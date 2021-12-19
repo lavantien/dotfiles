@@ -100,19 +100,35 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-export EDITOR='nvim'
-export JAVA_HOME="/usr/lib/jvm/java-17-oracle"
-export GOHOME=/home/savaka/go
+export GOPATH=/home/savaka/go
 export GOBIN=/home/savaka/go/bin
+export PATH=$PATH:/usr/local/go/bin
 export PATH=$PATH:$GOBIN
 
-fpath+=$HOME/.zsh/pure
+export GEM_HOME=~/.ruby
+export PATH=$PATH:~/.ruby/bin
 
+export PATH=$PATH:~/.local/bin
+
+export PATH=$PATH:/home/savaka/tools/ltex-ls/bin
+export PATH=$PATH:/home/savaka/tools/codeql
+export JDTLS_HOME=/home/savaka/tools/jdt-language-server
+export WORKSPACE=/home/savaka/dev/java
+export PATH=$PATH:/home/savaka/tools/lua-language-server/bin
+
+fpath+=$HOME/.zsh/pure
 autoload -U promptinit; promptinit
 prompt pure
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-alias lzd='lazydocker'
-alias lzg='lazygit'
+
+PATH="/home/savaka/perl5/bin${PATH:+:${PATH}}"; export PATH;
+PERL5LIB="/home/savaka/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
+PERL_LOCAL_LIB_ROOT="/home/savaka/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
+PERL_MB_OPT="--install_base \"/home/savaka/perl5\""; export PERL_MB_OPT;
+PERL_MM_OPT="INSTALL_BASE=/home/savaka/perl5"; export PERL_MM_OPT;
+
+alias luamake=/home/savaka/tools/lua-language-server/3rd/luamake/luamake
+alias n=nvim
