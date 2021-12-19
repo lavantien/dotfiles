@@ -134,3 +134,4 @@ alias luamake=/home/savaka/tools/lua-language-server/3rd/luamake/luamake
 alias n=nvim
 alias lzg=lazygit
 alias lzd=lazydocker
+alias lzn=lazynpm
