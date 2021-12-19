@@ -132,3 +132,5 @@ PERL_MM_OPT="INSTALL_BASE=/home/savaka/perl5"; export PERL_MM_OPT;
 
 alias luamake=/home/savaka/tools/lua-language-server/3rd/luamake/luamake
 alias n=nvim
+alias lzg=lazygit
+alias lzd=lazydocker
