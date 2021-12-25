@@ -115,6 +115,7 @@ export PATH=$PATH:/home/savaka/tools/codeql
 export JDTLS_HOME=/home/savaka/tools/jdt-language-server
 export WORKSPACE=/home/savaka/dev/java
 export PATH=$PATH:/home/savaka/tools/lua-language-server/bin
+export PATH=$PATH:/home/savaka/zk
 
 fpath+=$HOME/.zsh/pure
 autoload -U promptinit; promptinit
