@@ -6,7 +6,7 @@ return {
     "unifont",
   }),
   font_size = 12,
-  color_scheme = "nord",
+  color_scheme = "Tinacious Design (Dark)",
   enable_scroll_bar = true,
   keys = {
     {key="=", mods="ALT", action=wezterm.action{SplitHorizontal={domain="CurrentPaneDomain"}}},
