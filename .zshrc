@@ -116,6 +116,8 @@ export JDTLS_HOME=/home/savaka/tools/jdt-language-server
 export WORKSPACE=/home/savaka/dev/java
 export PATH=$PATH:/home/savaka/tools/lua-language-server/bin
 export PATH=$PATH:/home/savaka/zk
+export PATH=$PATH:/home/savaka/.yarn/bin
+export PATH=$PATH:/home/savaka/tools/git-lfs
 
 fpath+=$HOME/.zsh/pure
 autoload -U promptinit; promptinit
@@ -124,6 +126,7 @@ prompt pure
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+#export NPM_HOME=/home/savaka/.nvm/versions/node/v16.13.1/bin/npm
 
 PATH="/home/savaka/perl5/bin${PATH:+:${PATH}}"; export PATH;
 PERL5LIB="/home/savaka/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
@@ -133,6 +136,7 @@ PERL_MM_OPT="INSTALL_BASE=/home/savaka/perl5"; export PERL_MM_OPT;
 
 alias luamake=/home/savaka/tools/lua-language-server/3rd/luamake/luamake
 alias n=nvim
+alias l=lvim
 alias lzg=lazygit
 alias lzd=lazydocker
 alias lzn=lazynpm
