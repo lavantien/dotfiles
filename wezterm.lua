@@ -7,7 +7,7 @@ return {
   }),
   font_size = 12,
   --color_scheme = "Tinacious Design (Dark)",
-  color_scheme = "Nord Deep",
+  color_scheme = "wezterm_tokyonight_night",
   color_schemes = {
     ["Nord Deep"] = {
       foreground = "#d8dee9",

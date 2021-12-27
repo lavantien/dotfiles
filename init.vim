@@ -42,7 +42,7 @@ Plug 'rcarriga/nvim-dap-ui'
 Plug 'theHamsta/nvim-dap-virtual-text'
 Plug 'ray-x/guihua.lua', { 'do': 'cd lua/fzy && make' }
 Plug 'ray-x/go.nvim'
-" Plug 'ray-x/navigator.lua'
+Plug 'ray-x/navigator.lua'
 
 Plug 'williamboman/nvim-lsp-installer'
 
@@ -170,7 +170,7 @@ nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
 lua require('gitsigns').setup()
 lua require('feline').setup()
 " lua require('Comment').setup()
-" lua require'navigator'.setup()
+lua require'navigator'.setup()
 lua require'nvim-tree'.setup()
 
 " which-key.nvim
