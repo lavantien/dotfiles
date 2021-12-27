@@ -44,6 +44,8 @@ Plug 'williamboman/nvim-lsp-installer'
 
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'voldikss/vim-floaterm'
+
+Plug 'numToStr/Comment.nvim'
 call plug#end()
 " }}}
 
@@ -87,6 +89,7 @@ nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
 " SCRIPTS ----------------------------------------------------------------- {{{
 lua require('gitsigns').setup()
 lua require('feline').setup()
+lua require('Comment').setup()
 
 " nvim-lsp-installer default
 lua <<EOF
@@ -116,7 +119,7 @@ require 'go'.setup({
 local protocol = require'vim.lsp.protocol'
 
 -- integrate with lsp-installer (failed!)
-local path = require 'nvim-lsp-installer.path'
+--[[local path = require 'nvim-lsp-installer.path'
 local install_root_dir = path.concat {vim.fn.stdpath 'data', 'lsp_servers'}
 
 require('go').setup({
@@ -138,7 +141,7 @@ if server_available then
 		-- Queue the server to be installed
 		requested_server:install()
 	end
-end
+end--]]
 
 EOF
 
