@@ -52,6 +52,9 @@ Plug 'voldikss/vim-floaterm'
 " Plug 'numToStr/Comment.nvim'
 
 Plug 'folke/which-key.nvim'
+
+Plug 'nvim-lua/popup.nvim'
+Plug 'nvim-telescope/telescope-media-files.nvim'
 call plug#end()
 " }}}
 
@@ -172,6 +175,23 @@ lua require('feline').setup()
 " lua require('Comment').setup()
 lua require'navigator'.setup()
 lua require'nvim-tree'.setup()
+"lua require('telescope').extensions.media_files.media_files()
+
+" telescope-media-files.nvim
+lua <<EOF
+require('telescope').load_extension('media_files')
+require'telescope'.setup {
+  extensions = {
+    media_files = {
+      -- filetypes whitelist
+      -- defaults to {"png", "jpg", "mp4", "webm", "pdf"}
+      filetypes = {"png", "webp", "jpg", "jpeg", "mp4", "webm", "pdf"},
+      find_cmd = "rg" -- find command (defaults to `fd`)
+    }
+  },
+}
+
+EOF
 
 " which-key.nvim
 lua << EOF
