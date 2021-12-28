@@ -20,6 +20,10 @@ set wildmode=list:longest
 set wildignore=*.docx,*.jpg,*.png,*.gif,*.pdf,*.exe,*.xlsx,*pptx
 set termguicolors
 set mouse=a
+set cc=120
+set clipboard=unnamedplus
+set t_Co=256
+"set clipboard=unnamedplus
 " }}}
 
 " PLUGINS ----------------------------------------------------------------- {{{
@@ -188,6 +192,23 @@ nnoremap <s-j> :bprevious<CR>
 nnoremap <s-k> :bnext<CR>
 nnoremap <s-h> :bfirst<CR>
 nnoremap <s-l> :blast<CR>
+
+" Move split panes to left/bottom/top/right
+nnoremap <a-h> <C-W>H
+nnoremap <a-J> <C-W>J
+nnoremap <a-K> <C-W>K
+nnoremap <a-l> <C-W>L
+
+" Move line or visually selected block - alt+j/k
+inoremap <a-j> <Esc>:m .+1<CR>==gi
+inoremap <a-k> <Esc>:m .-2<CR>==gi
+vnoremap <a-j> :m '>+1<CR>gv=gv
+vnoremap <a-k> :m '<-2<CR>gv=gv
+
+" Quick save and quit
+nnoremap <c-s> :w<CR>
+nnoremap <c-q> <c-w>c
+
 " }}}
 
 " SCRIPTS ----------------------------------------------------------------- {{{
