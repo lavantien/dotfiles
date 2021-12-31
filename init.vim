@@ -190,8 +190,8 @@ noremap <c-right> <c-w><
 " Tab navigation.
 nnoremap <s-j> :bprevious<CR>
 nnoremap <s-k> :bnext<CR>
-nnoremap <s-h> :bfirst<CR>
-nnoremap <s-l> :blast<CR>
+nnoremap <s-a-h> :bfirst<CR>
+nnoremap <s-a-l> :blast<CR>
 
 " Move split panes to left/bottom/top/right
 nnoremap <a-h> <C-W>H
