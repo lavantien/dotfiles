@@ -30,6 +30,7 @@ set t_Co=256
 call plug#begin('~/.vim/plugged')
 Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate' }
 Plug 'nvim-treesitter/nvim-treesitter-refactor'
+Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 
 Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
 
@@ -45,9 +46,9 @@ Plug 'neovim/nvim-lspconfig'
 Plug 'mfussenegger/nvim-dap'
 Plug 'rcarriga/nvim-dap-ui'
 Plug 'theHamsta/nvim-dap-virtual-text'
-Plug 'ray-x/guihua.lua', { 'do': 'cd lua/fzy && make' }
-Plug 'ray-x/go.nvim'
-Plug 'ray-x/navigator.lua'
+" Plug 'ray-x/guihua.lua', { 'do': 'cd lua/fzy && make' }
+" Plug 'ray-x/go.nvim'
+" Plug 'ray-x/navigator.lua'
 
 Plug 'williamboman/nvim-lsp-installer'
 
@@ -60,6 +61,15 @@ Plug 'folke/which-key.nvim'
 
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-telescope/telescope-media-files.nvim'
+
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/nvim-cmp'
+" For vsnip users.
+Plug 'hrsh7th/cmp-vsnip'
+Plug 'hrsh7th/vim-vsnip'
 call plug#end()
 " }}}
 
@@ -134,9 +144,9 @@ let g:nvim_tree_icons = {
     \   }
     \ }
 
-nnoremap <C-n> :NvimTreeToggle<CR>
-nnoremap <leader>r :NvimTreeRefresh<CR>
-nnoremap <leader>n :NvimTreeFindFile<CR>
+nnoremap <leader>nn :NvimTreeToggle<CR>
+nnoremap <leader>nr :NvimTreeRefresh<CR>
+nnoremap <leader>nf :NvimTreeFindFile<CR>
 " NvimTreeOpen, NvimTreeClose, NvimTreeFocus, NvimTreeFindFileToggle, and NvimTreeResize are also available if you need them
 
 " a list of groups can be found at `:help nvim_tree_highlight`
@@ -163,12 +173,12 @@ let g:floaterm_height = 1.0
 
 " telescope.nvim
 " Find files using Telescope command-line sugar.
-nnoremap <leader>fe <cmd>Telescope find_files<cr>
+nnoremap <leader>ff <cmd>Telescope find_files<cr>
 nnoremap <leader>fg <cmd>Telescope live_grep<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 " Using Lua functions
-nnoremap <leader>fe <cmd>lua require('telescope.builtin').find_files()<cr>
+nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
 nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
 nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
 nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
@@ -209,14 +219,175 @@ vnoremap <a-k> :m '<-2<CR>gv=gv
 nnoremap <c-s> :w<CR>
 nnoremap <c-q> <c-w>c
 
+" Auto formatting
+autocmd BufWritePre * lua vim.lsp.buf.formatting()
+nnoremap <leader>fm <cmd>lua vim.lsp.buf.formatting()<CR>
 " }}}
 
 " SCRIPTS ----------------------------------------------------------------- {{{
 lua require('gitsigns').setup()
 lua require('feline').setup()
 " lua require('Comment').setup()
-lua require'navigator'.setup()
+" lua require'navigator'.setup()
 lua require'nvim-tree'.setup()
+lua require('nvim-dap-virtual-text').setup()
+lua require('dapui').setup()
+
+" nvim-lspconfig
+lua <<EOF
+local nvim_lsp = require('lspconfig')
+
+-- Use an on_attach function to only map the following keys
+-- after the language server attaches to the current buffer
+local on_attach = function(client, bufnr)
+  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+
+  -- Enable completion triggered by <c-x><c-o>
+  buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+
+  -- Mappings.
+  local opts = { noremap=true, silent=true }
+
+  -- See `:help vim.lsp.*` for documentation on any of the below functions
+  buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+  buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+  buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+  buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+  buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+  buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+  buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+  buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+  buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+  buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+  buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+  buf_set_keymap('n', '<space>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
+  buf_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
+  buf_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
+  buf_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
+  buf_set_keymap('n', '<space>fm', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+
+end
+
+-- Use a loop to conveniently call 'setup' on multiple servers and
+-- map buffer local keybindings when the language server attaches
+local servers = {'cmake', 'dartls', 'serve_d', 'gopls','ccls','csharp_ls','vimls','angularls','bashls','clangd','cssls','cssmodules_ls','codeqlls','diagnosticls','dockerls','dotls','eslint','emmet_ls','graphql','html','jsonls','jdtls','tsserver','ltex','sumneko_lua','pyright','rust_analyzer','sqlls','svelte','tailwindcss','tsserver','vuels','yamlls','ansiblels'}
+for _, lsp in ipairs(servers) do
+  nvim_lsp[lsp].setup {
+    on_attach = on_attach,
+    flags = {
+      debounce_text_changes = 150,
+    }
+  }
+end
+EOF
+
+" nvim-dap
+lua <<EOF
+local dap = require('dap')
+dap.adapters.go = {
+  type = 'executable';
+  command = 'node';
+  args = {os.getenv('HOME') .. '/dev/vscode-go/dist/debugAdapter.js'};
+}
+dap.configurations.go = {
+  {
+    type = 'go';
+    name = 'Debug';
+    request = 'launch';
+    showLog = false;
+    program = "${file}";
+    dlvToolPath = vim.fn.exepath('/home/savaka/go/bin/dlv')  -- Adjust to where delve is installed
+  },
+}
+EOF
+
+" nvim-cmp
+set completeopt=menu,menuone,noselect
+
+lua <<EOF
+  -- Setup nvim-cmp.
+  local cmp = require'cmp'
+
+  cmp.setup({
+    snippet = {
+      -- REQUIRED - you must specify a snippet engine
+      expand = function(args)
+        vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+        -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+        -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
+        -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+      end,
+    },
+    mapping = {
+		['<C-p>'] = cmp.mapping.select_prev_item(),
+		['<C-n>'] = cmp.mapping.select_next_item(),
+		['<C-d>'] = cmp.mapping.scroll_docs(-4),
+		['<C-f>'] = cmp.mapping.scroll_docs(4),
+		['<C-Space>'] = cmp.mapping.complete(),
+		['<C-e>'] = cmp.mapping.close(),
+		['<CR>'] = cmp.mapping.confirm {
+		  behavior = cmp.ConfirmBehavior.Replace,
+		  select = true,
+		},
+		['<Tab>'] = function(fallback)
+		  if cmp.visible() then
+			cmp.select_next_item()
+		  elseif luasnip.expand_or_jumpable() then
+			luasnip.expand_or_jump()
+		  else
+			fallback()
+		  end
+		end,
+		['<S-Tab>'] = function(fallback)
+		  if cmp.visible() then
+			cmp.select_prev_item()
+		  elseif luasnip.jumpable(-1) then
+			luasnip.jump(-1)
+		  else
+			fallback()
+		  end
+		end,
+    },
+    sources = cmp.config.sources({
+      { name = 'nvim_lsp' },
+      { name = 'vsnip' }, -- For vsnip users.
+      -- { name = 'luasnip' }, -- For luasnip users.
+      -- { name = 'ultisnips' }, -- For ultisnips users.
+      -- { name = 'snippy' }, -- For snippy users.
+    }, {
+      { name = 'buffer' },
+    })
+  })
+
+  -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline('/', {
+    sources = {
+      { name = 'buffer' }
+    }
+  })
+
+  -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline(':', {
+    sources = cmp.config.sources({
+      { name = 'path' }
+    }, {
+      { name = 'cmdline' }
+    })
+  })
+
+  -- Setup lspconfig.
+  local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+  -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
+  local servers = {'cmake', 'dartls', 'serve_d', 'gopls','ccls','csharp_ls','vimls','angularls','bashls','clangd','cssls','cssmodules_ls','codeqlls','diagnosticls','dockerls','dotls','eslint','emmet_ls','graphql','html','jsonls','jdtls','tsserver','ltex','sumneko_lua','pyright','rust_analyzer','sqlls','svelte','tailwindcss','tsserver','vuels','yamlls','ansiblels'}
+  for _, lsp in ipairs(servers) do
+	  require('lspconfig')[lsp].setup {
+		  on_attach = on_attach,
+		  capabilities = capabilities,
+	  }
+  end
+EOF
 
 " nvim-treesitter
 lua <<EOF
@@ -264,8 +435,8 @@ require'nvim-treesitter.configs'.setup {
     enable = true
   }
 }
-
 EOF
+
 set foldmethod=expr
 set foldexpr=nvim_treesitter#foldexpr()
 
@@ -282,7 +453,6 @@ require'telescope'.setup {
     }
   },
 }
-
 EOF
 
 " which-key.nvim
@@ -298,27 +468,27 @@ lsp_installer.on_server_ready(function(server)
 	local opts = {}
 	server:setup(opts)
 end)
-
 EOF
 
 " go.nvim default + integrate with lsp-installer
-lua <<EOF
-require 'go'.setup({
-	goimport = 'gopls', -- if set to 'gopls' will use golsp format
-	gofmt = 'gopls', -- if set to gopls will use golsp format
-	max_line_len = 120,
-	tag_transform = false,
-	test_dir = '',
-	comment_placeholder = '   ',
-	lsp_cfg = true, -- false: use your own lspconfig
-	lsp_gofumpt = true, -- true: set default gofmt in gopls format to gofumpt
-	lsp_on_attach = true, -- use on_attach from go.nvim
-	dap_debug = true,
-})
+"lua <<EOF
+"require 'go'.setup({
+	"goimport = 'gopls', -- if set to 'gopls' will use golsp format
+	"gofmt = 'gopls', -- if set to gopls will use golsp format
+	"filstruct = 'gopls',
+	"max_line_len = 120,
+	"tag_transform = false,
+	"test_dir = '',
+	"comment_placeholder = '   ',
+	"lsp_cfg = true, -- false: use your own lspconfig
+	"lsp_gofumpt = true, -- true: set default gofmt in gopls format to gofumpt
+	"lsp_on_attach = true, -- use on_attach from go.nvim
+	"dap_debug = true,
+	"lsp_codelens = false, -- use navigator
+"})
 
-local protocol = require'vim.lsp.protocol'
-
-EOF
+"local protocol = require'vim.lsp.protocol'
+"EOF
 
 " Enable the marker method of folding.
 augroup filetype_vim
