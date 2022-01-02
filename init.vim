@@ -68,8 +68,11 @@ Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/nvim-cmp'
 " For vsnip users.
-Plug 'hrsh7th/cmp-vsnip'
-Plug 'hrsh7th/vim-vsnip'
+" Plug 'hrsh7th/cmp-vsnip'
+" Plug 'hrsh7th/vim-vsnip'
+" For luasnip users.
+Plug 'L3MON4D3/LuaSnip'
+Plug 'saadparwaiz1/cmp_luasnip'
 call plug#end()
 " }}}
 
@@ -220,7 +223,24 @@ nnoremap <c-s> :w<CR>
 nnoremap <c-q> <c-w>c
 
 " Auto formatting
+lua <<EOF
+    function org_imports(wait_ms)
+      local params = vim.lsp.util.make_range_params()
+      params.context = {only = {"source.organizeImports"}}
+      local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params, wait_ms)
+      for _, res in pairs(result or {}) do
+        for _, r in pairs(res.result or {}) do
+          if r.edit then
+            vim.lsp.util.apply_workspace_edit(r.edit)
+          else
+            vim.lsp.buf.execute_command(r.command)
+          end
+        end
+      end
+  end
+EOF
 autocmd BufWritePre * lua vim.lsp.buf.formatting()
+autocmd BufWritePre *.go :silent! lua org_imports(1000)
 nnoremap <leader>fm <cmd>lua vim.lsp.buf.formatting()<CR>
 " }}}
 
@@ -314,8 +334,8 @@ lua <<EOF
     snippet = {
       -- REQUIRED - you must specify a snippet engine
       expand = function(args)
-        vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-        -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+        -- vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+        require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
         -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
         -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
       end,
@@ -352,8 +372,8 @@ lua <<EOF
     },
     sources = cmp.config.sources({
       { name = 'nvim_lsp' },
-      { name = 'vsnip' }, -- For vsnip users.
-      -- { name = 'luasnip' }, -- For luasnip users.
+      -- { name = 'vsnip' }, -- For vsnip users.
+      { name = 'luasnip' }, -- For luasnip users.
       -- { name = 'ultisnips' }, -- For ultisnips users.
       -- { name = 'snippy' }, -- For snippy users.
     }, {

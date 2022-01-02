@@ -110,14 +110,15 @@ export PATH=$PATH:~/.ruby/bin
 
 export PATH=$PATH:~/.local/bin
 
-export PATH=$PATH:/home/savaka/tools/ltex-ls/bin
-export PATH=$PATH:/home/savaka/tools/codeql
-export JDTLS_HOME=/home/savaka/tools/jdt-language-server
-export WORKSPACE=/home/savaka/dev/java
-export PATH=$PATH:/home/savaka/tools/lua-language-server/bin
+#export PATH=$PATH:/home/savaka/tools/ltex-ls/bin
+#export PATH=$PATH:/home/savaka/tools/codeql
+#export JDTLS_HOME=/home/savaka/tools/jdt-language-server
+#export WORKSPACE=/home/savaka/dev/java
+#export PATH=$PATH:/home/savaka/tools/lua-language-server/bin
+#export PATH=$PATH:/home/savaka/tools/git-lfs
 export PATH=$PATH:/home/savaka/zk
 export PATH=$PATH:/home/savaka/.yarn/bin
-export PATH=$PATH:/home/savaka/tools/git-lfs
+export PATH=$PATH:/home/savaka/.nvm/versions/node/v16.13.1/lib/node_modules
 
 fpath+=$HOME/.zsh/pure
 autoload -U promptinit; promptinit
