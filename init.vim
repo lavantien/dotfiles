@@ -57,7 +57,7 @@ Plug 'voldikss/vim-floaterm'
 
 " Plug 'numToStr/Comment.nvim'
 
-Plug 'folke/which-key.nvim'
+" Plug 'folke/which-key.nvim'
 
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-telescope/telescope-media-files.nvim'
@@ -476,10 +476,10 @@ require'telescope'.setup {
 EOF
 
 " which-key.nvim
-lua << EOF
-require("which-key").setup {
-}
-EOF
+"lua << EOF
+" require("which-key").setup {
+" }
+" EOF
 
 " nvim-lsp-installer default
 lua <<EOF
