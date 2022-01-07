@@ -6,9 +6,11 @@ return {
     "unifont",
   }),
   font_size = 12,
+  color_scheme = "GitHub Dark",
   --color_scheme = "Tinacious Design (Dark)",
-  color_scheme = "wezterm_tokyonight_night",
+  --color_scheme = "wezterm_tokyonight_night",
   --color_scheme = "wezterm_tokyonight_day",
+  --color_scheme = "Alabaster",
   color_schemes = {
     ["Nord Deep"] = {
       foreground = "#d8dee9",
