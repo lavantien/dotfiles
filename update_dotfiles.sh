@@ -1,1 +1,1 @@
-cd ~ && cp ~/.zshrc ~/.zshenv ~/.config/wezterm/wezterm.lua ~/.config/wezterm/colors/wezterm_tokyonight_night.toml ~/Documents/notebook/.zk/config.toml ~/.config/nvim/init.vim ~/.config/Code/User/settings.json ~/dotfiles && cd ~/dotfiles
+cd ~ && cp ~/.zshrc ~/.zshenv ~/.config/wezterm/wezterm.lua ~/.config/wezterm/colors/wezterm_tokyonight_night.toml ~/.config/wezterm/colors/wezterm_tokyonight_day.toml ~/Documents/notebook/.zk/config.toml ~/.config/nvim/init.vim ~/.config/Code/User/settings.json ~/dotfiles && cd ~/dotfiles
