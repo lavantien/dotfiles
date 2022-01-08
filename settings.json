@@ -454,6 +454,7 @@
 	"clang-format.style": "{IndentWidth: 4}",
 	"editor.minimap.maxColumn": 160,
 	"prettier.printWidth": 160,
+	"explorer.compactFolders": false,
 	// "vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim",
 	// "vim.easymotion": true,
 	// "vim.enableNeovim": true,
