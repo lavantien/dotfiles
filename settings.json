@@ -294,6 +294,8 @@
 		"gomock",
 		"gonic",
 		"GOPATH",
+		"grpcs",
+		"grpcui",
 		"hivemq",
 		"hlsearch",
 		"Idxs",
@@ -311,6 +313,7 @@
 		"mockdb",
 		"Mosquitto",
 		"newgrp",
+		"nginxconf",
 		"nohl",
 		"nums",
 		"nvim",
@@ -350,6 +353,7 @@
 		"vuex",
 		"webui",
 		"wezterm",
+		"xaver",
 		"Xeon"
 	],
 	"workbench.colorCustomizations": {
@@ -436,7 +440,6 @@
 	"Prettier-SQL.ignoreTabSettings": false,
 	"Prettier-SQL.insertSpacesOverride": false,
 	"Prettier-SQL.SQLFlavourOverride": "postgresql",
-	"workbench.colorTheme": "GitHub Dark Default",
 	"protoc": {
 		"path": "/home/savaka/.local/bin/protoc",
 		"options": [
@@ -451,10 +454,15 @@
 		"editor.tabSize": 4,
 		"editor.insertSpaces": false,
 	},
-	"clang-format.style": "{IndentWidth: 4}",
+	"clang-format.style": "{IndentWidth: 4, TabWidth: 4, UseTab: Always, ColumnLimit: 0}",
 	"editor.minimap.maxColumn": 160,
 	"prettier.printWidth": 160,
 	"explorer.compactFolders": false,
+	"workbench.colorTheme": "Nord Deep",
+	"security.workspace.trust.untrustedFiles": "open",
+	"[yaml]": {
+		"editor.defaultFormatter": "redhat.vscode-yaml"
+	},
 	// "vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim",
 	// "vim.easymotion": true,
 	// "vim.enableNeovim": true,
