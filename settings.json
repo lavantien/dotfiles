@@ -458,12 +458,17 @@
 	"editor.minimap.maxColumn": 160,
 	"prettier.printWidth": 160,
 	"explorer.compactFolders": false,
-	"workbench.colorTheme": "Nord Deep",
+	"workbench.colorTheme": "Nord",
 	"security.workspace.trust.untrustedFiles": "open",
 	"[yaml]": {
 		"editor.defaultFormatter": "redhat.vscode-yaml"
 	},
-	// "vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim",
+	"vs-kubernetes": {
+		"vscode-kubernetes.helm-path.linux": "/home/savaka/.vs-kubernetes/tools/helm/linux-amd64/helm"
+	},
+	"vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim",
+	"vscode-neovim.textDecorationsAtTop": true,
+	"vscode-neovim.revealCursorScrollLine": true,
 	// "vim.easymotion": true,
 	// "vim.enableNeovim": true,
 	// "vim.foldfix": true,

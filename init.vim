@@ -1,3 +1,5 @@
+if !exists('g:vscode')
+
 " GENERAL CONFIGS --------------------------------------------------------- {{{
 set number
 set relativenumber
@@ -32,7 +34,9 @@ Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate' }
 Plug 'nvim-treesitter/nvim-treesitter-refactor'
 Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 
-Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
+" Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
+" Plug 'arcticicestudio/nord-vim'
+Plug 'shaunsingh/nord.nvim'
 
 Plug 'ryanoasis/vim-devicons'
 Plug 'kyazdani42/nvim-web-devicons'
@@ -79,7 +83,8 @@ call plug#end()
 " MAPPINGS ---------------------------------------------------------------- {{{
 let mapleader = " "
 
-colorscheme tokyonight
+"colorscheme tokyonight
+colorscheme nord
 
 " nvim-tree.lua
 let g:nvim_tree_quit_on_open = 1 "0 by default, closes the tree when you open a file
@@ -530,4 +535,6 @@ augroup cursor_off
 	autocmd WinEnter * set cursorline cursorcolumn
 augroup END
 " }}}
+
+endif
 
