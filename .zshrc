@@ -2,13 +2,13 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="/home/savaka/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME=""
+ZSH_THEME="robbyrussell"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -105,41 +105,17 @@ export GOBIN=/home/savaka/go/bin
 export PATH=$PATH:/usr/local/go/bin
 export PATH=$PATH:$GOBIN
 
-export GEM_HOME=~/.ruby
-export PATH=$PATH:~/.ruby/bin
-
 export PATH=$PATH:~/.local/bin
-
-#export PATH=$PATH:/home/savaka/tools/ltex-ls/bin
-#export PATH=$PATH:/home/savaka/tools/codeql
-#export JDTLS_HOME=/home/savaka/tools/jdt-language-server
-#export WORKSPACE=/home/savaka/dev/java
-#export PATH=$PATH:/home/savaka/tools/lua-language-server/bin
-#export PATH=$PATH:/home/savaka/tools/git-lfs
-export PATH=$PATH:/home/savaka/zk
 export PATH=$PATH:/home/savaka/.yarn/bin
-export PATH=$PATH:/home/savaka/.nvm/versions/node/v16.13.1/lib/node_modules
+export PATH=$PATH:/home/savaka/.nvm/versions/node/v16.14.0/lib/node_modules
 
-fpath+=$HOME/.zsh/pure
-autoload -U promptinit; promptinit
-prompt pure
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-#export NPM_HOME=/home/savaka/.nvm/versions/node/v16.13.1/bin/npm
-
-PATH="/home/savaka/perl5/bin${PATH:+:${PATH}}"; export PATH;
-PERL5LIB="/home/savaka/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
-PERL_LOCAL_LIB_ROOT="/home/savaka/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
-PERL_MB_OPT="--install_base \"/home/savaka/perl5\""; export PERL_MB_OPT;
-PERL_MM_OPT="INSTALL_BASE=/home/savaka/perl5"; export PERL_MM_OPT;
-
-alias luamake=/home/savaka/tools/lua-language-server/3rd/luamake/luamake
 alias n=nvim
-alias l=lvim
 alias r=ranger
 alias lzg=lazygit
 alias lzd=lazydocker
 alias lzn=lazynpm
 alias pip=pip3
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

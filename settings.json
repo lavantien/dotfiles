@@ -1,5 +1,5 @@
 {
-	"workbench.iconTheme": "material-icon-theme",
+    "workbench.iconTheme": "material-icon-theme",
 	"files.autoSave": "afterDelay",
 	"editor.fontSize": 16,
 	"editor.fontFamily": "JetBrainsMono Nerd Font, Victor Mono",
@@ -103,26 +103,19 @@
 	"keyboard.dispatch": "keyCode",
 	"task.quickOpen.showAll": true,
 	"problems.showCurrentInStatus": true,
-	"auto-close-tag.insertSpaceBeforeSelfClosingTag": true,
-	"better-comments.highlightPlainText": true,
-	"bracketLens.mode": "auto",
-	"cSpell.allowCompoundWords": true,
 	"editor.suggestSelection": "first",
-	"vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
-	"cSpell.experimental.enableRegexpView": true,
-	"crates.listPreReleases": true,
-	"csv-to-table.markdownFormat": true,
 	"emmet.showSuggestionsAsSnippets": true,
 	"emmet.triggerExpansionOnTab": true,
-	"errorLens.delay": 500,
-	"errorLens.fontFamily": "Victor Mono",
-	"errorLens.fontSize": "12",
-	"errorLens.fontStyleItalic": true,
-	"errorLens.gutterIconsEnabled": true,
-	"errorLens.statusBarColorsEnabled": true,
-	"errorLens.statusBarIconsEnabled": true,
-	"errorLens.statusBarMessageEnabled": true,
-	"errorLens.statusBarMessageType": "closestSeverity",
+	"git.autofetchPeriod": 60,
+	"git.autoStash": true,
+	"git.enableSmartCommit": true,
+	"git.fetchOnPull": true,
+	"git.inputValidationLength": 80,
+	"git.pruneOnFetch": true,
+	"git.showPushSuccessNotification": true,
+	"git.useCommitInputAsStashMessage": true,
+	"vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+	"better-comments.highlightPlainText": true,
 	"eslint.alwaysShowStatus": true,
 	"eslint.format.enable": true,
 	"eslint.lintTask.enable": true,
@@ -138,15 +131,6 @@
 	"evenBetterToml.formatter.reorderKeys": true,
 	"evenBetterToml.schema.links": true,
 	"evenBetterToml.semanticTokens": true,
-	"formatFiles.runOrganizeImports": true,
-	"git.autofetchPeriod": 60,
-	"git.autoStash": true,
-	"git.enableSmartCommit": true,
-	"git.fetchOnPull": true,
-	"git.inputValidationLength": 80,
-	"git.pruneOnFetch": true,
-	"git.showPushSuccessNotification": true,
-	"git.useCommitInputAsStashMessage": true,
 	"gitProjectManager.maxDepthRecursion": 5,
 	"gitProjectManager.recentProjectsListSize": 100,
 	"gitProjectManager.storeRepositoriesBetweenSessions": true,
@@ -216,33 +200,12 @@
 	"markdown.extension.toc.orderedList": true,
 	"material-icon-theme.activeIconPack": "vue_vuex",
 	"material-icon-theme.hidesExplorerArrows": true,
-	"materialTheme.accent": "Pink",
 	"merge-conflict.autoNavigateNextConflict.enabled": true,
 	"merge-conflict.diffViewPosition": "Beside",
 	"npm.enableRunFromFolder": true,
-	"path-autocomplete.extensionOnImport": true,
 	"path-intellisense.autoSlashAfterDirectory": true,
 	"path-intellisense.extensionOnImport": true,
 	"path-intellisense.showHiddenFiles": true,
-	"pdf-preview.default.cursor": "hand",
-	"pdf-preview.default.sidebar": true,
-	"plantuml.diagramsRoot": "design/uml/",
-	"plantuml.previewSnapIndicators": true,
-	"prettier.jsxSingleQuote": true,
-	"prettier.singleQuote": true,
-	"prettier.tabWidth": 4,
-	"prettier.trailingComma": "all",
-	"prettier.useTabs": true,
-	"prettier.vueIndentScriptAndStyle": true,
-	"rainbow_csv.csv_lint_detect_trailing_spaces": true,
-	"rainbow_csv.enable_context_menu_tail": true,
-	"rainbow_csv.rbql_with_headers_by_default": true,
-	"rest-client.fontFamily": "JetBrainsMono Nerd Font, Victor Mono",
-	"rest-client.fontSize": 16,
-	"rest-client.requestNameAsResponseTabTitle": true,
-	"code-runner.clearPreviousOutput": true,
-	"code-runner.saveAllFilesBeforeRun": true,
-	"code-runner.runInTerminal": true,
 	"rust-analyzer.assist.importEnforceGranularity": true,
 	"rust-analyzer.cargo.allFeatures": true,
 	"rust-analyzer.debug.openDebugPane": true,
@@ -251,22 +214,13 @@
 	"rust-analyzer.lens.methodReferences": true,
 	"rust-analyzer.lens.references": true,
 	"rust-analyzer.rustfmt.enableRangeFormatting": true,
+	"rainbow_csv.csv_lint_detect_trailing_spaces": true,
+	"rainbow_csv.enable_context_menu_tail": true,
+	"rainbow_csv.rbql_with_headers_by_default": true,
+	"rest-client.fontFamily": "JetBrainsMono Nerd Font, Victor Mono",
+	"rest-client.fontSize": 16,
+	"rest-client.requestNameAsResponseTabTitle": true,
 	"shellformat.useEditorConfig": true,
-	"sortLines.sortEntireFile": true,
-	"svelte.enable-ts-plugin": true,
-	"svelte.plugin.svelte.defaultScriptLanguage": "ts",
-	"svelte.plugin.svelte.format.config.singleQuote": true,
-	"svelte.plugin.svelte.format.config.svelteStrictMode": true,
-	"todo-tree.highlights.useColourScheme": true,
-	"todo-tree.tree.buttons.export": true,
-	"todo-tree.tree.buttons.groupBySubTag": true,
-	"todo-tree.tree.buttons.scanMode": true,
-	"todo-tree.tree.disableCompactFolders": true,
-	"todo-tree.tree.expanded": true,
-	"todo-tree.tree.groupedBySubTag": true,
-	"todo-tree.tree.groupedByTag": true,
-	"todo-tree.tree.hideTreeWhenEmpty": true,
-	"todo-tree.tree.showCountsInTree": true,
 	"yaml.format.singleQuote": true,
 	"yaml.maxItemsComputed": 10000,
 	"cSpell.userWords": [
@@ -362,13 +316,10 @@
 			"editorCodeLens.foreground": "#7982a9" // Preferred hex color
 		}
 	},
-	"bracketLens.prefix": " ⦿ ",
-	"bracketLens.unmatchBracketsPrefix": " 🚫 ⦿ ",
 	"files.defaultLanguage": "${activeEditorLanguage}",
 	"editor.suggest.insertMode": "replace",
 	"workbench.productIconTheme": "material-product-icons",
 	"editor.codeLensFontSize": 12,
-	"gitlens.codeLens.includeSingleLineSymbols": true,
 	"editor.inlayHints.fontFamily": "Victor Mono",
 	"scm.inputFontFamily": "editor",
 	"redhat.telemetry.enabled": false,
@@ -381,20 +332,11 @@
 	"search.searchEditor.doubleClickBehaviour": "openLocationToSide",
 	"editor.wordWrap": "bounded",
 	"workbench.editor.wrapTabs": true,
-	"vetur.format.options.tabSize": 4,
-	"vetur.format.options.useTabs": true,
 	"screencastMode.onlyKeyboardShortcuts": true,
 	"window.titleBarStyle": "custom",
 	"window.customMenuBarAltFocus": false,
 	"[go]": {
 		"editor.defaultFormatter": "golang.go"
-	},
-	"github.copilot.enable": {
-		"*": false,
-		"yaml": false,
-		"plaintext": false,
-		"markdown": false,
-		"go": false
 	},
 	"editor.fontLigatures": true,
 	"markdownlint.config": {
@@ -410,6 +352,86 @@
 			]
 		},
 		"no-hard-tabs": false
+	},
+	"[dockerfile]": {
+		"editor.defaultFormatter": "ms-azuretools.vscode-docker"
+	},
+	"cSpell.enableFiletypes": [
+		"!plaintext",
+		"sql"
+	],
+	"extensions.webWorker": true,
+	"editor.accessibilitySupport": "off",
+	"[proto3]": {
+		"editor.defaultFormatter": "xaver.clang-format",
+		"editor.tabSize": 4,
+		"editor.insertSpaces": false,
+	},
+	"editor.minimap.maxColumn": 160,
+	"explorer.compactFolders": false,
+	"workbench.colorTheme": "Nord",
+	"security.workspace.trust.untrustedFiles": "open",
+	"[yaml]": {
+		"editor.defaultFormatter": "redhat.vscode-yaml"
+	},
+	"cSpell.allowCompoundWords": true,
+	"cSpell.experimental.enableRegexpView": true,
+	"clang-format.style": "{IndentWidth: 4, TabWidth: 4, UseTab: Always, ColumnLimit: 0}",
+	"svelte.enable-ts-plugin": true,
+	"svelte.plugin.svelte.defaultScriptLanguage": "ts",
+	"svelte.plugin.svelte.format.config.singleQuote": true,
+	"svelte.plugin.svelte.format.config.svelteStrictMode": true,
+	"vscode-neovim.textDecorationsAtTop": true,
+	"vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim",
+	"vscode-neovim.revealCursorScrollLine": true,
+	"protoc": {
+		"path": "/usr/bin/protoc",
+		"options": [
+			"--proto_path=proto",
+			"--go_out=pb",
+			"--go_opt=paths=source_relative",
+		]
+	},
+	"vs-kubernetes": {
+		"vscode-kubernetes.helm-path.linux": "/home/savaka/.vs-kubernetes/tools/helm/linux-amd64/helm"
+	},
+	"path-autocomplete.extensionOnImport": true,
+	"materialTheme.accent": "Pink",
+	"pdf-preview.default.cursor": "hand",
+	"pdf-preview.default.sidebar": true,
+	"plantuml.diagramsRoot": "design/uml/",
+	"plantuml.previewSnapIndicators": true,
+	"prettier.jsxSingleQuote": true,
+	"prettier.singleQuote": true,
+	"prettier.tabWidth": 4,
+	"prettier.trailingComma": "all",
+	"prettier.useTabs": true,
+	"prettier.vueIndentScriptAndStyle": true,
+	"code-runner.clearPreviousOutput": true,
+	"code-runner.saveAllFilesBeforeRun": true,
+	"code-runner.runInTerminal": true,
+	"sortLines.sortEntireFile": true,
+	"todo-tree.highlights.useColourScheme": true,
+	"todo-tree.tree.buttons.export": true,
+	"todo-tree.tree.buttons.groupBySubTag": true,
+	"todo-tree.tree.buttons.scanMode": true,
+	"todo-tree.tree.disableCompactFolders": true,
+	"todo-tree.tree.expanded": true,
+	"todo-tree.tree.groupedBySubTag": true,
+	"todo-tree.tree.groupedByTag": true,
+	"todo-tree.tree.hideTreeWhenEmpty": true,
+	"todo-tree.tree.showCountsInTree": true,
+	"bracketLens.prefix": " ⦿ ",
+	"bracketLens.unmatchBracketsPrefix": " 🚫 ⦿ ",
+	"gitlens.codeLens.includeSingleLineSymbols": true,
+	"vetur.format.options.tabSize": 4,
+	"vetur.format.options.useTabs": true,
+	"github.copilot.enable": {
+		"*": false,
+		"yaml": false,
+		"plaintext": false,
+		"markdown": false,
+		"go": false
 	},
 	// "indentRainbow.colors": [
 	// 	"rgba(16,16,16,0.1)",
@@ -428,147 +450,24 @@
 	"indentRainbow.excludedLanguages": [
 		"plaintext"
 	],
-	"[dockerfile]": {
-		"editor.defaultFormatter": "ms-azuretools.vscode-docker"
-	},
-	"cSpell.enableFiletypes": [
-		"!plaintext",
-		"sql"
-	],
-	"extensions.webWorker": true,
 	"vscode-postgres.prettyPrintJSONfields": true,
 	"Prettier-SQL.ignoreTabSettings": false,
 	"Prettier-SQL.insertSpacesOverride": false,
 	"Prettier-SQL.SQLFlavourOverride": "postgresql",
-	"protoc": {
-		"path": "/home/savaka/.local/bin/protoc",
-		"options": [
-			"--proto_path=proto",
-			"--go_out=pb",
-			"--go_opt=paths=source_relative",
-		]
-	},
-	"editor.accessibilitySupport": "off",
-	"[proto3]": {
-		"editor.defaultFormatter": "xaver.clang-format",
-		"editor.tabSize": 4,
-		"editor.insertSpaces": false,
-	},
-	"clang-format.style": "{IndentWidth: 4, TabWidth: 4, UseTab: Always, ColumnLimit: 0}",
-	"editor.minimap.maxColumn": 160,
 	"prettier.printWidth": 160,
-	"explorer.compactFolders": false,
-	"workbench.colorTheme": "Nord",
-	"security.workspace.trust.untrustedFiles": "open",
-	"[yaml]": {
-		"editor.defaultFormatter": "redhat.vscode-yaml"
-	},
-	"vs-kubernetes": {
-		"vscode-kubernetes.helm-path.linux": "/home/savaka/.vs-kubernetes/tools/helm/linux-amd64/helm"
-	},
-	"vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim",
-	"vscode-neovim.textDecorationsAtTop": true,
-	"vscode-neovim.revealCursorScrollLine": true,
-	// "vim.easymotion": true,
-	// "vim.enableNeovim": true,
-	// "vim.foldfix": true,
-	// "vim.gdefault": true,
-	// "vim.highlightedyank.enable": true,
-	// "vim.history": 100,
-	// "vim.hlsearch": true,
-	// "vim.neovimPath": "/usr/bin/nvim",
-	// "vim.neovimConfigPath": "~/.config/nvim/init.vim",
-	// "vim.sneak": true,
-	// "vim.sneakReplacesF": true,
-	// "vim.sneakUseIgnorecaseAndSmartcase": true,
-	// "vim.useSystemClipboard": true,
-	// "vim.visualstar": true,
-	// "vim.incsearch": true,
-	// "vim.useCtrlKeys": true,
-	// "vim.insertModeKeyBindings": [
-	// 	{
-	// 		"before": ["i"],
-	// 		"after": ["<Esc>"]
-	// 	}
-	// ],
-	// "vim.normalModeKeyBindingsNonRecursive": [
-	// 	{
-	// 		"before": ["<leader>", "d"],
-	// 		"after": ["d", "d"]
-	// 	},
-	// 	{
-	// 		"before": ["<C-n>"],
-	// 		"commands": [":nohl"]
-	// 	}
-	// ],
-	// "vim.normalModeKeyBindings": [
-    //     {
-    //         "before": [":"],
-    //         "commands": [
-    //             "workbench.action.showCommands",
-    //         ]
-    //     }
-    // ],
-	// "vim.operatorPendingModeKeyBindings": [
-    //     {
-    //         "before": ["{"],
-    //         "after": ["w"]
-    //     },
-	// 	{
-    //         "before": ["L"],
-    //         "after": ["$"]
-    //     },
-    //     {
-    //         "before": ["H"],
-    //         "after": ["^"]
-    //     }
-    // ],
-	// "vim.operatorPendingModeKeyBindingsNonRecursive": [
-    //     {
-    //         "before": ["("],
-    //         "after": ["i("]
-    //     }
-    // ],
-	// "vim.visualModeKeyBindings": [
-    //     {
-    //         "before": [
-    //             ">"
-    //         ],
-    //         "commands": [
-    //             "editor.action.indentLines"
-    //         ]
-    //     },
-    //     {
-    //         "before": [
-    //             "<"
-    //         ],
-    //         "commands": [
-    //             "editor.action.outdentLines"
-    //         ]
-    //     },
-    // ],
-	// "vim.visualModeKeyBindingsNonRecursive": [
-    //     {
-    //         "before": [
-    //             "p",
-    //         ],
-    //         "after": [
-    //             "p",
-    //             "g",
-    //             "v",
-    //             "y"
-    //         ]
-    //     }
-    // ],
-	// "vim.leader": "<space>",
-	// "vim.handleKeys": {
-	// 	"<C-a>": false,
-	// 	"<C-f>": false
-	// },
-	// "vim.disableExtension": true,
-	// "algorithm.autoImportAlgm": true,
-	// "algorithm.codeLang": "Go",
-	// "[jsonc]": {
-	//     "editor.defaultFormatter": "vscode.json-language-features"
-	// },
+	"auto-close-tag.insertSpaceBeforeSelfClosingTag": true,
+	"bracketLens.mode": "auto",
+	"crates.listPreReleases": true,
+	"csv-to-table.markdownFormat": true,
+	"errorLens.delay": 500,
+	"errorLens.fontFamily": "Victor Mono",
+	"errorLens.fontSize": "12",
+	"errorLens.fontStyleItalic": true,
+	"errorLens.gutterIconsEnabled": true,
+	"errorLens.statusBarColorsEnabled": true,
+	"errorLens.statusBarIconsEnabled": true,
+	"errorLens.statusBarMessageEnabled": true,
+	"errorLens.statusBarMessageType": "closestSeverity",
+	"formatFiles.runOrganizeImports": true,
 }
+
