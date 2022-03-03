@@ -1,0 +1,151 @@
+// Place your key bindings in this file to override the defaults
+
+[
+	{
+		"key": "ctrl+.",
+		"command": "keyboard-quickfix.openQuickFix",
+		"when": "editorHasCodeActionsProvider && editorTextFocus && !editorReadonly"
+	},
+	{
+		"key": "ctrl+'",
+		"command": "github.copilot.generate",
+		"when": "editorTextFocus && github.copilot.activated"
+	},
+	{
+		"key": "ctrl+enter",
+		"command": "-github.copilot.generate",
+		"when": "editorTextFocus && github.copilot.activated"
+	},
+	{
+		"key": "alt+h",
+		"command": "-gitlens.showQuickFileHistory",
+		"when": "!gitlens:disabled && config.gitlens.keymap == 'alternate'"
+	},
+	{
+		"key": "up",
+		"command": "-showPrevParameterHint",
+		"when": "editorFocus && parameterHintsMultipleSignatures && parameterHintsVisible"
+	},
+	{
+		"key": "up",
+		"command": "-selectPrevSuggestion",
+		"when": "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus"
+	},
+	{
+		"key": "up",
+		"command": "-history.showPrevious",
+		"when": "historyNavigationBackwardsEnabled && historyNavigationWidget && !suggestWidgetVisible"
+	},
+	{
+		"key": "down",
+		"command": "-showNextParameterHint",
+		"when": "editorFocus && parameterHintsMultipleSignatures && parameterHintsVisible"
+	},
+	{
+		"key": "down",
+		"command": "-selectNextSuggestion",
+		"when": "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus"
+	},
+	{
+		"key": "down",
+		"command": "-history.showNext",
+		"when": "historyNavigationForwardsEnabled && historyNavigationWidget && !suggestWidgetVisible"
+	},
+	{
+		"key": "down",
+		"command": "-breadcrumbs.selectFocused",
+		"when": "breadcrumbsActive && breadcrumbsVisible"
+	},
+	{
+		"key": "down",
+		"command": "-notebook.focusNextEditor",
+		"when": "config.notebook.navigation.allowNavigateToSurroundingCells && editorTextFocus && inputFocus && notebookEditorFocused && notebookEditorCursorAtBoundary != 'none' && notebookEditorCursorAtBoundary != 'top'"
+	},
+	{
+		"key": "left",
+		"command": "-breadcrumbs.focusPrevious",
+		"when": "breadcrumbsActive && breadcrumbsVisible"
+	},
+	{
+		"key": "left",
+		"command": "-notebook.fold",
+		"when": "notebookEditorFocused && !inputFocus && activeEditor == 'workbench.editor.notebook'"
+	},
+	{
+		"key": "right",
+		"command": "-breadcrumbs.focusNext",
+		"when": "breadcrumbsActive && breadcrumbsVisible"
+	},
+	{
+		"key": "right",
+		"command": "-notebook.unfold",
+		"when": "notebookEditorFocused && !inputFocus && activeEditor == 'workbench.editor.notebook'"
+	},
+	{
+		"key": "ctrl+n n",
+		"command": "explorer.newFile",
+		"when": "filesExplorerFocus && !inputFocus"
+	},
+	{
+		"key": "a",
+		"command": "-explorer.newFile",
+		"when": "filesExplorerFocus && !inputFocus"
+	},
+	{
+		"key": "ctrl+n d",
+		"command": "explorer.newFolder",
+		"when": "filesExplorerFocus && !inputFocus"
+	},
+	{
+		"key": "shift+a",
+		"command": "-explorer.newFolder",
+		"when": "filesExplorerFocus && !inputFocus"
+	},
+	{
+		"key": "ctrl+n f",
+		"command": "workbench.action.files.newUntitledFile"
+	},
+	{
+		"key": "ctrl+n",
+		"command": "-workbench.action.files.newUntitledFile"
+	},
+	{
+		"key": "shift+alt+l",
+		"command": "toggleFindInSelection",
+		"when": "editorFocus"
+	},
+	{
+		"key": "alt+l",
+		"command": "-toggleFindInSelection",
+		"when": "editorFocus"
+	},
+	{
+		"key": "ctrl+alt+e",
+		"command": "-rest-client.switch-environment"
+	},
+	{
+		"key": "ctrl+alt+e",
+		"command": "workbench.view.explorer",
+		"when": "viewContainer.workbench.view.explorer.enabled"
+	},
+	{
+		"key": "ctrl+shift+e",
+		"command": "-workbench.view.explorer",
+		"when": "viewContainer.workbench.view.explorer.enabled"
+	},
+	{
+		"key": "ctrl+alt+e",
+		"command": "workbench.action.quickOpenNavigatePreviousInFilePicker",
+		"when": "inFilesPicker && inQuickOpen"
+	},
+	{
+		"key": "ctrl+shift+e",
+		"command": "-workbench.action.quickOpenNavigatePreviousInFilePicker",
+		"when": "inFilesPicker && inQuickOpen"
+	},
+	{
+		"key": "ctrl+shift+c",
+		"command": "-workbench.action.terminal.openNativeConsole",
+		"when": "!terminalFocus"
+	}
+]
