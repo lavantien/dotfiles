@@ -284,6 +284,7 @@
 		"QWERTZ",
 		"rbql",
 		"RDBMS",
+		"Revr",
 		"rgba",
 		"runc",
 		"rustfmt",
@@ -393,7 +394,8 @@
 		]
 	},
 	"vs-kubernetes": {
-		"vscode-kubernetes.helm-path.linux": "/home/savaka/.vs-kubernetes/tools/helm/linux-amd64/helm"
+		"vscode-kubernetes.helm-path.linux": "/home/savaka/.vs-kubernetes/tools/helm/linux-amd64/helm",
+		"vscode-kubernetes.minikube-path.linux": "/home/savaka/.vs-kubernetes/tools/minikube/linux-amd64/minikube"
 	},
 	"path-autocomplete.extensionOnImport": true,
 	"materialTheme.accent": "Pink",
@@ -470,4 +472,3 @@
 	"errorLens.statusBarMessageType": "closestSeverity",
 	"formatFiles.runOrganizeImports": true,
 }
-
