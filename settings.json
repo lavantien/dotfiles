@@ -63,6 +63,7 @@
 	"workbench.editor.pinnedTabSizing": "shrink",
 	"workbench.editor.sharedViewState": true,
 	"workbench.settings.useSplitJSON": true,
+	"workbench.list.automaticKeyboardNavigation": false,
 	"screencastMode.fontSize": 32,
 	"screencastMode.keyboardOverlayTimeout": 1000,
 	"window.restoreFullscreen": true,
@@ -369,7 +370,7 @@
 	},
 	"editor.minimap.maxColumn": 160,
 	"explorer.compactFolders": false,
-	"workbench.colorTheme": "GitHub Dark Default",
+	"workbench.colorTheme": "Tokyo Night",
 	"security.workspace.trust.untrustedFiles": "open",
 	"[yaml]": {
 		"editor.defaultFormatter": "redhat.vscode-yaml"
@@ -473,4 +474,8 @@
 	"editor.lineHeight": 1.2,
 	"debug.console.lineHeight": 1.2,
 	"terminal.integrated.lineHeight": 1.2,
+	"editor.guides.bracketPairs": "active",
+	"rust-analyzer.diagnostics.disabled": [
+		"macro-error"
+	],
 }

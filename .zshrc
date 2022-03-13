@@ -109,6 +109,8 @@ export PATH=$PATH:~/.local/bin
 export PATH=$PATH:/home/savaka/.yarn/bin
 export PATH=$PATH:/home/savaka/.nvm/versions/node/v16.14.0/lib/node_modules
 
+export PATH=$PATH:/usr/lib/dart/bin
+
 alias n=nvim
 alias r=ranger
 alias lzg=lazygit
