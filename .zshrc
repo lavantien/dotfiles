@@ -111,6 +111,8 @@ export PATH=$PATH:/home/savaka/.nvm/versions/node/v16.14.0/lib/node_modules
 
 export PATH=$PATH:/usr/lib/dart/bin
 
+source ~/.env
+
 alias n=nvim
 alias r=ranger
 alias lzg=lazygit
