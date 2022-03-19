@@ -22,7 +22,6 @@
 	"editor.codeLensFontFamily": "Victor Mono",
 	"editor.fastScrollSensitivity": 10,
 	"editor.hover.delay": 500,
-	"editor.lineNumbers": "relative",
 	"editor.linkedEditing": true,
 	"editor.maxTokenizationLineLength": 100000,
 	"editor.parameterHints.cycle": true,
