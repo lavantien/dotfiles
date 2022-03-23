@@ -246,6 +246,7 @@
 		"Envcfg",
 		"epub",
 		"extendee",
+		"Formik",
 		"gdefault",
 		"GOBIN",
 		"gomock",
@@ -269,6 +270,7 @@
 		"migrateup",
 		"MIMEPROTOBUF",
 		"MIMEYAML",
+		"mkdir",
 		"mobi",
 		"mockdb",
 		"Mosquitto",
@@ -319,6 +321,7 @@
 		"vuex",
 		"webui",
 		"wezterm",
+		"XAPI",
 		"xaver",
 		"Xeon"
 	],
@@ -380,7 +383,7 @@
 	},
 	"editor.minimap.maxColumn": 160,
 	"explorer.compactFolders": false,
-	"workbench.colorTheme": "Tokyo Night",
+	"workbench.colorTheme": "Alabaster",
 	"security.workspace.trust.untrustedFiles": "open",
 	"[yaml]": {
 		"editor.defaultFormatter": "redhat.vscode-yaml"
@@ -491,4 +494,6 @@
 	"[jsonc]": {
 		"editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
 	},
+	"search.searchOnType": false,
+	"window.zoomLevel": 1,
 }

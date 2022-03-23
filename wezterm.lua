@@ -4,13 +4,13 @@ return {
     "JetBrainsMono Nerd Font",
     "Victor Mono",
   }),
-  font_size = 12,
+  font_size = 13,
   --color_scheme = "nord",
   --color_scheme = "Nord Deep",
   --color_scheme = "wezterm_github_dark_brighten",
   --color_scheme = "Tinacious Design (Dark)",
-  color_scheme = "wezterm_tokyonight_night",
-  --color_scheme = "wezterm_tokyonight_day",
+  --color_scheme = "wezterm_tokyonight_night",
+  color_scheme = "wezterm_tokyonight_day",
   --color_scheme = "Alabaster",
   color_schemes = {
     ["Nord Deep"] = {

@@ -119,6 +119,8 @@ alias lzg=lazygit
 alias lzd=lazydocker
 alias lzn=lazynpm
 alias pip=pip3
+alias vpp="openvpn3 session-manage --pause --config profile.ovpn"
+alias vpr="openvpn3 session-manage --resume --config profile.ovpn"
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
