@@ -119,6 +119,7 @@ alias lzg=lazygit
 alias lzd=lazydocker
 alias lzn=lazynpm
 alias pip=pip3
+alias vps="openvpn3 session-start --config profile.opvn"
 alias vpp="openvpn3 session-manage --pause --config profile.ovpn"
 alias vpr="openvpn3 session-manage --resume --config profile.ovpn"
 
