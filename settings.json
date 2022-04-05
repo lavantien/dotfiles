@@ -158,7 +158,7 @@
 	"go.testFlags": [
 		"-v",
 		"-count=1",
-		"-race"
+		"-race",
 	],
 	"go.toolsManagement.autoUpdate": true,
 	"go.useCodeSnippetsOnFunctionSuggestWithoutType": true,
@@ -230,6 +230,8 @@
 		"bcrypt",
 		"Behaviour",
 		"Bgcolor",
+		"bufconn",
+		"bufnet",
 		"chdir",
 		"choco",
 		"Chocolatery",
@@ -283,6 +285,7 @@
 		"OLED",
 		"Paket",
 		"Paseto",
+		"pbenum",
 		"plantuml",
 		"plpgsql",
 		"Portainer",
@@ -290,6 +293,7 @@
 		"protobuf",
 		"protoc",
 		"protoimpl",
+		"protolint",
 		"ptypes",
 		"pwsh",
 		"QWERTZ",
@@ -340,7 +344,6 @@
 	"editor.cursorBlinking": "phase",
 	"editor.cursorSmoothCaretAnimation": true,
 	"workbench.startupEditor": "none",
-	"editor.detectIndentation": false,
 	"git.autofetch": true,
 	"search.mode": "reuseEditor",
 	"search.searchEditor.doubleClickBehaviour": "openLocationToSide",
@@ -378,19 +381,19 @@
 	"editor.accessibilitySupport": "off",
 	"[proto3]": {
 		"editor.defaultFormatter": "xaver.clang-format",
-		"editor.tabSize": 4,
-		"editor.insertSpaces": false,
+		"editor.tabSize": 2,
+		"editor.insertSpaces": true,
 	},
 	"editor.minimap.maxColumn": 160,
 	"explorer.compactFolders": false,
-	"workbench.colorTheme": "Alabaster",
+	"workbench.colorTheme": "Nord Deep",
 	"security.workspace.trust.untrustedFiles": "open",
 	"[yaml]": {
 		"editor.defaultFormatter": "redhat.vscode-yaml"
 	},
 	"cSpell.allowCompoundWords": true,
 	"cSpell.experimental.enableRegexpView": true,
-	"clang-format.style": "{IndentWidth: 4, TabWidth: 4, UseTab: Always, ColumnLimit: 0}",
+	"clang-format.style": "{IndentWidth: 2, TabWidth: 2, UseTab: Never, ColumnLimit: 0}",
 	"svelte.enable-ts-plugin": true,
 	"svelte.plugin.svelte.defaultScriptLanguage": "ts",
 	"svelte.plugin.svelte.format.config.singleQuote": true,
@@ -495,5 +498,16 @@
 		"editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
 	},
 	"search.searchOnType": false,
-	"window.zoomLevel": 1,
+	"[dart]": {
+		"editor.formatOnSave": true,
+		"editor.formatOnType": true,
+		"editor.rulers": [
+			80
+		],
+		"editor.selectionHighlight": false,
+		"editor.suggest.snippetsPreventQuickSuggestions": false,
+		"editor.suggestSelection": "first",
+		"editor.tabCompletion": "onlySnippets",
+		"editor.wordBasedSuggestions": false
+	},
 }

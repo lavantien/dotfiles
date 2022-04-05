@@ -100,6 +100,9 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+export PATH=$PATH:$JAVA_HOME
+
 export GOPATH=/home/savaka/go
 export GOBIN=/home/savaka/go/bin
 export PATH=$PATH:/usr/local/go/bin
@@ -107,9 +110,11 @@ export PATH=$PATH:$GOBIN
 
 export PATH=$PATH:~/.local/bin
 export PATH=$PATH:/home/savaka/.yarn/bin
-export PATH=$PATH:/home/savaka/.nvm/versions/node/v16.14.0/lib/node_modules
+export PATH=$PATH:/home/savaka/.nvm/versions/node/v16.14.2/lib/node_modules
 
 export PATH=$PATH:/usr/lib/dart/bin
+
+export PATH="$PATH":"$HOME/snap/flutter/common/flutter/.pub-cache/bin"
 
 source ~/.env
 
