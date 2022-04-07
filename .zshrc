@@ -116,6 +116,8 @@ export PATH=$PATH:/usr/lib/dart/bin
 
 export PATH="$PATH":"$HOME/snap/flutter/common/flutter/.pub-cache/bin"
 
+export QT_QPA_PLATFORM=wayland
+
 source ~/.env
 
 alias n=nvim

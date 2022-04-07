@@ -331,8 +331,7 @@
 	],
 	"workbench.colorCustomizations": {
 		"[Tokyo Night]": {
-			// or "[Tokyo Night Storm]"
-			"editorCodeLens.foreground": "#7982a9" // Preferred hex color
+			"editorCodeLens.foreground": "#7982a9"
 		}
 	},
 	"files.defaultLanguage": "${activeEditorLanguage}",
@@ -386,7 +385,6 @@
 	},
 	"editor.minimap.maxColumn": 160,
 	"explorer.compactFolders": false,
-	"workbench.colorTheme": "Nord Deep",
 	"security.workspace.trust.untrustedFiles": "open",
 	"[yaml]": {
 		"editor.defaultFormatter": "redhat.vscode-yaml"
@@ -513,4 +511,6 @@
 	"[Log]": {
 		"editor.wordWrap": "on"
 	},
+	"workbench.colorTheme": "GitHub Dark Default",
+	"http.systemCertificates": false,
 }
