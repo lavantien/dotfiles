@@ -107,6 +107,7 @@ export GOPATH=/home/savaka/go
 export GOBIN=/home/savaka/go/bin
 export PATH=$PATH:/usr/local/go/bin
 export PATH=$PATH:$GOBIN
+export GOPRIVATE="github.com/dropezy"
 
 export PATH=$PATH:~/.local/bin
 export PATH=$PATH:/home/savaka/.yarn/bin

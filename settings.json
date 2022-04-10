@@ -58,7 +58,7 @@
 	"workbench.editor.highlightModifiedTabs": true,
 	"workbench.editor.limit.enabled": true,
 	"workbench.editor.limit.perEditorGroup": true,
-	"workbench.editor.limit.value": 160,
+	"workbench.editor.limit.value": 1,
 	"workbench.editor.pinnedTabSizing": "shrink",
 	"workbench.editor.sharedViewState": true,
 	"workbench.settings.useSplitJSON": true,
@@ -257,6 +257,7 @@
 		"gopay",
 		"Gramation",
 		"grpcs",
+		"grpctrace",
 		"grpcui",
 		"grpczerolog",
 		"hivemq",
@@ -320,6 +321,7 @@
 		"verr",
 		"vetur",
 		"vids",
+		"vishen",
 		"Vostro",
 		"vsintellicode",
 		"vuex",
@@ -511,6 +513,7 @@
 	"[Log]": {
 		"editor.wordWrap": "on"
 	},
-	"workbench.colorTheme": "GitHub Dark Default",
+	"workbench.colorTheme": "Popping and Locking Black Theme",
 	"http.systemCertificates": false,
+	"workbench.editor.showTabs": false,
 }
