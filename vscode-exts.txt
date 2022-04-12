@@ -1,3 +1,4 @@
+code --list-extensions | xargs -L 1 echo code --install-extension
 code --install-extension aaron-bond.better-comments
 code --install-extension andyyu2004.vscode-neovim
 code --install-extension bierner.markdown-preview-github-styles

@@ -130,6 +130,7 @@ alias pip=pip3
 alias vps="openvpn3 session-start --config profile.opvn"
 alias vpp="openvpn3 session-manage --pause --config profile.ovpn"
 alias vpr="openvpn3 session-manage --resume --config profile.ovpn"
+alias vscw="code --user-data-dir ~/work/.vscode/data --extensions-dir ~/work/.vscode/extensions"
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
