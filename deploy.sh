@@ -1,4 +1,4 @@
-cp .zshrc .zshenv .zprofile ~/
+cp .zshrc .zshenv .zprofile vscode-exts.txt ~/
 
 mkdir -p ~/.config/wezterm/colors
 
