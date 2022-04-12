@@ -1,5 +1,5 @@
 {
-    "workbench.iconTheme": "material-icon-theme",
+    "workbench.iconTheme": "vscode-icons",
 	"files.autoSave": "afterDelay",
 	"editor.fontSize": 13,
 	"editor.fontFamily": "JetBrainsMono Nerd Font, Victor Mono",
@@ -10,7 +10,6 @@
 	"editor.autoClosingOvertype": "always",
 	"editor.autoClosingQuotes": "always",
 	"editor.autoSurround": "quotes",
-	"editor.bracketPairColorization.enabled": true,
 	"editor.codeActionsOnSave": {
 		"source.fixAll": true,
 		"source.fixAll.eslint": true,
@@ -490,7 +489,6 @@
 	"editor.lineHeight": 1.2,
 	"debug.console.lineHeight": 1.2,
 	"terminal.integrated.lineHeight": 1.2,
-	"editor.guides.bracketPairs": "active",
 	"rust-analyzer.diagnostics.disabled": [
 		"macro-error"
 	],
@@ -513,7 +511,11 @@
 	"[Log]": {
 		"editor.wordWrap": "on"
 	},
-	"workbench.colorTheme": "Popping and Locking Black Theme",
+	"workbench.colorTheme": "GitHub Dark Default",
 	"http.systemCertificates": false,
 	"workbench.editor.showTabs": false,
+	"editor.scrollBeyondLastLine": false,
+	"editor.guides.bracketPairsHorizontal": false,
+	"editor.guides.highlightActiveBracketPair": false,
+	"yaclock.prefix": "",
 }

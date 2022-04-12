@@ -39,7 +39,7 @@ return {
   enable_scroll_bar = true,
   keys = {
     {key="=", mods="ALT", action=wezterm.action{SplitHorizontal={domain="CurrentPaneDomain"}}},
-    {key="+", mods="ALT", action=wezterm.action{SplitVertical={domain="CurrentPaneDomain"}}},
+    {key="+", mods="ALT|SHIFT", action=wezterm.action{SplitVertical={domain="CurrentPaneDomain"}}},
     {key="w", mods="CTRL", action=wezterm.action{CloseCurrentPane={confirm=true}}},
   },
 }

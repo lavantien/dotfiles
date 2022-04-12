@@ -1,4 +1,4 @@
-cp .zshrc .zshenv ~/
+cp .zshrc .zshenv .zprofile ~/
 
 mkdir -p ~/.config/wezterm/colors
 
