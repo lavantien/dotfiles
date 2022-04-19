@@ -1,5 +1,5 @@
 {
-    "workbench.iconTheme": "vscode-icons",
+	"workbench.iconTheme": "vscode-icons",
 	"files.autoSave": "afterDelay",
 	"editor.fontSize": 13,
 	"editor.fontFamily": "JetBrainsMono Nerd Font, Victor Mono",
@@ -48,7 +48,7 @@
 	"files.maxMemoryForLargeFilesMB": 8192,
 	"files.trimTrailingWhitespace": true,
 	"workbench.commandPalette.history": 100,
-	"workbench.experimental.layoutControl.enabled": true,
+	"workbench.layoutControl.enabled": true,
 	"workbench.list.fastScrollSensitivity": 10,
 	"workbench.sash.hoverDelay": 500,
 	"workbench.tree.indent": 16,
@@ -57,7 +57,7 @@
 	"workbench.editor.highlightModifiedTabs": true,
 	"workbench.editor.limit.enabled": true,
 	"workbench.editor.limit.perEditorGroup": true,
-	"workbench.editor.limit.value": 1,
+	"workbench.editor.limit.value": 100,
 	"workbench.editor.pinnedTabSizing": "shrink",
 	"workbench.editor.sharedViewState": true,
 	"workbench.settings.useSplitJSON": true,
@@ -132,10 +132,7 @@
 	"gitProjectManager.maxDepthRecursion": 5,
 	"gitProjectManager.recentProjectsListSize": 100,
 	"gitProjectManager.storeRepositoriesBetweenSessions": true,
-	"gitProjectManager.baseProjectsFolders": [
-		"~/go/src/github.com/lavantien/",
-		"~/dev"
-	],
+	"gitProjectManager.baseProjectsFolders": ["~/go/src/github.com/lavantien/", "~/dev"],
 	"go.addTags": {
 		"options": ""
 	},
@@ -154,11 +151,7 @@
 		"references": true
 	},
 	"go.lintOnSave": "workspace",
-	"go.testFlags": [
-		"-v",
-		"-count=1",
-		"-race",
-	],
+	"go.testFlags": ["-v", "-count=1", "-race"],
 	"go.toolsManagement.autoUpdate": true,
 	"go.useCodeSnippetsOnFunctionSuggestWithoutType": true,
 	"go.vetOnSave": "workspace",
@@ -229,6 +222,7 @@
 		"bcrypt",
 		"Behaviour",
 		"Bgcolor",
+		"bson",
 		"bufconn",
 		"bufnet",
 		"chdir",
@@ -238,6 +232,7 @@
 		"Cofig",
 		"createdb",
 		"dbname",
+		"dbstring",
 		"DBTX",
 		"dearmor",
 		"debloated",
@@ -262,6 +257,8 @@
 		"hivemq",
 		"hlsearch",
 		"Idxs",
+		"inpb",
+		"INPROGRESS",
 		"isready",
 		"jinzhu",
 		"jpoles",
@@ -294,6 +291,7 @@
 		"protoc",
 		"protoimpl",
 		"protolint",
+		"prpb",
 		"ptypes",
 		"pwsh",
 		"QWERTZ",
@@ -307,6 +305,7 @@
 		"savaka",
 		"someclientid",
 		"sqlc",
+		"sslmode",
 		"stretchr",
 		"Struct",
 		"Tahun",
@@ -337,7 +336,7 @@
 	},
 	"files.defaultLanguage": "${activeEditorLanguage}",
 	"editor.suggest.insertMode": "replace",
-	"workbench.productIconTheme": "material-product-icons",
+	"workbench.productIconTheme": "fluent-icons",
 	"editor.inlayHints.fontFamily": "Victor Mono",
 	"scm.inputFontFamily": "editor",
 	"redhat.telemetry.enabled": false,
@@ -362,27 +361,19 @@
 			"indent": 4
 		},
 		"MD033": {
-			"allowed_elements": [
-				"details",
-				"summary",
-				"a"
-			]
+			"allowed_elements": ["details", "summary", "a"]
 		},
 		"no-hard-tabs": false
 	},
 	"[dockerfile]": {
 		"editor.defaultFormatter": "ms-azuretools.vscode-docker"
 	},
-	"cSpell.enableFiletypes": [
-		"!plaintext",
-		"sql"
-	],
+	"cSpell.enableFiletypes": ["!plaintext", "sql"],
 	"extensions.webWorker": true,
 	"editor.accessibilitySupport": "off",
 	"[proto3]": {
-		"editor.defaultFormatter": "xaver.clang-format",
 		"editor.tabSize": 2,
-		"editor.insertSpaces": true,
+		"editor.insertSpaces": true
 	},
 	"editor.minimap.maxColumn": 160,
 	"explorer.compactFolders": false,
@@ -402,11 +393,7 @@
 	"vscode-neovim.revealCursorScrollLine": true,
 	"protoc": {
 		"path": "/usr/bin/protoc",
-		"options": [
-			"--proto_path=proto",
-			"--go_out=pb",
-			"--go_opt=paths=source_relative",
-		]
+		"options": ["--proto_path=proto", "--go_out=pb", "--go_opt=paths=source_relative"]
 	},
 	"vs-kubernetes": {
 		"vscode-kubernetes.helm-path.linux": "/home/savaka/.vs-kubernetes/tools/helm/linux-amd64/helm",
@@ -448,7 +435,7 @@
 		"yaml": false,
 		"plaintext": false,
 		"markdown": false,
-		"go": false
+		"go": true
 	},
 	// "indentRainbow.colors": [
 	// 	"rgba(16,16,16,0.1)",
@@ -464,9 +451,7 @@
 	// ],
 	"indentRainbow.updateDelay": 500,
 	"indentRainbow.includedLanguages": [],
-	"indentRainbow.excludedLanguages": [
-		"plaintext"
-	],
+	"indentRainbow.excludedLanguages": ["plaintext"],
 	"vscode-postgres.prettyPrintJSONfields": true,
 	"Prettier-SQL.ignoreTabSettings": false,
 	"Prettier-SQL.insertSpacesOverride": false,
@@ -489,19 +474,12 @@
 	"editor.lineHeight": 1.2,
 	"debug.console.lineHeight": 1.2,
 	"terminal.integrated.lineHeight": 1.2,
-	"rust-analyzer.diagnostics.disabled": [
-		"macro-error"
-	],
-	"[jsonc]": {
-		"editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
-	},
+	"rust-analyzer.diagnostics.disabled": ["macro-error"],
 	"search.searchOnType": false,
 	"[dart]": {
 		"editor.formatOnSave": true,
 		"editor.formatOnType": true,
-		"editor.rulers": [
-			80
-		],
+		"editor.rulers": [80],
 		"editor.selectionHighlight": false,
 		"editor.suggest.snippetsPreventQuickSuggestions": false,
 		"editor.suggestSelection": "first",
@@ -511,11 +489,28 @@
 	"[Log]": {
 		"editor.wordWrap": "on"
 	},
-	"workbench.colorTheme": "GitHub Dark Default",
+	"workbench.colorTheme": "Bluloco Dark Italic",
 	"http.systemCertificates": false,
-	"workbench.editor.showTabs": false,
 	"editor.scrollBeyondLastLine": false,
 	"editor.guides.bracketPairsHorizontal": false,
 	"editor.guides.highlightActiveBracketPair": false,
 	"yaclock.prefix": "",
+	"workbench.editor.enablePreview": false,
+	"window.zoomLevel": 1,
+	"vim.easymotion": true,
+	"vim.incsearch": true,
+	"vim.useSystemClipboard": true,
+	"vim.useCtrlKeys": true,
+	"vim.hlsearch": true,
+	"vim.leader": "<space>",
+	"vim.handleKeys": {
+		"<C-a>": false,
+		"<C-f>": false
+	},
+	"[jsonc]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"vim.enableNeovim": true,
+	"vim.neovimPath": "/usr/bin/nvim",
+	"vim.neovimConfigPath": " ~/.config/nvim/init.vim"
 }
