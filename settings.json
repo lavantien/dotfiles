@@ -98,7 +98,6 @@
 	"terminal.integrated.scrollback": 10000,
 	"terminal.integrated.rightClickBehavior": "selectWord",
 	"terminal.integrated.tabs.focusMode": "singleClick",
-	"keyboard.dispatch": "keyCode",
 	"task.quickOpen.showAll": true,
 	"problems.showCurrentInStatus": true,
 	"editor.suggestSelection": "first",
@@ -238,9 +237,12 @@
 		"debloated",
 		"decoupility",
 		"dropezy",
+		"dzsku",
 		"edgex",
 		"Envcfg",
 		"epub",
+		"esclient",
+		"esutil",
 		"extendee",
 		"Formik",
 		"gdefault",
@@ -258,7 +260,9 @@
 		"hlsearch",
 		"Idxs",
 		"inpb",
+		"inpbmock",
 		"INPROGRESS",
+		"irahardianto",
 		"isready",
 		"jinzhu",
 		"jpoles",
@@ -286,6 +290,7 @@
 		"plantuml",
 		"plpgsql",
 		"Portainer",
+		"productid",
 		"proto",
 		"protobuf",
 		"protoc",
@@ -306,6 +311,7 @@
 		"someclientid",
 		"sqlc",
 		"sslmode",
+		"storeid",
 		"stretchr",
 		"Struct",
 		"Tahun",
@@ -314,8 +320,10 @@
 		"tienla",
 		"timestamppb",
 		"timestamptz",
+		"tpbmock",
 		"Unimported",
 		"unmatch",
+		"variantid",
 		"verr",
 		"vetur",
 		"vids",
@@ -489,14 +497,12 @@
 	"[Log]": {
 		"editor.wordWrap": "on"
 	},
-	"workbench.colorTheme": "Bluloco Dark Italic",
 	"http.systemCertificates": false,
 	"editor.scrollBeyondLastLine": false,
 	"editor.guides.bracketPairsHorizontal": false,
 	"editor.guides.highlightActiveBracketPair": false,
 	"yaclock.prefix": "",
 	"workbench.editor.enablePreview": false,
-	"window.zoomLevel": 1,
 	"vim.easymotion": true,
 	"vim.incsearch": true,
 	"vim.useSystemClipboard": true,
@@ -505,12 +511,17 @@
 	"vim.leader": "<space>",
 	"vim.handleKeys": {
 		"<C-a>": false,
-		"<C-f>": false
+		"<C-p>": false,
+		"<C-n>": false,
+		"<C-x>": false
 	},
 	"[jsonc]": {
 		"editor.defaultFormatter": "esbenp.prettier-vscode"
 	},
 	"vim.enableNeovim": true,
 	"vim.neovimPath": "/usr/bin/nvim",
-	"vim.neovimConfigPath": " ~/.config/nvim/init.vim"
+	"vim.neovimConfigPath": " ~/.config/nvim/init.vim",
+	"todo-tree.general.statusBar": "tags",
+	"workbench.colorTheme": "Winter is Coming (Dark Blue)",
+	"build.experimentalWorkspaceModule": true
 }

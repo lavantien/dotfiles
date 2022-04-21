@@ -115,7 +115,9 @@ export PATH=$PATH:/home/savaka/.nvm/versions/node/v16.14.2/lib/node_modules
 
 export PATH=$PATH:/usr/lib/dart/bin
 
+export PATH="$PATH:/snap/bin"
 export PATH="$PATH":"$HOME/snap/flutter/common/flutter/.pub-cache/bin"
+export PATH="$PATH":"$HOME/.pub-cache/bin"
 
 export QT_QPA_PLATFORM=wayland
 
