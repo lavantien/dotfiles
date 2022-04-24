@@ -4,9 +4,9 @@ return {
     "JetBrainsMono Nerd Font",
     "Victor Mono",
   }),
-  font_size = 13,
-  color_scheme = "Andromeda",
-  --color_scheme = "nord",
+  font_size = 10,
+  --color_scheme = "Andromeda",
+  color_scheme = "nord",
   --color_scheme = "Nord Deep",
   --color_scheme = "Aura Dark",
   --color_scheme = "wezterm_github_dark_brighten",
@@ -56,3 +56,4 @@ return {
     {key="j", mods="ALT", action=wezterm.action{ActivatePaneDirection="Down"}},
   },
 }
+
