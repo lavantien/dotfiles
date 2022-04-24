@@ -1,28 +1,49 @@
+if exists('g:vscode')
+	set scrolloff=8
+endif
+
 if !exists('g:vscode')
 
 " GENERAL CONFIGS --------------------------------------------------------- {{{
+syntax on
+filetype plugin indent on
+
+set exrc
+
+set tabstop=4 softtabstop=4
+set shiftwidth=4
+set expandtab
+set smartindent
+set nowrap
+
 set number
 set relativenumber
+set hidden
+set noerrorbells
+
+set nohlsearch
+set incsearch
+
+set noswapfile
+set nobackup
+set undodir=~/.vim/undodir
+set undofile
+set history=1000
+
 set cursorline
 set cursorcolumn
-set shiftwidth=4
-set tabstop=4
-set nobackup
-set scrolloff=10
-set nowrap
-set incsearch
-set ignorecase
-set smartcase
+set scrolloff=20
+set colorcolumn=80
+set signcolumn=yes
+
 set showcmd
 set showmode
 set showmatch
-set hlsearch
-set history=1000
 set wildmode=list:longest
 set wildignore=*.docx,*.jpg,*.png,*.gif,*.pdf,*.exe,*.xlsx,*pptx
 set termguicolors
 set mouse=a
-set cc=120
+set cc=80
 set clipboard=unnamedplus
 set t_Co=256
 "set clipboard=unnamedplus

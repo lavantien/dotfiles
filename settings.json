@@ -1,7 +1,7 @@
 {
 	"workbench.iconTheme": "vscode-icons",
 	"files.autoSave": "afterDelay",
-	"editor.fontSize": 13,
+	"editor.fontSize": 31,
 	"editor.fontFamily": "JetBrainsMono Nerd Font, Victor Mono",
 	"editor.renderWhitespace": "trailing",
 	"editor.insertSpaces": false,
@@ -41,7 +41,6 @@
 	"editor.minimap.renderCharacters": false,
 	"editor.suggest.shareSuggestSelections": true,
 	"editor.suggest.showStatusBar": true,
-	"editor.wordWrapColumn": 160,
 	"files.autoSaveDelay": 500,
 	"files.eol": "\n",
 	"files.insertFinalNewline": true,
@@ -57,7 +56,7 @@
 	"workbench.editor.highlightModifiedTabs": true,
 	"workbench.editor.limit.enabled": true,
 	"workbench.editor.limit.perEditorGroup": true,
-	"workbench.editor.limit.value": 100,
+	"workbench.editor.limit.value": 1,
 	"workbench.editor.pinnedTabSizing": "shrink",
 	"workbench.editor.sharedViewState": true,
 	"workbench.settings.useSplitJSON": true,
@@ -383,7 +382,7 @@
 		"editor.tabSize": 2,
 		"editor.insertSpaces": true
 	},
-	"editor.minimap.maxColumn": 160,
+	"editor.minimap.maxColumn": 80,
 	"explorer.compactFolders": false,
 	"security.workspace.trust.untrustedFiles": "open",
 	"[yaml]": {
@@ -522,6 +521,10 @@
 	"vim.neovimPath": "/usr/bin/nvim",
 	"vim.neovimConfigPath": " ~/.config/nvim/init.vim",
 	"todo-tree.general.statusBar": "tags",
-	"workbench.colorTheme": "Winter is Coming (Dark Blue)",
-	"build.experimentalWorkspaceModule": true
+	"workbench.colorTheme": "GitHub Dark Default",
+	"build.experimentalWorkspaceModule": true,
+	"vim.smartRelativeLine": true,
+	"workbench.editor.showTabs": false,
+	"editor.rulers": [80],
+	"editor.cursorSurroundingLines": 8
 }

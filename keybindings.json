@@ -603,5 +603,21 @@
 		"key": "ctrl+up",
 		"command": "-selectPrevSuggestion",
 		"when": "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus"
+	},
+	{
+		"key": "ctrl+e",
+		"command": "-workbench.action.quickOpen"
+	},
+	{
+		"key": "ctrl+y",
+		"command": "-redo"
+	},
+	{
+		"key": "ctrl+z",
+		"command": "-undo"
+	},
+	{
+		"key": "ctrl+6",
+		"command": "-workbench.action.focusSixthEditorGroup"
 	}
 ]
