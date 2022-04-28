@@ -1,5 +1,6 @@
 code --install-extension aaron-bond.better-comments
 code --install-extension alexcvzz.vscode-sqlite
+code --install-extension allanoricil.nuxt-vscode-extension
 code --install-extension apollographql.vscode-apollo
 code --install-extension arcticicestudio.nord-visual-studio-code
 code --install-extension bierner.markdown-preview-github-styles

@@ -1,7 +1,7 @@
 {
 	"workbench.iconTheme": "vscode-icons",
 	"files.autoSave": "afterDelay",
-	"editor.fontSize": 31,
+	"editor.fontSize": 13,
 	"editor.fontFamily": "JetBrainsMono Nerd Font, Victor Mono",
 	"editor.renderWhitespace": "trailing",
 	"editor.insertSpaces": false,
@@ -149,7 +149,7 @@
 		"references": true
 	},
 	"go.lintOnSave": "workspace",
-	"go.testFlags": ["-v", "-count=1", "-race"],
+	"go.testFlags": ["-vet=off", "-timeout=5m", "-covermode=atomic", "-coverprofile=covprofile ./...", "-v", "-count=1", "-race"],
 	"go.toolsManagement.autoUpdate": true,
 	"go.useCodeSnippetsOnFunctionSuggestWithoutType": true,
 	"go.vetOnSave": "workspace",
@@ -382,7 +382,7 @@
 		"editor.tabSize": 2,
 		"editor.insertSpaces": true
 	},
-	"editor.minimap.maxColumn": 80,
+	"editor.minimap.maxColumn": 160,
 	"explorer.compactFolders": false,
 	"security.workspace.trust.untrustedFiles": "open",
 	"[yaml]": {
@@ -486,7 +486,7 @@
 	"[dart]": {
 		"editor.formatOnSave": true,
 		"editor.formatOnType": true,
-		"editor.rulers": [80],
+		"editor.rulers": [160],
 		"editor.selectionHighlight": false,
 		"editor.suggest.snippetsPreventQuickSuggestions": false,
 		"editor.suggestSelection": "first",
@@ -525,6 +525,10 @@
 	"build.experimentalWorkspaceModule": true,
 	"vim.smartRelativeLine": true,
 	"workbench.editor.showTabs": false,
-	"editor.rulers": [80],
-	"editor.cursorSurroundingLines": 8
+	"editor.rulers": [160],
+	"editor.cursorSurroundingLines": 20,
+	"editor.wordWrapColumn": 160,
+	"vim.textwidth": 160,
+	"dart.lineLength": 160,
+	"html.format.wrapLineLength": 160
 }
