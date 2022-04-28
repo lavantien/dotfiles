@@ -1,8 +1,10 @@
 code --install-extension aaron-bond.better-comments
+code --install-extension adamsome.vscode-theme-gruvbox-minor
 code --install-extension alexcvzz.vscode-sqlite
 code --install-extension allanoricil.nuxt-vscode-extension
 code --install-extension apollographql.vscode-apollo
 code --install-extension arcticicestudio.nord-visual-studio-code
+code --install-extension benjaminbenais.copilot-theme
 code --install-extension bierner.markdown-preview-github-styles
 code --install-extension bradlc.vscode-tailwindcss
 code --install-extension christian-kohler.path-intellisense
@@ -20,8 +22,10 @@ code --install-extension EditorConfig.EditorConfig
 code --install-extension eg2.vscode-npm-script
 code --install-extension emilast.LogFileHighlighter
 code --install-extension esbenp.prettier-vscode
+code --install-extension formulahendry.code-runner
 code --install-extension foxundermoon.shell-format
-code --install-extension GitHub.copilot
+code --install-extension GitHub.copilot-labs
+code --install-extension GitHub.copilot-nightly
 code --install-extension GitHub.github-vscode-theme
 code --install-extension GitHub.remotehub
 code --install-extension GitHub.vscode-pull-request-github
@@ -30,7 +34,6 @@ code --install-extension GraphQL.vscode-graphql
 code --install-extension Gruntfuggly.todo-tree
 code --install-extension jameslan.yaclock
 code --install-extension janisdd.vscode-edit-csv
-code --install-extension jdinhlife.gruvbox
 code --install-extension jeff-hykin.better-cpp-syntax
 code --install-extension johnpapa.winteriscoming
 code --install-extension matklad.rust-analyzer

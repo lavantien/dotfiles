@@ -283,6 +283,7 @@
 		"nums",
 		"nvim",
 		"OLED",
+		"oneof",
 		"Paket",
 		"Paseto",
 		"pbenum",
@@ -293,6 +294,7 @@
 		"proto",
 		"protobuf",
 		"protoc",
+		"protodot",
 		"protoimpl",
 		"protolint",
 		"prpb",
@@ -319,6 +321,7 @@
 		"tienla",
 		"timestamppb",
 		"timestamptz",
+		"tmpl",
 		"tpbmock",
 		"Unimported",
 		"unmatch",
@@ -438,11 +441,7 @@
 	"vetur.format.options.tabSize": 4,
 	"vetur.format.options.useTabs": true,
 	"github.copilot.enable": {
-		"*": false,
-		"yaml": false,
-		"plaintext": false,
-		"markdown": false,
-		"go": true
+		"*": true
 	},
 	// "indentRainbow.colors": [
 	// 	"rgba(16,16,16,0.1)",
@@ -506,7 +505,6 @@
 	"vim.incsearch": true,
 	"vim.useSystemClipboard": true,
 	"vim.useCtrlKeys": true,
-	"vim.hlsearch": true,
 	"vim.leader": "<space>",
 	"vim.handleKeys": {
 		"<C-a>": false,
@@ -521,7 +519,7 @@
 	"vim.neovimPath": "/usr/bin/nvim",
 	"vim.neovimConfigPath": " ~/.config/nvim/init.vim",
 	"todo-tree.general.statusBar": "tags",
-	"workbench.colorTheme": "GitHub Dark Default",
+	"workbench.colorTheme": "Gruvbox Minor Dark Hard",
 	"build.experimentalWorkspaceModule": true,
 	"vim.smartRelativeLine": true,
 	"workbench.editor.showTabs": false,
@@ -530,5 +528,9 @@
 	"editor.wordWrapColumn": 160,
 	"vim.textwidth": 160,
 	"dart.lineLength": 160,
-	"html.format.wrapLineLength": 160
+	"html.format.wrapLineLength": 160,
+	"[markdown]": {
+		"editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
+	},
+	"cmake.configureOnOpen": true
 }

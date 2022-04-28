@@ -118,8 +118,11 @@ export PATH=$PATH:/usr/lib/dart/bin
 export PATH="$PATH:/snap/bin"
 export PATH="$PATH":"$HOME/snap/flutter/common/flutter/.pub-cache/bin"
 export PATH="$PATH":"$HOME/.pub-cache/bin"
+export PATH="$PATH":"$HOME/tools/flutter/bin"
 
 export QT_QPA_PLATFORM=wayland
+
+export PATH=$PATH:/home/savaka/tools/protodot/binaries
 
 source ~/.env
 
@@ -133,6 +136,7 @@ alias vps="openvpn3 session-start --config profile.opvn"
 alias vpp="openvpn3 session-manage --pause --config profile.ovpn"
 alias vpr="openvpn3 session-manage --resume --config profile.ovpn"
 alias vscw="code --user-data-dir ~/work/.vscode/data --extensions-dir ~/work/.vscode/extensions"
+alias protodot=protodot-linux-amd64
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
