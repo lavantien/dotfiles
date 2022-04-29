@@ -56,7 +56,7 @@
 	"workbench.editor.highlightModifiedTabs": true,
 	"workbench.editor.limit.enabled": true,
 	"workbench.editor.limit.perEditorGroup": true,
-	"workbench.editor.limit.value": 1,
+	"workbench.editor.limit.value": 2,
 	"workbench.editor.pinnedTabSizing": "shrink",
 	"workbench.editor.sharedViewState": true,
 	"workbench.settings.useSplitJSON": true,
@@ -149,7 +149,7 @@
 		"references": true
 	},
 	"go.lintOnSave": "workspace",
-	"go.testFlags": ["-vet=off", "-timeout=5m", "-covermode=atomic", "-coverprofile=covprofile ./...", "-v", "-count=1", "-race"],
+	"go.testFlags": ["-vet=off", "-timeout=5m", "-v", "-count=1", "-race", "-cover"],
 	"go.toolsManagement.autoUpdate": true,
 	"go.useCodeSnippetsOnFunctionSuggestWithoutType": true,
 	"go.vetOnSave": "workspace",
@@ -223,12 +223,14 @@
 		"bson",
 		"bufconn",
 		"bufnet",
+		"capb",
 		"chdir",
 		"choco",
 		"Chocolatery",
 		"Codecov",
 		"Cofig",
 		"createdb",
+		"ctpb",
 		"dbname",
 		"dbstring",
 		"DBTX",
@@ -532,5 +534,6 @@
 	"[markdown]": {
 		"editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
 	},
-	"cmake.configureOnOpen": true
+	"cmake.configureOnOpen": true,
+	"go.coverOnSingleTest": true
 }
