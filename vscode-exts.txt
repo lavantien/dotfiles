@@ -30,8 +30,10 @@ code --install-extension GitHub.github-vscode-theme
 code --install-extension GitHub.remotehub
 code --install-extension GitHub.vscode-pull-request-github
 code --install-extension golang.go
+code --install-extension google.wireit
 code --install-extension GraphQL.vscode-graphql
 code --install-extension Gruntfuggly.todo-tree
+code --install-extension ionutvmi.path-autocomplete
 code --install-extension jameslan.yaclock
 code --install-extension janisdd.vscode-edit-csv
 code --install-extension jeff-hykin.better-cpp-syntax
@@ -65,6 +67,7 @@ code --install-extension plex.vscode-protolint
 code --install-extension RandomFractalsInc.vscode-data-preview
 code --install-extension redhat.java
 code --install-extension redhat.vscode-yaml
+code --install-extension ritwickdey.LiveServer
 code --install-extension softwaredotcom.swdc-vscode
 code --install-extension streetsidesoftware.code-spell-checker
 code --install-extension theumletteam.umlet

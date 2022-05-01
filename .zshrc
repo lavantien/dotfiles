@@ -103,15 +103,15 @@ source $ZSH/oh-my-zsh.sh
 export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 export PATH=$PATH:$JAVA_HOME
 
-export GOPATH=/home/savaka/go
-export GOBIN=/home/savaka/go/bin
+export GOPATH=$HOME/go
+export GOBIN=$HOME/go/bin
 export PATH=$PATH:/usr/local/go/bin
 export PATH=$PATH:$GOBIN
 export GOPRIVATE="github.com/dropezy"
 
 export PATH=$PATH:~/.local/bin
-export PATH=$PATH:/home/savaka/.yarn/bin
-export PATH=$PATH:/home/savaka/.nvm/versions/node/v16.14.2/lib/node_modules
+export PATH=$PATH:$HOME/.yarn/bin
+export PATH=$PATH:$HOME/.nvm/versions/node/v16.15.0/lib/node_modules
 
 export PATH=$PATH:/usr/lib/dart/bin
 
@@ -122,21 +122,23 @@ export PATH="$PATH":"$HOME/tools/flutter/bin"
 
 export QT_QPA_PLATFORM=wayland
 
-export PATH=$PATH:/home/savaka/tools/protodot/binaries
+export PATH=$PATH:$HOME/tools/protodot/binaries
 
 source ~/.env
 
-alias n=nvim
-alias r=ranger
-alias lzg=lazygit
-alias lzd=lazydocker
-alias lzn=lazynpm
-alias pip=pip3
+alias n="nvim"
+alias r="ranger"
+alias lzg="lazygit"
+alias lzd="lazydocker"
+alias lzn="lazynpm"
+alias pip="pip3"
 alias vps="openvpn3 session-start --config profile.opvn"
 alias vpp="openvpn3 session-manage --pause --config profile.ovpn"
 alias vpr="openvpn3 session-manage --resume --config profile.ovpn"
 alias vscw="code --user-data-dir ~/work/.vscode/data --extensions-dir ~/work/.vscode/extensions"
-alias protodot=protodot-linux-amd64
+alias protodot="protodot-linux-amd64"
+alias e="exa -la --icons --group-directories-first"
+alias et="exa -la --icons --group-directories-first -T"
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -146,3 +148,4 @@ autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /usr/bin/terraform terraform
 
 eval "$(starship init zsh)"
+
