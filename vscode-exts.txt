@@ -60,6 +60,7 @@ code --install-extension ms-vsliveshare.vsliveshare-audio
 code --install-extension ms-vsliveshare.vsliveshare-pack
 code --install-extension msjsdiag.vscode-react-native
 code --install-extension mutantdino.resourcemonitor
+code --install-extension Orta.vscode-jest
 code --install-extension pascalsenn.keyboard-quickfix
 code --install-extension Pivotal.vscode-boot-dev-pack
 code --install-extension Pivotal.vscode-spring-boot
