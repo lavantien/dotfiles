@@ -248,6 +248,7 @@
 		"Formik",
 		"gdefault",
 		"GOBIN",
+		"golangci",
 		"gomock",
 		"gonic",
 		"GOPATH",
@@ -535,5 +536,17 @@
 		"editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
 	},
 	"cmake.configureOnOpen": true,
-	"go.coverOnSingleTest": true
+	"go.coverOnSingleTest": true,
+	"go.lintTool": "golangci-lint",
+	"go.lintFlags": ["--fast"],
+	"go.installDependenciesWhenBuilding": true,
+	"go.testExplorer.alwaysRunBenchmarks": true,
+	"go.testExplorer.showDynamicSubtestsInEditor": true,
+	"go.testTimeout": "5m",
+	"go.useCodeSnippetsOnFunctionSuggest": true,
+	"C_Cpp.codeAnalysis.updateDelay": 500,
+	"trunk.trunkGrayOutNonBlockingIssues": false,
+	"[ignore]": {
+		"editor.defaultFormatter": "Trunk.io"
+	}
 }

@@ -71,6 +71,7 @@ code --install-extension ritwickdey.LiveServer
 code --install-extension softwaredotcom.swdc-vscode
 code --install-extension streetsidesoftware.code-spell-checker
 code --install-extension theumletteam.umlet
+code --install-extension Trunk.io
 code --install-extension twxs.cmake
 code --install-extension uloco.theme-bluloco-dark
 code --install-extension usernamehw.errorlens
@@ -84,4 +85,5 @@ code --install-extension vscjava.vscode-spring-boot-dashboard
 code --install-extension vscjava.vscode-spring-initializr
 code --install-extension vscode-icons-team.vscode-icons
 code --install-extension vscodevim.vim
+code --install-extension WallabyJs.quokka-vscode
 code --install-extension zxh404.vscode-proto3
