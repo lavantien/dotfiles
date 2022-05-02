@@ -87,4 +87,5 @@ code --install-extension vscjava.vscode-spring-initializr
 code --install-extension vscode-icons-team.vscode-icons
 code --install-extension vscodevim.vim
 code --install-extension WallabyJs.quokka-vscode
+code --install-extension xiaoxin-technology.goctl
 code --install-extension zxh404.vscode-proto3
