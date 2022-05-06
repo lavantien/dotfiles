@@ -54,6 +54,7 @@ code --install-extension ms-toolsai.jupyter-renderers
 code --install-extension ms-vscode-remote.remote-containers
 code --install-extension ms-vscode.cmake-tools
 code --install-extension ms-vscode.cpptools
+code --install-extension ms-vscode.makefile-tools
 code --install-extension ms-vscode.remote-repositories
 code --install-extension ms-vsliveshare.vsliveshare
 code --install-extension ms-vsliveshare.vsliveshare-audio
