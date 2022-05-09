@@ -1,7 +1,7 @@
 {
 	"workbench.iconTheme": "vscode-icons",
 	"files.autoSave": "afterDelay",
-	"editor.fontSize": 13,
+	"editor.fontSize": 20,
 	"editor.fontFamily": "JetBrainsMono Nerd Font, Victor Mono",
 	"editor.renderWhitespace": "trailing",
 	"editor.insertSpaces": false,
@@ -38,7 +38,6 @@
 	"diffEditor.maxComputationTime": 10000,
 	"diffEditor.maxFileSize": 100,
 	"diffEditor.wordWrap": "on",
-	"editor.minimap.renderCharacters": false,
 	"editor.suggest.shareSuggestSelections": true,
 	"editor.suggest.showStatusBar": true,
 	"files.autoSaveDelay": 500,
@@ -61,7 +60,7 @@
 	"workbench.editor.sharedViewState": true,
 	"workbench.settings.useSplitJSON": true,
 	"workbench.list.automaticKeyboardNavigation": false,
-	"screencastMode.fontSize": 32,
+	"screencastMode.fontSize": 40,
 	"screencastMode.keyboardOverlayTimeout": 1000,
 	"window.restoreFullscreen": true,
 	"explorer.copyRelativePathSeparator": "/",
@@ -77,7 +76,7 @@
 	"debug.allowBreakpointsEverywhere": true,
 	"debug.console.closeOnEnd": true,
 	"debug.console.fontFamily": "JetBrainsMono Nerd Font, Victor Mono",
-	"debug.console.fontSize": 13,
+	"debug.console.fontSize": 20,
 	"debug.terminal.clearBeforeReusing": true,
 	"testing.autoRun.delay": 500,
 	"testing.automaticallyOpenPeekViewDuringAutoRun": true,
@@ -92,7 +91,7 @@
 	"terminal.integrated.cursorBlinking": true,
 	"terminal.integrated.cursorStyle": "line",
 	"terminal.integrated.enableBell": true,
-	"terminal.integrated.fontSize": 13,
+	"terminal.integrated.fontSize": 20,
 	"terminal.integrated.gpuAcceleration": "on",
 	"terminal.integrated.scrollback": 10000,
 	"terminal.integrated.rightClickBehavior": "selectWord",
@@ -130,7 +129,10 @@
 	"gitProjectManager.maxDepthRecursion": 5,
 	"gitProjectManager.recentProjectsListSize": 100,
 	"gitProjectManager.storeRepositoriesBetweenSessions": true,
-	"gitProjectManager.baseProjectsFolders": ["~/go/src/github.com/lavantien/", "~/dev"],
+	"gitProjectManager.baseProjectsFolders": [
+		"~/go/src/github.com/lavantien/",
+		"~/dev"
+	],
 	"go.addTags": {
 		"options": ""
 	},
@@ -149,7 +151,14 @@
 		"references": true
 	},
 	"go.lintOnSave": "workspace",
-	"go.testFlags": ["-vet=off", "-timeout=5m", "-v", "-count=1", "-race", "-cover"],
+	"go.testFlags": [
+		"-vet=off",
+		"-timeout=5m",
+		"-v",
+		"-count=1",
+		"-race",
+		"-cover"
+	],
 	"go.toolsManagement.autoUpdate": true,
 	"go.useCodeSnippetsOnFunctionSuggestWithoutType": true,
 	"go.vetOnSave": "workspace",
@@ -177,9 +186,8 @@
 	"java.symbols.includeSourceMethodDeclarations": true,
 	"java.typeHierarchy.lazyLoad": true,
 	"markdown.links.openLocation": "beside",
-	"markdown.preview.fontSize": 13,
+	"markdown.preview.fontSize": 20,
 	"markdown.preview.fontFamily": "JetBrainsMono Nerd Font, Victor Mono",
-	"markdown.preview.lineHeight": 1.2,
 	"markdown.preview.typographer": true,
 	"markdown.extension.print.theme": "dark",
 	"markdown.extension.list.indentationSize": "inherit",
@@ -345,7 +353,8 @@
 	"workbench.colorCustomizations": {
 		"[Tokyo Night]": {
 			"editorCodeLens.foreground": "#7982a9"
-		}
+		},
+		"editorRuler.foreground": "#ff4081"
 	},
 	"files.defaultLanguage": "${activeEditorLanguage}",
 	"editor.suggest.insertMode": "replace",
@@ -388,7 +397,7 @@
 		"editor.tabSize": 2,
 		"editor.insertSpaces": true
 	},
-	"editor.minimap.maxColumn": 160,
+	"editor.minimap.maxColumn": 80,
 	"explorer.compactFolders": false,
 	"security.workspace.trust.untrustedFiles": "open",
 	"[yaml]": {
@@ -406,7 +415,11 @@
 	"vscode-neovim.revealCursorScrollLine": true,
 	"protoc": {
 		"path": "/usr/bin/protoc",
-		"options": ["--proto_path=proto", "--go_out=pb", "--go_opt=paths=source_relative"]
+		"options": [
+			"--proto_path=proto",
+			"--go_out=pb",
+			"--go_opt=paths=source_relative"
+		]
 	},
 	"vs-kubernetes": {
 		"vscode-kubernetes.helm-path.linux": "/home/savaka/.vs-kubernetes/tools/helm/linux-amd64/helm",
@@ -465,14 +478,14 @@
 	"Prettier-SQL.ignoreTabSettings": false,
 	"Prettier-SQL.insertSpacesOverride": false,
 	"Prettier-SQL.SQLFlavourOverride": "postgresql",
-	"prettier.printWidth": 160,
+	"prettier.printWidth": 80,
 	"auto-close-tag.insertSpaceBeforeSelfClosingTag": true,
 	"bracketLens.mode": "auto",
 	"crates.listPreReleases": true,
 	"csv-to-table.markdownFormat": true,
 	"errorLens.delay": 500,
 	"errorLens.fontFamily": "Victor Mono",
-	"errorLens.fontSize": "12",
+	"errorLens.fontSize": "20",
 	"errorLens.fontStyleItalic": true,
 	"errorLens.gutterIconsEnabled": true,
 	"errorLens.statusBarColorsEnabled": true,
@@ -480,15 +493,12 @@
 	"errorLens.statusBarMessageEnabled": true,
 	"errorLens.statusBarMessageType": "closestSeverity",
 	"formatFiles.runOrganizeImports": true,
-	"editor.lineHeight": 1.2,
-	"debug.console.lineHeight": 1.2,
-	"terminal.integrated.lineHeight": 1.2,
 	"rust-analyzer.diagnostics.disabled": ["macro-error"],
 	"search.searchOnType": false,
 	"[dart]": {
 		"editor.formatOnSave": true,
 		"editor.formatOnType": true,
-		"editor.rulers": [160],
+		"editor.rulers": [80],
 		"editor.selectionHighlight": false,
 		"editor.suggest.snippetsPreventQuickSuggestions": false,
 		"editor.suggestSelection": "first",
@@ -526,12 +536,10 @@
 	"build.experimentalWorkspaceModule": true,
 	"vim.smartRelativeLine": true,
 	"workbench.editor.showTabs": false,
-	"editor.rulers": [160],
+	"editor.rulers": [80],
 	"editor.cursorSurroundingLines": 20,
-	"editor.wordWrapColumn": 160,
-	"vim.textwidth": 160,
-	"dart.lineLength": 160,
-	"html.format.wrapLineLength": 160,
+	"vim.textwidth": 80,
+	"html.format.wrapLineLength": 80,
 	"[markdown]": {
 		"editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
 	},
@@ -547,6 +555,10 @@
 	"C_Cpp.codeAnalysis.updateDelay": 500,
 	"trunk.trunkGrayOutNonBlockingIssues": false,
 	"[ignore]": {
-		"editor.defaultFormatter": "Trunk.io"
-	}
+		"editor.defaultFormatter": "foxundermoon.shell-format"
+	},
+	"scm.inputFontSize": 20,
+	"editor.minimap.scale": 3,
+	"editor.minimap.showSlider": "always",
+	"editor.minimap.renderCharacters": false
 }

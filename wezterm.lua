@@ -4,7 +4,7 @@ return {
     "JetBrainsMono Nerd Font",
     "Victor Mono",
   }),
-  font_size = 10,
+  font_size = 16,
   color_scheme = "Gruvbox Dark",
   --color_scheme = "Andromeda",
   --color_scheme = "nord",
