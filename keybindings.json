@@ -619,5 +619,34 @@
 	{
 		"key": "ctrl+6",
 		"command": "-workbench.action.focusSixthEditorGroup"
+	},
+	{
+		"key": "ctrl+`",
+		"command": "workbench.action.togglePanel"
+	},
+	{
+		"key": "ctrl+j",
+		"command": "-workbench.action.togglePanel"
+	},
+	{
+		"key": "ctrl+`",
+		"command": "-workbench.action.terminal.toggleTerminal",
+		"when": "terminal.active"
+	},
+	{
+		"key": "ctrl+shift+c",
+		"command": "editor.action.clipboardCopyAction"
+	},
+	{
+		"key": "ctrl+c",
+		"command": "-editor.action.clipboardCopyAction"
+	},
+	{
+		"key": "ctrl+shift+v",
+		"command": "editor.action.clipboardPasteAction"
+	},
+	{
+		"key": "ctrl+v",
+		"command": "-editor.action.clipboardPasteAction"
 	}
 ]
