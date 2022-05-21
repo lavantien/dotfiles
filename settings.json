@@ -1,8 +1,8 @@
 {
 	"workbench.iconTheme": "vscode-icons",
 	"files.autoSave": "afterDelay",
-	"editor.fontSize": 20,
-	"editor.fontFamily": "JetBrainsMono Nerd Font, Victor Mono",
+	"editor.fontSize": 12,
+	"editor.fontFamily": "FiraCode Nerd Font",
 	"editor.renderWhitespace": "trailing",
 	"editor.insertSpaces": false,
 	"editor.autoClosingBrackets": "always",
@@ -18,7 +18,6 @@
 		"format.formatOnSave": true
 	},
 	"editor.inlineSuggest.enabled": true,
-	"editor.codeLensFontFamily": "Victor Mono",
 	"editor.fastScrollSensitivity": 10,
 	"editor.hover.delay": 500,
 	"editor.linkedEditing": true,
@@ -60,7 +59,7 @@
 	"workbench.editor.sharedViewState": true,
 	"workbench.settings.useSplitJSON": true,
 	"workbench.list.automaticKeyboardNavigation": false,
-	"screencastMode.fontSize": 40,
+	"screencastMode.fontSize": 36,
 	"screencastMode.keyboardOverlayTimeout": 1000,
 	"window.restoreFullscreen": true,
 	"explorer.copyRelativePathSeparator": "/",
@@ -75,8 +74,8 @@
 	"search.quickOpen.includeSymbols": true,
 	"debug.allowBreakpointsEverywhere": true,
 	"debug.console.closeOnEnd": true,
-	"debug.console.fontFamily": "JetBrainsMono Nerd Font, Victor Mono",
-	"debug.console.fontSize": 20,
+	"debug.console.fontFamily": "FiraCode Nerd Font",
+	"debug.console.fontSize": 12,
 	"debug.terminal.clearBeforeReusing": true,
 	"testing.autoRun.delay": 500,
 	"testing.automaticallyOpenPeekViewDuringAutoRun": true,
@@ -91,7 +90,7 @@
 	"terminal.integrated.cursorBlinking": true,
 	"terminal.integrated.cursorStyle": "line",
 	"terminal.integrated.enableBell": true,
-	"terminal.integrated.fontSize": 20,
+	"terminal.integrated.fontSize": 12,
 	"terminal.integrated.gpuAcceleration": "on",
 	"terminal.integrated.scrollback": 10000,
 	"terminal.integrated.rightClickBehavior": "selectWord",
@@ -105,7 +104,7 @@
 	"git.autoStash": true,
 	"git.enableSmartCommit": true,
 	"git.fetchOnPull": true,
-	"git.inputValidationLength": 80,
+	"git.inputValidationLength": 160,
 	"git.pruneOnFetch": true,
 	"git.showPushSuccessNotification": true,
 	"git.useCommitInputAsStashMessage": true,
@@ -129,10 +128,7 @@
 	"gitProjectManager.maxDepthRecursion": 5,
 	"gitProjectManager.recentProjectsListSize": 100,
 	"gitProjectManager.storeRepositoriesBetweenSessions": true,
-	"gitProjectManager.baseProjectsFolders": [
-		"~/go/src/github.com/lavantien/",
-		"~/dev"
-	],
+	"gitProjectManager.baseProjectsFolders": ["~/go/src/github.com/lavantien/", "~/dev"],
 	"go.addTags": {
 		"options": ""
 	},
@@ -151,14 +147,7 @@
 		"references": true
 	},
 	"go.lintOnSave": "workspace",
-	"go.testFlags": [
-		"-vet=off",
-		"-timeout=5m",
-		"-v",
-		"-count=1",
-		"-race",
-		"-cover"
-	],
+	"go.testFlags": ["-vet=off", "-timeout=5m", "-v", "-count=1", "-race", "-cover"],
 	"go.toolsManagement.autoUpdate": true,
 	"go.useCodeSnippetsOnFunctionSuggestWithoutType": true,
 	"go.vetOnSave": "workspace",
@@ -186,8 +175,8 @@
 	"java.symbols.includeSourceMethodDeclarations": true,
 	"java.typeHierarchy.lazyLoad": true,
 	"markdown.links.openLocation": "beside",
-	"markdown.preview.fontSize": 20,
-	"markdown.preview.fontFamily": "JetBrainsMono Nerd Font, Victor Mono",
+	"markdown.preview.fontSize": 12,
+	"markdown.preview.fontFamily": "FiraCode Nerd Font",
 	"markdown.preview.typographer": true,
 	"markdown.extension.print.theme": "dark",
 	"markdown.extension.list.indentationSize": "inherit",
@@ -270,6 +259,7 @@
 		"hivemq",
 		"hlsearch",
 		"Idxs",
+		"informations",
 		"inpb",
 		"inpbmock",
 		"INPROGRESS",
@@ -317,6 +307,7 @@
 		"QWERTZ",
 		"rbql",
 		"RDBMS",
+		"Reindex",
 		"Revr",
 		"rgba",
 		"runc",
@@ -362,8 +353,6 @@
 	},
 	"files.defaultLanguage": "${activeEditorLanguage}",
 	"editor.suggest.insertMode": "replace",
-	"workbench.productIconTheme": "fluent-icons",
-	"editor.inlayHints.fontFamily": "Victor Mono",
 	"scm.inputFontFamily": "editor",
 	"redhat.telemetry.enabled": false,
 	"editor.cursorBlinking": "phase",
@@ -401,7 +390,7 @@
 		"editor.tabSize": 2,
 		"editor.insertSpaces": true
 	},
-	"editor.minimap.maxColumn": 80,
+	"editor.minimap.maxColumn": 120,
 	"explorer.compactFolders": false,
 	"security.workspace.trust.untrustedFiles": "open",
 	"[yaml]": {
@@ -419,11 +408,7 @@
 	"vscode-neovim.revealCursorScrollLine": true,
 	"protoc": {
 		"path": "/usr/bin/protoc",
-		"options": [
-			"--proto_path=proto",
-			"--go_out=pb",
-			"--go_opt=paths=source_relative"
-		]
+		"options": ["--proto_path=proto", "--go_out=pb", "--go_opt=paths=source_relative"]
 	},
 	"vs-kubernetes": {
 		"vscode-kubernetes.helm-path.linux": "/home/savaka/.vs-kubernetes/tools/helm/linux-amd64/helm",
@@ -482,14 +467,14 @@
 	"Prettier-SQL.ignoreTabSettings": false,
 	"Prettier-SQL.insertSpacesOverride": false,
 	"Prettier-SQL.SQLFlavourOverride": "postgresql",
-	"prettier.printWidth": 80,
+	"prettier.printWidth": 160,
 	"auto-close-tag.insertSpaceBeforeSelfClosingTag": true,
 	"bracketLens.mode": "auto",
 	"crates.listPreReleases": true,
 	"csv-to-table.markdownFormat": true,
 	"errorLens.delay": 500,
-	"errorLens.fontFamily": "Victor Mono",
-	"errorLens.fontSize": "20",
+	"errorLens.fontFamily": "FiraCode Nerd Font",
+	"errorLens.fontSize": "12",
 	"errorLens.fontStyleItalic": true,
 	"errorLens.gutterIconsEnabled": true,
 	"errorLens.statusBarColorsEnabled": true,
@@ -502,7 +487,7 @@
 	"[dart]": {
 		"editor.formatOnSave": true,
 		"editor.formatOnType": true,
-		"editor.rulers": [80],
+		"editor.rulers": [160],
 		"editor.selectionHighlight": false,
 		"editor.suggest.snippetsPreventQuickSuggestions": false,
 		"editor.suggestSelection": "first",
@@ -536,13 +521,12 @@
 	"vim.neovimPath": "/usr/bin/nvim",
 	"vim.neovimConfigPath": " ~/.config/nvim/init.vim",
 	"todo-tree.general.statusBar": "tags",
-	"workbench.colorTheme": "Gruvbox Minor Dark Hard",
 	"build.experimentalWorkspaceModule": true,
 	"vim.smartRelativeLine": true,
-	"editor.rulers": [80],
+	"editor.rulers": [160],
 	"editor.cursorSurroundingLines": 8,
-	"vim.textwidth": 80,
-	"html.format.wrapLineLength": 80,
+	"vim.textwidth": 160,
+	"html.format.wrapLineLength": 160,
 	"[markdown]": {
 		"editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
 	},
@@ -560,8 +544,20 @@
 	"[ignore]": {
 		"editor.defaultFormatter": "foxundermoon.shell-format"
 	},
-	"scm.inputFontSize": 20,
+	"scm.inputFontSize": 12,
 	"editor.minimap.scale": 3,
 	"editor.minimap.showSlider": "always",
-	"editor.minimap.renderCharacters": false
+	"editor.minimap.renderCharacters": false,
+	"workbench.productIconTheme": "bootstrap-product-icons",
+	"markdown.preview.lineHeight": 1.3,
+	"notebook.outputLineHeight": 0,
+	"terminal.integrated.lineHeight": 0,
+	"workbench.editor.openPositioning": "last",
+	"workbench.colorTheme": "Gruvbox Minor Dark Hard",
+	"editor.wordWrapColumn": 160,
+	"editor.codeLensFontFamily": "FiraCode Nerd Font",
+	"[html]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"tailwindCSS.emmetCompletions": true
 }

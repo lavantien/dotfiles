@@ -1,10 +1,9 @@
 local wezterm = require 'wezterm';
 return {
   font = wezterm.font_with_fallback({
-    "JetBrainsMono Nerd Font",
-    "Victor Mono",
+      "FiraCode Nerd Font",
   }),
-  font_size = 16,
+  font_size = 10,
   color_scheme = "Gruvbox Dark",
   --color_scheme = "Andromeda",
   --color_scheme = "nord",
