@@ -3,6 +3,7 @@ code --install-extension adamsome.vscode-theme-gruvbox-minor
 code --install-extension alexcvzz.vscode-sqlite
 code --install-extension analytic-signal.preview-pdf
 code --install-extension apollographql.vscode-apollo
+code --install-extension atomiks.moonlight
 code --install-extension bradlc.vscode-tailwindcss
 code --install-extension casualjim.gotemplate
 code --install-extension christian-kohler.path-intellisense
@@ -30,7 +31,6 @@ code --install-extension James-Yu.latex-workshop
 code --install-extension jameslan.yaclock
 code --install-extension janisdd.vscode-edit-csv
 code --install-extension kisstkondoros.vscode-gutter-preview
-code --install-extension matklad.rust-analyzer
 code --install-extension mechatroner.rainbow-csv
 code --install-extension mhutchie.git-graph
 code --install-extension mongodb.mongodb-vscode
@@ -55,6 +55,7 @@ code --install-extension redhat.java
 code --install-extension redhat.vscode-yaml
 code --install-extension ritwickdey.LiveServer
 code --install-extension rubenverg.bootstrap-product-icons
+code --install-extension rust-lang.rust-analyzer
 code --install-extension softwaredotcom.swdc-vscode
 code --install-extension streetsidesoftware.code-spell-checker
 code --install-extension theumletteam.umlet
