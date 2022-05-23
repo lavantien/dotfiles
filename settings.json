@@ -553,11 +553,30 @@
 	"notebook.outputLineHeight": 0,
 	"terminal.integrated.lineHeight": 0,
 	"workbench.editor.openPositioning": "last",
-	"workbench.colorTheme": "Gruvbox Minor Dark Hard",
+	"workbench.colorTheme": "GitHub Dark Default",
 	"editor.wordWrapColumn": 160,
 	"editor.codeLensFontFamily": "Iosevka Nerd Font, FiraCode Nerd Font",
 	"[html]": {
 		"editor.defaultFormatter": "esbenp.prettier-vscode"
 	},
-	"tailwindCSS.emmetCompletions": true
+	"tailwindCSS.emmetCompletions": true,
+	"editor.semanticTokenColorCustomizations": {
+		"enabled": true
+	},
+	"syntax.debugHover": true,
+	"syntax.highlightTerms": [
+		"type",
+		"scope",
+		"function",
+		"variable",
+		"number",
+		"string",
+		"comment",
+		"constant",
+		"directive",
+		"control",
+		"operator",
+		"modifier",
+		"punctuation"
+	]
 }

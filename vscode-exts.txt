@@ -17,6 +17,7 @@ code --install-extension eamodio.gitlens
 code --install-extension EditorConfig.EditorConfig
 code --install-extension emilast.LogFileHighlighter
 code --install-extension esbenp.prettier-vscode
+code --install-extension evgeniypeshkov.syntax-highlighter
 code --install-extension formulahendry.auto-rename-tag
 code --install-extension formulahendry.code-runner
 code --install-extension foxundermoon.shell-format
