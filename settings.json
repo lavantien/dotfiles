@@ -553,7 +553,7 @@
 	"notebook.outputLineHeight": 0,
 	"terminal.integrated.lineHeight": 0,
 	"workbench.editor.openPositioning": "last",
-	"workbench.colorTheme": "GitHub Dark Default",
+	"workbench.colorTheme": "Gruvbox Minor Dark Hard",
 	"editor.wordWrapColumn": 160,
 	"editor.codeLensFontFamily": "Iosevka Nerd Font, FiraCode Nerd Font",
 	"[html]": {
@@ -578,5 +578,8 @@
 		"operator",
 		"modifier",
 		"punctuation"
-	]
+	],
+	"[css]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	}
 }

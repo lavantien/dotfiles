@@ -58,8 +58,8 @@ Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 " Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
 " Plug 'arcticicestudio/nord-vim'
 " Plug 'shaunsingh/nord.nvim'
-" Plug 'ellisonleao/gruvbox.nvim'
-Plug 'projekt0n/github-nvim-theme'
+Plug 'ellisonleao/gruvbox.nvim'
+" Plug 'projekt0n/github-nvim-theme'
 
 Plug 'ryanoasis/vim-devicons'
 Plug 'kyazdani42/nvim-web-devicons'
@@ -110,8 +110,9 @@ let mapleader = " "
 
 "colorscheme tokyonight
 "colorscheme nord
-"set background=dark " or light if you want light mode
-colorscheme github_dark_default
+"colorscheme github_dark_default
+set background=dark " or light if you want light mode
+colorscheme gruvbox
 
 " nvim-tree.lua
 let g:nvim_tree_quit_on_open = 1 "0 by default, closes the tree when you open a file

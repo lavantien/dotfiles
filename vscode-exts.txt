@@ -32,6 +32,7 @@ code --install-extension James-Yu.latex-workshop
 code --install-extension jameslan.yaclock
 code --install-extension janisdd.vscode-edit-csv
 code --install-extension kisstkondoros.vscode-gutter-preview
+code --install-extension marlosirapuan.nord-deep
 code --install-extension mechatroner.rainbow-csv
 code --install-extension mhutchie.git-graph
 code --install-extension mongodb.mongodb-vscode
@@ -46,6 +47,7 @@ code --install-extension ms-vsliveshare.vsliveshare-audio
 code --install-extension ms-vsliveshare.vsliveshare-pack
 code --install-extension msjsdiag.vscode-react-native
 code --install-extension mutantdino.resourcemonitor
+code --install-extension oderwat.indent-rainbow
 code --install-extension Orta.vscode-jest
 code --install-extension pascalsenn.keyboard-quickfix
 code --install-extension Pivotal.vscode-boot-dev-pack
@@ -58,9 +60,11 @@ code --install-extension ritwickdey.LiveServer
 code --install-extension rubenverg.bootstrap-product-icons
 code --install-extension rust-lang.rust-analyzer
 code --install-extension softwaredotcom.swdc-vscode
+code --install-extension solnurkarim.html-to-css-autocompletion
 code --install-extension streetsidesoftware.code-spell-checker
 code --install-extension tamasfe.even-better-toml
 code --install-extension theumletteam.umlet
+code --install-extension tonsky.theme-alabaster
 code --install-extension usernamehw.errorlens
 code --install-extension VisualStudioExptTeam.vscodeintellicode
 code --install-extension vscjava.vscode-java-debug
@@ -72,4 +76,5 @@ code --install-extension vscjava.vscode-spring-boot-dashboard
 code --install-extension vscjava.vscode-spring-initializr
 code --install-extension vscode-icons-team.vscode-icons
 code --install-extension vscodevim.vim
+code --install-extension yutent.scss-to-css
 code --install-extension zxh404.vscode-proto3
