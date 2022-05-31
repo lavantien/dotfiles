@@ -271,6 +271,7 @@
 		"kuiper",
 		"lavantien",
 		"matkhau",
+		"Meipaly",
 		"migrateup",
 		"MIMEPROTOBUF",
 		"MIMEYAML",
@@ -553,7 +554,7 @@
 	"notebook.outputLineHeight": 0,
 	"terminal.integrated.lineHeight": 0,
 	"workbench.editor.openPositioning": "last",
-	"workbench.colorTheme": "Gruvbox Minor Dark Hard",
+	"workbench.colorTheme": "GitHub Dark Default",
 	"editor.wordWrapColumn": 160,
 	"editor.codeLensFontFamily": "Iosevka Nerd Font, FiraCode Nerd Font",
 	"[html]": {
@@ -581,5 +582,20 @@
 	],
 	"[css]": {
 		"editor.defaultFormatter": "esbenp.prettier-vscode"
-	}
+	},
+	"[json]": {
+		"editor.defaultFormatter": "vscode.json-language-features"
+	},
+	"indentRainbow.colors": [
+		"rgba(3, 4, 94,0.15)",
+		"rgba(2, 62, 138,0.15)",
+		"rgba(0, 119, 182, 0.15)",
+		"rgba(0, 150, 199,0.15)",
+		"rgba(0, 180, 216,0.15)",
+		"rgba(72, 202, 228,0.15)",
+		"rgba(144, 224, 239,0.15)",
+		"rgba(144, 224, 239,0.1)",
+		"rgba(144, 224, 239,0.05)",
+		"rgba(144, 224, 239,0.025)"
+	]
 }
