@@ -37,6 +37,7 @@ code --install-extension kisstkondoros.vscode-gutter-preview
 code --install-extension marlosirapuan.nord-deep
 code --install-extension mechatroner.rainbow-csv
 code --install-extension mhutchie.git-graph
+code --install-extension mikestead.dotenv
 code --install-extension mongodb.mongodb-vscode
 code --install-extension ms-azuretools.vscode-docker
 code --install-extension ms-python.python
