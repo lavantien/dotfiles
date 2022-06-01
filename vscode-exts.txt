@@ -16,6 +16,7 @@ code --install-extension Dunn.redis
 code --install-extension eamodio.gitlens
 code --install-extension EditorConfig.EditorConfig
 code --install-extension emilast.LogFileHighlighter
+code --install-extension enkia.tokyo-night
 code --install-extension esbenp.prettier-vscode
 code --install-extension evgeniypeshkov.syntax-highlighter
 code --install-extension evondev.indent-rainbow-palettes

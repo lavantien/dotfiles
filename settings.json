@@ -554,7 +554,6 @@
 	"notebook.outputLineHeight": 0,
 	"terminal.integrated.lineHeight": 0,
 	"workbench.editor.openPositioning": "last",
-	"workbench.colorTheme": "GitHub Dark Default",
 	"editor.wordWrapColumn": 160,
 	"editor.codeLensFontFamily": "Iosevka Nerd Font, FiraCode Nerd Font",
 	"[html]": {
@@ -597,5 +596,6 @@
 		"rgba(144, 224, 239,0.1)",
 		"rgba(144, 224, 239,0.05)",
 		"rgba(144, 224, 239,0.025)"
-	]
+	],
+	"workbench.colorTheme": "Tokyo Night"
 }
