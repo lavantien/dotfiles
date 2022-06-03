@@ -33,7 +33,7 @@ set history=1000
 set cursorline
 set cursorcolumn
 set scrolloff=20
-set colorcolumn=80
+set colorcolumn=160
 set signcolumn=yes
 
 set showcmd
@@ -43,7 +43,7 @@ set wildmode=list:longest
 set wildignore=*.docx,*.jpg,*.png,*.gif,*.pdf,*.exe,*.xlsx,*pptx
 set termguicolors
 set mouse=a
-set cc=80
+set cc=160
 set clipboard=unnamedplus
 set t_Co=256
 "set clipboard=unnamedplus

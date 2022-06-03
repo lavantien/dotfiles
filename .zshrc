@@ -139,6 +139,7 @@ alias vscw="code --user-data-dir ~/work/.vscode/data --extensions-dir ~/work/.vs
 alias protodot="protodot-linux-amd64"
 alias e="exa -la --icons --group-directories-first"
 alias et="exa -la --icons --group-directories-first -T"
+alias b='bat --theme=gruvbox-dark'
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
