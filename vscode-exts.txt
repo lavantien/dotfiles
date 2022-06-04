@@ -4,6 +4,7 @@ code --install-extension alexcvzz.vscode-sqlite
 code --install-extension analytic-signal.preview-pdf
 code --install-extension apollographql.vscode-apollo
 code --install-extension atomiks.moonlight
+code --install-extension bbenoist.Nix
 code --install-extension bradlc.vscode-tailwindcss
 code --install-extension casualjim.gotemplate
 code --install-extension christian-kohler.path-intellisense
