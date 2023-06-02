@@ -1,4 +1,4 @@
-# My Dotfiles
+# My Linux Dotfiles
 
 ## Requirements
 
