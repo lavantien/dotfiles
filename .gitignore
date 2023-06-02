@@ -71,3 +71,5 @@ snap
 .zcompdump-savaka-5.9
 .zcompdump-savaka-5.9.zwc
 .zsh_history
+.kube
+.minikube
