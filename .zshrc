@@ -15,6 +15,15 @@ export EDITOR="nvim"
 export PRETTIERD_DEFAULT_CONFIG="/home/lavantien/prettierrc.yaml"
 export PRETTIERD_LOCAL_PRETTIER_ONLY=1
 
+# Wine
+# export WINEPREFIX="/home/lavantien/.wine"
+# export WINEDLLOVERRIDES=nvapi,nvapi64,dxgi=n
+export DXVK_ENABLE_NVAPI=1
+export MANGOHUD=1
+
+# D2R
+export D2R_SAVES_PATH="/home/lavantien/Games/battlenet/drive_c/users/lavantien/Saved Games/Diablo II Resurrected"
+
 # Brew
 export HOMEBREW_MAKE_JOBS=16
 export HOMEBREW_VERBOSE=1
@@ -35,12 +44,9 @@ export PATH="$PATH:/home/lavantien/.dotnet/tools"
 export RUBY_GEMS_PATH=/home/linuxbrew/.linuxbrew/lib/ruby/gems
 export PATH="$PATH:$(find $RUBY_GEMS_PATH -mindepth 1 -maxdepth 1 -type d)/bin"
 
-# Wine
-# export WINEPREFIX="/home/lavantien/.wine"
-# export WINEDLLOVERRIDES=nvapi,nvapi64,dxgi=n
-export DXVK_ENABLE_NVAPI=1
-export MANGOHUD=1
-
-# D2R
-export D2R_SAVES_PATH="/home/lavantien/Games/battlenet/drive_c/users/lavantien/Saved Games/Diablo II Resurrected"
-
+# Perl
+PATH="/home/lavantien/perl5/bin${PATH:+:${PATH}}"; export PATH;
+PERL5LIB="/home/lavantien/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
+PERL_LOCAL_LIB_ROOT="/home/lavantien/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
+PERL_MB_OPT="--install_base \"/home/lavantien/perl5\""; export PERL_MB_OPT;
+PERL_MM_OPT="INSTALL_BASE=/home/lavantien/perl5"; export PERL_MM_OPT;

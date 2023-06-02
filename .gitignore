@@ -75,3 +75,8 @@ snap
 .minikube
 .cargo
 .rustup
+.cpan
+.cpanm
+.local/share/gem/specs
+.npm
+perl5
