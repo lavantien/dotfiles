@@ -73,3 +73,5 @@ snap
 .zsh_history
 .kube
 .minikube
+.cargo
+.rustup
