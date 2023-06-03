@@ -12,7 +12,9 @@
 - docker compose (ppa), kubectl (ppa), minikube (deb), python2 (source)
 - rust (script), openjdk (brew), ruby (brew), lua (brew), maven (brew), node (brew), gopls (brew), rust-analyzer (brew), jdtls (brew), lua-language-server (brew), vscode-langservers-extracted (brew)
 - yaml-language-server (brew), bash-language-server (brew), terraform (brew), terraform-ls (brew), prettier (brew), nvim +che deps
-- nvidia vulkan (ppa & apt), wine (ppa), lutris (deb), mangohud (source)
+- nvidia vulkan (ppa & apt), wine (ppa), lutris (deb), mangohud (source), mpv (apt)
+- battlenet (lutris), diablo-2-resurrected (battlenet)
+- steam (apt), obs (ppa), blender (snap), gimp (flatpak), inkscape (snap)
 
 ## Neovim Deps (fresh 100% OK)
 
