@@ -349,7 +349,7 @@ vim.treesitter: require("vim.treesitter.health").check()
 - How to Debug like a Pro: <https://miguelcrespo.co/how-to-debug-like-a-pro-using-neovim>
 - Nvim DAP getting started: <https://davelage.com/posts/nvim-dap-getting-started/>
 
-## Google Cloud CLI (broken python2 dep)
+## Fix Google Cloud CLI (broken installation & missing python2 dep)
 
 ```bash
 echo "deb [signed-by=/etc/apt/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
@@ -369,4 +369,5 @@ sudo rm /usr/local/lib/pkgconfig/python-2.7.pc /usr/local/lib/libpython2.7.a
 sudo rm -rf /usr/local/include/python2.7
 
 sudo apt install google-cloud-cli-app-engine-go google-cloud-cli-app-engine-grpc google-cloud-cli-cloud-build-local google-cloud-cli-firestore-emulator google-cloud-cli-minikube google-cloud-cli-tests
+# still failed due to python2.7
 ````
