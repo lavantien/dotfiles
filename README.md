@@ -1,4 +1,3 @@
-For a smooth Git experience, you should make a `.netrc` file in your `home` directory and add auth token like this:  
 `machine github.com login lavantien password ghp_klsdfjalsdkfjdsjfalsdfjkldasfjkasldfjalsdfjalsdjfk`  
 For `gh`, run `gh auth login` and follow instruction to setup GitHub CLI
 
@@ -18,35 +17,48 @@ For `gh`, run `gh auth login` and follow instruction to setup GitHub CLI
 12. yaml-language-server (brew), bash-language-server (brew), terraform (brew), terraform-ls (brew)
 13. prettier (brew), delve (brew), vscode-langservers-extracted (brew)
 14. nvidia vulkan (ppa & apt), wine (ppa), lutris (deb), mangohud (source), mpv (apt), loc (brew)
-15. llvm (brew), vscode (dep), codelldb (vscode), flutter (snap), android-studio (snap)
+15. llvm (brew), vscode (dep), codelldb (vscode)
 16. helix (brew), hx --health, kreya (snap), dbgate (snap), dotenv-linter (brew), checkmake (brew)
 17. fd (brew), luarocks (brew), php (brew), composer (brew), julia (brew), nvim +che
 18. grpc (brew), protoc-gen-go (go), protoc-gen-go-grpc (go), libutf8proc2 (apt), libutf8proc-dev (apt)
-19. battlenet (lutris), diablo-2-resurrected (battlenet)
-20. steam (apt), obs (ppa), blender (snap), gimp (flatpak), inkscape (snap), libre-office (snap)
+19. cpu-checker (apt), qemu [kvm](https://developer.android.com/studio/run/emulator-acceleration?utm_source=android-studio#vm-linux), flutter (snap), android-studio (snap), android-sdk-cli (studio)
+20. battlenet (lutris), diablo-2-resurrected (battlenet)
+21. steam (apt), obs (ppa), blender (snap), gimp (flatpak), inkscape (snap), libre-office (snap)
 
-## Neovim Deps (fresh 100% OK)
+## Flutter Doctor
 
 ```bash
-npm i -g neovim
-cpan App::cpanminus
-cpanm Neovim::Ext
-pip3 install neovim
-sudo apt install ubuntu-dev-tools
-brew install gcc@11
-gem install neovim
-n +let g:loaded_perl_provider = 0
-:che
+Doctor summary (to see all details, run flutter doctor -v):
+[✓] Flutter (Channel stable, 3.10.3, on Ubuntu 23.04 6.2.0-20-generic, locale en_US.UTF-8)
+[✓] Android toolchain - develop for Android devices (Android SDK version 33.0.2)
+[✓] Chrome - develop for the web
+[✓] Linux toolchain - develop for Linux desktop
+[✓] Android Studio (version 2022.2)
+[✓] VS Code (version 1.78.2)
+[✓] Connected device (2 available)
+[✓] Network resources
+
+• No issues found!
 ```
 
 ## Neovim Setup From Scratch
 
+### Neovim Deps (fresh 100% OK)
+
+```bash
+npm i -g neovim
+cpan App::cpanminus
+cpanm -n Neovim::Ext
+pip3 install neovim
+sudo apt install ubuntu-dev-tools
+brew install gcc@11
+gem install neovim
+```
+
 ### Usage
 
 - Install `linuxbrew` and then `$ brew install neovim`
-- Make sure to run `$ nvim +checkhealth` to ensure all dependencies are
-  installed
-- `$ nvim +PackerSync` to sync plugins to local machine
+- Make sure to run `$ nvim +che` to ensure all dependencies are installed
 
 ### Checkhealth 100% OK
 

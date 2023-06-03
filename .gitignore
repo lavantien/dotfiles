@@ -100,3 +100,12 @@ go/pkg
 .wakatime.cfg
 go/bin
 .pearrc
+.android
+.config/Google/AndroidStudio2022.2
+.config/flutter
+.dart-tool
+.java
+.local/share/Google/consentOptions
+.pub-cache
+Android/Sdk
+.flutter
