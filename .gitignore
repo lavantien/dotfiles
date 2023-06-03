@@ -109,3 +109,4 @@ go/bin
 .pub-cache
 Android/Sdk
 .flutter
+.m2/repository
