@@ -23,8 +23,14 @@ For `gh`, run `gh auth login` and follow instruction to setup GitHub CLI
 17. fd (brew), luarocks (brew), php (brew), composer (brew), julia (brew), nvim +che
 18. grpc (brew), protoc-gen-go (go), protoc-gen-go-grpc (go), libutf8proc2 (apt), libutf8proc-dev (apt)
 19. cpu-checker (apt), qemu [kvm](https://developer.android.com/studio/run/emulator-acceleration?utm_source=android-studio#vm-linux), flutter (snap), android-studio (snap), android-sdk-cli (studio)
-20. battlenet (lutris), diablo-2-resurrected (battlenet)
+20. dotnet-sdk (ppa), battlenet (lutris), diablo-2-resurrected (battlenet)
 21. steam (apt), obs (ppa), blender (snap), gimp (flatpak), inkscape (snap), libre-office (snap)
+
+## Fix Dotnet SDK
+
+```bash
+sudo cp -r /usr/share/dotnet/* /usr/lib/dotnet/
+```
 
 ## Flutter Doctor
 
