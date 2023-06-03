@@ -98,3 +98,5 @@ Games/battlenet
 go/pkg
 .wakatime.bdb
 .wakatime.cfg
+go/bin
+.pearrc

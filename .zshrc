@@ -12,7 +12,7 @@ source .aliases
 
 # Default editor
 export EDITOR="nvim"
-export PRETTIERD_DEFAULT_CONFIG="/home/lavantien/prettierrc.yaml"
+export PRETTIERD_DEFAULT_CONFIG="/home/lavantien/.config/prettier/.prettierrc.yaml"
 export PRETTIERD_LOCAL_PRETTIER_ONLY=1
 
 # Wine
@@ -35,7 +35,7 @@ export PATH="$PATH:$(go env GOPATH)/bin"
 export PATH="$PATH:$HOME/.local/bin"
 
 # Nim
-export PATH=/home/lavantien/.nimble/bin:$PATH
+export PATH=$PATH:/home/lavantien/.nimble/bin
 
 # DotNet
 export PATH="$PATH:/home/lavantien/.dotnet/tools"
@@ -45,8 +45,8 @@ export RUBY_GEMS_PATH=/home/linuxbrew/.linuxbrew/lib/ruby/gems
 export PATH="$PATH:$(find $RUBY_GEMS_PATH -mindepth 1 -maxdepth 1 -type d)/bin"
 
 # Perl
-PATH="/home/lavantien/perl5/bin${PATH:+:${PATH}}"; export PATH;
-PERL5LIB="/home/lavantien/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
-PERL_LOCAL_LIB_ROOT="/home/lavantien/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
-PERL_MB_OPT="--install_base \"/home/lavantien/perl5\""; export PERL_MB_OPT;
-PERL_MM_OPT="INSTALL_BASE=/home/lavantien/perl5"; export PERL_MM_OPT;
+export PATH=$PATH:/home/lavantien/perl5/bin
+export PERL5LIB="/home/lavantien/perl5/lib/perl5"
+export PERL_LOCAL_LIB_ROOT="/home/lavantien/perl5"
+export PERL_MB_OPT="--install_base \"/home/lavantien/perl5\""
+export PERL_MM_OPT="INSTALL_BASE=/home/lavantien/perl5"
