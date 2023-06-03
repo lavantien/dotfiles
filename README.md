@@ -1,3 +1,4 @@
+For a smooth Git experience, you should make a .netrc file in your home directory and add auth token like this:
 `machine github.com login lavantien password ghp_klsdfjalsdkfjdsjfalsdfjkldasfjkasldfjalsdfjalsdjfk`  
 For `gh`, run `gh auth login` and follow instruction to setup GitHub CLI
 
