@@ -1,3 +1,5 @@
+# New Linux Environment Setup - Neovim From Scratch
+
 ## Necessary Programs
 
 1. ubuntu23.04, chrome (deb), xclip (apt), git (apt), curl (apt), zsh (apt), ohmyzsh (script)
