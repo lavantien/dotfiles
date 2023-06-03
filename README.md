@@ -1,4 +1,4 @@
-# My Linux Dotfiles
+# My Linux Dotfiles - New Linux Environment Setup
 
 ## Requirements
 
