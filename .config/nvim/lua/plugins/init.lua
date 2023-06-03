@@ -1,20 +1,20 @@
 return {
-    {
-        "VonHeikemen/lsp-zero.nvim",
-        branch = "v2.x",
-        dependencies = {
-            { "neovim/nvim-lspconfig" },
-            {
-                "williamboman/mason.nvim",
-                build = function() pcall(vim.cmd, "MasonUpdate") end,
-            },
-            { "williamboman/mason-lspconfig.nvim" },
-            { "hrsh7th/nvim-cmp" },
-            { "hrsh7th/cmp-nvim-lsp" },
-            { "L3MON4D3/LuaSnip" },
-        },
-        config = function()
-        	local lsp = require("lsp-zero")
+	{
+		"VonHeikemen/lsp-zero.nvim",
+		branch = "v2.x",
+		dependencies = {
+			{ "neovim/nvim-lspconfig" },
+			{
+				"williamboman/mason.nvim",
+				build = function() pcall(vim.cmd, "MasonUpdate") end,
+			},
+			{ "williamboman/mason-lspconfig.nvim" },
+			{ "hrsh7th/nvim-cmp" },
+			{ "hrsh7th/cmp-nvim-lsp" },
+			{ "L3MON4D3/LuaSnip" },
+		},
+		config = function()
+			local lsp = require("lsp-zero")
 			lsp.preset("recommended")
 			lsp.extend_cmp()
 			lsp.on_attach(function(client, bufnr)
@@ -83,15 +83,15 @@ return {
 				automatic_installation = true,
 				handlers = {}
 			})
-        end,
-    },
-    {
-        "mfussenegger/nvim-dap",
-        "jay-babu/mason-nvim-dap.nvim",
-        'leoluz/nvim-dap-go',
-        dependencies = { "williamboman/mason.nvim" },
-        config = function()
-        	require('dap-go').setup()
+		end,
+	},
+	{
+		"mfussenegger/nvim-dap",
+		"jay-babu/mason-nvim-dap.nvim",
+		'leoluz/nvim-dap-go',
+		dependencies = { "williamboman/mason.nvim" },
+		config = function()
+			require('dap-go').setup()
 			local dap, dapui = require("dap"), require("dapui")
 			dap.listeners.after.event_initialized["dapui_config"] = function()
 				dapui.open()
@@ -102,27 +102,26 @@ return {
 			dap.listeners.before.event_exited["dapui_config"] = function()
 				dapui.close()
 			end
-        end,
-    },
-    {
-        "rcarriga/nvim-dap-ui",
-        'folke/neodev.nvim',
-        'theHamsta/nvim-dap-virtual-text',
-        dependencies = { "mfussenegger/nvim-dap" },
-        config = function()
-        	require("dapui").setup()
+		end,
+	},
+	{
+		"rcarriga/nvim-dap-ui",
+		'folke/neodev.nvim',
+		'theHamsta/nvim-dap-virtual-text',
+		dependencies = { "mfussenegger/nvim-dap" },
+		config = function()
+			require("dapui").setup()
 			require("neodev").setup({
 				library = { plugins = { "nvim-dap-ui" }, types = true },
 			})
 			require("nvim-dap-virtual-text").setup()
-			
-        end,
-    },
-    {
-        "nvim-treesitter/nvim-treesitter",
-        build = ":TSUpdate",
-        config = function()
-        	require("nvim-treesitter.configs").setup({
+		end,
+	},
+	{
+		"nvim-treesitter/nvim-treesitter",
+		build = ":TSUpdate",
+		config = function()
+			require("nvim-treesitter.configs").setup({
 				ensure_installed = {},
 				sync_install = false,
 				auto_install = true,
@@ -131,15 +130,15 @@ return {
 					additional_vim_regex_highlighting = false,
 				},
 			})
-        end,
-    },
-    {
-    	"nvim-treesitter/nvim-treesitter-context",
-    },
-    {
-    	"jose-elias-alvarez/null-ls.nvim",
-    	config = function()
-    		local null_ls = require("null-ls")
+		end,
+	},
+	{
+		"nvim-treesitter/nvim-treesitter-context",
+	},
+	{
+		"jose-elias-alvarez/null-ls.nvim",
+		config = function()
+			local null_ls = require("null-ls")
 			local formatting = null_ls.builtins.formatting
 			local diagnostics = null_ls.builtins.diagnostics
 			local actions = null_ls.builtins.code_actions
@@ -185,34 +184,34 @@ return {
 				end,
 				--]==]
 			})
-    	end,
-    },
-    {
-	    "j-hui/fidget.nvim",
-        config = function() require("fidget").setup() end,
-    },
-    "nvim-treesitter/playground",
-    {
-        "nvim-telescope/telescope.nvim",
-        dependencies = { "nvim-lua/plenary.nvim" },
-    },
-    {
-        "kylechui/nvim-surround",
-        config = function() require("nvim-surround").setup() end,
-    },
-    {
-        'numToStr/Comment.nvim',
-        config = function() require('Comment').setup() end,
-    },
+		end,
+	},
+	{
+		"j-hui/fidget.nvim",
+		config = function() require("fidget").setup() end,
+	},
+	"nvim-treesitter/playground",
+	{
+		"nvim-telescope/telescope.nvim",
+		dependencies = { "nvim-lua/plenary.nvim" },
+	},
+	{
+		"kylechui/nvim-surround",
+		config = function() require("nvim-surround").setup() end,
+	},
+	{
+		'numToStr/Comment.nvim',
+		config = function() require('Comment').setup() end,
+	},
 
 
-    {
-        "folke/tokyonight.nvim",
-        lazy = false,
-        priority = 1000,
-        opts = {},
-        config = function()
-        	require("tokyonight").setup({
+	{
+		"folke/tokyonight.nvim",
+		lazy = false,
+		priority = 1000,
+		opts = {},
+		config = function()
+			require("tokyonight").setup({
 				-- rose-pine
 				disable_background = true,
 				disable_float_background = true,
@@ -263,23 +262,24 @@ return {
 				vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
 				vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
 			end
+
 			ColorMyPencils()
-        end,
-    },
-    -- {
-    --     "rose-pine/neovim",
-    --     as = "rose-pine",
-    -- },
-    {
-        "folke/trouble.nvim",
-        dependencies = "nvim-tree/nvim-web-devicons",
-        config = function() require("trouble").setup({}) end,
-    },
-    {
-        "nvim-lualine/lualine.nvim",
-        dependencies = { "nvim-tree/nvim-web-devicons" },
-        config = function()
-        	--[[
+		end,
+	},
+	-- {
+	--     "rose-pine/neovim",
+	--     as = "rose-pine",
+	-- },
+	{
+		"folke/trouble.nvim",
+		dependencies = "nvim-tree/nvim-web-devicons",
+		config = function() require("trouble").setup({}) end,
+	},
+	{
+		"nvim-lualine/lualine.nvim",
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+		config = function()
+			--[[
 			local custom_auto = require("lualine.themes.auto")
 			custom_auto.normal.c.bg = nil
 			custom_auto.insert.c.bg = nil
@@ -294,13 +294,13 @@ return {
 					component_separators = { left = "", right = "" },
 				},
 			})
-        end,
-    },
+		end,
+	},
 
-    {
-        'nmac427/guess-indent.nvim',
-        config = function()
-        	require('guess-indent').setup {
+	{
+		'nmac427/guess-indent.nvim',
+		config = function()
+			require('guess-indent').setup {
 				auto_cmd = true,
 				override_editorconfig = false,
 				filetype_exclude = {
@@ -314,8 +314,8 @@ return {
 					"prompt",
 				},
 			}
-        end,
-    },
+		end,
+	},
 
 	--[[
     {
@@ -323,24 +323,24 @@ return {
     	config = function() end,
     }
     --]]
-    {
-    	"theprimeagen/refactoring.nvim",
-    	config = function() require("refactoring").setup() end
-    },
-    {
-    	"mbbill/undotree",
-    },
-    {
-    	"tpope/vim-fugitive",
-    },
-    {
-    	"lewis6991/gitsigns.nvim",
-    },
+	{
+		"theprimeagen/refactoring.nvim",
+		config = function() require("refactoring").setup() end
+	},
+	{
+		"mbbill/undotree",
+	},
+	{
+		"tpope/vim-fugitive",
+	},
+	{
+		"lewis6991/gitsigns.nvim",
+	},
 
-    {
-    	"Exafunction/codeium.vim",
-    },
-    {
-    	"wakatime/vim-wakatime",
-    },
+	{
+		"Exafunction/codeium.vim",
+	},
+	{
+		"wakatime/vim-wakatime",
+	},
 }
