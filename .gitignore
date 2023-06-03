@@ -83,3 +83,6 @@ perl5
 .local/share/gnome-software
 Desktop
 Games/battlenet
+.config/inkscape
+.config/obs-studio
+.var/app/org.gimp.GIMP
