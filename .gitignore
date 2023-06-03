@@ -86,3 +86,15 @@ Games/battlenet
 .config/inkscape
 .config/obs-studio
 .var/app/org.gimp.GIMP
+.codeium
+.config/Code
+.config/htop
+.config/neofetch
+.dotnet/corefx/cryptography/crls
+.local/share/nvim
+.vim
+.vscode
+.wakatime
+go/pkg
+.wakatime.bdb
+.wakatime.cfg
