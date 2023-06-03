@@ -80,3 +80,6 @@ snap
 .local/share/gem/specs
 .npm
 perl5
+.local/share/gnome-software
+Desktop
+Games/battlenet
