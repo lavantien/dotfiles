@@ -1,4 +1,6 @@
-# A robust Dotfiles - Make system setup a science
+# A robust Dotfiles - Make development environment setup into a science
+
+Quality Assurance by myself: **70%**
 
 ## Step by Step for a Fresh Ubuntu 23.04+
 
@@ -131,7 +133,7 @@ go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 ```
 
-### 13. Install `CodeLLDB` (replace version `v1.9.2` with whatever latest)
+### 13. Install `VSCode` and `CodeLLDB` (replace version `v1.9.2` with whatever latest)
 
 ```bash
 cd ~/Downloads && wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg && sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg && sudo sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list' && rm -f packages.microsoft.gpg && cd ~ && sudo apt update && sudo apt install code -y
@@ -151,16 +153,51 @@ cd ~/Downloads && declare repo_version=$(if command -v lsb_release &> /dev/null;
 sudo cp -r /usr/share/dotnet/* /usr/lib/dotnet/ && dotnet --info
 ```
 
-## Necessary Programs
+### 15. Install `Qemu KVM`
 
-qemu [kvm](https://developer.android.com/studio/run/emulator-acceleration?utm_source=android-studio#vm-linux)  
-kreya (snap), dbgate (snap), flutter (snap), android-studio (snap), android-sdk-cli (studio)  
+```bash
+egrep -c '(vmx|svm)' /proc/cpuinfo && kvm-ok
+```
 
-flathub (apt & script), docker compose (ppa), nvidia vulkan (ppa & apt), kubectl (ppa), minikube (deb)  
-wine (ppa), lutris (deb), mangohud (source)  
+```bash
+sudo apt install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils
+```
 
-battlenet (lutris), diablo-2-resurrected (battlenet)  
-steam (deb), obs (ppa), blender (snap), gimp (flatpak), inkscape (snap), libre-office (snap)  
+### 16. Install `Android Studio`, `Android SDK`, and `Flutter`
+
+```bash
+sudo snap install android-studio --classic
+```
+
+Run `Android Studio` and install default configuration, then click `More tools` -> `Manages SDKs` -> `` -> tick `Android SDK CLI`
+
+```bash
+sudo snap install flutter --classic
+```
+
+```bash
+flutter doctor
+```
+
+### 17. Install `Kreya` and `DBbGate`
+
+```bash
+sudo snap install kreya
+```
+
+```bash
+sudo snap install dbgate
+```
+
+### 18. Install `Docker Compose`, `FlatHub`, and `Vulkan`, then `reboot`
+
+### 19. Install `kubectl`, and `minikube`
+
+### 20. Install `Wine`, `Lutris`, and `MangoHUD`
+
+### 21. Install `OBS`, `Gimp`, `Inkscape`, `LibreOffice`, `Blender`
+
+### 22. Install `Steam`, `Battlenet`, and `Diablo 2 Resurrected`
 
 ## Healthcheck
 
@@ -188,6 +225,25 @@ Doctor summary (to see all details, run flutter doctor -v):
 ```
 
 </details>
+
+### MiniKube
+
+```bash
+minikube start
+```
+
+<details>
+  <summary>expand result</summary>
+
+```bash
+
+```
+
+</details>
+
+```bash
+minikube stop
+```
 
 ### Neovim Deps (fresh 100% OK)
 
