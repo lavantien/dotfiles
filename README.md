@@ -90,13 +90,23 @@ qemu [kvm](https://developer.android.com/studio/run/emulator-acceleration?utm_so
 dotnet-sdk (ppa), battlenet (lutris), diablo-2-resurrected (battlenet)  
 steam (deb), obs (ppa), blender (snap), gimp (flatpak), inkscape (snap), libre-office (snap)  
 
-## Fix Dotnet SDK
+## Healthcheck
+
+### Fix Dotnet SDK
 
 ```bash
 sudo cp -r /usr/share/dotnet/* /usr/lib/dotnet/
 ```
 
-## Flutter Doctor
+```bash
+dotnet --info
+```
+
+### Flutter Doctor
+
+```bash
+flutter doctor
+```
 
 ```bash
 Doctor summary (to see all details, run flutter doctor -v):
@@ -112,8 +122,6 @@ Doctor summary (to see all details, run flutter doctor -v):
 • No issues found!
 ```
 
-## Neovim Setup From Scratch
-
 ### Neovim Deps (fresh 100% OK)
 
 ```bash
@@ -125,6 +133,8 @@ sudo apt install ubuntu-dev-tools
 brew install gcc@11
 gem install neovim
 ```
+
+## Neovim Setup From Scratch
 
 ### Usage
 
