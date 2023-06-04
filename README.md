@@ -2,6 +2,25 @@ For a smooth Git experience, you should make a .netrc file in your home director
 `machine github.com login lavantien password ghp_klsdfjalsdkfjdsjfalsdfjkldasfjkasldfjalsdfjalsdjfk`  
 For `gh`, run `gh auth login` and follow instruction to setup GitHub CLI
 
+## Step by Step for a Fresh Ubuntu
+
+1. Install all necessary APT packages
+
+```bash
+sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install xclip git curl zsh htop neofetch vim mpv libutf8proc2 libutf8proc-dev cpu-checker -y
+```
+2. Install Oh-my-zsh, then reboot
+
+```bash
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+```
+
+3. After reboot, install Linuxbrew
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
 ## Necessary Programs
 
 1. ubuntu-23.04+, stay away from 22.04-LTS - it's very unstable
