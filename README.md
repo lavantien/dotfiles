@@ -2,6 +2,21 @@
 
 ## Step by Step for a Fresh Ubuntu 23.04+
 
+0. Disable Wireless Powersaving
+
+```bash
+sudo vi /etc/NetworkManager/conf.d/default-wifi-powersave-on.conf
+```
+
+```conf
+[connection]
+wifi.powersave = 2
+```
+
+```bash
+sudo systemctl restart NetworkManager
+```
+
 1. Install all necessary `APT` packages
 
 ```bash
