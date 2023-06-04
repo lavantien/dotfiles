@@ -58,11 +58,11 @@ brew tap wez/wezterm-linuxbrew
 ```
 
 ```bash
-brew install wezterm
+brew install gcc gh go lazygit fzf fd ripgrep bat wezterm neovim hyperfine openjdk ruby lua maven node gopls rust-analyzer jdtls lua-language-server yaml-language-server bash-language-server terraform terraform-ls prettier delve vscode-langservers-extracted loc llvm helix dotenv-linter checkmake luarocks php composer grpc julia
 ```
 
 ```bash
-brew install gcc gh go lazygit fzf fd ripgrep bat wezterm neovim hyperfine openjdk ruby lua maven node gopls rust-analyzer jdtls lua-language-server yaml-language-server bash-language-server terraform terraform-ls prettier delve vscode-langservers-extracted loc llvm helix dotenv-linter checkmake luarocks php composer grpc julia
+brew install wezterm
 ```
 
 8. Install `Joplin (snap)`, sync your notes, and setup your `Git` environment:
@@ -79,7 +79,7 @@ mkdir -p ~/dev/personal && cp ~/git-clone-all.sh ~/dev/personal/ && cd ~/dev/per
 
 ## Necessary Programs
 
-rust (script), protoc-gen-go (go), protoc-gen-go-grpc (go)  
+protoc-gen-go (go), protoc-gen-go-grpc (go)  
 iosevka nf (nerd-fonts), noto sans sc (google), deng xian (fontke)  
 vscode (dep), codelldb (vscode)  
 
