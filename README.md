@@ -2,7 +2,7 @@
 
 ## Step by Step for a Fresh Ubuntu 23.04+
 
-0. Disable Wireless Powersaving
+0. Disable Wireless Powersaving and Files Open Limit
 
 ```bash
 sudo vi /etc/NetworkManager/conf.d/default-wifi-powersave-on.conf
@@ -16,6 +16,8 @@ wifi.powersave = 2
 ```bash
 sudo systemctl restart NetworkManager
 ```
+
+Fix `Error: Too many open files: [this article](https://www.howtogeek.com/805629/too-many-open-files-linux/#:~:text=If%20you%20see%20the%20%22Too,by%20editing%20systemd%20configuration%20files.)
 
 1. Install all necessary `APT` packages
 
