@@ -1,4 +1,4 @@
-# A robust Dotfiles - Make development environment setup into a science
+# A robust Dotfiles - Make dev environment setup into a science
 
 Quality Assurance by myself: **70%**
 
