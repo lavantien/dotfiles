@@ -51,6 +51,10 @@ git clone https://github.com/lavantien/dotfiles.git ~/temp && mv -v {~/temp/*,~/
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 
+```bash
+source ~/.zshrc
+```
+
 7. Install `gcc`, `gh`, `neovim`, and other necessary `Brew` packages
 
 ```bash
