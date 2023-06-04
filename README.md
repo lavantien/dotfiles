@@ -51,27 +51,29 @@ git clone https://github.com/lavantien/dotfiles.git ~/temp && mv -v {~/temp/*,~/
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 
-7. Install `gcc`, `gh`, `wezterm`, `neovim`, and other necessary `Brew` packages
+7. Install `gcc`, `gh`, `neovim`, and other necessary `Brew` packages
+
+```bash
+brew install gcc gh go lazygit fzf fd ripgrep bat wezterm neovim hyperfine openjdk ruby lua maven node gopls rust-analyzer jdtls lua-language-server yaml-language-server bash-language-server terraform terraform-ls prettier delve vscode-langservers-extracted loc llvm helix dotenv-linter checkmake luarocks php composer grpc julia
+```
+
+8. Install `wezterm`
 
 ```bash
 brew tap wez/wezterm-linuxbrew
 ```
 
 ```bash
-brew install gcc gh go lazygit fzf fd ripgrep bat wezterm neovim hyperfine openjdk ruby lua maven node gopls rust-analyzer jdtls lua-language-server yaml-language-server bash-language-server terraform terraform-ls prettier delve vscode-langservers-extracted loc llvm helix dotenv-linter checkmake luarocks php composer grpc julia
-```
-
-```bash
 brew install wezterm
 ```
 
-8. Install `Joplin (snap)`, sync your notes, and setup your `Git` environment:
+9. Install `Joplin (snap)`, sync your notes, and setup your `Git` environment:
 
 For a smooth `Git` experience, you should make a `.netrc` file in your home directory and add auth token:  
 `machine github.com login lavantien password ghp_klsdfjalsdkfjdsjfalsdkldasfjkasldfjalsdfjalsdjfk`  
 For `gh`, run `gh auth login` and follow instruction to setup `GitHub CLI` 
 
-9. Run `./git-clone-all your-github-username` on `~/dev/personal` for cloning all of your repos
+10. Run `./git-clone-all your-github-username` on `~/dev/personal` for cloning all of your repos
 
 ```bash
 mkdir -p ~/dev/personal && cp ~/git-clone-all.sh ~/dev/personal/ && cd ~/dev/personal && ./git-clone-all.sh your-github-username && cd ~
