@@ -108,6 +108,9 @@ dotnet --info
 flutter doctor
 ```
 
+<details>
+  <summary>expand result</summary>
+
 ```bash
 Doctor summary (to see all details, run flutter doctor -v):
 [✓] Flutter (Channel stable, 3.10.3, on Ubuntu 23.04 6.2.0-20-generic, locale en_US.UTF-8)
@@ -121,6 +124,8 @@ Doctor summary (to see all details, run flutter doctor -v):
 
 • No issues found!
 ```
+
+</details>
 
 ### Neovim Deps (fresh 100% OK)
 
@@ -162,7 +167,7 @@ nvim +che
 ### Checkhealth 100% OK
 
 <details>
-  <summary>n +che</summary>
+  <summary>`n +che`</summary>
   
 ```checkhealth
 ==============================================================================
@@ -429,6 +434,9 @@ vim.treesitter: require("vim.treesitter.health").check()
 
 ### References
 
+<details>
+  <summary>expand</summary>
+
 - 0 to LSP: <https://youtu.be/w7i4amO_zaE>
 - Zero to IDE: <https://youtu.be/N93cTbtLCIM>
 - Effective Neovim: Instant IDE: <https://youtu.be/stqUbv-5u2s>
@@ -440,6 +448,8 @@ vim.treesitter: require("vim.treesitter.health").check()
 - Debugging in Neovim: <https://youtu.be/0moS8UHupGc>
 - How to Debug like a Pro: <https://miguelcrespo.co/how-to-debug-like-a-pro-using-neovim>
 - Nvim DAP getting started: <https://davelage.com/posts/nvim-dap-getting-started/>
+
+</details>
 
 ## Fix Google Cloud CLI (broken installation & missing python2 dep)
 
