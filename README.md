@@ -5,7 +5,7 @@
 1. Install all necessary `APT` packages
 
 ```bash
-sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install xclip git curl zsh htop neofetch vim mpv libutf8proc2 libutf8proc-dev cpu-checker -y
+sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install xclip git curl zsh htop neofetch vim mpv libutf8proc2 libutf8proc-dev cpu-checker screenkey -y
 ```
 2. Install `Oh-my-zsh`, then reboot
 
@@ -31,10 +31,14 @@ git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-m
 git clone https://github.com/lavantien/dotfiles.git ~/temp && mv -v {~/temp/*,~/temp/.*} ~/ && cd ~/temp/.config && mv -v * ~/.config/ && cd ~ && cd ~/temp/.local/share/applications && mv * ~/.local/share/applications && cd ~ && source ~/.zshrc
 ```
 
-6. Install `gcc` and `gh`
+6. Install `gcc`, `gh`, and other necessary Brew packages
 
 ```bash
-brew install gcc gh
+brew tap wez/wezterm-linuxbrew
+```
+
+```bash
+brew install gcc gh go lazygit fzf fd ripgrep bat wezterm neovim hyperfine openjdk ruby lua maven node gopls rust-analyzer jdtls lua-language-server yaml-language-server bash-language-server terraform terraform-ls prettier delve vscode-langservers-extracted loc llvm helix dotenv-linter checkmake luarocks php composer grpc julia
 ```
 
 7. Install `Joplin (snap)`, sync your notes, and setup your Git environment:
