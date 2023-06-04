@@ -485,7 +485,7 @@ vim.treesitter: require("vim.treesitter.health").check()
 
 ### Install
 
-- Installed Neovim related packages as instructed in the Checkhealth section above
+- Installed Neovim related packages as instructed in the Healthcheck section above
 - Run `nvim` the first time to initialize plugins, then press `S` to sync packages
 - Enter the `WakaTime Auth Key` in the Settings panel in the browser
 - Enter the `Codeium Auth Key` provided by `:Codeium Auth`
