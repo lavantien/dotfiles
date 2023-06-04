@@ -1,15 +1,13 @@
-For a smooth Git experience, you should make a .netrc file in your home directory and add auth token like this:
-`machine github.com login lavantien password ghp_klsdfjalsdkfjdsjfalsdfjkldasfjkasldfjalsdfjalsdjfk`  
-For `gh`, run `gh auth login` and follow instruction to setup GitHub CLI
+# A robust Dotfiles - Make system setup a science
 
-## Step by Step for a Fresh Ubuntu
+## Step by Step for a Fresh Ubuntu 23.04+
 
-1. Install all necessary APT packages
+1. Install all necessary `APT` packages
 
 ```bash
 sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install xclip git curl zsh htop neofetch vim mpv libutf8proc2 libutf8proc-dev cpu-checker -y
 ```
-2. Install Oh-my-zsh, then reboot
+2. Install `Oh-my-zsh`, then reboot
 
 ```bash
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
@@ -19,6 +17,36 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/too
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+4. Install `zsh-autosuggestions`
+
+```bash
+git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+```
+
+5. , and the proper `.zshrc` by clone this repo to `~/temp`, copy all its content to `~`
+
+```bash
+git clone https://github.com/lavantien/dotfiles.git ~/temp && mv -r ~/temp/* ~/ && source ~/.zshrc
+```
+
+6. Install `gcc` and `gh`
+
+```bash
+brew install gcc gh
+```
+
+7. Install `Joplin (snap)`, sync your notes, and setup your Git environment:
+
+For a smooth Git experience, you should make a .netrc file in your home directory and add auth token:  
+`machine github.com login lavantien password ghp_klsdfjalsdkfjdsjfalsdkldasfjkasldfjalsdfjalsdjfk`  
+For `gh`, run `gh auth login` and follow instruction to setup GitHub CLI  
+
+8. Run `./git-clone-all your-github-username` on `~/dev/personal` for cloning all of your repos
+
+```bash
+mkdir -p ~/dev/personal && cp ~/git-clone-all.sh ~/dev/personal/ && cd ~/dev/personal && ./git-clone-all.sh your-github-username && cd ~
 ```
 
 ## Necessary Programs
