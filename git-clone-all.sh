@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# Source: https://gist.github.com/davegallant/277021b86161035e812082e73ae12fb7
 # This script clones all repos in a GitHub org
 # It requires the GH CLI: https://cli.github.com
 # It can be re-run to collect new repos and pull the latest changes
