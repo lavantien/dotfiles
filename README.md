@@ -138,7 +138,7 @@ cd ~/Downloads && wget -qO- https://packages.microsoft.com/keys/microsoft.asc | 
 ```
 
 ```bash
-cd ~Download && wget https://github.com/vadimcn/codelldb/releases/download/v1.9.2/codelldb-x86_64-linux.vsix && code --install-extension codelldb-x86_64-linux.vsix && rm codelldb-x86_64-linux.vsix && cd ~
+cd ~/Downloads && wget https://github.com/vadimcn/codelldb/releases/download/v1.9.2/codelldb-x86_64-linux.vsix && code --install-extension codelldb-x86_64-linux.vsix && rm codelldb-x86_64-linux.vsix && cd ~
 ```
 
 ### 14. Install `DotNet SDK`
