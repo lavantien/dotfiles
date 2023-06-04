@@ -250,15 +250,7 @@ npm i -g neovim
 ```
 
 ```bash
-cpan App::cpanminus
-```
-
-```bash
 pip3 install neovim
-```
-
-```bash
-sudo apt install ubuntu-dev-tools
 ```
 
 ```bash
