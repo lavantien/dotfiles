@@ -60,15 +60,18 @@ mkdir -p ~/dev/personal && cp ~/git-clone-all.sh ~/dev/personal/ && cd ~/dev/per
 
 ## Necessary Programs
 
-flathub (apt & script)
+rust (script), protoc-gen-go (go), protoc-gen-go-grpc (go)
 iosevka nf (nerd-fonts), noto sans sc (google), deng xian (fontke)
-docker compose (ppa), kubectl (ppa), minikube (deb)
-rust (script)
-nvidia vulkan (ppa & apt), wine (ppa), lutris (deb), mangohud (source)
 vscode (dep), codelldb (vscode)
+
+flathub (apt & script)
+docker compose (ppa), kubectl (ppa), minikube (deb)
+nvidia vulkan (ppa & apt), wine (ppa), lutris (deb), mangohud (source)
+
 kreya (snap), dbgate (snap)
-protoc-gen-go (go), protoc-gen-go-grpc (go)
+
 qemu [kvm](https://developer.android.com/studio/run/emulator-acceleration?utm_source=android-studio#vm-linux), flutter (snap), android-studio (snap), android-sdk-cli (studio)
+
 dotnet-sdk (ppa), battlenet (lutris), diablo-2-resurrected (battlenet)
 steam (deb), obs (ppa), blender (snap), gimp (flatpak), inkscape (snap), libre-office (snap)
 
