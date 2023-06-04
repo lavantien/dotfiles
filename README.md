@@ -17,7 +17,27 @@ wifi.powersave = 2
 sudo systemctl restart NetworkManager
 ```
 
-Fix `Error: Too many open files`: [this article](https://www.howtogeek.com/805629/too-many-open-files-linux/#:~:text=If%20you%20see%20the%20%22Too,by%20editing%20systemd%20configuration%20files.)
+```bash
+sudo vi /etc/systemd/system.conf
+```
+
+```conf
+DefaultLimitNOFILE=4096:2097152
+```
+
+```bash
+sudo vi /etc/systemd/user.conf
+```
+
+```conf
+DefaultLimitNOFILE=4096:2097152
+```
+
+```bash
+sudo systemctl daemon-reexec
+```
+
+`reboot`
 
 ### 1. Install all necessary `APT` packages
 
