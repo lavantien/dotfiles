@@ -44,10 +44,14 @@ sudo systemctl daemon-reexec
 ```bash
 sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install glibc-source gcc xclip git curl zsh htop neofetch vim mpv libutf8proc2 libutf8proc-dev libfuse2 cpu-checker screenkey -y
 ```
-### 2. Install `Oh-my-zsh`, then `reboot`
+### 2. Install `Oh-my-zsh` and `Chrome`, then `reboot`
 
 ```bash
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+```
+
+```bash
+cd ~Downloads && wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && sudo dpkg -i google-chrome-stable_current_amd64.deb && rm google-chrome-stable_current_amd64.deb && cd ~
 ```
 
 ### 3. After `reboot`, install `Linuxbrew`
@@ -137,32 +141,28 @@ wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add
 cd ~Download && wget https://github.com/vadimcn/codelldb/releases/download/v1.9.2/codelldb-x86_64-linux.vsix && code --install-extension codelldb-x86_64-linux.vsix && rm codelldb-x86_64-linux.vsix && cd ~
 ```
 
+### 14. Install `DotNet SDK`
+
+```bash
+cd ~/Downloads && declare repo_version=$(if command -v lsb_release &> /dev/null; then lsb_release -r -s; else grep -oP '(?<=^VERSION_ID=).+' /etc/os-release | tr -d '"'; fi) && wget https://packages.microsoft.com/config/ubuntu/$repo_version/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && sudo dpkg -i packages-microsoft-prod.deb && rm packages-microsoft-prod.deb && cd ~ && sudo apt update && sudo apt install dotnet-sdk-7.0 -y
+```
+
+```bash
+sudo cp -r /usr/share/dotnet/* /usr/lib/dotnet/ && dotnet --info
+```
+
 ## Necessary Programs
 
-vscode (dep), codelldb (vscode)  
+qemu [kvm](https://developer.android.com/studio/run/emulator-acceleration?utm_source=android-studio#vm-linux)  
+kreya (snap), dbgate (snap), flutter (snap), android-studio (snap), android-sdk-cli (studio)  
 
-flathub (apt & script)  
-docker compose (ppa), kubectl (ppa), minikube (deb)  
-nvidia vulkan (ppa & apt), wine (ppa), lutris (deb), mangohud (source)  
+flathub (apt & script), docker compose (ppa), nvidia vulkan (ppa & apt), kubectl (ppa), minikube (deb)  
+wine (ppa), lutris (deb), mangohud (source)  
 
-kreya (snap), dbgate (snap)  
-
-qemu [kvm](https://developer.android.com/studio/run/emulator-acceleration?utm_source=android-studio#vm-linux), flutter (snap), android-studio (snap), android-sdk-cli (studio)  
-
-dotnet-sdk (ppa), battlenet (lutris), diablo-2-resurrected (battlenet)  
+battlenet (lutris), diablo-2-resurrected (battlenet)  
 steam (deb), obs (ppa), blender (snap), gimp (flatpak), inkscape (snap), libre-office (snap)  
 
 ## Healthcheck
-
-### Fix Dotnet SDK
-
-```bash
-sudo cp -r /usr/share/dotnet/* /usr/lib/dotnet/
-```
-
-```bash
-dotnet --info
-```
 
 ### Flutter Doctor
 
@@ -219,14 +219,7 @@ gem install neovim
 nvim +che
 ```
 
-## Neovim Setup From Scratch
-
-### Usage
-
-- Install `linuxbrew` and then `$ brew install neovim`
-- Make sure to run `$ nvim +che` to ensure all dependencies are installed
-
-### Checkhealth 100% OK
+### Neovim Deps (after setup 100% OK)
 
 <details>
   <summary>`n +che` result</summary>
@@ -487,6 +480,13 @@ vim.treesitter: require("vim.treesitter.health").check()
 ````
 
 </details>
+
+## Neovim Setup From Scratch
+
+### Usage
+
+- Install `linuxbrew` and then `$ brew install neovim`
+- Make sure to run `$ nvim +che` to ensure all dependencies are installed
 
 ### Key Bindings
 
