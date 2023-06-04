@@ -75,20 +75,20 @@ mkdir -p ~/dev/personal && cp ~/git-clone-all.sh ~/dev/personal/ && cd ~/dev/per
 
 ## Necessary Programs
 
-rust (script), protoc-gen-go (go), protoc-gen-go-grpc (go)
-iosevka nf (nerd-fonts), noto sans sc (google), deng xian (fontke)
-vscode (dep), codelldb (vscode)
+rust (script), protoc-gen-go (go), protoc-gen-go-grpc (go)  
+iosevka nf (nerd-fonts), noto sans sc (google), deng xian (fontke)  
+vscode (dep), codelldb (vscode)  
 
-flathub (apt & script)
-docker compose (ppa), kubectl (ppa), minikube (deb)
-nvidia vulkan (ppa & apt), wine (ppa), lutris (deb), mangohud (source)
+flathub (apt & script)  
+docker compose (ppa), kubectl (ppa), minikube (deb)  
+nvidia vulkan (ppa & apt), wine (ppa), lutris (deb), mangohud (source)  
 
-kreya (snap), dbgate (snap)
+kreya (snap), dbgate (snap)  
 
-qemu [kvm](https://developer.android.com/studio/run/emulator-acceleration?utm_source=android-studio#vm-linux), flutter (snap), android-studio (snap), android-sdk-cli (studio)
+qemu [kvm](https://developer.android.com/studio/run/emulator-acceleration?utm_source=android-studio#vm-linux), flutter (snap), android-studio (snap), android-sdk-cli (studio)  
 
-dotnet-sdk (ppa), battlenet (lutris), diablo-2-resurrected (battlenet)
-steam (deb), obs (ppa), blender (snap), gimp (flatpak), inkscape (snap), libre-office (snap)
+dotnet-sdk (ppa), battlenet (lutris), diablo-2-resurrected (battlenet)  
+steam (deb), obs (ppa), blender (snap), gimp (flatpak), inkscape (snap), libre-office (snap)  
 
 ## Fix Dotnet SDK
 
