@@ -167,7 +167,7 @@ nvim +che
 ### Checkhealth 100% OK
 
 <details>
-  <summary>`n +che`</summary>
+  <summary>`n +che` result</summary>
   
 ```checkhealth
 ==============================================================================
