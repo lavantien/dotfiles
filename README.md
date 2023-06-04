@@ -126,12 +126,30 @@ Doctor summary (to see all details, run flutter doctor -v):
 
 ```bash
 npm i -g neovim
+```
+
+```bash
 cpan App::cpanminus
+```
+
+```bash
 cpanm -n Neovim::Ext
+```
+
+```bash
 pip3 install neovim
+```
+
+```bash
 sudo apt install ubuntu-dev-tools
-brew install gcc@11
+```
+
+```bash
 gem install neovim
+```
+
+```bash
+nvim +che
 ```
 
 ## Neovim Setup From Scratch
