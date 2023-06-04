@@ -1,6 +1,6 @@
-# A robust Dotfiles - Make dev environment setup into a science
+# A robust Dotfiles - Scientific, Optimize, and Minimal
 
-Quality Assurance by myself: **70%**
+Quality Assurance by myself: **85%**
 
 ## Step by Step for a Fresh Ubuntu 23.04+
 
