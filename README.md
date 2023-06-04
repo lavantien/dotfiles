@@ -31,7 +31,7 @@ git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-m
 git clone https://github.com/lavantien/dotfiles.git ~/temp && mv -v {~/temp/*,~/temp/.*} ~/ && cd ~/temp/.config && mv -v * ~/.config/ && cd ~ && cd ~/temp/.local/share/applications && mv * ~/.local/share/applications && cd ~ && source ~/.zshrc
 ```
 
-6. Install `gcc`, `gh`, and other necessary `Brew` packages
+6. Install `gcc`, `gh`, `wezterm`, `neovim`, and other necessary `Brew` packages
 
 ```bash
 brew tap wez/wezterm-linuxbrew
