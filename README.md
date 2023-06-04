@@ -28,7 +28,7 @@ git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-m
 5. , and the proper `.zshrc` by clone this repo to `~/temp`, copy all its content to `~`
 
 ```bash
-git clone https://github.com/lavantien/dotfiles.git ~/temp && mv -r ~/temp/* ~/ && source ~/.zshrc
+git clone https://github.com/lavantien/dotfiles.git ~/temp && mv -v {~/temp/*,~/temp/.*} ~/ && cd ~/temp/.config && mv -v * ~/.config/ && cd ~ && cd ~/temp/.local/share/applications && mv * ~/.local/share/applications && cd ~ && source ~/.zshrc
 ```
 
 6. Install `gcc` and `gh`
