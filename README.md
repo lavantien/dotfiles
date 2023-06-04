@@ -58,6 +58,10 @@ brew tap wez/wezterm-linuxbrew
 ```
 
 ```bash
+brew install wezterm
+```
+
+```bash
 brew install gcc gh go lazygit fzf fd ripgrep bat wezterm neovim hyperfine openjdk ruby lua maven node gopls rust-analyzer jdtls lua-language-server yaml-language-server bash-language-server terraform terraform-ls prettier delve vscode-langservers-extracted loc llvm helix dotenv-linter checkmake luarocks php composer grpc julia
 ```
 
