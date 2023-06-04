@@ -22,13 +22,13 @@ sudo systemctl restart NetworkManager
 ```bash
 sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install glibc-source gcc xclip git curl zsh htop neofetch vim mpv libutf8proc2 libutf8proc-dev cpu-checker screenkey -y
 ```
-2. Install `Oh-my-zsh`, then reboot
+2. Install `Oh-my-zsh`, then `reboot`
 
 ```bash
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 ```
 
-3. After reboot, install `Linuxbrew`
+3. After `reboot`, install `Linuxbrew`
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -45,14 +45,10 @@ git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-m
 ```bash
 git clone https://github.com/lavantien/dotfiles.git ~/temp && mv -v {~/temp/*,~/temp/.*} ~/ && cd ~/temp/.config && mv -v * ~/.config/ && cd ~ && cd ~/temp/.local/share/applications && mv * ~/.local/share/applications && cd ~ && source ~/.zshrc
 ```
-6. Install `rust` and its toolchains
+6. Install `rust` and its toolchains, then `reboot`
 
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-```
-
-```bash
-source ~/.zshrc
 ```
 
 7. Install `gcc`, `gh`, `neovim`, and other necessary `Brew` packages
