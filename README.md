@@ -169,24 +169,20 @@ sudo apt install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils
 sudo snap install android-studio --classic
 ```
 
-Run `Android Studio` and install default configuration, then click `More tools` -> `Manages SDKs` -> `` -> tick `Android SDK CLI`
+Run `Android Studio` and install default configuration, then click `More Actions` -> `SDK Manager` -> `SDK Tools` -> tick `Android SDK Build-Tools` and `Android SDK Command-line Tools` -> `Apply` and `OK`
 
 ```bash
 sudo snap install flutter --classic
 ```
 
 ```bash
-flutter doctor
+flutter doctor && flutter doctor --android-licenses
 ```
 
 ### 17. Install `Kreya` and `DBbGate`
 
 ```bash
-sudo snap install kreya
-```
-
-```bash
-sudo snap install dbgate
+sudo snap install kreya dbgate
 ```
 
 ### 18. Install `Docker Compose`, `FlatHub`, and `Vulkan`, then `reboot`
