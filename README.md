@@ -2,7 +2,7 @@
 
 ## Step by Step for a Fresh Ubuntu 23.04+
 
-0. Disable Wireless Powersaving and Files Open Limit
+### 0. Disable Wireless Powersaving and Files Open Limit
 
 ```bash
 sudo vi /etc/NetworkManager/conf.d/default-wifi-powersave-on.conf
@@ -17,49 +17,49 @@ wifi.powersave = 2
 sudo systemctl restart NetworkManager
 ```
 
-Fix `Error: Too many open files: [this article](https://www.howtogeek.com/805629/too-many-open-files-linux/#:~:text=If%20you%20see%20the%20%22Too,by%20editing%20systemd%20configuration%20files.)
+Fix `Error: Too many open files`: [this article](https://www.howtogeek.com/805629/too-many-open-files-linux/#:~:text=If%20you%20see%20the%20%22Too,by%20editing%20systemd%20configuration%20files.)
 
-1. Install all necessary `APT` packages
+### 1. Install all necessary `APT` packages
 
 ```bash
 sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install glibc-source gcc xclip git curl zsh htop neofetch vim mpv libutf8proc2 libutf8proc-dev cpu-checker screenkey -y
 ```
-2. Install `Oh-my-zsh`, then `reboot`
+### 2. Install `Oh-my-zsh`, then `reboot`
 
 ```bash
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 ```
 
-3. After `reboot`, install `Linuxbrew`
+### 3. After `reboot`, install `Linuxbrew`
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-4. Install `zsh-autosuggestions`
+### 4. Install `zsh-autosuggestions`
 
 ```bash
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 ```
 
-5. , and the proper `.zshrc` by clone this repo to `~/temp`, copy all its content to `~`
+### 5. Install the proper `.zshrc` by clone this repo to `~/temp`, copy all its content to `~`
 
 ```bash
 git clone https://github.com/lavantien/dotfiles.git ~/temp && mv -v {~/temp/*,~/temp/.*} ~/ && cd ~/temp/.config && mv -v * ~/.config/ && cd ~ && cd ~/temp/.local/share/applications && mv * ~/.local/share/applications && cd ~ && source ~/.zshrc
 ```
-6. Install `rust` and its toolchains, then `reboot`
+### 6. Install `rust` and its toolchains, then `reboot`
 
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 
-7. Install `gcc`, `gh`, `neovim`, and other necessary `Brew` packages
+### 7. Install `gcc`, `gh`, `neovim`, and other necessary `Brew` packages
 
 ```bash
 brew install gcc gh go lazygit fzf fd ripgrep bat neovim hyperfine openjdk ruby lua maven node gopls rust-analyzer jdtls lua-language-server yaml-language-server bash-language-server terraform terraform-ls prettier delve vscode-langservers-extracted loc llvm dotenv-linter checkmake luarocks php composer grpc julia
 ```
 
-8. Install `wezterm`
+### 8. Install `wezterm`
 
 ```bash
 brew tap wez/wezterm-linuxbrew
@@ -69,13 +69,13 @@ brew tap wez/wezterm-linuxbrew
 brew install wezterm
 ```
 
-9. Install `Joplin (snap)`, sync your notes, and setup your `Git` environment:
+### 9. Install `Joplin (snap)`, sync your notes, and setup your `Git` environment:
 
 For a smooth `Git` experience, you should make a `.netrc` file in your home directory and add auth token:  
 `machine github.com login lavantien password ghp_klsdfjalsdkfjdsjfalsdkldasfjkasldfjalsdfjalsdjfk`  
 For `gh`, run `gh auth login` and follow instruction to setup `GitHub CLI` 
 
-10. Run `./git-clone-all your-github-username` on `~/dev/personal` for cloning all of your repos
+### 10. Run `./git-clone-all your-github-username` on `~/dev/personal` for cloning all of your repos
 
 ```bash
 mkdir -p ~/dev/personal && cp ~/git-clone-all.sh ~/dev/personal/ && cd ~/dev/personal && ./git-clone-all.sh your-github-username && cd ~
