@@ -44,7 +44,7 @@ sudo systemctl daemon-reexec
 ### 1. Install all necessary `APT` packages
 
 ```bash
-sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install apt-transport-https glibc-source gcc xclip git curl zsh htop neofetch vim mpv libutf8proc2 libutf8proc-dev libfuse2 cpu-checker screenkey -y
+sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install apt-transport-https ubuntu-dev-tools glibc-source gcc xclip git curl zsh htop neofetch vim mpv libutf8proc2 libutf8proc-dev libfuse2 cpu-checker screenkey -y
 ```
 
 ### 2. Install `Oh-my-zsh` and `Chrome`, then `reboot`
@@ -84,7 +84,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ### 7. Install `gcc`, `gh`, `neovim`, and other necessary `Brew` packages
 
 ```bash
-brew install gcc gh go lazygit fzf fd ripgrep bat neovim hyperfine openjdk ruby lua maven node gopls rust-analyzer jdtls lua-language-server yaml-language-server bash-language-server terraform terraform-ls prettier delve vscode-langservers-extracted loc llvm dotenv-linter checkmake luarocks php composer
+brew install gcc@11 gcc gh go lazygit fzf fd ripgrep bat neovim hyperfine openjdk ruby lua maven node gopls rust-analyzer jdtls lua-language-server yaml-language-server bash-language-server terraform terraform-ls prettier delve vscode-langservers-extracted loc llvm dotenv-linter checkmake luarocks php composer
 ```
 
 ```bash
@@ -251,10 +251,6 @@ npm i -g neovim
 
 ```bash
 cpan App::cpanminus
-```
-
-```bash
-cpanm -n Neovim::Ext
 ```
 
 ```bash
