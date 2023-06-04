@@ -30,8 +30,13 @@ git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-m
 ```bash
 git clone https://github.com/lavantien/dotfiles.git ~/temp && mv -v {~/temp/*,~/temp/.*} ~/ && cd ~/temp/.config && mv -v * ~/.config/ && cd ~ && cd ~/temp/.local/share/applications && mv * ~/.local/share/applications && cd ~ && source ~/.zshrc
 ```
+6. Install `rust` and its toolchains
 
-6. Install `gcc`, `gh`, `wezterm`, `neovim`, and other necessary `Brew` packages
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+
+7. Install `gcc`, `gh`, `wezterm`, `neovim`, and other necessary `Brew` packages
 
 ```bash
 brew tap wez/wezterm-linuxbrew
@@ -41,13 +46,13 @@ brew tap wez/wezterm-linuxbrew
 brew install gcc gh go lazygit fzf fd ripgrep bat wezterm neovim hyperfine openjdk ruby lua maven node gopls rust-analyzer jdtls lua-language-server yaml-language-server bash-language-server terraform terraform-ls prettier delve vscode-langservers-extracted loc llvm helix dotenv-linter checkmake luarocks php composer grpc julia
 ```
 
-7. Install `Joplin (snap)`, sync your notes, and setup your `Git` environment:
+8. Install `Joplin (snap)`, sync your notes, and setup your `Git` environment:
 
 For a smooth `Git` experience, you should make a `.netrc` file in your home directory and add auth token:  
 `machine github.com login lavantien password ghp_klsdfjalsdkfjdsjfalsdkldasfjkasldfjalsdfjalsdjfk`  
 For `gh`, run `gh auth login` and follow instruction to setup `GitHub CLI` 
 
-8. Run `./git-clone-all your-github-username` on `~/dev/personal` for cloning all of your repos
+9. Run `./git-clone-all your-github-username` on `~/dev/personal` for cloning all of your repos
 
 ```bash
 mkdir -p ~/dev/personal && cp ~/git-clone-all.sh ~/dev/personal/ && cd ~/dev/personal && ./git-clone-all.sh your-github-username && cd ~
@@ -55,27 +60,17 @@ mkdir -p ~/dev/personal && cp ~/git-clone-all.sh ~/dev/personal/ && cd ~/dev/per
 
 ## Necessary Programs
 
-1. ubuntu-23.04+, stay away from 22.04-LTS - it's very unstable
-2. chrome (deb), xclip (apt), git (apt), curl (apt), zsh (apt), ohmyzsh (script)
-3. htop (apt), neofetch (apt), brew (script), gcc@11 (brew), gcc (brew), flathub (apt & script)
-4. wezterm (brew), vim (apt), neovim (brew), shortcut wmclass
-5. zsh-autosuggestions (git), fzf (brew), ripgrep (brew), bat (brew)
-6. go (brew), lazygit (brew), hyperfine (brew), screenkey (brew)
-7. iosevka nf (nerd-fonts), noto sans sc (google), deng xian (fontke)
-8. joplin (script), gh (brew), clone all (gh & script)
-9. docker compose (ppa), kubectl (ppa), minikube (deb)
-10. rust (script), openjdk (brew), ruby (brew), lua (brew), maven (brew), node (brew)
-11. gopls (brew), rust-analyzer (brew), jdtls (brew), lua-language-server (brew)
-12. yaml-language-server (brew), bash-language-server (brew), terraform (brew), terraform-ls (brew)
-13. prettier (brew), delve (brew), vscode-langservers-extracted (brew)
-14. nvidia vulkan (ppa & apt), wine (ppa), lutris (deb), mangohud (source), mpv (apt), loc (brew)
-15. llvm (brew), vscode (dep), codelldb (vscode)
-16. helix (brew), hx --health, kreya (snap), dbgate (snap), dotenv-linter (brew), checkmake (brew)
-17. fd (brew), luarocks (brew), php (brew), composer (brew), julia (brew), nvim +che
-18. grpc (brew), protoc-gen-go (go), protoc-gen-go-grpc (go), libutf8proc2 (apt), libutf8proc-dev (apt)
-19. cpu-checker (apt), qemu [kvm](https://developer.android.com/studio/run/emulator-acceleration?utm_source=android-studio#vm-linux), flutter (snap), android-studio (snap), android-sdk-cli (studio)
-20. dotnet-sdk (ppa), battlenet (lutris), diablo-2-resurrected (battlenet)
-21. steam (apt), obs (ppa), blender (snap), gimp (flatpak), inkscape (snap), libre-office (snap)
+flathub (apt & script)
+iosevka nf (nerd-fonts), noto sans sc (google), deng xian (fontke)
+docker compose (ppa), kubectl (ppa), minikube (deb)
+rust (script)
+nvidia vulkan (ppa & apt), wine (ppa), lutris (deb), mangohud (source)
+vscode (dep), codelldb (vscode)
+kreya (snap), dbgate (snap)
+protoc-gen-go (go), protoc-gen-go-grpc (go)
+qemu [kvm](https://developer.android.com/studio/run/emulator-acceleration?utm_source=android-studio#vm-linux), flutter (snap), android-studio (snap), android-sdk-cli (studio)
+dotnet-sdk (ppa), battlenet (lutris), diablo-2-resurrected (battlenet)
+steam (deb), obs (ppa), blender (snap), gimp (flatpak), inkscape (snap), libre-office (snap)
 
 ## Fix Dotnet SDK
 
