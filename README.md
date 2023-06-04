@@ -13,7 +13,7 @@ sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt ins
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 ```
 
-3. After reboot, install Linuxbrew
+3. After reboot, install `Linuxbrew`
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -31,7 +31,7 @@ git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-m
 git clone https://github.com/lavantien/dotfiles.git ~/temp && mv -v {~/temp/*,~/temp/.*} ~/ && cd ~/temp/.config && mv -v * ~/.config/ && cd ~ && cd ~/temp/.local/share/applications && mv * ~/.local/share/applications && cd ~ && source ~/.zshrc
 ```
 
-6. Install `gcc`, `gh`, and other necessary Brew packages
+6. Install `gcc`, `gh`, and other necessary `Brew` packages
 
 ```bash
 brew tap wez/wezterm-linuxbrew
@@ -41,11 +41,11 @@ brew tap wez/wezterm-linuxbrew
 brew install gcc gh go lazygit fzf fd ripgrep bat wezterm neovim hyperfine openjdk ruby lua maven node gopls rust-analyzer jdtls lua-language-server yaml-language-server bash-language-server terraform terraform-ls prettier delve vscode-langservers-extracted loc llvm helix dotenv-linter checkmake luarocks php composer grpc julia
 ```
 
-7. Install `Joplin (snap)`, sync your notes, and setup your Git environment:
+7. Install `Joplin (snap)`, sync your notes, and setup your `Git` environment:
 
-For a smooth Git experience, you should make a .netrc file in your home directory and add auth token:  
+For a smooth `Git` experience, you should make a `.netrc` file in your home directory and add auth token:  
 `machine github.com login lavantien password ghp_klsdfjalsdkfjdsjfalsdkldasfjkasldfjalsdfjalsdjfk`  
-For `gh`, run `gh auth login` and follow instruction to setup GitHub CLI  
+For `gh`, run `gh auth login` and follow instruction to setup `GitHub CLI` 
 
 8. Run `./git-clone-all your-github-username` on `~/dev/personal` for cloning all of your repos
 
