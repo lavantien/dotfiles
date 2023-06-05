@@ -547,6 +547,10 @@ go get -u https://github.com/golang-jwt/jwt
 
 ## Healthcheck
 
+```bash
+sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && rustup update && brew upgrade
+```
+
 <details>
   <summary>expand</summary>
 
