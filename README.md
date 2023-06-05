@@ -1,4 +1,4 @@
-# A robust Dotfiles - Scientific, Optimize, and Minimal
+# A robust Dotfiles - Scientific, Optimized, and Minimal
 
 Quality Assurance by myself: **99%**  
 
