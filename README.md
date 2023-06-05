@@ -1,9 +1,11 @@
 # A robust Dotfiles for Developer - Battery Included
 
-Quality Assurance: **100%**; Disk Size: **139GB**; Time Taken: **5h**;  
+Quality Assurance: **100%**; Disk Size: **139GB**; Time Taken: **5h**;
+
 Supported: **AMD** & **Intel** (Wayland), **NVIDIA** (auto X11)
 
-Turn off `M$ Secure Boot` in your `BIOS` for a smooth installation process  
+Turn off `M$ Secure Boot` in your `BIOS` for a smooth installation process
+
 Install with `Minimal setup`, check `Additionals Drivers` and `3rd-party` boxes
 
 ## Step by Step Setup for a Fresh Ubuntu 23.04
@@ -64,7 +66,8 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/too
 cd ~/Downloads && wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && sudo dpkg -i google-chrome-stable_current_amd64.deb && rm google-chrome-stable_current_amd64.deb && cd ~
 ```
 
-Open `Chrome`, sync your profile, and go to <https://github.com/lavantien/dotfiles/blob/main/README.md> to continue the steps  
+Open `Chrome`, sync your profile, and go to <https://github.com/lavantien/dotfiles/blob/main/README.md> to continue the steps
+
 Recommended `Chrome Extensions`:
 
 ```text
@@ -334,7 +337,8 @@ sudo apt install cabextract fluid-soundfont-gm fluid-soundfont-gs libmspack0 mes
 lutris
 ```
 
-Click the `gear button` next to `Wine` -> tick `Advanced` -> `System options` -> `Command prefix` -> `mangohud` -> `Save` -> exit Lutris  
+Click the `gear button` next to `Wine` -> tick `Advanced` -> `System options` -> `Command prefix` -> `mangohud` -> `Save` -> exit Lutris
+
 For `Steam` games, set launch options: `mangohud %command%`
 
 ```bash
@@ -371,8 +375,10 @@ cd ~/Downloads && wget https://repo.steampowered.com/steam/archive/precise/steam
 
 Run `Steam`, login, enable `Shader Pre-Caching` and `SteamPlay`, restart `Steam`
 
-(Install `Dota 2` to test native `Vulkan`, `Grim Dawn` to test `Proton`, also `gd rainbow filter` is a must-have loot filter for `Grim Dawn`  
-Install `Battlenet` by searching for `script` inside `Lutris`, do as instructed, then relaunch `Battlenet`, install `Diablo 2 Ressurrected`  
+(Install `Dota 2` to test native `Vulkan`, `Grim Dawn` to test `Proton`, also `gd rainbow filter` is a must-have loot filter for `Grim Dawn`
+
+Install `Battlenet` by searching for `script` inside `Lutris`, do as instructed, then relaunch `Battlenet`, install `Diablo 2 Ressurrected`
+
 Run `Diablo 2 Resurrected` to check for stability and if `Fsync/Gsync` is working properly)
 
 ```bash
@@ -1135,7 +1141,9 @@ vim.treesitter: require("vim.treesitter.health").check()
 ### Mason Built-in Packages to `:MasonInstall `
 
 All `language servers` are pre-installed when you first initialize Neovim
+
 Some tools such as `prettier` are handled by the configured `null-ls` already
+
 see `.config/nvim/lua/plugins/init.lua`, `null-ls` section
 
 - All 47 Packages:
