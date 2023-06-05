@@ -110,3 +110,14 @@ go/bin
 Android/Sdk
 .flutter
 .m2/repository
+.config/cef_user_data/Dictionaries
+.local/share/Steam
+.local/share/applications/Dota 2.desktop
+.local/share/applications/Steam Linux Runtime.desktop
+.local/share/containers/podman-desktop/configuration
+.local/share/vulkan/implicit_layer.d
+.redhat
+.steam
+.var/app/io.podman_desktop.PodmanDesktop
+.steampath
+.steampid
