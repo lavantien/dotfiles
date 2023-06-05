@@ -2,7 +2,8 @@
 
 Quality Assurance by myself: **99%**  
 
-Turn off `M$ Secure Boot` in your `BIOS` for a smooth installation process
+Turn off `M$ Secure Boot` in your `BIOS` for a smooth installation process  
+Install with `Minimal setup`, check `Additionals Drivers` and `3rd-party` boxes  
 
 ## Step by Step Setup for a Fresh Ubuntu 23.04
 
@@ -59,8 +60,10 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/too
 ```
 
 ```bash
-cd ~Downloads && wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && sudo dpkg -i google-chrome-stable_current_amd64.deb && rm google-chrome-stable_current_amd64.deb && cd ~
+cd ~/Downloads && wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && sudo dpkg -i google-chrome-stable_current_amd64.deb && rm google-chrome-stable_current_amd64.deb && cd ~
 ```
+
+Open `Chrome`, sync your profile, and go to <https://github.com/lavantien/dotfiles/blob/main/README.md> to continue the steps
 
 ### 3. After `reboot`, install `Linuxbrew`
 
