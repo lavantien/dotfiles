@@ -861,20 +861,89 @@ vim.treesitter: require("vim.treesitter.health").check()
 
 ### Mason Built-in 45 Packages to install (some tools such as `prettier` are handled by configured `null-ls` already)
 
-- Go: [gopls, delve, staticcheck, gotests, golangci-lint, golangci-lint-langserver, godebug-adapter, gomodifytags, impl]
-- Rust: [rust-analyzer, codelldb]
-- Lua: [lua-language-server, stylua, luacheck]
-- C/C++: [clangd, clang-format]
-- Java: [jdtls, java-tests, java-debug-adapter, google-java-format]
-- JavaScript: [typescript-language-server, js-debug-adapter, chrome-debug-adapter]
-- HTML: [html-lsp]
-- CSS: [css-lsp, tailwindcss-language-server]
-- Python: [pyright, debugpy, flake8, blue]
-- Dart: [dart-debug-adapter]
-- YAML: [yaml-language-server, yamllint, yamlfmt]
-- Protobuf: [buf-language-server, buf]
-- Terraform: [terraform-ls, tflint, tfsec]
-- Markdown: [marksman, ltex-ls, vale, proselint, markdown-toc, cbfmt]
+- Go:
+
+```text
+gopls delve staticcheck gotests golangci-lint golangci-lint-langserver godebug-adapter gomodifytags impl
+```
+
+- Rust:
+
+```text
+rust-analyzer codelldb
+```
+
+- Lua:
+
+```text
+lua-language-server stylua luacheck
+```
+
+- C/C++:
+
+```text
+clangd clang-format
+```
+
+- Java:
+
+```text
+jdtls java-tests java-debug-adapter google-java-format
+```
+
+- JavaScript:
+
+```text
+typescript-language-server js-debug-adapter chrome-debug-adapter
+```
+
+- HTML:
+
+```text
+html-lsp
+```
+
+- CSS:
+
+```text
+css-lsp tailwindcss-language-server
+```
+
+- Python:
+
+```text
+pyright debugpy flake8 blue
+```
+
+- Dart:
+
+```text
+dart-debug-adapter
+```
+
+- YAML:
+
+```text
+yaml-language-server yamllint yamlfmt
+```
+
+- Protobuf:
+
+```text
+buf-language-server buf
+```
+
+- Terraform:
+
+```text
+terraform-ls tflint tfsec
+```
+
+- Markdown:
+
+```text
+marksman ltex-ls vale proselint markdown-toc cbfmt
+```
 
 ### References
 
