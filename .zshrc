@@ -25,7 +25,7 @@ export MANGOHUD=1
 export D2R_SAVES_PATH="/home/lavantien/Games/battlenet/drive_c/users/lavantien/Saved Games/Diablo II Resurrected"
 
 # Brew
-export HOMEBREW_MAKE_JOBS=8
+export HOMEBREW_MAKE_JOBS=16
 export HOMEBREW_VERBOSE=1
 
 # Go

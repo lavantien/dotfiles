@@ -289,13 +289,15 @@ You can view the list of minikube maintainers at: https://github.com/kubernetes/
 minikube stop
 ```
 
-### 20. Install `Graphics Drivers` and `Vulkan`
+### 20. Install `Graphics Drivers` and `Vulkan`, and `Fan Control`
 
 If you have a `NVIDIA GPU`, replace `535` with whatever is the latest driver version as listed [here](https://launchpad.net/~graphics-drivers/+archive/ubuntu/ppa)
 
 ```bash
 sudo add-apt-repository ppa:graphics-drivers/ppa -y && sudo dpkg --add-architecture i386 && sudo apt update && sudo apt install nvidia-driver-535 libvulkan1 libvulkan1:i386 libgl-dev libgl-dev:i386 -y
 ```
+
+and then `underwatt` your GPU: <https://www.pugetsystems.com/labs/hpc/quad-rtx3090-gpu-power-limiting-with-systemd-and-nvidia-smi-1983/>  
 
 If not, just install `Vulkan`
 
@@ -310,6 +312,13 @@ sudo add-apt-repository ppa:kisak/kisak-mesa -y && sudo dpkg --add-architecture 
 ```
 
 `reboot`
+
+```bash
+curl -1sLf \
+  'https://dl.cloudsmith.io/public/coolercontrol/coolercontrol/setup.rpm.sh' \
+  | sudo -E bash \
+&& sudo apt update && sudo apt install lm-sensors libxcb-cursor0 coolercontrol -y && sudo sensors-detect && sudo systemctl enable coolercontrold && sudo systemctl start coolercontrold
+```
 
 ### 21. Install `Wine`, `Lutris`, and `MangoHud` (always check for the latest version and replace the version string when download from `wget`)
 
@@ -448,10 +457,16 @@ http {
 go get -u github.com/segmentio/kafka-go
 ```
 
-- [**GoKa KafkaGo**]()
+- [**GoKa KafkaGo**](https://github.com/lovoo/goka)
 
 ```bash
 go get -u github.com/lovoo/goka
+```
+
+- [**FranzGo KafkaGo**](https://github.com/twmb/franz-go)
+
+```bash
+go get -u github.com/twmb/franz-go
 ```
 
 - [**GRPC Gateway**](https://github.com/grpc-ecosystem/grpc-gateway)
