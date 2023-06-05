@@ -146,25 +146,13 @@ cd ~/Downloads && wget https://github.com/ryanoasis/nerd-fonts/releases/download
 ### 11. Install `wezterm`
 
 ```bash
-brew tap wez/wezterm-linuxbrew
-```
-
-```bash
-brew install wezterm
+brew tap wez/wezterm-linuxbrew && brew install wezterm
 ```
 
 ### 12. Install `GRPC`, `GRPC-Web`, and `protoc-gen`
 
 ```bash
-brew install grpc protoc-gen-grpc-web
-```
-
-```bash
-go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-```
-
-```bash
-go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+brew install grpc protoc-gen-grpc-web && go install google.golang.org/protobuf/cmd/protoc-gen-go@latest && go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 ```
 
 ### 13. Install `VSCode` and `CodeLLDB` (replace version `v1.9.2` with whatever latest)
@@ -210,11 +198,7 @@ sudo snap install android-studio --classic
 Run `Android Studio` and install default configuration, then click `More Actions` -> `SDK Manager` -> `SDK Tools` -> tick `Android SDK Build-Tools` and `Android SDK Command-line Tools` -> `Apply` and `OK`
 
 ```bash
-sudo snap install flutter --classic
-```
-
-```bash
-flutter doctor && flutter doctor --android-licenses
+sudo snap install flutter --classic && flutter doctor && flutter doctor --android-licenses
 ```
 
 ### 17. Install `Kreya` and `DBbGate`
@@ -228,8 +212,6 @@ sudo snap install kreya dbgate
 ```bash
 sudo apt install flatpak -y && sudo apt install gnome-software-plugin-flatpak -y && flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 ```
-
-`reboot`
 
 ```bash
 sudo install -m 0755 -d /etc/apt/keyrings && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg && sudo chmod a+r /etc/apt/keyrings/docker.gpg && echo \
@@ -252,7 +234,7 @@ docker run hello-world && flatpak install flathub io.podman_desktop.PodmanDeskto
 
 ```bash
 curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg && echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
- && sudo apt update && sudo apt install kubectl
+ && sudo apt update && sudo apt install kubectl -y
 ```
 
 ```bash
@@ -265,13 +247,13 @@ minikube config set driver docker && minikube start && minikube addons enable me
 
 ### 20. Install `Graphics Drivers` and `Vulkan`
 
-if you have a `NVIDIA GPU`, replace `535` with whatever is the latest driver version as listed [here](https://launchpad.net/~graphics-drivers/+archive/ubuntu/ppa)
+If you have a `NVIDIA GPU`, replace `535` with whatever is the latest driver version as listed [here](https://launchpad.net/~graphics-drivers/+archive/ubuntu/ppa)
 
 ```bash
 sudo add-apt-repository ppa:graphics-drivers/ppa -y && sudo dpkg --add-architecture i386 && sudo apt update && sudo apt install nvidia-driver-535 libvulkan1 libvulkan1:i386 libgl-dev libgl-dev:i386 -y
 ```
 
-if not, just install `Vulkan`
+If not, just install `Vulkan`
 
 ```bash
 sudo dpkg --add-architecture i386 && sudo apt update && sudo apt install libvulkan1 libvulkan1:i386 -y
