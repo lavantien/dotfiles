@@ -1,6 +1,6 @@
 # A robust Dotfiles - Battery Included
 
-Quality Assurance by myself: **99%**  
+Quality Assurance by myself: **99%**; Supported Architecture: **AMD**, **Intel**, **NVIDIA**
 
 Turn off `M$ Secure Boot` in your `BIOS` for a smooth installation process  
 Install with `Minimal setup`, check `Additionals Drivers` and `3rd-party` boxes  
