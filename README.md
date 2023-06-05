@@ -857,7 +857,7 @@ vim.treesitter: require("vim.treesitter.health").check()
 
 - In Neovim Normal Mode, hit `:nmap` to see the list of all bindings
 - To see bindings of a certain key, hit `:nmap <leader>`
-- Or you can just use Telescope to do the deed `<leader>vk`, in this case, holding the space bar and pressing `vk`
+- Or you can just use Telescope to do the deed `<leader>vk`, in this case, holding space and pressing `vk`
 
 ### Mason Built-in 45 Packages to `:MasonInstall ` (some tools such as `prettier` are handled by configured `null-ls` already)
 
