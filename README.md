@@ -363,7 +363,7 @@ cd ~/Downloads && wget https://repo.steampowered.com/steam/archive/precise/steam
 Run `Steam`, login, enable `Shader Pre-Caching` and `SteamPlay`, restart `Steam`
 
 (Install `Dota 2` to test native `Vulkan`, `Grim Dawn` to test `Proton`, also `gd rainbow filter` is a must-have loot filter for `Grim Dawn`  
-Install `Battlenet` by searching for `script` inside `Lutris`, do as instructed, then relaunch `Battlenet`, login and install `Diablo 2 Ressurrected`  
+Install `Battlenet` by searching for `script` inside `Lutris`, do as instructed, then relaunch `Battlenet`, install `Diablo 2 Ressurrected`  
 Run `Diablo 2 Resurrected` to check for stability and if `Fsync/Gsync` is working properly)
 
 ```bash

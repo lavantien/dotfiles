@@ -129,3 +129,5 @@ Android/Sdk
 .dotnet
 .local/share/NuGet
 .nuget/NuGet
+.config/libreoffice/4/user
+.config/blender/3.5/config
