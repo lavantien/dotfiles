@@ -272,7 +272,7 @@ Click the `gear button` next to `Wine` -> tick `Advanced` -> `System options` ->
 sudo apt install mangohud -y
 ```
 
-### 21. Install `OBS`, `Gimp`, `Inkscape`, `LibreOffice`, `Blender`
+### 22. Install `OBS`, `Gimp`, `Inkscape`, `LibreOffice`, `Blender`
 
 ```bash
 sudo add-apt-repository ppa:obsproject/obs-studio -y && sudo apt update && sudo apt install ffmpeg obs-studio -y
@@ -288,13 +288,13 @@ sudo snap install gimp inkscape libreoffice
 sudo snap install blender --classic
 ```
 
-### 22. `Helix`
+### 23. `Helix`
 
 ```bash
 brew install helix
 ```
 
-### 23. Install `Steam` (and optionally `Dota 2`, `Grim Dawn`, `Battlenet`, and `Diablo 2 Resurrected`)
+### 24. Install `Steam` (and optionally `Dota 2`, `Grim Dawn`, `Battlenet`, and `Diablo 2 Resurrected`)
 
 ```bash
 cd ~/Downloads && wget https://repo.steampowered.com/steam/archive/precise/steam_latest.deb && sudo dpkg -i steam_latest.deb && rm steam_latest.deb && cd ~
