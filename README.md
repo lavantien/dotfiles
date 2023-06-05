@@ -51,7 +51,7 @@ sudo systemctl daemon-reexec && ulimit -n
 ### 1. Install all necessary `APT` packages
 
 ```bash
-sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install ubuntu-desktop ca-certificates apt-transport-https ubuntu-dev-tools glibc-source gcc xclip git curl zsh htop neofetch vim mpv libutf8proc2 libutf8proc-dev libfuse2 cpu-checker screenkey -y
+sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install ubuntu-desktop ca-certificates apt-transport-https ubuntu-dev-tools glibc-source gcc xclip git git-lfs curl zsh htop neofetch vim mpv libutf8proc2 libutf8proc-dev libfuse2 cpu-checker screenkey -y
 ```
 
 ### 2. Install `Oh-my-zsh` and `Chrome`, then `reboot`
@@ -135,7 +135,7 @@ sudo snap install joplin-desktop
 For a smooth `Git` experience, you should make a `.netrc` file in your home directory and add auth token
 
 ```bash
-echo 'machine github.com login lavantien password ghp_klsdfjalsdkfjdsjfalsdkldasfjkasldfjalsdfjalsdjfk' >> .netrc
+echo 'machine github.com login lavantien password ghp_klsdfjalsdkfjdsjfalsdkldasfjkasldfjalsdfjalsdjfk' >> .netrc && git lfs install
 ```
 
 For `gh`, run `gh auth login` and follow instruction to setup `GitHub CLI`
