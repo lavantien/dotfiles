@@ -134,3 +134,5 @@ Android/Sdk
 .local/share/grilo-plugins
 .config/totem
 .config/coolercontrol
+.config/gnome-control-center/backgrounds
+.local/share/backgrounds
