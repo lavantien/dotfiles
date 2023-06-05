@@ -442,6 +442,18 @@ http {
 
 </details>
 
+- [**SegmentIO KafkaGo**](https://github.com/segmentio/kafka-go)
+
+```bash
+go get -u github.com/segmentio/kafka-go
+```
+
+- [**GoKa KafkaGo**]()
+
+```bash
+go get -u github.com/lovoo/goka
+```
+
 - [**GRPC Gateway**](https://github.com/grpc-ecosystem/grpc-gateway)
   
 ```bash
