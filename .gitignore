@@ -126,3 +126,6 @@ Android/Sdk
 .local/share/applications/Steam Linux Runtime - Sniper.desktop
 .local/share/applications/Steam Linux Runtime - Soldier.desktop
 .config/nvim/lazy-lock.json
+.dotnet
+.local/share/NuGet
+.nuget/NuGet
