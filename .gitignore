@@ -131,3 +131,6 @@ Android/Sdk
 .nuget/NuGet
 .config/libreoffice/4/user
 .config/blender/3.5/config
+.local/share/grilo-plugins
+.config/totem
+.config/coolercontrol
