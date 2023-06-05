@@ -364,6 +364,12 @@ Run `Steam`, login, enable `Shader Pre-Caching` and `SteamPlay`, restart `Steam`
 Install `Battlenet` by searching for `script` inside `Lutris`, do as instructed, then relaunch `Battlenet`, login and install `Diablo 2 Ressurrected`  
 Run `Diablo 2 Resurrected` to check for stability and if `Fsync/Gsync` is working properly)
 
+```bash
+nvidia-smi
+```
+  
+Enable `Gsync/Fsync` inside `nvidia-settings`
+
 </details>
   
 ## Healthcheck
