@@ -1337,7 +1337,35 @@ tmpfs           3.4G  586k  3.4G   1% /run/user/1000
 ### My laptop:
 
 ```bash
+            .-/+oossssoo+/-.               lavantien@savaka
+        `:+ssssssssssssssssss+:`           ----------------
+      -+ssssssssssssssssssyyssss+-         OS: Ubuntu 23.04 x86_64
+    .ossssssssssssssssssdMMMNysssso.       Host: HP ProBook 445 G7
+   /ssssssssssshdmmNNmmyNMMMMhssssss/      Kernel: 6.2.0-20-generic
+  +ssssssssshmydMMMMMMMNddddyssssssss+     Uptime: 1 hour, 9 mins
+ /sssssssshNMMMyhhyyyyhmNMMMNhssssssss/    Packages: 2487 (dpkg), 167 (brew), 6 (flatpak), 26 (snap)
+.ssssssssdMMMNhsssssssssshNMMMdssssssss.   Shell: zsh 5.9
++sssshhhyNMMNyssssssssssssyNMMMysssssss+   Resolution: 1920x1080
+ossyNMMMNyMMhsssssssssssssshmmmhssssssso   DE: GNOME 44.0
+ossyNMMMNyMMhsssssssssssssshmmmhssssssso   WM: Mutter
++sssshhhyNMMNyssssssssssssyNMMMysssssss+   WM Theme: Adwaita
+.ssssssssdMMMNhsssssssssshNMMMdssssssss.   Theme: Yaru-dark [GTK2/3]
+ /sssssssshNMMMyhhyyyyhdNMMMNhssssssss/    Icons: Yaru [GTK2/3]
+  +sssssssssdmydMMMMMMMMddddyssssssss+     Terminal: WezTerm
+   /ssssssssssshdmNNNNmyNMMMMhssssss/      CPU: AMD Ryzen 7 4700U with Radeon Graphics (8) @ 2.000GHz
+    .ossssssssssssssssssdMMMNysssso.       GPU: AMD ATI 05:00.0 Renoir
+      -+sssssssssssssssssyyyssss+-         Memory: 4885MiB / 15374MiB
+        `:+ssssssssssssssssss+:`
+            .-/+oossssoo+/-.
 
+Filesystem      Size  Used Avail Use% Mounted on
+tmpfs           1.7G  2.6M  1.7G   1% /run
+/dev/nvme0n1p2  502G  134G  344G  28% /
+tmpfs           8.1G  155M  8.0G   2% /dev/shm
+tmpfs           5.3M   13k  5.3M   1% /run/lock
+tmpfs           8.1G     0  8.1G   0% /run/qemu
+/dev/nvme0n1p1  1.2G  6.4M  1.2G   1% /boot/efi
+tmpfs           1.7G  148k  1.7G   1% /run/user/1000
 ```
 
 </details>
