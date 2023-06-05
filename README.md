@@ -997,7 +997,12 @@ marksman ltex-ls vale proselint markdown-toc cbfmt
 
 </details>
 
-## Fix Google Cloud CLI (broken installation & missing python2 dep)
+## Handle Corrupted Providers
+
+<details>
+  <summary>expand</summary>
+  
+### Google Cloud CLI (broken installation & missing python2 dep)
 
 ```bash
 echo "deb [signed-by=/etc/apt/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
@@ -1019,3 +1024,39 @@ sudo rm -rf /usr/local/include/python2.7
 sudo apt install google-cloud-cli-app-engine-go google-cloud-cli-app-engine-grpc google-cloud-cli-cloud-build-local google-cloud-cli-firestore-emulator google-cloud-cli-minikube google-cloud-cli-tests
 # still failed due to python2.7
 ````
+
+</details>
+
+## Tested Machines
+
+### My desktop:
+
+```bash
+            .-/+oossssoo+/-.               lavantien@savaka 
+        `:+ssssssssssssssssss+:`           ---------------- 
+      -+ssssssssssssssssssyyssss+-         OS: Ubuntu 23.04 x86_64 
+    .ossssssssssssssssssdMMMNysssso.       Host: MS-7D42 1.0 
+   /ssssssssssshdmmNNmmyNMMMMhssssss/      Kernel: 6.2.0-20-generic 
+  +ssssssssshmydMMMMMMMNddddyssssssss+     Uptime: 1 min 
+ /sssssssshNMMMyhhyyyyhmNMMMNhssssssss/    Packages: 2110 (dpkg), 9 (snap) 
+.ssssssssdMMMNhsssssssssshNMMMdssssssss.   Shell: zsh 5.9 
++sssshhhyNMMNyssssssssssssyNMMMysssssss+   Resolution: 3840x2160 
+ossyNMMMNyMMhsssssssssssssshmmmhssssssso   DE: GNOME 44.0 
+ossyNMMMNyMMhsssssssssssssshmmmhssssssso   WM: Mutter 
++sssshhhyNMMNyssssssssssssyNMMMysssssss+   WM Theme: Adwaita 
+.ssssssssdMMMNhsssssssssshNMMMdssssssss.   Theme: Yaru-dark [GTK2/3] 
+ /sssssssshNMMMyhhyyyyhdNMMMNhssssssss/    Icons: Yaru [GTK2/3] 
+  +sssssssssdmydMMMMMMMMddddyssssssss+     Terminal: gnome-terminal 
+   /ssssssssssshdmNNNNmyNMMMMhssssss/      CPU: 12th Gen Intel i7-12700F (20) @ 4.800GHz 
+    .ossssssssssssssssssdMMMNysssso.       GPU: NVIDIA GeForce RTX 3080 Lite Hash Rate 
+      -+sssssssssssssssssyyyssss+-         Memory: 2078MiB / 31930MiB 
+        `:+ssssssssssssssssss+:`
+            .-/+oossssoo+/-.                                       
+                                                                   
+```
+
+### My laptop:
+
+```bash
+
+```
