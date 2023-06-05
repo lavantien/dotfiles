@@ -145,6 +145,10 @@ For `gh`, run `gh auth login` and follow instruction to setup `GitHub CLI`
 ```bash
 mkdir -p ~/dev/personal && cp ~/git-clone-all.sh ~/dev/personal/ && cd ~/dev/personal && ./git-clone-all.sh your-github-username && cd ~
 ```
+  
+```bash
+mv ~/dev/personal/your-github-username/Documents/* ~/Documents && mv ~/dev/personal/your-github-username/Pictures/* ~/Pictures
+```
 
 ### 10. Install `Iosevka Nerd Font` (replace version `v3.0.1` with whatever latest)
 
