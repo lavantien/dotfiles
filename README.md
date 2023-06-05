@@ -1,6 +1,6 @@
 # A robust Dotfiles - Scientific, Optimize, and Minimal
 
-Quality Assurance by myself: **95%**
+Quality Assurance by myself: **99%**
 
 ## Step by Step Setup for a Fresh Ubuntu 23.04
 
@@ -303,12 +303,15 @@ Run `Diablo 2 Resurrected` to check for stability and if `Fsync/Gsync` is workin
 ### 23. `Helix`
 
 ```bash
-brew install helix && hx --health
+brew install helix
 ```
 
 </details>
   
 ## Healthcheck
+
+<details>
+  <summary>expand</summary>
 
 ### Docker
 
@@ -327,9 +330,6 @@ This message shows that your installation appears to be working correctly.
 kubectl get po -A && minikube dashboard
 ```
 
-<details>
-  <summary>expand result</summary>
-
 ```bash
 NAMESPACE     NAME                               READY   STATUS    RESTARTS        AGE
 kube-system   coredns-787d4945fb-s2w75           1/1     Running   0               2m52s
@@ -341,8 +341,6 @@ kube-system   kube-scheduler-minikube            1/1     Running   0            
 kube-system   storage-provisioner                1/1     Running   1 (2m22s ago)   3m5s
 ```
 
-</details>
-
 ```bash
 minikube stop
 ```
@@ -352,9 +350,6 @@ minikube stop
 ```bash
 flutter doctor
 ```
-
-<details>
-  <summary>expand result</summary>
 
 ```bash
 Doctor summary (to see all details, run flutter doctor -v):
@@ -369,8 +364,6 @@ Doctor summary (to see all details, run flutter doctor -v):
 
 • No issues found!
 ```
-
-</details>
 
 ### Test Docker Maven Workflow
 
@@ -422,6 +415,10 @@ mvn spring-boot:run
 Open browser at `http://localhost:8081/api/players`
 
 `<C-c>`
+
+```bash
+cd ~
+```
 
 ### Helix LSP
 
@@ -843,6 +840,8 @@ vim.treesitter: require("vim.treesitter.health").check()
 
 </details>
 
+</details>
+
 ## Neovim Setup From Scratch
 
 ### Install
@@ -860,21 +859,22 @@ vim.treesitter: require("vim.treesitter.health").check()
 - To see bindings of a certain key, hit `:nmap <leader>`
 - Or you can just use Telescope to do the deed `<leader>vk`, in this case, holding the space bar and pressing `vk`
 
-### Mason Built-in Packages to install (some are handled by `null-ls` already)
+### Mason Built-in 45 Packages to install (some tools such as `prettier` are handled by configured `null-ls` already)
 
-- Go: []
-- Rust: []
-- Lua: []
-- C/C++: []
-- Java: []
-- Python: []
-- JavaScript: []
-- HTML: []
-- CSS: []
-- Dart: []
-- YAML: []
-- Protobuf: []
-- Terraform: []
+- Go: [gopls, delve, staticcheck, gotests, golangci-lint, golangci-lint-langserver, godebug-adapter, gomodifytags, impl]
+- Rust: [rust-analyzer, codelldb]
+- Lua: [lua-language-server, stylua, luacheck]
+- C/C++: [clangd, clang-format]
+- Java: [jdtls, java-tests, java-debug-adapter, google-java-format]
+- JavaScript: [typescript-language-server, js-debug-adapter, chrome-debug-adapter]
+- HTML: [html-lsp]
+- CSS: [css-lsp, tailwindcss-language-server]
+- Python: [pyright, debugpy, flake8, blue]
+- Dart: [dart-debug-adapter]
+- YAML: [yaml-language-server, yamllint, yamlfmt]
+- Protobuf: [buf-language-server, buf]
+- Terraform: [terraform-ls, tflint, tfsec]
+- Markdown: [marksman, ltex-ls, vale, proselint, markdown-toc, cbfmt]
 
 ### References
 

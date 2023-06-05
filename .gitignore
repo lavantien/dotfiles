@@ -125,3 +125,4 @@ Android/Sdk
 .local/share/applications/Proton Experimental.desktop
 .local/share/applications/Steam Linux Runtime - Sniper.desktop
 .local/share/applications/Steam Linux Runtime - Soldier.desktop
+.config/nvim/lazy-lock.json
