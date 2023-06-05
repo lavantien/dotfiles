@@ -315,7 +315,7 @@ sudo add-apt-repository ppa:kisak/kisak-mesa -y && sudo dpkg --add-architecture 
 
 ```bash
 curl -1sLf \
-  'https://dl.cloudsmith.io/public/coolercontrol/coolercontrol/setup.rpm.sh' \
+  'https://dl.cloudsmith.io/public/coolercontrol/coolercontrol/setup.deb.sh' \
   | sudo -E bash \
 && sudo apt update && sudo apt install lm-sensors libxcb-cursor0 coolercontrol -y && sudo sensors-detect && sudo systemctl enable coolercontrold && sudo systemctl start coolercontrold
 ```
