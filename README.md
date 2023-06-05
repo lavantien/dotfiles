@@ -288,23 +288,23 @@ sudo snap install gimp inkscape libreoffice
 sudo snap install blender --classic
 ```
 
-### 22. Install `Steam`, `Dota 2`, `Grim Dawn`, `Battlenet`, and `Diablo 2 Resurrected`
+### 22. `Helix`
+
+```bash
+brew install helix
+```
+
+### 23. Install `Steam` (and optionally `Dota 2`, `Grim Dawn`, `Battlenet`, and `Diablo 2 Resurrected`)
 
 ```bash
 cd ~/Downloads && wget https://repo.steampowered.com/steam/archive/precise/steam_latest.deb && sudo dpkg -i steam_latest.deb && rm steam_latest.deb && cd ~
 ```
 
-Run `Steam`, login, enable `Shader Pre-Caching` and `SteamPlay`, restart `Steam`, install `Dota 2` to test native `Vulkan`, `Grim Dawn` to test `Proton`
+Run `Steam`, login, enable `Shader Pre-Caching` and `SteamPlay`, restart `Steam`
 
-Install `Battlenet` by searching for `script` inside `Lutris`, do as instructed, then relaunch `Battlenet`, login and install `Diablo 2 Ressurrected`
-
-Run `Diablo 2 Resurrected` to check for stability and if `Fsync/Gsync` is working properly
-
-### 23. `Helix`
-
-```bash
-brew install helix
-```
+(Install `Dota 2` to test native `Vulkan`, `Grim Dawn` to test `Proton`, also `gd rainbow filter` is a must-have loot filter for `Grim Dawn`  
+Install `Battlenet` by searching for `script` inside `Lutris`, do as instructed, then relaunch `Battlenet`, login and install `Diablo 2 Ressurrected`  
+Run `Diablo 2 Resurrected` to check for stability and if `Fsync/Gsync` is working properly)
 
 </details>
   
