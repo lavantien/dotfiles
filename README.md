@@ -1104,7 +1104,7 @@ gopls delve staticcheck gotests golangci-lint golangci-lint-langserver go-debug-
 - Go:
 
 ```text
-gopls delve staticcheck gotests golangci-lint golangci-lint-langserver godebug-adapter gomodifytags impl
+gopls delve staticcheck gotests golangci-lint golangci-lint-langserver go-debug-adapter gomodifytags impl
 ```
 
 - Rust:
@@ -1128,7 +1128,7 @@ clangd clang-format
 - Java:
 
 ```text
-jdtls java-tests java-debug-adapter google-java-format
+jdtls java-test java-debug-adapter google-java-format
 ```
 
 - JavaScript:
@@ -1164,7 +1164,7 @@ dart-debug-adapter
 - DotNet:
 
 ```text
-csharp-ls csharpier
+csharp-language-server csharpier
 ```
 
 - YAML:
