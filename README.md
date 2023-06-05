@@ -44,7 +44,7 @@ sudo systemctl daemon-reexec
 ### 1. Install all necessary `APT` packages
 
 ```bash
-sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install apt-transport-https ubuntu-dev-tools glibc-source gcc xclip git curl zsh htop neofetch vim mpv libutf8proc2 libutf8proc-dev libfuse2 cpu-checker screenkey -y
+sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install ubuntu-desktop ca-certificates apt-transport-https ubuntu-dev-tools glibc-source gcc xclip git curl zsh htop neofetch vim mpv libutf8proc2 libutf8proc-dev libfuse2 cpu-checker screenkey -y
 ```
 
 ### 2. Install `Oh-my-zsh` and `Chrome`, then `reboot`
@@ -187,17 +187,90 @@ flutter doctor && flutter doctor --android-licenses
 sudo snap install kreya dbgate
 ```
 
-### 18. Install `Docker Compose`, `FlatHub`, and `Vulkan`, then `reboot`
+### 18. Install `FlatHub`, `Docker Compose`, `Podman Desktop`, then `reboot`
+
+```bash
+sudo apt install flatpak -y && sudo apt install gnome-software-plugin-flatpak -y && flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+```
+
+`reboot`
+
+```bash
+sudo install -m 0755 -d /etc/apt/keyrings && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg && sudo chmod a+r /etc/apt/keyrings/docker.gpg && echo \
+  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null && sudo apt update && sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+```
+
+```bash
+sudo usermod -aG docker $USER && newgrp docker
+```
+
+`reboot`
+
+```bash
+docker run hello-world && flatpak install flathub io.podman_desktop.PodmanDesktop
+```
 
 ### 19. Install `kubectl`, and `minikube`
 
-### 20. Install `Wine`, `Lutris`, and `MangoHUD`
+```bash
+curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg && echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+ && sudo apt update && sudo apt install kubectl
+```
+
+```bash
+cd ~/Downloads && curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb && sudo dpkg -i minikube_latest_amd64.deb && rm minikube_latest_amd64.deb && cd ~
+```
+
+```bash
+minikube config set driver docker && minikube start && minikube addons enable metrics-server
+```
+
+### 20. Install `Vulkan`, `Wine`, `Lutris`, and `MangoHUD`
 
 ### 21. Install `OBS`, `Gimp`, `Inkscape`, `LibreOffice`, `Blender`
 
 ### 22. Install `Steam`, `Battlenet`, and `Diablo 2 Resurrected`
 
 ## Healthcheck
+
+### Docker
+
+```bash
+docker version && docker run hello-world
+```
+
+```bash
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+```
+
+### KubeCTL and MiniKube
+
+```bash
+kubectl get po -A && minikube dashboard
+```
+
+<details>
+  <summary>expand result</summary>
+
+```bash
+NAMESPACE     NAME                               READY   STATUS    RESTARTS        AGE
+kube-system   coredns-787d4945fb-s2w75           1/1     Running   0               2m52s
+kube-system   etcd-minikube                      1/1     Running   0               3m6s
+kube-system   kube-apiserver-minikube            1/1     Running   0               3m6s
+kube-system   kube-controller-manager-minikube   1/1     Running   0               3m7s
+kube-system   kube-proxy-fl25q                   1/1     Running   0               2m52s
+kube-system   kube-scheduler-minikube            1/1     Running   0               3m6s
+kube-system   storage-provisioner                1/1     Running   1 (2m22s ago)   3m5s
+```
+
+</details>
+
+```bash
+minikube stop
+```
 
 ### Flutter Doctor
 
