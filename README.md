@@ -268,7 +268,8 @@ sudo apt install cabextract fluid-soundfont-gm fluid-soundfont-gs libmspack0 mes
 lutris
 ```
 
-Click the `gear button` next to `Wine` -> tick `Advanced` -> `System options` -> `Command prefix` -> `mangohud` -> `Save` -> exit Lutris
+Click the `gear button` next to `Wine` -> tick `Advanced` -> `System options` -> `Command prefix` -> `mangohud` -> `Save` -> exit Lutris  
+For `Steam` games, set launch options: `mangohud %command%`  
 
 ```bash
 sudo apt install mangohud -y
