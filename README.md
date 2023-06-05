@@ -1,6 +1,8 @@
 # A robust Dotfiles - Scientific, Optimize, and Minimal
 
-Quality Assurance by myself: **99%**
+Quality Assurance by myself: **99%**  
+
+Turn off `M$ Secure Boot` in your `BIOS` for a smooth installation process
 
 ## Step by Step Setup for a Fresh Ubuntu 23.04
 
