@@ -366,6 +366,12 @@ Doctor summary (to see all details, run flutter doctor -v):
 
 </details>
 
+### Test Docker Maven Workflow
+
+```bash
+
+```
+
 ### Neovim Deps (fresh 100% OK)
 
 ```bash
