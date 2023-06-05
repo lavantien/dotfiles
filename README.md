@@ -283,6 +283,10 @@ You can view the list of minikube maintainers at: https://github.com/kubernetes/
 🌟  The 'metrics-server' addon is enabled
 ```
 
+```bash
+minikube stop
+```
+
 ### 20. Install `Graphics Drivers` and `Vulkan`
 
 If you have a `NVIDIA GPU`, replace `535` with whatever is the latest driver version as listed [here](https://launchpad.net/~graphics-drivers/+archive/ubuntu/ppa)
@@ -381,7 +385,7 @@ This message shows that your installation appears to be working correctly.
 ### KubeCTL and MiniKube
 
 ```bash
-kubectl get po -A && minikube dashboard
+minikube start && kubectl get po -A && minikube dashboard
 ```
 
 ```bash
