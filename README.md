@@ -863,7 +863,7 @@ vim.treesitter: require("vim.treesitter.health").check()
 
 ### Mason Built-in 45 Packages to `:MasonInstall `
   
-Some tools such as `prettier` are handled by configured `null-ls` already  
+Some tools such as `prettier` are handled by the configured `null-ls` already  
 see `.config/nvim/lua/plugins/init.lua`, `null-ls` section  
 
 - Go:
