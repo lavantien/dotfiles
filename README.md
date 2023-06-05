@@ -43,7 +43,7 @@ DefaultLimitNOFILE=4096:2097152
 ```
 
 ```bash
-sudo systemctl daemon-reexec
+sudo systemctl daemon-reexec && ulimit -n
 ```
 
 `reboot`
