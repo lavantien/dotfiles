@@ -373,7 +373,147 @@ nvidia-smi
 Enable `Gsync/Fsync` inside `nvidia-settings`
 
 </details>
+
+## Development Toolchains
+
+<details>
+  <summary>expand</summary>
+
+- [**NGINX**](https://nginx.org/en/docs/beginners_guide.html)
   
+```bash
+brew install nginx
+```
+
+`NGINX` config
+
+<details>
+	<summary>See details</summary>
+
+```nginx
+worker_processes 1;
+
+error_log /home/savaka/go/src/github.com/lavantien/go-laptop-booking/log/nginx/error.log;
+
+events {
+	worker_connections 10;
+}
+
+http {
+	access_log /home/savaka/go/src/github.com/lavantien/go-laptop-booking/log/nginx/access.log;
+
+	upstream auth_services {
+		server 0.0.0.0:50051;
+	}
+
+	upstream laptop_services {
+		server 0.0.0.0:50052;
+	}
+
+	server {
+		listen 8080 ssl http2;
+
+		# Mutual TLS between gRPC client and NGINX
+		ssl_certificate cert/server-cert.pem;
+		ssl_certificate_key cert/server-key.pem;
+
+		ssl_client_certificate cert/ca-cert.pem;
+		ssl_verify_client on;
+
+		location /pb.AuthService {
+			grpc_pass grpcs://auth_services;
+
+			# Mutual TLS between NGINX and gRPC server
+			grpc_ssl_certificate cert/server-cert.pem;
+			grpc_ssl_certificate_key cert/server-key.pem;
+		}
+
+		location /pb.LaptopService {
+			grpc_pass grpcs://laptop_services;
+
+			# Mutual TLS between NGINX and gRPC server
+			grpc_ssl_certificate cert/server-cert.pem;
+			grpc_ssl_certificate_key cert/server-key.pem;
+		}
+	}
+}
+
+```
+
+</details>
+
+- [**GRPC Gateway**](https://github.com/grpc-ecosystem/grpc-gateway)
+  
+```bash
+go install \
+    github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway \
+    github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2 \
+    google.golang.org/protobuf/cmd/protoc-gen-go \
+    google.golang.org/grpc/cmd/protoc-gen-go-grpc
+```
+
+- [**Evan CLI**](https://github.com/ktr0731/evans)
+  
+```bash
+go install github.com/ktr0731/evans@latest
+```
+  
+- [**GoTestSum**](https://github.com/gotestyourself/gotestsum)
+  
+```bash
+go install gotest.tools/gotestsum@latest
+```
+
+- [**Golang-Migrate**](https://github.com/golang-migrate/migrate/tree/master/cmd/migrate):
+
+```bash
+go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+```
+
+- [**SQLc**](https://docs.sqlc.dev/en/latest/overview/install.html):
+
+```bash
+go install github.com/kyleconroy/sqlc/cmd/sqlc@latest
+```
+
+- [**GoMock**](https://github.com/golang/mock):
+
+```bash
+go install github.com/golang/mock/mockgen@latest
+```
+
+- [**Viper**](https://github.com/spf13/viper):
+
+```bash
+go install https://github.com/spf13/viper@latest
+```
+
+- [**Gin**](https://github.com/gin-gonic/gin#installation):
+
+```bash
+go install github.com/gin-gonic/gin@latest
+
+go get -u github.com/gin-gonic/gin
+```
+
+- [**Paseto**](https://github.com/o1egl/paseto):
+
+```bash
+go get -u github.com/o1egl/paseto
+```
+
+- [**JWT**](https://github.com/golang-jwt/jwt):
+
+```bash
+go get -u https://github.com/golang-jwt/jwt
+```
+  
+- [**Swagger Editor**](https://editor.swagger.io/)
+
+- [**Coverage Badge**](https://eremeev.ca/posts/golang-test-coverage-github-action/)
+
+</details>
+
 ## Healthcheck
 
 <details>
