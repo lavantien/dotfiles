@@ -1,4 +1,4 @@
-# A robust Dotfiles - Scientific, Optimized, and Minimal
+# A robust Dotfiles - Battery Included
 
 Quality Assurance by myself: **99%**  
 
@@ -63,7 +63,31 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/too
 cd ~/Downloads && wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && sudo dpkg -i google-chrome-stable_current_amd64.deb && rm google-chrome-stable_current_amd64.deb && cd ~
 ```
 
-Open `Chrome`, sync your profile, and go to <https://github.com/lavantien/dotfiles/blob/main/README.md> to continue the steps
+Open `Chrome`, sync your profile, and go to <https://github.com/lavantien/dotfiles/blob/main/README.md> to continue the steps  
+Recommended `Chrome Extensions`:
+
+```text
+aapbdbdomjkkjkaonfhkkikfgjllcleb : Google Translate
+ahfgeienlihckogmohjhadlkjgocpleb : Web Store
+ahfhijdlegdabablpippeagghigmibma : Web Vitals
+bcjindcccaagfpapjjmafapmmgkkhgoa : JSON Formatter
+bkhaagjahfmjljalopjnoealnfndnagc : Octotree - GitHub code tree
+cjpalhdlnbpafiamejdnhcphjbkeiagm : uBlock Origin
+dbepggeogbaibhgnhhndojpepiihcmeb : Vimium
+eimadpbcbfnmbkopoojfekhnkhdbieeh : Dark Reader
+ejkiikneibegknkgimmihdpcbcedgmpo : Volume Booster
+gebbhagfogifgggkldgodflihgfeippi : Return YouTube Dislike
+ghbmnnjooekpmoecnnnilnnbdlolhkhi : Google Docs Offline
+gppongmhjkpfnbhagpmjfkannfbllamg : Wappalyzer
+hlkenndednhfkekhgcdicdfddnkalmdm : Cookie-Editor
+mafpmfcccpbjnhfhjnllmmalhifmlcie : Snowflake
+mhjfbmdgcfjbbpaeojofohoefgiehjai : Chrome PDF Viewer
+migdhldfbapmodfbmgpofnikfbfpbbon : Highlighty: Search, Find, Multi-Highlight
+neajdppkdcdipfabeoofebfddakdcjhd : Google Network Speech
+nkeimhogjdpnpccoofpliimaahmaaome : Google Hangouts
+nlkaejimjacpillmajjnopmpbkbnocid : YouTube NonStop
+nmmhkkegccagdldgiimedpiccmgmieda : Chrome Web Store Payments
+```
 
 ### 3. After `reboot`, install `Linuxbrew`
 
