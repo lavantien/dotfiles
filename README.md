@@ -195,7 +195,7 @@ egrep -c '(vmx|svm)' /proc/cpuinfo && kvm-ok
 ```
 
 ```bash
-sudo apt install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils
+sudo apt install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils -y
 ```
 
 ### 16. Install `Android Studio`, `Android SDK`, and `Flutter`
