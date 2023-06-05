@@ -861,7 +861,10 @@ vim.treesitter: require("vim.treesitter.health").check()
 - To see bindings of a certain key, hit `:nmap <leader>`
 - Or you can just use Telescope to do the deed `<leader>vk`, in this case, holding space and pressing `vk`
 
-### Mason Built-in 45 Packages to `:MasonInstall ` (some tools such as `prettier` are handled by configured `null-ls` already)
+### Mason Built-in 45 Packages to `:MasonInstall `
+  
+Some tools such as `prettier` are handled by configured `null-ls` already  
+see `.config/nvim/lua/plugins/init.lua`, `null-ls` section  
 
 - Go:
 
