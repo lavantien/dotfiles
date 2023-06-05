@@ -1,4 +1,4 @@
-# A robust Dotfiles - Battery Included
+# A robust Dotfiles for Developer - Battery Included
 
 Quality Assurance by myself: **99%**; Disk Size: **TBD**; Time Taken: **TBD**;  
 Supported: **AMD** & **Intel** (Wayland), **NVIDIA** (auto X11)  
