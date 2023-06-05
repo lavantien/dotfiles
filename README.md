@@ -128,8 +128,16 @@ Currently, `julia` build is failed on `brew`, use `snap` instead
 
 ### 8. Install `Joplin (snap)`, sync your notes, and setup your `Git` environment:
 
-For a smooth `Git` experience, you should make a `.netrc` file in your home directory and add auth token:  
-`machine github.com login lavantien password ghp_klsdfjalsdkfjdsjfalsdkldasfjkasldfjalsdfjalsdjfk`  
+```bash
+sudo snap install joplin-desktop
+```
+  
+For a smooth `Git` experience, you should make a `.netrc` file in your home directory and add auth token
+
+```bash
+echo 'machine github.com login lavantien password ghp_klsdfjalsdkfjdsjfalsdkldasfjkasldfjalsdfjalsdjfk' >> .netrc
+```
+
 For `gh`, run `gh auth login` and follow instruction to setup `GitHub CLI`
 
 ### 9. Run `./git-clone-all your-github-username` on `~/dev/personal` for cloning all of your repos
