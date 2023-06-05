@@ -3,8 +3,6 @@
 Quality Assurance by myself: **99%**; Disk Size: **TBD**; Time Taken: **TBD**;  
 Supported: **AMD** & **Intel** (Wayland), **NVIDIA** (auto X11)  
 
-## *I will held-handing you throughout the untwinked setup process*
-
 Turn off `M$ Secure Boot` in your `BIOS` for a smooth installation process  
 Install with `Minimal setup`, check `Additionals Drivers` and `3rd-party` boxes  
 
@@ -119,14 +117,16 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ### 7. Install `gcc`, `gh`, `neovim`, and other necessary `Brew` packages
 
 ```bash
-brew install gcc@11 gcc gh go lazygit fzf fd ripgrep bat neovim hyperfine openjdk ruby lua maven node gopls rust-analyzer jdtls lua-language-server yaml-language-server bash-language-server terraform terraform-ls prettier delve vscode-langservers-extracted loc llvm dotenv-linter checkmake luarocks php composer
+brew install gcc@11 gcc gh go lazygit fzf fd ripgrep bat neovim hyperfine openjdk ruby lua maven node gopls rust-analyzer jdtls lua-language-server typescript-language-server marksman texlab yaml-language-server bash-language-server terraform terraform-ls prettier delve vscode-langservers-extracted loc llvm dotenv-linter checkmake luarocks php composer
 ```
 
 ```bash
-sudo snap install julia --classic
+sudo snap install julia --classic && pip3 install cmake-language-server python-lsp-server
 ```
 
-Currently, `julia` build is failed on `brew`, use `snap` instead
+```bash
+cd ~/Downloads && wget https://github.com/OmniSharp/omnisharp-vscode/releases/download/v1.25.8/csharp-1.25.8-linux-x64.vsix && code --install-extension csharp-1.25.8-linux-x64.vsix && rm csharp-1.25.8-linux-x64.vsix && cd ~
+```
 
 ### 8. Install `Joplin (snap)`, sync your notes, and setup your `Git` environment:
 
@@ -1239,27 +1239,7 @@ sudo apt install google-cloud-cli-app-engine-go google-cloud-cli-app-engine-grpc
 ### My desktop:
 
 ```bash
-            .-/+oossssoo+/-.               lavantien@savaka 
-        `:+ssssssssssssssssss+:`           ---------------- 
-      -+ssssssssssssssssssyyssss+-         OS: Ubuntu 23.04 x86_64 
-    .ossssssssssssssssssdMMMNysssso.       Host: MS-7D42 1.0 
-   /ssssssssssshdmmNNmmyNMMMMhssssss/      Kernel: 6.2.0-20-generic 
-  +ssssssssshmydMMMMMMMNddddyssssssss+     Uptime: 1 min 
- /sssssssshNMMMyhhyyyyhmNMMMNhssssssss/    Packages: 2110 (dpkg), 9 (snap) 
-.ssssssssdMMMNhsssssssssshNMMMdssssssss.   Shell: zsh 5.9 
-+sssshhhyNMMNyssssssssssssyNMMMysssssss+   Resolution: 3840x2160 
-ossyNMMMNyMMhsssssssssssssshmmmhssssssso   DE: GNOME 44.0 
-ossyNMMMNyMMhsssssssssssssshmmmhssssssso   WM: Mutter 
-+sssshhhyNMMNyssssssssssssyNMMMysssssss+   WM Theme: Adwaita 
-.ssssssssdMMMNhsssssssssshNMMMdssssssss.   Theme: Yaru-dark [GTK2/3] 
- /sssssssshNMMMyhhyyyyhdNMMMNhssssssss/    Icons: Yaru [GTK2/3] 
-  +sssssssssdmydMMMMMMMMddddyssssssss+     Terminal: gnome-terminal 
-   /ssssssssssshdmNNNNmyNMMMMhssssss/      CPU: 12th Gen Intel i7-12700F (20) @ 4.800GHz 
-    .ossssssssssssssssssdMMMNysssso.       GPU: NVIDIA GeForce RTX 3080 Lite Hash Rate 
-      -+sssssssssssssssssyyyssss+-         Memory: 2078MiB / 31930MiB 
-        `:+ssssssssssssssssss+:`
-            .-/+oossssoo+/-.                                       
-                                                                   
+
 ```
 
 ### My laptop:
