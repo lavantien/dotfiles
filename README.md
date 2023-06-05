@@ -1,10 +1,10 @@
 # A robust Dotfiles for Developer - Battery Included
 
-Quality Assurance by myself: **99%**; Disk Size: **TBD**; Time Taken: **TBD**;  
-Supported: **AMD** & **Intel** (Wayland), **NVIDIA** (auto X11)  
+Quality Assurance: **100%**; Disk Size: **139GB**; Time Taken: **5h**;  
+Supported: **AMD** & **Intel** (Wayland), **NVIDIA** (auto X11)
 
 Turn off `M$ Secure Boot` in your `BIOS` for a smooth installation process  
-Install with `Minimal setup`, check `Additionals Drivers` and `3rd-party` boxes  
+Install with `Minimal setup`, check `Additionals Drivers` and `3rd-party` boxes
 
 ## Step by Step Setup for a Fresh Ubuntu 23.04
 
@@ -133,7 +133,7 @@ cd ~/Downloads && wget https://github.com/OmniSharp/omnisharp-vscode/releases/do
 ```bash
 sudo snap install joplin-desktop
 ```
-  
+
 For a smooth `Git` experience, you should make a `.netrc` file in your home directory and add auth token
 
 ```bash
@@ -147,7 +147,7 @@ For `gh`, run `gh auth login` and follow instruction to setup `GitHub CLI`
 ```bash
 mkdir -p ~/dev/personal && cp ~/git-clone-all.sh ~/dev/personal/ && cd ~/dev/personal && ./git-clone-all.sh your-github-username && cd ~
 ```
-  
+
 ```bash
 mv ~/dev/personal/your-github-username/Documents/* ~/Documents && mv ~/dev/personal/your-github-username/Pictures/* ~/Pictures
 ```
@@ -297,7 +297,7 @@ If you have a `NVIDIA GPU`, replace `535` with whatever is the latest driver ver
 sudo add-apt-repository ppa:graphics-drivers/ppa -y && sudo dpkg --add-architecture i386 && sudo apt update && sudo apt install nvidia-driver-535 libvulkan1 libvulkan1:i386 libgl-dev libgl-dev:i386 -y
 ```
 
-and to `underwatt` your GPU: <https://www.pugetsystems.com/labs/hpc/quad-rtx3090-gpu-power-limiting-with-systemd-and-nvidia-smi-1983/>  
+and to `underwatt` your GPU: <https://www.pugetsystems.com/labs/hpc/quad-rtx3090-gpu-power-limiting-with-systemd-and-nvidia-smi-1983/>
 
 If not, just install `Vulkan`
 
@@ -335,7 +335,7 @@ lutris
 ```
 
 Click the `gear button` next to `Wine` -> tick `Advanced` -> `System options` -> `Command prefix` -> `mangohud` -> `Save` -> exit Lutris  
-For `Steam` games, set launch options: `mangohud %command%`  
+For `Steam` games, set launch options: `mangohud %command%`
 
 ```bash
 sudo apt install mangohud -y
@@ -378,7 +378,7 @@ Run `Diablo 2 Resurrected` to check for stability and if `Fsync/Gsync` is workin
 ```bash
 nvidia-smi
 ```
-  
+
 Enable `Gsync/Fsync` inside `nvidia-settings`
 
 </details>
@@ -389,7 +389,7 @@ Enable `Gsync/Fsync` inside `nvidia-settings`
   <summary>expand</summary>
 
 - [**NGINX**](https://nginx.org/en/docs/beginners_guide.html)
-  
+
 ```bash
 brew install nginx
 ```
@@ -470,7 +470,7 @@ go get -u github.com/twmb/franz-go
 ```
 
 - [**GRPC Gateway**](https://github.com/grpc-ecosystem/grpc-gateway)
-  
+
 ```bash
 go install \
     github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@latest \
@@ -480,13 +480,13 @@ go install \
 ```
 
 - [**Evan CLI**](https://github.com/ktr0731/evans)
-  
+
 ```bash
 go install github.com/ktr0731/evans@latest
 ```
-  
+
 - [**GoTestSum**](https://github.com/gotestyourself/gotestsum)
-  
+
 ```bash
 go install gotest.tools/gotestsum@latest
 ```
@@ -532,7 +532,7 @@ go get -u github.com/o1egl/paseto
 ```bash
 go get -u https://github.com/golang-jwt/jwt
 ```
-  
+
 - [**Swagger Editor**](https://editor.swagger.io/)
 
 - [**Coverage Badge**](https://eremeev.ca/posts/golang-test-coverage-github-action/)
@@ -670,173 +670,173 @@ Runtime directory does not exist: /home/linuxbrew/.linuxbrew/Cellar/helix/23.05/
 Clipboard provider: xclip
 System clipboard provider: xclip
 
-Language                    LSP                         DAP                         Highlight                   Textobject                  Indent
-astro                       None                        None                        ✓                           ✘                           ✘
-awk                         ✘ awk-language-server       None                        ✓                           ✓                           ✘
-bash                        ✓ bash-language-server      None                        ✓                           ✘                           ✓
-bass                        ✘ bass                      None                        ✓                           ✘                           ✘
-beancount                   None                        None                        ✓                           ✘                           ✘
-bibtex                      ✘ texlab                    None                        ✓                           ✘                           ✘
-bicep                       ✘ bicep-langserver          None                        ✓                           ✘                           ✘
-c                           ✓ clangd                    ✓ lldb-vscode               ✓                           ✓                           ✓
-c-sharp                     ✘ OmniSharp                 ✘ netcoredbg                ✓                           ✓                           ✘
-cabal                       None                        None                        ✘                           ✘                           ✘
-cairo                       None                        None                        ✓                           ✘                           ✘
-capnp                       None                        None                        ✓                           ✘                           ✓
-clojure                     ✘ clojure-lsp               None                        ✓                           ✘                           ✘
-cmake                       ✘ cmake-language-server     None                        ✓                           ✓                           ✓
-comment                     None                        None                        ✓                           ✘                           ✘
-common-lisp                 ✘ cl-lsp                    None                        ✓                           ✘                           ✘
-cpon                        None                        None                        ✓                           ✘                           ✓
-cpp                         ✓ clangd                    ✓ lldb-vscode               ✓                           ✓                           ✓
-crystal                     ✘ crystalline               None                        ✓                           ✓                           ✘
-css                         ✓ vscode-css-language-se…   None                        ✓                           ✘                           ✘
-cue                         ✘ cuelsp                    None                        ✓                           ✘                           ✘
-d                           ✘ serve-d                   None                        ✓                           ✓                           ✓
-dart                        ✓ dart                      None                        ✓                           ✘                           ✓
-devicetree                  None                        None                        ✓                           ✘                           ✘
-dhall                       ✘ dhall-lsp-server          None                        ✓                           ✓                           ✘
-diff                        None                        None                        ✓                           ✘                           ✘
-dockerfile                  ✘ docker-langserver         None                        ✓                           ✘                           ✘
-dot                         ✘ dot-language-server       None                        ✓                           ✘                           ✘
-dtd                         None                        None                        ✓                           ✘                           ✘
-edoc                        None                        None                        ✓                           ✘                           ✘
-eex                         None                        None                        ✓                           ✘                           ✘
-ejs                         None                        None                        ✓                           ✘                           ✘
-elixir                      ✘ elixir-ls                 None                        ✓                           ✓                           ✓
-elm                         ✘ elm-language-server       None                        ✓                           ✓                           ✘
-elvish                      ✘ elvish                    None                        ✓                           ✘                           ✘
-env                         None                        None                        ✓                           ✘                           ✘
-erb                         None                        None                        ✓                           ✘                           ✘
-erlang                      ✘ erlang_ls                 None                        ✓                           ✓                           ✘
-esdl                        None                        None                        ✓                           ✘                           ✘
-fish                        None                        None                        ✓                           ✓                           ✓
-fortran                     ✘ fortls                    None                        ✓                           ✘                           ✓
-gdscript                    None                        None                        ✓                           ✓                           ✓
-git-attributes              None                        None                        ✓                           ✘                           ✘
-git-commit                  None                        None                        ✓                           ✓                           ✘
-git-config                  None                        None                        ✓                           ✘                           ✘
-git-ignore                  None                        None                        ✓                           ✘                           ✘
-git-rebase                  None                        None                        ✓                           ✘                           ✘
-gleam                       ✘ gleam                     None                        ✓                           ✓                           ✘
-glsl                        None                        None                        ✓                           ✓                           ✓
-go                          ✓ gopls                     ✓ dlv                       ✓                           ✓                           ✓
-godot-resource              None                        None                        ✓                           ✘                           ✘
-gomod                       ✓ gopls                     None                        ✓                           ✘                           ✘
-gotmpl                      ✓ gopls                     None                        ✓                           ✘                           ✘
-gowork                      ✓ gopls                     None                        ✓                           ✘                           ✘
-graphql                     None                        None                        ✓                           ✘                           ✘
-hare                        None                        None                        ✓                           ✘                           ✘
-haskell                     ✘ haskell-language-serve…   None                        ✓                           ✓                           ✘
-hcl                         ✓ terraform-ls              None                        ✓                           ✘                           ✓
-heex                        ✘ elixir-ls                 None                        ✓                           ✓                           ✘
-hosts                       None                        None                        ✓                           ✘                           ✘
-html                        ✓ vscode-html-language-s…   None                        ✓                           ✘                           ✘
-hurl                        None                        None                        ✓                           ✘                           ✓
-idris                       ✘ idris2-lsp                None                        ✘                           ✘                           ✘
-iex                         None                        None                        ✓                           ✘                           ✘
-ini                         None                        None                        ✓                           ✘                           ✘
-java                        ✓ jdtls                     None                        ✓                           ✓                           ✘
-javascript                  ✘ typescript-language-se…   ✘                           ✓                           ✓                           ✓
-jsdoc                       None                        None                        ✓                           ✘                           ✘
-json                        ✓ vscode-json-language-s…   None                        ✓                           ✘                           ✓
-jsonnet                     ✘ jsonnet-language-serve…   None                        ✓                           ✘                           ✘
-jsx                         ✘ typescript-language-se…   None                        ✓                           ✓                           ✓
-julia                       ✓ julia                     None                        ✓                           ✓                           ✓
-just                        None                        None                        ✓                           ✓                           ✓
-kdl                         None                        None                        ✓                           ✘                           ✘
-kotlin                      ✘ kotlin-language-server…   None                        ✓                           ✘                           ✘
-latex                       ✘ texlab                    None                        ✓                           ✓                           ✘
-lean                        ✘ lean                      None                        ✓                           ✘                           ✘
-ledger                      None                        None                        ✓                           ✘                           ✘
-llvm                        None                        None                        ✓                           ✓                           ✓
-llvm-mir                    None                        None                        ✓                           ✓                           ✓
-llvm-mir-yaml               None                        None                        ✓                           ✘                           ✓
-lua                         ✓ lua-language-server       None                        ✓                           ✓                           ✓
-make                        None                        None                        ✓                           ✘                           ✘
-markdoc                     ✘ markdoc-ls                None                        ✓                           ✘                           ✘
-markdown                    ✘ marksman                  None                        ✓                           ✘                           ✘
-markdown.inline             None                        None                        ✓                           ✘                           ✘
-matlab                      None                        None                        ✓                           ✘                           ✘
-mermaid                     None                        None                        ✓                           ✘                           ✘
-meson                       None                        None                        ✓                           ✘                           ✓
-mint                        ✘ mint                      None                        ✘                           ✘                           ✘
-msbuild                     None                        None                        ✓                           ✘                           ✓
-nasm                        None                        None                        ✓                           ✓                           ✘
-nickel                      ✘ nls                       None                        ✓                           ✘                           ✓
-nim                         ✘ nimlangserver             None                        ✓                           ✓                           ✓
-nix                         ✘ nil                       None                        ✓                           ✘                           ✘
-nu                          None                        None                        ✓                           ✘                           ✘
-ocaml                       ✘ ocamllsp                  None                        ✓                           ✘                           ✓
-ocaml-interface             ✘ ocamllsp                  None                        ✓                           ✘                           ✘
-odin                        ✘ ols                       None                        ✓                           ✘                           ✓
-opencl                      ✓ clangd                    None                        ✓                           ✓                           ✓
-openscad                    ✘ openscad-lsp              None                        ✓                           ✘                           ✘
-org                         None                        None                        ✓                           ✘                           ✘
-pascal                      ✘ pasls                     None                        ✓                           ✓                           ✘
-passwd                      None                        None                        ✓                           ✘                           ✘
-pem                         None                        None                        ✓                           ✘                           ✘
-perl                        ✘ perlnavigator             None                        ✓                           ✓                           ✓
-php                         ✘ intelephense              None                        ✓                           ✓                           ✓
-po                          None                        None                        ✓                           ✓                           ✘
-ponylang                    None                        None                        ✓                           ✓                           ✓
-prisma                      ✘ prisma-language-server…   None                        ✓                           ✘                           ✘
-prolog                      ✘ swipl                     None                        ✘                           ✘                           ✘
-protobuf                    None                        None                        ✓                           ✘                           ✓
-prql                        None                        None                        ✓                           ✘                           ✘
-purescript                  ✘ purescript-language-se…   None                        ✓                           ✘                           ✘
-python                      ✘ pylsp                     None                        ✓                           ✓                           ✓
-qml                         ✘ qmlls                     None                        ✓                           ✘                           ✓
-r                           ✘ R                         None                        ✓                           ✘                           ✘
-racket                      ✘ racket                    None                        ✓                           ✘                           ✘
-regex                       None                        None                        ✓                           ✘                           ✘
-rego                        ✘ regols                    None                        ✓                           ✘                           ✘
-rescript                    ✘ rescript-language-serv…   None                        ✓                           ✓                           ✘
-rmarkdown                   ✘ R                         None                        ✓                           ✘                           ✓
-robot                       ✘ robotframework_ls         None                        ✓                           ✘                           ✘
-ron                         None                        None                        ✓                           ✘                           ✓
-rst                         None                        None                        ✓                           ✘                           ✘
-ruby                        ✘ solargraph                None                        ✓                           ✓                           ✓
-rust                        ✓ rust-analyzer             ✓ lldb-vscode               ✓                           ✓                           ✓
-sage                        None                        None                        ✓                           ✓                           ✘
-scala                       ✘ metals                    None                        ✓                           ✘                           ✓
-scheme                      None                        None                        ✓                           ✘                           ✘
-scss                        ✓ vscode-css-language-se…   None                        ✓                           ✘                           ✘
-slint                       ✘ slint-lsp                 None                        ✓                           ✘                           ✓
-smithy                      ✘ cs                        None                        ✓                           ✘                           ✘
-sml                         None                        None                        ✓                           ✘                           ✘
-solidity                    ✘ solc                      None                        ✓                           ✘                           ✘
-sql                         None                        None                        ✓                           ✘                           ✘
-sshclientconfig             None                        None                        ✓                           ✘                           ✘
-starlark                    None                        None                        ✓                           ✓                           ✘
-svelte                      ✘ svelteserver              None                        ✓                           ✘                           ✘
-sway                        ✘ forc                      None                        ✓                           ✓                           ✓
-swift                       ✘ sourcekit-lsp             None                        ✓                           ✘                           ✘
-tablegen                    None                        None                        ✓                           ✓                           ✓
-task                        None                        None                        ✓                           ✘                           ✘
-tfvars                      ✓ terraform-ls              None                        ✓                           ✘                           ✓
-toml                        ✘ taplo                     None                        ✓                           ✘                           ✘
-tsq                         None                        None                        ✓                           ✘                           ✘
-tsx                         ✘ typescript-language-se…   None                        ✓                           ✓                           ✓
-twig                        None                        None                        ✓                           ✘                           ✘
-typescript                  ✘ typescript-language-se…   None                        ✓                           ✓                           ✓
-ungrammar                   None                        None                        ✓                           ✘                           ✘
-uxntal                      None                        None                        ✓                           ✘                           ✘
-v                           ✘ v                         None                        ✓                           ✓                           ✓
-vala                        ✘ vala-language-server      None                        ✓                           ✘                           ✘
-verilog                     ✘ svlangserver              None                        ✓                           ✓                           ✘
-vhdl                        ✘ vhdl_ls                   None                        ✓                           ✘                           ✘
-vhs                         None                        None                        ✓                           ✘                           ✘
-vue                         ✘ vls                       None                        ✓                           ✘                           ✘
-wast                        None                        None                        ✓                           ✘                           ✘
-wat                         None                        None                        ✓                           ✘                           ✘
-wgsl                        ✘ wgsl_analyzer             None                        ✓                           ✘                           ✘
-wit                         None                        None                        ✓                           ✘                           ✓
-xit                         None                        None                        ✓                           ✘                           ✘
-xml                         None                        None                        ✓                           ✘                           ✓
-yaml                        ✓ yaml-language-server      None                        ✓                           ✘                           ✓
-yuck                        None                        None                        ✓                           ✘                           ✘
-zig                         ✘ zls                       ✓ lldb-vscode               ✓                           ✓                           ✓
+Language                                                 LSP                                                      DAP                                                      Highlight                                                Textobject                                               Indent
+astro                                                    None                                                     None                                                     ✓                                                        ✘                                                        ✘
+awk                                                      ✘ awk-language-server                                    None                                                     ✓                                                        ✓                                                        ✘
+bash                                                     ✓ bash-language-server                                   None                                                     ✓                                                        ✘                                                        ✓
+bass                                                     ✘ bass                                                   None                                                     ✓                                                        ✘                                                        ✘
+beancount                                                None                                                     None                                                     ✓                                                        ✘                                                        ✘
+bibtex                                                   ✓ texlab                                                 None                                                     ✓                                                        ✘                                                        ✘
+bicep                                                    ✘ bicep-langserver                                       None                                                     ✓                                                        ✘                                                        ✘
+c                                                        ✓ clangd                                                 ✓ lldb-vscode                                            ✓                                                        ✓                                                        ✓
+c-sharp                                                  ✘ OmniSharp                                              ✘ netcoredbg                                             ✓                                                        ✓                                                        ✘
+cabal                                                    None                                                     None                                                     ✘                                                        ✘                                                        ✘
+cairo                                                    None                                                     None                                                     ✓                                                        ✘                                                        ✘
+capnp                                                    None                                                     None                                                     ✓                                                        ✘                                                        ✓
+clojure                                                  ✘ clojure-lsp                                            None                                                     ✓                                                        ✘                                                        ✘
+cmake                                                    ✓ cmake-language-server                                  None                                                     ✓                                                        ✓                                                        ✓
+comment                                                  None                                                     None                                                     ✓                                                        ✘                                                        ✘
+common-lisp                                              ✘ cl-lsp                                                 None                                                     ✓                                                        ✘                                                        ✘
+cpon                                                     None                                                     None                                                     ✓                                                        ✘                                                        ✓
+cpp                                                      ✓ clangd                                                 ✓ lldb-vscode                                            ✓                                                        ✓                                                        ✓
+crystal                                                  ✘ crystalline                                            None                                                     ✓                                                        ✓                                                        ✘
+css                                                      ✓ vscode-css-language-server                             None                                                     ✓                                                        ✘                                                        ✘
+cue                                                      ✘ cuelsp                                                 None                                                     ✓                                                        ✘                                                        ✘
+d                                                        ✘ serve-d                                                None                                                     ✓                                                        ✓                                                        ✓
+dart                                                     ✓ dart                                                   None                                                     ✓                                                        ✘                                                        ✓
+devicetree                                               None                                                     None                                                     ✓                                                        ✘                                                        ✘
+dhall                                                    ✘ dhall-lsp-server                                       None                                                     ✓                                                        ✓                                                        ✘
+diff                                                     None                                                     None                                                     ✓                                                        ✘                                                        ✘
+dockerfile                                               ✘ docker-langserver                                      None                                                     ✓                                                        ✘                                                        ✘
+dot                                                      ✘ dot-language-server                                    None                                                     ✓                                                        ✘                                                        ✘
+dtd                                                      None                                                     None                                                     ✓                                                        ✘                                                        ✘
+edoc                                                     None                                                     None                                                     ✓                                                        ✘                                                        ✘
+eex                                                      None                                                     None                                                     ✓                                                        ✘                                                        ✘
+ejs                                                      None                                                     None                                                     ✓                                                        ✘                                                        ✘
+elixir                                                   ✘ elixir-ls                                              None                                                     ✓                                                        ✓                                                        ✓
+elm                                                      ✘ elm-language-server                                    None                                                     ✓                                                        ✓                                                        ✘
+elvish                                                   ✘ elvish                                                 None                                                     ✓                                                        ✘                                                        ✘
+env                                                      None                                                     None                                                     ✓                                                        ✘                                                        ✘
+erb                                                      None                                                     None                                                     ✓                                                        ✘                                                        ✘
+erlang                                                   ✘ erlang_ls                                              None                                                     ✓                                                        ✓                                                        ✘
+esdl                                                     None                                                     None                                                     ✓                                                        ✘                                                        ✘
+fish                                                     None                                                     None                                                     ✓                                                        ✓                                                        ✓
+fortran                                                  ✘ fortls                                                 None                                                     ✓                                                        ✘                                                        ✓
+gdscript                                                 None                                                     None                                                     ✓                                                        ✓                                                        ✓
+git-attributes                                           None                                                     None                                                     ✓                                                        ✘                                                        ✘
+git-commit                                               None                                                     None                                                     ✓                                                        ✓                                                        ✘
+git-config                                               None                                                     None                                                     ✓                                                        ✘                                                        ✘
+git-ignore                                               None                                                     None                                                     ✓                                                        ✘                                                        ✘
+git-rebase                                               None                                                     None                                                     ✓                                                        ✘                                                        ✘
+gleam                                                    ✘ gleam                                                  None                                                     ✓                                                        ✓                                                        ✘
+glsl                                                     None                                                     None                                                     ✓                                                        ✓                                                        ✓
+go                                                       ✓ gopls                                                  ✓ dlv                                                    ✓                                                        ✓                                                        ✓
+godot-resource                                           None                                                     None                                                     ✓                                                        ✘                                                        ✘
+gomod                                                    ✓ gopls                                                  None                                                     ✓                                                        ✘                                                        ✘
+gotmpl                                                   ✓ gopls                                                  None                                                     ✓                                                        ✘                                                        ✘
+gowork                                                   ✓ gopls                                                  None                                                     ✓                                                        ✘                                                        ✘
+graphql                                                  None                                                     None                                                     ✓                                                        ✘                                                        ✘
+hare                                                     None                                                     None                                                     ✓                                                        ✘                                                        ✘
+haskell                                                  ✘ haskell-language-server-wrapper                        None                                                     ✓                                                        ✓                                                        ✘
+hcl                                                      ✓ terraform-ls                                           None                                                     ✓                                                        ✘                                                        ✓
+heex                                                     ✘ elixir-ls                                              None                                                     ✓                                                        ✓                                                        ✘
+hosts                                                    None                                                     None                                                     ✓                                                        ✘                                                        ✘
+html                                                     ✓ vscode-html-language-server                            None                                                     ✓                                                        ✘                                                        ✘
+hurl                                                     None                                                     None                                                     ✓                                                        ✘                                                        ✓
+idris                                                    ✘ idris2-lsp                                             None                                                     ✘                                                        ✘                                                        ✘
+iex                                                      None                                                     None                                                     ✓                                                        ✘                                                        ✘
+ini                                                      None                                                     None                                                     ✓                                                        ✘                                                        ✘
+java                                                     ✓ jdtls                                                  None                                                     ✓                                                        ✓                                                        ✘
+javascript                                               ✓ typescript-language-server                             ✘                                                        ✓                                                        ✓                                                        ✓
+jsdoc                                                    None                                                     None                                                     ✓                                                        ✘                                                        ✘
+json                                                     ✓ vscode-json-language-server                            None                                                     ✓                                                        ✘                                                        ✓
+jsonnet                                                  ✘ jsonnet-language-server                                None                                                     ✓                                                        ✘                                                        ✘
+jsx                                                      ✓ typescript-language-server                             None                                                     ✓                                                        ✓                                                        ✓
+julia                                                    ✓ julia                                                  None                                                     ✓                                                        ✓                                                        ✓
+just                                                     None                                                     None                                                     ✓                                                        ✓                                                        ✓
+kdl                                                      None                                                     None                                                     ✓                                                        ✘                                                        ✘
+kotlin                                                   ✘ kotlin-language-server                                 None                                                     ✓                                                        ✘                                                        ✘
+latex                                                    ✓ texlab                                                 None                                                     ✓                                                        ✓                                                        ✘
+lean                                                     ✘ lean                                                   None                                                     ✓                                                        ✘                                                        ✘
+ledger                                                   None                                                     None                                                     ✓                                                        ✘                                                        ✘
+llvm                                                     None                                                     None                                                     ✓                                                        ✓                                                        ✓
+llvm-mir                                                 None                                                     None                                                     ✓                                                        ✓                                                        ✓
+llvm-mir-yaml                                            None                                                     None                                                     ✓                                                        ✘                                                        ✓
+lua                                                      ✓ lua-language-server                                    None                                                     ✓                                                        ✓                                                        ✓
+make                                                     None                                                     None                                                     ✓                                                        ✘                                                        ✘
+markdoc                                                  ✘ markdoc-ls                                             None                                                     ✓                                                        ✘                                                        ✘
+markdown                                                 ✓ marksman                                               None                                                     ✓                                                        ✘                                                        ✘
+markdown.inline                                          None                                                     None                                                     ✓                                                        ✘                                                        ✘
+matlab                                                   None                                                     None                                                     ✓                                                        ✘                                                        ✘
+mermaid                                                  None                                                     None                                                     ✓                                                        ✘                                                        ✘
+meson                                                    None                                                     None                                                     ✓                                                        ✘                                                        ✓
+mint                                                     ✘ mint                                                   None                                                     ✘                                                        ✘                                                        ✘
+msbuild                                                  None                                                     None                                                     ✓                                                        ✘                                                        ✓
+nasm                                                     None                                                     None                                                     ✓                                                        ✓                                                        ✘
+nickel                                                   ✘ nls                                                    None                                                     ✓                                                        ✘                                                        ✓
+nim                                                      ✘ nimlangserver                                          None                                                     ✓                                                        ✓                                                        ✓
+nix                                                      ✘ nil                                                    None                                                     ✓                                                        ✘                                                        ✘
+nu                                                       None                                                     None                                                     ✓                                                        ✘                                                        ✘
+ocaml                                                    ✘ ocamllsp                                               None                                                     ✓                                                        ✘                                                        ✓
+ocaml-interface                                          ✘ ocamllsp                                               None                                                     ✓                                                        ✘                                                        ✘
+odin                                                     ✘ ols                                                    None                                                     ✓                                                        ✘                                                        ✓
+opencl                                                   ✓ clangd                                                 None                                                     ✓                                                        ✓                                                        ✓
+openscad                                                 ✘ openscad-lsp                                           None                                                     ✓                                                        ✘                                                        ✘
+org                                                      None                                                     None                                                     ✓                                                        ✘                                                        ✘
+pascal                                                   ✘ pasls                                                  None                                                     ✓                                                        ✓                                                        ✘
+passwd                                                   None                                                     None                                                     ✓                                                        ✘                                                        ✘
+pem                                                      None                                                     None                                                     ✓                                                        ✘                                                        ✘
+perl                                                     ✘ perlnavigator                                          None                                                     ✓                                                        ✓                                                        ✓
+php                                                      ✘ intelephense                                           None                                                     ✓                                                        ✓                                                        ✓
+po                                                       None                                                     None                                                     ✓                                                        ✓                                                        ✘
+ponylang                                                 None                                                     None                                                     ✓                                                        ✓                                                        ✓
+prisma                                                   ✘ prisma-language-server                                 None                                                     ✓                                                        ✘                                                        ✘
+prolog                                                   ✘ swipl                                                  None                                                     ✘                                                        ✘                                                        ✘
+protobuf                                                 None                                                     None                                                     ✓                                                        ✘                                                        ✓
+prql                                                     None                                                     None                                                     ✓                                                        ✘                                                        ✘
+purescript                                               ✘ purescript-language-server                             None                                                     ✓                                                        ✘                                                        ✘
+python                                                   ✓ pylsp                                                  None                                                     ✓                                                        ✓                                                        ✓
+qml                                                      ✘ qmlls                                                  None                                                     ✓                                                        ✘                                                        ✓
+r                                                        ✘ R                                                      None                                                     ✓                                                        ✘                                                        ✘
+racket                                                   ✘ racket                                                 None                                                     ✓                                                        ✘                                                        ✘
+regex                                                    None                                                     None                                                     ✓                                                        ✘                                                        ✘
+rego                                                     ✘ regols                                                 None                                                     ✓                                                        ✘                                                        ✘
+rescript                                                 ✘ rescript-language-server                               None                                                     ✓                                                        ✓                                                        ✘
+rmarkdown                                                ✘ R                                                      None                                                     ✓                                                        ✘                                                        ✓
+robot                                                    ✘ robotframework_ls                                      None                                                     ✓                                                        ✘                                                        ✘
+ron                                                      None                                                     None                                                     ✓                                                        ✘                                                        ✓
+rst                                                      None                                                     None                                                     ✓                                                        ✘                                                        ✘
+ruby                                                     ✘ solargraph                                             None                                                     ✓                                                        ✓                                                        ✓
+rust                                                     ✓ rust-analyzer                                          ✓ lldb-vscode                                            ✓                                                        ✓                                                        ✓
+sage                                                     None                                                     None                                                     ✓                                                        ✓                                                        ✘
+scala                                                    ✘ metals                                                 None                                                     ✓                                                        ✘                                                        ✓
+scheme                                                   None                                                     None                                                     ✓                                                        ✘                                                        ✘
+scss                                                     ✓ vscode-css-language-server                             None                                                     ✓                                                        ✘                                                        ✘
+slint                                                    ✘ slint-lsp                                              None                                                     ✓                                                        ✘                                                        ✓
+smithy                                                   ✘ cs                                                     None                                                     ✓                                                        ✘                                                        ✘
+sml                                                      None                                                     None                                                     ✓                                                        ✘                                                        ✘
+solidity                                                 ✘ solc                                                   None                                                     ✓                                                        ✘                                                        ✘
+sql                                                      None                                                     None                                                     ✓                                                        ✘                                                        ✘
+sshclientconfig                                          None                                                     None                                                     ✓                                                        ✘                                                        ✘
+starlark                                                 None                                                     None                                                     ✓                                                        ✓                                                        ✘
+svelte                                                   ✘ svelteserver                                           None                                                     ✓                                                        ✘                                                        ✘
+sway                                                     ✘ forc                                                   None                                                     ✓                                                        ✓                                                        ✓
+swift                                                    ✘ sourcekit-lsp                                          None                                                     ✓                                                        ✘                                                        ✘
+tablegen                                                 None                                                     None                                                     ✓                                                        ✓                                                        ✓
+task                                                     None                                                     None                                                     ✓                                                        ✘                                                        ✘
+tfvars                                                   ✓ terraform-ls                                           None                                                     ✓                                                        ✘                                                        ✓
+toml                                                     ✘ taplo                                                  None                                                     ✓                                                        ✘                                                        ✘
+tsq                                                      None                                                     None                                                     ✓                                                        ✘                                                        ✘
+tsx                                                      ✓ typescript-language-server                             None                                                     ✓                                                        ✓                                                        ✓
+twig                                                     None                                                     None                                                     ✓                                                        ✘                                                        ✘
+typescript                                               ✓ typescript-language-server                             None                                                     ✓                                                        ✓                                                        ✓
+ungrammar                                                None                                                     None                                                     ✓                                                        ✘                                                        ✘
+uxntal                                                   None                                                     None                                                     ✓                                                        ✘                                                        ✘
+v                                                        ✘ v                                                      None                                                     ✓                                                        ✓                                                        ✓
+vala                                                     ✘ vala-language-server                                   None                                                     ✓                                                        ✘                                                        ✘
+verilog                                                  ✘ svlangserver                                           None                                                     ✓                                                        ✓                                                        ✘
+vhdl                                                     ✘ vhdl_ls                                                None                                                     ✓                                                        ✘                                                        ✘
+vhs                                                      None                                                     None                                                     ✓                                                        ✘                                                        ✘
+vue                                                      ✘ vls                                                    None                                                     ✓                                                        ✘                                                        ✘
+wast                                                     None                                                     None                                                     ✓                                                        ✘                                                        ✘
+wat                                                      None                                                     None                                                     ✓                                                        ✘                                                        ✘
+wgsl                                                     ✘ wgsl_analyzer                                          None                                                     ✓                                                        ✘                                                        ✘
+wit                                                      None                                                     None                                                     ✓                                                        ✘                                                        ✓
+xit                                                      None                                                     None                                                     ✓                                                        ✘                                                        ✘
+xml                                                      None                                                     None                                                     ✓                                                        ✘                                                        ✓
+yaml                                                     ✓ yaml-language-server                                   None                                                     ✓                                                        ✘                                                        ✓
+yuck                                                     None                                                     None                                                     ✓                                                        ✘                                                        ✘
+zig                                                      ✘ zls                                                    ✓ lldb-vscode                                            ✓                                                        ✓                                                        ✓
 ```
 
 </details>
@@ -865,7 +865,6 @@ nvim +che
   <summary>`n +che` result</summary>
   
 ```checkhealth
-
 ==============================================================================
 lazy: require("lazy.health").check()
 
@@ -889,8 +888,8 @@ mason.nvim ~
 
 mason.nvim [Registries] ~
 
-- OK Registry `github.com/mason-org/mason-registry version: 2023-06-04-mutual-side` is installed.
-- OK Registry `github.com/mason-org/mason-registry version: 2023-06-04-mutual-side` is installed.
+- OK Registry `github.com/mason-org/mason-registry version: 2023-06-05-basic-pound` is installed.
+- OK Registry `github.com/mason-org/mason-registry version: 2023-06-05-basic-pound` is installed.
 
 mason.nvim [Core utils] ~
 
@@ -906,22 +905,22 @@ mason.nvim [Languages] ~
 
 - OK Go: `go version go1.20.4 linux/amd64`
 - OK Ruby: `ruby 3.2.2 (2023-03-30 revision e51014f9c0) [x86_64-linux]`
-- OK luarocks: `/home/linuxbrew/.linuxbrew/bin/luarocks 3.9.2`
 - OK PHP: `PHP 8.2.6 (cli) (built: May  9 2023 06:25:31) (NTS)`
 - OK cargo: `cargo 1.70.0 (ec8a8a0ca 2023-04-25)`
 - OK node: `v20.2.0`
+- OK luarocks: `/home/linuxbrew/.linuxbrew/bin/luarocks 3.9.2`
 - OK Composer: `Composer version 2.5.7 2023-05-24 15:00:39`
 - OK java: `openjdk version "20.0.1" 2023-04-18`
 - OK python3: `Python 3.11.3`
 - OK RubyGem: `3.4.13`
-- OK julia: `julia version 1.9.0`
 - OK javac: `javac 20.0.1`
 - OK npm: `9.6.7`
 - OK pip3: `pip 23.1.2 from /home/linuxbrew/.linuxbrew/Cellar/python@3.11/3.11.3/lib/python3.11/site-packages/pip (python 3.11)`
+- OK julia: `julia version 1.9.0`
 
 mason.nvim [GitHub] ~
 
-- OK GitHub API rate limit. Used: 3. Remaining: 4997. Limit: 5000. Reset: Mon 05 Jun 2023 12:21:43 AM +07.
+- OK GitHub API rate limit. Used: 1. Remaining: 4999. Limit: 5000. Reset: Tue 06 Jun 2023 02:38:17 AM +07.
 
 ==============================================================================
 null-ls: require("null-ls.health").check()
@@ -981,12 +980,33 @@ version = "#20-Ubuntu SMP PREEMPT_DYNAMIC Thu Apr 6 07:48:48 UTC 2023"
 
 Parser/Features H L F I J
 
+- bash ✓ ✓ ✓ . ✓
 - c ✓ ✓ ✓ ✓ ✓
+- cpp ✓ ✓ ✓ ✓ ✓
+- css ✓ . ✓ ✓ ✓
+- dart ✓ ✓ ✓ ✓ ✓
+- dockerfile ✓ . . . ✓
+- git_config ✓ . . . .
+- gitattributes ✓ . . . ✓
+- gitignore ✓ . . . .
+- go ✓ ✓ ✓ ✓ ✓
+- gomod ✓ . . . ✓
+- gosum ✓ . . . .
+- gowork ✓ . . . ✓
+- html ✓ ✓ ✓ ✓ ✓
+- java ✓ ✓ ✓ ✓ ✓
+- javascript ✓ ✓ ✓ ✓ ✓
+- json ✓ ✓ ✓ ✓ .
 - lua ✓ ✓ ✓ ✓ ✓
+- make ✓ . ✓ . ✓
 - markdown ✓ . ✓ ✓ ✓
+- proto ✓ . ✓ . .
 - query ✓ ✓ ✓ ✓ ✓
+- rust ✓ ✓ ✓ ✓ ✓
+- toml ✓ ✓ ✓ ✓ ✓
 - vim ✓ ✓ ✓ . ✓
 - vimdoc ✓ . . . ✓
+- yaml ✓ ✓ ✓ ✓ ✓
 
 Legend: H[ighlight], L[ocals], F[olds], I[ndents], In[j]ections
 +) multiple parsers found, only one will be used
@@ -1050,7 +1070,7 @@ vim.lsp: require("vim.lsp.health").check()
 
 - LSP log level : WARN
 - Log path: /home/lavantien/.local/state/nvim/lsp.log
-- Log size: 0 KB
+- Log size: 296 KB
 
 vim.lsp: Active Clients ~
 
@@ -1060,7 +1080,29 @@ vim.lsp: Active Clients ~
 vim.treesitter: require("vim.treesitter.health").check()
 
 - Nvim runtime ABI version: 14
-- OK Parser: markdown ABI: 13, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/markdown.so
+- OK Parser: bash ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/bash.so
+- OK Parser: cpp ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/cpp.so
+- OK Parser: css ABI: 13, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/css.so
+- OK Parser: dart ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/dart.so
+- OK Parser: dockerfile ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/dockerfile.so
+- OK Parser: git_config ABI: 13, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/git_config.so
+- OK Parser: gitattributes ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/gitattributes.so
+- OK Parser: gitignore ABI: 13, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/gitignore.so
+- OK Parser: go ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/go.so
+- OK Parser: gomod ABI: 13, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/gomod.so
+- OK Parser: gosum ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/gosum.so
+- OK Parser: gowork ABI: 13, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/gowork.so
+- OK Parser: html ABI: 13, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/html.so
+- OK Parser: java ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/java.so
+- OK Parser: javascript ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/javascript.so
+- OK Parser: json ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/json.so
+- OK Parser: lua ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/lua.so
+- OK Parser: make ABI: 13, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/make.so
+- OK Parser: markdown ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/markdown.so
+- OK Parser: proto ABI: 13, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/proto.so
+- OK Parser: rust ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/rust.so
+- OK Parser: toml ABI: 13, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/toml.so
+- OK Parser: yaml ABI: 13, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/yaml.so
 - OK Parser: c ABI: 13, path: /home/linuxbrew/.linuxbrew/Cellar/neovim/0.9.1/lib/nvim/parser/c.so
 - OK Parser: lua ABI: 14, path: /home/linuxbrew/.linuxbrew/Cellar/neovim/0.9.1/lib/nvim/parser/lua.so
 - OK Parser: query ABI: 14, path: /home/linuxbrew/.linuxbrew/Cellar/neovim/0.9.1/lib/nvim/parser/query.so
@@ -1091,17 +1133,17 @@ vim.treesitter: require("vim.treesitter.health").check()
 - Or you can just use Telescope to do the deed `<leader>vk`, in this case, holding space and pressing `vk`
 
 ### Mason Built-in Packages to `:MasonInstall `
-  
-All `language servers` are pre-installed when you first initialize Neovim  
-Some tools such as `prettier` are handled by the configured `null-ls` already  
-see `.config/nvim/lua/plugins/init.lua`, `null-ls` section  
+
+All `language servers` are pre-installed when you first initialize Neovim
+Some tools such as `prettier` are handled by the configured `null-ls` already
+see `.config/nvim/lua/plugins/init.lua`, `null-ls` section
 
 - All 47 Packages:
-	
+
 ```text
 gopls delve staticcheck gotests golangci-lint golangci-lint-langserver go-debug-adapter gomodifytags impl rust-analyzer codelldb lua-language-server stylua luacheck clangd clang-format jdtls java-test java-debug-adapter google-java-format typescript-language-server js-debug-adapter chrome-debug-adapter html-lsp css-lsp tailwindcss-language-server pyright debugpy flake8 blue dart-debug-adapter csharp-language-server csharpier yaml-language-server yamllint yamlfmt buf-language-server buf terraform-ls tflint tfsec marksman ltex-ls vale proselint markdown-toc cbfmt
 ```
-	
+
 - Go:
 
 ```text
@@ -1215,7 +1257,7 @@ marksman ltex-ls vale proselint markdown-toc cbfmt
 
 <details>
   <summary>expand</summary>
-  
+
 ### Google Cloud CLI (broken installation & missing python2 dep)
 
 ```bash
@@ -1243,10 +1285,41 @@ sudo apt install google-cloud-cli-app-engine-go google-cloud-cli-app-engine-grpc
 
 ## Tested Machines
 
+<details>
+  <summary>expand</summary>
+
 ### My desktop:
 
 ```bash
+            .-/+oossssoo+/-.               lavantien@savaka
+        `:+ssssssssssssssssss+:`           ----------------
+      -+ssssssssssssssssssyyssss+-         OS: Ubuntu 23.04 x86_64
+    .ossssssssssssssssssdMMMNysssso.       Host: MS-7D42 1.0
+   /ssssssssssshdmmNNmmyNMMMMhssssss/      Kernel: 6.2.0-20-generic
+  +ssssssssshmydMMMMMMMNddddyssssssss+     Uptime: 8 hours, 4 mins
+ /sssssssshNMMMyhhyyyyhmNMMMNhssssssss/    Packages: 2530 (dpkg), 162 (brew), 6 (flatpak), 26 (snap)
+.ssssssssdMMMNhsssssssssshNMMMdssssssss.   Shell: zsh 5.9
++sssshhhyNMMNyssssssssssssyNMMMysssssss+   Resolution: 3840x2160
+ossyNMMMNyMMhsssssssssssssshmmmhssssssso   DE: GNOME 44.0
+ossyNMMMNyMMhsssssssssssssshmmmhssssssso   WM: Mutter
++sssshhhyNMMNyssssssssssssyNMMMysssssss+   WM Theme: Adwaita
+.ssssssssdMMMNhsssssssssshNMMMdssssssss.   Theme: Yaru-dark [GTK2/3]
+ /sssssssshNMMMyhhyyyyhdNMMMNhssssssss/    Icons: Yaru [GTK2/3]
+  +sssssssssdmydMMMMMMMMddddyssssssss+     Terminal: WezTerm
+   /ssssssssssshdmNNNNmyNMMMMhssssss/      CPU: 12th Gen Intel i7-12700F (20) @ 4.800GHz
+    .ossssssssssssssssssdMMMNysssso.       GPU: NVIDIA GeForce RTX 3080 Lite Hash Rate
+      -+sssssssssssssssssyyyssss+-         Memory: 6507MiB / 31930MiB
+        `:+ssssssssssssssssss+:`
+            .-/+oossssoo+/-.
 
+Filesystem      Size  Used Avail Use% Mounted on
+tmpfs           3.4G  3.1M  3.4G   1% /run
+/dev/nvme0n1p2  983G  139G  794G  15% /
+tmpfs            17G  1.2G   16G   7% /dev/shm
+tmpfs           5.3M   17k  5.3M   1% /run/lock
+/dev/nvme0n1p1  1.2G  6.4M  1.2G   1% /boot/efi
+tmpfs            17G     0   17G   0% /run/qemu
+tmpfs           3.4G  586k  3.4G   1% /run/user/1000
 ```
 
 ### My laptop:
@@ -1254,3 +1327,5 @@ sudo apt install google-cloud-cli-app-engine-go google-cloud-cli-app-engine-grpc
 ```bash
 
 ```
+
+</details>

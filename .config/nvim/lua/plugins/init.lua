@@ -77,7 +77,29 @@ return {
 				virtual_text = true,
 			})
 			require("mason").setup()
-			require("mason-lspconfig").setup()
+			require("mason-lspconfig").setup({
+				ensure_installed = {
+					"ltex",
+					"jdtls",
+					"marksman",
+					"tflint",
+					"terraformls",
+					"yamlls",
+					"bufls",
+					"csharp_ls",
+					"tailwindcss",
+					"clangd",
+					"pyright",
+					"cssls",
+					"html",
+					"tsserver",
+					"lua_ls",
+					"rust_analyzer",
+					"golangci_lint_ls",
+					"gopls",
+				},
+			})
+
 			require("mason-nvim-dap").setup({
 				ensure_installed = {},
 				automatic_installation = true,
