@@ -187,6 +187,10 @@ cd ~/Downloads && declare repo_version=$(if command -v lsb_release &> /dev/null;
 sudo cp -r /usr/share/dotnet/* /usr/lib/dotnet/ && dotnet --info
 ```
 
+```bash
+dotnet tool install --global csharp-ls csharpier
+```
+
 ### 15. Install `Qemu KVM`
 
 ```bash
@@ -952,6 +956,12 @@ pyright debugpy flake8 blue
 
 ```text
 dart-debug-adapter
+```
+
+- DotNet:
+
+```text
+csharp-ls csharpier
 ```
 
 - YAML:
