@@ -3,6 +3,8 @@
 Quality Assurance by myself: **99%**; Disk Size: **TBD**; Time Taken: **TBD**;  
 Supported: **AMD** & **Intel** (Wayland), **NVIDIA** (auto X11)  
 
+## *I will held-handing you throughout the untwinked setup process*
+
 Turn off `M$ Secure Boot` in your `BIOS` for a smooth installation process  
 Install with `Minimal setup`, check `Additionals Drivers` and `3rd-party` boxes  
 
