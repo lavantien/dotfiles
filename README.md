@@ -185,7 +185,7 @@ sudo cp -r /usr/share/dotnet/* /usr/lib/dotnet/ && dotnet --info
 ```
 
 ```bash
-dotnet tool install --global csharp-ls csharpier
+dotnet tool install --global csharp-ls && dotnet tool install --global csharpier
 ```
 
 ### 15. Install `Qemu KVM`
