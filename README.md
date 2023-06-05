@@ -2,7 +2,7 @@
 
 Quality Assurance by myself: **90%**
 
-## Step by Step for a Fresh Ubuntu 23.04+
+## Step by Step Setup for a Fresh Ubuntu 23.04
 
 ### 0. Disable Wireless Powersaving and Files Open Limit
 
@@ -227,7 +227,47 @@ cd ~/Downloads && curl -LO https://storage.googleapis.com/minikube/releases/late
 minikube config set driver docker && minikube start && minikube addons enable metrics-server
 ```
 
-### 20. Install `Vulkan`, `Wine`, `Lutris`, and `MangoHUD`
+### 20. Install `Graphics Drivers` and `Vulkan`
+
+if you have a `NVIDIA GPU`, replace `535` with whatever is the latest driver version as listed [here](https://launchpad.net/~graphics-drivers/+archive/ubuntu/ppa)
+
+```bash
+sudo add-apt-repository ppa:graphics-drivers/ppa -y && sudo dpkg --add-architecture i386 && sudo apt update && sudo apt install nvidia-driver-535 libvulkan1 libvulkan1:i386 -y
+```
+
+if not, just install `Vulkan`
+
+```bash
+sudo dpkg --add-architecture i386 && sudo apt update && sudo apt install libvulkan1 libvulkan1:i386 -y
+```
+
+and the latest `AMD/Intel` drivers
+
+```bash
+sudo add-apt-repository ppa:kisak/kisak-mesa -y && sudo dpkg --add-architecture i386 && sudo apt update && sudo apt upgrade && sudo apt install libgl1-mesa-dri:i386 mesa-vulkan-drivers mesa-vulkan-drivers:i386 -y && sudo apt autoremove -y
+```
+
+`reboot`
+
+### 21. Install `Wine`, `Lutris`, and `MangoHud`
+
+```bash
+sudo mkdir -pm755 /etc/apt/keyrings && sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key && sudo wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/lunar/winehq-lunar.sources && sudo apt update && sudo apt install --install-recommends winehq-devel -y
+```
+
+```bash
+sudo apt install cabextract fluid-soundfont-gm fluid-soundfont-gs libmspack0 mesa-utils mesa-utils-bin p7zip python3-bs4 python3-html5lib python3-lxml python3-setproctitle python3-soupsieve python3-webencodings p7zip-full python3-genshi doc-base -y && cd ~/Downloads && wget https://github.com/lutris/lutris/releases/download/v0.5.13/lutris_0.5.13_all.deb && sudo dpkg -i lutris_0.5.13_all.deb && rm lutris_0.5.13_all.deb && cd ~
+```
+
+```bash
+lutris
+```
+
+Click the `gear button` next to `Wine` -> tick `Advanced` -> `System options` -> `Command prefix` -> `mangohud` -> `Save` -> exit Lutris
+
+```bash
+sudo apt install mangohud -y
+```
 
 ### 21. Install `OBS`, `Gimp`, `Inkscape`, `LibreOffice`, `Blender`
 
@@ -296,25 +336,6 @@ Doctor summary (to see all details, run flutter doctor -v):
 ```
 
 </details>
-
-### MiniKube
-
-```bash
-minikube start
-```
-
-<details>
-  <summary>expand result</summary>
-
-```bash
-
-```
-
-</details>
-
-```bash
-minikube stop
-```
 
 ### Neovim Deps (fresh 100% OK)
 
