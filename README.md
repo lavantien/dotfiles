@@ -236,7 +236,7 @@ sudo usermod -aG docker $USER && newgrp docker
 `reboot`
 
 ```bash
-docker run hello-world && flatpak install flathub io.podman_desktop.PodmanDesktop
+docker run hello-world && flatpak install flathub io.podman_desktop.PodmanDesktop -y
 ```
 
 ### 19. Install `kubectl`, and `minikube`
