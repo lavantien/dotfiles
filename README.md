@@ -467,7 +467,7 @@ go install gotest.tools/gotestsum@latest
 - [**Golang-Migrate**](https://github.com/golang-migrate/migrate/tree/master/cmd/migrate):
 
 ```bash
-go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest && go install -tags 'mongodb' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 ```
 
 - [**SQLc**](https://docs.sqlc.dev/en/latest/overview/install.html):
