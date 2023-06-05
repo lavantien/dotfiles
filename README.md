@@ -485,15 +485,13 @@ go install github.com/golang/mock/mockgen@latest
 - [**Viper**](https://github.com/spf13/viper):
 
 ```bash
-go install https://github.com/spf13/viper@latest
+go get -u https://github.com/spf13/viper@latest
 ```
 
 - [**Gin**](https://github.com/gin-gonic/gin#installation):
 
 ```bash
-go install github.com/gin-gonic/gin@latest
-
-go get -u github.com/gin-gonic/gin
+go get -u github.com/gin-gonic/gin && go install github.com/gin-gonic/gin@latest
 ```
 
 - [**Paseto**](https://github.com/o1egl/paseto):
