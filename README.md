@@ -304,6 +304,20 @@ sudo add-apt-repository ppa:graphics-drivers/ppa -y && sudo dpkg --add-architect
 
 and to `underwatt` your GPU: <https://www.pugetsystems.com/labs/hpc/quad-rtx3090-gpu-power-limiting-with-systemd-and-nvidia-smi-1983/>
 
+and to be able to save `nvidia-settings` config:
+
+```bash
+sudo nvidia-xconfig
+```
+
+```bash
+sudo chmod +x /usr/share/screen-resolution-extra/nvidia-polkit
+```
+
+```bash
+sudo nvidia-settings
+```
+
 If not, just install `Vulkan`
 
 ```bash
