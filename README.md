@@ -108,7 +108,7 @@ git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-m
 ### 5. Install the proper `.zshrc` by clone this repo to `~/temp`, copy all its content to `~`
 
 ```bash
-git clone https://github.com/lavantien/dotfiles.git ~/temp && mv -v {~/temp/*,~/temp/.*} ~/ && mv ~/temp/.config/* ~/.config/ && mv ~/temp/.local/share/applications/* ~/.local/share/applications/ && source ~/.zshrc
+git clone https://github.com/lavantien/dotfiles.git ~/temp && cp -r ~/temp/{*,.*} ~/ && cp -r ~/temp/.config/* ~/.config/ && cp ~/temp/.local/share/applications/* ~/.local/share/applications/ && source ~/.zshrc
 ```
 
 ### 6. Install `rust` and its toolchains, then `reboot`
@@ -145,16 +145,18 @@ echo 'machine github.com login lavantien password ghp_klsdfjalsdkfjdsjfalsdkldas
 
 For `gh`, run `gh auth login` and follow instruction to setup `GitHub CLI`
 
-### 9. Run `./git-clone-all your-github-username` on `~/dev/personal` for cloning all of your repos
+### 9. Run `./git-clone-all $org_name` on `~/dev/personal` for cloning all of your repos
 
 ```bash
-mkdir -p ~/dev/personal && cp ~/git-clone-all.sh ~/dev/personal/ && cd ~/dev/personal && ./git-clone-all.sh your-github-username && cd ~
+org_name=your-github-username && mkdir -p ~/dev/personal && cp ~/git-clone-all.sh ~/dev/personal/ && cd ~/dev/personal && ./git-clone-all.sh $org_name && cd ~
 ```
 
 ```bash
-mv ~/dev/personal/your-github-username/Documents/* ~/Documents && mv ~/dev/personal/your-github-username/Pictures/* ~/Pictures
+org_name=your-github-username && cp -r ~/dev/personal/$org_name/Documents/{*,.*} ~/Documents/ && cp -r ~/dev/personal/$org_name/Pictures/{*,.*} ~/Pictures/
 ```
 
+Rerun the script to sync with remote
+	
 ### 10. Install `Iosevka Nerd Font` (replace version `v3.0.1` with whatever latest)
 
 ```bash
