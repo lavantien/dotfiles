@@ -156,7 +156,7 @@ org_name=your-github-username && cp -r ~/dev/personal/$org_name/Documents/{*,.*}
 ```
 
 Rerun the script to sync with remote
-	
+
 ### 10. Install `Iosevka Nerd Font` (replace version `v3.0.1` with whatever latest)
 
 ```bash
@@ -917,12 +917,12 @@ mason.nvim [Languages] ~
 
 - OK Go: `go version go1.20.4 linux/amd64`
 - OK Ruby: `ruby 3.2.2 (2023-03-30 revision e51014f9c0) [x86_64-linux]`
-- OK PHP: `PHP 8.2.6 (cli) (built: May  9 2023 06:25:31) (NTS)`
+- OK luarocks: `/home/linuxbrew/.linuxbrew/bin/luarocks 3.9.2`
 - OK cargo: `cargo 1.70.0 (ec8a8a0ca 2023-04-25)`
 - OK node: `v20.2.0`
-- OK luarocks: `/home/linuxbrew/.linuxbrew/bin/luarocks 3.9.2`
-- OK Composer: `Composer version 2.5.7 2023-05-24 15:00:39`
+- OK PHP: `PHP 8.2.6 (cli) (built: May  9 2023 06:25:31) (NTS)`
 - OK java: `openjdk version "20.0.1" 2023-04-18`
+- OK Composer: `Composer version 2.5.7 2023-05-24 15:00:39`
 - OK python3: `Python 3.11.3`
 - OK RubyGem: `3.4.13`
 - OK javac: `javac 20.0.1`
@@ -932,7 +932,7 @@ mason.nvim [Languages] ~
 
 mason.nvim [GitHub] ~
 
-- OK GitHub API rate limit. Used: 1. Remaining: 4999. Limit: 5000. Reset: Tue 06 Jun 2023 02:38:17 AM +07.
+- OK GitHub API rate limit. Used: 1. Remaining: 4999. Limit: 5000. Reset: Tue 06 Jun 2023 07:04:06 PM +07.
 
 ==============================================================================
 null-ls: require("null-ls.health").check()
@@ -994,6 +994,7 @@ Parser/Features H L F I J
 
 - bash ✓ ✓ ✓ . ✓
 - c ✓ ✓ ✓ ✓ ✓
+- c_sharp ✓ ✓ ✓ . ✓
 - cpp ✓ ✓ ✓ ✓ ✓
 - css ✓ . ✓ ✓ ✓
 - dart ✓ ✓ ✓ ✓ ✓
@@ -1013,9 +1014,13 @@ Parser/Features H L F I J
 - make ✓ . ✓ . ✓
 - markdown ✓ . ✓ ✓ ✓
 - proto ✓ . ✓ . .
+- python ✓ ✓ ✓ ✓ ✓
 - query ✓ ✓ ✓ ✓ ✓
 - rust ✓ ✓ ✓ ✓ ✓
+- scss ✓ . ✓ ✓ .
+- sql ✓ . . ✓ ✓
 - toml ✓ ✓ ✓ ✓ ✓
+- typescript ✓ ✓ ✓ ✓ ✓
 - vim ✓ ✓ ✓ . ✓
 - vimdoc ✓ . . . ✓
 - yaml ✓ ✓ ✓ ✓ ✓
@@ -1082,7 +1087,7 @@ vim.lsp: require("vim.lsp.health").check()
 
 - LSP log level : WARN
 - Log path: /home/lavantien/.local/state/nvim/lsp.log
-- Log size: 296 KB
+- Log size: 443 KB
 
 vim.lsp: Active Clients ~
 
@@ -1093,6 +1098,8 @@ vim.treesitter: require("vim.treesitter.health").check()
 
 - Nvim runtime ABI version: 14
 - OK Parser: bash ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/bash.so
+- OK Parser: c ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/c.so
+- OK Parser: c_sharp ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/c_sharp.so
 - OK Parser: cpp ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/cpp.so
 - OK Parser: css ABI: 13, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/css.so
 - OK Parser: dart ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/dart.so
@@ -1112,10 +1119,17 @@ vim.treesitter: require("vim.treesitter.health").check()
 - OK Parser: make ABI: 13, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/make.so
 - OK Parser: markdown ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/markdown.so
 - OK Parser: proto ABI: 13, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/proto.so
+- OK Parser: python ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/python.so
+- OK Parser: query ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/query.so
 - OK Parser: rust ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/rust.so
+- OK Parser: scss ABI: 13, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/scss.so
+- OK Parser: sql ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/sql.so
 - OK Parser: toml ABI: 13, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/toml.so
+- OK Parser: typescript ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/typescript.so
+- OK Parser: vim ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/vim.so
+- OK Parser: vimdoc ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/vimdoc.so
 - OK Parser: yaml ABI: 13, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/yaml.so
-- OK Parser: c ABI: 13, path: /home/linuxbrew/.linuxbrew/Cellar/neovim/0.9.1/lib/nvim/parser/c.so
+- OK Parser: c ABI: 14, path: /home/linuxbrew/.linuxbrew/Cellar/neovim/0.9.1/lib/nvim/parser/c.so
 - OK Parser: lua ABI: 14, path: /home/linuxbrew/.linuxbrew/Cellar/neovim/0.9.1/lib/nvim/parser/lua.so
 - OK Parser: query ABI: 14, path: /home/linuxbrew/.linuxbrew/Cellar/neovim/0.9.1/lib/nvim/parser/query.so
 - OK Parser: vim ABI: 14, path: /home/linuxbrew/.linuxbrew/Cellar/neovim/0.9.1/lib/nvim/parser/vim.so
@@ -1146,7 +1160,7 @@ vim.treesitter: require("vim.treesitter.health").check()
 
 ### Mason Built-in Packages to `:MasonInstall `
 
-All `language servers` are pre-installed when you first initialize Neovim
+All language `servers` and `treesitters` are pre-installed when you first initialize Neovim
 
 Some tools such as `prettier` are handled by the configured `null-ls` already
 

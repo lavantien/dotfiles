@@ -144,7 +144,10 @@ return {
 		build = ":TSUpdate",
 		config = function()
 			require("nvim-treesitter.configs").setup({
-				ensure_installed = {},
+				ensure_installed = { 'bash', 'c', 'c_sharp', 'cpp', 'css', 'dart', 'dockerfile', 'git_config',
+					'gitattributes',
+					'gitignore', 'go', 'gomod', 'gosum', 'gowork', 'html', 'java', 'javascript', 'json', 'lua', 'make',
+					'markdown', 'proto', 'query', 'rust', 'scss', 'sql', 'toml', 'typescript', 'vim', 'vimdoc', 'yaml' },
 				sync_install = false,
 				auto_install = true,
 				highlight = {
