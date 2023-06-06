@@ -97,6 +97,7 @@ return {
 					"rust_analyzer",
 					"golangci_lint_ls",
 					"gopls",
+					"sqlls",
 				},
 			})
 
