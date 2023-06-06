@@ -136,3 +136,4 @@ Android/Sdk
 .config/coolercontrol
 .config/gnome-control-center/backgrounds
 .local/share/backgrounds
+.local/share/applications/net.lutris.battlenet-1.desktop
