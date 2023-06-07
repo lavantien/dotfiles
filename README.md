@@ -550,6 +550,8 @@ go get -u github.com/o1egl/paseto
 go get -u https://github.com/golang-jwt/jwt
 ```
 
+- [**DB Diagram**](https://dbdiagram.io/)
+
 - [**Swagger Editor**](https://editor.swagger.io/)
 
 - [**Coverage Badge**](https://eremeev.ca/posts/golang-test-coverage-github-action/)
