@@ -1192,6 +1192,11 @@ see `.config/nvim/lua/plugins/init.lua`, `null-ls` section
 gopls delve staticcheck gotests golangci-lint golangci-lint-langserver go-debug-adapter gomodifytags impl rust-analyzer codelldb lua-language-server stylua luacheck clangd clang-format jdtls java-test java-debug-adapter google-java-format typescript-language-server js-debug-adapter chrome-debug-adapter html-lsp css-lsp tailwindcss-language-server pyright debugpy flake8 blue dart-debug-adapter csharp-language-server csharpier yaml-language-server yamllint yamlfmt buf-language-server buf terraform-ls sqlls sqlfluff sql-formatter tflint tfsec marksman ltex-ls vale proselint markdown-toc cbfmt
 ```
 
+- Specific Languages:
+
+<details>
+	<summary>expand</summary>
+
 - Go:
 
 ```text
@@ -1287,6 +1292,8 @@ terraform-ls tflint tfsec
 ```text
 marksman ltex-ls vale proselint markdown-toc cbfmt
 ```
+
+</details>
 
 ### References
 
