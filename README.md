@@ -120,7 +120,7 @@ brew install gcc@11 gcc gh go lazygit fzf fd ripgrep bat neovim hyperfine openjd
 ```
 
 ```bash
-sudo snap install julia --classic && pip3 install cmake-language-server python-lsp-server && npm install --global sql-formatter && sudo apt install python-is-python3 -y
+sudo snap install julia --classic && pip3 install cmake-language-server python-lsp-server && npm install --global sql-formatter && sudo apt install python-is-python3 -y && go install github.com/charmbracelet/glow@latest
 ```
 
 ```bash
