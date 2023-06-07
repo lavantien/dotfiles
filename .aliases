@@ -4,6 +4,7 @@ alias lz="lazygit"
 alias n="nvim"
 alias b="bat"
 alias ls='ls --color -h --group-directories-first'
+alias ntop='nvidia-smi -l 1'
 alias gs="git status"
 alias gl="git log"
 alias glg="git log --graph"
