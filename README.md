@@ -1,12 +1,9 @@
 # A robust Dotfiles for Developer - Battery Included
 
-Quality Assurance: **100%**; Disk Size: **139GB**; Time Taken: **5h**;
-
-Supported: **AMD** & **Intel** (Wayland), **NVIDIA** (auto X11)
-
-Turn off `M$ Secure Boot` in your `BIOS` for a smooth installation process
-
-Install with `Minimal setup`, check `Additionals Drivers` and `3rd-party` boxes
+- Quality Assurance: **100%**; Disk Size: **139GB**; Time Taken: **5h**;
+- Supported: **AMD** & **Intel** (Wayland), **NVIDIA** (auto X11)
+- Turn off `M$ Secure Boot` in your `BIOS` for a smooth installation process
+- Install with `Minimal setup`, check `Additionals Drivers` and `3rd-party` boxes
 
 ## Step by Step Setup for a Fresh Ubuntu 23.04
 
@@ -137,13 +134,13 @@ cd ~/Downloads && wget https://github.com/OmniSharp/omnisharp-vscode/releases/do
 sudo snap install joplin-desktop
 ```
 
-For a smooth `Git` experience, you should make a `.netrc` file in your home directory and add auth token
+- For a smooth `Git` experience, you should make a `.netrc` file in your home directory and add auth token
 
 ```bash
 echo 'machine github.com login lavantien password ghp_klsdfjalsdkfjdsjfalsdkldasfjkasldfjalsdfjalsdjfk' >> .netrc && git lfs install
 ```
 
-For `gh`, run `gh auth login` and follow instruction to setup `GitHub CLI`
+- For `gh`, run `gh auth login` and follow instruction to setup `GitHub CLI`
 
 ### 9. Run `./git-clone-all $org_name` on `~/dev/personal` for cloning all of your repos
 
@@ -155,7 +152,7 @@ org_name=your-github-username && mkdir -p ~/dev/personal && cp ~/git-clone-all.s
 org_name=your-github-username && cp -r ~/dev/personal/$org_name/Documents/{*,.*} ~/Documents/ && cp -r ~/dev/personal/$org_name/Pictures/{*,.*} ~/Pictures/
 ```
 
-Rerun the script to sync with remote
+- Rerun the script to sync with remote
 
 ### 10. Install `Iosevka Nerd Font` (replace version `v3.0.1` with whatever latest)
 
@@ -215,7 +212,7 @@ sudo apt install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils -y
 sudo snap install android-studio --classic
 ```
 
-Run `Android Studio` and install default configuration, then click `More Actions` -> `SDK Manager` -> `SDK Tools` -> tick `Android SDK Build-Tools` and `Android SDK Command-line Tools` -> `Apply` and `OK`
+- Run `Android Studio` and install default configuration, then click `More Actions` -> `SDK Manager` -> `SDK Tools` -> tick `Android SDK Build-Tools` and `Android SDK Command-line Tools` -> `Apply` and `OK`
 
 ```bash
 sudo snap install flutter --classic && flutter doctor && flutter doctor --android-licenses
@@ -296,15 +293,14 @@ minikube stop
 
 ### 20. Install `Graphics Drivers` and `Vulkan`, and `Fan Control`
 
-If you have a `NVIDIA GPU`, replace `535` with whatever is the latest driver version as listed [here](https://launchpad.net/~graphics-drivers/+archive/ubuntu/ppa)
+- If you have a `NVIDIA GPU`, replace `535` with whatever is the latest driver version as listed [here](https://launchpad.net/~graphics-drivers/+archive/ubuntu/ppa)
 
 ```bash
 sudo add-apt-repository ppa:graphics-drivers/ppa -y && sudo dpkg --add-architecture i386 && sudo apt update && sudo apt install nvidia-driver-535 libvulkan1 libvulkan1:i386 libgl-dev libgl-dev:i386 -y
 ```
 
-and to `underwatt` your GPU: <https://www.pugetsystems.com/labs/hpc/quad-rtx3090-gpu-power-limiting-with-systemd-and-nvidia-smi-1983/>
-
-and to be able to save `nvidia-settings` config:
+- and to `underwatt` your GPU: <https://www.pugetsystems.com/labs/hpc/quad-rtx3090-gpu-power-limiting-with-systemd-and-nvidia-smi-1983/>
+- and to be able to save `nvidia-settings` config:
 
 ```bash
 sudo nvidia-xconfig
@@ -318,13 +314,13 @@ sudo chmod +x /usr/share/screen-resolution-extra/nvidia-polkit
 sudo nvidia-settings
 ```
 
-If not, just install `Vulkan`
+- If not, just install `Vulkan`
 
 ```bash
 sudo dpkg --add-architecture i386 && sudo apt update && sudo apt install libvulkan1 libvulkan1:i386 -y
 ```
 
-and the latest `AMD/Intel` drivers
+- and the latest `AMD/Intel` drivers
 
 ```bash
 sudo add-apt-repository ppa:kisak/kisak-mesa -y && sudo dpkg --add-architecture i386 && sudo apt update && sudo apt upgrade && sudo apt install libgl1-mesa-dri:i386 mesa-vulkan-drivers mesa-vulkan-drivers:i386 libgl-dev libgl-dev:i386 -y && sudo apt autoremove -y
@@ -353,9 +349,8 @@ sudo apt install cabextract fluid-soundfont-gm fluid-soundfont-gs libmspack0 mes
 lutris
 ```
 
-Click the `gear button` next to `Wine` -> tick `Advanced` -> `System options` -> `Command prefix` -> `mangohud` -> `Save` -> exit Lutris
-
-For `Steam` games, set launch options: `mangohud %command%`
+- Click the `gear button` next to `Wine` -> tick `Advanced` -> `System options` -> `Command prefix` -> `mangohud` -> `Save` -> exit Lutris
+- For `Steam` games, set launch options: `mangohud %command%`
 
 ```bash
 sudo apt install mangohud -y
@@ -367,7 +362,7 @@ sudo apt install mangohud -y
 sudo add-apt-repository ppa:obsproject/obs-studio -y && sudo apt update && sudo apt install ffmpeg obs-studio -y
 ```
 
-Then run `OBS`, setup proper resolution, framerate, encoder, and default whole screen scene
+- Then run `OBS`, setup proper resolution, framerate, encoder, and default whole screen scene
 
 ```bash
 sudo snap install gimp inkscape libreoffice
@@ -389,19 +384,16 @@ brew install helix
 cd ~/Downloads && wget https://repo.steampowered.com/steam/archive/precise/steam_latest.deb && sudo dpkg -i steam_latest.deb && rm steam_latest.deb && cd ~
 ```
 
-Run `Steam`, login, enable `Shader Pre-Caching` and `SteamPlay`, restart `Steam`
-
-(Install `Dota 2` to test native `Vulkan`, `Grim Dawn` to test `Proton`, also `gd rainbow filter` is a must-have loot filter for `Grim Dawn`
-
-Install `Battlenet` by searching for `script` inside `Lutris`, do as instructed, then relaunch `Battlenet`, install `Diablo 2 Ressurrected`
-
-Run `Diablo 2 Resurrected` to check for stability and if `Fsync/Gsync` is working properly)
+- Run `Steam`, login, enable `Shader Pre-Caching` and `SteamPlay`, restart `Steam`
+- (Install `Dota 2` to test native `Vulkan`, `Grim Dawn` to test `Proton`, also `gd rainbow filter` is a must-have loot filter for `Grim Dawn`
+- Install `Battlenet` by searching for `script` inside `Lutris`, do as instructed, then relaunch `Battlenet`, install `Diablo 2 Ressurrected`
+- Run `Diablo 2 Resurrected` to check for stability and if `Fsync/Gsync` is working properly)
 
 ```bash
 nvidia-smi
 ```
 
-Enable `Gsync/Fsync` inside `nvidia-settings`
+- Enable `Gsync/Fsync` inside `nvidia-settings`
 
 </details>
 
@@ -416,10 +408,8 @@ Enable `Gsync/Fsync` inside `nvidia-settings`
 brew install nginx
 ```
 
-`NGINX` config
-
 <details>
-	<summary>See details</summary>
+	<summary>`NGINX` config</summary>
 
 ```nginx
 worker_processes 1;
@@ -675,7 +665,7 @@ mvn test
 mvn spring-boot:run
 ```
 
-Open browser at `http://localhost:8081/api/players`
+- Open browser at `http://localhost:8081/api/players`
 
 `<C-c>`
 
@@ -1180,12 +1170,9 @@ vim.treesitter: require("vim.treesitter.health").check()
 
 ### Mason Built-in Packages to `:MasonInstall `
 
-All language `servers` and `treesitters` are pre-installed when you first initialize Neovim
-
-Some tools such as `prettier` are handled by the configured `null-ls` already
-
-see `.config/nvim/lua/plugins/init.lua`, `null-ls` section
-
+- All language `servers` and `treesitters` are pre-installed when you first initialize Neovim
+- Some tools such as `prettier` are handled by the configured `null-ls` already
+- see `.config/nvim/lua/plugins/init.lua`, `null-ls` section
 - All 50 Packages:
 
 ```text
@@ -1304,10 +1291,8 @@ marksman ltex-ls vale proselint markdown-toc cbfmt
 - Zero to IDE: <https://youtu.be/N93cTbtLCIM>
 - Effective Neovim: Instant IDE: <https://youtu.be/stqUbv-5u2s>
 - Kickstart.nvim: <https://github.com/nvim-lua/kickstart.nvim>
-- Neovim Null-LS - Hooks For LSP | Format Code On Save:
-  <https://youtu.be/ryxRpKpM9B4>
-- Null-LS built-in:
-  <https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md>
+- Neovim Null-LS - Hooks For LSP | Format Code On Save: <https://youtu.be/ryxRpKpM9B4>
+- Null-LS built-in: <https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md>
 - Debugging in Neovim: <https://youtu.be/0moS8UHupGc>
 - How to Debug like a Pro: <https://miguelcrespo.co/how-to-debug-like-a-pro-using-neovim>
 - Nvim DAP getting started: <https://davelage.com/posts/nvim-dap-getting-started/>
