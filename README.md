@@ -53,7 +53,7 @@ sudo systemctl daemon-reexec && ulimit -n
 ### 1. Install all necessary `APT` packages
 
 ```bash
-sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install ubuntu-desktop ca-certificates apt-transport-https ubuntu-dev-tools glibc-source gcc xclip git git-lfs curl zsh htop neofetch vim mpv libutf8proc2 libutf8proc-dev libfuse2 cpu-checker screenkey -y
+sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install ubuntu-desktop ca-certificates apt-transport-https ubuntu-dev-tools glibc-source gcc xclip git git-lfs curl zsh htop neofetch vim mpv libutf8proc2 libutf8proc-dev libfuse2 cpu-checker screenkey cmake cmake-format ninja-build libjsoncpp-dev uuid-dev zlib1g-dev libssl-dev postgresql-all libmariadb-dev libsqlite3-dev libhiredis-dev -y
 ```
 
 ### 2. Install `Oh-my-zsh` and `Chrome`, then `reboot`
@@ -472,6 +472,12 @@ http {
 ```
 
 </details>
+
+- [**Drogon Core - The fastest Web Framework**](https://drogonframework.github.io/drogon-docs/#/?id=document)
+
+```bash
+sudo apt install postgresql-all libmariadb-dev libsqlite3-dev libhiredis-dev && docker pull drogonframework/drogon
+```
 
 - [**SegmentIO KafkaGo**](https://github.com/segmentio/kafka-go)
 
