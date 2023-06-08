@@ -1,7 +1,7 @@
 # A robust Dotfiles for Developer - Battery Included
 
 - Quality Assurance: **100%**; Disk Size: **139GB**; Time Taken: **5h**;
-- Supported: **AMD** & **Intel** (Wayland), **NVIDIA** (auto X11)
+- Supported: **AMD** & **Intel** (Wayland), **NVIDIA** (auto X11), **Windows** (WSL)
 - Turn off `M$ Secure Boot` in your `BIOS` for a smooth installation process
 - Install with `Minimal setup`, check `Additionals Drivers` and `3rd-party` boxes
 
