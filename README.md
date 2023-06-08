@@ -126,11 +126,13 @@ brew install gcc@11 gcc gh go lazygit fzf fd ripgrep bat neovim hyperfine openjd
 ```
 
 ```bash
-sudo snap install julia --classic && pip3 install cmake-language-server python-lsp-server && npm install --global sql-formatter && sudo apt install python-is-python3 -y && go install github.com/charmbracelet/glow@latest
+pip3 install cmake-language-server python-lsp-server && npm install --global sql-formatter && sudo apt install python-is-python3 -y && go install github.com/charmbracelet/glow@latest
 ```
 
+- Skip this on WSL
+
 ```bash
-cd ~/Downloads && wget https://github.com/OmniSharp/omnisharp-vscode/releases/download/v1.25.8/csharp-1.25.8-linux-x64.vsix && code --install-extension csharp-1.25.8-linux-x64.vsix && rm csharp-1.25.8-linux-x64.vsix && cd ~
+sudo snap install julia --classic && cd ~/Downloads && wget https://github.com/OmniSharp/omnisharp-vscode/releases/download/v1.25.8/csharp-1.25.8-linux-x64.vsix && code --install-extension csharp-1.25.8-linux-x64.vsix && rm csharp-1.25.8-linux-x64.vsix && cd ~
 ```
 
 ### 8. Install `Joplin (snap)`, sync your notes, and setup your `Git` environment:
