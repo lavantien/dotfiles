@@ -407,7 +407,16 @@ nvidia-smi
 <details>
   <summary>expand</summary>
 
-### 0. Disable Files Open Limit and install `Wezterm`
+### 0. Enable `SystemD`, disable Files Open Limit and install `Wezterm`
+
+- `/etc/wsl.conf`
+
+```conf
+[boot]
+systemd=true
+```
+
+- Exit `wsl` and run `wsl --shutdown` and `wsl --update`
 
 ```bash
 sudo prlimit -p "$$" --nofile=4096:1048576
