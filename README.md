@@ -462,10 +462,24 @@ pip3 install cmake-language-server python-lsp-server && npm install --global sql
 ```
 
 ```bash
-brew install julia
+sudo snap install julia --classic && sudo snap install flutter --classic
 ```
 
-### 8. Install `Joplin (snap)`, sync your notes, and setup your `Git` environment:
+### 8. Install `DotNet SDK`
+
+```bash
+declare repo_version=$(if command -v lsb_release &> /dev/null; then lsb_release -r -s; else grep -oP '(?<=^VERSION_ID=).+' /etc/os-release | tr -d '"'; fi) && wget https://packages.microsoft.com/config/ubuntu/$repo_version/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && sudo dpkg -i packages-microsoft-prod.deb && rm packages-microsoft-prod.deb && sudo apt update && sudo apt install dotnet-sdk-7.0 -y
+```
+
+```bash
+sudo cp -r /usr/share/dotnet/* /usr/lib/dotnet/ && dotnet --info
+```
+
+```bash
+dotnet tool install --global csharp-ls && dotnet tool install --global csharpier
+```
+
+### 9. Install `Joplin (snap)`, sync your notes, and setup your `Git` environment:
 
 - Download Joplin Windows binary installer
 
@@ -477,7 +491,7 @@ echo 'machine github.com login lavantien password ghp_klsdfjalsdkfjdsjfalsdkldas
 
 - For `gh`, run `gh auth login` and follow instruction to setup `GitHub CLI`
 
-### 9. Run `./git-clone-all $org_name` on `~/dev/personal` for cloning all of your repos
+### 10. Run `./git-clone-all $org_name` on `~/dev/personal` for cloning all of your repos
 
 ```bash
 org_name=your-github-username && mkdir -p ~/dev/personal && cp ~/git-clone-all.sh ~/dev/personal/ && cd ~/dev/personal && ./git-clone-all.sh $org_name && cd ~
@@ -485,17 +499,17 @@ org_name=your-github-username && mkdir -p ~/dev/personal && cp ~/git-clone-all.s
 
 - Rerun the script to sync with remote
 
-### 10. Install `Iosevka Nerd Font` (replace version `v3.0.1` with whatever latest)
+### 11. Install `Iosevka Nerd Font` (replace version `v3.0.1` with whatever latest)
 
 - Install on Windows for all users
 
-### 11. Install `GRPC`, `GRPC-Web`, and `protoc-gen`
+### 12. Install `GRPC`, `GRPC-Web`, and `protoc-gen`
 
 ```bash
 brew install grpc protoc-gen-grpc-web && go install google.golang.org/protobuf/cmd/protoc-gen-go@latest && go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 ```
 
-### 12. Install `Docker Compose`, then `restart`
+### 13. Install `Docker Compose`, then `restart`
 
 ```bash
 sudo install -m 0755 -d /etc/apt/keyrings && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg && sudo chmod a+r /etc/apt/keyrings/docker.gpg && echo \
@@ -514,7 +528,7 @@ sudo usermod -aG docker $USER && newgrp docker
 docker run hello-world
 ```
 
-### 13. Install `kubectl`, and `minikube`
+### 14. Install `kubectl`, and `minikube`
 
 ```bash
 curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg && echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list && sudo apt update && sudo apt install kubectl -y
@@ -556,12 +570,6 @@ You can view the list of minikube maintainers at: https://github.com/kubernetes/
 
 ```bash
 minikube stop
-```
-
-### 14. `Helix`
-
-```bash
-brew install helix
 ```
 
 </details>
