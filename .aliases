@@ -1,6 +1,7 @@
 alias fzf="fzf --preview 'bat --color=always --style=numbers --line-range=:1000 {}'"
 alias logfmt="bat --paging=never -l log" # tail -f /var/log/syslog | logfmt
 alias lz="lazygit"
+alias ld="lazydocker"
 alias n="nvim"
 alias b="bat"
 alias ls='ls --color -h --group-directories-first'
