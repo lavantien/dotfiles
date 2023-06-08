@@ -407,7 +407,7 @@ nvidia-smi
 <details>
   <summary>expand</summary>
 
-### 0. Enable `SystemD`, disable Files Open Limit and install `Wezterm`
+### 0. Enable `SystemD`, disable Files Open Limit, setup forward localhost, and install `Wezterm`
 
 - `/etc/wsl.conf`
 
@@ -421,6 +421,8 @@ systemd=true
 ```bash
 sudo prlimit -p "$$" --nofile=4096:1048576
 ```
+
+- Follow this instruction to set up forward localhost: <https://stackoverflow.com/a/66504604/4578386>
 
 - Download `Wezterm` Windows binary installer, then copy `.config/wezterm/wezterm.lua` to `%HOME%\\.wezterm.lua` and modify it a bit
 
