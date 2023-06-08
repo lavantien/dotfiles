@@ -53,12 +53,6 @@ sudo systemctl daemon-reexec && ulimit -n
 sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install ubuntu-desktop ca-certificates apt-transport-https ubuntu-dev-tools glibc-source gcc xclip git git-lfs curl zsh htop neofetch vim mpv libutf8proc2 libutf8proc-dev libfuse2 cpu-checker screenkey cmake cmake-format ninja-build libjsoncpp-dev uuid-dev zlib1g-dev libssl-dev postgresql-all libmariadb-dev libsqlite3-dev libhiredis-dev ttf-mscorefonts-installer -y
 ```
 
-- For Windows WSL
-
-```bash
-sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install ca-certificates apt-transport-https ubuntu-dev-tools glibc-source gcc xclip git git-lfs curl zsh htop neofetch vim libutf8proc2 libutf8proc-dev libfuse2 cpu-checker cmake cmake-format ninja-build libjsoncpp-dev uuid-dev zlib1g-dev libssl-dev -y
-```
-
 ### 2. Install `Oh-my-zsh` and `Chrome`, then `reboot`
 
 ```bash
@@ -129,10 +123,14 @@ brew install gcc@11 gcc gh go lazygit fzf fd ripgrep bat neovim hyperfine openjd
 pip3 install cmake-language-server python-lsp-server && npm install --global sql-formatter && sudo apt install python-is-python3 -y && go install github.com/charmbracelet/glow@latest
 ```
 
-- Skip this on WSL
+```bash
+sudo snap install julia --classic
+```
+
+- or
 
 ```bash
-sudo snap install julia --classic && cd ~/Downloads && wget https://github.com/OmniSharp/omnisharp-vscode/releases/download/v1.25.8/csharp-1.25.8-linux-x64.vsix && code --install-extension csharp-1.25.8-linux-x64.vsix && rm csharp-1.25.8-linux-x64.vsix && cd ~
+brew install julia
 ```
 
 ### 8. Install `Joplin (snap)`, sync your notes, and setup your `Git` environment:
@@ -200,7 +198,7 @@ sudo cp -r /usr/share/dotnet/* /usr/lib/dotnet/ && dotnet --info
 ```
 
 ```bash
-dotnet tool install --global csharp-ls && dotnet tool install --global csharpier
+dotnet tool install --global csharp-ls && dotnet tool install --global csharpier && cd ~/Downloads && wget https://github.com/OmniSharp/omnisharp-vscode/releases/download/v1.25.8/csharp-1.25.8-linux-x64.vsix && code --install-extension csharp-1.25.8-linux-x64.vsix && rm csharp-1.25.8-linux-x64.vsix && cd ~
 ```
 
 ### 15. Install `Qemu KVM`
@@ -401,6 +399,170 @@ nvidia-smi
 ```
 
 - Enable `Gsync/Fsync` inside `nvidia-settings`
+
+</details>
+
+## Step by Step Setup for a Fresh WSL
+
+<details>
+  <summary>expand</summary>
+
+### 0. Disable Files Open Limit and install `Wezterm`
+
+```bash
+sudo prlimit -p "$$" --nofile=4096:1048576
+```
+
+- Download `Wezterm` Windows binary installer, then copy `.config/wezterm/wezterm.lua` to `%HOME%\\.wezterm.lua` and modify it a bit
+
+### 1. Install all necessary `APT` packages
+
+```bash
+sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install ca-certificates apt-transport-https ubuntu-dev-tools glibc-source gcc xclip git git-lfs curl zsh htop neofetch vim libutf8proc2 libutf8proc-dev libfuse2 cpu-checker cmake cmake-format ninja-build libjsoncpp-dev uuid-dev zlib1g-dev libssl-dev -y
+```
+
+### 2. Install `Oh-my-zsh` then `restart`
+
+```bash
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+```
+
+### 3. After `reboot`, install `Linuxbrew`
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+### 4. Install `zsh-autosuggestions`
+
+```bash
+git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+```
+
+### 5. Install the proper `.zshrc` by clone this repo to `~/temp`, copy all its content to `~`
+
+```bash
+git clone https://github.com/lavantien/dotfiles.git ~/temp && cp -r ~/temp/{*,.*} ~/ && cp -r ~/temp/.config/* ~/.config/ && cp ~/temp/.local/share/applications/* ~/.local/share/applications/ && source ~/.zshrc
+```
+
+### 6. Install `rust` and its toolchains, then `reboot`
+
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+
+### 7. Install `gcc`, `gh`, `neovim`, and other necessary `Brew` packages
+
+```bash
+brew install gcc@11 gcc gh go lazygit fzf fd ripgrep bat neovim hyperfine openjdk ruby lua maven node gopls rust-analyzer jdtls lua-language-server typescript-language-server marksman texlab yaml-language-server bash-language-server terraform terraform-ls sql-language-server sqlfluff prettier delve vscode-langservers-extracted loc llvm dotenv-linter checkmake luarocks php composer
+```
+
+```bash
+pip3 install cmake-language-server python-lsp-server && npm install --global sql-formatter && sudo apt install python-is-python3 -y && go install github.com/charmbracelet/glow@latest
+```
+
+```bash
+brew install julia
+```
+
+### 8. Install `Joplin (snap)`, sync your notes, and setup your `Git` environment:
+
+- Download Joplin Windows binary installer
+
+- For a smooth `Git` experience, you should make a `.netrc` file in your home directory and add auth token
+
+```bash
+echo 'machine github.com login lavantien password ghp_klsdfjalsdkfjdsjfalsdkldasfjkasldfjalsdfjalsdjfk' >> .netrc && git lfs install
+```
+
+- For `gh`, run `gh auth login` and follow instruction to setup `GitHub CLI`
+
+### 9. Run `./git-clone-all $org_name` on `~/dev/personal` for cloning all of your repos
+
+```bash
+org_name=your-github-username && mkdir -p ~/dev/personal && cp ~/git-clone-all.sh ~/dev/personal/ && cd ~/dev/personal && ./git-clone-all.sh $org_name && cd ~
+```
+
+- Rerun the script to sync with remote
+
+### 10. Install `Iosevka Nerd Font` (replace version `v3.0.1` with whatever latest)
+
+- Install on Windows for all users
+
+### 11. Install `GRPC`, `GRPC-Web`, and `protoc-gen`
+
+```bash
+brew install grpc protoc-gen-grpc-web && go install google.golang.org/protobuf/cmd/protoc-gen-go@latest && go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+```
+
+### 12. Install `Docker Compose`, then `restart`
+
+```bash
+sudo install -m 0755 -d /etc/apt/keyrings && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg && sudo chmod a+r /etc/apt/keyrings/docker.gpg && echo \
+  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null && sudo apt update && sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+```
+
+```bash
+sudo usermod -aG docker $USER && newgrp docker
+```
+
+`reboot`
+
+```bash
+docker run hello-world
+```
+
+### 13. Install `kubectl`, and `minikube`
+
+```bash
+curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg && echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list && sudo apt update && sudo apt install kubectl -y
+```
+
+```bash
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb && sudo dpkg -i minikube_latest_amd64.deb && rm minikube_latest_amd64.deb
+```
+
+```bash
+minikube config set driver docker && minikube start && minikube addons enable metrics-server
+```
+
+```bash
+❗  These changes will take effect upon a minikube delete and then a minikube start
+😄  minikube v1.30.1 on Ubuntu 23.04
+✨  Using the docker driver based on user configuration
+📌  Using Docker driver with root privileges
+👍  Starting control plane node minikube in cluster minikube
+🚜  Pulling base image ...
+💾  Downloading Kubernetes v1.26.3 preload ...
+    > preloaded-images-k8s-v18-v1...:  397.02 MiB / 397.02 MiB  100.00% 14.17 M
+    > gcr.io/k8s-minikube/kicbase...:  373.53 MiB / 373.53 MiB  100.00% 6.42 Mi
+🔥  Creating docker container (CPUs=2, Memory=7900MB) ...
+🐳  Preparing Kubernetes v1.26.3 on Docker 23.0.2 ...
+    ▪ Generating certificates and keys ...
+    ▪ Booting up control plane ...
+    ▪ Configuring RBAC rules ...
+🔗  Configuring bridge CNI (Container Networking Interface) ...
+    ▪ Using image gcr.io/k8s-minikube/storage-provisioner:v5
+🌟  Enabled addons: storage-provisioner, default-storageclass
+🔎  Verifying Kubernetes components...
+🏄  Done! kubectl is now configured to use "minikube" cluster and "default" namespace by default
+💡  metrics-server is an addon maintained by Kubernetes. For any concerns contact minikube on GitHub.
+You can view the list of minikube maintainers at: https://github.com/kubernetes/minikube/blob/master/OWNERS
+    ▪ Using image registry.k8s.io/metrics-server/metrics-server:v0.6.3
+🌟  The 'metrics-server' addon is enabled
+```
+
+```bash
+minikube stop
+```
+
+### 14. `Helix`
+
+```bash
+brew install helix
+```
 
 </details>
 
