@@ -471,7 +471,7 @@ pip3 install cmake-language-server python-lsp-server && npm install --global sql
 ```
 
 ```bash
-sudo snap install julia --classic && sudo snap install flutter --classic
+brew install dark-sdk julia
 ```
 
 ### 8. Install `DotNet SDK`
