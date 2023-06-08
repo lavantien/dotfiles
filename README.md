@@ -583,6 +583,14 @@ You can view the list of minikube maintainers at: https://github.com/kubernetes/
 minikube stop
 ```
 
+### 15. Install `Kreya`, `DBbGate`, and `lazydocker`
+
+- Install `Kreya` and `DBbGate` on Windows
+
+```bash
+brew install lazydocker
+```
+
 </details>
 
 ## Development Toolchains
