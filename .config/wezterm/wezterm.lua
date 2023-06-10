@@ -28,7 +28,7 @@ local bg_path = "/home/lavantien/Pictures/wallpaper"
 config.background = {
 	{
 		source = {
-			File = bg_path .. "/deer-forest.jpeg",
+			File = bg_path .. "/fantasy-forest-wallpaper.jpg",
 		},
 		repeat_x = "NoRepeat",
 		width = "100%",
