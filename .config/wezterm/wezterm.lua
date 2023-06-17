@@ -24,7 +24,7 @@ config.window_decorations = "NONE"
 config.hide_tab_bar_if_only_one_tab = true
 
 local dimmer = { brightness = 0.020 }
-local bg_path = "/home/lavantien/Pictures/wallpaper"
+local bg_path = "/home/lavantien/assets"
 config.background = {
 	{
 		source = {
