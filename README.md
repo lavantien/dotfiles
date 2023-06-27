@@ -1105,7 +1105,7 @@ mason: require("mason.health").check()
 
 mason.nvim ~
 
-- OK mason.nvim version v1.1.1
+- OK mason.nvim version v1.4.0
 - OK PATH: prepend
 - OK Providers:
   mason.providers.registry-api
@@ -1114,39 +1114,40 @@ mason.nvim ~
 
 mason.nvim [Registries] ~
 
-- OK Registry `github.com/mason-org/mason-registry version: 2023-06-05-basic-pound` is installed.
-- OK Registry `github.com/mason-org/mason-registry version: 2023-06-05-basic-pound` is installed.
+- OK Registry `github.com/mason-org/mason-registry version: 2023-06-26-toxic-dirt` is installed.
+- OK Registry `github.com/mason-org/mason-registry version: 2023-06-26-toxic-dirt` is installed.
 
 mason.nvim [Core utils] ~
 
 - OK unzip: `UnZip 6.00 of 20 April 2009, by Debian. Original by Info-ZIP.`
-- OK wget: `GNU Wget 1.21.3 built on linux-gnu.`
-- OK curl: `curl 8.1.2 (x86_64-pc-linux-gnu) libcurl/8.1.2 OpenSSL/1.1.1u zlib/1.2.13 brotli/1.0.9 zstd/1.5.5 libidn2/2.3.4 libssh2/1.11.0 nghttp2/1.53.0 librtmp/2.3`
-- OK gzip: `gzip 1.12`
+- OK wget: `GNU Wget 1.21.2 built on linux-gnu.`
+- OK curl: `curl 8.1.2 (x86_64-pc-linux-gnu) libcurl/8.1.2 OpenSSL/3.1.1 zlib/1.2.13 brotli/1.0.9 zstd/1.5.5 libidn2/2.3.4 libssh2/1.11.0 nghttp2/1.54.0 librtmp/2.3`
+- OK gzip: `gzip 1.10`
 - OK tar: `tar (GNU tar) 1.34`
-- OK bash: `GNU bash, version 5.2.15(1)-release (x86_64-pc-linux-gnu)`
+- OK bash: `GNU bash, version 5.1.16(1)-release (x86_64-pc-linux-gnu)`
 - OK sh: `Ok`
 
 mason.nvim [Languages] ~
 
-- OK Go: `go version go1.20.4 linux/amd64`
 - OK Ruby: `ruby 3.2.2 (2023-03-30 revision e51014f9c0) [x86_64-linux]`
 - OK luarocks: `/home/linuxbrew/.linuxbrew/bin/luarocks 3.9.2`
 - OK cargo: `cargo 1.70.0 (ec8a8a0ca 2023-04-25)`
-- OK node: `v20.2.0`
-- OK PHP: `PHP 8.2.6 (cli) (built: May  9 2023 06:25:31) (NTS)`
-- OK java: `openjdk version "20.0.1" 2023-04-18`
-- OK Composer: `Composer version 2.5.7 2023-05-24 15:00:39`
-- OK python3: `Python 3.11.3`
+- OK Go: `go version go1.20.5 linux/amd64`
+- OK PHP: `PHP 8.2.7 (cli) (built: Jun  6 2023 21:28:56) (NTS)`
+- OK node: `v20.3.1`
 - OK RubyGem: `3.4.13`
+- OK Composer: `Composer version 2.5.8 2023-06-09 17:13:21`
+- OK python: `Python 3.11.4`
+- OK julia: `julia version 1.9.1`
+- OK java: `openjdk version "20.0.1" 2023-04-18`
 - OK javac: `javac 20.0.1`
 - OK npm: `9.6.7`
-- OK pip3: `pip 23.1.2 from /home/linuxbrew/.linuxbrew/Cellar/python@3.11/3.11.3/lib/python3.11/site-packages/pip (python 3.11)`
-- OK julia: `julia version 1.9.0`
+- OK pip: `pip 23.0.1 from /home/linuxbrew/.linuxbrew/Cellar/python@3.11/3.11.4_1/lib/python3.11/site-packages/pip (python 3.11)`
+- OK python venv: `Ok`
 
 mason.nvim [GitHub] ~
 
-- OK GitHub API rate limit. Used: 1. Remaining: 4999. Limit: 5000. Reset: Tue 06 Jun 2023 07:04:06 PM +07.
+- OK GitHub API rate limit. Used: 1. Remaining: 4999. Limit: 5000. Reset: Tue Jun 27 13:23:50 2023.
 
 ==============================================================================
 null-ls: require("null-ls.health").check()
@@ -1190,18 +1191,18 @@ nvim-treesitter: require("nvim-treesitter.health").check()
 Installation ~
 
 - OK `tree-sitter` found 0.20.8 (parser generator, only needed for :TSInstallFromGrammar)
-- OK `node` found v20.2.0 (only needed for :TSInstallFromGrammar)
+- OK `node` found v20.3.1 (only needed for :TSInstallFromGrammar)
 - OK `git` executable found.
 - OK `cc` executable found. Selected from { vim.NIL, "cc", "gcc", "clang", "cl", "zig" }
-  Version: cc (Ubuntu 12.2.0-17ubuntu1) 12.2.0
+  Version: cc (Ubuntu 11.3.0-1ubuntu1~22.04.1) 11.3.0
 - OK Neovim was compiled with tree-sitter runtime ABI version 14 (required >=13). Parsers must be compatible with runtime ABI.
 
 OS Info:
 {
 machine = "x86_64",
-release = "6.2.0-20-generic",
+release = "5.15.90.1-microsoft-standard-WSL2",
 sysname = "Linux",
-version = "#20-Ubuntu SMP PREEMPT_DYNAMIC Thu Apr 6 07:48:48 UTC 2023"
+version = "#1 SMP Fri Jan 27 02:56:13 UTC 2023"
 } ~
 
 Parser/Features H L F I J
@@ -1257,7 +1258,7 @@ Python 3 provider (optional) ~
 - Executable: /home/linuxbrew/.linuxbrew/bin/python3
 - Other python executable: /usr/bin/python3
 - Other python executable: /bin/python3
-- Python version: 3.11.3
+- Python version: 3.11.4
 - pynvim version: 0.4.3
 - OK Latest pynvim is installed.
 
@@ -1273,7 +1274,7 @@ Ruby provider (optional) ~
 
 Node.js provider (optional) ~
 
-- Node.js: v20.2.0
+- Node.js: v20.3.1
 - Nvim node.js host: /home/linuxbrew/.linuxbrew/lib/node_modules/neovim/bin/cli.js
 - OK Latest "neovim" npm/yarn/pnpm package is installed: 4.10.1
 
@@ -1301,7 +1302,7 @@ vim.lsp: require("vim.lsp.health").check()
 
 - LSP log level : WARN
 - Log path: /home/lavantien/.local/state/nvim/lsp.log
-- Log size: 443 KB
+- Log size: 5617 KB
 
 vim.lsp: Active Clients ~
 
@@ -1325,7 +1326,7 @@ vim.treesitter: require("vim.treesitter.health").check()
 - OK Parser: gomod ABI: 13, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/gomod.so
 - OK Parser: gosum ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/gosum.so
 - OK Parser: gowork ABI: 13, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/gowork.so
-- OK Parser: html ABI: 13, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/html.so
+- OK Parser: html ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/html.so
 - OK Parser: java ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/java.so
 - OK Parser: javascript ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/javascript.so
 - OK Parser: json ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/json.so
