@@ -424,12 +424,16 @@ sudo prlimit -p "$$" --nofile=4096:1048576
 
 - Follow this instruction to set up forward localhost: <https://stackoverflow.com/a/66504604/4578386>
 
+```bash
+touch ~/.Xauthority
+```
+
 - Download `Wezterm` Windows binary installer, then copy `.config/wezterm/wezterm.lua` to `%HOME%\\.wezterm.lua` and modify it a bit
 
 ### 1. Install all necessary `APT` packages
 
 ```bash
-sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install ca-certificates apt-transport-https ubuntu-dev-tools glibc-source gcc xclip git git-lfs curl zsh htop neofetch vim libutf8proc2 libutf8proc-dev libfuse2 cpu-checker cmake cmake-format ninja-build libjsoncpp-dev uuid-dev zlib1g-dev libssl-dev jq bc -y
+sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install ca-certificates apt-transport-https ubuntu-dev-tools glibc-source gcc xclip git git-lfs curl zsh htop neofetch vim libutf8proc2 libutf8proc-dev libfuse2 cpu-checker cmake cmake-format ninja-build libjsoncpp-dev uuid-dev zlib1g-dev libssl-dev jq bc x11-apps libx11-dev xserver-xorg-dev xorg-dev -y
 ```
 
 ### 2. Install `Oh-my-zsh` then `restart`
