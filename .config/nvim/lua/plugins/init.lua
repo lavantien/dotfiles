@@ -178,10 +178,13 @@ return {
 				--formatting.clang_format, -- shadowing jdtls
 				formatting.prettier,
 				--diagnostics.dotenv_linter,
+				formatting.goimports_reviser,
 				diagnostics.checkmake,
 				diagnostics.clang_check,
 				actions.refactoring,
 				actions.gitsigns,
+				actions.gomodifytags,
+				actions.impl,
 			}
 			--local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 			null_ls.setup({
@@ -230,7 +233,10 @@ return {
 		'numToStr/Comment.nvim',
 		config = function() require('Comment').setup() end,
 	},
-
+	{
+		'stevearc/dressing.nvim',
+		opts = {},
+	},
 
 	{
 		"folke/tokyonight.nvim",
