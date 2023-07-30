@@ -74,11 +74,12 @@ bcjindcccaagfpapjjmafapmmgkkhgoa : JSON Formatter
 bkhaagjahfmjljalopjnoealnfndnagc : Octotree - GitHub code tree
 cjpalhdlnbpafiamejdnhcphjbkeiagm : uBlock Origin
 dbepggeogbaibhgnhhndojpepiihcmeb : Vimium
+eanggfilgoajaocelnaflolkadkeghjp : HARPA AI | ChatGPT Chrome Automation Copilot
 eimadpbcbfnmbkopoojfekhnkhdbieeh : Dark Reader
 ejkiikneibegknkgimmihdpcbcedgmpo : Volume Booster
 gebbhagfogifgggkldgodflihgfeippi : Return YouTube Dislike
 ghbmnnjooekpmoecnnnilnnbdlolhkhi : Google Docs Offline
-gppongmhjkpfnbhagpmjfkannfbllamg : Wappalyzer
+gppongmhjkpfnbhagpmjfkannfbllamg : Wappalyzer - Technology profiler
 hlkenndednhfkekhgcdicdfddnkalmdm : Cookie-Editor
 mafpmfcccpbjnhfhjnllmmalhifmlcie : Snowflake
 mhjfbmdgcfjbbpaeojofohoefgiehjai : Chrome PDF Viewer
