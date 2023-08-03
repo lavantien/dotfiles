@@ -1379,10 +1379,10 @@ vim.treesitter: require("vim.treesitter.health").check()
 - All language `servers` and `treesitters` are pre-installed when you first initialize Neovim
 - Some tools such as `prettier` are handled by the configured `null-ls` already
 - see `.config/nvim/lua/plugins/init.lua`, `null-ls` section
-- All 50 Packages:
+- All 53 Packages:
 
 ```text
-gopls delve staticcheck gotests golangci-lint golangci-lint-langserver go-debug-adapter gomodifytags impl rust-analyzer codelldb lua-language-server stylua luacheck clangd clang-format jdtls java-test java-debug-adapter google-java-format typescript-language-server js-debug-adapter chrome-debug-adapter html-lsp css-lsp tailwindcss-language-server pyright debugpy flake8 blue dart-debug-adapter csharp-language-server csharpier yaml-language-server yamllint yamlfmt buf-language-server buf terraform-ls sqlls sqlfluff sql-formatter tflint tfsec marksman ltex-ls vale proselint markdown-toc cbfmt
+gopls delve staticcheck gotests golangci-lint golangci-lint-langserver go-debug-adapter gomodifytags impl goimports-reviser rust-analyzer codelldb lua-language-server stylua luacheck clangd clang-format jdtls java-test java-debug-adapter google-java-format typescript-language-server prettier js-debug-adapter chrome-debug-adapter html-lsp css-lsp tailwindcss-language-server pyright debugpy flake8 blue dart-debug-adapter csharp-language-server csharpier yaml-language-server yamllint yamlfmt buf-language-server buf terraform-ls sqlls sqlfluff sql-formatter tflint tfsec marksman ltex-ls vale proselint markdown-toc cbfmt nginx-language-server
 ```
 
 - Specific Languages:
@@ -1393,7 +1393,7 @@ gopls delve staticcheck gotests golangci-lint golangci-lint-langserver go-debug-
 - Go:
 
 ```text
-gopls delve staticcheck gotests golangci-lint golangci-lint-langserver go-debug-adapter gomodifytags impl
+gopls delve staticcheck gotests golangci-lint golangci-lint-langserver go-debug-adapter gomodifytags impl goimports-reviser
 ```
 
 - Rust:
@@ -1423,7 +1423,7 @@ jdtls java-test java-debug-adapter google-java-format
 - JavaScript:
 
 ```text
-typescript-language-server js-debug-adapter chrome-debug-adapter
+typescript-language-server prettier js-debug-adapter chrome-debug-adapter
 ```
 
 - HTML:
@@ -1484,6 +1484,12 @@ terraform-ls tflint tfsec
 
 ```text
 marksman ltex-ls vale proselint markdown-toc cbfmt
+```
+
+- Nginx:
+
+```text
+nginx-language-server
 ```
 
 </details>
