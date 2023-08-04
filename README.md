@@ -50,7 +50,7 @@ sudo systemctl daemon-reexec && ulimit -n
 ### 1. Install all necessary `APT` packages
 
 ```bash
-sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install ubuntu-desktop ca-certificates apt-transport-https ubuntu-dev-tools glibc-source gcc xclip git git-lfs curl zsh htop neofetch vim mpv libutf8proc2 libutf8proc-dev libfuse2 cpu-checker screenkey cmake cmake-format ninja-build libjsoncpp-dev uuid-dev zlib1g-dev libssl-dev postgresql-all libmariadb-dev libsqlite3-dev libhiredis-dev ttf-mscorefonts-installer jq bc libgl2-mesa-dev xorg-dev libxcursor-dev cloud-init openssh-server ssh-import-id nvtop -y
+sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install ubuntu-desktop ca-certificates apt-transport-https ubuntu-dev-tools glibc-source gcc xclip git git-lfs curl zsh htop neofetch vim mpv libutf8proc2 libutf8proc-dev libfuse2 cpu-checker screenkey cmake cmake-format ninja-build libjsoncpp-dev uuid-dev zlib1g-dev libssl-dev postgresql-all libmariadb-dev libsqlite3-dev libhiredis-dev ttf-mscorefonts-installer jq bc xorg-dev libxcursor-dev cloud-init openssh-server ssh-import-id nvtop -y
 ```
 
 ### 2. Install `Oh-my-zsh` and `Chrome`, then `reboot`
@@ -151,19 +151,19 @@ echo 'machine github.com login lavantien password ghp_klsdfjalsdkfjdsjfalsdkldas
 ### 9. Run `./git-clone-all $org_name` on `~/dev/personal` for cloning all of your repos
 
 ```bash
-org_name=your-github-username && mkdir -p ~/dev/personal && cp ~/git-clone-all.sh ~/dev/personal/ && cd ~/dev/personal && ./git-clone-all.sh $org_name && cd ~
+org_name=lavantien && mkdir -p ~/dev/personal && cp ~/git-clone-all.sh ~/dev/personal/ && cd ~/dev/personal && ./git-clone-all.sh $org_name && cd ~
 ```
 
 ```bash
-org_name=your-github-username && cp -r ~/dev/personal/$org_name/Documents/{*,.*} ~/Documents/ && cp -r ~/dev/personal/$org_name/Pictures/{*,.*} ~/Pictures/
+org_name=lavantien && cp -r ~/dev/personal/$org_name/Documents/{*,.*} ~/Documents/ && cp -r ~/dev/personal/$org_name/Pictures/{*,.*} ~/Pictures/
 ```
 
-- Rerun the script to sync with remote
+- Rerun the script to sync with remote, replace `org_name` with your github username or organization.
 
-### 10. Install `Iosevka Nerd Font` (replace version `v3.0.1` with whatever latest)
+### 10. Install `Iosevka Nerd Font` (replace version `v3.0.2` with whatever latest)
 
 ```bash
-cd ~/Downloads && wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.1/Iosevka.zip && mkdir Iosevka && unzip Iosevka.zip -d Iosevka && cd Iosevka && sudo mkdir -p /usr/share/fonts/truetype/iosevka-nerd-font && sudo cp *.ttf /usr/share/fonts/truetype/iosevka-nerd-font/ && cd .. && rm -r Iosevka Iosevka.zip && cd ~ && sudo fc-cache -f -v
+cd ~/Downloads && wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/Iosevka.zip && mkdir Iosevka && unzip Iosevka.zip -d Iosevka && cd Iosevka && sudo mkdir -p /usr/share/fonts/truetype/iosevka-nerd-font && sudo cp *.ttf /usr/share/fonts/truetype/iosevka-nerd-font/ && cd .. && rm -r Iosevka Iosevka.zip && cd ~ && sudo fc-cache -f -v
 ```
 
 ### 11. Install `wezterm`
@@ -199,7 +199,7 @@ sudo cp -r /usr/share/dotnet/* /usr/lib/dotnet/ && dotnet --info
 ```
 
 ```bash
-dotnet tool install --global csharp-ls && dotnet tool install --global csharpier && cd ~/Downloads && wget https://github.com/OmniSharp/omnisharp-vscode/releases/download/v1.25.8/csharp-1.25.8-linux-x64.vsix && code --install-extension csharp-1.25.8-linux-x64.vsix && rm csharp-1.25.8-linux-x64.vsix && cd ~
+dotnet tool install --global csharp-ls && dotnet tool install --global csharpier && cd ~/Downloads && wget https://github.com/OmniSharp/omnisharp-vscode/releases/download/v1.26.0/csharp-1.26.0-linux-x64.vsix && code --install-extension csharp-1.26.0-linux-x64.vsix && rm csharp-1.26.0-linux-x64.vsix && cd ~
 ```
 
 ### 15. Install `Qemu KVM`
@@ -335,10 +335,7 @@ sudo add-apt-repository ppa:kisak/kisak-mesa -y && sudo dpkg --add-architecture 
 `reboot`
 
 ```bash
-curl -1sLf \
-  'https://dl.cloudsmith.io/public/coolercontrol/coolercontrol/setup.deb.sh' \
-  | sudo -E bash \
-&& sudo apt update && sudo apt install lm-sensors libxcb-cursor0 coolercontrol -y && sudo sensors-detect && sudo systemctl enable coolercontrold && sudo systemctl start coolercontrold
+sudo apt update && sudo apt install lm-sensors libxcb-cursor0 -y && sudo sensors-detect
 ```
 
 ### 21. Install `Wine`, `Lutris`, and `MangoHud` (always check for the latest version and replace the version string when download from `wget`)
