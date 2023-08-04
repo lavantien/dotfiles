@@ -146,3 +146,7 @@ Videos
 temp
 .local/share/gsettings-data-convert
 .Xauthority
+.local/share/Google/AndroidStudio2022.2/Dart/lib
+.local/share/Google/AndroidStudio2022.2/IdeaVim/lib
+.local/share/Google/AndroidStudio2022.2/Key-Promoter-X/lib
+.local/share/Google/AndroidStudio2022.2/flutter-intellij/lib
