@@ -181,3 +181,4 @@ temp
 .local/share/applications/Timberborn.desktop
 .local/share/applications/Titan Quest Anniversary Edition.desktop
 .local/share/applications/Zeus + Poseidon.desktop
+.var/app/org.signal.Signal
