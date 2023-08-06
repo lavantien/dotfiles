@@ -182,3 +182,6 @@ temp
 .local/share/applications/Titan Quest Anniversary Edition.desktop
 .local/share/applications/Zeus + Poseidon.desktop
 .var/app/org.signal.Signal
+.local/share/applications/Factory Town.desktop
+.local/share/applications/Sid Meier's Civilization VI.desktop
+.local/share/applications/Torchlight II.desktop
