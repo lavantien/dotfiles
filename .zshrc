@@ -69,3 +69,5 @@ export PERL_LOCAL_LIB_ROOT="/home/lavantien/perl5"
 export PERL_MB_OPT="--install_base \"/home/lavantien/perl5\""
 export PERL_MM_OPT="INSTALL_BASE=/home/lavantien/perl5"
 
+# opam configuration
+[[ ! -r /home/lavantien/.opam/opam-init/init.zsh ]] || source /home/lavantien/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null
