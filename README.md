@@ -1365,10 +1365,10 @@ vim.treesitter: require("vim.treesitter.health").check()
 ### Mason Built-in Packages to `:MasonInstall `
 
 - All language `servers` and `treesitters` are pre-installed when you first initialize Neovim
-- All 53 Packages:
+- All 55 Packages:
 
 ```text
-gopls delve staticcheck gotests golangci-lint golangci-lint-langserver go-debug-adapter gomodifytags impl goimports-reviser rust-analyzer codelldb lua-language-server stylua luacheck clangd clang-format jdtls java-test java-debug-adapter google-java-format typescript-language-server prettier js-debug-adapter chrome-debug-adapter html-lsp css-lsp tailwindcss-language-server pyright debugpy flake8 blue dart-debug-adapter csharp-language-server csharpier yaml-language-server yamllint yamlfmt buf-language-server buf terraform-ls sqlls sqlfluff sql-formatter tflint tfsec marksman ltex-ls vale proselint markdown-toc cbfmt nginx-language-server
+gopls delve staticcheck gotests golangci-lint golangci-lint-langserver go-debug-adapter gomodifytags impl goimports-reviser rust-analyzer codelldb lua-language-server stylua luacheck clangd clang-format jdtls java-test java-debug-adapter google-java-format typescript-language-server prettier js-debug-adapter chrome-debug-adapter html-lsp css-lsp tailwindcss-language-server pyright debugpy flake8 blue dart-debug-adapter csharp-language-server csharpier ocaml-lsp ocamlformat yaml-language-server yamllint yamlfmt buf-language-server buf terraform-ls sqlls sqlfluff sql-formatter tflint tfsec marksman ltex-ls vale proselint markdown-toc cbfmt nginx-language-server
 ```
 
 - Specific Languages:
@@ -1440,6 +1440,12 @@ dart-debug-adapter
 
 ```text
 csharp-language-server csharpier
+```
+
+- OCaml:
+
+```text
+ocaml-lsp ocamlformat
 ```
 
 - YAML:
