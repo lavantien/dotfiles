@@ -87,6 +87,7 @@ return {
 					"yamlls",
 					"bufls",
 					"csharp_ls",
+					"ocamllsp",
 					"tailwindcss",
 					"clangd",
 					"pyright",
