@@ -79,6 +79,7 @@ eimadpbcbfnmbkopoojfekhnkhdbieeh : Dark Reader
 ejkiikneibegknkgimmihdpcbcedgmpo : Volume Booster
 gebbhagfogifgggkldgodflihgfeippi : Return YouTube Dislike
 ghbmnnjooekpmoecnnnilnnbdlolhkhi : Google Docs Offline
+gpgbiinpmelaihndlegbgfkmnpofgfei : Multiselect for YouTube™
 gppongmhjkpfnbhagpmjfkannfbllamg : Wappalyzer - Technology profiler
 hlkenndednhfkekhgcdicdfddnkalmdm : Cookie-Editor
 mafpmfcccpbjnhfhjnllmmalhifmlcie : Snowflake
