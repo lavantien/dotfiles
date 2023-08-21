@@ -29,7 +29,8 @@ config.background = {
 	{
 		source = {
 			--File = bg_path .. "/fantasy-forest-wallpaper.jpg",
-			File = bg_path .. "/solid-121212.png",
+			File = bg_path .. "/fantasy-forest-right-half.jpg",
+			--File = bg_path .. "/solid-121212.png",
 		},
 		repeat_x = "NoRepeat",
 		width = "100%",
