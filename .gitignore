@@ -198,3 +198,11 @@ Games/league-of-legends
 .local/share/applications/wine-extension-vbs.desktop
 .local/share/applications/net.lutris.league-of-legends-2.desktop
 .opam
+.nimble
+.googleearth
+.local/share/applications/DOOM Eternal.desktop
+.local/share/applications/Metro 2033 Redux.desktop
+.local/share/applications/Metro Last Light Redux.desktop
+.local/share/applications/Portal Prelude RTX.desktop
+.local/share/applications/Portal with RTX.desktop
+.local/share/applications/Turbo Overkill.desktop
