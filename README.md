@@ -42,6 +42,10 @@ DefaultLimitNOFILE=4096:2097152
 ```
 
 ```bash
+cat /proc/sys/fs/inotify/max_user_watches && sudo sysctl fs.inotify.max_user_watches=2097152
+```
+
+```bash
 sudo systemctl daemon-reexec && ulimit -n
 ```
 
@@ -419,6 +423,10 @@ systemd=true
 
 ```bash
 sudo prlimit -p "$$" --nofile=4096:1048576
+```
+
+```bash
+cat /proc/sys/fs/inotify/max_user_watches && sudo sysctl fs.inotify.max_user_watches=2097152
 ```
 
 - Follow this instruction to set up forward localhost: <https://stackoverflow.com/a/66504604/4578386>
@@ -1126,7 +1134,7 @@ lazy.nvim ~
 mason: require("mason.health").check()
 
 mason.nvim ~
-- OK mason.nvim version v1.6.1
+- OK mason.nvim version v1.6.2
 - OK PATH: prepend
 - OK Providers: 
   mason.providers.registry-api
@@ -1134,8 +1142,8 @@ mason.nvim ~
 - OK neovim version >= 0.7.0
 
 mason.nvim [Registries] ~
-- OK Registry `github.com/mason-org/mason-registry version: 2023-08-03-speedy-bowl` is installed.
-- OK Registry `github.com/mason-org/mason-registry version: 2023-08-03-speedy-bowl` is installed.
+- OK Registry `github.com/mason-org/mason-registry version: 2023-08-21-past-bonsai` is installed.
+- OK Registry `github.com/mason-org/mason-registry version: 2023-08-21-past-bonsai` is installed.
 
 mason.nvim [Core utils] ~
 - OK unzip: `UnZip 6.00 of 20 April 2009, by Debian. Original by Info-ZIP.`
@@ -1147,24 +1155,24 @@ mason.nvim [Core utils] ~
 - OK sh: `Ok`
 
 mason.nvim [Languages] ~
-- OK Go: `go version go1.20.7 linux/amd64`
+- OK Go: `go version go1.21.0 linux/amd64`
 - OK Ruby: `ruby 3.2.2 (2023-03-30 revision e51014f9c0) [x86_64-linux]`
-- OK cargo: `cargo 1.71.1 (7f1d04c00 2023-07-29)`
-- OK PHP: `PHP 8.2.8 (cli) (built: Jul  4 2023 14:52:54) (NTS)`
-- OK node: `v20.5.0`
 - OK luarocks: `/home/linuxbrew/.linuxbrew/bin/luarocks 3.9.2`
-- OK Composer: `Composer version 2.5.8 2023-06-09 17:13:21`
+- OK cargo: `cargo 1.71.1 (7f1d04c00 2023-07-29)`
+- OK PHP: `PHP 8.2.9 (cli) (built: Aug  3 2023 11:39:08) (NTS)`
+- OK node: `v20.5.1`
 - OK java: `openjdk version "20.0.1" 2023-04-18`
+- OK Composer: `Composer version 2.5.8 2023-06-09 17:13:21`
+- OK RubyGem: `3.4.19`
 - OK python: `Python 3.11.4`
-- OK RubyGem: `3.4.18`
 - OK javac: `javac 20.0.1`
-- OK julia: `julia version 1.9.2`
 - OK npm: `9.8.0`
 - OK pip: `pip 23.2.1 from /home/linuxbrew/.linuxbrew/Cellar/python@3.11/3.11.4_1/lib/python3.11/site-packages/pip (python 3.11)`
 - OK python venv: `Ok`
+- OK julia: `julia version 1.9.2`
 
 mason.nvim [GitHub] ~
-- OK GitHub API rate limit. Used: 4. Remaining: 4996. Limit: 5000. Reset: Fri 04 Aug 2023 12:45:25 PM +07.
+- OK GitHub API rate limit. Used: 0. Remaining: 5000. Limit: 5000. Reset: Mon 21 Aug 2023 02:20:39 PM +07.
 
 ==============================================================================
 nvim: require("nvim.health").check()
@@ -1192,7 +1200,7 @@ nvim-treesitter: require("nvim-treesitter.health").check()
 
 Installation ~
 - OK `tree-sitter` found 0.20.8 (parser generator, only needed for :TSInstallFromGrammar)
-- OK `node` found v20.5.0 (only needed for :TSInstallFromGrammar)
+- OK `node` found v20.5.1 (only needed for :TSInstallFromGrammar)
 - OK `git` executable found.
 - OK `cc` executable found. Selected from { vim.NIL, "cc", "gcc", "clang", "cl", "zig" }
   Version: cc (Ubuntu 12.3.0-1ubuntu1~23.04) 12.3.0
@@ -1201,9 +1209,9 @@ Installation ~
 OS Info:
 {
   machine = "x86_64",
-  release = "6.2.0-26-generic",
+  release = "6.2.0-27-generic",
   sysname = "Linux",
-  version = "#26-Ubuntu SMP PREEMPT_DYNAMIC Mon Jul 10 23:39:54 UTC 2023"
+  version = "#28-Ubuntu SMP PREEMPT_DYNAMIC Wed Jul 12 22:39:51 UTC 2023"
 } ~
 
 Parser/Features         H L F I J
@@ -1266,10 +1274,10 @@ Python virtualenv ~
 Ruby provider (optional) ~
 - Ruby: ruby 3.2.2 (2023-03-30 revision e51014f9c0) [x86_64-linux]
 - Host: /home/linuxbrew/.linuxbrew/lib/ruby/gems/3.2.0/bin/neovim-ruby-host
-- OK Latest "neovim" gem is installed: 0.9.0
+- OK Latest "neovim" gem is installed: 0.9.1
 
 Node.js provider (optional) ~
-- Node.js: v20.5.0
+- Node.js: v20.5.1
 - Nvim node.js host: /home/linuxbrew/.linuxbrew/lib/node_modules/neovim/bin/cli.js
 - OK Latest "neovim" npm/yarn/pnpm package is installed: 4.10.1
 
