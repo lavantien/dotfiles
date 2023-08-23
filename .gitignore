@@ -207,3 +207,7 @@ Games/league-of-legends
 .local/share/applications/Portal with RTX.desktop
 .local/share/applications/Turbo Overkill.desktop
 .local/share/Windscribe/Windscribe2
+.var/app/com.jetbrains.IntelliJ-IDEA-Community
+.wakatime-internal.cfg
+.local/share/JetBrains
+.m2/wrapper/dists/apache-maven-3.9.1-bin/2cpar40ui5s2pm3ja4s69ub7fa
