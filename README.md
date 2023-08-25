@@ -89,6 +89,7 @@ hlkenndednhfkekhgcdicdfddnkalmdm : Cookie-Editor
 mafpmfcccpbjnhfhjnllmmalhifmlcie : Snowflake
 mhjfbmdgcfjbbpaeojofohoefgiehjai : Chrome PDF Viewer
 migdhldfbapmodfbmgpofnikfbfpbbon : Highlighty: Search, Find, Multi-Highlight
+mnjggcdmjocbbbhaepdhchncahnbgone : SponsorBlock for YouTube - Skip Sponsorship
 neajdppkdcdipfabeoofebfddakdcjhd : Google Network Speech
 nkeimhogjdpnpccoofpliimaahmaaome : Google Hangouts
 nlkaejimjacpillmajjnopmpbkbnocid : YouTube NonStop
