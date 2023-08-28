@@ -211,3 +211,8 @@ Games/league-of-legends
 .wakatime-internal.cfg
 .local/share/JetBrains
 .m2/wrapper/dists/apache-maven-3.9.1-bin/2cpar40ui5s2pm3ja4s69ub7fa
+.local/share/Anki/QtWebEngine/Default
+.local/share/Anki2
+anki/languages
+goldendict
+storage
