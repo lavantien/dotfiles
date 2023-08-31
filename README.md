@@ -1518,6 +1518,12 @@ nginx-language-server
 <details>
   <summary>expand</summary>
 
+### Fix borked MKV file (remux to rebuild the metadata)
+
+```bash
+ffmpeg -i "<interrrupted mkv>" -c copy "fixed.mkv"
+```
+
 ### Google Cloud CLI (broken installation & missing python2 dep)
 
 ```bash
