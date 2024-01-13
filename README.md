@@ -1,11 +1,11 @@
 # A robust Dotfiles for Developer - Battery Included
 
-- Quality Assurance: **100%**; Disk Size: **73 GB**; Time Taken: **2.5h**;
+- Quality Assurance: **100%**; Disk Size: **71 GB**; Time Taken: **2h**;
 - Supported: **AMD** & **Intel** (Wayland), **NVIDIA** (auto X11), **Windows** (WSL)
 - Turn off `Secure Boot` in your `BIOS` for a smooth installation process
 - Install with `Minimal setup`, check `Additionals Drivers` and `3rd-party` boxes
 
-## Step-by-Step Setup for a Fresh Ubuntu 23.04
+## Step-by-Step Setup for a Fresh Ubuntu 23.10
 
 <details>
   <summary>expand</summary>
@@ -46,10 +46,14 @@ cat /proc/sys/fs/inotify/max_user_watches && sudo sysctl fs.inotify.max_user_wat
 ```
 
 ```bash
-sudo systemctl daemon-reexec && ulimit -n
+sudo systemctl daemon-reexec
 ```
 
 `reboot`
+
+```bash
+ulimit -n
+```
 
 ### 1. Install all necessary `APT` packages
 
@@ -71,29 +75,30 @@ cd ~/Downloads && wget https://dl.google.com/linux/direct/google-chrome-stable_c
 - Recommended `Chrome Extensions`:
 
 ```text
-aapbdbdomjkkjkaonfhkkikfgjllcleb : Google Translate
-ahfgeienlihckogmohjhadlkjgocpleb : Web Store
-ahfhijdlegdabablpippeagghigmibma : Web Vitals
-bcjindcccaagfpapjjmafapmmgkkhgoa : JSON Formatter
-bkhaagjahfmjljalopjnoealnfndnagc : Octotree - GitHub code tree
-cjpalhdlnbpafiamejdnhcphjbkeiagm : uBlock Origin
-dbepggeogbaibhgnhhndojpepiihcmeb : Vimium
-eanggfilgoajaocelnaflolkadkeghjp : HARPA AI | ChatGPT Chrome Automation Copilot
-eimadpbcbfnmbkopoojfekhnkhdbieeh : Dark Reader
-ejkiikneibegknkgimmihdpcbcedgmpo : Volume Booster
-gebbhagfogifgggkldgodflihgfeippi : Return YouTube Dislike
-ghbmnnjooekpmoecnnnilnnbdlolhkhi : Google Docs Offline
-gpgbiinpmelaihndlegbgfkmnpofgfei : Multiselect for YouTube™
-gppongmhjkpfnbhagpmjfkannfbllamg : Wappalyzer - Technology profiler
-hlkenndednhfkekhgcdicdfddnkalmdm : Cookie-Editor
-mafpmfcccpbjnhfhjnllmmalhifmlcie : Snowflake
-mhjfbmdgcfjbbpaeojofohoefgiehjai : Chrome PDF Viewer
-migdhldfbapmodfbmgpofnikfbfpbbon : Highlighty: Search, Find, Multi-Highlight
-mnjggcdmjocbbbhaepdhchncahnbgone : SponsorBlock for YouTube - Skip Sponsorship
-neajdppkdcdipfabeoofebfddakdcjhd : Google Network Speech
-nkeimhogjdpnpccoofpliimaahmaaome : Google Hangouts
-nlkaejimjacpillmajjnopmpbkbnocid : YouTube NonStop
-nmmhkkegccagdldgiimedpiccmgmieda : Chrome Web Store Payments
+
+aapbdbdomjkkjkaonfhkkikfgjllcleb : Google Translate : version 2_0_13
+ahfgeienlihckogmohjhadlkjgocpleb : Web Store : version 0_2
+ahfhijdlegdabablpippeagghigmibma : Web Vitals : version 1_4_0
+bcjindcccaagfpapjjmafapmmgkkhgoa : JSON Formatter : version 0_7_1
+bkhaagjahfmjljalopjnoealnfndnagc : Octotree - GitHub code tree : version 7_11_2
+cjpalhdlnbpafiamejdnhcphjbkeiagm : uBlock Origin : version 1_54_0
+dbepggeogbaibhgnhhndojpepiihcmeb : Vimium : version 2_0_5
+eimadpbcbfnmbkopoojfekhnkhdbieeh : Dark Reader : version 4_9_74
+ejkiikneibegknkgimmihdpcbcedgmpo : Volume Booster : version 0_2_1
+gebbhagfogifgggkldgodflihgfeippi : Return YouTube Dislike : version 3_0_0_14
+ghbmnnjooekpmoecnnnilnnbdlolhkhi : Google Docs Offline : version 1_73_0
+gpgbiinpmelaihndlegbgfkmnpofgfei : Multiselect for YouTube™ : version 3_5
+gppongmhjkpfnbhagpmjfkannfbllamg : Wappalyzer - Technology profiler : version 6_10_67
+hlkenndednhfkekhgcdicdfddnkalmdm : Cookie-Editor : version 1_12_2
+ioimlbgefgadofblnajllknopjboejda : Transpose ▲▼ pitch ▹ speed ▹ loop for videos : version 5_1_1
+mafpmfcccpbjnhfhjnllmmalhifmlcie : Snowflake : version 0_7_2
+mhjfbmdgcfjbbpaeojofohoefgiehjai : Chrome PDF Viewer : version 1
+migdhldfbapmodfbmgpofnikfbfpbbon : Highlighty: Search, Find, Multi Highlight : version 2_2_4
+mnjggcdmjocbbbhaepdhchncahnbgone : SponsorBlock for YouTube - Skip Sponsorships : version 5_4_28
+neajdppkdcdipfabeoofebfddakdcjhd : Google Network Speech : version 1_0
+nkeimhogjdpnpccoofpliimaahmaaome : Google Hangouts : version 1_3_21
+nlkaejimjacpillmajjnopmpbkbnocid : YouTube NonStop : version 0_9_2
+nmmhkkegccagdldgiimedpiccmgmieda : Chrome Web Store Payments : version 1_0_0_6
 ```
 
 ### 3. After `reboot`, install `Linuxbrew`
@@ -149,7 +154,11 @@ sudo snap install joplin-desktop
 - For a smooth `Git` experience, you should make a `.netrc` file in your home directory and add auth token
 
 ```bash
-echo 'machine github.com login lavantien password ghp_klsdfjalsdkfjdsjfalsdkldasfjkasldfjalsdfjalsdjfk' >> .netrc && git lfs install
+machine github.com login lavantien password ghp_klsdfjalsdkfjdsjfalsdkldasfjkasldfjalsdfjalsdjfk
+```
+
+```bash
+git lfs install
 ```
 
 - For `gh`, run `gh auth login` and follow instruction to setup `GitHub CLI`
@@ -166,10 +175,10 @@ org_name=lavantien && cp -r ~/dev/personal/$org_name/Documents/{*,.*} ~/Document
 
 - Rerun the script to sync with remote, replace `org_name` with your GitHub username or organization.
 
-### 10. Install `Iosevka Nerd Font` (replace version `v3.0.2` with whatever latest)
+### 10. Install `Iosevka Nerd Font` (replace version `v3.1.1` with whatever latest)
 
 ```bash
-cd ~/Downloads && wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/Iosevka.zip && mkdir Iosevka && unzip Iosevka.zip -d Iosevka && cd Iosevka && sudo mkdir -p /usr/share/fonts/truetype/iosevka-nerd-font && sudo cp *.ttf /usr/share/fonts/truetype/iosevka-nerd-font/ && cd .. && rm -r Iosevka Iosevka.zip && cd ~ && sudo fc-cache -f -v
+cd ~/Downloads && wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/Iosevka.zip && mkdir Iosevka && unzip Iosevka.zip -d Iosevka && cd Iosevka && sudo mkdir -p /usr/share/fonts/truetype/iosevka-nerd-font && sudo cp *.ttf /usr/share/fonts/truetype/iosevka-nerd-font/ && cd .. && rm -r Iosevka Iosevka.zip && cd ~ && sudo fc-cache -f -v
 ```
 
 ### 11. Install `wezterm`
@@ -184,28 +193,26 @@ brew tap wez/wezterm-linuxbrew && brew install wezterm
 brew install grpc protoc-gen-grpc-web && go install google.golang.org/protobuf/cmd/protoc-gen-go@latest && go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 ```
 
-### 13. Install `VSCode` and `CodeLLDB` (replace version `v1.9.2` with whatever latest)
+### 13. Install `VSCode` and extensions
 
 ```bash
 cd ~/Downloads && wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg && sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg && sudo sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list' && rm -f packages.microsoft.gpg && cd ~ && sudo apt update && sudo apt install code -y
 ```
 
-```bash
-cd ~/Downloads && wget https://github.com/vadimcn/codelldb/releases/download/v1.9.2/codelldb-x86_64-linux.vsix && code --install-extension codelldb-x86_64-linux.vsix && rm codelldb-x86_64-linux.vsix && cd ~
-```
+Open VSCode, sync, and install extensions.
 
-### 14. Install `DotNet SDK`
+### 14. Install `DotNet SDK 8`
 
 ```bash
-cd ~/Downloads && declare repo_version=$(if command -v lsb_release &> /dev/null; then lsb_release -r -s; else grep -oP '(?<=^VERSION_ID=).+' /etc/os-release | tr -d '"'; fi) && wget https://packages.microsoft.com/config/ubuntu/$repo_version/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && sudo dpkg -i packages-microsoft-prod.deb && rm packages-microsoft-prod.deb && cd ~ && sudo apt update && sudo apt install dotnet-sdk-7.0 -y
-```
-
-```bash
-sudo cp -r /usr/share/dotnet/* /usr/lib/dotnet/ && dotnet --info
+cd ~/Downloads && declare repo_version=$(if command -v lsb_release &> /dev/null; then lsb_release -r -s; else grep -oP '(?<=^VERSION_ID=).+' /etc/os-release | tr -d '"'; fi) && wget https://packages.microsoft.com/config/ubuntu/$repo_version/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && sudo dpkg -i packages-microsoft-prod.deb && rm packages-microsoft-prod.deb && cd ~ && sudo apt update && sudo apt install dotnet-sdk-8.0 -y
 ```
 
 ```bash
-dotnet tool install --global csharp-ls && dotnet tool install --global csharpier && cd ~/Downloads && wget https://github.com/OmniSharp/omnisharp-vscode/releases/download/v1.26.0/csharp-1.26.0-linux-x64.vsix && code --install-extension csharp-1.26.0-linux-x64.vsix && rm csharp-1.26.0-linux-x64.vsix && cd ~
+dotnet --info
+```
+
+```bash
+dotnet tool install --global csharp-ls && dotnet tool install --global csharpier
 ```
 
 ### 15. Install `Qemu KVM`
@@ -227,7 +234,7 @@ sudo snap install android-studio --classic
 - Run `Android Studio` and install default configuration, then click `More Actions` -> `SDK Manager` -> `SDK Tools` -> tick `Android SDK Build-Tools` and `Android SDK Command-line Tools` -> `Apply` and `OK`
 
 ```bash
-sudo snap install flutter --classic && flutter doctor && flutter doctor --android-licenses
+sudo snap install flutter --classic && flutter doctor && flutter doctor --android-licenses && flutter --disable-telemetry
 ```
 
 ### 17. Install `Kreya` and `DBbGate`
@@ -303,7 +310,7 @@ You can view the list of minikube maintainers at: https://github.com/kubernetes/
 minikube stop
 ```
 
-### 20. Install `Graphics Drivers` and `Vulkan`, and `Fan Control`
+### 20. (Optional) Install `Graphics Drivers` and `Vulkan`, and `Fan Control`
 
 - If you have a `NVIDIA GPU`, replace `535` with whatever is the latest driver version as listed [here](https://launchpad.net/~graphics-drivers/+archive/ubuntu/ppa)
 
@@ -344,7 +351,7 @@ sudo add-apt-repository ppa:kisak/kisak-mesa -y && sudo dpkg --add-architecture 
 sudo apt update && sudo apt install lm-sensors libxcb-cursor0 -y && sudo sensors-detect
 ```
 
-### 21. Install `Wine`, `Lutris`, and `MangoHud` (always check for the latest version and replace the version string when download from `wget`)
+### 21. (Optional) Install `Wine`, `Lutris`, and `MangoHud` (always check for the latest version and replace the version string when download from `wget`)
 
 ```bash
 sudo mkdir -pm755 /etc/apt/keyrings && sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key && sudo wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/lunar/winehq-lunar.sources && sudo apt update && sudo apt install --install-recommends winehq-devel -y
@@ -387,7 +394,7 @@ sudo snap install blender --classic
 brew install helix
 ```
 
-### 24. Install `Steam` (and optionally `Dota 2`, `Grim Dawn`, `Battlenet`, and `Diablo 2 Resurrected`)
+### 24. (Optional) Install `Steam` (and optionally `Dota 2`, `Grim Dawn`, `Battlenet`, and `Diablo 2 Resurrected`)
 
 ```bash
 cd ~/Downloads && wget https://repo.steampowered.com/steam/archive/precise/steam_latest.deb && sudo dpkg -i steam_latest.deb && rm steam_latest.deb && cd ~
@@ -673,30 +680,6 @@ http {
 
 </details>
 
-- [**Drogon Core - The fastest Web Framework**](https://drogonframework.github.io/drogon-docs/#/?id=document)
-
-```bash
-sudo apt install postgresql-all libmariadb-dev libsqlite3-dev libhiredis-dev && docker pull drogonframework/drogon
-```
-
-- [**SegmentIO KafkaGo**](https://github.com/segmentio/kafka-go)
-
-```bash
-go get -u github.com/segmentio/kafka-go
-```
-
-- [**GoKa KafkaGo**](https://github.com/lovoo/goka)
-
-```bash
-go get -u github.com/lovoo/goka
-```
-
-- [**FranzGo KafkaGo**](https://github.com/twmb/franz-go)
-
-```bash
-go get -u github.com/twmb/franz-go
-```
-
 - [**GRPC Gateway**](https://github.com/grpc-ecosystem/grpc-gateway)
 
 ```bash
@@ -906,7 +889,7 @@ mvn spring-boot:run
 `<C-c>`
 
 ```bash
-cd ~
+dcd && cd ~
 ```
 
 ### Helix LSP
@@ -1123,6 +1106,7 @@ nvim +che
   <summary>`n +che` result</summary>
   
 ```checkhealth
+
 ==============================================================================
 lazy: require("lazy.health").check()
 
@@ -1135,7 +1119,7 @@ lazy.nvim ~
 mason: require("mason.health").check()
 
 mason.nvim ~
-- OK mason.nvim version v1.6.2
+- OK mason.nvim version v1.9.0
 - OK PATH: prepend
 - OK Providers: 
   mason.providers.registry-api
@@ -1143,37 +1127,36 @@ mason.nvim ~
 - OK neovim version >= 0.7.0
 
 mason.nvim [Registries] ~
-- OK Registry `github.com/mason-org/mason-registry version: 2023-08-21-past-bonsai` is installed.
-- OK Registry `github.com/mason-org/mason-registry version: 2023-08-21-past-bonsai` is installed.
+- OK Registry `github.com/mason-org/mason-registry version: 2024-01-13-spiffy-patio` is installed.
 
 mason.nvim [Core utils] ~
 - OK unzip: `UnZip 6.00 of 20 April 2009, by Debian. Original by Info-ZIP.`
 - OK wget: `GNU Wget 1.21.3 built on linux-gnu.`
-- OK curl: `curl 8.2.1 (x86_64-pc-linux-gnu) libcurl/8.2.1 OpenSSL/3.1.2 zlib/1.2.13 brotli/1.0.9 zstd/1.5.5 libidn2/2.3.4 libssh2/1.11.0 nghttp2/1.55.1 librtmp/2.3 OpenLDAP/2.6.6`
+- OK curl: `curl 8.5.0 (x86_64-pc-linux-gnu) libcurl/8.5.0 OpenSSL/3.2.0 zlib/1.3 brotli/1.1.0 zstd/1.5.5 libidn2/2.3.4 libssh2/1.11.0 nghttp2/1.58.0 librtmp/2.3 OpenLDAP/2.6.6`
 - OK gzip: `gzip 1.12`
 - OK tar: `tar (GNU tar) 1.34`
 - OK bash: `GNU bash, version 5.2.15(1)-release (x86_64-pc-linux-gnu)`
 - OK sh: `Ok`
 
 mason.nvim [Languages] ~
-- OK Go: `go version go1.21.0 linux/amd64`
-- OK Ruby: `ruby 3.2.2 (2023-03-30 revision e51014f9c0) [x86_64-linux]`
+- OK Go: `go version go1.21.6 linux/amd64`
+- OK Ruby: `ruby 3.3.0 (2023-12-25 revision 5124f9ac75) [x86_64-linux]`
+- OK PHP: `PHP 8.3.1 (cli) (built: Dec 20 2023 12:44:38) (NTS)`
+- OK cargo: `cargo 1.75.0 (1d8b05cdd 2023-11-20)`
+- OK node: `v21.5.0`
 - OK luarocks: `/home/linuxbrew/.linuxbrew/bin/luarocks 3.9.2`
-- OK cargo: `cargo 1.71.1 (7f1d04c00 2023-07-29)`
-- OK PHP: `PHP 8.2.9 (cli) (built: Aug  3 2023 11:39:08) (NTS)`
-- OK node: `v20.5.1`
-- OK java: `openjdk version "20.0.1" 2023-04-18`
-- OK Composer: `Composer version 2.5.8 2023-06-09 17:13:21`
-- OK RubyGem: `3.4.19`
-- OK python: `Python 3.11.4`
-- OK javac: `javac 20.0.1`
-- OK npm: `9.8.0`
-- OK pip: `pip 23.2.1 from /home/linuxbrew/.linuxbrew/Cellar/python@3.11/3.11.4_1/lib/python3.11/site-packages/pip (python 3.11)`
+- OK Composer: `Composer version 2.6.6 2023-12-08 18:32:26`
+- OK java: `openjdk version "21.0.1" 2023-10-17`
+- OK RubyGem: `3.5.4`
+- OK python: `Python 3.11.7`
+- OK julia: `julia version 1.10.0`
+- OK javac: `javac 21.0.1`
+- OK npm: `10.2.4`
+- OK pip: `pip 23.3.2 from /home/linuxbrew/.linuxbrew/Cellar/python@3.11/3.11.7/lib/python3.11/site-packages/pip (python 3.11)`
 - OK python venv: `Ok`
-- OK julia: `julia version 1.9.2`
 
 mason.nvim [GitHub] ~
-- OK GitHub API rate limit. Used: 0. Remaining: 5000. Limit: 5000. Reset: Mon 21 Aug 2023 02:20:39 PM +07.
+- OK GitHub API rate limit. Used: 3. Remaining: 4997. Limit: 5000. Reset: Sun 14 Jan 2024 12:31:00 AM +07.
 
 ==============================================================================
 nvim: require("nvim.health").check()
@@ -1182,7 +1165,7 @@ Configuration ~
 - OK no issues found
 
 Runtime ~
-- OK $VIMRUNTIME: /home/linuxbrew/.linuxbrew/Cellar/neovim/0.9.1/share/nvim/runtime
+- OK $VIMRUNTIME: /home/linuxbrew/.linuxbrew/Cellar/neovim/0.9.5/share/nvim/runtime
 
 Performance ~
 - OK Build type: Release
@@ -1201,18 +1184,18 @@ nvim-treesitter: require("nvim-treesitter.health").check()
 
 Installation ~
 - OK `tree-sitter` found 0.20.8 (parser generator, only needed for :TSInstallFromGrammar)
-- OK `node` found v20.5.1 (only needed for :TSInstallFromGrammar)
+- OK `node` found v21.5.0 (only needed for :TSInstallFromGrammar)
 - OK `git` executable found.
 - OK `cc` executable found. Selected from { vim.NIL, "cc", "gcc", "clang", "cl", "zig" }
-  Version: cc (Ubuntu 12.3.0-1ubuntu1~23.04) 12.3.0
+  Version: cc (Ubuntu 13.2.0-4ubuntu3) 13.2.0
 - OK Neovim was compiled with tree-sitter runtime ABI version 14 (required >=13). Parsers must be compatible with runtime ABI.
 
 OS Info:
 {
   machine = "x86_64",
-  release = "6.2.0-27-generic",
+  release = "6.5.0-14-generic",
   sysname = "Linux",
-  version = "#28-Ubuntu SMP PREEMPT_DYNAMIC Wed Jul 12 22:39:51 UTC 2023"
+  version = "#14-Ubuntu SMP PREEMPT_DYNAMIC Tue Nov 14 14:59:49 UTC 2023"
 } ~
 
 Parser/Features         H L F I J
@@ -1224,7 +1207,7 @@ Parser/Features         H L F I J
   - dart                ✓ ✓ ✓ ✓ ✓
   - dockerfile          ✓ . . . ✓
   - git_config          ✓ . . . .
-  - gitattributes       ✓ . . . ✓
+  - gitattributes       ✓ ✓ . . ✓
   - gitignore           ✓ . . . .
   - go                  ✓ ✓ ✓ ✓ ✓
   - gomod               ✓ . . . ✓
@@ -1265,20 +1248,20 @@ Python 3 provider (optional) ~
 - Executable: /home/linuxbrew/.linuxbrew/bin/python3
 - Other python executable: /usr/bin/python3
 - Other python executable: /bin/python3
-- Python version: 3.11.4
-- pynvim version: 0.4.3
+- Python version: 3.11.7
+- pynvim version: 0.5.0
 - OK Latest pynvim is installed.
 
 Python virtualenv ~
 - OK no $VIRTUAL_ENV
 
 Ruby provider (optional) ~
-- Ruby: ruby 3.2.2 (2023-03-30 revision e51014f9c0) [x86_64-linux]
-- Host: /home/linuxbrew/.linuxbrew/lib/ruby/gems/3.2.0/bin/neovim-ruby-host
+- Ruby: ruby 3.3.0 (2023-12-25 revision 5124f9ac75) [x86_64-linux]
+- Host: /home/linuxbrew/.linuxbrew/lib/ruby/gems/3.3.0/bin/neovim-ruby-host
 - OK Latest "neovim" gem is installed: 0.9.1
 
 Node.js provider (optional) ~
-- Node.js: v20.5.1
+- Node.js: v21.5.0
 - Nvim node.js host: /home/linuxbrew/.linuxbrew/lib/node_modules/neovim/bin/cli.js
 - OK Latest "neovim" npm/yarn/pnpm package is installed: 4.10.1
 
@@ -1293,8 +1276,8 @@ Checking for required plugins ~
 - OK nvim-treesitter installed.
 
 Checking external dependencies ~
-- OK rg: found ripgrep 13.0.0
-- OK fd: found fd 8.7.0
+- OK rg: found ripgrep 14.1.0
+- OK fd: found fd 9.0.0
 
 ===== Installed extensions ===== ~
 
@@ -1303,7 +1286,7 @@ vim.lsp: require("vim.lsp.health").check()
 
 - LSP log level : WARN
 - Log path: /home/lavantien/.local/state/nvim/lsp.log
-- Log size: 0 KB
+- Log size: 110 KB
 
 vim.lsp: Active Clients ~
 - No active clients
@@ -1316,9 +1299,9 @@ vim.treesitter: require("vim.treesitter.health").check()
 - OK Parser: c          ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/c.so
 - OK Parser: c_sharp    ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/c_sharp.so
 - OK Parser: cpp        ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/cpp.so
-- OK Parser: css        ABI: 13, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/css.so
+- OK Parser: css        ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/css.so
 - OK Parser: dart       ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/dart.so
-- OK Parser: dockerfile ABI: 13, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/dockerfile.so
+- OK Parser: dockerfile ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/dockerfile.so
 - OK Parser: git_config ABI: 13, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/git_config.so
 - OK Parser: gitattributes ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/gitattributes.so
 - OK Parser: gitignore  ABI: 13, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/gitignore.so
@@ -1344,12 +1327,12 @@ vim.treesitter: require("vim.treesitter.health").check()
 - OK Parser: vim        ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/vim.so
 - OK Parser: vimdoc     ABI: 14, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/vimdoc.so
 - OK Parser: yaml       ABI: 13, path: /home/lavantien/.local/share/nvim/lazy/nvim-treesitter/parser/yaml.so
-- OK Parser: c          ABI: 14, path: /home/linuxbrew/.linuxbrew/Cellar/neovim/0.9.1/lib/nvim/parser/c.so
-- OK Parser: lua        ABI: 14, path: /home/linuxbrew/.linuxbrew/Cellar/neovim/0.9.1/lib/nvim/parser/lua.so
-- OK Parser: query      ABI: 14, path: /home/linuxbrew/.linuxbrew/Cellar/neovim/0.9.1/lib/nvim/parser/query.so
-- OK Parser: vim        ABI: 14, path: /home/linuxbrew/.linuxbrew/Cellar/neovim/0.9.1/lib/nvim/parser/vim.so
-- OK Parser: vimdoc     ABI: 14, path: /home/linuxbrew/.linuxbrew/Cellar/neovim/0.9.1/lib/nvim/parser/vimdoc.so
-````
+- OK Parser: c          ABI: 14, path: /home/linuxbrew/.linuxbrew/Cellar/neovim/0.9.5/lib/nvim/parser/c.so
+- OK Parser: lua        ABI: 14, path: /home/linuxbrew/.linuxbrew/Cellar/neovim/0.9.5/lib/nvim/parser/lua.so
+- OK Parser: query      ABI: 14, path: /home/linuxbrew/.linuxbrew/Cellar/neovim/0.9.5/lib/nvim/parser/query.so
+- OK Parser: vim        ABI: 14, path: /home/linuxbrew/.linuxbrew/Cellar/neovim/0.9.5/lib/nvim/parser/vim.so
+- OK Parser: vimdoc     ABI: 14, path: /home/linuxbrew/.linuxbrew/Cellar/neovim/0.9.5/lib/nvim/parser/vimdoc.so
+```
 
 </details>
 
@@ -1361,7 +1344,7 @@ vim.treesitter: require("vim.treesitter.health").check()
 
 - Installed Neovim related packages as instructed in the Healthcheck section above
 - Run `nvim` the first time to initialize plugins, then press `S` to sync packages
-- Enter the `WakaTime Auth Key` in the Settings panel in the browser
+- Enter the `WakaTime Auth Key` provided by `:WakaTimeApiKey` and in the Settings panel in the browser
 - Enter the `Codeium Auth Key` provided by `:Codeium Auth`
 - Run `:MasonUpdate` to install all registries
 - Make sure to run `$ nvim +che` to ensure all dependencies are installed
@@ -1559,14 +1542,14 @@ sudo apt install google-cloud-cli-app-engine-go google-cloud-cli-app-engine-grpc
 ```bash
             .-/+oossssoo+/-.               lavantien@savaka
         `:+ssssssssssssssssss+:`           ----------------
-      -+ssssssssssssssssssyyssss+-         OS: Ubuntu 23.04 x86_64
+      -+ssssssssssssssssssyyssss+-         OS: Ubuntu 23.10 x86_64
     .ossssssssssssssssssdMMMNysssso.       Host: MS-7D42 1.0
-   /ssssssssssshdmmNNmmyNMMMMhssssss/      Kernel: 6.2.0-26-generic
-  +ssssssssshmydMMMMMMMNddddyssssssss+     Uptime: 1 hour, 1 min
- /sssssssshNMMMyhhyyyyhmNMMMNhssssssss/    Packages: 2637 (dpkg), 162 (brew), 7 (flatpak), 26 (snap)
+   /ssssssssssshdmmNNmmyNMMMMhssssss/      Kernel: 6.5.0-14-generic
+  +ssssssssshmydMMMMMMMNddddyssssssss+     Uptime: 54 mins
+ /sssssssshNMMMyhhyyyyhmNMMMNhssssssss/    Packages: 2444 (dpkg), 173 (brew), 7 (flatpak), 25 (snap)
 .ssssssssdMMMNhsssssssssshNMMMdssssssss.   Shell: zsh 5.9
 +sssshhhyNMMNyssssssssssssyNMMMysssssss+   Resolution: 3840x2160
-ossyNMMMNyMMhsssssssssssssshmmmhssssssso   DE: GNOME 44.3
+ossyNMMMNyMMhsssssssssssssshmmmhssssssso   DE: GNOME 45.2
 ossyNMMMNyMMhsssssssssssssshmmmhssssssso   WM: Mutter
 +sssshhhyNMMNyssssssssssssyNMMMysssssss+   WM Theme: Adwaita
 .ssssssssdMMMNhsssssssssshNMMMdssssssss.   Theme: Yaru-dark [GTK2/3]
@@ -1574,20 +1557,19 @@ ossyNMMMNyMMhsssssssssssssshmmmhssssssso   WM: Mutter
   +sssssssssdmydMMMMMMMMddddyssssssss+     Terminal: WezTerm
    /ssssssssssshdmNNNNmyNMMMMhssssss/      CPU: 12th Gen Intel i7-12700F (20) @ 4.800GHz
     .ossssssssssssssssssdMMMNysssso.       GPU: NVIDIA GeForce RTX 3080 Lite Hash Rate
-      -+sssssssssssssssssyyyssss+-         Memory: 5401MiB / 31930MiB
+      -+sssssssssssssssssyyyssss+-         Memory: 5339MiB / 31937MiB
         `:+ssssssssssssssssss+:`
             .-/+oossssoo+/-.
 
-
-
 Filesystem      Size  Used Avail Use% Mounted on
-tmpfs           3.4G  3.0M  3.4G   1% /run
-/dev/nvme0n1p2  983G   73G  860G   8% /
-tmpfs            17G  704M   17G   5% /dev/shm
+tmpfs           3.4G  2.5M  3.4G   1% /run
+/dev/nvme0n1p2  983G   71G  862G   8% /
+tmpfs            17G  223M   17G   2% /dev/shm
 tmpfs           5.3M   17k  5.3M   1% /run/lock
+efivarfs        263k  124k  134k  48% /sys/firmware/efi/efivars
 /dev/nvme0n1p1  1.2G  6.4M  1.2G   1% /boot/efi
 tmpfs            17G     0   17G   0% /run/qemu
-tmpfs           3.4G  156k  3.4G   1% /run/user/1000
+tmpfs           3.4G  140k  3.4G   1% /run/user/1000
 ```
 
 ### My laptop:
