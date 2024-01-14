@@ -58,7 +58,7 @@ ulimit -n
 ### 1. Install all necessary `APT` packages
 
 ```bash
-sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install ubuntu-desktop ca-certificates apt-transport-https ubuntu-dev-tools glibc-source gcc xclip git git-lfs curl zsh htop neofetch vim mpv libutf8proc2 libutf8proc-dev libfuse2 cpu-checker screenkey cmake cmake-format ninja-build libjsoncpp-dev uuid-dev zlib1g-dev libssl-dev postgresql-all libmariadb-dev libsqlite3-dev libhiredis-dev ttf-mscorefonts-installer jq bc xorg-dev libxcursor-dev cloud-init openssh-server ssh-import-id nvtop anki rar unrar glmark2 -y
+sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install ubuntu-desktop ca-certificates apt-transport-https ubuntu-dev-tools glibc-source gcc xclip git git-lfs curl zsh htop neofetch vim mpv libutf8proc2 libutf8proc-dev libfuse2 cpu-checker screenkey cmake cmake-format ninja-build libjsoncpp-dev uuid-dev zlib1g-dev libssl-dev postgresql-all libmariadb-dev libsqlite3-dev libhiredis-dev ttf-mscorefonts-installer jq bc xorg-dev libxcursor-dev cloud-init openssh-server ssh-import-id nvtop anki rar unrar glmark2 meson glslang-tools glslang-dev libxnvctrl-dev libdbus-1-dev -y
 ```
 
 ### 2. Install `Oh-my-zsh` and `Chrome`, then `reboot`
@@ -312,10 +312,10 @@ minikube stop
 
 ### 20. (Optional) Install `Graphics Drivers` and `Vulkan`, and `Fan Control`
 
-- If you have a `NVIDIA GPU`, replace `535` with whatever is the latest driver version as listed [here](https://launchpad.net/~graphics-drivers/+archive/ubuntu/ppa)
+- If you have a `NVIDIA GPU`, replace `545` with whatever is the latest driver version as listed [here](https://launchpad.net/~graphics-drivers/+archive/ubuntu/ppa)
 
 ```bash
-sudo add-apt-repository ppa:graphics-drivers/ppa -y && sudo dpkg --add-architecture i386 && sudo apt update && sudo apt install nvidia-driver-535 libvulkan1 libvulkan1:i386 libgl-dev libgl-dev:i386 -y
+sudo add-apt-repository ppa:graphics-drivers/ppa -y && sudo dpkg --add-architecture i386 && sudo apt update && sudo apt install nvidia-driver-545 libvulkan1 libvulkan1:i386 libgl-dev libgl-dev:i386 -y
 ```
 
 - and to `underwatt` your GPU: <https://www.pugetsystems.com/labs/hpc/quad-rtx3090-gpu-power-limiting-with-systemd-and-nvidia-smi-1983/>
@@ -351,7 +351,7 @@ sudo add-apt-repository ppa:kisak/kisak-mesa -y && sudo dpkg --add-architecture 
 sudo apt update && sudo apt install lm-sensors libxcb-cursor0 -y && sudo sensors-detect
 ```
 
-### 21. (Optional) Install `Wine`, `Lutris`, and `MangoHud` (always check for the latest version and replace the version string when download from `wget`)
+### 21. (Optional) Install `Wine`, `Lutris`, `MangoHud`, and `GOverlay` 
 
 ```bash
 sudo mkdir -pm755 /etc/apt/keyrings && sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key && sudo wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/lunar/winehq-lunar.sources && sudo apt update && sudo apt install --install-recommends winehq-devel -y
@@ -367,9 +367,10 @@ lutris
 
 - Click the `gear button` next to `Wine` -> tick `Advanced` -> `System options` -> `Command prefix` -> `mangohud` -> `Save` -> exit Lutris
 - For `Steam` games, set launch options: `mangohud %command%`
+- Install `MangoHud` manually by building from source: [here](https://github.com/flightlessmango/MangoHud?tab=readme-ov-file#installation---build-from-source) 
 
 ```bash
-sudo apt install mangohud -y
+pip3 install mako && sudo apt install goverlay -y
 ```
 
 ### 22. Install `OBS`, `Gimp`, `Inkscape`, `LibreOffice`, `Blender`
