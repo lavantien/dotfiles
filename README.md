@@ -721,6 +721,12 @@ go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
 go install github.com/golang/mock/mockgen@latest
 ```
 
+- [**TestContainers**](https://testcontainers.com/):
+
+```bash
+go get github.com/jackc/pgx/v5 && go get github.com/testcontainers/testcontainers-go && go get github.com/testcontainers/testcontainers-go/modules/postgres && go get github.com/stretchr/testify
+```
+
 - [**Viper**](https://github.com/spf13/viper):
 
 ```bash
