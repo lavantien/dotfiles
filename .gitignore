@@ -235,3 +235,4 @@ storage
 .local/share/applications/Majesty Gold HD.desktop
 .local/share/applications/Proton EasyAntiCheat Runtime.desktop
 .var/app/org.qbittorrent.qBittorrent
+.pulse-cookie

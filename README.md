@@ -1,6 +1,6 @@
 # A robust Dotfiles for Developer - Battery Included
 
-- Quality Assurance: **100%**; Disk Size: **71 GB**; Time Taken: **2h**;
+- Quality Assurance: **100%**; Disk Size: **67 GB**; Time Taken: **2h**;
 - Supported: **AMD** & **Intel** (Wayland), **NVIDIA** (auto X11), **Windows** (WSL)
 - Turn off `Secure Boot` in your `BIOS` for a smooth installation process
 - Install with `Minimal setup`, check `Additionals Drivers` and `3rd-party` boxes
@@ -58,7 +58,7 @@ ulimit -n
 ### 1. Install all necessary `APT` packages
 
 ```bash
-sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install ubuntu-desktop ca-certificates apt-transport-https ubuntu-dev-tools glibc-source gcc xclip git git-lfs curl zsh htop neofetch vim mpv libutf8proc2 libutf8proc-dev libfuse2 cpu-checker screenkey cmake cmake-format ninja-build libjsoncpp-dev uuid-dev zlib1g-dev libssl-dev postgresql-all libmariadb-dev libsqlite3-dev libhiredis-dev ttf-mscorefonts-installer jq bc xorg-dev libxcursor-dev cloud-init openssh-server ssh-import-id nvtop anki rar unrar glmark2 meson glslang-tools glslang-dev libxnvctrl-dev libdbus-1-dev -y
+sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install ubuntu-desktop ca-certificates apt-transport-https ubuntu-dev-tools glibc-source gcc xclip git git-lfs curl zsh htop neofetch vim mpv libutf8proc2 libutf8proc-dev libfuse2 cpu-checker screenkey cmake cmake-format ninja-build libjsoncpp-dev uuid-dev zlib1g-dev libssl-dev postgresql-all libmariadb-dev libsqlite3-dev libhiredis-dev ttf-mscorefonts-installer jq bc xorg-dev libxcursor-dev cloud-init openssh-server ssh-import-id nvtop anki rar unrar -y
 ```
 
 ### 2. Install `Oh-my-zsh` and `Chrome`, then `reboot`
@@ -370,7 +370,7 @@ lutris
 - Install `MangoHud` manually by building from source: [here](https://github.com/flightlessmango/MangoHud?tab=readme-ov-file#installation---build-from-source) 
 
 ```bash
-pip3 install mako && sudo apt install goverlay -y
+pip3 install mako && sudo apt glmark2 meson glslang-tools glslang-dev libxnvctrl-dev libdbus-1-dev install goverlay -y
 ```
 
 ### 22. Install `OBS`, `Gimp`, `Inkscape`, `LibreOffice`, `Blender`
@@ -1104,6 +1104,10 @@ gem install neovim
 ```
 
 ```bash
+nvim
+```
+
+```bash
 nvim +che
 ```
 
@@ -1354,7 +1358,6 @@ vim.treesitter: require("vim.treesitter.health").check()
 - Enter the `WakaTime Auth Key` provided by `:WakaTimeApiKey` and in the Settings panel in the browser
 - Enter the `Codeium Auth Key` provided by `:Codeium Auth`
 - Run `:MasonUpdate` to install all registries
-- Make sure to run `$ nvim +che` to ensure all dependencies are installed
 
 ### Key Bindings
 
@@ -1486,6 +1489,8 @@ nginx-language-server
 
 </details>
 
+- Make sure to run `$ nvim +che` to ensure all dependencies are installed
+
 ### References
 
 <details>
@@ -1584,14 +1589,14 @@ tmpfs           3.4G  140k  3.4G   1% /run/user/1000
 ```bash
             .-/+oossssoo+/-.               lavantien@savaka
         `:+ssssssssssssssssss+:`           ----------------
-      -+ssssssssssssssssssyyssss+-         OS: Ubuntu 23.04 x86_64
+      -+ssssssssssssssssssyyssss+-         OS: Ubuntu 23.10 x86_64
     .ossssssssssssssssssdMMMNysssso.       Host: HP ProBook 445 G7
-   /ssssssssssshdmmNNmmyNMMMMhssssss/      Kernel: 6.2.0-20-generic
-  +ssssssssshmydMMMMMMMNddddyssssssss+     Uptime: 1 hour, 9 mins
- /sssssssshNMMMyhhyyyyhmNMMMNhssssssss/    Packages: 2487 (dpkg), 167 (brew), 6 (flatpak), 26 (snap)
+   /ssssssssssshdmmNNmmyNMMMMhssssss/      Kernel: 6.5.0-14-generic
+  +ssssssssshmydMMMMMMMNddddyssssssss+     Uptime: 46 mins
+ /sssssssshNMMMyhhyyyyhmNMMMNhssssssss/    Packages: 2459 (dpkg), 174 (brew), 6 (flatpak), 25 (snap)
 .ssssssssdMMMNhsssssssssshNMMMdssssssss.   Shell: zsh 5.9
 +sssshhhyNMMNyssssssssssssyNMMMysssssss+   Resolution: 1920x1080
-ossyNMMMNyMMhsssssssssssssshmmmhssssssso   DE: GNOME 44.0
+ossyNMMMNyMMhsssssssssssssshmmmhssssssso   DE: GNOME 45.2
 ossyNMMMNyMMhsssssssssssssshmmmhssssssso   WM: Mutter
 +sssshhhyNMMNyssssssssssssyNMMMysssssss+   WM Theme: Adwaita
 .ssssssssdMMMNhsssssssssshNMMMdssssssss.   Theme: Yaru-dark [GTK2/3]
@@ -1599,18 +1604,19 @@ ossyNMMMNyMMhsssssssssssssshmmmhssssssso   WM: Mutter
   +sssssssssdmydMMMMMMMMddddyssssssss+     Terminal: WezTerm
    /ssssssssssshdmNNNNmyNMMMMhssssss/      CPU: AMD Ryzen 7 4700U with Radeon Graphics (8) @ 2.000GHz
     .ossssssssssssssssssdMMMNysssso.       GPU: AMD ATI 05:00.0 Renoir
-      -+sssssssssssssssssyyyssss+-         Memory: 4885MiB / 15374MiB
+      -+sssssssssssssssssyyyssss+-         Memory: 2854MiB / 15378MiB
         `:+ssssssssssssssssss+:`
             .-/+oossssoo+/-.
 
 Filesystem      Size  Used Avail Use% Mounted on
-tmpfs           1.7G  2.6M  1.7G   1% /run
-/dev/nvme0n1p2  502G  134G  344G  28% /
-tmpfs           8.1G  155M  8.0G   2% /dev/shm
+tmpfs           1.7G  2.4M  1.7G   1% /run
+/dev/nvme0n1p2  502G   67G  410G  15% /
+tmpfs           8.1G  397M  7.7G   5% /dev/shm
 tmpfs           5.3M   13k  5.3M   1% /run/lock
+efivarfs        154k   80k   70k  54% /sys/firmware/efi/efivars
 tmpfs           8.1G     0  8.1G   0% /run/qemu
 /dev/nvme0n1p1  1.2G  6.4M  1.2G   1% /boot/efi
-tmpfs           1.7G  148k  1.7G   1% /run/user/1000
+tmpfs           1.7G  140k  1.7G   1% /run/user/1000
 ```
 
 </details>
