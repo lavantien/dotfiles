@@ -193,15 +193,7 @@ brew tap wez/wezterm-linuxbrew && brew install wezterm
 brew install grpc protoc-gen-grpc-web && go install google.golang.org/protobuf/cmd/protoc-gen-go@latest && go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 ```
 
-### 13. Install `VSCode` and extensions
-
-```bash
-cd ~/Downloads && wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg && sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg && sudo sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list' && rm -f packages.microsoft.gpg && cd ~ && sudo apt update && sudo apt install code -y
-```
-
-Open VSCode, sync, and install extensions.
-
-### 14. Install `DotNet SDK 8`
+### 13. Install `DotNet SDK 8`
 
 ```bash
 cd ~/Downloads && declare repo_version=$(if command -v lsb_release &> /dev/null; then lsb_release -r -s; else grep -oP '(?<=^VERSION_ID=).+' /etc/os-release | tr -d '"'; fi) && wget https://packages.microsoft.com/config/ubuntu/$repo_version/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && sudo dpkg -i packages-microsoft-prod.deb && rm packages-microsoft-prod.deb && cd ~ && sudo apt update && sudo apt install dotnet-sdk-8.0 -y
@@ -215,7 +207,11 @@ dotnet --info
 dotnet tool install --global csharp-ls && dotnet tool install --global csharpier
 ```
 
-### 15. Install `Qemu KVM`
+```bash
+sudo dotnet workload update
+```
+
+### 14. Install `Qemu KVM`
 
 ```bash
 egrep -c '(vmx|svm)' /proc/cpuinfo && kvm-ok
@@ -225,7 +221,7 @@ egrep -c '(vmx|svm)' /proc/cpuinfo && kvm-ok
 sudo apt install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils -y
 ```
 
-### 16. Install `Android Studio`, `Android SDK`, and `Flutter`
+### 15. Install `Android Studio`, `Android SDK`, and `Flutter`
 
 ```bash
 sudo snap install android-studio --classic
@@ -234,8 +230,16 @@ sudo snap install android-studio --classic
 - Run `Android Studio` and install default configuration, then click `More Actions` -> `SDK Manager` -> `SDK Tools` -> tick `Android SDK Build-Tools` and `Android SDK Command-line Tools` -> `Apply` and `OK`
 
 ```bash
-sudo snap install flutter --classic && flutter doctor && flutter doctor --android-licenses && flutter --disable-telemetry
+sudo snap install flutter --classic && flutter doctor && flutter doctor --android-licenses
 ```
+
+### 16. Install `VSCode` and extensions
+
+```bash
+cd ~/Downloads && wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg && sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg && sudo sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list' && rm -f packages.microsoft.gpg && cd ~ && sudo apt update && sudo apt install code -y
+```
+
+Open VSCode, sync, and install extensions.
 
 ### 17. Install `Kreya` and `DBbGate`
 
@@ -282,27 +286,6 @@ minikube config set driver docker && minikube start && minikube addons enable me
 
 ```bash
 ❗  These changes will take effect upon a minikube delete and then a minikube start
-😄  minikube v1.30.1 on Ubuntu 23.04
-✨  Using the docker driver based on user configuration
-📌  Using Docker driver with root privileges
-👍  Starting control plane node minikube in cluster minikube
-🚜  Pulling base image ...
-💾  Downloading Kubernetes v1.26.3 preload ...
-    > preloaded-images-k8s-v18-v1...:  397.02 MiB / 397.02 MiB  100.00% 14.17 M
-    > gcr.io/k8s-minikube/kicbase...:  373.53 MiB / 373.53 MiB  100.00% 6.42 Mi
-🔥  Creating docker container (CPUs=2, Memory=7900MB) ...
-🐳  Preparing Kubernetes v1.26.3 on Docker 23.0.2 ...
-    ▪ Generating certificates and keys ...
-    ▪ Booting up control plane ...
-    ▪ Configuring RBAC rules ...
-🔗  Configuring bridge CNI (Container Networking Interface) ...
-    ▪ Using image gcr.io/k8s-minikube/storage-provisioner:v5
-🌟  Enabled addons: storage-provisioner, default-storageclass
-🔎  Verifying Kubernetes components...
-🏄  Done! kubectl is now configured to use "minikube" cluster and "default" namespace by default
-💡  metrics-server is an addon maintained by Kubernetes. For any concerns contact minikube on GitHub.
-You can view the list of minikube maintainers at: https://github.com/kubernetes/minikube/blob/master/OWNERS
-    ▪ Using image registry.k8s.io/metrics-server/metrics-server:v0.6.3
 🌟  The 'metrics-server' addon is enabled
 ```
 
@@ -316,6 +299,12 @@ minikube stop
 
 ```bash
 sudo add-apt-repository ppa:graphics-drivers/ppa -y && sudo dpkg --add-architecture i386 && sudo apt update && sudo apt install nvidia-driver-545 libvulkan1 libvulkan1:i386 libgl-dev libgl-dev:i386 -y
+```
+
+- Or with built-in NVIDIA driver:
+
+```bash
+sudo apt dpkg --add-architecture i386 && sudo apt update && sudo apt install libvulkan1:i386 libgl-dev:i386 
 ```
 
 - and to `underwatt` your GPU: <https://www.pugetsystems.com/labs/hpc/quad-rtx3090-gpu-power-limiting-with-systemd-and-nvidia-smi-1983/>
@@ -370,10 +359,10 @@ lutris
 - Install `MangoHud` manually by building from source: [here](https://github.com/flightlessmango/MangoHud?tab=readme-ov-file#installation---build-from-source) 
 
 ```bash
-pip3 install mako && sudo apt glmark2 meson glslang-tools glslang-dev libxnvctrl-dev libdbus-1-dev install goverlay -y
+pip3 install mako && sudo apt install meson glslang-tools glslang-dev libxnvctrl-dev libdbus-1-dev goverlay -y
 ```
 
-### 22. Install `OBS`, `Gimp`, `Inkscape`, `LibreOffice`, `Blender`
+### 22. Install `OBS`, `Gimp`, `Inkscape`, `LibreOffice`, `Blender`, `Audacity`, and `Avidemux`
 
 ```bash
 sudo add-apt-repository ppa:obsproject/obs-studio -y && sudo apt update && sudo apt install ffmpeg obs-studio -y
@@ -387,6 +376,10 @@ sudo snap install gimp inkscape libreoffice
 
 ```bash
 sudo snap install blender --classic
+```
+
+```bash
+flatpak install flathub org.audacityteam.Audacity org.avidemux.Avidemux
 ```
 
 ### 23. `Helix`
@@ -571,27 +564,6 @@ minikube config set driver docker && minikube start && minikube addons enable me
 
 ```bash
 ❗  These changes will take effect upon a minikube delete and then a minikube start
-😄  minikube v1.30.1 on Ubuntu 23.04
-✨  Using the docker driver based on user configuration
-📌  Using Docker driver with root privileges
-👍  Starting control plane node minikube in cluster minikube
-🚜  Pulling base image ...
-💾  Downloading Kubernetes v1.26.3 preload ...
-    > preloaded-images-k8s-v18-v1...:  397.02 MiB / 397.02 MiB  100.00% 14.17 M
-    > gcr.io/k8s-minikube/kicbase...:  373.53 MiB / 373.53 MiB  100.00% 6.42 Mi
-🔥  Creating docker container (CPUs=2, Memory=7900MB) ...
-🐳  Preparing Kubernetes v1.26.3 on Docker 23.0.2 ...
-    ▪ Generating certificates and keys ...
-    ▪ Booting up control plane ...
-    ▪ Configuring RBAC rules ...
-🔗  Configuring bridge CNI (Container Networking Interface) ...
-    ▪ Using image gcr.io/k8s-minikube/storage-provisioner:v5
-🌟  Enabled addons: storage-provisioner, default-storageclass
-🔎  Verifying Kubernetes components...
-🏄  Done! kubectl is now configured to use "minikube" cluster and "default" namespace by default
-💡  metrics-server is an addon maintained by Kubernetes. For any concerns contact minikube on GitHub.
-You can view the list of minikube maintainers at: https://github.com/kubernetes/minikube/blob/master/OWNERS
-    ▪ Using image registry.k8s.io/metrics-server/metrics-server:v0.6.3
 🌟  The 'metrics-server' addon is enabled
 ```
 
@@ -832,15 +804,6 @@ flutter doctor
 
 ```bash
 Doctor summary (to see all details, run flutter doctor -v):
-[✓] Flutter (Channel stable, 3.10.3, on Ubuntu 23.04 6.2.0-20-generic, locale en_US.UTF-8)
-[✓] Android toolchain - develop for Android devices (Android SDK version 33.0.2)
-[✓] Chrome - develop for the web
-[✓] Linux toolchain - develop for Linux desktop
-[✓] Android Studio (version 2022.2)
-[✓] VS Code (version 1.78.2)
-[✓] Connected device (2 available)
-[✓] Network resources
-
 • No issues found!
 ```
 

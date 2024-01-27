@@ -236,3 +236,4 @@ storage
 .local/share/applications/Proton EasyAntiCheat Runtime.desktop
 .var/app/org.qbittorrent.qBittorrent
 .pulse-cookie
+.var/app/org.audacityteam.Audacity
