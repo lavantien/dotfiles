@@ -237,3 +237,5 @@ storage
 .var/app/org.qbittorrent.qBittorrent
 .pulse-cookie
 .var/app/org.audacityteam.Audacity
+.local/share/applications/Counter-Strike 2.desktop
+.local/share/wezterm/check_update
