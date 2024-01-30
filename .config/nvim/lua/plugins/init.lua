@@ -395,4 +395,8 @@ return {
 	{
 		"wakatime/vim-wakatime",
 	},
+
+	{
+		"lervag/vimtex",
+	},
 }
