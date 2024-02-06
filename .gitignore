@@ -241,3 +241,4 @@ storage
 .local/share/wezterm/check_update
 .var/app/org.americanmonk.TipitakaPaliReader
 .local/share/applications
+.var/app/org.kde.kdenlive
