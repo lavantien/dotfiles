@@ -930,6 +930,8 @@ nvim
 nvim +che
 ```
 
+</details>
+
 ## Neovim Setup From Scratch
 
 ### Install

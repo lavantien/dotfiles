@@ -145,6 +145,7 @@ return {
 		"nvim-treesitter/nvim-treesitter",
 		build = ":TSUpdate",
 		config = function()
+			require 'nvim-treesitter.install'.compilers = { "clang" }
 			require("nvim-treesitter.configs").setup({
 				ensure_installed = { 'bash', 'c', 'c_sharp', 'cpp', 'css', 'dart', 'dockerfile', 'git_config',
 					'gitattributes',
