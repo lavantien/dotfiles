@@ -5,7 +5,7 @@
 - Turn off `Secure Boot` in your `BIOS` for a smooth installation process
 - Install with `Minimal setup`, check `Additionals Drivers` and `3rd-party` boxes
 
-## Step-by-Step Setup for a Fresh Ubuntu 23.10
+## Step-by-Step Setup for a Fresh Ubuntu 24.04 LTS
 
 <details>
   <summary>expand</summary>
