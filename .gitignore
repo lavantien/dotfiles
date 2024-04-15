@@ -243,3 +243,4 @@ storage
 .local/share/applications
 .var/app/org.kde.kdenlive
 .var/app/org.telegram.desktop
+.var/app/net.ankiweb.Anki
