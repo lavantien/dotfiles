@@ -3,7 +3,7 @@
 - Quality Assurance: **100%**; Disk Size: **67 GB**; Time Taken: **2h**;
 - Supported: **AMD** & **Intel** (Wayland), **NVIDIA** (auto X11), **Windows** (WSL)
 - Turn off `Secure Boot` in your `BIOS` for a smooth installation process
-- Install with `Minimal setup`, check `Additionals Drivers` and `3rd-party` boxes
+- Install with `Minimal setup`, check `Additional Drivers` and `3rd-party` boxes
 
 ## Step-by-Step Setup for a Fresh Ubuntu 24.04 LTS
 
@@ -58,7 +58,7 @@ ulimit -n
 ### 1. Install all necessary `APT` packages
 
 ```bash
-sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install ubuntu-desktop ca-certificates apt-transport-https ubuntu-dev-tools glibc-source gcc xclip git git-lfs curl zsh htop neofetch vim mpv libutf8proc2 libutf8proc-dev libfuse2 cpu-checker screenkey cmake cmake-format ninja-build libjsoncpp-dev uuid-dev zlib1g-dev libssl-dev postgresql-all libmariadb-dev libsqlite3-dev libhiredis-dev ttf-mscorefonts-installer jq bc xorg-dev libxcursor-dev cloud-init openssh-server ssh-import-id nvtop anki rar unrar sysfsutils latexmk mupdf -y
+sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install ubuntu-desktop ca-certificates apt-transport-https ubuntu-dev-tools glibc-source gcc xclip git git-lfs curl zsh htop neofetch vim mpv libutf8proc2 libutf8proc-dev libfuse2 cpu-checker screenkey cmake cmake-format ninja-build libjsoncpp-dev uuid-dev zlib1g-dev libssl-dev postgresql-all libmariadb-dev libsqlite3-dev libhiredis-dev ttf-mscorefonts-installer jq bc xorg-dev libxcursor-dev cloud-init openssh-server ssh-import-id nvtop rar unrar sysfsutils latexmk mupdf -y
 ```
 
 - Add this line in `/etc/sysfs.conf`, if you're AMD, use `zenpower`:
@@ -81,30 +81,32 @@ cd ~/Downloads && wget https://dl.google.com/linux/direct/google-chrome-stable_c
 - Recommended `Chrome Extensions`:
 
 ```text
-
-aapbdbdomjkkjkaonfhkkikfgjllcleb : Google Translate : version 2_0_13
-ahfgeienlihckogmohjhadlkjgocpleb : Web Store : version 0_2
-ahfhijdlegdabablpippeagghigmibma : Web Vitals : version 1_4_0
-bcjindcccaagfpapjjmafapmmgkkhgoa : JSON Formatter : version 0_7_1
-bkhaagjahfmjljalopjnoealnfndnagc : Octotree - GitHub code tree : version 7_11_2
-cjpalhdlnbpafiamejdnhcphjbkeiagm : uBlock Origin : version 1_54_0
-dbepggeogbaibhgnhhndojpepiihcmeb : Vimium : version 2_0_5
-eimadpbcbfnmbkopoojfekhnkhdbieeh : Dark Reader : version 4_9_74
-ejkiikneibegknkgimmihdpcbcedgmpo : Volume Booster : version 0_2_1
-gebbhagfogifgggkldgodflihgfeippi : Return YouTube Dislike : version 3_0_0_14
-ghbmnnjooekpmoecnnnilnnbdlolhkhi : Google Docs Offline : version 1_73_0
-gpgbiinpmelaihndlegbgfkmnpofgfei : Multiselect for YouTube™ : version 3_5
-gppongmhjkpfnbhagpmjfkannfbllamg : Wappalyzer - Technology profiler : version 6_10_67
-hlkenndednhfkekhgcdicdfddnkalmdm : Cookie-Editor : version 1_12_2
-ioimlbgefgadofblnajllknopjboejda : Transpose ▲▼ pitch ▹ speed ▹ loop for videos : version 5_1_1
-mafpmfcccpbjnhfhjnllmmalhifmlcie : Snowflake : version 0_7_2
-mhjfbmdgcfjbbpaeojofohoefgiehjai : Chrome PDF Viewer : version 1
-migdhldfbapmodfbmgpofnikfbfpbbon : Highlighty: Search, Find, Multi Highlight : version 2_2_4
-mnjggcdmjocbbbhaepdhchncahnbgone : SponsorBlock for YouTube - Skip Sponsorships : version 5_4_28
-neajdppkdcdipfabeoofebfddakdcjhd : Google Network Speech : version 1_0
-nkeimhogjdpnpccoofpliimaahmaaome : Google Hangouts : version 1_3_21
-nlkaejimjacpillmajjnopmpbkbnocid : YouTube NonStop : version 0_9_2
-nmmhkkegccagdldgiimedpiccmgmieda : Chrome Web Store Payments : version 1_0_0_6
+Google Translate : version 2_0_13
+Web Store : version 0_2
+Web Vitals : version 1_4_2
+JSON Formatter : version 0_7_3
+Octotree - GitHub code tree : version 7_12_4
+uBlock Origin : version 1_57_0
+Search by Image : version 6_1_2
+Vimium : version 2_1_2
+Dark Reader : version 4_9_83
+Volume Booster : version 0_2_1
+Return YouTube Dislike : version 3_0_0_14
+Google Docs Offline : version 1_75_4
+Multiselect for YouTube™ : version 3_5
+Wappalyzer - Technology profiler : version 6_10_68
+Cookie-Editor : version 1_13_0
+Transpose ▲▼ pitch ▹ speed ▹ loop for videos : version 5_1_4
+Snowflake : version 0_7_3
+Chrome PDF Viewer : version 1
+Highlighty: Search, Find, Multi Highlight : version 2_2_6
+SponsorBlock for YouTube - Skip Sponsorships : version 5_5_9
+Google Network Speech : version 1_0
+Google Hangouts : version 1_3_21
+YouTube NonStop : version 0_9_2
+Chrome Web Store Payments : version 1_0_0_6
+Instant Data Scraper : version 1_2_0
+Kasm - Open In Isolation : version 0_1_3
 ```
 
 ### 3. After `reboot`, install `Linuxbrew`
@@ -151,7 +153,7 @@ sudo snap install julia --classic
 brew install julia
 ```
 
-### 8. Install `Joplin (snap)`, sync your notes, and setup your `Git` environment:
+### 8. Install `Joplin (snap)`, sync your notes, and setup your `Git` environment
 
 ```bash
 sudo snap install joplin-desktop
@@ -253,7 +255,7 @@ Open VSCode, sync, and install extensions.
 sudo snap install kreya dbgate
 ```
 
-### 18. Install `FlatHub`, `Docker Compose`, `Podman Desktop`, then `reboot`
+### 18. Install `FlatHub`, `Docker Compose`, `Podman Desktop`, `Anki`, `Obsidian`, `Signal`, `Telegram`, and `FreeCAD`
 
 ```bash
 sudo apt install flatpak -y && sudo apt install gnome-software-plugin-flatpak -y && flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
@@ -273,7 +275,7 @@ sudo usermod -aG docker $USER && newgrp docker
 `reboot`
 
 ```bash
-docker run hello-world && flatpak install flathub io.podman_desktop.PodmanDesktop -y
+docker run hello-world && flatpak install flathub io.podman_desktop.PodmanDesktop -y && flatpak install flathub net.ankiweb.Anki md.obsidian.Obsidian org.signal.Signal org.telegram.desktop org.freecadweb.FreeCAD -y
 ```
 
 ### 19. Install `kubectl`, and `minikube`
@@ -346,7 +348,7 @@ sudo add-apt-repository ppa:kisak/kisak-mesa -y && sudo dpkg --add-architecture 
 sudo apt update && sudo apt install lm-sensors libxcb-cursor0 -y && sudo sensors-detect
 ```
 
-### 21. (Optional) Install `Wine`, `Lutris`, `MangoHud`, and `GOverlay` 
+### 21. (Optional) Install `Wine`, `Lutris`, `MangoHud`, and `GOverlay`
 
 ```bash
 sudo mkdir -pm755 /etc/apt/keyrings && sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key && sudo wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/lunar/winehq-lunar.sources && sudo apt update && sudo apt install --install-recommends winehq-devel -y
@@ -362,7 +364,7 @@ lutris
 
 - Click the `gear button` next to `Wine` -> tick `Advanced` -> `System options` -> `Command prefix` -> `mangohud` -> `Save` -> exit Lutris
 - For `Steam` games, set launch options: `mangohud %command%`
-- Install `MangoHud` manually by building from source: [here](https://github.com/flightlessmango/MangoHud?tab=readme-ov-file#installation---build-from-source) 
+- Install `MangoHud` manually by building from source: [here](https://github.com/flightlessmango/MangoHud?tab=readme-ov-file#installation---build-from-source)
 
 ```bash
 pip3 install mako && sudo apt install meson glslang-tools glslang-dev libxnvctrl-dev libdbus-1-dev goverlay -y
@@ -1124,82 +1126,5 @@ sudo rm -rf /usr/local/include/python2.7
 sudo apt install google-cloud-cli-app-engine-go google-cloud-cli-app-engine-grpc google-cloud-cli-cloud-build-local google-cloud-cli-firestore-emulator google-cloud-cli-minikube google-cloud-cli-tests
 # still failed due to python2.7
 ````
-
-</details>
-
-## Tested Machines
-
-<details>
-  <summary>expand</summary>
-
-### My desktop:
-
-```bash
-            .-/+oossssoo+/-.               lavantien@savaka
-        `:+ssssssssssssssssss+:`           ----------------
-      -+ssssssssssssssssssyyssss+-         OS: Ubuntu 23.10 x86_64
-    .ossssssssssssssssssdMMMNysssso.       Host: MS-7D42 1.0
-   /ssssssssssshdmmNNmmyNMMMMhssssss/      Kernel: 6.5.0-14-generic
-  +ssssssssshmydMMMMMMMNddddyssssssss+     Uptime: 54 mins
- /sssssssshNMMMyhhyyyyhmNMMMNhssssssss/    Packages: 2444 (dpkg), 173 (brew), 7 (flatpak), 25 (snap)
-.ssssssssdMMMNhsssssssssshNMMMdssssssss.   Shell: zsh 5.9
-+sssshhhyNMMNyssssssssssssyNMMMysssssss+   Resolution: 3840x2160
-ossyNMMMNyMMhsssssssssssssshmmmhssssssso   DE: GNOME 45.2
-ossyNMMMNyMMhsssssssssssssshmmmhssssssso   WM: Mutter
-+sssshhhyNMMNyssssssssssssyNMMMysssssss+   WM Theme: Adwaita
-.ssssssssdMMMNhsssssssssshNMMMdssssssss.   Theme: Yaru-dark [GTK2/3]
- /sssssssshNMMMyhhyyyyhdNMMMNhssssssss/    Icons: Yaru [GTK2/3]
-  +sssssssssdmydMMMMMMMMddddyssssssss+     Terminal: WezTerm
-   /ssssssssssshdmNNNNmyNMMMMhssssss/      CPU: 12th Gen Intel i7-12700F (20) @ 4.800GHz
-    .ossssssssssssssssssdMMMNysssso.       GPU: NVIDIA GeForce RTX 3080 Lite Hash Rate
-      -+sssssssssssssssssyyyssss+-         Memory: 5339MiB / 31937MiB
-        `:+ssssssssssssssssss+:`
-            .-/+oossssoo+/-.
-
-Filesystem      Size  Used Avail Use% Mounted on
-tmpfs           3.4G  2.5M  3.4G   1% /run
-/dev/nvme0n1p2  983G   71G  862G   8% /
-tmpfs            17G  223M   17G   2% /dev/shm
-tmpfs           5.3M   17k  5.3M   1% /run/lock
-efivarfs        263k  124k  134k  48% /sys/firmware/efi/efivars
-/dev/nvme0n1p1  1.2G  6.4M  1.2G   1% /boot/efi
-tmpfs            17G     0   17G   0% /run/qemu
-tmpfs           3.4G  140k  3.4G   1% /run/user/1000
-```
-
-### My laptop:
-
-```bash
-            .-/+oossssoo+/-.               lavantien@savaka
-        `:+ssssssssssssssssss+:`           ----------------
-      -+ssssssssssssssssssyyssss+-         OS: Ubuntu 23.10 x86_64
-    .ossssssssssssssssssdMMMNysssso.       Host: HP ProBook 445 G7
-   /ssssssssssshdmmNNmmyNMMMMhssssss/      Kernel: 6.5.0-14-generic
-  +ssssssssshmydMMMMMMMNddddyssssssss+     Uptime: 46 mins
- /sssssssshNMMMyhhyyyyhmNMMMNhssssssss/    Packages: 2459 (dpkg), 174 (brew), 6 (flatpak), 25 (snap)
-.ssssssssdMMMNhsssssssssshNMMMdssssssss.   Shell: zsh 5.9
-+sssshhhyNMMNyssssssssssssyNMMMysssssss+   Resolution: 1920x1080
-ossyNMMMNyMMhsssssssssssssshmmmhssssssso   DE: GNOME 45.2
-ossyNMMMNyMMhsssssssssssssshmmmhssssssso   WM: Mutter
-+sssshhhyNMMNyssssssssssssyNMMMysssssss+   WM Theme: Adwaita
-.ssssssssdMMMNhsssssssssshNMMMdssssssss.   Theme: Yaru-dark [GTK2/3]
- /sssssssshNMMMyhhyyyyhdNMMMNhssssssss/    Icons: Yaru [GTK2/3]
-  +sssssssssdmydMMMMMMMMddddyssssssss+     Terminal: WezTerm
-   /ssssssssssshdmNNNNmyNMMMMhssssss/      CPU: AMD Ryzen 7 4700U with Radeon Graphics (8) @ 2.000GHz
-    .ossssssssssssssssssdMMMNysssso.       GPU: AMD ATI 05:00.0 Renoir
-      -+sssssssssssssssssyyyssss+-         Memory: 2854MiB / 15378MiB
-        `:+ssssssssssssssssss+:`
-            .-/+oossssoo+/-.
-
-Filesystem      Size  Used Avail Use% Mounted on
-tmpfs           1.7G  2.4M  1.7G   1% /run
-/dev/nvme0n1p2  502G   67G  410G  15% /
-tmpfs           8.1G  397M  7.7G   5% /dev/shm
-tmpfs           5.3M   13k  5.3M   1% /run/lock
-efivarfs        154k   80k   70k  54% /sys/firmware/efi/efivars
-tmpfs           8.1G     0  8.1G   0% /run/qemu
-/dev/nvme0n1p1  1.2G  6.4M  1.2G   1% /boot/efi
-tmpfs           1.7G  140k  1.7G   1% /run/user/1000
-```
 
 </details>
