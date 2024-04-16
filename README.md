@@ -10,7 +10,7 @@
 <details>
   <summary>expand</summary>
 
-### 0. Disable Wireless Powersaving and Files Open Limit
+### 0. Disable Wireless Powersaving and Files Open Limit; increase swap size
 
 ```bash
 sudo vi /etc/NetworkManager/conf.d/default-wifi-powersave-on.conf
@@ -53,6 +53,16 @@ sudo systemctl daemon-reexec
 
 ```bash
 ulimit -n
+```
+
+```bash
+sudo swapoff -a && sudo dd if=/dev/zero of=/swapfile bs=1G count=16 && sudo chmod 0600 /swapfile && sudo mkswap /swapfile && sudo swapon /swapfile && grep Swap /proc/meminfo
+```
+
+Add this line to the end of your `/etc/fstab`:
+
+```bash
+/swapfile swap swap sw 0 0
 ```
 
 ### 1. Install all necessary `APT` packages
