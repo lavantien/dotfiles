@@ -246,3 +246,4 @@ storage
 .var/app/net.ankiweb.Anki
 .var/app/md.obsidian.Obsidian
 .var/app/org.freecadweb.FreeCAD
+.psensor

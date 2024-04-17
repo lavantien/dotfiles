@@ -355,7 +355,7 @@ sudo add-apt-repository ppa:kisak/kisak-mesa -y && sudo dpkg --add-architecture 
 `reboot`
 
 ```bash
-sudo apt update && sudo apt install lm-sensors libxcb-cursor0 -y && sudo sensors-detect
+sudo apt update && sudo apt install lm-sensors psensor libxcb-cursor0 -y && sudo sensors-detect
 ```
 
 ### 21. (Optional) Install `Wine`, `Lutris`, `MangoHud`, and `GOverlay`
