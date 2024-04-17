@@ -245,3 +245,4 @@ storage
 .var/app/org.telegram.desktop
 .var/app/net.ankiweb.Anki
 .var/app/md.obsidian.Obsidian
+.var/app/org.freecadweb.FreeCAD
