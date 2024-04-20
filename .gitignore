@@ -247,3 +247,4 @@ storage
 .var/app/md.obsidian.Obsidian
 .var/app/org.freecadweb.FreeCAD
 .psensor
+.var/app
