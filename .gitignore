@@ -248,3 +248,4 @@ storage
 .var/app/org.freecadweb.FreeCAD
 .psensor
 .var/app
+.lmmsrc.xml

@@ -91,32 +91,32 @@ cd ~/Downloads && wget https://dl.google.com/linux/direct/google-chrome-stable_c
 - Recommended `Chrome Extensions`:
 
 ```text
-Google Translate : version 2_0_13
-Web Store : version 0_2
-Web Vitals : version 1_4_2
-JSON Formatter : version 0_7_3
-Octotree - GitHub code tree : version 7_12_4
-uBlock Origin : version 1_57_0
-Search by Image : version 6_1_2
-Vimium : version 2_1_2
-Dark Reader : version 4_9_83
-Volume Booster : version 0_2_1
-Return YouTube Dislike : version 3_0_0_14
-Google Docs Offline : version 1_75_4
-Multiselect for YouTube™ : version 3_5
-Wappalyzer - Technology profiler : version 6_10_68
-Cookie-Editor : version 1_13_0
-Transpose ▲▼ pitch ▹ speed ▹ loop for videos : version 5_1_4
-Snowflake : version 0_7_3
-Chrome PDF Viewer : version 1
-Highlighty: Search, Find, Multi Highlight : version 2_2_6
-SponsorBlock for YouTube - Skip Sponsorships : version 5_5_9
-Google Network Speech : version 1_0
-Google Hangouts : version 1_3_21
-YouTube NonStop : version 0_9_2
-Chrome Web Store Payments : version 1_0_0_6
-Instant Data Scraper : version 1_2_0
-Kasm - Open In Isolation : version 0_1_3
+aapbdbdomjkkjkaonfhkkikfgjllcleb : Google Translate : version 2_0_13
+ahfgeienlihckogmohjhadlkjgocpleb : Web Store : version 0_2
+ahfhijdlegdabablpippeagghigmibma : Web Vitals : version 1_4_2
+bcjindcccaagfpapjjmafapmmgkkhgoa : JSON Formatter : version 0_7_3
+bkhaagjahfmjljalopjnoealnfndnagc : Octotree - GitHub code tree : version 7_12_4
+cjpalhdlnbpafiamejdnhcphjbkeiagm : uBlock Origin : version 1_57_0
+cnojnbdhbhnkbcieeekonklommdnndci : Search by Image : version 6_1_2
+dbepggeogbaibhgnhhndojpepiihcmeb : Vimium : version 2_1_2
+eimadpbcbfnmbkopoojfekhnkhdbieeh : Dark Reader : version 4_9_83
+ejkiikneibegknkgimmihdpcbcedgmpo : Volume Booster : version 0_2_1
+gebbhagfogifgggkldgodflihgfeippi : Return YouTube Dislike : version 3_0_0_16
+ghbmnnjooekpmoecnnnilnnbdlolhkhi : Google Docs Offline : version 1_75_4
+gpgbiinpmelaihndlegbgfkmnpofgfei : Multiselect for YouTube™ : version 3_5
+gppongmhjkpfnbhagpmjfkannfbllamg : Wappalyzer - Technology profiler : version 6_10_68
+hlkenndednhfkekhgcdicdfddnkalmdm : Cookie-Editor : version 1_13_0
+ioimlbgefgadofblnajllknopjboejda : Transpose ▲▼ pitch ▹ speed ▹ loop for videos : version 5_1_4
+mafpmfcccpbjnhfhjnllmmalhifmlcie : Snowflake : version 0_7_3
+mhjfbmdgcfjbbpaeojofohoefgiehjai : Chrome PDF Viewer : version 1
+migdhldfbapmodfbmgpofnikfbfpbbon : Highlighty: Search, Find, Multi Highlight : version 2_2_7
+mnjggcdmjocbbbhaepdhchncahnbgone : SponsorBlock for YouTube - Skip Sponsorships : version 5_5_9
+neajdppkdcdipfabeoofebfddakdcjhd : Google Network Speech : version 1_0
+nkeimhogjdpnpccoofpliimaahmaaome : Google Hangouts : version 1_3_21
+nlkaejimjacpillmajjnopmpbkbnocid : YouTube NonStop : version 0_9_2
+nmmhkkegccagdldgiimedpiccmgmieda : Chrome Web Store Payments : version 1_0_0_6
+ofaokhiedipichpaobibbnahnkdoiiah : Instant Data Scraper : version 1_2_0
+pamimfbchojeflegdjgijcgnoghgfemn : Kasm - Open In Isolation : version 0_1_3
 ```
 
 ### 3. After `reboot`, install `Linuxbrew`
