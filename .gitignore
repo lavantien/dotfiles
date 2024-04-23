@@ -138,7 +138,6 @@ Android/Sdk
 .local/share/backgrounds
 .local/share/applications/net.lutris.battlenet-1.desktop
 .python_history
-.config
 Videos
 .motd_shown
 .zcompdump-savaka-5.8.1
@@ -249,3 +248,8 @@ storage
 .psensor
 .var/app
 .lmmsrc.xml
+.config/Google/AndroidStudio2023.1
+.config/blender/4.0/config
+.config/cef_user_data/WidevineCdm
+.config/go/telemetry/local
+.config/menus
