@@ -253,3 +253,6 @@ storage
 .config/cef_user_data/WidevineCdm
 .config/go/telemetry/local
 .config/menus
+.dart
+.dartServer
+.local/share/CMakeTools
