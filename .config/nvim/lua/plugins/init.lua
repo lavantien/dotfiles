@@ -86,8 +86,6 @@ return {
 					"terraformls",
 					"yamlls",
 					"bufls",
-					"csharp_ls",
-					"ocamllsp",
 					"tailwindcss",
 					"clangd",
 					"pyright",
@@ -147,7 +145,7 @@ return {
 		config = function()
 			require 'nvim-treesitter.install'.compilers = { "clang" }
 			require("nvim-treesitter.configs").setup({
-				ensure_installed = { 'bash', 'c', 'c_sharp', 'cpp', 'css', 'dart', 'dockerfile', 'git_config',
+				ensure_installed = { 'bash', 'c', 'cpp', 'css', 'dart', 'dockerfile', 'git_config',
 					'gitattributes',
 					'gitignore', 'go', 'gomod', 'gosum', 'gowork', 'html', 'java', 'javascript', 'json', 'lua', 'make',
 					'markdown', 'proto', 'python', 'query', 'rust', 'scss', 'sql', 'toml', 'typescript', 'vim', 'vimdoc',

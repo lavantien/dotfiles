@@ -91,32 +91,34 @@ cd ~/Downloads && wget https://dl.google.com/linux/direct/google-chrome-stable_c
 - Recommended `Chrome Extensions`:
 
 ```text
-aapbdbdomjkkjkaonfhkkikfgjllcleb : Google Translate : version 2_0_13
-ahfgeienlihckogmohjhadlkjgocpleb : Web Store : version 0_2
-ahfhijdlegdabablpippeagghigmibma : Web Vitals : version 1_4_2
-bcjindcccaagfpapjjmafapmmgkkhgoa : JSON Formatter : version 0_7_3
-bkhaagjahfmjljalopjnoealnfndnagc : Octotree - GitHub code tree : version 7_12_4
-cjpalhdlnbpafiamejdnhcphjbkeiagm : uBlock Origin : version 1_57_0
-cnojnbdhbhnkbcieeekonklommdnndci : Search by Image : version 6_1_2
-dbepggeogbaibhgnhhndojpepiihcmeb : Vimium : version 2_1_2
-eimadpbcbfnmbkopoojfekhnkhdbieeh : Dark Reader : version 4_9_83
-ejkiikneibegknkgimmihdpcbcedgmpo : Volume Booster : version 0_2_1
-gebbhagfogifgggkldgodflihgfeippi : Return YouTube Dislike : version 3_0_0_16
-ghbmnnjooekpmoecnnnilnnbdlolhkhi : Google Docs Offline : version 1_75_4
-gpgbiinpmelaihndlegbgfkmnpofgfei : Multiselect for YouTube™ : version 3_5
-gppongmhjkpfnbhagpmjfkannfbllamg : Wappalyzer - Technology profiler : version 6_10_68
-hlkenndednhfkekhgcdicdfddnkalmdm : Cookie-Editor : version 1_13_0
-ioimlbgefgadofblnajllknopjboejda : Transpose ▲▼ pitch ▹ speed ▹ loop for videos : version 5_1_4
-mafpmfcccpbjnhfhjnllmmalhifmlcie : Snowflake : version 0_7_3
-mhjfbmdgcfjbbpaeojofohoefgiehjai : Chrome PDF Viewer : version 1
-migdhldfbapmodfbmgpofnikfbfpbbon : Highlighty: Search, Find, Multi Highlight : version 2_2_7
-mnjggcdmjocbbbhaepdhchncahnbgone : SponsorBlock for YouTube - Skip Sponsorships : version 5_5_9
-neajdppkdcdipfabeoofebfddakdcjhd : Google Network Speech : version 1_0
-nkeimhogjdpnpccoofpliimaahmaaome : Google Hangouts : version 1_3_21
-nlkaejimjacpillmajjnopmpbkbnocid : YouTube NonStop : version 0_9_2
-nmmhkkegccagdldgiimedpiccmgmieda : Chrome Web Store Payments : version 1_0_0_6
-ofaokhiedipichpaobibbnahnkdoiiah : Instant Data Scraper : version 1_2_0
-pamimfbchojeflegdjgijcgnoghgfemn : Kasm - Open In Isolation : version 0_1_3
+aapbdbdomjkkjkaonfhkkikfgjllcleb : Google Translate
+ahfgeienlihckogmohjhadlkjgocpleb : Web Store
+ahfhijdlegdabablpippeagghigmibma : Web Vitals
+bcjindcccaagfpapjjmafapmmgkkhgoa : JSON Formatter
+bkhaagjahfmjljalopjnoealnfndnagc : Octotree - GitHub code tree
+cjpalhdlnbpafiamejdnhcphjbkeiagm : uBlock Origin
+cnojnbdhbhnkbcieeekonklommdnndci : Search by Image
+dbepggeogbaibhgnhhndojpepiihcmeb : Vimium
+donbcfbmhbcapadipfkeojnmajbakjdc : Ruffle - Flash Emulator
+eimadpbcbfnmbkopoojfekhnkhdbieeh : Dark Reader
+ejkiikneibegknkgimmihdpcbcedgmpo : Volume Booster
+gebbhagfogifgggkldgodflihgfeippi : Return YouTube Dislike
+ghbmnnjooekpmoecnnnilnnbdlolhkhi : Google Docs Offline
+gpgbiinpmelaihndlegbgfkmnpofgfei : Multiselect for YouTube
+gppongmhjkpfnbhagpmjfkannfbllamg : Wappalyzer - Technology profiler
+hlkenndednhfkekhgcdicdfddnkalmdm : Cookie-Editor
+ioimlbgefgadofblnajllknopjboejda : Transpose pitch speed loop for videos
+mafpmfcccpbjnhfhjnllmmalhifmlcie : Snowflake
+mhjfbmdgcfjbbpaeojofohoefgiehjai : Chrome PDF Viewer
+migdhldfbapmodfbmgpofnikfbfpbbon : Highlighty: Search, Find, Multi Highlight
+mnjggcdmjocbbbhaepdhchncahnbgone : SponsorBlock for YouTube - Skip Sponsorships
+neajdppkdcdipfabeoofebfddakdcjhd : Google Network Speech
+nffaoalbilbmmfgbnbgppjihopabppdk : Video Speed Controller
+nkeimhogjdpnpccoofpliimaahmaaome : Google Hangouts
+nlkaejimjacpillmajjnopmpbkbnocid : YouTube NonStop
+nmmhkkegccagdldgiimedpiccmgmieda : Chrome Web Store Payments
+ofaokhiedipichpaobibbnahnkdoiiah : Instant Data Scraper
+pamimfbchojeflegdjgijcgnoghgfemn : Kasm - Open In Isolation
 ```
 
 ### 3. After `reboot`, install `Linuxbrew`
@@ -146,11 +148,11 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ### 7. Install `gcc`, `gh`, `neovim`, and other necessary `Brew` packages
 
 ```bash
-brew install gcc@11 gcc gh go lazygit fzf fd ripgrep bat neovim hyperfine openjdk ruby lua maven node gopls rust-analyzer jdtls lua-language-server typescript-language-server marksman texlab yaml-language-server bash-language-server terraform terraform-ls sql-language-server sqlfluff prettier delve vscode-langservers-extracted loc llvm dotenv-linter checkmake luarocks php composer pkg-config ocaml opam
+brew install gcc@11 gcc gh go lazygit fzf fd ripgrep bat neovim hyperfine openjdk ruby lua maven node gopls rust-analyzer jdtls lua-language-server typescript-language-server marksman texlab yaml-language-server bash-language-server terraform terraform-ls sql-language-server sqlfluff prettier delve vscode-langservers-extracted loc llvm dotenv-linter checkmake luarocks php composer pkg-config
 ```
 
 ```bash
-pip3 install cmake-language-server python-lsp-server && npm install --global sql-formatter && sudo apt install python-is-python3 -y && go install github.com/charmbracelet/glow@latest && go install -v github.com/incu6us/goimports-reviser/v3@latest && go install github.com/fatih/gomodifytags@latest && npm i -g live-server && opam init && opam install utop ocaml-lsp-server ocamlformat
+pip3 install cmake-language-server python-lsp-server && npm install --global sql-formatter && sudo apt install python-is-python3 -y && go install github.com/charmbracelet/glow@latest && go install -v github.com/incu6us/goimports-reviser/v3@latest && go install github.com/fatih/gomodifytags@latest && npm i -g live-server
 ```
 
 ```bash
@@ -209,24 +211,6 @@ brew tap wez/wezterm-linuxbrew && brew install wezterm
 
 ```bash
 brew install grpc protoc-gen-grpc-web && go install google.golang.org/protobuf/cmd/protoc-gen-go@latest && go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-```
-
-### 13. Install `DotNet SDK 8`
-
-```bash
-cd ~/Downloads && declare repo_version=$(if command -v lsb_release &> /dev/null; then lsb_release -r -s; else grep -oP '(?<=^VERSION_ID=).+' /etc/os-release | tr -d '"'; fi) && wget https://packages.microsoft.com/config/ubuntu/$repo_version/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && sudo dpkg -i packages-microsoft-prod.deb && rm packages-microsoft-prod.deb && cd ~ && sudo apt update && sudo apt install dotnet-sdk-8.0 -y
-```
-
-```bash
-dotnet --info
-```
-
-```bash
-dotnet tool install --global csharp-ls && dotnet tool install --global csharpier
-```
-
-```bash
-sudo dotnet workload update
 ```
 
 ### 14. Install `Qemu KVM`
@@ -963,10 +947,10 @@ nvim +che
 ### Mason Built-in Packages to `:MasonInstall `
 
 - All language `servers` and `treesitters` are pre-installed when you first initialize Neovim
-- All 55 Packages:
+- All 51 Packages:
 
 ```text
-gopls delve staticcheck gotests golangci-lint golangci-lint-langserver go-debug-adapter gomodifytags impl goimports-reviser rust-analyzer codelldb lua-language-server stylua luacheck clangd clang-format jdtls java-test java-debug-adapter google-java-format typescript-language-server prettier js-debug-adapter chrome-debug-adapter html-lsp css-lsp tailwindcss-language-server pyright debugpy flake8 blue dart-debug-adapter csharp-language-server csharpier ocaml-lsp ocamlformat yaml-language-server yamllint yamlfmt buf-language-server buf terraform-ls sqlls sqlfluff sql-formatter tflint tfsec marksman ltex-ls vale proselint markdown-toc cbfmt nginx-language-server
+gopls delve staticcheck gotests golangci-lint golangci-lint-langserver go-debug-adapter gomodifytags impl goimports-reviser rust-analyzer codelldb lua-language-server stylua luacheck clangd clang-format jdtls java-test java-debug-adapter google-java-format typescript-language-server prettier js-debug-adapter chrome-debug-adapter html-lsp css-lsp tailwindcss-language-server pyright debugpy flake8 blue dart-debug-adapter yaml-language-server yamllint yamlfmt buf-language-server buf terraform-ls sqlls sqlfluff sql-formatter tflint tfsec marksman ltex-ls vale proselint markdown-toc cbfmt nginx-language-server
 ```
 
 - Specific Languages:
@@ -1032,18 +1016,6 @@ pyright debugpy flake8 blue
 
 ```text
 dart-debug-adapter
-```
-
-- DotNet:
-
-```text
-csharp-language-server csharpier
-```
-
-- OCaml:
-
-```text
-ocaml-lsp ocamlformat
 ```
 
 - YAML:
