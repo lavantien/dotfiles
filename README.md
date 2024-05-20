@@ -620,7 +620,7 @@ hx --health
 
 ### Install
 
-- Install Git, Neovim, GCC/LLVM-Clang, Go, NodeJS, Python3, Rust, Lua, Java, and SQLite
+- Install Git, Neovim, GCC/LLVM-Clang, Go, NodeJS, Python3, Rust, Lua, Java, SQLite, Docker, K8s, OpenTofu
 - Neovim Deps:
 
 ```bash
@@ -811,6 +811,8 @@ nginx-language-server
 - Vim Dadbod - My Favorite SQL Plugin: <https://youtu.be/ALGBuFLzDSA>
 
 </details>
+
+![neovim-demo](/assets/neovim-demo.png)
 
 ## Handle Corrupted Providers
 
