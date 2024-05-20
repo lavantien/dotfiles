@@ -1,11 +1,3 @@
-[filter "lfs"]
-	process = git-lfs filter-process
-	required = true
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-[user]
-	name = lavantien
-	email = lavantien96@gmail.com
 [init]
 	defaultBranch = main
 [core]
@@ -17,9 +9,3 @@
 [mergetool "vimdiff"]
 	cmd = nvim -d $MERGED $LOCAL $BASE $REMOTE -c '$wincmd w' -c 'wincmd J'
 	trustExitCode = false
-[credential "https://github.com"]
-	helper = 
-	helper = !/home/linuxbrew/.linuxbrew/Cellar/gh/2.30.0/bin/gh auth git-credential
-[credential "https://gist.github.com"]
-	helper = 
-	helper = !/home/linuxbrew/.linuxbrew/Cellar/gh/2.30.0/bin/gh auth git-credential

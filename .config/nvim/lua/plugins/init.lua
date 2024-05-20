@@ -1,7 +1,7 @@
 return {
-	{
+	{ -- Intellisense and Snippets
 		"VonHeikemen/lsp-zero.nvim",
-		branch = "v2.x",
+		branch = "v3.x",
 		dependencies = {
 			{ "neovim/nvim-lspconfig" },
 			{
@@ -12,6 +12,7 @@ return {
 			{ "hrsh7th/nvim-cmp" },
 			{ "hrsh7th/cmp-nvim-lsp" },
 			{ "L3MON4D3/LuaSnip" },
+			{ 'onsails/lspkind.nvim' },
 		},
 		config = function()
 			local lsp = require("lsp-zero")
@@ -66,13 +67,55 @@ return {
 			local cmp = require("cmp")
 			local cmp_action = require('lsp-zero').cmp_action()
 			cmp.setup({
+				sources = {
+					{ name = 'nvim_lsp' },
+					{ name = 'path' },
+					{ name = 'buffer' },
+				},
 				mapping = {
-					["<CR>"] = cmp.mapping.confirm({ select = false }),
-					["<C-Space>"] = cmp.mapping.complete(),
+					["<C-n>"] = cmp.mapping.select_next_item { behavior = cmp.SelectBehavior.Insert },
+					["<C-p>"] = cmp.mapping.select_prev_item { behavior = cmp.SelectBehavior.Insert },
+					["<C-y>"] = cmp.mapping(
+						cmp.mapping.confirm {
+							behavior = cmp.ConfirmBehavior.Insert,
+							select = true,
+						},
+						{ "i", "c" }
+					),
+					['<C-Space>'] = cmp.mapping.complete(),
 					['<C-f>'] = cmp_action.luasnip_jump_forward(),
 					['<C-b>'] = cmp_action.luasnip_jump_backward(),
 				},
+				snippet = {
+					expand = function(args)
+						require("luasnip").lsp_expand(args.body)
+					end,
+				},
 			})
+			cmp.setup.filetype({ 'sql' }, {
+				sources = {
+					{ name = "vim-dadbod-completion" },
+					{ name = "buffer" },
+				},
+			})
+			local ls = require "luasnip"
+			ls.config.set_config {
+				history = false,
+				updateevents = "TextChanged,TextChangedI",
+			}
+			for _, ft_path in ipairs(vim.api.nvim_get_runtime_file("lua/snippets/*.lua", true)) do
+				loadfile(ft_path)()
+			end
+			vim.keymap.set({ "i", "s" }, "<c-k>", function()
+				if ls.expand_or_jumpable() then
+					ls.expand_or_jump()
+				end
+			end, { silent = true })
+			vim.keymap.set({ "i", "s" }, "<c-j>", function()
+				if ls.jumpable(-1) then
+					ls.jump(-1)
+				end
+			end, { silent = true })
 			vim.diagnostic.config({
 				virtual_text = true,
 			})
@@ -99,7 +142,6 @@ return {
 					"sqlls",
 				},
 			})
-
 			require("mason-nvim-dap").setup({
 				ensure_installed = {},
 				automatic_installation = true,
@@ -107,12 +149,25 @@ return {
 			})
 		end,
 	},
-	{
+
+	{ -- Debugging
 		"mfussenegger/nvim-dap",
 		"jay-babu/mason-nvim-dap.nvim",
 		'leoluz/nvim-dap-go',
-		dependencies = { "williamboman/mason.nvim" },
+		"rcarriga/nvim-dap-ui",
+		'folke/neodev.nvim',
+		'theHamsta/nvim-dap-virtual-text',
+		dependencies = {
+			"williamboman/mason.nvim",
+			"mfussenegger/nvim-dap",
+			'nvim-neotest/nvim-nio',
+		},
 		config = function()
+			require("dapui").setup()
+			require("neodev").setup({
+				library = { plugins = { "nvim-dap-ui" }, types = true },
+			})
+			require("nvim-dap-virtual-text").setup()
 			require('dap-go').setup()
 			local dap, dapui = require("dap"), require("dapui")
 			dap.listeners.after.event_initialized["dapui_config"] = function()
@@ -124,22 +179,17 @@ return {
 			dap.listeners.before.event_exited["dapui_config"] = function()
 				dapui.close()
 			end
+			require('mason-nvim-dap').setup {
+				automatic_installation = true,
+				handlers = {},
+				ensure_installed = {
+					'delve',
+				},
+			}
 		end,
 	},
-	{
-		"rcarriga/nvim-dap-ui",
-		'folke/neodev.nvim',
-		'theHamsta/nvim-dap-virtual-text',
-		dependencies = { "mfussenegger/nvim-dap" },
-		config = function()
-			require("dapui").setup()
-			require("neodev").setup({
-				library = { plugins = { "nvim-dap-ui" }, types = true },
-			})
-			require("nvim-dap-virtual-text").setup()
-		end,
-	},
-	{
+
+	{ -- Code Objects
 		"nvim-treesitter/nvim-treesitter",
 		build = ":TSUpdate",
 		config = function()
@@ -159,147 +209,148 @@ return {
 			})
 		end,
 	},
-	{
+
+	{ -- Pin Headers
 		"nvim-treesitter/nvim-treesitter-context",
 	},
-	-- {
-	-- 	"jose-elias-alvarez/null-ls.nvim",
-	-- 	config = function()
-	-- 		local null_ls = require("null-ls")
-	-- 		local formatting = null_ls.builtins.formatting
-	-- 		local diagnostics = null_ls.builtins.diagnostics
-	-- 		local actions = null_ls.builtins.code_actions
-	-- 		local sources = {
-	-- 			formatting.dart_format,
-	-- 			--formatting.zigfmt,
-	-- 			--formatting.nimpretty, -- not supported by the LS
-	-- 			--formatting.nixfmt,
-	-- 			--formatting.nginx_beautifier,
-	-- 			--formatting.clang_format, -- shadowing jdtls
-	-- 			formatting.prettier,
-	-- 			--diagnostics.dotenv_linter,
-	-- 			formatting.goimports_reviser,
-	-- 			diagnostics.checkmake,
-	-- 			diagnostics.clang_check,
-	-- 			actions.refactoring,
-	-- 			actions.gitsigns,
-	-- 			actions.gomodifytags,
-	-- 			actions.impl,
-	-- 		}
-	-- 		--local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
-	-- 		null_ls.setup({
-	-- 			sources = sources,
-	-- 			--[==[
-	-- 			on_attach = function(client, bufnr)
-	-- 				if client.supports_method("textDocument/formatting") then
-	-- 					vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
-	-- 					vim.api.nvim_create_autocmd("BufWritePre", {
-	-- 						group = augroup,
-	-- 						buffer = bufnr,
-	-- 						callback = function()
-	-- 							vim.lsp.buf.format({
-	-- 								bufnr = bufnr,
-	-- 								filter = function(client)
-	-- 									return client.name == "null-ls"
-	-- 								end,
-	-- 							})
-	-- 						end,
-	-- 						--[[
-	-- 						callback = function()
-	-- 							vim.lsp.buf.format({ bufnr = bufnr })
-	-- 						end,
-	-- 					    --]]
-	-- 					})
-	-- 				end
-	-- 			end,
-	-- 			--]==]
-	-- 		})
-	-- 	end,
-	-- },
-	{
+
+	{ -- Display Statuses
 		"j-hui/fidget.nvim",
 		config = function() require("fidget").setup() end,
 	},
-	"nvim-treesitter/playground",
-	{
+
+	{ -- Disect Token Tree
+		"nvim-treesitter/playground"
+	},
+
+	{ -- Fuzzy Picker
 		"nvim-telescope/telescope.nvim",
 		dependencies = { "nvim-lua/plenary.nvim" },
 	},
-	{
-		"kylechui/nvim-surround",
-		config = function() require("nvim-surround").setup() end,
+
+	{ -- Surround Motions
+		'echasnovski/mini.nvim',
+		version = '*',
+		config = function()
+			require('mini.ai').setup { n_lines = 500 }
+			require('mini.surround').setup()
+			--[[
+			local statusline = require 'mini.statusline'
+			statusline.setup { use_icons = vim.g.have_nerd_font }
+			---@diagnostic disable-next-line: duplicate-set-field
+			statusline.section_location = function()
+				return '%2l:%-2v'
+			end
+			--]]
+		end,
 	},
-	{
-		'numToStr/Comment.nvim',
-		config = function() require('Comment').setup() end,
+
+	{ -- Smart Help
+		'folke/which-key.nvim',
+		event = 'VimEnter',
+		config = function()
+			require('which-key').setup()
+		end,
 	},
-	{
+
+	{ -- Rainbow Indentation Guides
+		'lukas-reineke/indent-blankline.nvim',
+		main = 'ibl',
+		opts = function()
+			require("ibl").setup()
+			local highlight = {
+				"RainbowRed",
+				"RainbowYellow",
+				"RainbowBlue",
+				"RainbowOrange",
+				"RainbowGreen",
+				"RainbowViolet",
+				"RainbowCyan",
+			}
+			local hooks = require "ibl.hooks"
+			hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
+				vim.api.nvim_set_hl(0, "RainbowRed", { fg = "#E06C75" })
+				vim.api.nvim_set_hl(0, "RainbowYellow", { fg = "#E5C07B" })
+				vim.api.nvim_set_hl(0, "RainbowBlue", { fg = "#61AFEF" })
+				vim.api.nvim_set_hl(0, "RainbowOrange", { fg = "#D19A66" })
+				vim.api.nvim_set_hl(0, "RainbowGreen", { fg = "#98C379" })
+				vim.api.nvim_set_hl(0, "RainbowViolet", { fg = "#C678DD" })
+				vim.api.nvim_set_hl(0, "RainbowCyan", { fg = "#56B6C2" })
+			end)
+			require("ibl").setup { indent = { highlight = highlight } }
+		end,
+	},
+
+	{ -- Improved Floating UIs
 		'stevearc/dressing.nvim',
 		opts = {},
 	},
 
-	-- {
-	-- 	"folke/tokyonight.nvim",
-	-- 	lazy = false,
-	-- 	priority = 1000,
-	-- 	opts = {},
-	-- 	config = function()
-	-- 		require("tokyonight").setup({
-	-- 			-- rose-pine
-	-- 			disable_background = true,
-	-- 			disable_float_background = true,
-	-- 			-- tokyonight
-	-- 			transparent = true,
-	-- 			on_highlights = function(hl, c)
-	-- 				local textColor = c.fg_dark
-	-- 				hl.TelescopeNormal = {
-	-- 					-- bg = c.bg_dark,
-	-- 					bg = 'none',
-	-- 					fg = textColor,
-	-- 				}
-	-- 				hl.TelescopeBorder = {
-	-- 					-- bg = c.bg_dark,
-	-- 					bg = 'none',
-	-- 					fg = textColor,
-	-- 				}
-	-- 				hl.TelescopePromptNormal = {
-	-- 					-- bg = prompt,
-	-- 					bg = 'none',
-	-- 					fg = textColor,
-	-- 				}
-	-- 				hl.TelescopePromptBorder = {
-	-- 					-- bg = prompt,
-	-- 					bg = 'none',
-	-- 					fg = textColor,
-	-- 				}
-	-- 				hl.TelescopePromptTitle = {
-	-- 					-- bg = prompt,
-	-- 					bg = 'none',
-	-- 					fg = textColor,
-	-- 				}
-	-- 				hl.TelescopePreviewTitle = {
-	-- 					-- bg = c.bg_dark,
-	-- 					bg = 'none',
-	-- 					fg = textColor,
-	-- 				}
-	-- 				hl.TelescopeResultsTitle = {
-	-- 					-- bg = c.bg_dark,
-	-- 					bg = 'none',
-	-- 					fg = textColor,
-	-- 				}
-	-- 			end,
-	-- 		})
-	-- 		function ColorMyPencils(color)
-	-- 			color = color or "tokyonight"
-	-- 			vim.cmd.colorscheme(color)
-	-- 			vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
-	-- 			vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
-	-- 		end
-	--
-	-- 		ColorMyPencils()
-	-- 	end,
-	-- },
-	{
+	--[[
+	{ -- Theme Tokyo Night
+		"folke/tokyonight.nvim",
+		lazy = false,
+		priority = 1000,
+		opts = {},
+		config = function()
+			require("tokyonight").setup({
+				-- rose-pine
+				disable_background = true,
+				disable_float_background = true,
+				-- tokyonight
+				transparent = true,
+				on_highlights = function(hl, c)
+					local textColor = c.fg_dark
+					hl.TelescopeNormal = {
+						-- bg = c.bg_dark,
+						bg = 'none',
+						fg = textColor,
+					}
+					hl.TelescopeBorder = {
+						-- bg = c.bg_dark,
+						bg = 'none',
+						fg = textColor,
+					}
+					hl.TelescopePromptNormal = {
+						-- bg = prompt,
+						bg = 'none',
+						fg = textColor,
+					}
+					hl.TelescopePromptBorder = {
+						-- bg = prompt,
+						bg = 'none',
+						fg = textColor,
+					}
+					hl.TelescopePromptTitle = {
+						-- bg = prompt,
+						bg = 'none',
+						fg = textColor,
+					}
+					hl.TelescopePreviewTitle = {
+						-- bg = c.bg_dark,
+						bg = 'none',
+						fg = textColor,
+					}
+					hl.TelescopeResultsTitle = {
+						-- bg = c.bg_dark,
+						bg = 'none',
+						fg = textColor,
+					}
+				end,
+			})
+			function ColorMyPencils(color)
+				color = color or "tokyonight"
+				vim.cmd.colorscheme(color)
+				vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+				vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+			end
+	
+			ColorMyPencils()
+		end,
+	},
+	--]]
+
+	{ -- Theme Gruvbox
 		"ellisonleao/gruvbox.nvim",
 		priority = 1000,
 		config = function()
@@ -310,33 +361,38 @@ return {
 		end,
 		opts = ...
 	},
-	-- {
-	-- 	"rose-pine/neovim",
-	-- 	name = "rose-pine",
-	-- 	lazy = false,
-	-- 	priority = 1000,
-	-- 	opts = {},
-	-- 	config = function()
-	-- 		require("rose-pine").setup({
-	-- 			disable_background = true,
-	-- 			disable_float_background = true,
-	-- 		})
-	-- 		function ColorMyPencils(color)
-	-- 			color = color or "rose-pine"
-	-- 			vim.cmd.colorscheme(color)
-	-- 			vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
-	-- 			vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
-	-- 		end
-	--
-	-- 		ColorMyPencils()
-	-- 	end,
-	-- },
-	{
+
+	--[[
+	{ -- Theme Rose Pine
+		"rose-pine/neovim",
+		name = "rose-pine",
+		lazy = false,
+		priority = 1000,
+		opts = {},
+		config = function()
+			require("rose-pine").setup({
+				disable_background = true,
+				disable_float_background = true,
+			})
+			function ColorMyPencils(color)
+				color = color or "rose-pine"
+				vim.cmd.colorscheme(color)
+				vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+				vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+			end
+	
+			ColorMyPencils()
+		end,
+	},
+	--]]
+
+	{ -- Inline Diagnostics
 		"folke/trouble.nvim",
 		dependencies = "nvim-tree/nvim-web-devicons",
 		config = function() require("trouble").setup({}) end,
 	},
-	{
+
+	{ -- Cute Statusbar
 		"nvim-lualine/lualine.nvim",
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 		config = function()
@@ -359,54 +415,94 @@ return {
 		end,
 	},
 
-	{
-		'nmac427/guess-indent.nvim',
-		config = function()
-			require('guess-indent').setup {
-				auto_cmd = true,
-				override_editorconfig = false,
-				filetype_exclude = {
-					"netrw",
-					"tutor",
-				},
-				buftype_exclude = {
-					"help",
-					"nofile",
-					"terminal",
-					"prompt",
-				},
-			}
+	{ -- Multifiles Jumper
+		"ThePrimeagen/harpoon",
+		branch = "harpoon2",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			'nvim-telescope/telescope.nvim',
+		},
+		opts = function()
+			local harpoon = require('harpoon')
+			harpoon:setup({})
+			local conf = require("telescope.config").values
+			local function toggle_telescope(harpoon_files)
+				local file_paths = {}
+				for _, item in ipairs(harpoon_files.items) do
+					table.insert(file_paths, item.value)
+				end
+				require("telescope.pickers").new({}, {
+					prompt_title = "Harpoon",
+					finder = require("telescope.finders").new_table({
+						results = file_paths,
+					}),
+					previewer = conf.file_previewer({}),
+					sorter = conf.generic_sorter({}),
+				}):find()
+			end
+			vim.keymap.set("n", "<C-e>", function() toggle_telescope(harpoon:list()) end,
+				{ desc = "Open harpoon window" })
 		end,
 	},
 
-	--[[
-    {
-    	"theprimeagen/harpoon",
-    	config = function() end,
-    }
-    --]]
-	{
-		"theprimeagen/refactoring.nvim",
-		config = function() require("refactoring").setup() end
+	{ -- Refactoring
+		"ThePrimeagen/refactoring.nvim",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"nvim-treesitter/nvim-treesitter",
+		},
+		config = function()
+			require("refactoring").setup()
+		end,
 	},
-	{
+
+	{ -- Disect Undo Tree
 		"mbbill/undotree",
 	},
-	{
-		"tpope/vim-fugitive",
-	},
-	{
+
+	{ -- Git Integration
 		"lewis6991/gitsigns.nvim",
 	},
 
-	{
-		"Exafunction/codeium.vim",
-	},
-	{
-		"wakatime/vim-wakatime",
+	{ -- LaTeX
+		"lervag/vimtex",
 	},
 
-	{
-		"lervag/vimtex",
+	{ -- Markdown
+		'MeanderingProgrammer/markdown.nvim',
+		name = 'render-markdown',
+		dependencies = { 'nvim-treesitter/nvim-treesitter' },
+		config = function()
+			require('render-markdown').setup({})
+		end,
+	},
+
+	{ -- SQL/NoSQL Client
+		"tpope/vim-dadbod",
+		"kristijanhusak/vim-dadbod-completion",
+		"kristijanhusak/vim-dadbod-ui",
+	},
+
+	{ -- File Handler
+		"stevearc/oil.nvim",
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+		config = function()
+			require("oil").setup {
+				columns = { "icon" },
+				keymaps = {
+					["<C-h>"] = false,
+					["<M-h>"] = "actions.select_split",
+				},
+				view_options = {
+					show_hidden = true,
+				},
+			}
+
+			-- Open parent directory in current window
+			vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+
+			-- Open parent directory in floating window
+			vim.keymap.set("n", "<space>-", require("oil").toggle_float)
+		end,
 	},
 }

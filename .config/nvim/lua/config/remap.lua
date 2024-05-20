@@ -17,6 +17,8 @@ vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]])
 vim.keymap.set("i", "<C-c>", "<Esc>")
 vim.keymap.set("n", "Q", "<nop>")
 
+vim.keymap.set('t', '<C-]>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+
 --vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
 vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
 
@@ -51,23 +53,6 @@ vim.keymap.set("n", "<leader><leader>", function()
 end)
 --]=====]
 
--- codeium
-vim.keymap.set("i", "<C-'>", function()
-	return vim.fn["codeium#Accept"]()
-end, { expr = true })
-vim.keymap.set("i", "<C-.>", function()
-	return vim.fn["codeium#CycleCompletions"](1)
-end, { expr = true })
-vim.keymap.set("i", "<C-,>", function()
-	return vim.fn["codeium#CycleCompletions"](-1)
-end, { expr = true })
-vim.keymap.set("i", "<C-/>", function()
-	return vim.fn["codeium#Clear"]()
-end, { expr = true })
-vim.keymap.set("i", "<C-]>", function()
-	return vim.fn["codeium#Complete"]()
-end, { expr = true })
-
 -- dap
 vim.keymap.set('n', '<F5>', require 'dap'.continue)
 vim.keymap.set('n', '<F6>', require 'dap'.step_over)
@@ -89,6 +74,9 @@ vim.keymap.set('n', '<leader>ap',
 	end)
 vim.keymap.set('n', '<leader>E', require 'dap'.repl.open)
 vim.keymap.set('n', '<leader>e', require 'dap-go'.debug_test)
+vim.keymap.set('n', '<leader>?', function()
+	require('dapui').eval(nil, { enter = true })
+end)
 
 -- fugitive
 vim.keymap.set("n", "<leader>gs", vim.cmd.Git)
@@ -172,21 +160,13 @@ vim.keymap.set("n", "<leader>xq", "<cmd>TroubleToggle quickfix<cr>", { silent = 
 vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle)
 
 -- harpoon
---[[
-local mark = require("harpoon.mark")
-local ui = require("harpoon.ui")
-vim.keymap.set("n", "<leader>va", mark.add_file)
-vim.keymap.set("n", "<C-e>", ui.toggle_quick_menu)
-vim.keymap.set("n", "<C-h>", function()
-	ui.nav_file(1)
-end)
-vim.keymap.set("n", "<C-t>", function()
-	ui.nav_file(2)
-end)
-vim.keymap.set("n", "<C-n>", function()
-	ui.nav_file(3)
-end)
-vim.keymap.set("n", "<C-s>", function()
-	ui.nav_file(4)
-end)
---]]
+local harpoon = require("harpoon")
+harpoon:setup()
+vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end)
+vim.keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
+vim.keymap.set("n", "<C-h>", function() harpoon:list():select(1) end)
+vim.keymap.set("n", "<C-b>", function() harpoon:list():select(2) end)
+vim.keymap.set("n", "<C-m>", function() harpoon:list():select(3) end)
+vim.keymap.set("n", "<C-l>", function() harpoon:list():select(4) end)
+vim.keymap.set("n", "<C-S-P>", function() harpoon:list():prev() end)
+vim.keymap.set("n", "<C-S-N>", function() harpoon:list():next() end)
