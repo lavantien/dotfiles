@@ -194,4 +194,4 @@ nginx-language-server
 
 </details>
 
-![neovim-demo](/assets/neovim-demo.png)
+![neovim-demo](https://github.com/lavantien/dotfiles/blob/main/assets/neovim-demo.png)

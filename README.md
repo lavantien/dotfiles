@@ -755,6 +755,9 @@ nginx-language-server
 
 ### Plugins List
 
+<details>
+	<summary>expand</summary>
+
 - nvim-treesitter/nvim-treesitter
 - nvim-treesitter/nvim-treesitter-context
 - nvim-treesitter/playground
@@ -792,6 +795,8 @@ nginx-language-server
 - tpope/vim-dadbod
 - stevearc/oil.nvim
 - nvim-tree/nvim-web-devicons
+
+</details>
 
 ### References
 
