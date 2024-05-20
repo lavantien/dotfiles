@@ -15,6 +15,38 @@ return {
 			{ 'onsails/lspkind.nvim' },
 		},
 		config = function()
+			vim.api.nvim_create_autocmd('LspAttach', {
+				group = vim.api.nvim_create_augroup('lsp-attach', { clear = true }),
+				callback = function(event)
+					local client = vim.lsp.get_client_by_id(event.data.client_id)
+					if client and client.server_capabilities.documentHighlightProvider then
+						local highlight_augroup = vim.api.nvim_create_augroup('lsp-highlight',
+							{ clear = false })
+						vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+							buffer = event.buf,
+							group = highlight_augroup,
+							callback = vim.lsp.buf.document_highlight,
+						})
+						vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
+							buffer = event.buf,
+							group = highlight_augroup,
+							callback = vim.lsp.buf.clear_references,
+						})
+						vim.api.nvim_create_autocmd('LspDetach', {
+							group = vim.api.nvim_create_augroup('lsp-detach', { clear = true }),
+							callback = function(event2)
+								vim.lsp.buf.clear_references()
+								vim.api.nvim_clear_autocmds { group = 'lsp-highlight', buffer = event2.buf }
+							end,
+						})
+					end
+					if client and client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint then
+						map('<leader>th', function()
+							vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+						end, '[T]oggle Inlay [H]ints')
+					end
+				end,
+			})
 			local lsp = require("lsp-zero")
 			lsp.preset("recommended")
 			lsp.extend_cmp()
@@ -191,6 +223,7 @@ return {
 
 	{ -- Code Objects
 		"nvim-treesitter/nvim-treesitter",
+		dependencies = { 'windwp/nvim-ts-autotag' },
 		build = ":TSUpdate",
 		config = function()
 			require 'nvim-treesitter.install'.compilers = { "clang" }
@@ -206,6 +239,9 @@ return {
 					enable = true,
 					additional_vim_regex_highlighting = false,
 				},
+				autotag = {
+					enable = true,
+				}
 			})
 		end,
 	},
@@ -234,6 +270,7 @@ return {
 		config = function()
 			require('mini.ai').setup { n_lines = 500 }
 			require('mini.surround').setup()
+			require('mini.pairs').setup()
 			--[[
 			local statusline = require 'mini.statusline'
 			statusline.setup { use_icons = vim.g.have_nerd_font }
@@ -408,8 +445,8 @@ return {
 				options = {
 					--theme = 'tokyonight',
 					theme = 'auto',
-					section_separators = { left = "", right = "" },
-					component_separators = { left = "", right = "" },
+					section_separators = { left = "", right = "" },
+					component_separators = { left = "", right = "" },
 				},
 			})
 		end,

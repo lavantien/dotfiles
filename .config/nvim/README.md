@@ -17,8 +17,8 @@ npm i -g neovim && pip3 install neovim
 
 - Fully support Go, Rust, Lua, JavaScript/TypeScript, Python, Java, HTML/CSS, LaTeX, Markdown and DevOps techs
 - Intellisense, Snippets, Debugging, Code Objects, Pin Headers, Display Statuses, Disect Token Tree, Fuzzy Picker
-- Surround Motions, Improved Floating UIs, Inline Diagnostics, Cute Statusbar, Multifiles Jumper, Refactoring
-- Rainbow Indentation Guides, Smart Help, Disect Undo Tree, Git Integration, SQL/NoSQL Client, File Handler
+- Surround, Autotag, Improved Floating UIs, Inline Diagnostics, Cute Statusbar, Multifiles Jumper, Refactoring
+- Rainbow Indentation Guides, Smart Help, Disect Undo Tree, Git Integration, SQL/NoSQL Client, File Explorer
 - Pre-setup 3 themes - `Gruvbox`, `Tokyo Night`, `Pine Rose` - you can just uncomment any one of them
 
 ## Key Bindings
@@ -137,6 +137,9 @@ nginx-language-server
 
 ## Plugins List
 
+<details>
+    <summary>expand</summary>
+
 - nvim-treesitter/nvim-treesitter
 - nvim-treesitter/nvim-treesitter-context
 - nvim-treesitter/playground
@@ -174,6 +177,8 @@ nginx-language-server
 - tpope/vim-dadbod
 - stevearc/oil.nvim
 - nvim-tree/nvim-web-devicons
+
+</details>
 
 ## References
 

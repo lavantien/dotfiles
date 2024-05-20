@@ -43,7 +43,7 @@ vim.keymap.set("n", "<A-l>", "<C-w>l")
 vim.keymap.set("n", "<A-t>", "<C-w>t") -- and then use 'gt' to switch tabs
 
 vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
-vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
+-- vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
 
 vim.keymap.set("n", "<leader>vc", "<cmd>e ~/.config/nvim/lua/plugins/init.lua<CR>")
 
@@ -114,7 +114,7 @@ vim.api.nvim_set_keymap(
 )
 vim.api.nvim_set_keymap(
 	"n",
-	"<leader>rbf",
+	"<leader>rp",
 	[[ <Cmd>lua require('refactoring').refactor('Extract Block To File')<CR>]],
 	{ noremap = true, silent = true, expr = false }
 )
@@ -162,7 +162,7 @@ vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle)
 -- harpoon
 local harpoon = require("harpoon")
 harpoon:setup()
-vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end)
+vim.keymap.set("n", "<leader>h", function() harpoon:list():add() end)
 vim.keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
 vim.keymap.set("n", "<C-h>", function() harpoon:list():select(1) end)
 vim.keymap.set("n", "<C-b>", function() harpoon:list():select(2) end)
