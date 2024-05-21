@@ -1,11 +1,12 @@
 return {
-	{ -- Intellisense and Snippets
+	{ -- Intellisense, Debugging, Autolint, Snippets, and Status Spinner
 		"VonHeikemen/lsp-zero.nvim",
 		branch = "v3.x",
 		dependencies = {
 			{ "neovim/nvim-lspconfig" },
 			{
 				"williamboman/mason.nvim",
+				config = true,
 				build = function() pcall(vim.cmd, "MasonUpdate") end,
 			},
 			{ "williamboman/mason-lspconfig.nvim" },
@@ -13,6 +14,17 @@ return {
 			{ "hrsh7th/cmp-nvim-lsp" },
 			{ "L3MON4D3/LuaSnip" },
 			{ 'onsails/lspkind.nvim' },
+			{ "jay-babu/mason-null-ls.nvim" },
+			{ "nvimtools/none-ls.nvim" },
+			{ "mfussenegger/nvim-dap" },
+			{ "jay-babu/mason-nvim-dap.nvim" },
+			{ 'leoluz/nvim-dap-go' },
+			{ "rcarriga/nvim-dap-ui" },
+			{ 'folke/neodev.nvim',                        opts = {} },
+			{ 'theHamsta/nvim-dap-virtual-text' },
+			{ 'nvim-neotest/nvim-nio' },
+			{ 'WhoIsSethDaniel/mason-tool-installer.nvim' },
+			{ "j-hui/fidget.nvim",                        opts = {} },
 		},
 		config = function()
 			vim.api.nvim_create_autocmd('LspAttach', {
@@ -47,9 +59,43 @@ return {
 					end
 				end,
 			})
+			local capabilities = vim.lsp.protocol.make_client_capabilities()
+			capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
+
 			require("mason").setup()
-			require("mason-lspconfig").setup({
+			require('mason-tool-installer').setup {
 				ensure_installed = {
+					'staticcheck',
+					'gotests',
+					'gomodifytags',
+					'impl',
+					'goimports-reviser',
+					'stylua',
+					'clang-format',
+					'google-java-format',
+					'prettier',
+					'flake8',
+					'blue',
+					'yamllint',
+					'yamlfmt',
+					'buf',
+					'sqlfluff',
+					'sql-formatter',
+					'tflint',
+					'tfsec',
+					'vale',
+					'proselint',
+					'markdown-toc',
+					'cbfmt',
+					'delve',
+					'go-debug-adapter',
+					'js-debug-adapter',
+					'chrome-debug-adapter',
+					'firefox-debug-adapter',
+					'codelldb',
+					'debugpy',
+					'java-debug-adapter',
+					'java-test',
 					"ltex",
 					"jdtls",
 					"marksman",
@@ -68,28 +114,62 @@ return {
 					"golangci_lint_ls",
 					"gopls",
 					"sqlls",
-                    "dockerls",
-                    "docker_compose_language_service",
-                    "emmet_language_server",
-                    "graphql",
-                    "htmx",
-                    "helm_ls",
-                    "jsonls",
-                    "volar",
-                    "neocmake",
-                    "bashls",
-                    "asm_lsp",
-                    "snyk_ls",
-                    "typos_lsp",
-                    "powershell_es",
-                    "bufls",
-                    "ansiblels",
-                    "eslint",
-                    "taplo",
-                    "ltex",
+					"dockerls",
+					"docker_compose_language_service",
+					"emmet_language_server",
+					"graphql",
+					"htmx",
+					"helm_ls",
+					"jsonls",
+					"volar",
+					"neocmake",
+					"bashls",
+					"snyk_ls",
+					"typos_lsp",
+					"powershell_es",
+					"ansiblels",
+					"eslint",
+					"taplo",
 				},
-                automatic_installation = true,
+				auto_update = true,
+				integrations = {
+					["mason-lspconfig"] = true,
+					["mason-null-ls"] = true,
+					["mason-nvim-dap"] = true,
+				}
+			}
+			require("mason-lspconfig").setup({
+				automatic_installation = false,
+				handlers = {},
 			})
+			require("dapui").setup()
+			require("neodev").setup({
+				library = { plugins = { "nvim-dap-ui" }, types = true },
+			})
+			require("nvim-dap-virtual-text").setup()
+			require('dap-go').setup()
+			local dap, dapui = require("dap"), require("dapui")
+			dap.listeners.after.event_initialized["dapui_config"] = function()
+				dapui.open()
+			end
+			dap.listeners.before.event_terminated["dapui_config"] = function()
+				dapui.close()
+			end
+			dap.listeners.before.event_exited["dapui_config"] = function()
+				dapui.close()
+			end
+			require('mason-nvim-dap').setup {
+				automatic_installation = false,
+				handlers = {},
+			}
+			require("mason-null-ls").setup({
+				automatic_installation = false,
+				handlers = {},
+			})
+			require("null-ls").setup({
+				sources = {}
+			})
+
 			local lsp = require("lsp-zero")
 			lsp.preset("recommended")
 			lsp.extend_cmp()
@@ -197,45 +277,6 @@ return {
 		end,
 	},
 
-	{ -- Debugging
-		"mfussenegger/nvim-dap",
-		"jay-babu/mason-nvim-dap.nvim",
-		'leoluz/nvim-dap-go',
-		"rcarriga/nvim-dap-ui",
-		'folke/neodev.nvim',
-		'theHamsta/nvim-dap-virtual-text',
-		dependencies = {
-			"williamboman/mason.nvim",
-			"mfussenegger/nvim-dap",
-			'nvim-neotest/nvim-nio',
-		},
-		config = function()
-			require("dapui").setup()
-			require("neodev").setup({
-				library = { plugins = { "nvim-dap-ui" }, types = true },
-			})
-			require("nvim-dap-virtual-text").setup()
-			require('dap-go').setup()
-			local dap, dapui = require("dap"), require("dapui")
-			dap.listeners.after.event_initialized["dapui_config"] = function()
-				dapui.open()
-			end
-			dap.listeners.before.event_terminated["dapui_config"] = function()
-				dapui.close()
-			end
-			dap.listeners.before.event_exited["dapui_config"] = function()
-				dapui.close()
-			end
-			require('mason-nvim-dap').setup {
-				automatic_installation = true,
-				handlers = {},
-				ensure_installed = {
-					'delve',
-				},
-			}
-		end,
-	},
-
 	{ -- Code Objects
 		"nvim-treesitter/nvim-treesitter",
 		dependencies = { 'windwp/nvim-ts-autotag' },
@@ -243,11 +284,14 @@ return {
 		config = function()
 			require 'nvim-treesitter.install'.compilers = { "clang" }
 			require("nvim-treesitter.configs").setup({
-				ensure_installed = { 'bash', 'c', 'cpp', 'css', 'dart', 'dockerfile', 'git_config',
+				ensure_installed = { 'bash', 'c', 'cpp', 'css', 'dart', 'dockerfile', 'cmake', 'gitcommit', 'git_rebase',
+					'git_config',
 					'gitattributes',
-					'gitignore', 'go', 'gomod', 'gosum', 'gowork', 'html', 'java', 'javascript', 'json', 'lua', 'make',
+					'gitignore', 'go', 'gomod', 'gosum', 'gowork', 'html', 'java', 'javascript', 'http', 'json',
+					'graphql', 'lua',
+					'make',
 					'markdown', 'proto', 'python', 'query', 'rust', 'scss', 'sql', 'toml', 'typescript', 'vim', 'vimdoc',
-					'yaml' },
+					'yaml', 'glsl', 'helm', 'csv', 'xml' },
 				sync_install = false,
 				auto_install = true,
 				highlight = {
@@ -263,11 +307,6 @@ return {
 
 	{ -- Pin Headers
 		"nvim-treesitter/nvim-treesitter-context",
-	},
-
-	{ -- Display Statuses
-		"j-hui/fidget.nvim",
-		config = function() require("fidget").setup() end,
 	},
 
 	{ -- Disect Token Tree

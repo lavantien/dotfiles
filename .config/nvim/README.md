@@ -2,7 +2,7 @@
 
 ## Install
 
-- Install Git, Neovim, GCC/LLVM-Clang, Go, NodeJS, Python3, Rust, Lua, Java, SQLite, Docker, K8s, OpenTofu
+- Git, GH CLI, Neovim, GCC/LLVM-Clang, Go, NodeJS, Python3, Rust, Lua, Java, SQLite, Docker, K8s, OpenTofu
 - Neovim Deps:
 
 ```bash
@@ -15,13 +15,15 @@ npm i -g neovim && pip3 install neovim
     - add to `PATH` this value `C:\Users\<name>\AppData\Local\nvim-data\mason\bin`
 - Run `nvim` the first time and wait for it to auto initialize plugins, then press `S` to sync packages
 - Run `:MasonUpdate` to install all registries, then `:Mason` and press `U` if there's any update
+- All language `servers`, `linters`, and `treesitters` are pre-installed when you first initialize Neovim
+- Make sure to run `$ nvim +che` to ensure all related dependencies are installed
 
 ## Features
 
 - Fully support Go, Rust, Lua, JavaScript/TypeScript, Python, Java, HTML/CSS, LaTeX, Markdown and DevOps techs
 - Intellisense, Snippets, Debugging, Code Objects, Pin Headers, Display Statuses, Disect Token Tree, Fuzzy Picker
 - Surround, Autotag, Improved Floating UIs, Inline Diagnostics, Cute Statusbar, Multifiles Jumper, Refactoring
-- Rainbow Indentation Guides, Smart Help, Disect Undo Tree, Git Integration, SQL/NoSQL Client, File Explorer
+- Autolint, Rainbow Indentation, Smart Help, Disect Undo Tree, Git Integration, SQL/NoSQL Client, File Explorer
 - Pre-setup 3 themes - `Gruvbox`, `Tokyo Night`, `Pine Rose` - you can just uncomment any one of them
 
 ## Key Bindings
@@ -30,156 +32,129 @@ npm i -g neovim && pip3 install neovim
 - To see bindings of a certain key, hit `:nmap <leader>`
 - Or you can just use Telescope to do the deed `<leader>vk`, in this case, holding space and pressing `vk`
 
-## Mason Built-in Packages to `:MasonInstall `
-
-- All language `servers` and `treesitters` are pre-installed when you first initialize Neovim
-- All 50 Packages:
-
-```text
-gopls delve staticcheck gotests golangci-lint golangci-lint-langserver go-debug-adapter gomodifytags impl goimports-reviser rust-analyzer codelldb lua-language-server stylua luacheck clangd clang-format jdtls java-test java-debug-adapter google-java-format typescript-language-server prettier js-debug-adapter chrome-debug-adapter html-lsp css-lsp tailwindcss-language-server pyright debugpy flake8 blue yaml-language-server yamllint yamlfmt buf-language-server buf terraform-ls sqlls sqlfluff sql-formatter tflint tfsec marksman ltex-ls vale proselint markdown-toc cbfmt nginx-language-server
-```
-
-- Specific Languages:
-
-<details>
-	<summary>go, rust, lua, c/c++, java, javascript/typescript, html, css, python, yaml, protobuf, sql, terraform, markdown, nginx</summary>
-
-- Go:
-
-```text
-gopls delve staticcheck gotests golangci-lint golangci-lint-langserver go-debug-adapter gomodifytags impl goimports-reviser
-```
-
-- Rust:
-
-```text
-rust-analyzer codelldb
-```
-
-- Lua:
-
-```text
-lua-language-server stylua luacheck
-```
-
-- C/C++:
-
-```text
-clangd clang-format
-```
-
-- Java:
-
-```text
-jdtls java-test java-debug-adapter google-java-format
-```
-
-- JavaScript/TypeScript:
-
-```text
-typescript-language-server prettier js-debug-adapter chrome-debug-adapter
-```
-
-- HTML:
-
-```text
-html-lsp
-```
-
-- CSS:
-
-```text
-css-lsp tailwindcss-language-server
-```
-
-- Python:
-
-```text
-pyright debugpy flake8 blue
-```
-
-- YAML:
-
-```text
-yaml-language-server yamllint yamlfmt
-```
-
-- Protobuf:
-
-```text
-buf-language-server buf
-```
-
-- SQL:
-
-```text
-sqlls sqlfluff sql-formatter
-```
-
-- Terraform:
-
-```text
-terraform-ls tflint tfsec
-```
-
-- Markdown:
-
-```text
-marksman ltex-ls vale proselint markdown-toc cbfmt
-```
-
-- Nginx:
-
-```text
-nginx-language-server
-```
-
-</details>
-
-- Make sure to run `$ nvim +che` to ensure all dependencies are installed
-
 ## Plugins List
 
 <details>
-    <summary>expand</summary>
+	<summary>expand</summary>
 
-- nvim-treesitter/nvim-treesitter
-- nvim-treesitter/nvim-treesitter-context
-- nvim-treesitter/playground
-- neovim/nvim-lspconfig
-- hrsh7th/nvim-cmp
-- hrsh7th/cmp-nvim-lsp
-- L3MON4D3/LuaSnip
-- onsails/lspkind.nvim
-- williamboman/mason.nvim
-- williamboman/mason-lspconfig.nvim
-- VonHeikemen/lsp-zero.nvim
-- mfussenegger/nvim-dap
-- jay-babu/mason-nvim-dap.nvim
-- leoluz/nvim-dap-go
-- rcarriga/nvim-dap-ui
-- nvim-neotest/nvim-nio
-- folke/neodev.nvim
-- theHamsta/nvim-dap-virtual-text
-- j-hui/fidget.nvim
-- nvim-telescope/telescope.nvim
-- kylechui/nvim-surround
-- stevearc/dressing.nvim
-- ellisonleao/gruvbox.nvim
-- (folke/tokyonight.nvim)
-- (rose-pine/neovim)
-- folke/trouble.nvim
-- nvim-lualine/lualine.nvim
-- theprimeagen/harpoon
-- theprimeagen/refactoring.nvim
-- mbbill/undotree
-- tpope/vim-fugitive
-- lewis6991/gitsigns.nvim
-- lervag/vimtex
-- MeanderingProgrammer/markdown.nvim
-- tpope/vim-dadbod
-- stevearc/oil.nvim
-- nvim-tree/nvim-web-devicons
+  Loaded (44)
+    ● cmp-nvim-lsp 0.17ms  lsp-zero.nvim
+    ● dressing.nvim 17.06ms  start
+    ● fidget.nvim 118.89ms  lsp-zero.nvim
+    ● gitsigns.nvim 0.11ms  start
+    ● gruvbox.nvim 161.28ms  start
+    ● harpoon 153.73ms  start
+    ● indent-blankline.nvim 54.39ms  start
+    ● lazy.nvim 12562.18ms  init.lua
+    ● lsp-zero.nvim 2070.3ms  start
+    ● lspkind.nvim 0.16ms  lsp-zero.nvim
+    ● lualine.nvim 106.7ms  start
+    ● LuaSnip 147.14ms  lsp-zero.nvim
+    ● mason-lspconfig.nvim 1.13ms  lsp-zero.nvim
+    ● mason-null-ls.nvim 1.44ms  lsp-zero.nvim
+    ● mason-nvim-dap.nvim 1.79ms  lsp-zero.nvim
+    ● mason-tool-installer.nvim 16.63ms  lsp-zero.nvim
+    ● mason.nvim 56.47ms ✔ build
+    ● mini.nvim 272.08ms  start
+    ● neodev.nvim 39.81ms  lsp-zero.nvim
+    ● none-ls.nvim 1.4ms  lsp-zero.nvim
+    ● nvim-cmp 42.43ms  lsp-zero.nvim
+    ● nvim-dap 6.75ms  lsp-zero.nvim
+    ● nvim-dap-go 1.73ms  lsp-zero.nvim
+    ● nvim-dap-ui 1.64ms  lsp-zero.nvim
+    ● nvim-dap-virtual-text 0.2ms  lsp-zero.nvim
+    ● nvim-lspconfig 6.99ms  lsp-zero.nvim
+    ● nvim-nio 1.61ms  lsp-zero.nvim
+    ● nvim-treesitter 571.7ms ✔ build
+    ● nvim-treesitter-context 29.32ms  start
+    ● nvim-ts-autotag 89.84ms  nvim-treesitter
+    ● nvim-web-devicons 12.91ms  oil.nvim
+    ● oil.nvim 250.59ms  start
+    ● playground 12.05ms  start
+    ● plenary.nvim 4.39ms  harpoon
+    ● refactoring.nvim 300.19ms  start
+    ● render-markdown 53.32ms  start
+    ● telescope.nvim 6.31ms  harpoon
+    ● trouble.nvim 57.26ms  start
+    ● undotree 7.72ms  start
+    ● vim-dadbod 5.96ms  start
+    ● vim-dadbod-completion 5.45ms  start
+    ● vim-dadbod-ui 153.69ms  start
+    ● vimtex 17.99ms  start
+    ● which-key.nvim 74.55ms  VimEnter
+
+</details>
+
+## Languages Packages List
+
+<details>
+	<summary>expand</summary>
+
+  Installed
+    ◍ ansible-language-server ansiblels
+    ◍ bash-language-server bashls
+    ◍ blue
+    ◍ buf
+    ◍ buf-language-server bufls
+    ◍ cbfmt
+    ◍ chrome-debug-adapter
+    ◍ clang-format
+    ◍ clangd
+    ◍ codelldb
+    ◍ css-lsp cssls
+    ◍ debugpy
+    ◍ delve
+    ◍ docker-compose-language-service docker_compose_language_service
+    ◍ dockerfile-language-server dockerls
+    ◍ emmet-language-server emmet_language_server
+    ◍ eslint-lsp eslint
+    ◍ firefox-debug-adapter
+    ◍ flake8
+    ◍ go-debug-adapter
+    ◍ goimports-reviser
+    ◍ golangci-lint-langserver golangci_lint_ls
+    ◍ gomodifytags
+    ◍ google-java-format
+    ◍ gopls
+    ◍ gotests
+    ◍ graphql-language-service-cli graphql
+    ◍ helm-ls helm_ls
+    ◍ html-lsp html
+    ◍ htmx-lsp htmx
+    ◍ impl
+    ◍ java-debug-adapter
+    ◍ java-test
+    ◍ jdtls
+    ◍ js-debug-adapter
+    ◍ json-lsp jsonls
+    ◍ ltex-ls ltex
+    ◍ lua-language-server lua_ls
+    ◍ markdown-toc
+    ◍ marksman
+    ◍ neocmakelsp neocmake
+    ◍ powershell-editor-services powershell_es
+    ◍ prettier
+    ◍ proselint
+    ◍ pyright
+    ◍ rust-analyzer rust_analyzer
+    ◍ snyk-ls snyk_ls
+    ◍ sql-formatter
+    ◍ sqlfluff
+    ◍ sqlls
+    ◍ staticcheck
+    ◍ stylua
+    ◍ tailwindcss-language-server tailwindcss
+    ◍ taplo
+    ◍ terraform-ls terraformls
+    ◍ tflint
+    ◍ tfsec
+    ◍ typescript-language-server tsserver
+    ◍ typos-lsp typos_lsp
+    ◍ vale
+    ◍ vue-language-server volar
+    ◍ yaml-language-server yamlls
+    ◍ yamlfmt
+    ◍ yamllint
 
 </details>
 
