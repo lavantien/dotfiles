@@ -641,7 +641,7 @@ npm i -g neovim && pip3 install neovim
 - Fully support Go, Rust, Lua, JavaScript/TypeScript, Python, Java, HTML/CSS, LaTeX, Markdown and DevOps techs
 - Intellisense, Snippets, Debugging, Code Objects, Pin Headers, Display Statuses, Disect Token Tree, Fuzzy Picker
 - Surround, Autotag, Improved Floating UIs, Inline Diagnostics, Cute Statusbar, Multifiles Jumper, Refactoring
-- Autolint, Rainbow Indentation, Smart Help, Disect Undo Tree, Git Integration, SQL/NoSQL Client, File Explorer
+- Autolint, Indentation Guides, Smart Help, Disect Undo Tree, Git Integration, SQL/NoSQL Client, File Explorer
 - Pre-setup 3 themes - `Gruvbox`, `Tokyo Night`, `Pine Rose` - you can just uncomment any one of them
 
 ### Key Bindings
