@@ -653,126 +653,124 @@ npm i -g neovim && pip3 install neovim
 ### Plugins List
 
 <details>
-	<summary>expand</summary>
+	<summary>Loaded (44)</summary>
 
-  Loaded (44)
-    ● cmp-nvim-lsp 0.17ms  lsp-zero.nvim
-    ● dressing.nvim 17.06ms  start
-    ● fidget.nvim 118.89ms  lsp-zero.nvim
-    ● gitsigns.nvim 0.11ms  start
-    ● gruvbox.nvim 161.28ms  start
-    ● harpoon 153.73ms  start
-    ● indent-blankline.nvim 54.39ms  start
-    ● lazy.nvim 12562.18ms  init.lua
-    ● lsp-zero.nvim 2070.3ms  start
-    ● lspkind.nvim 0.16ms  lsp-zero.nvim
-    ● lualine.nvim 106.7ms  start
-    ● LuaSnip 147.14ms  lsp-zero.nvim
-    ● mason-lspconfig.nvim 1.13ms  lsp-zero.nvim
-    ● mason-null-ls.nvim 1.44ms  lsp-zero.nvim
-    ● mason-nvim-dap.nvim 1.79ms  lsp-zero.nvim
-    ● mason-tool-installer.nvim 16.63ms  lsp-zero.nvim
-    ● mason.nvim 56.47ms ✔ build
-    ● mini.nvim 272.08ms  start
-    ● neodev.nvim 39.81ms  lsp-zero.nvim
-    ● none-ls.nvim 1.4ms  lsp-zero.nvim
-    ● nvim-cmp 42.43ms  lsp-zero.nvim
-    ● nvim-dap 6.75ms  lsp-zero.nvim
-    ● nvim-dap-go 1.73ms  lsp-zero.nvim
-    ● nvim-dap-ui 1.64ms  lsp-zero.nvim
-    ● nvim-dap-virtual-text 0.2ms  lsp-zero.nvim
-    ● nvim-lspconfig 6.99ms  lsp-zero.nvim
-    ● nvim-nio 1.61ms  lsp-zero.nvim
-    ● nvim-treesitter 571.7ms ✔ build
-    ● nvim-treesitter-context 29.32ms  start
-    ● nvim-ts-autotag 89.84ms  nvim-treesitter
-    ● nvim-web-devicons 12.91ms  oil.nvim
-    ● oil.nvim 250.59ms  start
-    ● playground 12.05ms  start
-    ● plenary.nvim 4.39ms  harpoon
-    ● refactoring.nvim 300.19ms  start
-    ● render-markdown 53.32ms  start
-    ● telescope.nvim 6.31ms  harpoon
-    ● trouble.nvim 57.26ms  start
-    ● undotree 7.72ms  start
-    ● vim-dadbod 5.96ms  start
-    ● vim-dadbod-completion 5.45ms  start
-    ● vim-dadbod-ui 153.69ms  start
-    ● vimtex 17.99ms  start
-    ● which-key.nvim 74.55ms  VimEnter
+1. cmp-nvim-lsp 0.17ms  lsp-zero.nvim
+2. dressing.nvim 17.06ms  start
+3. fidget.nvim 118.89ms  lsp-zero.nvim
+4. gitsigns.nvim 0.11ms  start
+5. gruvbox.nvim 161.28ms  start
+6. harpoon 153.73ms  start
+7. indent-blankline.nvim 54.39ms  start
+8. lazy.nvim 12562.18ms  init.lua
+9. lsp-zero.nvim 2070.3ms  start
+10. lspkind.nvim 0.16ms  lsp-zero.nvim
+11. lualine.nvim 106.7ms  start
+12. LuaSnip 147.14ms  lsp-zero.nvim
+13. mason-lspconfig.nvim 1.13ms  lsp-zero.nvim
+14. mason-null-ls.nvim 1.44ms  lsp-zero.nvim
+15. mason-nvim-dap.nvim 1.79ms  lsp-zero.nvim
+16. mason-tool-installer.nvim 16.63ms  lsp-zero.nvim
+17. mason.nvim 56.47ms ✔ build
+18. mini.nvim 272.08ms  start
+19. neodev.nvim 39.81ms  lsp-zero.nvim
+20. none-ls.nvim 1.4ms  lsp-zero.nvim
+21. nvim-cmp 42.43ms  lsp-zero.nvim
+22. nvim-dap 6.75ms  lsp-zero.nvim
+23. nvim-dap-go 1.73ms  lsp-zero.nvim
+24. nvim-dap-ui 1.64ms  lsp-zero.nvim
+25. nvim-dap-virtual-text 0.2ms  lsp-zero.nvim
+26. nvim-lspconfig 6.99ms  lsp-zero.nvim
+27. nvim-nio 1.61ms  lsp-zero.nvim
+28. nvim-treesitter 571.7ms ✔ build
+29. nvim-treesitter-context 29.32ms  start
+30. nvim-ts-autotag 89.84ms  nvim-treesitter
+31. nvim-web-devicons 12.91ms  oil.nvim
+32. oil.nvim 250.59ms  start
+33. playground 12.05ms  start
+34. plenary.nvim 4.39ms  harpoon
+35. refactoring.nvim 300.19ms  start
+36. render-markdown 53.32ms  start
+37. telescope.nvim 6.31ms  harpoon
+38. trouble.nvim 57.26ms  start
+39. undotree 7.72ms  start
+40. vim-dadbod 5.96ms  start
+41. vim-dadbod-completion 5.45ms  start
+42. vim-dadbod-ui 153.69ms  start
+43. vimtex 17.99ms  start
+44. which-key.nvim 74.55ms  VimEnter
 
 </details>
 
 ### Languages Packages List
 
 <details>
-	<summary>expand</summary>
+	<summary>Installed (64)</summary>
 
-  Installed
-    ◍ ansible-language-server ansiblels
-    ◍ bash-language-server bashls
-    ◍ blue
-    ◍ buf
-    ◍ buf-language-server bufls
-    ◍ cbfmt
-    ◍ chrome-debug-adapter
-    ◍ clang-format
-    ◍ clangd
-    ◍ codelldb
-    ◍ css-lsp cssls
-    ◍ debugpy
-    ◍ delve
-    ◍ docker-compose-language-service docker_compose_language_service
-    ◍ dockerfile-language-server dockerls
-    ◍ emmet-language-server emmet_language_server
-    ◍ eslint-lsp eslint
-    ◍ firefox-debug-adapter
-    ◍ flake8
-    ◍ go-debug-adapter
-    ◍ goimports-reviser
-    ◍ golangci-lint-langserver golangci_lint_ls
-    ◍ gomodifytags
-    ◍ google-java-format
-    ◍ gopls
-    ◍ gotests
-    ◍ graphql-language-service-cli graphql
-    ◍ helm-ls helm_ls
-    ◍ html-lsp html
-    ◍ htmx-lsp htmx
-    ◍ impl
-    ◍ java-debug-adapter
-    ◍ java-test
-    ◍ jdtls
-    ◍ js-debug-adapter
-    ◍ json-lsp jsonls
-    ◍ ltex-ls ltex
-    ◍ lua-language-server lua_ls
-    ◍ markdown-toc
-    ◍ marksman
-    ◍ neocmakelsp neocmake
-    ◍ powershell-editor-services powershell_es
-    ◍ prettier
-    ◍ proselint
-    ◍ pyright
-    ◍ rust-analyzer rust_analyzer
-    ◍ snyk-ls snyk_ls
-    ◍ sql-formatter
-    ◍ sqlfluff
-    ◍ sqlls
-    ◍ staticcheck
-    ◍ stylua
-    ◍ tailwindcss-language-server tailwindcss
-    ◍ taplo
-    ◍ terraform-ls terraformls
-    ◍ tflint
-    ◍ tfsec
-    ◍ typescript-language-server tsserver
-    ◍ typos-lsp typos_lsp
-    ◍ vale
-    ◍ vue-language-server volar
-    ◍ yaml-language-server yamlls
-    ◍ yamlfmt
-    ◍ yamllint
+1. ansible-language-server ansiblels
+2. bash-language-server bashls
+3. blue
+4. buf
+5. buf-language-server bufls
+6. cbfmt
+7. chrome-debug-adapter
+8. clang-format
+9. clangd
+10. codelldb
+11. css-lsp cssls
+12. debugpy
+13. delve
+14. docker-compose-language-service docker_compose_language_service
+15. dockerfile-language-server dockerls
+16. emmet-language-server emmet_language_server
+17. eslint-lsp eslint
+18. firefox-debug-adapter
+19. flake8
+20. go-debug-adapter
+21. goimports-reviser
+22. golangci-lint-langserver golangci_lint_ls
+23. gomodifytags
+24. google-java-format
+25. gopls
+26. gotests
+27. graphql-language-service-cli graphql
+28. helm-ls helm_ls
+29. html-lsp html
+30. htmx-lsp htmx
+31. impl
+32. java-debug-adapter
+33. java-test
+34. jdtls
+35. js-debug-adapter
+36. json-lsp jsonls
+37. ltex-ls ltex
+38. lua-language-server lua_ls
+39. markdown-toc
+40. marksman
+41. neocmakelsp neocmake
+42. powershell-editor-services powershell_es
+43. prettier
+44. proselint
+45. pyright
+46. rust-analyzer rust_analyzer
+47. snyk-ls snyk_ls
+48. sql-formatter
+49. sqlfluff
+50. sqlls
+51. staticcheck
+52. stylua
+53. tailwindcss-language-server tailwindcss
+54. taplo
+55. terraform-ls terraformls
+56. tflint
+57. tfsec
+58. typescript-language-server tsserver
+59. typos-lsp typos_lsp
+60. vale
+61. vue-language-server volar
+62. yaml-language-server yamlls
+63. yamlfmt
+64. yamllint
 
 </details>
 
