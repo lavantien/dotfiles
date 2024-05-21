@@ -9,7 +9,10 @@
 npm i -g neovim && pip3 install neovim
 ```
 
-- If you're on Windows you need to set the `HOME` environment variable to `C:\Users\<your account name>`
+- If you're on Windows you need to
+    - set the `HOME` environment variable to `C:\Users\<name>`
+    - copy `.config/nvim` directory to `C:\Users\<name>\AppData\Local\`
+    - add to `PATH` this value `C:\Users\<name>\AppData\Local\nvim-data\mason\bin`
 - Run `nvim` the first time and wait for it to auto initialize plugins, then press `S` to sync packages
 - Run `:MasonUpdate` to install all registries, then `:Mason` and press `U` if there's any update
 

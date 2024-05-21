@@ -47,6 +47,49 @@ return {
 					end
 				end,
 			})
+			require("mason").setup()
+			require("mason-lspconfig").setup({
+				ensure_installed = {
+					"ltex",
+					"jdtls",
+					"marksman",
+					"tflint",
+					"terraformls",
+					"yamlls",
+					"bufls",
+					"tailwindcss",
+					"clangd",
+					"pyright",
+					"cssls",
+					"html",
+					"tsserver",
+					"lua_ls",
+					"rust_analyzer",
+					"golangci_lint_ls",
+					"gopls",
+					"sqlls",
+                    "dockerls",
+                    "docker_compose_language_service",
+                    "emmet_language_server",
+                    "graphql",
+                    "htmx",
+                    "helm_ls",
+                    "jsonls",
+                    "volar",
+                    "neocmake",
+                    "bashls",
+                    "asm_lsp",
+                    "snyk_ls",
+                    "typos_lsp",
+                    "powershell_es",
+                    "bufls",
+                    "ansiblels",
+                    "eslint",
+                    "taplo",
+                    "ltex",
+				},
+                automatic_installation = true,
+			})
 			local lsp = require("lsp-zero")
 			lsp.preset("recommended")
 			lsp.extend_cmp()
@@ -150,34 +193,6 @@ return {
 			end, { silent = true })
 			vim.diagnostic.config({
 				virtual_text = true,
-			})
-			require("mason").setup()
-			require("mason-lspconfig").setup({
-				ensure_installed = {
-					"ltex",
-					"jdtls",
-					"marksman",
-					"tflint",
-					"terraformls",
-					"yamlls",
-					"bufls",
-					"tailwindcss",
-					"clangd",
-					"pyright",
-					"cssls",
-					"html",
-					"tsserver",
-					"lua_ls",
-					"rust_analyzer",
-					"golangci_lint_ls",
-					"gopls",
-					"sqlls",
-				},
-			})
-			require("mason-nvim-dap").setup({
-				ensure_installed = {},
-				automatic_installation = true,
-				handlers = {}
 			})
 		end,
 	},
