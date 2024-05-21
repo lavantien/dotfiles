@@ -536,24 +536,14 @@ return {
 	},
 
 	{ -- Markdown
-		"wallpants/github-preview.nvim",
-		cmd = { "GithubPreviewToggle" },
-		keys = { "<leader>mpt" },
-		opts = {
-			host = "localhost",
-			port = 6041,
-			theme = {
-				name = "dark",
-				high_contrast = false,
-			},
-		},
-		config = function(_, opts)
-			local gpreview = require("github-preview")
-			gpreview.setup(opts)
-			local fns = gpreview.fns
-			vim.keymap.set("n", "<leader>mpt", fns.toggle)
-			vim.keymap.set("n", "<C-v>", fns.single_file_toggle)
-			vim.keymap.set("n", "<leader>mpd", fns.details_tags_toggle)
+		'MeanderingProgrammer/markdown.nvim',
+		name = 'render-markdown',
+		dependencies = { 'nvim-treesitter/nvim-treesitter' },
+		config = function()
+			require('render-markdown').setup({
+				start_enabled = true,
+				max_file_size = 4.0,
+			})
 		end,
 	},
 
