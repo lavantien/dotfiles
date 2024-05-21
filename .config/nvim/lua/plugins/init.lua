@@ -83,8 +83,6 @@ return {
 					'sql-formatter',
 					'tflint',
 					'tfsec',
-					'vale',
-					'proselint',
 					'markdown-toc',
 					'cbfmt',
 					'delve',

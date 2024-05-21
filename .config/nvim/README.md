@@ -132,27 +132,25 @@ npm i -g neovim && pip3 install neovim
 41. neocmakelsp neocmake
 42. powershell-editor-services powershell_es
 43. prettier
-44. proselint
-45. pyright
-46. rust-analyzer rust_analyzer
-47. snyk-ls snyk_ls
-48. sql-formatter
-49. sqlfluff
-50. sqlls
-51. staticcheck
-52. stylua
-53. tailwindcss-language-server tailwindcss
-54. taplo
-55. terraform-ls terraformls
-56. tflint
-57. tfsec
-58. typescript-language-server tsserver
-59. typos-lsp typos_lsp
-60. vale
-61. vue-language-server volar
-62. yaml-language-server yamlls
-63. yamlfmt
-64. yamllint
+44. pyright
+45. rust-analyzer rust_analyzer
+46. snyk-ls snyk_ls
+47. sql-formatter
+48. sqlfluff
+49. sqlls
+50. staticcheck
+51. stylua
+52. tailwindcss-language-server tailwindcss
+53. taplo
+54. terraform-ls terraformls
+55. tflint
+56. tfsec
+57. typescript-language-server tsserver
+58. typos-lsp typos_lsp
+59. vue-language-server volar
+60. yaml-language-server yamlls
+61. yamlfmt
+62. yamllint
 
 </details>
 
@@ -166,6 +164,7 @@ npm i -g neovim && pip3 install neovim
 - Effective Neovim: Instant IDE: <https://youtu.be/stqUbv-5u2s>
 - The Only Video You Need to Get Started with Neovim: <https://youtu.be/m8C0Cq9Uv9o>
 - Kickstart.nvim: <https://github.com/nvim-lua/kickstart.nvim>
+- ThePrimeagen/init.lua: <https://github.com/ThePrimeagen/init.lua>
 - TJDevries/config.nvim: <https://github.com/tjdevries/config.nvim>
 - Debugging in Neovim: <https://youtu.be/0moS8UHupGc>
 - Simple neovim debugging setup: <https://youtu.be/lyNfnI-B640>
