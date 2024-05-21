@@ -63,6 +63,21 @@ return {
 			capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
 
 			require("mason").setup()
+			require("mason-lspconfig").setup({
+				automatic_installation = false,
+				handlers = {},
+			})
+			require('mason-nvim-dap').setup {
+				automatic_installation = false,
+				handlers = {},
+			}
+			require("mason-null-ls").setup({
+				automatic_installation = false,
+				handlers = {},
+			})
+			require("null-ls").setup({
+				sources = {}
+			})
 			require('mason-tool-installer').setup {
 				ensure_installed = {
 					'staticcheck',
@@ -136,10 +151,6 @@ return {
 					["mason-nvim-dap"] = true,
 				}
 			}
-			require("mason-lspconfig").setup({
-				automatic_installation = false,
-				handlers = {},
-			})
 			require("dapui").setup()
 			require("neodev").setup({
 				library = { plugins = { "nvim-dap-ui" }, types = true },
@@ -156,17 +167,6 @@ return {
 			dap.listeners.before.event_exited["dapui_config"] = function()
 				dapui.close()
 			end
-			require('mason-nvim-dap').setup {
-				automatic_installation = false,
-				handlers = {},
-			}
-			require("mason-null-ls").setup({
-				automatic_installation = false,
-				handlers = {},
-			})
-			require("null-ls").setup({
-				sources = {}
-			})
 
 			local lsp = require("lsp-zero")
 			lsp.preset("recommended")
@@ -558,11 +558,24 @@ return {
 	},
 
 	{ -- Markdown
-		'MeanderingProgrammer/markdown.nvim',
-		name = 'render-markdown',
-		dependencies = { 'nvim-treesitter/nvim-treesitter' },
-		config = function()
-			require('render-markdown').setup({})
+		"wallpants/github-preview.nvim",
+		cmd = { "GithubPreviewToggle" },
+		keys = { "<leader>mpt" },
+		opts = {
+			host = "localhost",
+			port = 6041,
+			theme = {
+				name = "dark",
+				high_contrast = false,
+			},
+		},
+		config = function(_, opts)
+			local gpreview = require("github-preview")
+			gpreview.setup(opts)
+			local fns = gpreview.fns
+			vim.keymap.set("n", "<leader>mpt", fns.toggle)
+			vim.keymap.set("n", "<C-v>", fns.single_file_toggle)
+			vim.keymap.set("n", "<leader>mpd", fns.details_tags_toggle)
 		end,
 	},
 
