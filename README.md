@@ -26,7 +26,7 @@ sudo apt install flatpak -y && sudo apt install gnome-software-plugin-flatpak -y
 ```
 
 ```bash
-sudo flatpak install com.obsproject.Studio
+sudo flatpak install com.obsproject.Studio && sudo apt install ffmpeg -y
 ```
 
 - Then run `OBS`, setup proper resolution, framerate, encoder, and default whole screen scene
