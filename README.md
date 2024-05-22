@@ -3,7 +3,7 @@
 - Quality Assurance: **100%**
 - Supported: **AMD** & **Intel** (Wayland), **NVIDIA** (auto X11), **Windows** (Neovim)
 - Turn off `Secure Boot` in your `BIOS` for a smooth installation process
-- Install with `Minimal setup` and `ZFS full disk encryption` to avoid the feds diddling with your machine
+- Install with `Minimal setup` and **ZFS full disk encryption** to avoid the feds raiding your machine
 - If you're floating on cash make sure to always use Mullvad VPN and Tor Network/Snowflake
 - And if you're broke, use the free WARP and practice good OpSec hygiene
 - A modern software engineering free quality resources library: <https://gist.github.com/lavantien/dc730dad7d7e8157000ddae845eddfd7>
@@ -13,7 +13,30 @@
 <details>
   <summary>expand</summary>
 
-### 0. Disable Wireless Powersaving and Files Open Limit; increase swap size
+### 0. Install `OBS`, `VPN`; disable Wireless Powersaving and Files Open Limit; increase swap size
+
+```bash
+sudo add-apt-repository ppa:obsproject/obs-studio -y && sudo apt update && sudo apt install ffmpeg obs-studio -y
+```
+
+- Then run `OBS`, setup proper resolution, framerate, encoder, and default whole screen scene
+- Cloudflare WARP only support 22.04 (Jammy) for now, so I've replaced `$(lsb_release -cs)` with `jammy`
+
+```bash
+curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg \
+&& echo "deb [signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ jammy main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list \
+&& sudo apt update && sudo apt install curl cloudflare-warp
+```
+
+- Config WARP, Zero Trust, and DNS malware/porn blocking
+
+```bash
+warp-cli registration new && warp-cli connect \
+&& warp-cli mode warp+doh && warp-cli dns families full \
+&& curl https://www.cloudflare.com/cdn-cgi/trace/
+```
+
+- Verify that `warp=on`.
 
 ```bash
 sudo vi /etc/NetworkManager/conf.d/default-wifi-powersave-on.conf
@@ -62,7 +85,7 @@ ulimit -n
 sudo swapoff -a && sudo dd if=/dev/zero of=/swapfile bs=1G count=16 && sudo chmod 0600 /swapfile && sudo mkswap /swapfile && sudo swapon /swapfile && grep Swap /proc/meminfo
 ```
 
-Add this line to the end of your `/etc/fstab`:
+- Add this line to the end of your `/etc/fstab`:
 
 ```bash
 /swapfile swap swap sw 0 0
@@ -309,13 +332,7 @@ lutris
 pip3 install mako && sudo apt install meson glslang-tools glslang-dev libxnvctrl-dev libdbus-1-dev goverlay -y
 ```
 
-### 21. Install `LibreOffice`, `OBS`, `Gimp`, `Inkscape`, `Krita`, `Blender`, `Audacity`, `Kdenlive`, and `Avidemux`
-
-```bash
-sudo add-apt-repository ppa:obsproject/obs-studio -y && sudo apt update && sudo apt install ffmpeg obs-studio -y
-```
-
-- Then run `OBS`, setup proper resolution, framerate, encoder, and default whole screen scene
+### 21. Install `LibreOffice`, `Gimp`, `Inkscape`, `Krita`, `Blender`, `Audacity`, `Kdenlive`, and `Avidemux`
 
 ```bash
 flatpak install flathub org.libreoffice.LibreOffice org.gimp.GIMP org.inkscape.Inkscape org.kde.krita org.blender.Blender org.audacityteam.Audacity org.avidemux.Avidemux
