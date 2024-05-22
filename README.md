@@ -26,10 +26,11 @@ sudo apt install flatpak -y && sudo apt install gnome-software-plugin-flatpak -y
 ```
 
 ```bash
-sudo flatpak install com.obsproject.Studio && sudo apt install ffmpeg curl -y
+sudo flatpak install com.obsproject.Studio && sudo apt install ffmpeg -y
 ```
 
 - Then `reboot`, and run `OBS`, setup proper resolution, framerate, encoder, and default whole screen scene
+- Open `Firefox`, sync your profile, and go to <https://github.com/lavantien/dotfiles/blob/main/README.md> to continue the steps
 
 ```bash
 sudo vi /etc/NetworkManager/conf.d/default-wifi-powersave-on.conf
@@ -106,7 +107,6 @@ sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt ins
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 ```
 
-- Open `Firefox`, sync your profile, and go to <https://github.com/lavantien/dotfiles/blob/main/README.md> to continue the steps
 - Recommended `Firefox Extensions`:
 
 ```text
