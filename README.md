@@ -13,10 +13,14 @@
 <details>
   <summary>expand</summary>
 
-### 0. Install `OBS`, `VPN`; disable Wireless Powersaving and Files Open Limit; increase swap size
+### 0. Install `Flatpak`, `OBS`, `VPN`; disable Wireless Powersaving and Files Open Limit; increase swap size
 
 ```bash
-sudo add-apt-repository ppa:obsproject/obs-studio -y && sudo apt update && sudo apt install ffmpeg obs-studio -y
+sudo apt install flatpak -y && sudo apt install gnome-software-plugin-flatpak -y && flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+```
+
+```bash
+sudo flatpak install com.obsproject.Studio
 ```
 
 - Then run `OBS`, setup proper resolution, framerate, encoder, and default whole screen scene
@@ -215,11 +219,7 @@ Open VSCode, sync, and install extensions.
 sudo snap install kreya dbgate
 ```
 
-### 17. Install `FlatHub`, `Docker Compose`, `Podman Desktop`, `Anki`, `Signal`, and `FreeCAD`
-
-```bash
-sudo apt install flatpak -y && sudo apt install gnome-software-plugin-flatpak -y && flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-```
+### 17. Install `Docker Compose`, `Podman Desktop`, `Anki`, `Signal`, and `FreeCAD`
 
 ```bash
 sudo install -m 0755 -d /etc/apt/keyrings && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg && sudo chmod a+r /etc/apt/keyrings/docker.gpg && echo \
