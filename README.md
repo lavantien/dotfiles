@@ -26,7 +26,7 @@ sudo apt install flatpak -y && sudo apt install gnome-software-plugin-flatpak -y
 ```
 
 ```bash
-sudo flatpak install com.obsproject.Studio && sudo apt install ffmpeg -y
+sudo flatpak install com.obsproject.Studio && sudo apt install ffmpeg curl -y
 ```
 
 - Then `reboot`, and run `OBS`, setup proper resolution, framerate, encoder, and default whole screen scene
@@ -35,7 +35,7 @@ sudo flatpak install com.obsproject.Studio && sudo apt install ffmpeg -y
 ```bash
 curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg \
 && echo "deb [signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ jammy main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list \
-&& sudo apt update && sudo apt install curl cloudflare-warp
+&& sudo apt update && sudo apt install cloudflare-warp
 ```
 
 - Config WARP, Zero Trust, and DNS malware/porn blocking
