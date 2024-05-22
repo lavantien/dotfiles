@@ -30,23 +30,6 @@ sudo flatpak install com.obsproject.Studio && sudo apt install ffmpeg curl -y
 ```
 
 - Then `reboot`, and run `OBS`, setup proper resolution, framerate, encoder, and default whole screen scene
-- Cloudflare WARP only support 22.04 (Jammy) for now, so I've replaced `$(lsb_release -cs)` with `jammy`
-
-```bash
-curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg \
-&& echo "deb [signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ jammy main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list \
-&& sudo apt update && sudo apt install cloudflare-warp
-```
-
-- Config WARP, Zero Trust, and DNS malware/porn blocking
-
-```bash
-warp-cli registration new && warp-cli connect \
-&& warp-cli mode warp+doh && warp-cli dns families full \
-&& curl https://www.cloudflare.com/cdn-cgi/trace/
-```
-
-- Verify that `warp=on`.
 
 ```bash
 sudo vi /etc/NetworkManager/conf.d/default-wifi-powersave-on.conf
