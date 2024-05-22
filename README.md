@@ -3,10 +3,10 @@
 - Quality Assurance: **100%**
 - Supported: **AMD** & **Intel** (Wayland), **NVIDIA** (auto X11), **Windows** (Neovim)
 - Turn off `Secure Boot` in your `BIOS` for a smooth installation process
-- Install with `Minimal setup` and **ZFS full disk encryption** to avoid the feds raiding your machine
+- Install with `Minimal setup` and **LVM full disk encryption** to avoid the feds raiding your machine
 - If you're floating on cash make sure to always use Mullvad VPN and Tor Network/Snowflake
 - And if you're broke, use the free WARP and practice good OpSec hygiene
-- A modern software engineering free quality resources library: <https://gist.github.com/lavantien/dc730dad7d7e8157000ddae845eddfd7>
+- A modern software engineering free quality resources library: [gist](https://gist.github.com/lavantien/dc730dad7d7e8157000ddae845eddfd7)
 
 ## Step-by-Step Standardized Setup for a Fresh Ubuntu 24.04 LTS
 
@@ -50,6 +50,7 @@ sudo vi /etc/systemd/system.conf
 ```
 
 ```conf
+# uncomment first
 DefaultLimitNOFILE=4096:2097152
 ```
 
@@ -58,6 +59,7 @@ sudo vi /etc/systemd/user.conf
 ```
 
 ```conf
+# uncomment first
 DefaultLimitNOFILE=4096:2097152
 ```
 
@@ -85,7 +87,8 @@ sudo swapoff -a && sudo dd if=/dev/zero of=/swapfile bs=1G count=16 && sudo chmo
 /swapfile swap swap sw 0 0
 ```
 
-- With ZFS enable you have to use this insetad: <https://askubuntu.com/a/1198916>
+- With encrypted ZFS enable you have to use this insetad: <https://askubuntu.com/a/1198916>
+- And with LVM: <https://askubuntu.com/a/1412400>
 
 - Add this line in `/etc/sysfs.conf`:
 
@@ -120,7 +123,6 @@ Snowflake
 SponsorBlock
 uBlock Origin
 Vimium
-Wikipedia (en)
 ```
 
 ### 3. After `reboot`, install `Linuxbrew`
@@ -205,12 +207,12 @@ cd ~/Downloads && wget -qO- https://packages.microsoft.com/keys/microsoft.asc | 
 
 Open VSCode, sync, and install extensions.
 
-### 16. Install `Kreya`, `DBbGate`, `Anki`, `Signal`, and `FreeCAD`
+### 16. Install `GRPCUI`, `DBbGate`, `Anki`, `Signal`, and `FreeCAD`
 
 - Kreya is coming to flatpak soon: <https://github.com/riok/Kreya/issues/64>
 
 ```bash
-sudo snap install kreya && flatpak install flathub org.dbgate.DbGate net.ankiweb.Anki org.signal.Signal org.freecadweb.FreeCAD  -y
+brew install grpcui && flatpak install flathub org.dbgate.DbGate net.ankiweb.Anki org.signal.Signal org.freecadweb.FreeCAD  -y
 ```
 
 ### 17. Install `Docker Compose`, `Podman Desktop`
