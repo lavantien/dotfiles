@@ -150,7 +150,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ### 7. Install `gcc`, `gh`, `neovim`, and other necessary `Brew` packages
 
 ```bash
-brew install gcc@11 gcc gh go lazygit fzf fd ripgrep bat tokei neovim hyperfine openjdk ruby lua maven node gopls rust-analyzer jdtls lua-language-server typescript-language-server marksman texlab yaml-language-server bash-language-server terraform terraform-ls sql-language-server sqlfluff prettier delve vscode-langservers-extracted loc llvm dotenv-linter checkmake luarocks pkg-config mpv macchina
+brew install gcc gh go lazygit fzf fd ripgrep bat tokei neovim hyperfine openjdk ruby lua maven node gopls rust-analyzer jdtls lua-language-server typescript-language-server marksman texlab yaml-language-server bash-language-server terraform terraform-ls sql-language-server sqlfluff prettier delve vscode-langservers-extracted loc llvm dotenv-linter checkmake luarocks pkg-config mpv macchina
 ```
 
 ```bash
