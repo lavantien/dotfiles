@@ -15,6 +15,12 @@
 
 ### 0. Install `Flatpak`, `OBS`, `VPN`; disable Wireless Powersaving and Files Open Limit; increase swap size
 
+- Go to `Software & Updates` and enable `main`, `universe`, and `restricted`
+
+```bash
+sudo apt update && sudo apt upgrade -y
+```
+
 ```bash
 sudo apt install flatpak -y && sudo apt install gnome-software-plugin-flatpak -y && flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 ```
