@@ -101,7 +101,9 @@ sudo swapoff -a && sudo dd if=/dev/zero of=/swapfile bs=1G count=16 && sudo chmo
 /swapfile swap swap sw 0 0
 ```
 
-- Add this line in `/etc/sysfs.conf`, if you're AMD, use `zenpower`:
+- With ZFS enable you have to use this insetad: <https://askubuntu.com/a/1198916>
+
+- Add this line in `/etc/sysfs.conf`:
 
 ```bash
 mode class/powercap/intel-rapl:0/energy_uj = 0444
@@ -110,9 +112,10 @@ mode class/powercap/intel-rapl:0/energy_uj = 0444
 ### 1. Install all necessary `APT` packages
 
 ```bash
-sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install ubuntu-desktop ca-certificates apt-transport-https ubuntu-dev-tools glibc-source gcc xclip git curl zsh htop vim libutf8proc2 libutf8proc-dev libfuse2 cpu-checker screenkey cmake cmake-format ninja-build libjsoncpp-dev uuid-dev zlib1g-dev libssl-dev postgresql-all libmariadb-dev libsqlite3-dev libhiredis-dev jq bc xorg-dev libxcursor-dev cloud-init openssh-server ssh-import-id nvtop rar unrar sysfsutils latexmk mupdf -y
+sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install ubuntu-desktop ca-certificates apt-transport-https ubuntu-dev-tools glibc-source gcc xclip git curl zsh htop vim libfuse2 cpu-checker screenkey cmake cmake-format ninja-build libjsoncpp-dev uuid-dev zlib1g-dev libssl-dev postgresql-all libmariadb-dev libsqlite3-dev libhiredis-dev jq bc xorg-dev libxcursor-dev cloud-init openssh-server ssh-import-id sysfsutils latexmk mupdf -y
 ```
 
+- When prompted for entering a mirror for `pbuilder` enter this: `http://http.us.debian.org/debian`
 
 ### 2. Install `Oh-my-zsh` and `Firefox`, then `reboot`
 
