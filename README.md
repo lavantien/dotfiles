@@ -29,7 +29,7 @@ sudo apt install flatpak -y && sudo apt install gnome-software-plugin-flatpak -y
 sudo flatpak install com.obsproject.Studio && sudo apt install ffmpeg -y
 ```
 
-- Then run `OBS`, setup proper resolution, framerate, encoder, and default whole screen scene
+- Then `reboot`, and run `OBS`, setup proper resolution, framerate, encoder, and default whole screen scene
 - Cloudflare WARP only support 22.04 (Jammy) for now, so I've replaced `$(lsb_release -cs)` with `jammy`
 
 ```bash
