@@ -205,13 +205,15 @@ cd ~/Downloads && wget -qO- https://packages.microsoft.com/keys/microsoft.asc | 
 
 Open VSCode, sync, and install extensions.
 
-### 16. Install `Kreya` and `DBbGate`
+### 16. Install `Kreya`, `DBbGate`, `Anki`, `Signal`, and `FreeCAD`
+
+- Kreya is coming to flatpak soon: <https://github.com/riok/Kreya/issues/64>
 
 ```bash
-sudo snap install kreya dbgate
+sudo snap install kreya && flatpak install flathub org.dbgate.DbGate net.ankiweb.Anki org.signal.Signal org.freecadweb.FreeCAD  -y
 ```
 
-### 17. Install `Docker Compose`, `Podman Desktop`, `Anki`, `Signal`, and `FreeCAD`
+### 17. Install `Docker Compose`, `Podman Desktop`
 
 ```bash
 sudo install -m 0755 -d /etc/apt/keyrings && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg && sudo chmod a+r /etc/apt/keyrings/docker.gpg && echo \
@@ -227,7 +229,7 @@ sudo usermod -aG docker $USER && newgrp docker
 `reboot`
 
 ```bash
-docker run hello-world && flatpak install flathub io.podman_desktop.PodmanDesktop -y && flatpak install flathub net.ankiweb.Anki org.signal.Signal org.freecadweb.FreeCAD -y
+docker run hello-world && flatpak install flathub io.podman_desktop.PodmanDesktop -y
 ```
 
 ### 18. Install `kubectl`, and `minikube`, change `1.30` to whatever is the latest version
