@@ -152,7 +152,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ### 7. Install `gcc`, `gh`, `neovim`, and other necessary `Brew` packages
 
 ```bash
-brew install gcc gh go lazygit fzf fd ripgrep bat tokei glow neovim hyperfine openjdk ruby lua maven node gopls rust-analyzer jdtls lua-language-server typescript-language-server marksman texlab yaml-language-server bash-language-server opentofu terraform-ls sql-language-server sqlfluff prettier delve vscode-langservers-extracted loc llvm dotenv-linter checkmake luarocks pkg-config mpv macchina cmake-language-server python-lsp-server sql-language-server sql-lint gomodifytags
+brew install gcc gh go lazygit fzf fd ripgrep bat tokei glow neovim hyperfine openjdk ruby lua maven node gopls rust-analyzer jdtls lua-language-server typescript-language-server marksman texlab yaml-language-server bash-language-server opentofu terraform-ls sql-language-server sqlfluff prettier delve vscode-langservers-extracted loc llvm dotenv-linter checkmake luarocks pkg-config mpv macchina cmake-language-server python-lsp-server sql-language-server sql-lint gomodifytags golangci-lint
 ```
 
 ### 8. Setup your `Git` environment
@@ -268,7 +268,7 @@ sudo add-apt-repository ppa:graphics-drivers/ppa -y && sudo dpkg --add-architect
 - Or with built-in NVIDIA driver:
 
 ```bash
-sudo apt dpkg --add-architecture i386 && sudo apt update && sudo apt install libvulkan1:i386 libgl-dev:i386 
+sudo apt dpkg --add-architecture i386 && sudo apt update && sudo apt install libvulkan1:i386 libgl-dev:i386
 ```
 
 - and to `underwatt` your GPU: <https://www.pugetsystems.com/labs/hpc/quad-rtx3090-gpu-power-limiting-with-systemd-and-nvidia-smi-1983/>
@@ -647,9 +647,9 @@ npm i -g neovim
 ```
 
 - If you're on Windows you need to
-    - set the `HOME` environment variable to `C:\Users\<name>`
-    - copy `.config/nvim` directory to `C:\Users\<name>\AppData\Local\`
-    - add to `PATH` this value `C:\Users\<name>\AppData\Local\nvim-data\mason\bin`
+  - set the `HOME` environment variable to `C:\Users\<name>`
+  - copy `.config/nvim` directory to `C:\Users\<name>\AppData\Local\`
+  - add to `PATH` this value `C:\Users\<name>\AppData\Local\nvim-data\mason\bin`
 - Run `nvim` the first time and wait for it to auto initialize plugins, then press `S` to sync packages
 - Run `:MasonUpdate` to install all registries, then `:Mason` and press `U` if there's any update
 - All language `servers`, `linters`, and `treesitters` are pre-installed when you first initialize Neovim
@@ -845,6 +845,6 @@ sudo rm -rf /usr/local/include/python2.7
 
 sudo apt install google-cloud-cli-app-engine-go google-cloud-cli-app-engine-grpc google-cloud-cli-cloud-build-local google-cloud-cli-firestore-emulator google-cloud-cli-minikube google-cloud-cli-tests
 # still failed due to python2.7
-````
+```
 
 </details>
