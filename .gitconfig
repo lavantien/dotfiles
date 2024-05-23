@@ -9,3 +9,11 @@
 [mergetool "vimdiff"]
 	cmd = nvim -d $MERGED $LOCAL $BASE $REMOTE -c '$wincmd w' -c 'wincmd J'
 	trustExitCode = false
+[credential "https://github.com"]
+	helper = 
+	helper = !/home/linuxbrew/.linuxbrew/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/home/linuxbrew/.linuxbrew/bin/gh auth git-credential
+[http]
+	postBuffer = 524288000

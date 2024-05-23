@@ -256,3 +256,7 @@ storage
 .dart
 .dartServer
 .local/share/CMakeTools
+.config/aseprite
+.zcompdump-cariyaputta-5.9
+.zcompdump-cariyaputta-5.9.zwc
+*.mkv

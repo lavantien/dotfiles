@@ -20,10 +20,10 @@
     "vis_shift": false,
     "vis_space": true,
     "geometry": [
-        3312,
-        2101,
-        528,
-        59
+        0,
+        0,
+        1920,
+        1080
     ],
     "screen": 0,
     "start_disabled": false,
