@@ -330,8 +330,10 @@ pip3 install mako && sudo apt install meson glslang-tools glslang-dev libxnvctrl
 
 ### 20. Install `LibreOffice`, `Gimp`, `Inkscape`, `Krita`, `Blender`, `Audacity`, `Kdenlive`, and `Avidemux`
 
+- Remove old `LibreOffice` or `snap` packages in the systeme first
+
 ```bash
-flatpak install flathub org.libreoffice.LibreOffice org.gimp.GIMP org.inkscape.Inkscape org.kde.krita org.blender.Blender org.audacityteam.Audacity org.avidemux.Avidemux
+flatpak install flathub org.libreoffice.LibreOffice org.gimp.GIMP org.inkscape.Inkscape org.kde.krita org.blender.Blender org.audacityteam.Audacity org.avidemux.Avidemux org.kde.kdenlive
 ```
 
 ### 21. (Optional) `Helix`
