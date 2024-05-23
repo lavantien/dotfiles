@@ -119,7 +119,7 @@ sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt ins
 
 - When prompted for entering a mirror for `pbuilder` enter this: `http://http.us.debian.org/debian`
 
-### 2. Install `Oh-my-zsh`, then restart terminal
+### 2. Install `Oh-my-zsh`, then `reboot`
 
 ```bash
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
