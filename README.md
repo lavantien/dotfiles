@@ -506,6 +506,10 @@ go get -u https://github.com/golang-jwt/jwt
 ## Auto-Update All and Healthcheck
 
 ```bash
+sudo systemctl daemon-reload
+```
+
+```bash
 sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && rustup update && brew upgrade && flatpak update
 ```
 
