@@ -685,7 +685,7 @@ npm i -g neovim
 - Intellisense, Snippets, Debugging, Code Objects, Pin Headers, Display Statuses, Disect Token Tree, Fuzzy Picker
 - Surround, Autotag, Improved Floating UIs, Inline Diagnostics, Cute Statusbar, Multifiles Jumper, Refactoring
 - Autolint, Indentation Guides, Smart Help, Disect Undo Tree, Git Integration, SQL/NoSQL Client, File Explorer
-- Pre-setup 3 themes - `Gruvbox`, `Tokyo Night`, `Pine Rose` - you can just uncomment any one of them
+- Schemas Store, Pre-setup 3 themes - `Gruvbox`, `Tokyo Night`, `Pine Rose` - you can just uncomment any one of them
 
 ### Key Bindings
 
@@ -696,52 +696,53 @@ npm i -g neovim
 ### Plugins List
 
 <details>
-	<summary>Loaded (44)</summary>
+	<summary>Loaded (45)</summary>
 
-1. cmp-nvim-lsp 0.12ms  lsp-zero.nvim
-2. dressing.nvim 2ms  start
-3. fidget.nvim 3.47ms  lsp-zero.nvim
-4. gitsigns.nvim 0.49ms  start
-5. gruvbox.nvim 4.58ms  start
-6. harpoon 9.01ms  start
-7. indent-blankline.nvim 2.56ms  start
-8. lazy.nvim 3198.43ms  init.lua
-9. lsp-zero.nvim 128.35ms  start
-10. lspkind.nvim 0.08ms  lsp-zero.nvim
-11. lualine.nvim 7.9ms  start
-12. LuaSnip 6.81ms  lsp-zero.nvim
-13. mason-lspconfig.nvim 0.14ms  lsp-zero.nvim
-14. mason-null-ls.nvim 0.83ms  lsp-zero.nvim
-15. mason-nvim-dap.nvim 0.94ms  lsp-zero.nvim
-16. mason-tool-installer.nvim 3.13ms  lsp-zero.nvim
-17. mason.nvim 3.27ms  lsp-zero.nvim
-18. mini.nvim 2.72ms  start
-19. neodev.nvim 3.8ms  lsp-zero.nvim
-20. none-ls.nvim 0.88ms  lsp-zero.nvim
-21. nvim-cmp 3.12ms  lsp-zero.nvim
-22. nvim-dap 1.17ms  lsp-zero.nvim
-23. nvim-dap-go 0.93ms  lsp-zero.nvim
-24. nvim-dap-ui 0.91ms  lsp-zero.nvim
-25. nvim-dap-virtual-text 0.11ms  lsp-zero.nvim
-26. nvim-lspconfig 1.07ms  lsp-zero.nvim
-27. nvim-nio 1.13ms  lsp-zero.nvim
-28. nvim-treesitter 15.35ms  render-markdown
-29. nvim-treesitter-context 1.91ms  start
-30. nvim-ts-autotag 5.73ms  nvim-treesitter
-31. nvim-web-devicons 0.52ms  lualine.nvim
-32. oil.nvim 3.07ms  start
-33. playground 1.79ms  start
-34. plenary.nvim 1.36ms  telescope.nvim
-35. refactoring.nvim 8.27ms  start
-36. render-markdown 84.7ms  start
-37. telescope.nvim 1.89ms  start
-38. trouble.nvim 4.81ms  start
-39. undotree 0.39ms  start
-40. vim-dadbod 1.44ms  start
-41. vim-dadbod-completion 0.36ms  start
-42. vim-dadbod-ui 1.06ms  start
-43. vimtex 0.65ms  start
-44. which-key.nvim 11.79ms  VimEnter
+- cmp-nvim-lsp 0.15ms  lsp-zero.nvim
+- dressing.nvim 0.99ms  start
+- fidget.nvim 1.69ms  lsp-zero.nvim
+- gitsigns.nvim 0.07ms  start
+- gruvbox.nvim 3.63ms  start
+- harpoon 7.42ms  start
+- indent-blankline.nvim 1.61ms  start
+- lazy.nvim 2.04ms  init.lua
+- lsp-zero.nvim 83.79ms  start
+- lspkind.nvim 0.04ms  lsp-zero.nvim
+- lualine.nvim 6.1ms  start
+- LuaSnip 2.19ms  lsp-zero.nvim
+- mason-lspconfig.nvim 0.1ms  lsp-zero.nvim
+- mason-null-ls.nvim 0.21ms  lsp-zero.nvim
+- mason-nvim-dap.nvim 0.19ms  lsp-zero.nvim
+- mason-tool-installer.nvim 0.87ms  lsp-zero.nvim
+- mason.nvim 1.53ms  lsp-zero.nvim
+- mini.nvim 3.5ms  start
+- neodev.nvim 1.46ms  lsp-zero.nvim
+- none-ls.nvim 0.23ms  lsp-zero.nvim
+- nvim-cmp 3.39ms  lsp-zero.nvim
+- nvim-dap 0.34ms  lsp-zero.nvim
+- nvim-dap-go 0.17ms  lsp-zero.nvim
+- nvim-dap-ui 0.24ms  lsp-zero.nvim
+- nvim-dap-virtual-text 0.06ms  lsp-zero.nvim
+- nvim-lspconfig 0.37ms  lsp-zero.nvim
+- nvim-nio 0.21ms  lsp-zero.nvim
+- nvim-treesitter 6.87ms  start
+- nvim-treesitter-context 0.71ms  start
+- nvim-ts-autotag 3.52ms  nvim-treesitter
+- nvim-web-devicons 0.23ms  oil.nvim
+- oil.nvim 2.32ms  start
+- playground 0.9ms  start
+- plenary.nvim 0.25ms  telescope.nvim
+- refactoring.nvim 4.18ms  start
+- render-markdown 8.03ms  start
+- SchemaStore.nvim 0.09ms  lsp-zero.nvim
+- telescope.nvim 0.5ms  start
+- trouble.nvim 2.07ms  start
+- undotree 0.57ms  start
+- vim-dadbod 0.2ms  start
+- vim-dadbod-completion 0.3ms  start
+- vim-dadbod-ui 0.46ms  start
+- vimtex 0.46ms  start
+- which-key.nvim 10.87ms  VimEnter
 
 </details>
 

@@ -27,6 +27,7 @@ return {
 			{ "nvim-neotest/nvim-nio" },
 			{ "WhoIsSethDaniel/mason-tool-installer.nvim" },
 			{ "j-hui/fidget.nvim", opts = {} },
+			{ "b0o/SchemaStore.nvim" },
 		},
 		config = function()
 			local lsp_zero = require("lsp-zero")
@@ -71,7 +72,25 @@ return {
 					"marksman",
 					"tflint",
 					"terraformls",
-					"yamlls",
+					jsonls = {
+						settings = {
+							json = {
+								schemas = require("schemastore").json.schemas(),
+								validate = { enable = true },
+							},
+						},
+					},
+					yamlls = {
+						settings = {
+							yaml = {
+								schemaStore = {
+									enable = false,
+									url = "",
+								},
+								schemas = require("schemastore").yaml.schemas(),
+							},
+						},
+					},
 					"bufls",
 					"tailwindcss",
 					"clangd",
@@ -90,7 +109,6 @@ return {
 					"graphql",
 					"htmx",
 					"helm_ls",
-					"jsonls",
 					"volar",
 					"neocmake",
 					"bashls",
