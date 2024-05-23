@@ -13,7 +13,7 @@
 <details>
   <summary>expand</summary>
 
-### 0. Install `Flatpak`, `OBS`, `VPN`; disable Wireless Powersaving and Files Open Limit; increase swap size
+### 0. Install `Flatpak`, `OBS`, `Firefox`; disable Wireless Powersaving and Files Open Limit; increase swap size
 
 - Go to `Software & Updates` and enable `main`, `universe`, and `restricted`
 
@@ -104,28 +104,13 @@ sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt ins
 
 - When prompted for entering a mirror for `pbuilder` enter this: `http://http.us.debian.org/debian`
 
-### 2. Install `Oh-my-zsh` and `Firefox`, then `reboot`
+### 2. Install `Oh-my-zsh`, then restart terminal
 
 ```bash
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 ```
 
-- Recommended `Firefox Extensions`:
-
-```text
-Cookie Quick Manager
-Dark Reader
-Privacy Badger
-Return YouTube Dislike
-Search by Image
-Sidebery
-Snowflake
-SponsorBlock
-uBlock Origin
-Vimium
-```
-
-### 3. After `reboot`, install `Linuxbrew`
+### 3. Install `Linuxbrew`
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -143,7 +128,7 @@ git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-m
 git clone https://github.com/lavantien/dotfiles.git ~/temp && cp -r ~/temp/{*,.*} ~/ && cp -r ~/temp/.config/* ~/.config/ && cp ~/temp/.local/share/applications/* ~/.local/share/applications/ && source ~/.zshrc
 ```
 
-### 6. Install `rust` and its toolchains, then `reboot`
+### 6. Install `rust` and its toolchains
 
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -152,11 +137,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ### 7. Install `gcc`, `gh`, `neovim`, and other necessary `Brew` packages
 
 ```bash
-brew install gcc gh go lazygit fzf fd ripgrep bat tokei neovim hyperfine openjdk ruby lua maven node gopls rust-analyzer jdtls lua-language-server typescript-language-server marksman texlab yaml-language-server bash-language-server terraform terraform-ls sql-language-server sqlfluff prettier delve vscode-langservers-extracted loc llvm dotenv-linter checkmake luarocks pkg-config mpv macchina cmake-language-server python-lsp-server sql-language-server sql-lint
-```
-
-```bash
-go install github.com/charmbracelet/glow@latest && go install -v github.com/incu6us/goimports-reviser/v3@latest && go install github.com/fatih/gomodifytags@latest
+brew install gcc gh go lazygit fzf fd ripgrep bat tokei glow neovim hyperfine openjdk ruby lua maven node gopls rust-analyzer jdtls lua-language-server typescript-language-server marksman texlab yaml-language-server bash-language-server terraform terraform-ls sql-language-server sqlfluff prettier delve vscode-langservers-extracted loc llvm dotenv-linter checkmake luarocks pkg-config mpv macchina cmake-language-server python-lsp-server sql-language-server sql-lint gomodifytags
 ```
 
 ### 8. Setup your `Git` environment
@@ -186,10 +167,10 @@ brew tap wez/wezterm-linuxbrew && brew install wezterm
 ### 12. Install `GRPC`, `GRPC-Web`, and `protoc-gen`
 
 ```bash
-brew install grpc protoc-gen-grpc-web && go install google.golang.org/protobuf/cmd/protoc-gen-go@latest && go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+brew install protobuf grpc && go install google.golang.org/protobuf/cmd/protoc-gen-go@latest && go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest && brew instsall protoc-gen-grpc-web
 ```
 
-### 14. Install `Qemu KVM`
+### 13. Install `Qemu KVM`
 
 ```bash
 egrep -c '(vmx|svm)' /proc/cpuinfo && kvm-ok
@@ -199,7 +180,7 @@ egrep -c '(vmx|svm)' /proc/cpuinfo && kvm-ok
 sudo apt install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils -y
 ```
 
-### 15. Install `VSCode` and extensions
+### 14. Install `VSCode` and extensions
 
 ```bash
 cd ~/Downloads && wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg && sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg && sudo sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list' && rm -f packages.microsoft.gpg && cd ~ && sudo apt update && sudo apt install code -y
@@ -207,15 +188,15 @@ cd ~/Downloads && wget -qO- https://packages.microsoft.com/keys/microsoft.asc | 
 
 Open VSCode, sync, and install extensions.
 
-### 16. Install `GRPCUI`, `DBbGate`, `Anki`, `Signal`, and `FreeCAD`
+### 15. Install `GRPCUI`, `DBbGate`, `Anki`, and `Signal`
 
 - Kreya is coming to flatpak soon: <https://github.com/riok/Kreya/issues/64>
 
 ```bash
-brew install grpcui && flatpak install flathub org.dbgate.DbGate net.ankiweb.Anki org.signal.Signal org.freecadweb.FreeCAD  -y
+brew install grpcui && flatpak install flathub org.dbgate.DbGate net.ankiweb.Anki org.signal.Signal -y
 ```
 
-### 17. Install `Docker Compose`, `Podman Desktop`
+### 16. Install `Docker Compose`, `Podman Desktop` and reboot, then use Wezterm to continue the steps
 
 ```bash
 sudo install -m 0755 -d /etc/apt/keyrings && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg && sudo chmod a+r /etc/apt/keyrings/docker.gpg && echo \
@@ -234,7 +215,7 @@ sudo usermod -aG docker $USER && newgrp docker
 docker run hello-world && flatpak install flathub io.podman_desktop.PodmanDesktop -y
 ```
 
-### 18. Install `kubectl`, and `minikube`, change `1.30` to whatever is the latest version
+### 17. Install `kubectl`, and `minikube`, change `1.30` to whatever is the latest version
 
 ```bash
 curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg && sudo chmod 644 /etc/apt/keyrings/kubernetes-apt-keyring.gpg && echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list && sudo chmod 644 /etc/apt/sources.list.d/kubernetes.list && sudo apt update && sudo apt install kubectl -y
@@ -257,7 +238,7 @@ minikube config set driver docker && minikube start && minikube addons enable me
 minikube stop
 ```
 
-### 19. Install `Graphics Drivers` and `Vulkan`, and `Sensors`
+### 18. Install `Graphics Drivers` and `Vulkan`, and `Sensors`
 
 - If you have a `NVIDIA GPU`, replace `550` with whatever is the latest driver version as listed [here](https://launchpad.net/~graphics-drivers/+archive/ubuntu/ppa)
 
@@ -304,7 +285,7 @@ sudo add-apt-repository ppa:kisak/kisak-mesa -y && sudo dpkg --add-architecture 
 sudo apt update && sudo apt install lm-sensors psensor libxcb-cursor0 -y && sudo sensors-detect
 ```
 
-### 20. (Optional) Install `Wine`, `Lutris`, `MangoHud`, and `GOverlay`
+### 19. (Optional) Install `Wine`, `Lutris`, `MangoHud`, and `GOverlay`
 
 ```bash
 sudo mkdir -pm755 /etc/apt/keyrings && sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key && sudo wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/lunar/winehq-lunar.sources && sudo apt update && sudo apt install --install-recommends winehq-devel -y
@@ -328,19 +309,19 @@ lutris
 pip3 install mako && sudo apt install meson glslang-tools glslang-dev libxnvctrl-dev libdbus-1-dev goverlay -y
 ```
 
-### 21. Install `LibreOffice`, `Gimp`, `Inkscape`, `Krita`, `Blender`, `Audacity`, `Kdenlive`, and `Avidemux`
+### 20. Install `LibreOffice`, `Gimp`, `Inkscape`, `Krita`, `Blender`, `Audacity`, `Kdenlive`, and `Avidemux`
 
 ```bash
 flatpak install flathub org.libreoffice.LibreOffice org.gimp.GIMP org.inkscape.Inkscape org.kde.krita org.blender.Blender org.audacityteam.Audacity org.avidemux.Avidemux
 ```
 
-### 22. (Optional) `Helix`
+### 21. (Optional) `Helix`
 
 ```bash
-brew install helix
+brew install helix && helix --health
 ```
 
-### 23. (Optional) Install `Steam` (and optionally `Dota 2`, `Grim Dawn`, `Battlenet`, and `StarCraft 2`)
+### 22. (Optional) Install `Steam` (and optionally `Dota 2`, `Grim Dawn`, `Battlenet`, and `Diablo 2 Resurrected`)
 
 ```bash
 cd ~/Downloads && wget https://repo.steampowered.com/steam/archive/precise/steam_latest.deb && sudo dpkg -i steam_latest.deb && rm steam_latest.deb && cd ~
