@@ -30,7 +30,22 @@ sudo flatpak install com.obsproject.Studio && sudo apt install ffmpeg -y
 ```
 
 - Then `reboot`, and run `OBS`, setup proper resolution, framerate, encoder, and default whole screen scene
+
 - Open `Firefox`, sync your profile, and go to <https://github.com/lavantien/dotfiles/blob/main/README.md> to continue the steps
+- Go to uBlock settings and enable all of the filteres. Recommended Firefox Extensions:
+
+```text
+Cookie Quick Manager
+Dark Reader
+Privacy Badger
+Return YouTube Dislike
+Search by Image
+Sidebery
+Snowflake
+SponsorBlock
+uBlock Origin
+Vimium
+```
 
 ```bash
 sudo vi /etc/NetworkManager/conf.d/default-wifi-powersave-on.conf
