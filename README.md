@@ -13,7 +13,43 @@
 <details>
   <summary>expand</summary>
 
-### 0. Install `Flatpak`, `OBS`, `Firefox`; disable Wireless Powersaving and Files Open Limit; increase swap size
+### 0. Install `Firefox`, `Flatpak`, `OBS`; disable Wireless Powersaving and Files Open Limit; increase swap size
+
+- Open `Firefox`, sync your profile, and go to <https://github.com/lavantien/dotfiles/blob/main/README.md> to continue the steps
+- Go to uBlock settings and enable all filters. Recommended Firefox Extensions:
+
+```text
+Cookie Quick Manager
+Dark Reader
+Privacy Badger
+Return YouTube Dislike
+Search by Image
+Sidebery
+Snowflake
+SponsorBlock
+uBlock Origin
+Vimium
+```
+
+- Edit Ubuntu repo source file like this and replace `us.` with yours:
+
+```bash
+sudo vi /etc/apt/sources.list.d/ubuntu.sources
+```
+
+```config
+Types: deb deb-src
+URIs: http://us.archive.ubuntu.com/ubuntu/
+Suites: noble noble-updates noble-backports noble-proposed
+Components: main restricted universe multiverse
+Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+
+Types: deb deb-src
+URIs: http://security.ubuntu.com/ubuntu/
+Suites: noble-security
+Components: main restricted universe multiverse
+Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+```
 
 - Go to `Software & Updates` and enable `main`, `universe`, and `restricted`
 
@@ -30,22 +66,6 @@ sudo flatpak install com.obsproject.Studio && sudo apt install ffmpeg -y
 ```
 
 - Then `reboot`, and run `OBS`, setup proper resolution, framerate, encoder, and default whole screen scene
-
-- Open `Firefox`, sync your profile, and go to <https://github.com/lavantien/dotfiles/blob/main/README.md> to continue the steps
-- Go to uBlock settings and enable all of the filteres. Recommended Firefox Extensions:
-
-```text
-Cookie Quick Manager
-Dark Reader
-Privacy Badger
-Return YouTube Dislike
-Search by Image
-Sidebery
-Snowflake
-SponsorBlock
-uBlock Origin
-Vimium
-```
 
 ```bash
 sudo vi /etc/NetworkManager/conf.d/default-wifi-powersave-on.conf
@@ -330,10 +350,10 @@ pip3 install mako && sudo apt install meson glslang-tools glslang-dev libxnvctrl
 
 ### 20. Install `LibreOffice`, `Gimp`, `Inkscape`, `Krita`, `Blender`, `Audacity`, `Kdenlive`, and `Avidemux`
 
-- Remove old `LibreOffice` or `snap` packages in the systeme first
+- Remove old `LibreOffice` or `snap` packages in the system first
 
 ```bash
-flatpak install flathub org.libreoffice.LibreOffice org.gimp.GIMP org.inkscape.Inkscape org.kde.krita org.blender.Blender org.audacityteam.Audacity org.avidemux.Avidemux org.kde.kdenlive
+sudo apt install libreoffice && flatpak install flathub org.gimp.GIMP org.inkscape.Inkscape org.kde.krita org.blender.Blender org.audacityteam.Audacity org.avidemux.Avidemux org.kde.kdenlive
 ```
 
 ### 21. (Optional) `Helix`
