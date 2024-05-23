@@ -534,10 +534,14 @@ sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && rustup updat
 ```
 
 <details>
-  <summary>common commands</summary>
+  <summary>helpful commands</summary>
 
 ```bash
 docker rm $(docker ps -a -q --filter "ancestor=${IMG_ID}")
+```
+
+```bash
+ffmpeg -i input.mkv -filter:v "setpts=PTS/8,fps=32" -an output.mkv
 ```
 
 ```bash
