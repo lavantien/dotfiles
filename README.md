@@ -186,7 +186,7 @@ brew tap wez/wezterm-linuxbrew && brew install wezterm
 ### 12. Install `GRPC`, `GRPC-Web`, and `protoc-gen`
 
 ```bash
-brew install protobuf grpc && go install google.golang.org/protobuf/cmd/protoc-gen-go@latest && go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest && brew instsall protoc-gen-grpc-web
+brew install protobuf grpc && go install google.golang.org/protobuf/cmd/protoc-gen-go@latest && go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest && brew install protoc-gen-grpc-web
 ```
 
 ### 13. Install `Qemu KVM`
