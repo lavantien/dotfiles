@@ -339,7 +339,7 @@ flatpak install flathub org.libreoffice.LibreOffice org.gimp.GIMP org.inkscape.I
 ### 21. (Optional) `Helix`
 
 ```bash
-brew install helix && helix --health
+brew install helix && hx --health
 ```
 
 ### 22. (Optional) Install `Steam` (and optionally `Dota 2`, `Grim Dawn`, `Battlenet`, and `Diablo 2 Resurrected`)
