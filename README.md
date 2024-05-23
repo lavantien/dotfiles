@@ -159,6 +159,10 @@ brew install gcc gh go lazygit fzf fd ripgrep bat tokei glow neovim hyperfine op
 
 - For `gh`, run `gh auth login` and follow `HTTPS browser` instruction to setup `GitHub CLI`
 
+```bash
+git config --global http.postBuffer 524288000
+```
+
 ### 9. Run `./git-clone-all $org_name` on `~/dev/personal` for cloning all of your repos
 
 ```bash
