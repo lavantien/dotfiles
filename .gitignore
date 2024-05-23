@@ -260,3 +260,5 @@ storage
 .zcompdump-cariyaputta-5.9
 .zcompdump-cariyaputta-5.9.zwc
 *.mkv
+.config/configstore
+.local/share/snyk-ls

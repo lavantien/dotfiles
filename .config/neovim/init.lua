@@ -1,4 +1,4 @@
-vim.cmd [[
+vim.cmd([[
     let nu = "true"
     let relativenumber = "true"
     let tabstop = 4
@@ -55,4 +55,4 @@ vim.cmd [[
     nnoremap <A-h> <C-w>h
     nnoremap <A-l> <C-w>l
     nnoremap <A-t> <C-w>t
-]]
+]])
