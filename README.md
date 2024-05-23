@@ -345,7 +345,7 @@ brew install helix && hx --health
 ### 22. (Optional) Install `Steam` (and optionally `Dota 2`, `Grim Dawn`, `Battlenet`, and `Diablo 2 Resurrected`)
 
 ```bash
-cd ~/Downloads && wget https://repo.steampowered.com/steam/archive/precise/steam_latest.deb && sudo dpkg -i steam_latest.deb && rm steam_latest.deb && cd ~
+sudo apt install steam -y
 ```
 
 - Run `Steam`, login, enable `Shader Pre-Caching` and `SteamPlay`, restart `Steam`
