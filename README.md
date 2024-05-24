@@ -362,13 +362,13 @@ sudo apt install libreoffice && flatpak install flathub org.gimp.GIMP org.inksca
 brew install helix && hx --health
 ```
 
-### 22. (Optional) Install `Steam` (and optionally `Dota 2`, `Grim Dawn`, `Battlenet`, and `Diablo 2 Resurrected`)
+### 22. (Optional) Install `Steam` and `Aseprite` (and optionally `Dota 2`, `Grim Dawn`, `Battlenet`, and `Diablo 2 Resurrected`)
 
 ```bash
 sudo apt install steam -y
 ```
 
-- Run `Steam`, login, enable `Shader Pre-Caching` and `SteamPlay`, restart `Steam`
+- Run `Steam`, login, enable `Shader Pre-Caching` and `SteamPlay`, restart `Steam` and install `Aseprite`
 - (Install `Dota 2` to test native `Vulkan`, `Grim Dawn` to test `Proton`, also `gd rainbow filter` is a must-have loot filter for `Grim Dawn`
 - Install `Battlenet` by searching for `script` inside `Lutris`, do as instructed, then relaunch `Battlenet`, install `Diablo 2 Ressurrected`
 - Run `Diablo 2 Resurrected` to check for stability and if `Fsync/Gsync` is working properly)

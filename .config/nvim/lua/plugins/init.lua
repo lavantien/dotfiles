@@ -248,6 +248,7 @@ return {
 			--]]
 
 			local cmp = require("cmp")
+			local cmp_action = require("lsp-zero").cmp_action()
 			cmp.setup({
 				sources = {
 					{ name = "nvim_lsp" },
@@ -265,6 +266,8 @@ return {
 						{ "i", "c" }
 					),
 					["<C-Space>"] = cmp.mapping.complete(),
+					["<C-f>"] = cmp_action.luasnip_jump_forward(),
+					["<C-b>"] = cmp_action.luasnip_jump_backward(),
 				},
 				snippet = {
 					expand = function(args)
