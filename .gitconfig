@@ -17,3 +17,5 @@
 	helper = !/home/linuxbrew/.linuxbrew/bin/gh auth git-credential
 [http]
 	postBuffer = 524288000
+[pull]
+	rebase = true
