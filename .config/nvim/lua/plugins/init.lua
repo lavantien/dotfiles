@@ -14,7 +14,11 @@ return {
 			{ "williamboman/mason-lspconfig.nvim" },
 			{ "hrsh7th/nvim-cmp" },
 			{ "hrsh7th/cmp-nvim-lsp" },
-			{ "L3MON4D3/LuaSnip" },
+			{
+				"L3MON4D3/LuaSnip",
+				version = "v2.*",
+				build = "make install_jsregexp",
+			},
 			{ "onsails/lspkind.nvim" },
 			{ "jay-babu/mason-null-ls.nvim" },
 			{ "nvimtools/none-ls.nvim" },
