@@ -262,3 +262,4 @@ storage
 *.mkv
 .config/configstore
 .local/share/snyk-ls
+.wine

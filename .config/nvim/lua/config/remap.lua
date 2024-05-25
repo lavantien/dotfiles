@@ -53,6 +53,10 @@ vim.keymap.set("n", "<leader><leader>", function()
 end)
 --]=====]
 
+-- ufo
+vim.keymap.set("n", "zR", require("ufo").openAllFolds)
+vim.keymap.set("n", "zM", require("ufo").closeAllFolds)
+
 -- dap
 vim.keymap.set("n", "<F5>", require("dap").continue)
 vim.keymap.set("n", "<F6>", require("dap").step_over)
