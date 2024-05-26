@@ -35,7 +35,7 @@ npm i -g neovim && pip3 install neovim
 ## Plugins List
 
 <details>
-	<summary>Loaded (45)</summary>
+	<summary>Loaded (47)</summary>
 
 - cmp-nvim-lsp 0.03ms  lsp-zero.nvim
 - dressing.nvim 1.11ms  start
@@ -90,70 +90,69 @@ npm i -g neovim && pip3 install neovim
 ## Languages Packages List
 
 <details>
-	<summary>Installed (64)</summary>
+	<summary>Installed (61)</summary>
 
-1. ansible-language-server ansiblels
-2. bash-language-server bashls
-3. blue
-4. buf
-5. buf-language-server bufls
-6. cbfmt
-7. chrome-debug-adapter
-8. clang-format
-9. clangd
-10. codelldb
-11. css-lsp cssls
-12. debugpy
-13. delve
-14. docker-compose-language-service docker_compose_language_service
-15. dockerfile-language-server dockerls
-16. emmet-language-server emmet_language_server
-17. eslint-lsp eslint
-18. firefox-debug-adapter
-19. flake8
-20. go-debug-adapter
-21. goimports-reviser
-22. golangci-lint-langserver golangci_lint_ls
-23. gomodifytags
-24. google-java-format
-25. gopls
-26. gotests
-27. graphql-language-service-cli graphql
-28. helm-ls helm_ls
-29. html-lsp html
-30. htmx-lsp htmx
-31. impl
-32. java-debug-adapter
-33. java-test
-34. jdtls
-35. js-debug-adapter
-36. json-lsp jsonls
-37. ltex-ls ltex
-38. lua-language-server lua_ls
-39. markdown-toc
-40. marksman
-41. neocmakelsp neocmake
-42. powershell-editor-services powershell_es
-43. prettier
-44. pyright
-45. rust-analyzer rust_analyzer
-46. snyk-ls snyk_ls
-47. sql-formatter
-48. sqlfluff
-49. sqlls
-50. staticcheck
-51. stylua
-52. tailwindcss-language-server tailwindcss
-53. taplo
-54. terraform-ls terraformls
-55. tflint
-56. tfsec
-57. typescript-language-server tsserver
-58. typos-lsp typos_lsp
-59. vue-language-server volar
-60. yaml-language-server yamlls
-61. yamlfmt
-62. yamllint
+- ansible-language-server ansiblels
+- bash-language-server bashls
+- blue
+- buf
+- buf-language-server bufls
+- cbfmt
+- clang-format
+- clangd
+- codelldb
+- css-lsp cssls
+- debugpy
+- delve
+- docker-compose-language-service docker_compose_language_service
+- dockerfile-language-server dockerls
+- emmet-language-server emmet_language_server
+- eslint-lsp eslint
+- firefox-debug-adapter
+- flake8
+- go-debug-adapter
+- goimports-reviser
+- golangci-lint-langserver golangci_lint_ls
+- gomodifytags
+- google-java-format
+- gopls
+- gotests
+- graphql-language-service-cli graphql
+- helm-ls helm_ls
+- html-lsp html
+- htmx-lsp htmx
+- impl
+- java-debug-adapter
+- java-test
+- jdtls
+- js-debug-adapter
+- json-lsp jsonls
+- ltex-ls ltex
+- lua-language-server lua_ls
+- markdown-toc
+- marksman
+- neocmakelsp neocmake
+- powershell-editor-services powershell_es
+- prettier
+- pyright
+- rust-analyzer rust_analyzer
+- snyk-ls snyk_ls
+- sql-formatter
+- sqlfluff
+- sqlls
+- staticcheck
+- stylua
+- tailwindcss-language-server tailwindcss
+- taplo
+- terraform-ls terraformls
+- tflint
+- tfsec
+- typescript-language-server tsserver
+- typos-lsp typos_lsp
+- vue-language-server volar
+- yaml-language-server yamlls
+- yamlfmt
+- yamllint
 
 </details>
 
