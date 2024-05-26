@@ -26,56 +26,79 @@ return {
 			{ "jay-babu/mason-nvim-dap.nvim" },
 			{ "leoluz/nvim-dap-go" },
 			{ "rcarriga/nvim-dap-ui" },
-			{ "folke/neodev.nvim", opts = {} },
+			{ "folke/neodev.nvim",                        opts = {} },
 			{ "theHamsta/nvim-dap-virtual-text" },
 			{ "nvim-neotest/nvim-nio" },
 			{ "WhoIsSethDaniel/mason-tool-installer.nvim" },
-			{ "j-hui/fidget.nvim", opts = {} },
+			{ "j-hui/fidget.nvim",                        opts = {} },
 			{ "b0o/SchemaStore.nvim" },
 		},
 		config = function()
 			local lsp_zero = require("lsp-zero")
 
 			lsp_zero.on_attach(function(client, bufnr)
-				lsp_zero.default_keymaps({ buffer = bufnr })
+				lsp_zero.default_keymaps({
+					buffer = bufnr,
+					preserve_mappings = false,
+				})
+				-- lsp_zero.buffer_autoformat()
+				-- only enable the above if you have exactly one active server attach to the buffer per filetype
 			end)
+
+			--[[
+			lsp_zero.format_on_save({
+				format_opts = {
+					async = false,
+					timeout_ms = 10000,
+				},
+				servers = {
+					['tsserver'] = { 'javascript', 'typescript' },
+					['rust_analyzer'] = { 'rust' },
+				}
+			})
+			]]
 
 			require("mason").setup()
 			require("mason-tool-installer").setup({
 				ensure_installed = {
+					-- lua
+					"stylua",
+					-- markdown
+					"marksman",
+					"cbfmt",
+					-- go
 					"staticcheck",
 					"gotests",
 					"gomodifytags",
 					"impl",
 					"goimports-reviser",
-					"stylua",
-					"clang-format",
-					"google-java-format",
-					"prettier",
-					"flake8",
-					"blue",
-					"yamllint",
-					"yamlfmt",
-					"buf",
-					"sqlfluff",
-					"sql-formatter",
-					"tflint",
-					"tfsec",
-					"markdown-toc",
-					"cbfmt",
 					"delve",
 					"go-debug-adapter",
+					"golangci_lint_ls",
+					-- c & cpp & rust
+					"clang-format",
+					"codelldb",
+					-- javascript & typescript
+					"prettier",
 					"js-debug-adapter",
 					"firefox-debug-adapter",
-					"codelldb",
-					"debugpy",
-					"java-debug-adapter",
-					"java-test",
-					"ltex",
+					-- python
+					"flake8",
+					"blue",
+					-- java
 					"jdtls",
-					"marksman",
-					"tflint",
-					"terraformls",
+					"java-test",
+					"java-debug-adapter",
+					"google-java-format",
+					-- yaml
+					"yamllint",
+					"yamlfmt",
+					-- protobuf
+					"buf",
+					-- sql
+					"sqlfluff",
+					"sql-formatter",
+
 					jsonls = {
 						settings = {
 							json = {
@@ -96,7 +119,7 @@ return {
 						},
 					},
 					"bufls",
-					"tailwindcss",
+					-- "tailwindcss",
 					"clangd",
 					"pyright",
 					"cssls",
@@ -104,7 +127,7 @@ return {
 					"tsserver",
 					"lua_ls",
 					"rust_analyzer",
-					"golangci_lint_ls",
+
 					"gopls",
 					"sqlls",
 					"dockerls",
@@ -116,12 +139,18 @@ return {
 					"volar",
 					"neocmake",
 					"bashls",
-					"snyk_ls",
 					"typos_lsp",
-					"powershell_es",
 					"ansiblels",
 					"eslint",
 					"taplo",
+					-- opentofu
+					"tflint",
+					"tfsec",
+
+					"ltex",
+
+					"tflint",
+					"terraformls",
 				},
 				auto_update = true,
 				integrations = {
@@ -272,6 +301,8 @@ return {
 					["<C-Space>"] = cmp.mapping.complete(),
 					["<C-f>"] = cmp_action.luasnip_jump_forward(),
 					["<C-b>"] = cmp_action.luasnip_jump_backward(),
+					['<C-u>'] = cmp.mapping.scroll_docs(-4),
+					['<C-d>'] = cmp.mapping.scroll_docs(4),
 				},
 				snippet = {
 					expand = function(args)

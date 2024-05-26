@@ -47,11 +47,50 @@ vim.keymap.set("n", "<leader>x", "<cmd>lua vim.lsp.buf.code_action()<CR>")
 
 vim.keymap.set("n", "<leader>il", "<cmd>e ~/.config/nvim/lua/plugins/init.lua<CR>")
 
---[=====[
+--[[
 vim.keymap.set("n", "<leader><leader>", function()
     vim.cmd("so")
 end)
---]=====]
+]]
+
+-- lsp-zero
+--[[
+K: Displays hover information about the symbol under the cursor in a floating window. See :help vim.lsp.buf.hover().
+gd: Jumps to the definition of the symbol under the cursor. See :help vim.lsp.buf.definition().
+gD: Jumps to the declaration of the symbol under the cursor. Some servers don't implement this feature. See :help vim.lsp.buf.declaration().
+gi: Lists all the implementations for the symbol under the cursor in the quickfix window. See :help vim.lsp.buf.implementation().
+go: Jumps to the definition of the type of the symbol under the cursor. See :help vim.lsp.buf.type_definition().
+gr: Lists all the references to the symbol under the cursor in the quickfix window. See :help vim.lsp.buf.references().
+gs: Displays signature information about the symbol under the cursor in a floating window. See :help vim.lsp.buf.signature_help(). If a mapping already exists for this key this function is not bound.
+<F2>: Renames all references to the symbol under the cursor. See :help vim.lsp.buf.rename().
+<F3>: Format code in current buffer. See :help vim.lsp.buf.format().
+<F4>: Selects a code action available at the current cursor position. See :help vim.lsp.buf.code_action().
+gl: Show diagnostics in a floating window. See :help vim.diagnostic.open_float().
+[d: Move to the previous diagnostic in the current buffer. See :help vim.diagnostic.goto_prev().
+]d: Move to the next diagnostic. See :help vim.diagnostic.goto_next().
+]]
+
+-- telescope
+local builtin = require("telescope.builtin")
+vim.api.nvim_set_hl(0, "TelescopeNormal", { bg = "none" })
+vim.keymap.set("n", "<leader>pf", builtin.find_files, {})
+vim.keymap.set("n", "<C-p>", builtin.git_files, {})
+vim.keymap.set("n", "<leader>ps", function()
+	builtin.grep_string({ search = vim.fn.input("Grep > ") })
+end)
+vim.keymap.set("n", "<leader>vh", builtin.help_tags, {})
+vim.keymap.set("n", "<leader>vp", builtin.commands, {})
+vim.keymap.set("n", "<leader>vk", builtin.keymaps, {})
+vim.keymap.set("n", "<leader>vq", builtin.quickfix, {})
+vim.keymap.set("n", "<leader>vj", builtin.jumplist, {})
+vim.keymap.set("n", "<leader>vf", builtin.current_buffer_fuzzy_find, {})
+vim.keymap.set("n", "<leader>ac", builtin.diagnostics, {})
+vim.keymap.set("n", "<leader>ar", builtin.lsp_references, {})
+vim.keymap.set("n", "<leader>as", builtin.lsp_document_symbols, {})
+vim.keymap.set("n", "<leader>aw", builtin.lsp_dynamic_workspace_symbols, {})
+vim.keymap.set("n", "<leader>ai", builtin.lsp_implementations, {})
+vim.keymap.set("n", "<leader>ad", builtin.lsp_definitions, {})
+vim.keymap.set("n", "<leader>at", builtin.lsp_type_definitions, {})
 
 -- ufo
 vim.keymap.set("n", "zR", require("ufo").openAllFolds)
@@ -131,28 +170,6 @@ vim.api.nvim_set_keymap(
 	[[ <Esc><Cmd>lua require('refactoring').refactor('Inline Variable')<CR>]],
 	{ noremap = true, silent = true, expr = false }
 )
-
--- telescope
-local builtin = require("telescope.builtin")
-vim.api.nvim_set_hl(0, "TelescopeNormal", { bg = "none" })
-vim.keymap.set("n", "<leader>pf", builtin.find_files, {})
-vim.keymap.set("n", "<C-p>", builtin.git_files, {})
-vim.keymap.set("n", "<leader>ps", function()
-	builtin.grep_string({ search = vim.fn.input("Grep > ") })
-end)
-vim.keymap.set("n", "<leader>vh", builtin.help_tags, {})
-vim.keymap.set("n", "<leader>vp", builtin.commands, {})
-vim.keymap.set("n", "<leader>vk", builtin.keymaps, {})
-vim.keymap.set("n", "<leader>vq", builtin.quickfix, {})
-vim.keymap.set("n", "<leader>vj", builtin.jumplist, {})
-vim.keymap.set("n", "<leader>vf", builtin.current_buffer_fuzzy_find, {})
-vim.keymap.set("n", "<leader>ac", builtin.diagnostics, {})
-vim.keymap.set("n", "<leader>ar", builtin.lsp_references, {})
-vim.keymap.set("n", "<leader>as", builtin.lsp_document_symbols, {})
-vim.keymap.set("n", "<leader>aw", builtin.lsp_dynamic_workspace_symbols, {})
-vim.keymap.set("n", "<leader>ai", builtin.lsp_implementations, {})
-vim.keymap.set("n", "<leader>ad", builtin.lsp_definitions, {})
-vim.keymap.set("n", "<leader>at", builtin.lsp_type_definitions, {})
 
 -- trouble
 vim.keymap.set("n", "<leader>ca", "<cmd>TroubleToggle quickfix<cr>", { silent = true, noremap = true })
