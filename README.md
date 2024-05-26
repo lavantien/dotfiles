@@ -674,6 +674,7 @@ npm i -g neovim
   - set the `HOME` environment variable to `C:\Users\<name>`
   - copy `.config/nvim` directory to `C:\Users\<name>\AppData\Local\`
   - add to `PATH` this value `C:\Users\<name>\AppData\Local\nvim-data\mason\bin`
+  - remove `make install_jsregexp` from `luasnip` build config
 - Run `nvim` the first time and wait for it to auto initialize plugins, then press `S` to sync packages
 - Run `:MasonUpdate` to install all registries, then `:Mason` and press `U` if there's any update
 - All language `servers`, `linters`, and `treesitters` are pre-installed when you first initialize Neovim
@@ -681,7 +682,7 @@ npm i -g neovim
 
 ### Features
 
-- Fully support Go, Rust, Lua, JavaScript/TypeScript, Python, Java, HTML/CSS, LaTeX, Markdown and DevOps techs
+- Fully support lua, go, javascript/typescript & vue, html/htmx & css/tailwind, python, c/cpp, rust, java, markdown, latex & typos, bash, make & cmake, json, yaml, toml, sql, protobuf, graphql, docker, kubernetes, ansible, opentofu
 - Intellisense, Code Actions, Snippets, Debugging, Code Objects, Pin Headers, Display Statuses, Token Tree, Fuzzy Picker
 - Surround, Autotag, Improved Floating UIs, Inline Diagnostics, Cute Statusbar, Multifiles Jumper, Refactoring
 - Smart Folds, Autolint, Indentation Guides, Smart Help, Undo Tree, Git Integration, SQL/NoSQL Client, File Explorer
@@ -690,8 +691,9 @@ npm i -g neovim
 ### Key Bindings
 
 - In Neovim Normal Mode, hit `:nmap` to see the list of all bindings
-- To see bindings of a certain key, hit `:nmap <leader>`
-- Or you can just use Telescope to do the deed `<leader>vk`, in this case, holding space and pressing `vk`
+- Or via Telescope `<leader>vk`, in this case, holding space and pressing `vk`
+- Which-key support, just hit any key and a popup will appear to guide you
+- Check `~/.config/nvim/lua/config/remap.lua` for detailed information
 
 ### Plugins List
 
@@ -751,69 +753,110 @@ npm i -g neovim
 ### Languages Packages List
 
 <details>
-	<summary>Installed (61)</summary>
+	<summary>Installed (55)</summary>
 
-- ansible-language-server ansiblels
-- bash-language-server bashls
-- blue
-- buf
-- buf-language-server bufls
-- cbfmt
-- clang-format
-- clangd
-- codelldb
-- css-lsp cssls
-- debugpy
-- delve
-- docker-compose-language-service docker_compose_language_service
-- dockerfile-language-server dockerls
-- emmet-language-server emmet_language_server
-- eslint-lsp eslint
-- firefox-debug-adapter
-- flake8
-- go-debug-adapter
-- goimports-reviser
-- golangci-lint-langserver golangci_lint_ls
-- gomodifytags
-- google-java-format
-- gopls
-- gotests
-- graphql-language-service-cli graphql
-- helm-ls helm_ls
-- html-lsp html
-- htmx-lsp htmx
-- impl
-- java-debug-adapter
-- java-test
-- jdtls
-- js-debug-adapter
-- json-lsp jsonls
-- ltex-ls ltex
-- lua-language-server lua_ls
-- markdown-toc
-- marksman
-- neocmakelsp neocmake
-- powershell-editor-services powershell_es
-- prettier
-- pyright
-- rust-analyzer rust_analyzer
-- snyk-ls snyk_ls
-- sql-formatter
-- sqlfluff
-- sqlls
-- staticcheck
-- stylua
-- tailwindcss-language-server tailwindcss
-- taplo
-- terraform-ls terraformls
-- tflint
-- tfsec
-- typescript-language-server tsserver
-- typos-lsp typos_lsp
-- vue-language-server volar
-- yaml-language-server yamlls
-- yamlfmt
-- yamllint
+```lua
+-- lua
+"lua_ls",
+"stylua",
+
+-- go
+"gopls",
+"gotests",
+"impl",
+"gomodifytags",
+"goimports-reviser",
+"staticcheck",
+"golangci_lint_ls",
+"delve",
+"go-debug-adapter",
+
+-- javascript/typescript & vue
+"tsserver",
+"eslint",
+"volar",
+"prettier",
+"js-debug-adapter",
+"firefox-debug-adapter",
+
+-- html/htmx & css/tailwind
+"html",
+"emmet_language_server",
+"htmx",
+"cssls",
+"tailwindcss",
+
+-- python
+"pyright",
+"blue",
+"flake8",
+
+-- c/cpp
+"clangd",
+"clang-format",
+
+-- rust
+"rust_analyzer",
+"codelldb",
+
+-- java
+"jdtls",
+"java-test",
+"google-java-format",
+"java-debug-adapter",
+
+-- markdown
+"marksman",
+"cbfmt",
+
+-- latex & typos
+"ltex",
+"typos_lsp",
+
+-- bash
+"bashls",
+
+-- make & cmake
+"neocmake",
+"checkmake",
+
+-- json
+"jsonls", -- with schemastore
+
+-- yaml
+"yamlls", -- with schemastore
+"yamlfmt",
+"yamllint",
+
+-- toml
+"taplo",
+
+-- sql
+"sqlls",
+"sqlfluff",
+"sql-formatter",
+
+-- protobuf
+"bufls",
+"buf",
+
+-- graphql
+"graphql",
+
+-- docker
+"dockerls",
+"docker_compose_language_service",
+
+-- kubernetes
+"helm_ls",
+
+-- ansible
+"ansiblels",
+
+-- opentofu
+"terraformls",
+"tflint",
+```
 
 </details>
 

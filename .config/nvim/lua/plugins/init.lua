@@ -26,11 +26,11 @@ return {
 			{ "jay-babu/mason-nvim-dap.nvim" },
 			{ "leoluz/nvim-dap-go" },
 			{ "rcarriga/nvim-dap-ui" },
-			{ "folke/neodev.nvim",                        opts = {} },
+			{ "folke/neodev.nvim", opts = {} },
 			{ "theHamsta/nvim-dap-virtual-text" },
 			{ "nvim-neotest/nvim-nio" },
 			{ "WhoIsSethDaniel/mason-tool-installer.nvim" },
-			{ "j-hui/fidget.nvim",                        opts = {} },
+			{ "j-hui/fidget.nvim", opts = {} },
 			{ "b0o/SchemaStore.nvim" },
 		},
 		config = function()
@@ -62,43 +62,70 @@ return {
 			require("mason-tool-installer").setup({
 				ensure_installed = {
 					-- lua
+					"lua_ls",
 					"stylua",
-					-- markdown
-					"marksman",
-					"cbfmt",
+
 					-- go
-					"staticcheck",
+					"gopls",
 					"gotests",
-					"gomodifytags",
 					"impl",
+					"gomodifytags",
 					"goimports-reviser",
+					"staticcheck",
+					"golangci_lint_ls",
 					"delve",
 					"go-debug-adapter",
-					"golangci_lint_ls",
-					-- c & cpp & rust
-					"clang-format",
-					"codelldb",
-					-- javascript & typescript
+
+					-- javascript/typescript & vue
+					"tsserver",
+					"eslint",
+					"volar",
 					"prettier",
 					"js-debug-adapter",
 					"firefox-debug-adapter",
+
+					-- html/htmx & css/tailwind
+					"html",
+					"emmet_language_server",
+					"htmx",
+					"cssls",
+					"tailwindcss",
+
 					-- python
-					"flake8",
+					"pyright",
 					"blue",
+					"flake8",
+
+					-- c/cpp
+					"clangd",
+					"clang-format",
+
+					-- rust
+					"rust_analyzer",
+					"codelldb",
+
 					-- java
 					"jdtls",
 					"java-test",
-					"java-debug-adapter",
 					"google-java-format",
-					-- yaml
-					"yamllint",
-					"yamlfmt",
-					-- protobuf
-					"buf",
-					-- sql
-					"sqlfluff",
-					"sql-formatter",
+					"java-debug-adapter",
 
+					-- markdown
+					"marksman",
+					"cbfmt",
+
+					-- latex & typos
+					"ltex",
+					"typos_lsp",
+
+					-- bash
+					"bashls",
+
+					-- make & cmake
+					"neocmake",
+					"checkmake",
+
+					-- json
 					jsonls = {
 						settings = {
 							json = {
@@ -107,6 +134,8 @@ return {
 							},
 						},
 					},
+
+					-- yaml
 					yamlls = {
 						settings = {
 							yaml = {
@@ -118,39 +147,37 @@ return {
 							},
 						},
 					},
-					"bufls",
-					-- "tailwindcss",
-					"clangd",
-					"pyright",
-					"cssls",
-					"html",
-					"tsserver",
-					"lua_ls",
-					"rust_analyzer",
+					"yamlfmt",
+					"yamllint",
 
-					"gopls",
+					-- toml
+					"taplo",
+
+					-- sql
 					"sqlls",
+					"sqlfluff",
+					"sql-formatter",
+
+					-- protobuf
+					"bufls",
+					"buf",
+
+					-- graphql
+					"graphql",
+
+					-- docker
 					"dockerls",
 					"docker_compose_language_service",
-					"emmet_language_server",
-					"graphql",
-					"htmx",
+
+					-- kubernetes
 					"helm_ls",
-					"volar",
-					"neocmake",
-					"bashls",
-					"typos_lsp",
+
+					-- ansible
 					"ansiblels",
-					"eslint",
-					"taplo",
+
 					-- opentofu
-					"tflint",
-					"tfsec",
-
-					"ltex",
-
-					"tflint",
 					"terraformls",
+					"tflint",
 				},
 				auto_update = true,
 				integrations = {
@@ -301,8 +328,8 @@ return {
 					["<C-Space>"] = cmp.mapping.complete(),
 					["<C-f>"] = cmp_action.luasnip_jump_forward(),
 					["<C-b>"] = cmp_action.luasnip_jump_backward(),
-					['<C-u>'] = cmp.mapping.scroll_docs(-4),
-					['<C-d>'] = cmp.mapping.scroll_docs(4),
+					["<C-u>"] = cmp.mapping.scroll_docs(-4),
+					["<C-d>"] = cmp.mapping.scroll_docs(4),
 				},
 				snippet = {
 					expand = function(args)
