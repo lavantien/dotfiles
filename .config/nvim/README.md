@@ -21,7 +21,7 @@ npm i -g neovim && pip3 install neovim
 
 ## Features
 
-- Fully support lua, go, javascript/typescript & vue, html/htmx & css/tailwind, python, c/cpp, rust, java, markdown, latex & typos, bash, make & cmake, json, yaml, toml, sql, protobuf, graphql, docker, kubernetes, ansible, opentofu
+- Fully support lua, go, javascript/typescript & vue, html/htmx & css/tailwind, python, c/cpp, rust, java, markdown, latex & typos, bash, make & cmake, json, yaml, toml, sql, protobuf, graphql, docker, kubernetes/helm, ansible, opentofu
 - Intellisense, Code Actions, Snippets, Debugging, Code Objects, Pin Headers, Display Statuses, Token Tree, Fuzzy Picker
 - Surround, Autotag, Improved Floating UIs, Inline Diagnostics, Cute Statusbar, Multifiles Jumper, Refactoring
 - Smart Folds, Autolint, Indentation Guides, Smart Help, Undo Tree, Git Integration, SQL/NoSQL Client, File Explorer
@@ -186,7 +186,7 @@ npm i -g neovim && pip3 install neovim
 "dockerls",
 "docker_compose_language_service",
 
--- kubernetes
+-- kubernetes/helm
 "helm_ls",
 
 -- ansible
