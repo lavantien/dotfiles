@@ -530,7 +530,7 @@ sudo systemctl daemon-reload
 ```
 
 ```bash
-sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && rustup update && brew upgrade && flatpak update
+sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && rustup update && brew upgrade && flatpak update -y
 ```
 
 <details>
@@ -663,11 +663,11 @@ hx --health
 
 ### Install
 
-- Git, GH CLI, Neovim, GCC/LLVM-Clang, Go, NodeJS, Bun, Python3, Rust, Lua, Java, SQLite, Docker, K8s, OpenTf
+- Git, GH CLI, Neovim, GCC/LLVM-Clang, Go, NodeJS, Python3, Rust, Lua, Java, SQLite, Docker, K8s, OpenTf
 - Neovim Deps:
 
 ```bash
-npm i -g neovim
+npm i -g neovim && pip3 install neovim
 ```
 
 - If you're on Windows you need to
@@ -675,6 +675,7 @@ npm i -g neovim
   - copy `.config/nvim` directory to `C:\Users\<name>\AppData\Local\`
   - add to `PATH` this value `C:\Users\<name>\AppData\Local\nvim-data\mason\bin`
   - remove `make install_jsregexp` from `luasnip` build config
+  - remove `checkmake`, `ansible-lint`, or other packages that don't support Windows from `mason-tools-installer` list
 - Run `nvim` the first time and wait for it to auto initialize plugins, then press `S` to sync packages
 - Run `:MasonUpdate` to install all registries, then `:Mason` and press `U` if there's any update
 - All language `servers`, `linters`, and `treesitters` are pre-installed when you first initialize Neovim
@@ -682,7 +683,7 @@ npm i -g neovim
 
 ### Features
 
-- Fully support lua, go, javascript/typescript & vue, html/htmx & css/tailwind, python, c/cpp, rust, java, markdown, latex & typos, bash, make & cmake, json, yaml, toml, sql, protobuf, graphql, docker, kubernetes/helm, ansible, opentofu
+- Fully support lua, go, javascript/typescript & vue, html/htmx & css/tailwind, python, c/cpp, rust, java, assembly, markdown, latex & typos, bash, make & cmake, json, yaml, toml, sql, protobuf, graphql, docker/compose, ci/cd, kubernetes/helm, ansible, opentofu
 - Intellisense, Code Actions, Snippets, Debugging, Code Objects, Pin Headers, Display Statuses, Token Tree, Fuzzy Picker
 - Surround, Autotag, Improved Floating UIs, Inline Diagnostics, Cute Statusbar, Multifiles Jumper, Refactoring
 - Smart Folds, Autolint, Indentation Guides, Smart Help, Undo Tree, Git Integration, SQL/NoSQL Client, File Explorer
@@ -691,7 +692,7 @@ npm i -g neovim
 ### Key Bindings
 
 - In Neovim Normal Mode, hit `:nmap` to see the list of all bindings
-- Or via Telescope `<leader>vk`, in this case, holding space and pressing `vk`
+- Or via Telescope `<leader>vk`, in this case, hit space and pressing `vk`
 - Which-key support, just hit any key and a popup will appear to guide you
 - Check `~/.config/nvim/lua/config/remap.lua` for detailed information
 
@@ -753,12 +754,13 @@ npm i -g neovim
 ### Languages Packages List
 
 <details>
-	<summary>Installed (55)</summary>
+	<summary>Installed (69)</summary>
 
 ```lua
 -- lua
 "lua_ls",
 "stylua",
+"luacheck",
 
 -- go
 "gopls",
@@ -767,7 +769,9 @@ npm i -g neovim
 "gomodifytags",
 "goimports-reviser",
 "staticcheck",
+"semgrep",
 "golangci_lint_ls",
+"golangci_lint",
 "delve",
 "go-debug-adapter",
 
@@ -790,10 +794,12 @@ npm i -g neovim
 "pyright",
 "blue",
 "flake8",
+"debugpy",
 
 -- c/cpp
 "clangd",
 "clang-format",
+"cpptools",
 
 -- rust
 "rust_analyzer",
@@ -805,26 +811,51 @@ npm i -g neovim
 "google-java-format",
 "java-debug-adapter",
 
+-- assembly
+"asm-lsp",
+"asmfmt",
+
 -- markdown
 "marksman",
 "cbfmt",
 
 -- latex & typos
-"ltex",
+"texlab",
 "typos_lsp",
 
 -- bash
 "bashls",
+"shellcheck",
+"shfmt",
+"bash-debug-adapter",
 
 -- make & cmake
-"neocmake",
 "checkmake",
+"neocmake",
+"cmakelint",
 
 -- json
-"jsonls", -- with schemastore
+jsonls = {
+    settings = {
+        json = {
+            schemas = require("schemastore").json.schemas(),
+            validate = { enable = true },
+        },
+    },
+},
 
 -- yaml
-"yamlls", -- with schemastore
+yamlls = {
+    settings = {
+        yaml = {
+            schemaStore = {
+                enable = false,
+                url = "",
+            },
+            schemas = require("schemastore").yaml.schemas(),
+        },
+    },
+},
 "yamlfmt",
 "yamllint",
 
@@ -839,19 +870,24 @@ npm i -g neovim
 -- protobuf
 "bufls",
 "buf",
+"protolint",
 
 -- graphql
 "graphql",
 
--- docker
+-- docker/compose
 "dockerls",
 "docker_compose_language_service",
+
+-- ci/cd
+"actionlint",
 
 -- kubernetes/helm
 "helm_ls",
 
 -- ansible
 "ansiblels",
+"ansible-lint",
 
 -- opentofu
 "terraformls",
@@ -890,7 +926,7 @@ npm i -g neovim
 ### Fix borked MKV file (remux to rebuild the metadata)
 
 ```bash
-ffmpeg -i "<interrrupted mkv>" -c copy "fixed.mkv"
+ffmpeg -i "<interrupted mkv>" -c copy "fixed.mkv"
 ```
 
 ### Google Cloud CLI (broken installation & missing python2 dep)
