@@ -913,4 +913,25 @@ return {
 			vim.keymap.set("n", "<space>-", require("oil").toggle_float)
 		end,
 	},
+
+	{
+		"eandrju/cellular-automaton.nvim",
+		config = function()
+			-- local config = {
+			-- 	fps = 50,
+			-- 	name = "slide",
+			-- }
+			-- config.init = function(grid) end
+			-- config.update = function(grid)
+			-- 	for i = 1, #grid do
+			-- 		local prev = grid[i][#grid[i]]
+			-- 		for j = 1, #grid[i] do
+			-- 			grid[i][j], prev = prev, grid[i][j]
+			-- 		end
+			-- 	end
+			-- 	return true
+			-- end
+			-- require("cellular-automaton").register_animation(config)
+		end,
+	},
 }

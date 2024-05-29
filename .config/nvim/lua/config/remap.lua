@@ -37,6 +37,10 @@ vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><
 
 vim.keymap.set("n", "<leader>il", "<cmd>e ~/.config/nvim/lua/plugins/init.lua<CR>")
 
+-- cellularautomaton
+vim.keymap.set("n", "<leader>ir", "<cmd>CellularAutomaton make_it_rain<CR>")
+vim.keymap.set("n", "<leader>ig", "<cmd>CellularAutomaton game_of_life<CR>")
+
 -- lsp
 --[[
 K: Displays hover information about the symbol under the cursor in a floating window. See :help vim.lsp.buf.hover().
