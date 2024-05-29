@@ -12,14 +12,20 @@ return {
 				end,
 			},
 			{ "williamboman/mason-lspconfig.nvim" },
-			{ "hrsh7th/nvim-cmp" },
-			{ "hrsh7th/cmp-nvim-lsp" },
 			{
-				"L3MON4D3/LuaSnip",
-				version = "v2.*",
-				build = "make install_jsregexp",
+				"hrsh7th/nvim-cmp",
+				lazy = false,
+				priority = 100,
+				dependencies = {
+					"onsails/lspkind.nvim",
+					"hrsh7th/cmp-nvim-lsp",
+					"hrsh7th/cmp-path",
+					"hrsh7th/cmp-buffer",
+					"hrsh7th/cmp-nvim-lsp-signature-help",
+					{ "L3MON4D3/LuaSnip", build = "make install_jsregexp" },
+					"saadparwaiz1/cmp_luasnip",
+				},
 			},
-			{ "onsails/lspkind.nvim" },
 			{ "jay-babu/mason-null-ls.nvim" },
 			{ "nvimtools/none-ls.nvim" },
 			{ "mfussenegger/nvim-dap" },
@@ -204,10 +210,27 @@ return {
 					["mason-nvim-dap"] = true,
 				},
 			})
+			--[[
+			local capabilities = nil
+			if pcall(require, "cmp_nvim_lsp") then
+				capabilities = require("cmp_nvim_lsp").default_capabilities()
+			end
+            ]]
+			--[[
+			local capabilities = vim.lsp.protocol.make_client_capabilities()
+			capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
+            ]]
 			require("mason-lspconfig").setup({
 				automatic_installation = false,
 				handlers = {
 					lsp_zero.default_setup,
+					--[[
+					function(server_name)
+						local server = servers[server_name] or {}
+						server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
+						require("lspconfig")[server_name].setup(server)
+					end,
+                    ]]
 				},
 			})
 			require("mason-nvim-dap").setup({
@@ -234,6 +257,54 @@ return {
 				})
 			end
 			lsp_zero.on_attach(function(client, bufnr)
+				local opts = { buffer = bufnr, remap = false }
+
+				vim.keymap.set("n", "K", function()
+					vim.lsp.buf.hover()
+				end, opts)
+				vim.keymap.set("n", "gd", function()
+					vim.lsp.buf.definition()
+				end, opts)
+				vim.keymap.set("n", "gD", function()
+					vim.lsp.buf.declaration()
+				end, opts)
+				vim.keymap.set("n", "gi", function()
+					vim.lsp.buf.implementation()
+				end, opts)
+				vim.keymap.set("n", "go", function()
+					vim.lsp.buf.type_definition()
+				end, opts)
+				vim.keymap.set("n", "gr", function()
+					vim.lsp.buf.references()
+				end, opts)
+				vim.keymap.set("n", "gs", function()
+					vim.lsp.buf.signature_help()
+				end, opts)
+				vim.keymap.set("n", "<F2>", function()
+					vim.lsp.buf.rename()
+				end, opts)
+				vim.keymap.set({ "n", "x" }, "<F3>", function()
+					vim.lsp.buf.format({ async = true })
+				end, opts)
+				vim.keymap.set("n", "<F4>", function()
+					vim.lsp.buf.code_action()
+				end, opts)
+				vim.keymap.set("n", "gl", function()
+					vim.diagnostic.open_float()
+				end, opts)
+				vim.keymap.set("n", "[d", function()
+					vim.diagnostic.goto_prev()
+				end, opts)
+				vim.keymap.set("n", "]d", function()
+					vim.diagnostic.goto_next()
+				end, opts)
+				vim.keymap.set("i", "<C-g>", function()
+					vim.lsp.buf.signature_help()
+				end, opts)
+				vim.keymap.set("n", "<C-g>", function()
+					vim.lsp.buf.workspace_symbol()
+				end, opts)
+
 				lsp_format_on_save(bufnr)
 			end)
 			lsp_zero.setup()
@@ -245,22 +316,6 @@ return {
 					local map = function(keys, func, desc)
 						vim.keymap.set("n", keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
 					end
-
-					local opts = { buffer = event.buf }
-					vim.keymap.set("n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
-					vim.keymap.set("n", "gd", "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
-					vim.keymap.set("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>", opts)
-					vim.keymap.set("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<cr>", opts)
-					vim.keymap.set("n", "go", "<cmd>lua vim.lsp.buf.type_definition()<cr>", opts)
-					vim.keymap.set("n", "gr", "<cmd>lua vim.lsp.buf.references()<cr>", opts)
-					vim.keymap.set("n", "gs", "<cmd>lua vim.lsp.buf.signature_help()<cr>", opts)
-					vim.keymap.set("n", "<F2>", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
-					vim.keymap.set({ "n", "x" }, "<F3>", "<cmd>lua vim.lsp.buf.format({async = true})<cr>", opts)
-					vim.keymap.set("n", "<F4>", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
-					vim.keymap.set("n", "gl", "<cmd>lua vim.diagnostic.open_float()<cr>", opts)
-					vim.keymap.set("n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<cr>", opts)
-					vim.keymap.set("n", "]d", "<cmd>lua vim.diagnostic.goto_next()<cr>", opts)
-
 					if client and client.server_capabilities.documentHighlightProvider then
 						local highlight_augroup = vim.api.nvim_create_augroup("lsp-highlight", { clear = false })
 						vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
@@ -306,9 +361,6 @@ return {
 				dapui.close()
 			end
 
-			local capabilities = vim.lsp.protocol.make_client_capabilities()
-			capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
-
 			--[[
 			require('lspconfig').jdtls.setup({
 			  on_attach = function(client, bufnr)
@@ -341,11 +393,13 @@ return {
 			})
 			]]
 
+			require("lspkind").init()
 			local cmp = require("cmp")
 			local cmp_action = require("lsp-zero").cmp_action()
 			cmp.setup({
 				sources = {
 					{ name = "nvim_lsp" },
+					{ name = "nvim_lsp_signature_help" },
 					{ name = "path" },
 					{ name = "buffer" },
 				},
@@ -551,7 +605,28 @@ return {
 			require("mini.ai").setup({ n_lines = 500 })
 			require("mini.surround").setup()
 			require("mini.pairs").setup()
-			require("mini.operators").setup()
+			require("mini.operators").setup({
+				evaluate = {
+					prefix = "g=",
+					func = nil,
+				},
+				exchange = {
+					prefix = "<leader>xx",
+					reindent_linewise = true,
+				},
+				multiply = {
+					prefix = "gm",
+					func = nil,
+				},
+				replace = {
+					prefix = "<leader>xr",
+					reindent_linewise = true,
+				},
+				sort = {
+					prefix = "<leader>xs",
+					func = nil,
+				},
+			})
 			local miniclue = require("mini.clue")
 			miniclue.setup({
 				triggers = {
