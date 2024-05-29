@@ -675,7 +675,7 @@ npm i -g neovim && pip3 install neovim
   - copy `.config/nvim` directory to `C:\Users\<name>\AppData\Local\`
   - add to `PATH` this value `C:\Users\<name>\AppData\Local\nvim-data\mason\bin`
   - remove `make install_jsregexp` from `luasnip` build config
-  - remove `checkmake`, `ansible-lint`, or other packages that don't support Windows from `mason-tools-installer` list
+  - remove `checkmake`, `luacheck`, `semgrep`, `ansible-lint`, or other packages that don't support Windows from `mason-tools-installer` list
 - Run `nvim` the first time and wait for it to auto initialize plugins, then press `S` to sync packages
 - Run `:MasonUpdate` to install all registries, then `:Mason` and press `U` if there's any update
 - All language `servers`, `linters`, and `treesitters` are pre-installed when you first initialize Neovim
