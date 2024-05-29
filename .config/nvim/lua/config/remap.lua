@@ -38,7 +38,7 @@ vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><
 vim.keymap.set("n", "<leader>il", "<cmd>e ~/.config/nvim/lua/plugins/init.lua<CR>")
 vim.keymap.set("n", "<leader>x", "<cmd>lua vim.lsp.buf.code_action()<CR>")
 
--- lsp-zero
+-- lsp
 --[[
 K: Displays hover information about the symbol under the cursor in a floating window. See :help vim.lsp.buf.hover().
 gd: Jumps to the definition of the symbol under the cursor. See :help vim.lsp.buf.definition().
@@ -53,17 +53,6 @@ gs: Displays signature information about the symbol under the cursor in a floati
 gl: Show diagnostics in a floating window. See :help vim.diagnostic.open_float().
 [d: Move to the previous diagnostic in the current buffer. See :help vim.diagnostic.goto_prev().
 ]d: Move to the next diagnostic. See :help vim.diagnostic.goto_next().
-
-vim.keymap.set('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
-vim.keymap.set('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
-vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
-vim.keymap.set('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
-vim.keymap.set('n', 'go', '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts)
-vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
-vim.keymap.set('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
-vim.keymap.set('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
-vim.keymap.set({'n', 'x'}, '<F3>', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
-vim.keymap.set('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
 ]]
 
 -- telescope
@@ -87,6 +76,13 @@ vim.keymap.set("n", "<leader>aw", builtin.lsp_dynamic_workspace_symbols, {})
 vim.keymap.set("n", "<leader>ai", builtin.lsp_implementations, {})
 vim.keymap.set("n", "<leader>ad", builtin.lsp_definitions, {})
 vim.keymap.set("n", "<leader>at", builtin.lsp_type_definitions, {})
+
+-- smartopen
+vim.keymap.set("n", "<C-t>", function()
+	require("telescope").extensions.smart_open.smart_open({
+		cwd_only = true,
+	})
+end, { noremap = true, silent = true })
 
 -- ufo
 vim.keymap.set("n", "zR", require("ufo").openAllFolds)
@@ -179,10 +175,10 @@ harpoon:setup()
 vim.keymap.set("n", "<leader>h", function()
 	harpoon:list():add()
 end)
-vim.keymap.set("n", "<C-a>", function()
+vim.keymap.set("n", "<C-m>", function()
 	harpoon.ui:toggle_quick_menu(harpoon:list())
 end)
-vim.keymap.set("n", "<C-g>", function()
+vim.keymap.set("n", "<C-a>", function()
 	harpoon:list():select(1)
 end)
 vim.keymap.set("n", "<C-m>", function()
@@ -194,14 +190,11 @@ end)
 vim.keymap.set("n", "<C-s>", function()
 	harpoon:list():select(4)
 end)
-vim.keymap.set("n", "<C-t>", function()
+vim.keymap.set("n", "<C-x>", function()
 	harpoon:list():select(5)
 end)
-vim.keymap.set("n", "<C-x>", function()
-	harpoon:list():select(6)
-end)
 vim.keymap.set("n", "<C-z>", function()
-	harpoon:list():select(7)
+	harpoon:list():select(6)
 end)
 vim.keymap.set("n", "<C-S-P>", function()
 	harpoon:list():prev()
