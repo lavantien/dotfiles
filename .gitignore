@@ -263,3 +263,4 @@ storage
 .config/configstore
 .local/share/snyk-ls
 .wine
+.semgrep
