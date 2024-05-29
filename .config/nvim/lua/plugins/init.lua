@@ -339,7 +339,7 @@ return {
 					},
 				},
 			})
-			--]]
+			]]
 
 			local cmp = require("cmp")
 			local cmp_action = require("lsp-zero").cmp_action()
@@ -596,7 +596,7 @@ return {
 			statusline.section_location = function()
 				return '%2l:%-2v'
 			end
-			--]]
+			]]
 		end,
 	},
 
@@ -673,7 +673,7 @@ return {
 			ColorMyPencils()
 		end,
 	},
-	--]]
+	]]
 
 	{ -- Theme Gruvbox
 		"ellisonleao/gruvbox.nvim",
@@ -709,7 +709,7 @@ return {
 			ColorMyPencils()
 		end,
 	},
-	--]]
+	]]
 
 	{ -- Inline Diagnostics
 		"folke/trouble.nvim",
@@ -730,7 +730,7 @@ return {
 			custom_auto.visual.c.bg = nil
 			custom_auto.replace.c.bg = nil
 			custom_auto.command.c.bg = nil
-			--]]
+			]]
 			require("lualine").setup({
 				options = {
 					--theme = 'tokyonight',
