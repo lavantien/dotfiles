@@ -699,7 +699,7 @@ npm i -g neovim && pip3 install neovim
 ### Plugins List
 
 <details>
-	<summary>Loaded (54)</summary>
+	<summary>Loaded (55)</summary>
 
 - cellular-automaton.nvim 0.26ms  start
 - cmp-buffer 0.11ms  nvim-cmp

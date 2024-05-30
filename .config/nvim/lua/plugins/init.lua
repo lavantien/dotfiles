@@ -396,16 +396,31 @@ return {
 			require("lspkind").init()
 			local cmp = require("cmp")
 			local cmp_action = require("lsp-zero").cmp_action()
+			-- local cmp_format = require("lsp-zero").cmp_format({ details = true })
+			require("luasnip.loaders.from_vscode").lazy_load()
 			cmp.setup({
 				sources = {
 					{ name = "nvim_lsp" },
 					{ name = "nvim_lsp_signature_help" },
-					{ name = "path" },
 					{ name = "buffer" },
+					{ name = "path" },
+					{ name = "luasnip" },
 				},
-				mapping = {
-					["<C-n>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
-					["<C-p>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
+				mapping = cmp.mapping.preset.insert({
+					["<C-p>"] = cmp.mapping(function()
+						if cmp.visible() then
+							cmp.select_prev_item({ behavior = "insert" })
+						else
+							cmp.complete()
+						end
+					end),
+					["<C-n>"] = cmp.mapping(function()
+						if cmp.visible() then
+							cmp.select_next_item({ behavior = "insert" })
+						else
+							cmp.complete()
+						end
+					end),
 					["<C-y>"] = cmp.mapping(
 						cmp.mapping.confirm({
 							behavior = cmp.ConfirmBehavior.Insert,
@@ -413,16 +428,35 @@ return {
 						}),
 						{ "i", "c" }
 					),
-					["<C-Space>"] = cmp.mapping.complete(),
-					["<C-f>"] = cmp_action.luasnip_jump_forward(),
-					["<C-b>"] = cmp_action.luasnip_jump_backward(),
+					-- ["<C-Space>"] = cmp.mapping.complete(),
 					["<C-u>"] = cmp.mapping.scroll_docs(-4),
 					["<C-d>"] = cmp.mapping.scroll_docs(4),
-				},
+					["<C-f>"] = cmp_action.luasnip_jump_forward(),
+					["<C-b>"] = cmp_action.luasnip_jump_backward(),
+				}),
 				snippet = {
 					expand = function(args)
-						require("luasnip").lsp_expand(args.body)
+						vim.snippet.expand(args.body)
 					end,
+				},
+				-- formatting = cmp_format,
+				formatting = {
+					fields = { "abbr", "kind", "menu" },
+					format = require("lspkind").cmp_format({
+						mode = "symbol",
+						maxwidth = 50,
+						ellipsis_char = "...",
+					}),
+					details = true,
+				},
+				preselect = "item",
+				completion = {
+					-- autocomplete = true,
+					completeopt = "menu,menuone,noinsert",
+				},
+				window = {
+					completion = cmp.config.window.bordered(),
+					documentation = cmp.config.window.bordered(),
 				},
 			})
 			cmp.setup.filetype({ "sql" }, {
