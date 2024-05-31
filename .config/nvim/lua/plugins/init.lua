@@ -499,29 +499,34 @@ return {
 				ensure_installed = {
 					"bash",
 					"c",
+					"cmake",
 					"cpp",
 					"css",
+					"csv",
 					"dart",
 					"dockerfile",
-					"cmake",
-					"gitcommit",
-					"git_rebase",
 					"git_config",
+					"git_rebase",
 					"gitattributes",
+					"gitcommit",
 					"gitignore",
+					"glsl",
 					"go",
 					"gomod",
 					"gosum",
 					"gowork",
+					"graphql",
+					"helm",
+					"help",
 					"html",
+					"http",
 					"java",
 					"javascript",
-					"http",
 					"json",
-					"graphql",
 					"lua",
 					"make",
 					"markdown",
+					"markdown_inline",
 					"proto",
 					"python",
 					"query",
@@ -532,11 +537,8 @@ return {
 					"typescript",
 					"vim",
 					"vimdoc",
-					"yaml",
-					"glsl",
-					"helm",
-					"csv",
 					"xml",
+					"yaml",
 				},
 				sync_install = false,
 				auto_install = true,
@@ -823,32 +825,54 @@ return {
 	{ -- Inline Diagnostics
 		"folke/trouble.nvim",
 		dependencies = "nvim-tree/nvim-web-devicons",
-		config = function()
-			require("trouble").setup({})
-		end,
+		keys = {
+			{
+				"<leader>cc",
+				"<cmd>Trouble diagnostics toggle focus=false filter.buf=0<cr>",
+				desc = "Buffer Diagnostics (Trouble)",
+			},
+			{
+				"<leader>cs",
+				"<cmd>Trouble symbols toggle focus=false<cr>",
+				desc = "Symbols (Trouble)",
+			},
+			{
+				"<leader>cd",
+				"<cmd>Trouble lsp toggle focus=false win.position=right<cr>",
+				desc = "LSP Definitions / references / ... (Trouble)",
+			},
+			{
+				"<leader>ce",
+				"<cmd>Trouble loclist toggle<cr>",
+				desc = "Location List (Trouble)",
+			},
+			{
+				"<leader>ca",
+				"<cmd>Trouble qflist toggle<cr>",
+				desc = "Quickfix List (Trouble)",
+			},
+		},
+		opts = {},
 	},
 
-	{ -- Cute Statusbar
+	{ -- Statusbar
 		"nvim-lualine/lualine.nvim",
 		dependencies = { "nvim-tree/nvim-web-devicons" },
-		config = function()
-			--[[
-			local custom_auto = require("lualine.themes.auto")
-			custom_auto.normal.c.bg = nil
-			custom_auto.insert.c.bg = nil
-			custom_auto.visual.c.bg = nil
-			custom_auto.replace.c.bg = nil
-			custom_auto.command.c.bg = nil
-			]]
-			require("lualine").setup({
-				options = {
-					--theme = 'tokyonight',
-					theme = "auto",
-					section_separators = { left = "", right = "" },
-					component_separators = { left = "", right = "" },
-				},
-			})
-		end,
+		opts = {
+			options = {
+				--theme = 'tokyonight',
+				theme = "auto",
+				section_separators = { left = "", right = "" },
+				component_separators = { left = "", right = "" },
+			},
+			extensions = {
+				"lazy",
+				"mason",
+				"nvim-dap-ui",
+				"oil",
+				"trouble",
+			},
+		},
 	},
 
 	{ -- Multifiles Jumper

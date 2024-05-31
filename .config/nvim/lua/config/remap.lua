@@ -1,6 +1,10 @@
-vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
-vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
-vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
+--[[ free keybinds: <leader>f, <leader>/, <leader>p ]]
+-- TODO: add description to add keymaps and maybe making a keybinding table
+
+-- global
+-- vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move down" })
+vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move up" })
 vim.keymap.set("n", "J", "mzJ`z")
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
@@ -63,17 +67,17 @@ C-g: Signature Help in INSERT mode.
 -- telescope
 local builtin = require("telescope.builtin")
 vim.api.nvim_set_hl(0, "TelescopeNormal", { bg = "none" })
-vim.keymap.set("n", "<leader>pf", builtin.git_files, {})
-vim.keymap.set("n", "<C-p>", builtin.find_files, {})
-vim.keymap.set("n", "<leader>f", function()
+vim.keymap.set("n", "<C-f>", function()
 	builtin.grep_string({ search = vim.fn.input("Grep > ") })
 end)
+vim.keymap.set("n", "<C-p>", builtin.find_files, {})
+vim.keymap.set("n", "<C-/>", builtin.current_buffer_fuzzy_find, {})
+vim.keymap.set("n", "<leader>vf", builtin.git_files, {})
 vim.keymap.set("n", "<leader>vh", builtin.help_tags, {})
 vim.keymap.set("n", "<leader>vp", builtin.commands, {})
 vim.keymap.set("n", "<leader>vk", builtin.keymaps, {})
 vim.keymap.set("n", "<leader>vq", builtin.quickfix, {})
 vim.keymap.set("n", "<leader>vj", builtin.jumplist, {})
-vim.keymap.set("n", "<leader>/", builtin.current_buffer_fuzzy_find, {})
 vim.keymap.set("n", "<leader>ac", builtin.diagnostics, {})
 vim.keymap.set("n", "<leader>ar", builtin.lsp_references, {})
 vim.keymap.set("n", "<leader>as", builtin.lsp_document_symbols, {})
@@ -81,6 +85,15 @@ vim.keymap.set("n", "<leader>aw", builtin.lsp_dynamic_workspace_symbols, {})
 vim.keymap.set("n", "<leader>ai", builtin.lsp_implementations, {})
 vim.keymap.set("n", "<leader>ad", builtin.lsp_definitions, {})
 vim.keymap.set("n", "<leader>at", builtin.lsp_type_definitions, {})
+
+-- trouble
+--[[
+<leader>cc: Buffer Diagnostics (Trouble)
+<leader>cs: Symbols (Trouble)
+<leader>cd: LSP Definitions / references / ... (Trouble)
+<leader>ce: Location List (Trouble)
+<leader>ca: Quickfix List (Trouble)
+]]
 
 -- smartopen
 vim.keymap.set("n", "<C-t>", function()
@@ -167,9 +180,6 @@ vim.api.nvim_set_keymap(
 	[[ <Esc><Cmd>lua require('refactoring').refactor('Inline Variable')<CR>]],
 	{ noremap = true, silent = true, expr = false }
 )
-
--- trouble
-vim.keymap.set("n", "<leader>ca", "<cmd>TroubleToggle quickfix<cr>", { silent = true, noremap = true })
 
 -- undotree
 vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle)
