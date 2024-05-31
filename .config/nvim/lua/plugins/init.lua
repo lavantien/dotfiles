@@ -517,7 +517,6 @@ return {
 					"gowork",
 					"graphql",
 					"helm",
-					"help",
 					"html",
 					"http",
 					"java",

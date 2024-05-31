@@ -1,6 +1,6 @@
 # A robust Dotfiles for Developer - Ubuntu & Neovim - Battery Included
 
-- Quality Assurance: **100%**
+- Quality Assurance: **100%**; Demonstration video: <https://youtu.be/a28SZdUkpKw>
 - Supported: **AMD** & **Intel** (Wayland), **NVIDIA** (auto X11), **Windows** (Neovim)
 - Turn off `Secure Boot` in your `BIOS` for a smooth installation process
 - Install with `Minimal setup` and **LVM full disk encryption** to avoid the feds raiding your machine
