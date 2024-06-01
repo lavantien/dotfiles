@@ -299,9 +299,9 @@ return {
 				vim.keymap.set("i", "<C-z>", function()
 					vim.lsp.buf.signature_help()
 				end, { buffer = bufnr, remap = false, desc = "LSP display signature help" })
-				vim.keymap.set("n", "<C-S-Z>", function()
+				vim.keymap.set("n", "<C-A-Q>", function()
 					vim.lsp.buf.workspace_symbol()
-				end, { buffer = bufnr, remap = false, desc = "LSP browse workspace symbol" })
+				end, { buffer = bufnr, remap = false, desc = "LSP query workspace symbol" })
 
 				lsp_format_on_save(bufnr)
 			end)
@@ -920,7 +920,7 @@ return {
 					})
 					:find()
 			end
-			vim.keymap.set("n", "<C-q>", function()
+			vim.keymap.set("n", "<C-A-Z>", function()
 				toggle_telescope(harpoon:list())
 			end, { desc = "Open harpoon window" })
 		end,

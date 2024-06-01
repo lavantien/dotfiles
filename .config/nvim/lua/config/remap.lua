@@ -18,6 +18,7 @@ vim.keymap.set("i", "<C-c>", "<Esc>", { desc = "Escape" })
 vim.keymap.set("n", "Q", "<nop>", { desc = "Nope" })
 vim.keymap.set("t", "<C-]>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 vim.keymap.set("n", "<leader>pf", vim.lsp.buf.format, { desc = "Format current file" })
+vim.keymap.set("n", "<C-q>", "<cmd>cclose<CR>", { desc = "Close quickfix window" })
 vim.keymap.set("n", "<C-k>", "<cmd>cnext<CR>zz", { desc = "Next quickfix item" })
 vim.keymap.set("n", "<C-j>", "<cmd>cprev<CR>zz", { desc = "Previous quickfix item" })
 vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz", { desc = "Next POI location" })
@@ -119,7 +120,7 @@ vim.keymap.set("n", "<leader>at", builtin.lsp_type_definitions, { desc = "Browse
 ]]
 
 -- smartopen
-vim.keymap.set("n", "<C-t>", function()
+vim.keymap.set("n", "<C-x>", function()
 	require("telescope").extensions.smart_open.smart_open({
 		cwd_only = true,
 	})
@@ -169,10 +170,10 @@ end, { desc = "Go to 3rd Harpoon location" })
 vim.keymap.set("n", "<C-m>", function()
 	harpoon:list():select(4)
 end, { desc = "Go to 4th Harpoon location" })
-vim.keymap.set("n", "<C-S-P>", function()
+vim.keymap.set("n", "<C-A-P>", function()
 	harpoon:list():prev()
 end, { desc = "Go to next Harpoon location" })
-vim.keymap.set("n", "<C-S-N>", function()
+vim.keymap.set("n", "<C-A-N>", function()
 	harpoon:list():next()
 end, { desc = "Go to previous Harpoon location" })
 
