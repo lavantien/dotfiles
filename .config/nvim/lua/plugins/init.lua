@@ -257,53 +257,51 @@ return {
 				})
 			end
 			lsp_zero.on_attach(function(client, bufnr)
-				local opts = { buffer = bufnr, remap = false }
-
 				vim.keymap.set("n", "K", function()
 					vim.lsp.buf.hover()
-				end, opts)
+				end, { buffer = bufnr, remap = false, desc = "LSP display symbol information" })
 				vim.keymap.set("n", "gd", function()
 					vim.lsp.buf.definition()
-				end, opts)
+				end, { buffer = bufnr, remap = false, desc = "LSP go to definition" })
 				vim.keymap.set("n", "gD", function()
 					vim.lsp.buf.declaration()
-				end, opts)
+				end, { buffer = bufnr, remap = false, desc = "LSP go to declaration" })
 				vim.keymap.set("n", "gi", function()
 					vim.lsp.buf.implementation()
-				end, opts)
+				end, { buffer = bufnr, remap = false, desc = "LSP go to implementation" })
 				vim.keymap.set("n", "go", function()
 					vim.lsp.buf.type_definition()
-				end, opts)
+				end, { buffer = bufnr, remap = false, desc = "LSP go to type definition" })
 				vim.keymap.set("n", "gr", function()
 					vim.lsp.buf.references()
-				end, opts)
+				end, { buffer = bufnr, remap = false, desc = "LSP go to references" })
 				vim.keymap.set("n", "gs", function()
 					vim.lsp.buf.signature_help()
-				end, opts)
+				end, { buffer = bufnr, remap = false, desc = "LSP display signature help" })
 				vim.keymap.set("n", "<F2>", function()
 					vim.lsp.buf.rename()
-				end, opts)
+				end, { buffer = bufnr, remap = false, desc = "LSP rename symbol" })
 				vim.keymap.set({ "n", "x" }, "<F3>", function()
 					vim.lsp.buf.format({ async = true })
-				end, opts)
+				end, { buffer = bufnr, remap = false, desc = "LSP format file" })
 				vim.keymap.set("n", "<F4>", function()
 					vim.lsp.buf.code_action()
-				end, opts)
+				end, { buffer = bufnr, remap = false, desc = "LSP browse code actions" })
 				vim.keymap.set("n", "gl", function()
 					vim.diagnostic.open_float()
-				end, opts)
+				end, { buffer = bufnr, remap = false, desc = "LSP browse diagnostic in float" })
 				vim.keymap.set("n", "[d", function()
 					vim.diagnostic.goto_prev()
-				end, opts)
+				end, { buffer = bufnr, remap = false, desc = "LSP jump to previous diagnostic" })
 				vim.keymap.set("n", "]d", function()
 					vim.diagnostic.goto_next()
-				end, opts)
-				vim.keymap.set("i", "<C-g>", function()
+				end, { buffer = bufnr, remap = false, desc = "LSP jump to next diagnostic" })
+				vim.keymap.set("i", "<C-z>", function()
 					vim.lsp.buf.signature_help()
-				end, opts)
-				vim.keymap.set("n", "<C-g>", function()
+				end, { buffer = bufnr, remap = false, desc = "LSP display signature help" })
+				vim.keymap.set("n", "<C-S-Z>", function()
 					vim.lsp.buf.workspace_symbol()
-				end, opts)
+				end, { buffer = bufnr, remap = false, desc = "LSP browse workspace symbol" })
 
 				lsp_format_on_save(bufnr)
 			end)
@@ -563,6 +561,7 @@ return {
 	{ -- Fuzzy Picker
 		"nvim-telescope/telescope.nvim",
 		dependencies = { "nvim-lua/plenary.nvim" },
+		opts = {},
 	},
 
 	{ -- Smart Open
@@ -690,13 +689,20 @@ return {
 					{ mode = "x", keys = "z" },
 				},
 				clues = {
-					-- Enhance this by adding descriptions for <Leader> mapping groups
 					miniclue.gen_clues.builtin_completion(),
 					miniclue.gen_clues.g(),
 					miniclue.gen_clues.marks(),
 					miniclue.gen_clues.registers(),
 					miniclue.gen_clues.windows(),
 					miniclue.gen_clues.z(),
+				},
+				window = {
+					config = {
+						width = "auto",
+					},
+					delay = 1000,
+					scroll_down = "<C-d>",
+					scroll_up = "<C-u>",
 				},
 			})
 			local hipatterns = require("mini.hipatterns")
@@ -922,13 +928,36 @@ return {
 
 	{ -- Refactoring
 		"ThePrimeagen/refactoring.nvim",
+		config = function()
+			require("telescope").load_extension("refactoring")
+		end,
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 			"nvim-treesitter/nvim-treesitter",
 		},
-		config = function()
-			require("refactoring").setup()
-		end,
+		opts = {
+			prompt_func_return_type = {
+				go = true,
+				java = true,
+				cpp = true,
+				c = true,
+				h = true,
+				hpp = true,
+				cxx = true,
+			},
+			prompt_func_param_type = {
+				go = true,
+				java = true,
+				cpp = true,
+				c = true,
+				h = true,
+				hpp = true,
+				cxx = true,
+			},
+			printf_statements = {},
+			print_var_statements = {},
+			show_success_message = true,
+		},
 	},
 
 	{ -- Disect Undo Tree

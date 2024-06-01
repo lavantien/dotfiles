@@ -27,13 +27,13 @@ npm i -g neovim && pip3 install neovim
 - Intellisense, Code Actions, Snippets, Debugging, Hints, Code Objects, Pin Headers, Display Statuses, Token Tree, Fuzzy Picker
 - Surround, Autotag, Improved Floating UIs, Inline Diagnostics, Inline Eval, Statusbar, Multifiles Jumper, Refactoring, Clues
 - Smart Folds, Autolint, Indentation Guides, Smart Help, Undo Tree, Git Integration, SQL/NoSQL Client, File Explorer, Cellular Automaton
-- Schemas Store, Pre-setup 3 themes - `Gruvbox`, `Tokyo Night`, `Pine Rose`
+- Optimized Keymaps, Schemas Store, Highlight Patterns, Pre-setup 3 themes - `Gruvbox`, `Tokyo Night`, `Pine Rose`
 
 ## Key Bindings
 
-- In Neovim Normal Mode, hit `:nmap` to see the list of all bindings
-- Or via Telescope `<leader>vk`, in this case, hit space and pressing `vk`
 - Key clue support, just hit any key and a popup will appear to guide you
+- Or via Telescope `<leader>vk`, in this case, hit space and pressing `vk`
+- In Neovim Normal Mode, hit `:nmap` to see the list of all bindings
 - Check `~/.config/nvim/lua/config/remap.lua` for detailed information
 
 ## Plugins List
