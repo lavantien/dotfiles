@@ -1,49 +1,64 @@
---[[ free keybinds: <leader>f, <leader>/, <leader>p ]]
--- TODO: add description to add keymaps and maybe making a keybinding table
+--[[ free keybinds: <leader>/, <leader>p, <leader>y ]]
+-- TODO: add description to all keymaps and maybe making a keybinding table
 
 -- global
 -- vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
-vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move down" })
-vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move up" })
-vim.keymap.set("n", "J", "mzJ`z")
-vim.keymap.set("n", "<C-d>", "<C-d>zz")
-vim.keymap.set("n", "<C-u>", "<C-u>zz")
-vim.keymap.set("n", "n", "nzzzv")
-vim.keymap.set("n", "N", "Nzzzv")
-vim.keymap.set("x", "<A-p>", [["_dP]])
-vim.keymap.set({ "n", "v" }, "<A-y>", [["+y]])
-vim.keymap.set("n", "<A-S-Y>", [["+Y]])
-vim.keymap.set({ "n", "v" }, "<A-d>", [["_d]])
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move text down" })
+vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move text up" })
+vim.keymap.set("n", "J", "mzJ`z", { desc = "Remove newline underneath" })
+vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = "Jump down half page and centering" })
+vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = "Jump up half page and centering" })
+vim.keymap.set("n", "n", "nzzzv", { desc = "Go to next match and centering" })
+vim.keymap.set("n", "N", "Nzzzv", { desc = "Go to previous match and centering" })
+vim.keymap.set("x", "<A-p>", [["_dP]], { desc = "Paste overwrite without yanking" })
+vim.keymap.set({ "n", "v" }, "<A-y>", [["+y]], { desc = "Yank to system clipboard" })
+vim.keymap.set("n", "<A-S-Y>", [["+Y]], { desc = "" })
+vim.keymap.set({ "n", "v" }, "<A-d>", [["_d]], { desc = "" })
 vim.keymap.set("i", "<C-c>", "<Esc>")
 vim.keymap.set("n", "Q", "<nop>")
 vim.keymap.set("t", "<C-]>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 -- vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
-vim.keymap.set("n", "<C-k>", "<cmd>cnext<CR>zz")
-vim.keymap.set("n", "<C-j>", "<cmd>cprev<CR>zz")
-vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz")
-vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz")
-vim.keymap.set("t", "<Esc>", "<C-\\><C-n>")
-vim.keymap.set("t", "<A-j>", "<C-\\><C-n><C-w>j")
-vim.keymap.set("t", "<A-k>", "<C-\\><C-n><C-w>k")
-vim.keymap.set("t", "<A-h>", "<C-\\><C-n><C-w>h")
-vim.keymap.set("t", "<A-l>", "<C-\\><C-n><C-w>l")
-vim.keymap.set("i", "<A-j>", "<C-\\><C-n><C-w>j")
-vim.keymap.set("i", "<A-k>", "<C-\\><C-n><C-w>k")
-vim.keymap.set("i", "<A-h>", "<C-\\><C-n><C-w>h")
-vim.keymap.set("i", "<A-l>", "<C-\\><C-n><C-w>l")
-vim.keymap.set("n", "<A-j>", "<C-w>j")
-vim.keymap.set("n", "<A-k>", "<C-w>k")
-vim.keymap.set("n", "<A-h>", "<C-w>h")
-vim.keymap.set("n", "<A-l>", "<C-w>l")
-vim.keymap.set("n", "<A-t>", "<C-w>t") -- and then use 'gt' to switch tabs
-vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
+vim.keymap.set("n", "<C-k>", "<cmd>cnext<CR>zz", { desc = "Next quickfix item" })
+vim.keymap.set("n", "<C-j>", "<cmd>cprev<CR>zz", { desc = "Previous quickfix item" })
+vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz", { desc = "Next POI location" })
+vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz", { desc = "Previous POI location" })
+vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { desc = "Escape terminal mode" })
+vim.keymap.set("t", "<A-j>", "<C-\\><C-n><C-w>j", { desc = "Jump to bottom pane" })
+vim.keymap.set("t", "<A-k>", "<C-\\><C-n><C-w>k", { desc = "Jump to top pane" })
+vim.keymap.set("t", "<A-h>", "<C-\\><C-n><C-w>h", { desc = "Jump to left pane" })
+vim.keymap.set("t", "<A-l>", "<C-\\><C-n><C-w>l", { desc = "Jump to right pane" })
+vim.keymap.set("i", "<A-j>", "<C-\\><C-n><C-w>j", { desc = "Jump to bottom pane" })
+vim.keymap.set("i", "<A-k>", "<C-\\><C-n><C-w>k", { desc = "Jump to top pane" })
+vim.keymap.set("i", "<A-h>", "<C-\\><C-n><C-w>h", { desc = "Jump to left pane" })
+vim.keymap.set("i", "<A-l>", "<C-\\><C-n><C-w>l", { desc = "Jump to right pane" })
+vim.keymap.set("n", "<A-j>", "<C-w>j", { desc = "Jump to bottom pane" })
+vim.keymap.set("n", "<A-k>", "<C-w>k", { desc = "Jump to top pane" })
+vim.keymap.set("n", "<A-h>", "<C-w>h", { desc = "Jump to right pane" })
+vim.keymap.set("n", "<A-l>", "<C-w>l", { desc = "Jump to right pane" })
+vim.keymap.set("n", "<A-t>", "<C-w>t", { desc = "Jump to top left pane" }) -- and then use 'gt' to switch tabs
+vim.keymap.set(
+	"n",
+	"<leader>s",
+	[[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]],
+	{ desc = "Concurrently replace all matching words" }
+)
 -- vim.keymap.set("n", "<leader>ex", "<cmd>!chmod +x %<CR>", { silent = true })
 
-vim.keymap.set("n", "<leader>il", "<cmd>e ~/.config/nvim/lua/plugins/init.lua<CR>")
+-- knowledgebase
+vim.keymap.set(
+	"n",
+	"<leader>ii",
+	"<cmd>e ~/.config/nvim/lua/plugins/init.lua<CR>",
+	{ desc = "Go to plugins init file" }
+)
+vim.keymap.set("n", "<leader>iq", "<cmd>e ~/notes/quick.md<CR>", { desc = "Go to plugins init file" })
+vim.keymap.set("n", "<leader>ic", "<cmd>e ~/notes/checklist.md<CR>", { desc = "Go personal quick note file" })
+vim.keymap.set("n", "<leader>it", "<cmd>e ~/notes/temp.md<CR>", { desc = "Go personal temp text file" })
+vim.keymap.set("n", "<leader>iw", "<cmd>e ~/notes/wiki.md<CR>", { desc = "Go personal wiki file" })
 
 -- cellularautomaton
-vim.keymap.set("n", "<leader>ir", "<cmd>CellularAutomaton make_it_rain<CR>")
-vim.keymap.set("n", "<leader>ig", "<cmd>CellularAutomaton game_of_life<CR>")
+vim.keymap.set("n", "<leader>ir", "<cmd>CellularAutomaton make_it_rain<CR>", { desc = "Run Make It Rain" })
+vim.keymap.set("n", "<leader>il", "<cmd>CellularAutomaton game_of_life<CR>", { desc = "Run Game of Life" })
 
 -- lsp
 --[[
@@ -62,16 +77,19 @@ gl: Show diagnostics in a floating window. See :help vim.diagnostic.open_float()
 ]d: Move to the next diagnostic. See :help vim.diagnostic.goto_next().
 C-g: Workspace Symbol.
 C-g: Signature Help in INSERT mode.
+<leader>th: Toggle Inline Hints.
+C-j: Previous snippet in INSERT mode.
+C-k: Next snippet or expand in INSERT mode.
 ]]
 
 -- telescope
 local builtin = require("telescope.builtin")
 vim.api.nvim_set_hl(0, "TelescopeNormal", { bg = "none" })
-vim.keymap.set("n", "<C-f>", function()
+vim.keymap.set("n", "<C-_>", function()
 	builtin.grep_string({ search = vim.fn.input("Grep > ") })
 end)
 vim.keymap.set("n", "<C-p>", builtin.find_files, {})
-vim.keymap.set("n", "<C-/>", builtin.current_buffer_fuzzy_find, {})
+vim.keymap.set("n", "<leader>f", builtin.current_buffer_fuzzy_find, {})
 vim.keymap.set("n", "<leader>vf", builtin.git_files, {})
 vim.keymap.set("n", "<leader>vh", builtin.help_tags, {})
 vim.keymap.set("n", "<leader>vp", builtin.commands, {})
@@ -102,10 +120,6 @@ vim.keymap.set("n", "<C-t>", function()
 	})
 end, { noremap = true, silent = true })
 
--- ufo
-vim.keymap.set("n", "zR", require("ufo").openAllFolds)
-vim.keymap.set("n", "zM", require("ufo").closeAllFolds)
-
 -- dap
 vim.keymap.set("n", "<F5>", require("dap").continue)
 vim.keymap.set("n", "<F6>", require("dap").step_over)
@@ -128,8 +142,34 @@ vim.keymap.set("n", "<leader>?", function()
 	require("dapui").eval(nil, { enter = true })
 end)
 
--- fugitive
-vim.keymap.set("n", "<leader>gs", vim.cmd.Git)
+-- harpoon
+local harpoon = require("harpoon")
+harpoon:setup()
+-- C-q: Open Harpoon Telescope window
+vim.keymap.set("n", "<leader>h", function()
+	harpoon:list():add()
+end)
+vim.keymap.set("n", "<C-z>", function()
+	harpoon.ui:toggle_quick_menu(harpoon:list())
+end)
+vim.keymap.set("n", "<C-a>", function()
+	harpoon:list():select(1)
+end)
+vim.keymap.set("n", "<C-s>", function()
+	harpoon:list():select(2)
+end)
+vim.keymap.set("n", "<C-n>", function()
+	harpoon:list():select(3)
+end)
+vim.keymap.set("n", "<C-m>", function()
+	harpoon:list():select(4)
+end)
+vim.keymap.set("n", "<C-S-P>", function()
+	harpoon:list():prev()
+end)
+vim.keymap.set("n", "<C-S-N>", function()
+	harpoon:list():next()
+end)
 
 -- refactoring
 vim.api.nvim_set_keymap(
@@ -183,31 +223,33 @@ vim.api.nvim_set_keymap(
 
 -- undotree
 vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle)
+-- fugitive
+vim.keymap.set("n", "<leader>gs", vim.cmd.Git)
 
--- harpoon
-local harpoon = require("harpoon")
-harpoon:setup()
-vim.keymap.set("n", "<leader>h", function()
-	harpoon:list():add()
-end)
-vim.keymap.set("n", "<C-z>", function()
-	harpoon.ui:toggle_quick_menu(harpoon:list())
-end)
-vim.keymap.set("n", "<C-a>", function()
-	harpoon:list():select(1)
-end)
-vim.keymap.set("n", "<C-s>", function()
-	harpoon:list():select(2)
-end)
-vim.keymap.set("n", "<C-n>", function()
-	harpoon:list():select(3)
-end)
-vim.keymap.set("n", "<C-m>", function()
-	harpoon:list():select(4)
-end)
-vim.keymap.set("n", "<C-S-P>", function()
-	harpoon:list():prev()
-end)
-vim.keymap.set("n", "<C-S-N>", function()
-	harpoon:list():next()
-end)
+-- ufo
+vim.keymap.set("n", "zR", require("ufo").openAllFolds)
+vim.keymap.set("n", "zM", require("ufo").closeAllFolds)
+
+-- file manager
+vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+vim.keymap.set("n", "<space>-", require("oil").toggle_float, { desc = "Open parent directory in floating window" })
+--[[
+keymaps = {
+    ["g?"] = "actions.show_help",
+    ["<CR>"] = "actions.select",
+    ["<C-s>"] = "actions.select_vsplit",
+    ["<C-h>"] = "actions.select_split",
+    ["<C-t>"] = "actions.select_tab",
+    ["<C-p>"] = "actions.preview",
+    ["<C-c>"] = "actions.close",
+    ["<C-l>"] = "actions.refresh",
+    ["-"] = "actions.parent",
+    ["_"] = "actions.open_cwd",
+    ["`"] = "actions.cd",
+    ["~"] = "actions.tcd",
+    ["gs"] = "actions.change_sort",
+    ["gx"] = "actions.open_external",
+    ["g."] = "actions.toggle_hidden",
+    ["g\\"] = "actions.toggle_trash",
+},
+]]

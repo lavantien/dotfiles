@@ -699,6 +699,18 @@ return {
 					miniclue.gen_clues.z(),
 				},
 			})
+			local hipatterns = require("mini.hipatterns")
+			hipatterns.setup({
+				highlighters = {
+					-- Highlight standalone 'FIXME', 'HACK', 'TODO', 'NOTE'
+					fixme = { pattern = "%f[%w]()FIXME()%f[%W]", group = "MiniHipatternsFixme" },
+					hack = { pattern = "%f[%w]()HACK()%f[%W]", group = "MiniHipatternsHack" },
+					todo = { pattern = "%f[%w]()TODO()%f[%W]", group = "MiniHipatternsTodo" },
+					note = { pattern = "%f[%w]()NOTE()%f[%W]", group = "MiniHipatternsNote" },
+					-- Highlight hex color strings (`#rrggbb`) using that color
+					hex_color = hipatterns.gen_highlighter.hex_color(),
+				},
+			})
 			--[[
 			local statusline = require 'mini.statusline'
 			statusline.setup { use_icons = vim.g.have_nerd_font }
@@ -866,6 +878,7 @@ return {
 			},
 			extensions = {
 				"lazy",
+				"fugitive",
 				"mason",
 				"nvim-dap-ui",
 				"oil",
@@ -948,26 +961,17 @@ return {
 		"kristijanhusak/vim-dadbod-ui",
 	},
 
-	{ -- File Handler
+	{ -- File Manager
 		"stevearc/oil.nvim",
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 		config = function()
 			require("oil").setup({
 				columns = { "icon" },
-				keymaps = {
-					["<C-h>"] = false,
-					["<M-h>"] = "actions.select_split",
-				},
+				keymaps = {},
 				view_options = {
 					show_hidden = true,
 				},
 			})
-
-			-- Open parent directory in current window
-			vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
-
-			-- Open parent directory in floating window
-			vim.keymap.set("n", "<space>-", require("oil").toggle_float)
 		end,
 	},
 
