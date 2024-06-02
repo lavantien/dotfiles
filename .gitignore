@@ -264,3 +264,4 @@ storage
 .local/share/snyk-ls
 .wine
 .semgrep
+.local/share/gh/extensions/gh-f

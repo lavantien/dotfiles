@@ -177,10 +177,10 @@ brew install gcc gh go lazygit fzf fd ripgrep bat tokei glow neovim hyperfine op
 
 ### 8. Setup your `Git` environment
 
-- For `gh`, run `gh auth login` and follow `HTTPS browser` instruction to setup `GitHub CLI`
+- For `gh`, [`gh-f`](https://github.com/gennaro-tedesco/gh-f), run `gh auth login` and follow `HTTPS browser` instruction to setup `GitHub CLI`
 
 ```bash
-git config --global http.postBuffer 524288000
+git config --global http.postBuffer 524288000 && gh extension install gennaro-tedesco/gh-f
 ```
 
 ### 9. Run `./git-clone-all $org_name` on `~/dev/personal` for cloning all of your repos
@@ -686,7 +686,7 @@ npm i -g neovim && pip3 install neovim
 
 - Fully support lua, go, javascript/typescript & vue, html/htmx & css/tailwind, python, c/cpp, rust, java, assembly, markdown, latex & typos, bash, make & cmake, json, yaml, toml, sql, protobuf, graphql, docker/compose, ci/cd, kubernetes/helm, ansible, opentofu
 - Intellisense, Code Actions, Snippets, Debugging, Hints, Code Objects, Pin Headers, Display Statuses, Token Tree, Fuzzy Picker
-- Surround, Autotag, Improved Floating UIs, Inline Diagnostics, Inline Eval, Statusbar, Multifiles Jumper, Refactoring, Clues
+- Surround, Autotag, Improved Floating UIs, Inline Diagnostics, Toggle Term, Inline Eval, Statusbar, Multifiles Jumper, Refactoring, Clues
 - Smart Folds, Autolint, Indentation Guides, Smart Help, Undo Tree, Git Integration, SQL/NoSQL Client, File Explorer, Cellular Automaton
 - Optimized Keymaps, Schemas Store, Highlight Patterns, Pre-setup 3 themes - `Gruvbox`, `Tokyo Night`, `Pine Rose`
 

@@ -25,8 +25,8 @@ plugins=(
 )
 
 source $ZSH/oh-my-zsh.sh
-source .zprofile
-source .aliases
+source ~/.zprofile
+source ~/.aliases
 
 # Default editor
 export EDITOR="nvim"

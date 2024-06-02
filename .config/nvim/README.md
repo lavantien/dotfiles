@@ -25,7 +25,7 @@ npm i -g neovim && pip3 install neovim
 
 - Fully support lua, go, javascript/typescript & vue, html/htmx & css/tailwind, python, c/cpp, rust, java, assembly, markdown, latex & typos, bash, make & cmake, json, yaml, toml, sql, protobuf, graphql, docker/compose, ci/cd, kubernetes/helm, ansible, opentofu
 - Intellisense, Code Actions, Snippets, Debugging, Hints, Code Objects, Pin Headers, Display Statuses, Token Tree, Fuzzy Picker
-- Surround, Autotag, Improved Floating UIs, Inline Diagnostics, Inline Eval, Statusbar, Multifiles Jumper, Refactoring, Clues
+- Surround, Autotag, Improved Floating UIs, Toggle Term, Inline Diagnostics, Inline Eval, Statusbar, Multifiles Jumper, Refactoring, Clues
 - Smart Folds, Autolint, Indentation Guides, Smart Help, Undo Tree, Git Integration, SQL/NoSQL Client, File Explorer, Cellular Automaton
 - Optimized Keymaps, Schemas Store, Highlight Patterns, Pre-setup 3 themes - `Gruvbox`, `Tokyo Night`, `Pine Rose`
 
@@ -39,7 +39,7 @@ npm i -g neovim && pip3 install neovim
 ## Plugins List
 
 <details>
-	<summary>Loaded (55)</summary>
+	<summary>Loaded (56)</summary>
 
 - cellular-automaton.nvim 0.26ms  start
 - cmp-buffer 0.11ms  nvim-cmp
