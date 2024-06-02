@@ -32,7 +32,6 @@ return {
 			{ "jay-babu/mason-nvim-dap.nvim" },
 			{ "leoluz/nvim-dap-go" },
 			{ "rcarriga/nvim-dap-ui" },
-			{ "folke/neodev.nvim", opts = {} },
 			{ "theHamsta/nvim-dap-virtual-text" },
 			{ "nvim-neotest/nvim-nio" },
 			{ "WhoIsSethDaniel/mason-tool-installer.nvim" },
@@ -343,9 +342,6 @@ return {
 			})
 
 			require("dapui").setup()
-			require("neodev").setup({
-				library = { plugins = { "nvim-dap-ui" }, types = true },
-			})
 			require("nvim-dap-virtual-text").setup()
 			require("dap-go").setup()
 			local dap, dapui = require("dap"), require("dapui")
@@ -548,6 +544,31 @@ return {
 				},
 			})
 		end,
+	},
+
+	{ -- Neovim Dev
+		{
+			"folke/lazydev.nvim",
+			ft = "lua",
+			opts = {
+				library = {
+					"LazyVim",
+					"/luvit-meta/library",
+					"nvim-dap-ui",
+				},
+			},
+		},
+		{ "Bilal2453/luvit-meta", lazy = true },
+		{ -- optional completion source for require statements and module annotations
+			"hrsh7th/nvim-cmp",
+			opts = function(_, opts)
+				opts.sources = opts.sources or {}
+				table.insert(opts.sources, {
+					name = "lazydev",
+					group_index = 0, -- set group index to 0 to skip loading LuaLS completions
+				})
+			end,
+		},
 	},
 
 	{ -- Pin Headers
