@@ -99,7 +99,7 @@ vim.keymap.set("n", "<leader>vq", builtin.quickfix, { desc = "Browse quickfix it
 vim.keymap.set("n", "<leader>vj", builtin.jumplist, { desc = "Browse jumplist global via Telescope" })
 vim.keymap.set("n", "<leader>ac", builtin.diagnostics, { desc = "Browse diagnostics items local via Telescope" })
 vim.keymap.set("n", "<leader>ar", builtin.lsp_references, { desc = "Browse LSP References via Telescope" })
-vim.keymap.set("n", "<leader>as", builtin.lsp_document_symbols, { desc = "Browse LSP References via Telescope" })
+vim.keymap.set("n", "<leader>as", builtin.lsp_document_symbols, { desc = "Browse LSP Document Symbols via Telescope" })
 vim.keymap.set(
 	"n",
 	"<leader>aw",
@@ -249,3 +249,6 @@ keymaps = {
     ["g\\"] = "actions.toggle_trash",
 },
 ]]
+
+-- rendermarkdown
+vim.keymap.set("n", "<leader>tr", require("render-markdown").toggle, { desc = "Toggle Render Markdown" })
