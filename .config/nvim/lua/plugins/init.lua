@@ -489,6 +489,79 @@ return {
 		end,
 	},
 
+	{ -- Testing Integration
+		"nvim-neotest/neotest",
+		dependencies = {
+			"nvim-neotest/nvim-nio",
+			"nvim-lua/plenary.nvim",
+			"antoinemadec/FixCursorHold.nvim",
+			"nvim-treesitter/nvim-treesitter",
+			"nvim-neotest/neotest-python",
+			"nvim-neotest/neotest-plenary",
+			"nvim-neotest/neotest-go",
+			"rouge8/neotest-rust",
+			"rcasia/neotest-bash",
+			"alfaix/neotest-gtest",
+			"nvim-neotest/neotest-jest",
+			"marilari88/neotest-vitest",
+		},
+		config = function()
+			local neotest_ns = vim.api.nvim_create_namespace("neotest")
+			vim.diagnostic.config({
+				virtual_text = {
+					format = function(diagnostic)
+						local message =
+							diagnostic.message:gsub("\n", " "):gsub("\t", " "):gsub("%s+", " "):gsub("^%s+", "")
+						return message
+					end,
+				},
+			}, neotest_ns)
+			require("neotest").setup({
+				adapters = {
+					require("neotest-go")({
+						experimental = {
+							test_table = true,
+						},
+						args = {
+							"-count=1",
+							"-timeout=60s",
+							"-race",
+							"-v",
+							"-cover",
+							"-covermode=count" --[[set to `atomic` if run parallel]],
+						},
+						recursive_run = true,
+					}),
+					require("neotest-rust")({
+						args = { "--no-capture" },
+						dap_adapter = "lldb",
+					}),
+					require("neotest-jest")({
+						jestCommand = "npm test --",
+						-- jestCommand = require("neotest-jest.jest-util").getJestCommand(vim.fn.expand("%:p:h"))
+						-- 	.. " --watch",
+						jestConfigFile = "custom.jest.config.ts",
+						env = { CI = true },
+						cwd = function(path)
+							return vim.fn.getcwd()
+						end,
+					}),
+					require("neotest-vitest")({
+						filter_dir = function(name, rel_path, root)
+							return name ~= "node_modules"
+						end,
+					}),
+					require("neotest-gtest").setup({}),
+					require("neotest-python")({
+						dap = { justMyCode = false },
+					}),
+					require("neotest-plenary"),
+					require("neotest-bash"),
+				},
+			})
+		end,
+	},
+
 	{ -- Code Objects
 		"nvim-treesitter/nvim-treesitter",
 		dependencies = { "windwp/nvim-ts-autotag" },
@@ -561,6 +634,7 @@ return {
 					"LazyVim",
 					"/luvit-meta/library",
 					"nvim-dap-ui",
+					"neotest",
 				},
 			},
 		},
@@ -899,7 +973,9 @@ return {
 		opts = {},
 	},
 
-	{
+	{ -- Git Integration
+		"sindrets/diffview.nvim",
+		"lewis6991/gitsigns.nvim",
 		"tpope/vim-fugitive",
 		config = function()
 			local Fugitive = vim.api.nvim_create_augroup("Fugitive", {})
@@ -1016,10 +1092,6 @@ return {
 
 	{ -- Disect Undo Tree
 		"mbbill/undotree",
-	},
-
-	{ -- Git Integration
-		"lewis6991/gitsigns.nvim",
 	},
 
 	{ -- LaTeX
