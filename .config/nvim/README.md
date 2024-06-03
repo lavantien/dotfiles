@@ -6,7 +6,7 @@
 - Neovim Deps:
 
 ```bash
-npm i -g neovim && pip3 install neovim
+npm i -g neovim && mkdir -p ~/notes
 ```
 
 - If you're on Windows you need to

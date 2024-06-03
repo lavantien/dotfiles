@@ -53,9 +53,10 @@ vim.keymap.set(
 	"<cmd>e ~/.config/nvim/lua/plugins/init.lua<CR>",
 	{ desc = "Go to plugins init file" }
 )
-vim.keymap.set("n", "<leader>iq", "<cmd>e ~/notes/quick.md<CR>", { desc = "Go to plugins init file" })
-vim.keymap.set("n", "<leader>ic", "<cmd>e ~/notes/checklist.md<CR>", { desc = "Go personal quick note file" })
+vim.keymap.set("n", "<leader>iq", "<cmd>e ~/notes/quick.md<CR>", { desc = "Go to personal quick note file" })
+vim.keymap.set("n", "<leader>ic", "<cmd>e ~/notes/checklist.md<CR>", { desc = "Go personal checklist file" })
 vim.keymap.set("n", "<leader>it", "<cmd>e ~/notes/temp.md<CR>", { desc = "Go personal temp text file" })
+vim.keymap.set("n", "<leader>ij", "<cmd>e ~/notes/journal.md<CR>", { desc = "Go personal journal file" })
 vim.keymap.set("n", "<leader>iw", "<cmd>e ~/notes/wiki.md<CR>", { desc = "Go personal wiki file" })
 
 -- cellularautomaton
@@ -143,9 +144,15 @@ end, { desc = "Debug set breakpoint condition" })
 vim.keymap.set("n", "<leader>ap", function()
 	require("dap").set_breakpoint(nil, nil, vim.fn.input("Log point message: "))
 end, { desc = "Debug set log point message" })
-vim.keymap.set("n", "<leader>E", require("dap").repl.open, { desc = "Debug open REPL" })
-vim.keymap.set("n", "<leader>e", require("dap-go").debug_test, { desc = "Debug golang test" })
-vim.keymap.set("n", "<leader>?", function()
+vim.keymap.set(
+	"n",
+	"<leader>el",
+	require("dap").run_last,
+	{ desc = "Create a new window & buffer to evaluate expressions" }
+)
+vim.keymap.set("n", "<leader>er", require("dap").repl.open, { desc = "Debug open REPL" })
+vim.keymap.set("n", "<leader>et", require("dap-go").debug_test, { desc = "Debug golang test" })
+vim.keymap.set("n", "<leader>ee", function()
 	require("dapui").eval(nil, { enter = true })
 end, { desc = "Debug evaluate expression" })
 
