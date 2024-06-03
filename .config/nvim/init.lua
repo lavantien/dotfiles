@@ -11,7 +11,31 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+local _border = "rounded"
+
 require("config.set")
-require("lazy").setup("plugins")
+require("lazy").setup("plugins", {
+	ui = {
+		border = _border,
+	},
+})
 require("config.remap")
 require("config.features")
+
+vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
+	border = _border,
+})
+vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
+	border = _border,
+})
+vim.diagnostic.config({
+	float = { border = _border },
+})
+require("lspconfig.ui.windows").default_options = {
+	border = _border,
+}
+require("mason").setup({
+	ui = {
+		border = _border,
+	},
+})
