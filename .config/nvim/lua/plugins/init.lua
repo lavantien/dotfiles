@@ -504,6 +504,7 @@ return {
 			"alfaix/neotest-gtest",
 			"nvim-neotest/neotest-jest",
 			"marilari88/neotest-vitest",
+			"stevanmilic/neotest-scala",
 		},
 		config = function()
 			local neotest_ns = vim.api.nvim_create_namespace("neotest")
@@ -551,6 +552,10 @@ return {
 							return name ~= "node_modules"
 						end,
 					}),
+					require("neotest-scala")({
+						runner = "sbt",
+						framework = "scalatest",
+					}),
 					require("neotest-gtest").setup({}),
 					require("neotest-python")({
 						dap = { justMyCode = false },
@@ -559,6 +564,67 @@ return {
 					require("neotest-bash"),
 				},
 			})
+		end,
+	},
+
+	{
+		"scalameta/nvim-metals",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			{
+				"mfussenegger/nvim-dap",
+				config = function(self, opts)
+					local dap = require("dap")
+					dap.configurations.scala = {
+						{
+							type = "scala",
+							request = "launch",
+							name = "RunOrTest",
+							metals = {
+								runType = "runOrTestFile",
+								--args = { "firstArg", "secondArg", "thirdArg" }, -- here just as an example
+							},
+						},
+						{
+							type = "scala",
+							request = "launch",
+							name = "Test Target",
+							metals = {
+								runType = "testTarget",
+							},
+						},
+					}
+				end,
+			},
+		},
+		ft = {
+			"scala",
+			"sbt",
+			-- "java", -- use LSP's for now
+		},
+		opts = function()
+			local metals_config = require("metals").bare_config()
+			metals_config.settings = {
+				showImplicitArguments = true,
+				excludedPackages = { "akka.actor.typed.javadsl", "com.github.swagger.akka.javadsl" },
+			}
+			metals_config.init_options.statusBarProvider = "off" -- use fidget
+			metals_config.capabilities = require("cmp_nvim_lsp").default_capabilities()
+			metals_config.on_attach = function(client, bufnr)
+				require("metals").setup_dap()
+			end
+			return metals_config
+		end,
+		config = function(self, metals_config)
+			local nvim_metals_group = vim.api.nvim_create_augroup("nvim-metals", { clear = true })
+			vim.api.nvim_create_autocmd("FileType", {
+				pattern = self.ft,
+				callback = function()
+					require("metals").initialize_or_attach(metals_config)
+				end,
+				group = nvim_metals_group,
+			})
+			require("telescope").load_extension("metals")
 		end,
 	},
 
@@ -603,6 +669,7 @@ return {
 					"python",
 					"query",
 					"rust",
+					"scala",
 					"scss",
 					"sql",
 					"toml",
@@ -924,17 +991,25 @@ return {
 		opts = {},
 		config = function()
 			require("rose-pine").setup({
-				disable_background = true,
-				disable_float_background = true,
+				variant = "main",
+				dark_variant = "main",
+				enable = {
+					legacy_highlights = false,
+				},
+				styles = {
+					transparency = true,
+				},
+				-- disable_background = true,
+				-- disable_float_background = true,
 			})
-			function ColorMyPencils(color)
-				color = color or "rose-pine"
-				vim.cmd.colorscheme(color)
-				vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
-				vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
-			end
-
-			ColorMyPencils()
+			vim.cmd.colorscheme("rose-pine")
+			-- function ColorMyPencils(color)
+			-- 	color = color or "rose-pine"
+			-- 	vim.cmd.colorscheme(color)
+			-- 	vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+			-- 	vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+			-- end
+			-- ColorMyPencils()
 		end,
 	},
 
