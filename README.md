@@ -172,7 +172,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ### 7. Install `gcc`, `gh`, `neovim`, and other necessary `Brew` packages
 
 ```bash
-brew install gcc gh go lazygit fzf fd ripgrep bat tokei glow neovim openjdk ruby lua maven node gopls rust-analyzer jdtls lua-language-server typescript-language-server marksman texlab yaml-language-server bash-language-server opentofu terraform-ls sql-language-server sqlfluff prettier delve vscode-langservers-extracted loc llvm dotenv-linter checkmake luarocks pkg-config mpv macchina cmake-language-server python-lsp-server sql-language-server sql-lint gomodifytags golangci-lint hyperfine
+brew install gcc gh go lazygit fzf fd ripgrep bat tokei glow neovim openjdk ruby coursier lua maven node gopls rust-analyzer jdtls lua-language-server typescript-language-server marksman texlab yaml-language-server bash-language-server opentofu terraform-ls sql-language-server sqlfluff prettier delve vscode-langservers-extracted loc llvm dotenv-linter checkmake luarocks pkg-config mpv macchina cmake-language-server python-lsp-server sql-language-server sql-lint gomodifytags golangci-lint hyperfine
 ```
 
 ### 8. Setup your `Git` environment

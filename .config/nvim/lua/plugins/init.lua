@@ -899,7 +899,17 @@ return {
 	{ -- Indentation Guides
 		"lukas-reineke/indent-blankline.nvim",
 		main = "ibl",
-		opts = {},
+		opts = {
+			indent = {
+				char = "┊",
+				priority = 2,
+				-- highlight = { "Function", "Label" },
+			},
+			scope = {
+				enabled = true,
+				priority = 500,
+			},
+		},
 	},
 
 	{ -- Improved Floating UIs
@@ -971,17 +981,19 @@ return {
 	},
 	]]
 
-	-- { -- Theme Gruvbox
-	-- 	"ellisonleao/gruvbox.nvim",
-	-- 	priority = 1000,
-	-- 	config = function()
-	-- 		require("gruvbox").setup({
-	-- 			transparent_mode = true,
-	-- 		})
-	-- 		vim.cmd.colorscheme("gruvbox")
-	-- 	end,
-	-- 	opts = ...,
-	-- },
+	--[[
+	{ -- Theme Gruvbox
+		"ellisonleao/gruvbox.nvim",
+		priority = 1000,
+		config = function()
+			require("gruvbox").setup({
+				transparent_mode = true,
+			})
+			vim.cmd.colorscheme("gruvbox")
+		end,
+		opts = ...,
+	},
+    ]]
 
 	{ -- Theme Rose Pine
 		"rose-pine/neovim",
