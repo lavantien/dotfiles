@@ -1060,9 +1060,15 @@ return {
 
 	{ -- Git Integration
 		"sindrets/diffview.nvim",
-		"lewis6991/gitsigns.nvim",
+		{
+			"lewis6991/gitsigns.nvim",
+			config = function()
+				require("gitsigns").setup()
+			end,
+		},
 		"tpope/vim-fugitive",
 		config = function()
+			require("gitsigns").setup()
 			local Fugitive = vim.api.nvim_create_augroup("Fugitive", {})
 			local autocmd = vim.api.nvim_create_autocmd
 			autocmd("BufWinEnter", {
@@ -1073,10 +1079,12 @@ return {
 						return
 					end
 					local bufnr = vim.api.nvim_get_current_buf()
-					local opts = { buffer = bufnr, remap = false }
+					local opts = { buffer = bufnr, remap = false, desc = "" }
+					opts.desc = "Git push"
 					vim.keymap.set("n", "<leader>p", function()
 						vim.cmd.Git("push")
 					end, opts)
+					opts.desc = "Git pull rebase"
 					vim.keymap.set("n", "<leader>P", function()
 						vim.cmd.Git({ "pull", "--rebase" })
 					end, opts)
