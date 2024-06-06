@@ -1122,7 +1122,14 @@ return {
 		opts = {},
 		dependencies = {
 			"MunifTanjim/nui.nvim",
-			"rcarriga/nvim-notify", -- remove this to use mini fallback
+			{
+				"rcarriga/nvim-notify", -- remove this to use mini fallback
+				config = function()
+					require("notify").setup({
+						background_colour = "#000000",
+					})
+				end,
+			},
 		},
 		config = function()
 			require("telescope").load_extension("noice")
