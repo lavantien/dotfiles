@@ -686,7 +686,7 @@ cargo install coreutils && npm i -g neovim && mkdir -p ~/notes
 
 - Fully support lua, go, javascript/typescript & vue, html/htmx & css/tailwind, python, c/cpp, rust, java, scala, assembly, markdown, latex & typos, bash, make & cmake, json, yaml, toml, sql, protobuf, graphql, docker/compose, ci/cd, kubernetes/helm, ansible, opentofu
 - Intellisense, Code Actions, Debugging, Testing, Diff View, Snippets, Hints, Code Objects, Pin Headers, Display Statuses, Token Tree, Fuzzy Picker
-- Surround, Autotag, Improved Floating UIs, Toggle Term, Inline Diagnostics, Inline Eval, Statusbar, Multifiles Jumper, Refactoring, Clues
+- Surround, Autotag, Improved Floating UIs, Toggle Term, Notifications, Inline Diagnostics, Inline Eval, Statusbar, Multifiles Jumper, Refactoring, Clues
 - Smart Folds, Autolint, Notes Taking, Indentation Guides, Smart Help, Undo Tree, Git Integration, SQL/NoSQL Client, File Explorer, Cellular Automaton
 - Optimized Keymaps, Schemas Store, Highlight Patterns, Pre-setup 3 themes - `Gruvbox`, `Tokyo Night`, `Pine Rose`
 
@@ -700,80 +700,83 @@ cargo install coreutils && npm i -g neovim && mkdir -p ~/notes
 ### Plugins List
 
 <details>
-	<summary>Loaded (72)</summary>
+	<summary>Loaded (75)</summary>
 
-- cellular-automaton.nvim 0.46ms  start
-- cmp-buffer 0.43ms  nvim-cmp
-- cmp-cmdline 0.47ms  nvim-cmp
-- cmp-nvim-lsp 0.38ms  nvim-cmp
-- cmp-nvim-lsp-signature-help 0.5ms  nvim-cmp
-- cmp-path 0.44ms  nvim-cmp
-- cmp_luasnip 0.08ms  nvim-cmp
-- diffview.nvim 3.05ms  start
-- dressing.nvim 2.63ms  start
-- fidget.nvim 4.78ms  lsp-zero.nvim
-- FixCursorHold.nvim 2.11ms  neotest
-- friendly-snippets 0.6ms  LuaSnip
-- gitsigns.nvim 1.63ms  start
-- harpoon 6.21ms  start
-- indent-blankline.nvim 3.56ms  start
-- lazy.nvim 3110.27ms  init.lua
-- lsp-zero.nvim 154.78ms  start
-- lspkind.nvim 0.37ms  nvim-cmp
-- lualine.nvim 13.04ms  start
-- LuaSnip 8.31ms  nvim-cmp
-- mason-lspconfig.nvim 0.09ms  lsp-zero.nvim
-- mason-null-ls.nvim 0.86ms  lsp-zero.nvim
-- mason-nvim-dap.nvim 0.09ms  lsp-zero.nvim
-- mason-tool-installer.nvim 3.66ms  lsp-zero.nvim
-- mason.nvim 3.15ms  lsp-zero.nvim
-- mini.nvim 4.88ms  start
-- neotest 72.92ms  start
-- neotest-bash 1.86ms  neotest
-- neotest-go 1.85ms  neotest
-- neotest-gtest 2.12ms  neotest
-- neotest-jest 1.9ms  neotest
-- neotest-plenary 1.98ms  neotest
-- neotest-python 1.77ms  neotest
-- neotest-rust 1.83ms  neotest
-- neotest-scala 1.92ms  neotest
-- neotest-vitest 1.89ms  neotest
-- none-ls.nvim 0.83ms  lsp-zero.nvim
-- nvim-cmp 15.66ms  start
-- nvim-dap 3.11ms  lsp-zero.nvim
-- nvim-dap-go 1.03ms  lsp-zero.nvim
-- nvim-dap-ui 0.99ms  lsp-zero.nvim
-- nvim-dap-virtual-text 1.09ms  lsp-zero.nvim
-- nvim-lspconfig 0.48ms 󰢱 lspconfig  nvim-ufo
-- nvim-nio 1.03ms  lsp-zero.nvim
-- nvim-treesitter 52.33ms 󰢱 nvim-treesitter.parsers  playground
-- nvim-treesitter-context 2.09ms  start
-- nvim-ts-autotag 7.26ms  nvim-treesitter
-- nvim-ufo 11.71ms  start
-- nvim-web-devicons 1.48ms  oil.nvim
-- oil.nvim 4.26ms  start
-- playground 55.67ms  start
-- plenary.nvim 1.56ms  telescope.nvim
-- promise-async 0.66ms  nvim-ufo
-- refactoring.nvim 9.51ms  start
-- render-markdown 8.66ms  start
-- rose-pine 4.57ms  start
-- SchemaStore.nvim 0.1ms  lsp-zero.nvim
+- cellular-automaton.nvim 0.36ms  start
+- cmp-buffer 0.4ms  nvim-cmp
+- cmp-cmdline 0.43ms  nvim-cmp
+- cmp-nvim-lsp 0.31ms  nvim-cmp
+- cmp-nvim-lsp-signature-help 0.54ms  nvim-cmp
+- cmp-path 0.42ms  nvim-cmp
+- cmp_luasnip 0.14ms  nvim-cmp
+- diffview.nvim 1.99ms  start
+- dressing.nvim 2.22ms  start
+- fidget.nvim 4.05ms  lsp-zero.nvim
+- FixCursorHold.nvim 2.01ms  neotest
+- friendly-snippets 0.59ms  LuaSnip
+- gitsigns.nvim 3.68ms  start
+- harpoon 4.83ms  start
+- indent-blankline.nvim 5.07ms  start
+- lazy.nvim 4.36ms  init.lua
+- lsp-zero.nvim 149.49ms  start
+- lspkind.nvim 0.32ms  nvim-cmp
+- lualine.nvim 11.01ms  start
+- LuaSnip 6.59ms  nvim-cmp
+- mason-lspconfig.nvim 0.12ms  lsp-zero.nvim
+- mason-null-ls.nvim 1.28ms  lsp-zero.nvim
+- mason-nvim-dap.nvim 0.24ms  lsp-zero.nvim
+- mason-tool-installer.nvim 5.26ms  lsp-zero.nvim
+- mason.nvim 4.23ms  lsp-zero.nvim
+- mini.nvim 4.23ms  start
+- neotest 43.79ms  start
+- neotest-bash 1.76ms  neotest
+- neotest-go 1.72ms  neotest
+- neotest-gtest 1.99ms  neotest
+- neotest-jest 1.91ms  neotest
+- neotest-plenary 1.7ms  neotest
+- neotest-python 1.69ms  neotest
+- neotest-rust 1.74ms  neotest
+- neotest-scala 1.98ms  neotest
+- neotest-vitest 1.88ms  neotest
+- noice.nvim 7.96ms 󰢱 noice  config.remap
+- none-ls.nvim 1.26ms  lsp-zero.nvim
+- nui.nvim 2.27ms  noice.nvim
+- nvim-cmp 14.6ms  start
+- nvim-dap 3.97ms  lsp-zero.nvim
+- nvim-dap-go 1.35ms  lsp-zero.nvim
+- nvim-dap-ui 1.29ms  lsp-zero.nvim
+- nvim-dap-virtual-text 1.32ms  lsp-zero.nvim
+- nvim-lspconfig 0.46ms 󰢱 lspconfig  nvim-ufo
+- nvim-nio 1.34ms  lsp-zero.nvim
+- nvim-notify 2.03ms  noice.nvim
+- nvim-treesitter 19.61ms  render-markdown
+- nvim-treesitter-context 1.9ms  start
+- nvim-ts-autotag 4.87ms  nvim-treesitter
+- nvim-ufo 7.26ms  start
+- nvim-web-devicons 1.18ms  lualine.nvim
+- oil.nvim 2.67ms  start
+- playground 3.53ms  start
+- plenary.nvim 0.96ms  refactoring.nvim
+- promise-async 1.09ms  nvim-ufo
+- refactoring.nvim 11.49ms  start
+- render-markdown 25.1ms  start
+- rose-pine 3.91ms  start
+- SchemaStore.nvim 0.12ms  lsp-zero.nvim
 - smart-open.nvim 15.67ms  start
-- sqlite.lua 1.49ms  smart-open.nvim
-- telescope-fzf-native.nvim 1.5ms  smart-open.nvim
-- telescope-fzy-native.nvim 1.37ms  smart-open.nvim
-- telescope.nvim 11.16ms  start
-- undotree 1.8ms  start
-- vim-dadbod 0.59ms  start
-- vim-dadbod-completion 0.42ms  start
-- vim-dadbod-ui 1.6ms  start
-- vim-fugitive 1.67ms  start
-- vimtex 0.73ms  start
+- sqlite.lua 1.56ms  smart-open.nvim
+- telescope-fzf-native.nvim 1.69ms  smart-open.nvim
+- telescope-fzy-native.nvim 1.72ms  smart-open.nvim
+- telescope.nvim 4.42ms 󰢱 telescope  refactoring.nvim
+- undotree 1.19ms  start
+- vim-dadbod 0.46ms  start
+- vim-dadbod-completion 1.21ms  start
+- vim-dadbod-ui 2.05ms  start
+- vim-fugitive 2.34ms  start
+- vimtex 0.56ms  start
 - lazydev.nvim  lua
 - luvit-meta
-- nvim-metals  sbt  scala
-- trouble.nvim  <leader>cd  <leader>cc  <leader>cs  <leader>ca  <leader>ce
+- nvim-metals  scala  sbt
+- trouble.nvim  <leader>ca  <leader>cc  <leader>cs  <leader>cd  <leader>ce
 
 </details>
 
