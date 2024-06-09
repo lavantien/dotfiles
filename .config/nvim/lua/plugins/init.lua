@@ -135,7 +135,11 @@ return {
 
 					-- latex & typos
 					"texlab",
-					"typos_lsp",
+					typos_lsp = {
+						init_options = {
+							config = "~/typos.toml",
+						},
+					},
 
 					-- bash
 					"bashls",

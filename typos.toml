@@ -1,0 +1,10 @@
+[default.extend-words]
+neet = "neet"
+NEET = "NEET"
+OT = "OT"
+ETCC = "ETCC"
+OLL = "OLL"
+CLL = "CLL"
+Yau = "Yau"
+
+[default.extend-identifiers]
