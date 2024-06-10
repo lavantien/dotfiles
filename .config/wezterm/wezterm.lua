@@ -24,6 +24,12 @@ config.color_scheme = "rose-pine"
 -- config.color_scheme = "GruvboxDarkHard"
 config.window_decorations = "NONE"
 config.hide_tab_bar_if_only_one_tab = true
+config.window_padding = {
+	left = 0,
+	right = 0,
+	top = 0,
+	bottom = 0,
+}
 
 local dimmer = { brightness = 0.020 }
 local bg_path = wezterm.home_dir .. "/assets"

@@ -347,12 +347,12 @@ vim.keymap.set("c", "<S-Enter>", function()
 	noice.redirect(vim.fn.getcmdline())
 end, { desc = "Redirect Cmdline" })
 vim.keymap.set({ "n", "i", "s" }, "<c-f>", function()
-	if not noice.scroll(4) then
+	if not require("noice.lsp").scroll(4) then
 		return "<c-f>"
 	end
 end, { silent = true, expr = true, desc = "LSP hover doc scroll up" })
 vim.keymap.set({ "n", "i", "s" }, "<c-b>", function()
-	if not noice.scroll(-4) then
+	if not require("noice.lsp").scroll(-4) then
 		return "<c-b>"
 	end
 end, { silent = true, expr = true, desc = "LSP hover doc scroll down" })

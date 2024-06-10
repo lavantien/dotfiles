@@ -15,6 +15,21 @@ if [[ ${OS} == "WSL2" ]]; then
 fi
 echo ${OS};
 
+# Ripgrep-all and fzf integration
+rga-fzf() {
+	RG_PREFIX="rga --files-with-matches"
+	local file
+	file="$(
+		FZF_DEFAULT_COMMAND="$RG_PREFIX '$1'" \
+			fzf --sort --preview="[[ ! -z {} ]] && rga --pretty --context 5 {q} {}" \
+				--phony -q "$1" \
+				--bind "change:reload:$RG_PREFIX {q}" \
+				--preview-window="70%:wrap"
+	)" &&
+	echo "opening $file" &&
+	xdg-open "$file"
+}
+
 # Start of zshrc
 export ZSH="$HOME/.oh-my-zsh"
 
@@ -45,6 +60,6 @@ export HOMEBREW_VERBOSE=1
 # Go
 export PATH="$PATH:$(go env GOPATH)/bin"
 
-# GRPC
+# GRPC and other local bins
 export PATH="$PATH:$HOME/.local/bin"
 

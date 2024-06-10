@@ -3,13 +3,17 @@
 ## Install
 
 - Git, GH CLI, Neovim, GCC/LLVM-Clang, Go, NodeJS, Python3, Rust, Lua, Java, Coursier/Scala, SQLite, Docker, K8s, OpenTf
-- Neovim Deps:
+- Neovim Deps; then [integrate the two](https://github.com/phiresky/ripgrep-all/wiki/fzf-Integration), put the file in `~/.local/bin` and add the folder to `PATH`
 
 ```bash
 cargo install coreutils && npm i -g neovim && mkdir -p ~/notes
 ```
 
-- If you're on Windows you need to
+```bash
+go install github.com/theredditbandit/pman@latest && pman completion zsh
+```
+
+- If you're on `Windows` you need to
   - remove `make install_jsregexp` from `luasnip` build config
   - remove `checkmake`, `luacheck`, `semgrep`, `ansible-lint`, or other packages that don't support Windows from `mason-tools-installer` list
   - set the `HOME` environment variable to `C:\Users\<name>`
@@ -17,6 +21,8 @@ cargo install coreutils && npm i -g neovim && mkdir -p ~/notes
   - add to `PATH` this value `C:\Users\<name>\AppData\Local\nvim-data\mason\bin`
   - install [sqlite3](https://gist.github.com/zeljic/d8b542788b225b1bcb5fce169ee28c55), rename `sqlite3.dll` to `libsqlite3.dll` and `sqlite3.lib` to `libsqlite3.lib`, and add its location to`PATH`
   - Install [coursier/scala](https://www.scala-lang.org/download/)
+  - `rustup toolchain install nightly-x86_64-pc-windows-msvc`, `cargo install eza just broot`, `cargo +nightly install dua-cli`; `choco install ripgrep fzf rsync`, `pman completion powershell`, all these for cli navigation and projects management
+  - Install additional packages yourself if there are something missing, Windows is a hot mess, that's all
 - Run `nvim` the first time and wait for it to auto initialize plugins, then press `S` to sync packages
 - Run `:MasonUpdate` to install all registries, then `:Mason` and press `U` if there's any update
 - All language `servers`, `linters`, and `treesitters` are pre-installed when you first initialize Neovim
@@ -123,7 +129,7 @@ cargo install coreutils && npm i -g neovim && mkdir -p ~/notes
 ## Languages Packages List
 
 <details>
-	<summary>Installed (69)</summary>
+	<summary>Installed (71)</summary>
 
 ```lua
 -- lua
@@ -190,12 +196,18 @@ cargo install coreutils && npm i -g neovim && mkdir -p ~/notes
 
 -- latex & typos
 "texlab",
-"typos_lsp",
+typos_lsp = {
+    init_options = {
+        config = "~/typos.toml",
+    },
+},
 
--- bash
+-- shell
 "bashls",
+"powershell_es",
 "shellcheck",
 "shfmt",
+"beautysh",
 "bash-debug-adapter",
 
 -- make & cmake

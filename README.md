@@ -1,4 +1,4 @@
-# A robust Dotfiles for Developer - Ubuntu & Neovim - Battery Included
+# A robust Dotfiles fgr Developer - Ubuntu & Neovim - Battery Included
 
 - Quality Assurance: **100%**; Demonstration video: <https://youtu.be/a28SZdUkpKw>
 - Supported: **AMD** & **Intel** (Wayland), **NVIDIA** (auto X11), **Windows** (Neovim)
@@ -172,7 +172,11 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ### 7. Install `gcc`, `gh`, `neovim`, and other necessary `Brew` packages
 
 ```bash
-brew install gcc gh go lazygit fzf fd ripgrep bat tokei glow neovim openjdk ruby coursier lua maven node gopls rust-analyzer jdtls lua-language-server typescript-language-server marksman texlab yaml-language-server bash-language-server opentofu terraform-ls sql-language-server sqlfluff prettier delve vscode-langservers-extracted loc llvm dotenv-linter checkmake luarocks pkg-config mpv macchina cmake-language-server python-lsp-server sql-language-server sql-lint gomodifytags golangci-lint hyperfine
+brew install coreutils gcc gh go lazygit fzf fd ripgrep bat tokei glow ripgrep-all pandoc poppler ffmpeg eza navi broot just exiftool fdupes procs rsync neovim openjdk ruby coursier lua maven node gopls rust-analyzer jdtls lua-language-server typescript-language-server marksman texlab yaml-language-server bash-language-server opentofu terraform-ls sql-language-server sqlfluff prettier delve vscode-langservers-extracted loc llvm dotenv-linter checkmake luarocks pkg-config mpv macchina cmake-language-server python-lsp-server sql-language-server sql-lint gomodifytags golangci-lint hyperfine zoxide
+```
+
+```bash
+zoxide init zsh
 ```
 
 ### 8. Setup your `Git` environment
@@ -664,13 +668,17 @@ hx --health
 ### Install
 
 - Git, GH CLI, Neovim, GCC/LLVM-Clang, Go, NodeJS, Python3, Rust, Lua, Java, Coursier/Scala, SQLite, Docker, K8s, OpenTf
-- Neovim Deps:
+- Neovim Deps; then [integrate the two](https://github.com/phiresky/ripgrep-all/wiki/fzf-Integration), put the file in `~/.local/bin` and add the folder to `PATH`
 
 ```bash
 cargo install coreutils && npm i -g neovim && mkdir -p ~/notes
 ```
 
-- If you're on Windows you need to
+```bash
+go install github.com/theredditbandit/pman@latest && pman completion zsh
+```
+
+- If you're on `Windows` you need to
   - remove `make install_jsregexp` from `luasnip` build config
   - remove `checkmake`, `luacheck`, `semgrep`, `ansible-lint`, or other packages that don't support Windows from `mason-tools-installer` list
   - set the `HOME` environment variable to `C:\Users\<name>`
@@ -678,6 +686,8 @@ cargo install coreutils && npm i -g neovim && mkdir -p ~/notes
   - add to `PATH` this value `C:\Users\<name>\AppData\Local\nvim-data\mason\bin`
   - install [sqlite3](https://gist.github.com/zeljic/d8b542788b225b1bcb5fce169ee28c55), rename `sqlite3.dll` to `libsqlite3.dll` and `sqlite3.lib` to `libsqlite3.lib`, and add its location to`PATH`
   - Install [coursier/scala](https://www.scala-lang.org/download/)
+  - `rustup toolchain install nightly-x86_64-pc-windows-msvc`, `cargo install eza just broot`, `cargo +nightly install dua-cli`; `choco install ripgrep fzf rsync`, `pman completion powershell`, all these for cli navigation and projects management
+  - Install additional packages yourself if there are something missing, Windows is a hot mess, that's all
 - Run `nvim` the first time and wait for it to auto initialize plugins, then press `S` to sync packages
 - Run `:MasonUpdate` to install all registries, then `:Mason` and press `U` if there's any update
 - All language `servers`, `linters`, and `treesitters` are pre-installed when you first initialize Neovim
@@ -784,7 +794,7 @@ cargo install coreutils && npm i -g neovim && mkdir -p ~/notes
 ### Languages Packages List
 
 <details>
-	<summary>Installed (69)</summary>
+	<summary>Installed (71)</summary>
 
 ```lua
 -- lua
@@ -851,12 +861,18 @@ cargo install coreutils && npm i -g neovim && mkdir -p ~/notes
 
 -- latex & typos
 "texlab",
-"typos_lsp",
+typos_lsp = {
+    init_options = {
+        config = "~/typos.toml",
+    },
+},
 
--- bash
+-- shell
 "bashls",
+"powershell_es",
 "shellcheck",
 "shfmt",
+"beautysh",
 "bash-debug-adapter",
 
 -- make & cmake

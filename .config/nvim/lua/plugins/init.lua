@@ -141,10 +141,12 @@ return {
 						},
 					},
 
-					-- bash
+					-- shell
 					"bashls",
+					"powershell_es",
 					"shellcheck",
 					"shfmt",
+					"beautysh",
 					"bash-debug-adapter",
 
 					-- make & cmake
