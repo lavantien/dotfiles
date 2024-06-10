@@ -266,3 +266,4 @@ storage
 .semgrep
 .local/share/gh/extensions/gh-f
 notes
+.local/share/zoxide

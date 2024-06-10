@@ -109,7 +109,7 @@ sudo systemctl daemon-reexec
 `reboot`
 
 ```bash
-ulimit -n
+ulimit -n && mkdir -p ~/.local/bin
 ```
 
 ```bash
@@ -172,7 +172,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ### 7. Install `gcc`, `gh`, `neovim`, and other necessary `Brew` packages
 
 ```bash
-brew install coreutils gcc gh go lazygit fzf fd ripgrep bat tokei glow ripgrep-all pandoc poppler ffmpeg eza navi broot just exiftool fdupes procs rsync neovim openjdk ruby coursier lua maven node gopls rust-analyzer jdtls lua-language-server typescript-language-server marksman texlab yaml-language-server bash-language-server opentofu terraform-ls sql-language-server sqlfluff prettier delve vscode-langservers-extracted loc llvm dotenv-linter checkmake luarocks pkg-config mpv macchina cmake-language-server python-lsp-server sql-language-server sql-lint gomodifytags golangci-lint hyperfine zoxide
+brew install coreutils gcc gh go lazygit fzf fd ripgrep bat tokei glow ripgrep-all dua-cli pandoc poppler ffmpeg eza navi broot just exiftool fdupes procs rsync watchman neovim openjdk ruby coursier lua maven node gopls rust-analyzer jdtls lua-language-server typescript-language-server marksman texlab yaml-language-server bash-language-server opentofu terraform-ls sql-language-server sqlfluff prettier delve vscode-langservers-extracted loc llvm dotenv-linter checkmake luarocks pkg-config mpv macchina cmake-language-server python-lsp-server sql-language-server sql-lint gomodifytags golangci-lint hyperfine zoxide
 ```
 
 ```bash
@@ -357,9 +357,7 @@ pip3 install mako && sudo apt install meson glslang-tools glslang-dev libxnvctrl
 - After install `Android Studio`, run it and install the [Android SDK](https://reactnative.dev/docs/set-up-your-environment).
 
 ```bash
-sudo dpkg --add-architecture i386 \
-&& sudo apt sudo install libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1 libbz2-1.0:i386 \
-&& flatpak install flathub com.google.AndroidStudio
+flatpak install flathub com.google.AndroidStudio
 ```
 
 - Remove old `LibreOffice` or `snap` packages in the system first

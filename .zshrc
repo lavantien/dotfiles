@@ -15,21 +15,6 @@ if [[ ${OS} == "WSL2" ]]; then
 fi
 echo ${OS};
 
-# Ripgrep-all and fzf integration
-rga-fzf() {
-	RG_PREFIX="rga --files-with-matches"
-	local file
-	file="$(
-		FZF_DEFAULT_COMMAND="$RG_PREFIX '$1'" \
-			fzf --sort --preview="[[ ! -z {} ]] && rga --pretty --context 5 {q} {}" \
-				--phony -q "$1" \
-				--bind "change:reload:$RG_PREFIX {q}" \
-				--preview-window="70%:wrap"
-	)" &&
-	echo "opening $file" &&
-	xdg-open "$file"
-}
-
 # Start of zshrc
 export ZSH="$HOME/.oh-my-zsh"
 
@@ -63,3 +48,26 @@ export PATH="$PATH:$(go env GOPATH)/bin"
 # GRPC and other local bins
 export PATH="$PATH:$HOME/.local/bin"
 
+# Android SDK
+export ANDROID_HOME=$HOME/Android/Sdk
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+
+# Ripgrep-all and fzf integration
+rga-fzf() {
+	RG_PREFIX="rga --files-with-matches"
+	local file
+	file="$(
+		FZF_DEFAULT_COMMAND="$RG_PREFIX '$1'" \
+			fzf --sort --preview="[[ ! -z {} ]] && rga --pretty --context 5 {q} {}" \
+				--phony -q "$1" \
+				--bind "change:reload:$RG_PREFIX {q}" \
+				--preview-window="70%:wrap"
+	)" &&
+	echo "opening $file" &&
+	xdg-open "$file"
+}
+
+# pman & zoxide
+eval "$(pman completion zsh)"
+eval "$(zoxide init zsh)"
