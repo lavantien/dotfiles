@@ -2,7 +2,7 @@
 
 ## Install
 
-- Git, GH CLI, Neovim, GCC/LLVM-Clang, Go, NodeJS, Python3, Rust, Lua, Java, Coursier/Scala, SQLite, Docker, K8s, OpenTf
+- Git, GH CLI, Neovim, GCC/LLVM-Clang, Go, NodeJS, Python3, Rust, Lua, Android/React Native, Java, Coursier/Scala, SQLite, Docker, K8s, OpenTf
 - Neovim Deps; then [integrate the two](https://github.com/phiresky/ripgrep-all/wiki/fzf-Integration), put the file in `~/.local/bin` and add the folder to `PATH`
 
 ```bash
@@ -20,7 +20,7 @@ go install github.com/theredditbandit/pman@latest && pman completion zsh
   - copy `.config/nvim` directory to `C:\Users\<name>\AppData\Local\`
   - add to `PATH` this value `C:\Users\<name>\AppData\Local\nvim-data\mason\bin`
   - install [sqlite3](https://gist.github.com/zeljic/d8b542788b225b1bcb5fce169ee28c55), rename `sqlite3.dll` to `libsqlite3.dll` and `sqlite3.lib` to `libsqlite3.lib`, and add its location to`PATH`
-  - Install [coursier/scala](https://www.scala-lang.org/download/)
+  - Install `Android Studio`, [Android SDK](https://reactnative.dev/docs/set-up-your-environment), and [coursier/scala](https://www.scala-lang.org/download/)
   - `rustup toolchain install nightly-x86_64-pc-windows-msvc`, `cargo install eza just broot`, `cargo +nightly install dua-cli`; `choco install ripgrep fzf rsync`, `pman completion powershell`, all these for cli navigation and projects management
   - Install additional packages yourself if there are something missing, Windows is a hot mess, that's all
 - Run `nvim` the first time and wait for it to auto initialize plugins, then press `S` to sync packages
