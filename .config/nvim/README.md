@@ -23,12 +23,13 @@ cargo install coreutils && npm i -g neovim \
   - Install all packages via [winget](https://winget.run/) if possible, then use `cargo install`, `go install`, and `choco install` (requires admin shell) in this order
     - `winget source reset --force` in admin shell
     - `winget upgrade --all --unknown-sources` to mass update all packages
-    - `winget install gsudo ajeetdsouza.zoxide wez.wezterm JesseDuffield.lazygit JesseDuffield.Lazydocker` for Wezterm, Zoxide, LazyGit, and LazyDocker
+    - `winget install gsudo TheDocumentFoundation.LibreOffice Git.Git GitHub.cli Docker.DockerDesktop GoLang.Go OpenJS.NodeJS Amazon.Corretto Rustlang.Rustup ajeetdsouza.zoxide wez.wezterm JesseDuffield.lazygit JesseDuffield.Lazydocker`
   - Install additional packages yourself if there are something missing, be mindful of adding the `env vars`
-  - Create `~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1` (`$profile`) and add these lines to it:
+  - Create `~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1` (`$profile`) and add these lines to it, then install [ohmyposh](https://ohmyposh.dev/docs/installation/windows):
 
 ```powershell
 Invoke-Expression (& { (zoxide init powershell | Out-String) })
+oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\half-life.omp.json" | Invoke-Expression
 
 # aliases
 Set-Alias -Name n -Value nvim
