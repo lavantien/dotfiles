@@ -23,6 +23,7 @@ config.font_size = 24.0
 config.color_scheme = "rose-pine"
 -- config.color_scheme = "GruvboxDarkHard"
 config.window_decorations = "NONE"
+config.enable_tab_bar = false
 config.hide_tab_bar_if_only_one_tab = true
 config.window_padding = {
 	left = 0,
