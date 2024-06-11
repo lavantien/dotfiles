@@ -14,7 +14,7 @@ cargo install coreutils && npm i -g neovim \
 
   - remove `make install_jsregexp` from `luasnip` build config
   - remove `checkmake`, `luacheck`, `semgrep`, `ansible-lint`, or other packages that don't support Windows from `mason-tools-installer` list
-  - set the `HOME` environment variable to `C:\Users\<name>`
+  - set the `HOME` environment variable to `C:\Users\<name>`; create `notes` folder in home
   - copy `.config/nvim/` directory to `C:\Users\<name>\AppData\Local\`
   - copy `./typos.toml` file to `~/`
   - add to `PATH` this value `C:\Users\<name>\AppData\Local\nvim-data\mason\bin`

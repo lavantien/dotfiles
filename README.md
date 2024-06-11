@@ -536,7 +536,10 @@ sudo systemctl daemon-reload
 ```
 
 ```bash
-sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && rustup update && brew upgrade && flatpak update -y
+sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y \
+&& rustup update && cargo install $(cargo install --list | egrep '^[a-z0-9_-]+ v[0-9.]+:$' | cut -f1 -d' ') \
+&& brew upgrade \
+&& flatpak update -y
 ```
 
 <details>
@@ -681,7 +684,7 @@ cargo install coreutils && npm i -g neovim \
 
   - remove `make install_jsregexp` from `luasnip` build config
   - remove `checkmake`, `luacheck`, `semgrep`, `ansible-lint`, or other packages that don't support Windows from `mason-tools-installer` list
-  - set the `HOME` environment variable to `C:\Users\<name>`
+  - set the `HOME` environment variable to `C:\Users\<name>`; create `notes` folder in home
   - copy `.config/nvim/` directory to `C:\Users\<name>\AppData\Local\`
   - copy `./typos.toml` file to `~/`
   - add to `PATH` this value `C:\Users\<name>\AppData\Local\nvim-data\mason\bin`
