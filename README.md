@@ -8,7 +8,7 @@
 - And if you're broke, use the free WARP and practice good OpSec hygiene
 - A modern software engineering free quality resources library: [gist](https://gist.github.com/lavantien/dc730dad7d7e8157000ddae845eddfd7)
 
-## Step-by-Step Standardized Setup for a Fresh Ubuntu 24.04 LTS
+## Step-by-Step Standardized Setup for a Fresh Ubuntu/Kubuntu 24.04 LTS
 
 <details>
   <summary>expand</summary>
@@ -129,6 +129,12 @@ sudo swapoff -a && sudo dd if=/dev/zero of=/swapfile bs=1G count=16 && sudo chmo
 
 ```bash
 mode class/powercap/intel-rapl:0/energy_uj = 0444
+```
+
+- To switch to KDE, run this then reboot:
+
+```bash
+sudo apt install kubuntu-desktop
 ```
 
 ### 1. Install all necessary `APT` packages
