@@ -6,5 +6,10 @@ ETCC = "ETCC"
 OLL = "OLL"
 CLL = "CLL"
 Yau = "Yau"
+noice = "noice"
+Noice = "Noice"
+Dota = "Dota"
+nd = "nd"
 
 [default.extend-identifiers]
+noice = "noice"
