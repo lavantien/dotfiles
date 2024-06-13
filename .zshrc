@@ -43,7 +43,7 @@ export HOMEBREW_MAKE_JOBS=16
 export HOMEBREW_VERBOSE=1
 
 # Cargo
-export RUSTC_WRAPPER="$HOME/.cargo/bin/sccache"
+export RUSTC_WRAPPER="/home/linuxbrew/.linuxbrew/bin/sccache"
 
 # Go
 export PATH="$PATH:$(go env GOPATH)/bin"

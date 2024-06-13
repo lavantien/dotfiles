@@ -342,3 +342,5 @@ notes
 .config/session
 .config/bluedevilglobalrc
 .local/share/plasmashell/kuserfeedback/audit
+.config/PlasmaDiscoverUpdates
+.mozilla/firefox
