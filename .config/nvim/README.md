@@ -6,29 +6,28 @@
 - Neovim Deps; then [integrate ripgrep-all and fzf](https://github.com/phiresky/ripgrep-all/wiki/fzf-Integration), put the file in `~/.local/bin` and add the folder to `PATH`
 
 ```bash
-cargo install coreutils && npm i -g neovim \
+cargo install sccache && sccache cargo install coreutils && npm i -g neovim \
 && mkdir -p ~/notes
 ```
 
 <details>
-    <summary>If you're on `Windows` you need to</summary>
+    <summary>If you're on Windows you need to (expand)</summary>
 
-- If you're on `Windows` you need to
-
-  - remove `make install_jsregexp` from `luasnip` build config
-  - remove `checkmake`, `luacheck`, `semgrep`, `ansible-lint`, or other packages that don't support Windows from `mason-tools-installer` list
-  - set the `HOME` environment variable to `C:\Users\<name>`; create `notes` folder in home
-  - copy `.config/nvim/` directory to `C:\Users\<name>\AppData\Local\`
-  - copy `./typos.toml` file to `~/`
-  - add to `PATH` this value `C:\Users\<name>\AppData\Local\nvim-data\mason\bin`
-  - install [sqlite3](https://gist.github.com/zeljic/d8b542788b225b1bcb5fce169ee28c55), rename `sqlite3.dll` to `libsqlite3.dll` and `sqlite3.lib` to `libsqlite3.lib`, and add its location to`PATH`
-  - Install `Android Studio`, [Android SDK](https://reactnative.dev/docs/set-up-your-environment), and [coursier/scala](https://www.scala-lang.org/download/)
-  - Install all packages via [winget](https://winget.run/) if possible, then use `cargo install`, `go install`, and `choco install` (requires admin shell) in this order
-    - `winget source reset --force` in admin shell
-    - `winget upgrade --all --unknown-sources` to mass update all packages
-    - `winget install gsudo TheDocumentFoundation.LibreOffice Git.Git GitHub.cli Docker.DockerDesktop GoLang.Go OpenJS.NodeJS Amazon.Corretto Rustlang.Rustup ajeetdsouza.zoxide wez.wezterm JesseDuffield.lazygit JesseDuffield.Lazydocker`
-  - Install additional packages yourself if there are something missing, be mindful of adding the `env vars`
-  - Create `~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1` (`$profile`) and add these lines to it, then install [ohmyposh](https://ohmyposh.dev/docs/installation/windows):
+- remove `make install_jsregexp` from `luasnip` build config
+- remove `checkmake`, `luacheck`, `semgrep`, `ansible-lint`, or other packages that don't support Windows from `mason-tools-installer` list
+- set the `HOME` environment variable to `C:\Users\<name>`; create `notes` folder in home
+- copy `.config/nvim/` directory to `C:\Users\<name>\AppData\Local\`
+- copy `./typos.toml` file to `~/`
+- add to `PATH` this value `C:\Users\<name>\AppData\Local\nvim-data\mason\bin`
+- set the `RUSTC_WRAPPER` env var to `C:\Users\<name>\.cargo\bin\sccache.exe`
+- install [sqlite3](https://gist.github.com/zeljic/d8b542788b225b1bcb5fce169ee28c55), rename `sqlite3.dll` to `libsqlite3.dll` and `sqlite3.lib` to `libsqlite3.lib`, and add its location to`PATH`
+- Install `Android Studio`, [Android SDK](https://reactnative.dev/docs/set-up-your-environment), and [coursier/scala](https://www.scala-lang.org/download/)
+- Install all packages via [winget](https://winget.run/) if possible, then use `cargo install`, `go install`, and `choco install` (requires admin shell) in this order
+  - `winget source reset --force` in admin shell
+  - `winget upgrade --all --unknown-sources` to mass update all packages
+  - `winget install gsudo TheDocumentFoundation.LibreOffice Git.Git GitHub.cli Docker.DockerDesktop GoLang.Go OpenJS.NodeJS Amazon.Corretto Rustlang.Rustup ajeetdsouza.zoxide wez.wezterm JesseDuffield.lazygit JesseDuffield.Lazydocker`
+- Install additional packages yourself if there are something missing, be mindful of adding the `env vars`
+- Create `~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1` (`$profile`) and add these lines to it, then install [ohmyposh](https://ohmyposh.dev/docs/installation/windows):
 
 ```powershell
 Invoke-Expression (& { (zoxide init powershell | Out-String) })

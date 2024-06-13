@@ -30,7 +30,7 @@ source ~/.aliases
 
 # Default editor
 export EDITOR="nvim"
-export PRETTIERD_DEFAULT_CONFIG="/home/lavantien/.config/prettier/.prettierrc.yaml"
+export PRETTIERD_DEFAULT_CONFIG="$HOME/.config/prettier/.prettierrc.yaml"
 export PRETTIERD_LOCAL_PRETTIER_ONLY=1
 
 # Wine
@@ -41,6 +41,9 @@ export MANGOHUD=1
 # Brew
 export HOMEBREW_MAKE_JOBS=16
 export HOMEBREW_VERBOSE=1
+
+# Cargo
+export RUSTC_WRAPPER="$HOME/.cargo/bin/sccache"
 
 # Go
 export PATH="$PATH:$(go env GOPATH)/bin"
