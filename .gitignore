@@ -339,3 +339,6 @@ notes
 .local/share/kcookiejar
 .local/share/klipper
 .local/share/okular/docdata
+.config/session
+.config/bluedevilglobalrc
+.local/share/plasmashell/kuserfeedback/audit
