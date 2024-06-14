@@ -347,3 +347,4 @@ notes
 .local/share/kded5/keyboard/session
 .config
 .local/share/discover/kuserfeedback/audit
+.local/share/session_migration-ubuntu-wayland

@@ -1,6 +1,7 @@
 alias f="fzf"
 alias r="rga-fzf"
 alias rs="rsync"
+alias m="mpv"
 alias cu="coreutils"
 alias j="just"
 alias h="hyperfine"
