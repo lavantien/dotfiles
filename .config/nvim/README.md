@@ -24,8 +24,10 @@ cargo install sccache && sccache cargo install coreutils && npm i -g neovim \
 - Install `Android Studio`, [Android SDK](https://reactnative.dev/docs/set-up-your-environment), and [coursier/scala](https://www.scala-lang.org/download/)
 - Install all packages via [winget](https://winget.run/) if possible, then use `cargo install`, `go install`, and `choco install` (requires admin shell) in this order
   - `winget source reset --force` in admin shell
-  - `winget upgrade --all --unknown-sources` to mass update all packages
+  - `winget upgrade --all --unknown-sources` and `choco upgrade all -y` to mass update all packages
   - `winget install gsudo TheDocumentFoundation.LibreOffice Git.Git GitHub.cli Docker.DockerDesktop GoLang.Go OpenJS.NodeJS Amazon.Corretto Rustlang.Rustup ajeetdsouza.zoxide wez.wezterm JesseDuffield.lazygit JesseDuffield.Lazydocker`
+  - `choco install vifm`
+  - `winget upgrade --all --unknown-sources` and `choco upgrade all -y` (in admin shell) to mass update all packages
 - Install additional packages yourself if there are something missing, be mindful of adding the `env vars`
 - Create `~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1` (`$profile`) and add these lines to it, then install [ohmyposh](https://ohmyposh.dev/docs/installation/windows):
 
