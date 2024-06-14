@@ -345,3 +345,5 @@ notes
 .config/PlasmaDiscoverUpdates
 .mozilla/firefox
 .local/share/kded5/keyboard/session
+.config
+.local/share/discover/kuserfeedback/audit
