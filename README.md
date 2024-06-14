@@ -178,7 +178,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ### 7. Install `gcc`, `gh`, `neovim`, and other necessary `Brew` packages
 
 ```bash
-brew install coreutils gcc gh go lazygit lazydocker fzf fd ripgrep bat tokei glow ripgrep-all dua-cli pandoc poppler ffmpeg eza navi broot just exiftool fdupes procs rsync watchman neovim openjdk ruby coursier lua maven node gopls rust-analyzer jdtls lua-language-server typescript-language-server marksman texlab yaml-language-server bash-language-server opentofu terraform-ls sql-language-server sqlfluff prettier delve vscode-langservers-extracted loc llvm dotenv-linter checkmake luarocks pkg-config mpv macchina cmake-language-server python-lsp-server sql-language-server sql-lint gomodifytags golangci-lint hyperfine zoxide btop sccache
+brew install coreutils gcc gh go lazygit lazydocker fzf fd ripgrep bat tokei glow ripgrep-all dua-cli pandoc poppler ffmpeg eza navi broot just exiftool fdupes procs rsync watchman neovim openjdk ruby coursier lua maven node gopls rust-analyzer jdtls lua-language-server typescript-language-server marksman texlab yaml-language-server bash-language-server opentofu terraform-ls sql-language-server sqlfluff prettier delve vscode-langservers-extracted loc llvm dotenv-linter checkmake luarocks pkg-config mpv macchina cmake-language-server python-lsp-server sql-language-server sql-lint gomodifytags golangci-lint hyperfine zoxide btop sccache vifm
 ```
 
 ### 8. Setup your `Git` environment
@@ -711,10 +711,23 @@ oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\half-life.omp.json" | Invok
 
 # aliases
 Set-Alias -Name n -Value nvim
+Set-Alias -Name vi -Value vim
 Set-Alias -Name g -Value git
 Set-Alias -Name d -Value docker
 Set-Alias -Name lg -Value lazygit
 Set-Alias -Name ld -Value lazydocker
+Set-Alias -Name e -Value eza
+Set-Alias -Name v -Value vifm
+Set-Alias -Name f -Value fzf
+Set-Alias -Name r -Value rg
+Set-Alias -Name ff -Value ffmpeg
+Set-Alias -Name b -Value bat
+Set-Alias -Name t -Value tokei
+Set-Alias -Name r -Value rg
+Set-Alias -Name rs -Value rsync
+Set-Alias -Name cu -Value coreutils
+Set-Alias -Name j -Value just
+Set-Alias -Name h -Value hyperfine
 ```
 
 </details>
