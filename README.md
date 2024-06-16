@@ -181,6 +181,10 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 brew install coreutils gcc gh go lazygit lazydocker fzf fd ripgrep bat tokei glow ripgrep-all dua-cli pandoc poppler ffmpeg eza navi broot just exiftool fdupes procs rsync watchman neovim openjdk ruby coursier lua maven node gopls rust-analyzer jdtls lua-language-server typescript-language-server marksman texlab yaml-language-server bash-language-server opentofu terraform-ls sql-language-server sqlfluff prettier delve vscode-langservers-extracted loc llvm dotenv-linter checkmake luarocks pkg-config macchina cmake-language-server python-lsp-server sql-language-server sql-lint gomodifytags golangci-lint hyperfine zoxide btop sccache vifm
 ```
 
+```bash
+cargo install cargo-update --force
+```
+
 ### 8. Setup your `Git` environment
 
 - For `gh`, [`gh-f`](https://github.com/gennaro-tedesco/gh-f), run `gh auth login` and follow `HTTPS browser` instruction to setup `GitHub CLI`
@@ -543,7 +547,7 @@ sudo systemctl daemon-reload
 
 ```bash
 sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y \
-&& rustup update && cargo install $(cargo install --list | egrep '^[a-z0-9_-]+ v[0-9.]+:$' | cut -f1 -d' ') \
+&& rustup update && cargo install-update -a \
 && brew upgrade \
 && flatpak update -y
 ```
