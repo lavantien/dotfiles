@@ -178,7 +178,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ### 7. Install `gcc`, `gh`, `neovim`, and other necessary `Brew` packages
 
 ```bash
-brew install coreutils gcc gh go lazygit lazydocker fzf fd ripgrep bat tokei glow ripgrep-all dua-cli pandoc poppler ffmpeg eza navi broot just exiftool fdupes procs rsync watchman neovim openjdk ruby coursier lua maven node gopls rust-analyzer jdtls lua-language-server typescript-language-server marksman texlab yaml-language-server bash-language-server opentofu terraform-ls sql-language-server sqlfluff prettier delve vscode-langservers-extracted loc llvm dotenv-linter checkmake luarocks pkg-config macchina cmake-language-server python-lsp-server sql-language-server sql-lint gomodifytags golangci-lint hyperfine zoxide btop sccache vifm
+brew install coreutils gcc gh go lazygit lazydocker fzf fd ripgrep bat tokei glow ripgrep-all dua-cli pandoc poppler ffmpeg eza navi broot just exiftool fdupes procs rsync watchman neovim openjdk ruby coursier lua maven node gopls rust-analyzer jdtls lua-language-server typescript-language-server marksman texlab yaml-language-server bash-language-server opentofu terraform-ls sql-language-server sqlfluff prettier delve vscode-langservers-extracted loc llvm dotenv-linter checkmake luarocks pkg-config macchina cmake-language-server python-lsp-server sql-language-server sql-lint gomodifytags golangci-lint hyperfine zoxide btop sccache vifm difftastic
 ```
 
 ```bash
@@ -697,6 +697,7 @@ cargo install sccache && cargo install coreutils && npm i -g neovim \
 - remove `checkmake`, `luacheck`, `semgrep`, `ansible-lint`, or other packages that don't support Windows from `mason-tools-installer` list
 - set the `HOME` environment variable to `C:\Users\<name>`; create `notes` folder in home
 - copy `.config/nvim/` directory to `C:\Users\<name>\AppData\Local\`
+- copy `.gitconfig` to your config location (`git config --list --show-origin --show-scope`)
 - copy `./typos.toml` file to `~/`
 - add to `PATH` this value `C:\Users\<name>\AppData\Local\nvim-data\mason\bin`
 - set the `RUSTC_WRAPPER` env var to `C:\Users\<name>\.cargo\bin\sccache.exe`
@@ -721,6 +722,7 @@ Set-Alias -Name g -Value git
 Set-Alias -Name d -Value docker
 Set-Alias -Name lg -Value lazygit
 Set-Alias -Name ld -Value lazydocker
+Set-Alias -Name df -Value difft
 Set-Alias -Name e -Value eza
 Set-Alias -Name v -Value vifm
 Set-Alias -Name f -Value fzf

@@ -17,6 +17,7 @@ cargo install sccache && cargo install coreutils && npm i -g neovim \
 - remove `checkmake`, `luacheck`, `semgrep`, `ansible-lint`, or other packages that don't support Windows from `mason-tools-installer` list
 - set the `HOME` environment variable to `C:\Users\<name>`; create `notes` folder in home
 - copy `.config/nvim/` directory to `C:\Users\<name>\AppData\Local\`
+- copy `.gitconfig` to your config location (`git config --list --show-origin --show-scope`)
 - copy `./typos.toml` file to `~/`
 - add to `PATH` this value `C:\Users\<name>\AppData\Local\nvim-data\mason\bin`
 - set the `RUSTC_WRAPPER` env var to `C:\Users\<name>\.cargo\bin\sccache.exe`
@@ -42,6 +43,7 @@ Set-Alias -Name g -Value git
 Set-Alias -Name d -Value docker
 Set-Alias -Name lg -Value lazygit
 Set-Alias -Name ld -Value lazydocker
+Set-Alias -Name df -Value difft
 Set-Alias -Name e -Value eza
 Set-Alias -Name v -Value vifm
 Set-Alias -Name f -Value fzf

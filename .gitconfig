@@ -9,6 +9,17 @@
 [mergetool "vimdiff"]
 	cmd = nvim -d $MERGED $LOCAL $BASE $REMOTE -c '$wincmd w' -c 'wincmd J'
 	trustExitCode = false
+[diff]
+    tool = difftastic
+[difftool]
+    prompt = false
+[difftool "difftastic"]
+    cmd = difft "$LOCAL" "$REMOTE"
+[pager]
+    difftool = true
+[alias]
+    dft = difftool
+    dlog = "-c diff.external=difft log -p --ext-diff"
 [credential "https://github.com"]
 	helper = 
 	helper = !/home/linuxbrew/.linuxbrew/bin/gh auth git-credential
