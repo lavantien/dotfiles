@@ -6,7 +6,7 @@
 - Neovim Deps; then [integrate ripgrep-all and fzf](https://github.com/phiresky/ripgrep-all/wiki/fzf-Integration), put the file in `~/.local/bin` and add the folder to `PATH`
 
 ```bash
-cargo install sccache && sccache cargo install coreutils && npm i -g neovim \
+cargo install sccache && cargo install coreutils && npm i -g neovim \
 && mkdir -p ~/notes
 ```
 

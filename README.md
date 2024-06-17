@@ -1,4 +1,4 @@
-# A robust Dotfiles fgr Developer - Ubuntu & Neovim - Battery Included
+# A robust Dotfiles for Developer - Ubuntu & Neovim - Battery Included
 
 - Quality Assurance: **100%**; Demonstration video: <https://youtu.be/a28SZdUkpKw>
 - Fully Supported: **AMD** & **Intel** (Wayland), **NVIDIA** (auto X11), **Windows** (Neovim, Wezterm, Dev Env Setup)
@@ -686,7 +686,7 @@ hx --health
 - Neovim Deps; then [integrate ripgrep-all and fzf](https://github.com/phiresky/ripgrep-all/wiki/fzf-Integration), put the file in `~/.local/bin` and add the folder to `PATH`
 
 ```bash
-cargo install sccache && sccache cargo install coreutils && npm i -g neovim \
+cargo install sccache && cargo install coreutils && npm i -g neovim \
 && mkdir -p ~/notes
 ```
 
