@@ -20,6 +20,8 @@
 [alias]
     dft = difftool
     dlog = "-c diff.external=difft log -p --ext-diff"
+[pull]
+	rebase = true
 [credential "https://github.com"]
 	helper = 
 	helper = !/home/linuxbrew/.linuxbrew/bin/gh auth git-credential
@@ -28,5 +30,3 @@
 	helper = !/home/linuxbrew/.linuxbrew/bin/gh auth git-credential
 [http]
 	postBuffer = 524288000
-[pull]
-	rebase = true
