@@ -182,7 +182,7 @@ brew install coreutils gcc gh go lazygit lazydocker fzf fd ripgrep bat tokei glo
 ```
 
 ```bash
-cargo install cargo-update --force
+cargo install cargo-update --force && go install github.com/Gelio/go-global-update@latest
 ```
 
 ### 8. Setup your `Git` environment
@@ -548,6 +548,7 @@ sudo systemctl daemon-reload
 ```bash
 sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y \
 && rustup update && cargo install-update -a \
+&& npm -g update && go-global-update \
 && brew upgrade \
 && flatpak update -y
 ```
@@ -709,6 +710,8 @@ cargo install sccache && cargo install coreutils && npm i -g neovim \
   - `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` and `Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression`
   - `scoop install btop-lhm`
   - `choco install vifm`
+  - `cargo install cargo-update`, `go install github.com/Gelio/go-global-update@latest`
+  - `cargo install-update -a`, `npm -g update`, `go-global-update`
   - `winget upgrade --all --unknown-sources`, `scoop update`, and `choco upgrade all -y` (in admin shell) to mass update all packages
 - Install additional packages yourself if there are something missing, be mindful of adding the `env vars`
 - Create `~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1` (`$profile`) and add these lines to it, then install [ohmyposh](https://ohmyposh.dev/docs/installation/windows):
