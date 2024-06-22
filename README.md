@@ -711,8 +711,6 @@ cargo install sccache && cargo install coreutils && npm i -g neovim \
   - `scoop install btop-lhm`
   - `choco install vifm`
   - `cargo install cargo-update`, `go install github.com/Gelio/go-global-update@latest`
-  - `cargo install-update -a`, `npm -g update`, `go-global-update`
-  - `winget upgrade --all --unknown-sources`, `scoop update`, and `choco upgrade all -y` (in admin shell) to mass update all packages
 - Install additional packages yourself if there are something missing, be mindful of adding the `env vars`
 - Create `~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1` (`$profile`) and add these lines to it, then install [ohmyposh](https://ohmyposh.dev/docs/installation/windows):
 
@@ -741,6 +739,12 @@ Set-Alias -Name cu -Value coreutils
 Set-Alias -Name j -Value just
 Set-Alias -Name h -Value hyperfine
 ```
+
+```powershell
+cargo install-update -a && npm -g update && go-global-update && winget upgrade --all -u && scoop update
+```
+
+- `choco upgrade all -y` (in admin shell) to mass update all packages
 
 </details>
 
