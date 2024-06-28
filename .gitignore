@@ -348,3 +348,4 @@ notes
 .config
 .local/share/discover/kuserfeedback/audit
 .local/share/session_migration-ubuntu-wayland
+.docker
