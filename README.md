@@ -178,7 +178,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ### 7. Install `gcc`, `gh`, `neovim`, and other necessary `Brew` packages
 
 ```bash
-brew install coreutils gcc gh go lazygit lazydocker fzf fd ripgrep bat tokei glow ripgrep-all dua-cli pandoc poppler ffmpeg eza navi broot just exiftool fdupes procs rsync watchman neovim openjdk ruby coursier lua maven node gopls rust-analyzer jdtls lua-language-server typescript-language-server marksman texlab yaml-language-server bash-language-server opentofu terraform-ls sql-language-server sqlfluff prettier delve vscode-langservers-extracted loc llvm dotenv-linter checkmake luarocks pkg-config macchina cmake-language-server python-lsp-server sql-language-server sql-lint gomodifytags golangci-lint hyperfine zoxide btop sccache vifm difftastic ocaml zig zls asdf roswell
+brew install coreutils gcc gh go lazygit lazydocker fzf fd ripgrep bat tokei glow ripgrep-all dua-cli pandoc poppler ffmpeg eza navi broot just exiftool fdupes procs rsync watchman neovim openjdk ruby coursier lua maven node gopls rust-analyzer jdtls lua-language-server typescript-language-server marksman texlab yaml-language-server bash-language-server opentofu terraform-ls sql-language-server sqlfluff prettier delve vscode-langservers-extracted loc llvm dotenv-linter checkmake luarocks pkg-config macchina cmake-language-server python-lsp-server sql-language-server sql-lint gomodifytags golangci-lint hyperfine zoxide btop sccache vifm difftastic gcc@11 ocaml opam zig zls asdf roswell
 ```
 
 ```bash
@@ -687,9 +687,9 @@ hx --health
 - Neovim Deps (on first run let them install don't close Neovim midway, `:Mason` to see progress); then [integrate ripgrep-all and fzf](https://github.com/phiresky/ripgrep-all/wiki/fzf-Integration), put the file in `~/.local/bin` and add the folder to `PATH`
 
 ```bash
-cargo install sccache && cargo install coreutils \
-&& npm i -g neovim && ros install quicklisp && dkml init --system \
-&& mkdir -p ~/notes
+mkdir -p ~/notes \
+&& cargo install sccache && cargo install coreutils \
+&& npm i -g neovim && ros install quicklisp && opam init && opam install ocaml-lsp-server odoc ocamlformat utop
 ```
 
 <details>
@@ -1139,90 +1139,169 @@ end, { silent = true, expr = true, desc = "LSP hover doc scroll down" })
 ### Plugins List
 
 <details>
-	<summary>Loaded (75)</summary>
+	<summary>(78)</summary>
 
-- cellular-automaton.nvim 0.36ms  start
-- cmp-buffer 0.4ms  nvim-cmp
-- cmp-cmdline 0.43ms  nvim-cmp
-- cmp-nvim-lsp 0.31ms  nvim-cmp
-- cmp-nvim-lsp-signature-help 0.54ms  nvim-cmp
-- cmp-path 0.42ms  nvim-cmp
-- cmp_luasnip 0.14ms  nvim-cmp
-- diffview.nvim 1.99ms  start
-- dressing.nvim 2.22ms  start
-- fidget.nvim 4.05ms  lsp-zero.nvim
-- FixCursorHold.nvim 2.01ms  neotest
-- friendly-snippets 0.59ms  LuaSnip
-- gitsigns.nvim 3.68ms  start
-- harpoon 4.83ms  start
-- indent-blankline.nvim 5.07ms  start
-- lazy.nvim 4.36ms  init.lua
-- lsp-zero.nvim 149.49ms  start
-- lspkind.nvim 0.32ms  nvim-cmp
-- lualine.nvim 11.01ms  start
-- LuaSnip 6.59ms  nvim-cmp
-- mason-lspconfig.nvim 0.12ms  lsp-zero.nvim
-- mason-null-ls.nvim 1.28ms  lsp-zero.nvim
-- mason-nvim-dap.nvim 0.24ms  lsp-zero.nvim
-- mason-tool-installer.nvim 5.26ms  lsp-zero.nvim
-- mason.nvim 4.23ms  lsp-zero.nvim
-- mini.nvim 4.23ms  start
-- neotest 43.79ms  start
-- neotest-bash 1.76ms  neotest
-- neotest-go 1.72ms  neotest
-- neotest-gtest 1.99ms  neotest
-- neotest-jest 1.91ms  neotest
-- neotest-plenary 1.7ms  neotest
-- neotest-python 1.69ms  neotest
-- neotest-rust 1.74ms  neotest
-- neotest-scala 1.98ms  neotest
-- neotest-vitest 1.88ms  neotest
-- noice.nvim 7.96ms 󰢱 noice  config.remap
-- none-ls.nvim 1.26ms  lsp-zero.nvim
-- nui.nvim 2.27ms  noice.nvim
-- nvim-cmp 14.6ms  start
-- nvim-dap 3.97ms  lsp-zero.nvim
-- nvim-dap-go 1.35ms  lsp-zero.nvim
-- nvim-dap-ui 1.29ms  lsp-zero.nvim
-- nvim-dap-virtual-text 1.32ms  lsp-zero.nvim
-- nvim-lspconfig 0.46ms 󰢱 lspconfig  nvim-ufo
-- nvim-nio 1.34ms  lsp-zero.nvim
-- nvim-notify 2.03ms  noice.nvim
-- nvim-treesitter 19.61ms  render-markdown
-- nvim-treesitter-context 1.9ms  start
-- nvim-ts-autotag 4.87ms  nvim-treesitter
-- nvim-ufo 7.26ms  start
-- nvim-web-devicons 1.18ms  lualine.nvim
-- oil.nvim 2.67ms  start
-- playground 3.53ms  start
-- plenary.nvim 0.96ms  refactoring.nvim
-- promise-async 1.09ms  nvim-ufo
-- refactoring.nvim 11.49ms  start
-- render-markdown 25.1ms  start
-- rose-pine 3.91ms  start
-- SchemaStore.nvim 0.12ms  lsp-zero.nvim
-- smart-open.nvim 15.67ms  start
-- sqlite.lua 1.56ms  smart-open.nvim
-- telescope-fzf-native.nvim 1.69ms  smart-open.nvim
-- telescope-fzy-native.nvim 1.72ms  smart-open.nvim
-- telescope.nvim 4.42ms 󰢱 telescope  refactoring.nvim
-- undotree 1.19ms  start
-- vim-dadbod 0.46ms  start
-- vim-dadbod-completion 1.21ms  start
-- vim-dadbod-ui 2.05ms  start
-- vim-fugitive 2.34ms  start
-- vimtex 0.56ms  start
-- lazydev.nvim  lua
+- cellular-automaton.nvim 0.67ms  start
+- cmp-buffer 0.19ms  nvim-cmp
+- cmp-cmdline 0.14ms  nvim-cmp
+- cmp-nvim-lsp 0.09ms  nvim-cmp
+- cmp-nvim-lsp-signature-help 0.13ms  nvim-cmp
+- cmp-path 0.12ms  nvim-cmp
+- cmp_luasnip 0.13ms  nvim-cmp
+- conform.nvim 0.64ms  lsp-zero.nvim
+- diffview.nvim 1.15ms  start
+- dressing.nvim 1.95ms  start
+- fidget.nvim 1.96ms  lsp-zero.nvim
+- FixCursorHold.nvim 0.64ms  neotest
+- friendly-snippets 0.17ms  LuaSnip
+- gitsigns.nvim 3.44ms  start
+- harpoon 5.61ms  start
+- indent-blankline.nvim 1.53ms  start
+- lazy.nvim 6.06ms  init.lua
+- lazydev.nvim 1.91ms  lua
+- lsp-zero.nvim 126.61ms  start
+- lspkind.nvim 0.12ms  nvim-cmp
+- lualine.nvim 5.45ms  start
+- LuaSnip 5.25ms  nvim-cmp
+- mason-lspconfig.nvim 0.09ms  lsp-zero.nvim
+- mason-null-ls.nvim 0.35ms  lsp-zero.nvim
+- mason-nvim-dap.nvim 0.07ms  lsp-zero.nvim
+- mason-tool-installer.nvim 1.08ms  lsp-zero.nvim
+- mason.nvim 1.5ms  lsp-zero.nvim
+- mini.nvim 5.6ms  start
+- neotest 36.91ms  start
+- neotest-bash 0.36ms  neotest
+- neotest-go 0.41ms  neotest
+- neotest-gtest 0.34ms  neotest
+- neotest-jest 0.37ms  neotest
+- neotest-plenary 0.36ms  neotest
+- neotest-python 0.36ms  neotest
+- neotest-rust 0.35ms  neotest
+- neotest-scala 0.41ms  neotest
+- neotest-vitest 0.44ms  neotest
+- neotest-zig 0.4ms  neotest
+- noice.nvim 17.18ms 󰢱 noice  config.remap
+- none-ls.nvim 0.24ms  lsp-zero.nvim
+- nui.nvim 0.57ms  noice.nvim
+- nvim-cmp 11.65ms  start
+- nvim-dap 0.77ms  lsp-zero.nvim
+- nvim-dap-go 0.29ms  lsp-zero.nvim
+- nvim-dap-ui 0.28ms  lsp-zero.nvim
+- nvim-dap-virtual-text 0.28ms  lsp-zero.nvim
+- nvim-lspconfig 0.28ms 󰢱 lspconfig  nvim-ufo
+- nvim-nio 0.27ms  lsp-zero.nvim
+- nvim-notify 11.79ms  noice.nvim
+- nvim-treesitter 10.38ms  render-markdown
+- nvim-treesitter-context 1.65ms  start
+- nvim-ts-autotag 5.57ms  nvim-treesitter
+- nvim-ufo 5.51ms  start
+- nvim-web-devicons 0.55ms 󰢱 nvim-web-devicons  render-markdown
+- oil.nvim 4.25ms  start
+- playground 1.21ms  start
+- plenary.nvim 0.35ms  refactoring.nvim
+- promise-async 0.27ms  nvim-ufo
+- refactoring.nvim 13.69ms  start
+- render-markdown 20.77ms  start
+- rose-pine 4.79ms  start
+- SchemaStore.nvim 0.07ms  lsp-zero.nvim
+- smart-open.nvim 10.73ms  start
+- sqlite.lua 0.4ms  smart-open.nvim
+- telescope-fzf-native.nvim 0.22ms  smart-open.nvim
+- telescope-fzy-native.nvim 0.22ms  smart-open.nvim
+- telescope.nvim 8.96ms 󰢱 telescope  refactoring.nvim
+- undotree 0.32ms  start
+- vim-dadbod 0.63ms  start
+- vim-dadbod-completion 0.23ms  start
+- vim-dadbod-ui 0.71ms  start
+- vim-fugitive 1.13ms  start
+- vimtex 0.39ms  start
+- vlime 0.1ms  start
 - luvit-meta
-- nvim-metals  scala  sbt
-- trouble.nvim  <leader>ca  <leader>cc  <leader>cs  <leader>cd  <leader>ce
+- nvim-metals  sbt  scala
+- trouble.nvim  <leader>cd  <leader>ce  <leader>ca  <leader>cc  <leader>cs
 
 </details>
 
-### Languages Packages List
+## Languages Packages List
 
 <details>
-	<summary>Installed (71)</summary>
+	<summary>(75)</summary>
+
+- actionlint
+- ansible-language-server ansiblels
+- ansible-lint
+- asm-lsp asm_lsp
+- asmfmt
+- bash-debug-adapter
+- bash-language-server bashls
+- beautysh
+- blue
+- buf
+- buf-language-server bufls
+- cbfmt
+- checkmake
+- clang-format
+- clangd
+- cmakelint
+- codelldb
+- cpptools
+- css-lsp cssls
+- debugpy
+- delve
+- docker-compose-language-service docker_compose_language_service
+- dockerfile-language-server dockerls
+- emmet-language-server emmet_language_server
+- eslint-lsp eslint
+- firefox-debug-adapter
+- flake8
+- go-debug-adapter
+- goimports-reviser
+- golangci-lint
+- golangci-lint-langserver golangci_lint_ls
+- gomodifytags
+- google-java-format
+- gopls
+- gotests
+- graphql-language-service-cli graphql
+- helm-ls helm_ls
+- html-lsp html
+- htmx-lsp htmx
+- impl
+- java-debug-adapter
+- java-test
+- jdtls
+- js-debug-adapter
+- lua-language-server lua_ls
+- luacheck
+- marksman
+- neocmakelsp neocmake
+- ocaml-lsp ocamllsp
+- ocamlearlybird
+- ocamlformat
+- powershell-editor-services powershell_es
+- prettier
+- protolint
+- pyright
+- rust-analyzer rust_analyzer
+- semgrep
+- shellcheck
+- shfmt
+- sql-formatter
+- sqlfluff
+- sqlls
+- staticcheck
+- stylua
+- tailwindcss-language-server tailwindcss
+- taplo
+- terraform-ls terraformls
+- texlab
+- tflint
+- typescript-language-server tsserver
+- typos-lsp typos_lsp
+- vue-language-server volar
+- yamlfmt
+- yamllint
+- zls
 
 ```lua
 -- lua

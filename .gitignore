@@ -349,3 +349,4 @@ notes
 .local/share/discover/kuserfeedback/audit
 .local/share/session_migration-ubuntu-wayland
 .docker
+.roswell
