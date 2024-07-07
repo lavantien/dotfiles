@@ -20,7 +20,7 @@ mkdir -p ~/notes \
 - copy `.config/nvim/` directory to `C:\Users\<name>\AppData\Local\`
 - copy from `[init] to [pull]` inside `.gitconfig` to your config file location (`git config --list --show-origin --show-scope`)
 - copy `./typos.toml` file to `~/`
-- add to `PATH` this value `C:\Users\<name>\AppData\Local\nvim-data\mason\bin`
+- add to local `PATH` value `C:\Users\<name>\AppData\Local\nvim-data\mason\bin`
 - set the `RUSTC_WRAPPER` env var to `C:\Users\<name>\.cargo\bin\sccache.exe`
 - install [sqlite3](https://gist.github.com/zeljic/d8b542788b225b1bcb5fce169ee28c55), rename `sqlite3.dll` to `libsqlite3.dll` and `sqlite3.lib` to `libsqlite3.lib`, and add its location to`PATH`
 - Install `Android Studio`, [Android SDK](https://reactnative.dev/docs/set-up-your-environment), and [coursier/scala](https://www.scala-lang.org/download/)
@@ -33,6 +33,7 @@ mkdir -p ~/notes \
   - `choco install vifm vscode-ruby` on admin terminal
   - `cargo install cargo-update`, `go install github.com/Gelio/go-global-update@latest`
 - Install additional packages yourself if there are something missing, be mindful of adding the `env vars`
+- add to global `PATH` value `C:\Program Files\LLVM\bin`
 - Create `~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1` (`$profile`) and add these lines to it, then install [ohmyposh](https://ohmyposh.dev/docs/installation/windows):
 
 ```powershell

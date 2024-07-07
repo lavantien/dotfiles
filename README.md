@@ -714,6 +714,7 @@ mkdir -p ~/notes \
   - `choco install vifm vscode-ruby` on admin terminal
   - `cargo install cargo-update`, `go install github.com/Gelio/go-global-update@latest`
 - Install additional packages yourself if there are something missing, be mindful of adding the `env vars`
+- add to global `PATH` value `C:\Program Files\LLVM\bin`
 - Create `~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1` (`$profile`) and add these lines to it, then install [ohmyposh](https://ohmyposh.dev/docs/installation/windows):
 
 ```powershell
