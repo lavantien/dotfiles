@@ -8,7 +8,7 @@
 ```bash
 mkdir -p ~/notes \
 && cargo install sccache && cargo install coreutils \
-&& npm i -g neovim && ros install quicklisp && opam init && opam install ocaml-lsp-server odoc ocamlformat utop
+&& npm i -g neovim && ros install quicklisp && cargo install tree-sitter-cli && opam init && opam install ocaml-lsp-server odoc ocamlformat utop
 ```
 
 <details>
