@@ -2,13 +2,15 @@
 
 ## Install
 
-- Git, GH CLI, Neovim, GCC/LLVM-Clang, Go, NodeJS, Python3, Rust, Lua, Android/React Native, Java, Coursier/Scala, Ocaml, Zig, Lisp, SQLite, Docker, K8s, OpenTf
+- Git, GH CLI, Neovim, GCC/LLVM-Clang, Go, NodeJS, Python3, Rust, Lua, Android/React Native, Java, Coursier/Scala, Ocaml, Zig, Lisp, C#/Dotnet, SQLite, Docker, K8s, OpenTf
 - Neovim Deps (on first run let them install don't close Neovim midway, `:Mason` to see progress); then [integrate ripgrep-all and fzf](https://github.com/phiresky/ripgrep-all/wiki/fzf-Integration), put the file in `~/.local/bin` and add the folder to `PATH`
 
 ```bash
 mkdir -p ~/notes \
 && cargo install sccache && cargo install coreutils \
-&& npm i -g neovim && ros install quicklisp && cargo install tree-sitter-cli && opam init && opam install ocaml-lsp-server odoc ocamlformat utop
+&& npm i -g neovim && cargo install tree-sitter-cli \
+&& ros install quicklisp && opam init && opam install ocaml-lsp-server odoc ocamlformat utop \
+&& dotnet dev-certs https --trust && dotnet tool install --global csharp-ls csharpier
 ```
 
 <details>
@@ -77,7 +79,7 @@ cargo install-update -a && npm -g update && go-global-update && winget upgrade -
 
 ## Features
 
-- Fully support lua, go, javascript/typescript & vue, html/htmx & css/tailwind, python, c/cpp, rust, java, scala, ocaml, zig, lisp, assembly, markdown, latex & typos, bash, make & cmake, json, yaml, toml, sql, protobuf, graphql, docker/compose, ci/cd, kubernetes/helm, ansible, opentofu
+- Fully support lua, go, javascript/typescript & vue, html/htmx & css/tailwind, python, c/cpp, rust, java, scala, ocaml, csharp/dotnet, zig, lisp, assembly, markdown, latex & typos, bash, make & cmake, json, yaml, toml, sql, protobuf, graphql, docker/compose, ci/cd, kubernetes/helm, ansible, opentofu
 - Intellisense, Code Actions, Debugging, Testing, Diff View, Snippets, Hints, Code Objects, Pin Headers, Display Statuses, Token Tree, Fuzzy Picker
 - Surround, Autotag, Improved Floating UIs, Toggle Term, Notifications, Inline Diagnostics, Inline Eval, Statusbar, Multifiles Jumper, Refactoring, Clues
 - Smart Folds, Autolint, Notes Taking, Indentation Guides, Smart Help, Undo Tree, Git Integration, SQL/NoSQL Client, File Explorer, Cellular Automaton
@@ -545,7 +547,7 @@ end, { silent = true, expr = true, desc = "LSP hover doc scroll down" })
 ## Languages Packages List
 
 <details>
-	<summary>(75)</summary>
+	<summary>(77)</summary>
 
 - actionlint
 - ansible-language-server ansiblels
@@ -565,6 +567,8 @@ end, { silent = true, expr = true, desc = "LSP hover doc scroll down" })
 - cmakelint
 - codelldb
 - cpptools
+- csharp-language-server csharp_ls
+- csharpier
 - css-lsp cssls
 - debugpy
 - delve
@@ -691,6 +695,10 @@ end, { silent = true, expr = true, desc = "LSP hover doc scroll down" })
 "ocamllsp",
 "ocamlearlybird",
 "ocamlformat",
+
+-- csharp
+"csharp_ls",
+"csharpier",
 
 -- assembly
 "asm-lsp",

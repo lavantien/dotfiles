@@ -137,6 +137,10 @@ return {
 					"ocamlearlybird",
 					"ocamlformat",
 
+					-- csharp
+					"csharp_ls",
+					"csharpier",
+
 					-- assembly
 					"asm-lsp",
 					"asmfmt",
@@ -678,6 +682,7 @@ return {
 				ensure_installed = {
 					"bash",
 					"c",
+					"c_sharp",
 					"cmake",
 					"commonlisp",
 					"cpp",
