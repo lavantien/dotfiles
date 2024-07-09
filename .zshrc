@@ -56,6 +56,10 @@ export ANDROID_HOME=$HOME/Android/Sdk
 export PATH=$PATH:$ANDROID_HOME/emulator
 export PATH=$PATH:$ANDROID_HOME/platform-tools
 
+# DotNet
+export DOTNET_ROOT="/home/linuxbrew/.linuxbrew/opt/dotnet/libexec"
+export PATH="$PATH:/home/lavantien/.dotnet/tools"
+
 # Ripgrep-all and fzf integration
 rga-fzf() {
 	RG_PREFIX="rga --files-with-matches"

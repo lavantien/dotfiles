@@ -691,7 +691,7 @@ mkdir -p ~/notes \
 && cargo install sccache && cargo install coreutils \
 && npm i -g neovim && cargo install tree-sitter-cli \
 && ros install quicklisp && opam init && opam install ocaml-lsp-server odoc ocamlformat utop \
-&& dotnet dev-certs https --trust && dotnet tool install --global csharp-ls csharpier
+&& dotnet dev-certs https --trust && dotnet tool install --global csharp-ls && dotnet tool install --global csharpier
 ```
 
 <details>
