@@ -32,7 +32,12 @@ return {
 				},
 			},
 			{ "jay-babu/mason-null-ls.nvim" },
-			{ "nvimtools/none-ls.nvim" },
+			{
+				"nvimtools/none-ls.nvim",
+				dependencies = {
+					"nvimtools/none-ls-extras.nvim",
+				},
+			},
 			{
 				"stevearc/conform.nvim",
 				opts = {},
@@ -116,7 +121,7 @@ return {
 
 					-- c/cpp
 					"clangd",
-					"clang-format",
+					-- "clang-format",
 					"cpptools",
 
 					-- rust
@@ -126,7 +131,6 @@ return {
 					-- java
 					"jdtls",
 					"java-test",
-					"google-java-format",
 					"java-debug-adapter",
 
 					-- zig
@@ -266,12 +270,13 @@ return {
 				automatic_installation = false,
 				handlers = {},
 			})
+			require("null-ls").setup({
+				sources = {},
+				border = "rounded",
+			})
 			require("mason-null-ls").setup({
 				automatic_installation = false,
 				handlers = {},
-			})
-			require("null-ls").setup({
-				sources = {},
 			})
 
 			local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
@@ -281,7 +286,7 @@ return {
 					group = augroup,
 					buffer = bufnr,
 					callback = function()
-						vim.lsp.buf.format()
+						vim.lsp.buf.format({ async = true, timeout_ms = 5000 })
 					end,
 				})
 			end
@@ -311,7 +316,7 @@ return {
 					vim.lsp.buf.rename()
 				end, { buffer = bufnr, remap = false, desc = "LSP rename symbol" })
 				vim.keymap.set({ "n", "x" }, "<F3>", function()
-					vim.lsp.buf.format({ async = true })
+					vim.lsp.buf.format({ async = true, timeout_ms = 5000 })
 				end, { buffer = bufnr, remap = false, desc = "LSP format file" })
 				vim.keymap.set("n", "<F4>", function()
 					vim.lsp.buf.code_action()
@@ -377,7 +382,7 @@ return {
 					zig = { "zig fmt" },
 				},
 				format_on_save = {
-					timeout_ms = 500,
+					timeout_ms = 5000,
 					lsp_format = "fallback",
 				},
 			})
@@ -711,6 +716,7 @@ return {
 					"make",
 					"markdown",
 					"markdown_inline",
+					"nginx",
 					"ocaml",
 					"ocaml_interface",
 					"ocamllex",

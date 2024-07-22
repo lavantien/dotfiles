@@ -547,7 +547,7 @@ end, { silent = true, expr = true, desc = "LSP hover doc scroll down" })
 ## Languages Packages List
 
 <details>
-	<summary>(77)</summary>
+	<summary>(75)</summary>
 
 - actionlint
 - ansible-language-server ansiblels
@@ -562,7 +562,6 @@ end, { silent = true, expr = true, desc = "LSP hover doc scroll down" })
 - buf-language-server bufls
 - cbfmt
 - checkmake
-- clang-format
 - clangd
 - cmakelint
 - codelldb
@@ -583,7 +582,6 @@ end, { silent = true, expr = true, desc = "LSP hover doc scroll down" })
 - golangci-lint
 - golangci-lint-langserver golangci_lint_ls
 - gomodifytags
-- google-java-format
 - gopls
 - gotests
 - graphql-language-service-cli graphql
@@ -669,7 +667,6 @@ end, { silent = true, expr = true, desc = "LSP hover doc scroll down" })
 
 -- c/cpp
 "clangd",
-"clang-format",
 "cpptools",
 
 -- rust
@@ -679,7 +676,6 @@ end, { silent = true, expr = true, desc = "LSP hover doc scroll down" })
 -- java
 "jdtls",
 "java-test",
-"google-java-format",
 "java-debug-adapter",
 
 -- scala
