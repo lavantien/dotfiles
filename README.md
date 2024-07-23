@@ -547,6 +547,7 @@ sudo systemctl daemon-reload
 
 ```bash
 sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y \
+&& sudo snap refresh \
 && rustup update && cargo install-update -a \
 && npm -g update && go-global-update \
 && brew upgrade \
