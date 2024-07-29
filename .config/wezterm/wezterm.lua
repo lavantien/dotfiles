@@ -41,6 +41,7 @@ config.background = {
 			-- File = bg_path .. "/fantasy-forest-right-half.jpg",
 			-- File = bg_path .. "/solid-121212.png",
 			-- File = bg_path .. "/tokyo-sunset.jpeg",
+			-- File = bg_path .. "/Buddha-and-animals.png",
 		},
 		repeat_x = "NoRepeat",
 		width = "100%",
