@@ -32,14 +32,15 @@ config.window_padding = {
 	bottom = 0,
 }
 
-local dimmer = { brightness = 0.020 }
+local dimmer = { brightness = 0.004 }
 local bg_path = wezterm.home_dir .. "/assets"
 config.background = {
 	{
 		source = {
 			File = bg_path .. "/fantasy-forest-wallpaper.jpg",
-			-- File = bg_path .. '/fantasy-forest-right-half.jpg',
-			-- File = bg_path .. '/solid-121212.png',
+			-- File = bg_path .. "/fantasy-forest-right-half.jpg",
+			-- File = bg_path .. "/solid-121212.png",
+			-- File = bg_path .. "/tokyo-sunset.jpeg",
 		},
 		repeat_x = "NoRepeat",
 		width = "100%",
