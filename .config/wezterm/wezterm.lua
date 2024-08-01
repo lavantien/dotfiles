@@ -18,7 +18,7 @@ config.font = wezterm.font_with_fallback({
 	"DengXian",
 	"Source Han Sans SC",
 })
-config.font_size = 21.0
+config.font_size = 32.0
 -- config.color_scheme = 'tokyonight_night'
 config.color_scheme = "rose-pine"
 -- config.color_scheme = "GruvboxDarkHard"
