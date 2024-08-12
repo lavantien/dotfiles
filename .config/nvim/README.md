@@ -65,7 +65,7 @@ Set-Alias -Name h -Value hyperfine
 ```
 
 ```powershell
-cargo install-update -a && npm -g update && go-global-update && winget upgrade --all -u && scoop update
+cargo +nightly install-update -a && npm -g update && go-global-update && winget upgrade --all -u && scoop update
 ```
 
 - `choco upgrade all -y` (in admin shell) to mass update all packages
