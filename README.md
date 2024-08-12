@@ -182,7 +182,7 @@ brew install coreutils gcc gh go lazygit lazydocker fzf fd ripgrep bat tokei glo
 ```
 
 ```bash
-cargo install cargo-update --force && go install github.com/Gelio/go-global-update@latest && sudo apt install openjfx
+rustup install nightly && cargo install cargo-update --force && go install github.com/Gelio/go-global-update@latest && sudo apt install openjfx
 ```
 
 ### 8. Setup your `Git` environment
@@ -548,7 +548,7 @@ sudo systemctl daemon-reload
 ```bash
 sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y \
 && sudo snap refresh \
-&& rustup update && cargo install-update -a \
+&& rustup update && cargo +nightly install-update -a \
 && npm -g update && go-global-update \
 && brew upgrade \
 && flatpak update -y
@@ -747,7 +747,7 @@ Set-Alias -Name h -Value hyperfine
 ```
 
 ```powershell
-cargo install-update -a && npm -g update && go-global-update && winget upgrade --all -u && scoop update
+cargo +nightly install-update -a && npm -g update && go-global-update && winget upgrade --all -u && scoop update
 ```
 
 - `choco upgrade all -y` (in admin shell) to mass update all packages
