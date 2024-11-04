@@ -18,7 +18,7 @@ config.font = wezterm.font_with_fallback({
 	"DengXian",
 	"Source Han Sans SC",
 })
-config.font_size = 32.0
+config.font_size = 21.0
 -- config.color_scheme = 'tokyonight_night'
 config.color_scheme = "rose-pine"
 -- config.color_scheme = "GruvboxDarkHard"
@@ -32,15 +32,15 @@ config.window_padding = {
 	bottom = 0,
 }
 
-local dimmer = { brightness = 0.004 }
+local dimmer = { brightness = 0.02 }
 local bg_path = wezterm.home_dir .. "/assets"
 config.background = {
 	{
 		source = {
-			File = bg_path .. "/fantasy-forest-wallpaper.jpg",
+			-- File = bg_path .. "/fantasy-forest-wallpaper.jpg",
 			-- File = bg_path .. "/fantasy-forest-right-half.jpg",
 			-- File = bg_path .. "/solid-121212.png",
-			-- File = bg_path .. "/tokyo-sunset.jpeg",
+			File = bg_path .. "/tokyo-sunset.jpeg",
 			-- File = bg_path .. "/Buddha-and-animals.png",
 		},
 		repeat_x = "NoRepeat",
