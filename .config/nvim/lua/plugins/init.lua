@@ -99,7 +99,6 @@ return {
 					"go-debug-adapter",
 
 					-- javascript/typescript & vue
-					"tsserver",
 					"eslint",
 					"volar",
 					"prettier",
