@@ -351,3 +351,5 @@ notes
 .docker
 .roswell
 .gradle
+.local/share/teamviewer15/TeamViewer/Database
+.local/share/teamviewer15/logfiles
