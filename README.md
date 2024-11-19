@@ -15,6 +15,37 @@
 
 ### 0. Install `Firefox`, `Flatpak`, `OBS`; disable Wireless Powersaving and Files Open Limit; increase swap size
 
+```bash
+sudo snap remove firefox && sudo apt remove firefox
+```
+
+```bash
+sudo install -d -m 0755 /etc/apt/keyrings
+```
+
+```bash
+wget -q https://packages.mozilla.org/apt/repo-signing-key.gpg -O- | sudo tee /etc/apt/keyrings/packages.mozilla.org.asc > /dev/null
+```
+
+```bash
+echo "deb [signed-by=/etc/apt/keyrings/packages.mozilla.org.asc] https://packages.mozilla.org/apt mozilla main" | sudo tee -a /etc/apt/sources.list.d/mozilla.list > /dev/null
+```
+
+```bash
+echo '
+Package: *
+Pin: origin packages.mozilla.org
+Pin-Priority: 1000
+
+Package: firefox*
+Pin: release o=Ubuntu
+Pin-Priority: -1' | sudo tee /etc/apt/preferences.d/mozilla
+```
+
+```bash
+sudo apt update && sudo apt install firefox
+```
+
 - Open `Firefox`, sync your profile, and go to <https://github.com/lavantien/dotfiles/blob/main/README.md> to continue the steps
 - Go to uBlock settings and enable all filters. Recommended Firefox Extensions:
 
