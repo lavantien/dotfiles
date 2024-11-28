@@ -137,6 +137,20 @@ cat /proc/sys/fs/inotify/max_user_watches && sudo sysctl fs.inotify.max_user_wat
 sudo systemctl daemon-reexec
 ```
 
+lift restrictions for appimage
+
+```bash
+sudo vi /etc/sysctl.conf
+```
+
+```bash
+kernel.apparmor_restrict_unprivileged_userns=0
+```
+
+```bash
+sudo sysctl -p
+```
+
 `reboot`
 
 ```bash
@@ -171,7 +185,7 @@ sudo apt install kubuntu-desktop
 ### 1. Install all necessary `APT` packages
 
 ```bash
-sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install ubuntu-desktop ca-certificates apt-transport-https ubuntu-dev-tools glibc-source gcc xclip git curl zsh htop vim mpv libfuse2 cpu-checker cmake cmake-format ninja-build libjsoncpp-dev uuid-dev zlib1g-dev libssl-dev postgresql-all libmariadb-dev libsqlite3-dev libhiredis-dev jq bc xorg-dev libxcursor-dev cloud-init openssh-server ssh-import-id sysfsutils latexmk mupdf python3-pip python-is-python3 -y
+sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install ubuntu-desktop ca-certificates apt-transport-https ubuntu-dev-tools glibc-source gcc xclip git curl zsh htop vim mpv libfuse2 cpu-checker cmake cmake-format ninja-build libjsoncpp-dev uuid-dev zlib1g-dev libssl-dev postgresql-all libmariadb-dev libsqlite3-dev libhiredis-dev jq bc xorg-dev libxcursor-dev cloud-init openssh-server ssh-import-id sysfsutils latexmk mupdf python3-pip python-is-python3 libclblast-dev libclblast1 -y
 ```
 
 - When prompted for entering a mirror for `pbuilder` enter this: `http://http.us.debian.org/debian`
@@ -405,13 +419,17 @@ flatpak install flathub com.google.AndroidStudio
 sudo apt install libreoffice && flatpak install flathub org.gimp.GIMP org.inkscape.Inkscape org.kde.krita org.blender.Blender org.audacityteam.Audacity org.avidemux.Avidemux org.kde.kdenlive
 ```
 
-### 21. (Optional) `Helix`
+### 21. Install `LM Studio` and then download `gwen coder instruct q8` and `llama instruct q8`.
+
+- <https://insomniacvoid.dev/posts/installing-lm-studio-on-linux>
+
+### 22. (Optional) `Helix`
 
 ```bash
 brew install helix && hx --health
 ```
 
-### 22. (Optional) Install `Steam` and `Aseprite` (and optionally `Dota 2`, `Grim Dawn`, `Battlenet`, and `Diablo 2 Resurrected`)
+### 23. (Optional) Install `Steam` and `Aseprite` (and optionally `Dota 2`, `Grim Dawn`, `Battlenet`, and `Diablo 2 Resurrected`)
 
 ```bash
 sudo apt install steam -y
@@ -751,6 +769,7 @@ mkdir -p ~/notes \
   - `choco install vifm vscode-ruby` on admin terminal
   - `cargo install cargo-update`, `go install github.com/Gelio/go-global-update@latest`
   - `winget install --source winget --exact --id JohnMacFarlane.Pandoc` and [TeX Live](https://www.tug.org/texlive/windows.html).
+  - Install `LM Studio` and download `gwen coder instruct q8` and `llama instruct q8`.
 - Install additional packages yourself if there are something missing, be mindful of adding the `env vars`
 - add to global `PATH` value `C:\Program Files\LLVM\bin`
 - Create `~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1` (`$profile`) and add these lines to it, then install [ohmyposh](https://ohmyposh.dev/docs/installation/windows):

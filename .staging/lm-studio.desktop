@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=LM Studio
+Comment=LM Studio
+Exec=/home/lavantien/.local/bin/LM_Studio-0.3.5.AppImage
+Icon=/home/lavantien/Themes/Icons/lm-studio/lm-studio.png
+Terminal=false
+Type=Application
+Categories=Development;

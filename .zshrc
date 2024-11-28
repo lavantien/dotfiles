@@ -87,3 +87,6 @@ eval "$(zoxide init zsh)"
 # This section can be safely removed at any time if needed.
 [[ ! -r '/home/lavantien/.opam/opam-init/init.zsh' ]] || source '/home/lavantien/.opam/opam-init/init.zsh' > /dev/null 2> /dev/null
 # END opam configuration
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/home/lavantien/.cache/lm-studio/bin"
