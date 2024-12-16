@@ -94,7 +94,7 @@ return {
 					"staticcheck",
 					"semgrep",
 					"golangci_lint_ls",
-					"golangci_lint",
+					-- "golangci_lint",
 					"delve",
 					"go-debug-adapter",
 
@@ -137,9 +137,9 @@ return {
 					"zls",
 
 					-- ocaml
-					"ocamllsp",
-					"ocamlearlybird",
-					"ocamlformat",
+					-- {"ocamllsp", auto_update = false},
+					-- {"ocamlformat", auto_update = false},
+					-- {"ocamlearlybird", auto_update = false},
 
 					-- csharp
 					"csharp_ls",
@@ -155,14 +155,7 @@ return {
 
 					-- latex & typos
 					"texlab",
-					typos_lsp = {
-						-- settings = {
-						--     init_options = {
-						--         config = "~/.config/typos-lsp/typos.toml",
-						--         diagnosticSeverity = "Hint",
-						--     },
-						-- },
-					},
+					"typos",
 
 					-- shell
 					"bashls",
@@ -211,7 +204,6 @@ return {
 					"sql-formatter",
 
 					-- protobuf
-					"bufls",
 					"buf",
 					"protolint",
 

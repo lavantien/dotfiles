@@ -748,6 +748,7 @@ mkdir -p ~/notes \
   - `winget install gsudo TheDocumentFoundation.LibreOffice Git.Git GitHub.cli Docker.DockerDesktop GoLang.Go OpenJS.NodeJS Amazon.Corretto Rustlang.Rustup Diskuv.OCaml zig.zig ajeetdsouza.zoxide wez.wezterm JesseDuffield.lazygit JesseDuffield.Lazydocker`
   - `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` and `Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression`
   - `scoop install btop-lhm roswell`, `ros install quicklisp`, `dkml init --system`
+  - `scoop install main/golangci-lint`
   - `choco install vifm vscode-ruby` on admin terminal
   - `cargo install cargo-update`, `go install github.com/Gelio/go-global-update@latest`
   - `winget install --source winget --exact --id JohnMacFarlane.Pandoc` and [TeX Live](https://www.tug.org/texlive/windows.html).
