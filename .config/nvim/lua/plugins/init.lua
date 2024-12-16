@@ -262,8 +262,13 @@ return {
 				automatic_installation = false,
 				handlers = {},
 			})
-			require("null-ls").setup({
-				sources = {},
+			local null_ls = require("null-ls")
+			null_ls.setup({
+				sources = {
+					null_ls.builtins.diagnostics.sqlfluff.with({
+						extra_args = { "--dialect", "sqlite" },
+					}),
+				},
 				border = "rounded",
 			})
 			require("mason-null-ls").setup({
