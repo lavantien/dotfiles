@@ -114,9 +114,7 @@ return {
 					"tailwindcss",
 
 					-- python
-					"pyright",
-					"blue",
-					"flake8",
+					"python-lsp-server",
 					"debugpy",
 
 					-- c/cpp

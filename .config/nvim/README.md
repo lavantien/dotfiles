@@ -2,8 +2,10 @@
 
 ## Install
 
+- Latest **Neovim Nightly/Prerelease required**, v0.11+ as of now. Or else some plugins will bug out.
 - Git, GH CLI, Neovim, GCC/LLVM-Clang, Go, NodeJS, Python3, Rust, Lua, Android/React Native, Java, Coursier/Scala, Ocaml, Zig, Lisp, C#/Dotnet, SQLite, Docker, K8s, OpenTf
 - Neovim Deps (on first run let them install don't close Neovim midway, `:Mason` to see progress); then [integrate ripgrep-all and fzf](https://github.com/phiresky/ripgrep-all/wiki/fzf-Integration), put the file in `~/.local/bin` and add the folder to `PATH`
+- Local LLMs via [LM Studio](https://lmstudio.ai/) (16+ gb ram, referably a RTX card).
 
 ```bash
 mkdir -p ~/notes \
@@ -22,18 +24,20 @@ mkdir -p ~/notes \
 - copy `.config/nvim/` directory to `C:\Users\<name>\AppData\Local\`
 - copy from `[init] to [pull]` inside `.gitconfig` to your config file location (`git config --list --show-origin --show-scope`)
 - copy `./typos.toml` file to `~/`
-- add to local `PATH` value `C:\Users\<name>\AppData\Local\nvim-data\mason\bin`
+- add to `PATH` this value `C:\Users\<name>\AppData\Local\nvim-data\mason\bin`
 - set the `RUSTC_WRAPPER` env var to `C:\Users\<name>\.cargo\bin\sccache.exe`
 - install [sqlite3](https://gist.github.com/zeljic/d8b542788b225b1bcb5fce169ee28c55), rename `sqlite3.dll` to `libsqlite3.dll` and `sqlite3.lib` to `libsqlite3.lib`, and add its location to`PATH`
 - Install `Android Studio`, [Android SDK](https://reactnative.dev/docs/set-up-your-environment), and [coursier/scala](https://www.scala-lang.org/download/)
 - Install all packages via [winget](https://winget.run/) if possible, then use `scoop install`, `cargo install`, `go install`, and `choco install` (requires admin shell) in this order
   - `winget source reset --force` in admin shell
   - `winget install Microsoft.VisualStudio.2019.BuildTools --override "--wait --passive --installPath C:\VS --addProductLang En-us --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"`
-  - `winget install gsudo TheDocumentFoundation.LibreOffice Git.Git GitHub.cli Docker.DockerDesktop GoLang.Go OpenJS.NodeJS Amazon.Corretto Rustlang.Rustup Diskuv.OCaml zig.zig ajeetdsouza.zoxide wez.wezterm JesseDuffield.lazygit JesseDuffield.Lazydocker`
+  - `winget install gsudo TheDocumentFoundation.LibreOffice Git.Git GitHub.cli Docker.DockerDesktop GoLang.Go OpenJS.NodeJS Amazon.Corretto Rustlang.Rustup Diskuv.OCaml zig.zig ajeetdsouza.zoxide wez.wezterm JesseDuffield.lazygit JesseDuffield.Lazydocker wget`
   - `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` and `Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression`
   - `scoop install btop-lhm roswell`, `ros install quicklisp`, `dkml init --system`
+  - `scoop install main/golangci-lint`
   - `choco install vifm vscode-ruby` on admin terminal
   - `cargo install cargo-update`, `go install github.com/Gelio/go-global-update@latest`
+  - `winget install --source winget --exact --id JohnMacFarlane.Pandoc` and [TeX Live](https://www.tug.org/texlive/windows.html).
 - Install additional packages yourself if there are something missing, be mindful of adding the `env vars`
 - add to global `PATH` value `C:\Program Files\LLVM\bin`
 - Create `~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1` (`$profile`) and add these lines to it, then install [ohmyposh](https://ohmyposh.dev/docs/installation/windows):
@@ -79,7 +83,7 @@ cargo +nightly install-update -a && npm -g update && go-global-update && winget 
 
 ## Features
 
-- Fully support lua, go, javascript/typescript & vue, html/htmx & css/tailwind, python, c/cpp, rust, java, scala, ocaml, csharp/dotnet, zig, lisp, assembly, markdown, latex & typos, bash, make & cmake, json, yaml, toml, sql, protobuf, graphql, docker/compose, ci/cd, kubernetes/helm, ansible, opentofu
+- Fully support lua, go, javascript/typescript & vue, html/htmx & css/tailwind, python, c/cpp, rust, java, scala, ocaml, zig, lisp, csharp/dotnet, assembly, markdown, latex & typos, bash, make & cmake, json, yaml, toml, sql, protobuf, graphql, docker/compose, ci/cd, kubernetes/helm, ansible, opentofu
 - Intellisense, Code Actions, Debugging, Testing, Diff View, Snippets, Hints, Code Objects, Pin Headers, Display Statuses, Token Tree, Fuzzy Picker
 - Surround, Autotag, Improved Floating UIs, Toggle Term, Notifications, Inline Diagnostics, Inline Eval, Statusbar, Multifiles Jumper, Refactoring, Clues
 - Smart Folds, Autolint, Notes Taking, Indentation Guides, Smart Help, Undo Tree, Git Integration, SQL/NoSQL Client, File Explorer, Cellular Automaton
@@ -461,86 +465,87 @@ end, { silent = true, expr = true, desc = "LSP hover doc scroll down" })
 ## Plugins List
 
 <details>
-	<summary>(78)</summary>
+	<summary>(79)</summary>
 
-- cellular-automaton.nvim 0.67ms  start
-- cmp-buffer 0.19ms  nvim-cmp
-- cmp-cmdline 0.14ms  nvim-cmp
-- cmp-nvim-lsp 0.09ms  nvim-cmp
-- cmp-nvim-lsp-signature-help 0.13ms  nvim-cmp
-- cmp-path 0.12ms  nvim-cmp
-- cmp_luasnip 0.13ms  nvim-cmp
-- conform.nvim 0.64ms  lsp-zero.nvim
-- diffview.nvim 1.15ms  start
-- dressing.nvim 1.95ms  start
-- fidget.nvim 1.96ms  lsp-zero.nvim
-- FixCursorHold.nvim 0.64ms  neotest
-- friendly-snippets 0.17ms  LuaSnip
-- gitsigns.nvim 3.44ms  start
-- harpoon 5.61ms  start
-- indent-blankline.nvim 1.53ms  start
-- lazy.nvim 6.06ms  init.lua
-- lazydev.nvim 1.91ms  lua
-- lsp-zero.nvim 126.61ms  start
-- lspkind.nvim 0.12ms  nvim-cmp
-- lualine.nvim 5.45ms  start
-- LuaSnip 5.25ms  nvim-cmp
-- mason-lspconfig.nvim 0.09ms  lsp-zero.nvim
-- mason-null-ls.nvim 0.35ms  lsp-zero.nvim
-- mason-nvim-dap.nvim 0.07ms  lsp-zero.nvim
-- mason-tool-installer.nvim 1.08ms  lsp-zero.nvim
-- mason.nvim 1.5ms  lsp-zero.nvim
-- mini.nvim 5.6ms  start
-- neotest 36.91ms  start
-- neotest-bash 0.36ms  neotest
-- neotest-go 0.41ms  neotest
-- neotest-gtest 0.34ms  neotest
-- neotest-jest 0.37ms  neotest
-- neotest-plenary 0.36ms  neotest
-- neotest-python 0.36ms  neotest
-- neotest-rust 0.35ms  neotest
-- neotest-scala 0.41ms  neotest
-- neotest-vitest 0.44ms  neotest
-- neotest-zig 0.4ms  neotest
-- noice.nvim 17.18ms 󰢱 noice  config.remap
-- none-ls.nvim 0.24ms  lsp-zero.nvim
-- nui.nvim 0.57ms  noice.nvim
-- nvim-cmp 11.65ms  start
-- nvim-dap 0.77ms  lsp-zero.nvim
-- nvim-dap-go 0.29ms  lsp-zero.nvim
-- nvim-dap-ui 0.28ms  lsp-zero.nvim
-- nvim-dap-virtual-text 0.28ms  lsp-zero.nvim
-- nvim-lspconfig 0.28ms 󰢱 lspconfig  nvim-ufo
-- nvim-nio 0.27ms  lsp-zero.nvim
-- nvim-notify 11.79ms  noice.nvim
-- nvim-treesitter 10.38ms  render-markdown
-- nvim-treesitter-context 1.65ms  start
-- nvim-ts-autotag 5.57ms  nvim-treesitter
-- nvim-ufo 5.51ms  start
-- nvim-web-devicons 0.55ms 󰢱 nvim-web-devicons  render-markdown
-- oil.nvim 4.25ms  start
-- playground 1.21ms  start
-- plenary.nvim 0.35ms  refactoring.nvim
-- promise-async 0.27ms  nvim-ufo
-- refactoring.nvim 13.69ms  start
-- render-markdown 20.77ms  start
-- rose-pine 4.79ms  start
-- SchemaStore.nvim 0.07ms  lsp-zero.nvim
-- smart-open.nvim 10.73ms  start
-- sqlite.lua 0.4ms  smart-open.nvim
-- telescope-fzf-native.nvim 0.22ms  smart-open.nvim
-- telescope-fzy-native.nvim 0.22ms  smart-open.nvim
-- telescope.nvim 8.96ms 󰢱 telescope  refactoring.nvim
-- undotree 0.32ms  start
-- vim-dadbod 0.63ms  start
-- vim-dadbod-completion 0.23ms  start
-- vim-dadbod-ui 0.71ms  start
-- vim-fugitive 1.13ms  start
-- vimtex 0.39ms  start
-- vlime 0.1ms  start
-- luvit-meta 
-- nvim-metals  sbt  scala 
-- trouble.nvim  <leader>cd  <leader>ce  <leader>ca  <leader>cc  <leader>cs 
+● cellular-automaton.nvim 0.11ms  start
+● cmp-buffer 0.09ms  nvim-cmp
+● cmp-cmdline 0.13ms  nvim-cmp
+● cmp-nvim-lsp 0.1ms  nvim-cmp
+● cmp-nvim-lsp-signature-help 0.11ms  nvim-cmp
+● cmp-path 0.1ms  nvim-cmp
+● cmp_luasnip 0.17ms  nvim-cmp
+● conform.nvim 0.67ms  lsp-zero.nvim
+● diffview.nvim 1.66ms  start
+● dressing.nvim 1.54ms  start
+● fidget.nvim 1.82ms  lsp-zero.nvim
+● FixCursorHold.nvim 0.58ms  neotest
+● friendly-snippets 0.12ms  LuaSnip
+● gitsigns.nvim 1.3ms  start
+● harpoon 4.32ms  start
+● indent-blankline.nvim 1.91ms  start
+● lazy.nvim 9.11ms  init.lua
+● lsp-zero.nvim 111.12ms  start
+● lspkind.nvim 0.14ms  nvim-cmp
+● lualine.nvim 12.16ms  start
+● LuaSnip 5.33ms  nvim-cmp
+● mason-lspconfig.nvim 0.07ms  lsp-zero.nvim
+● mason-null-ls.nvim 0.37ms  lsp-zero.nvim
+● mason-nvim-dap.nvim 0.04ms  lsp-zero.nvim
+● mason-tool-installer.nvim 1.67ms  lsp-zero.nvim
+● mason.nvim 3.66ms  lsp-zero.nvim
+● mini.nvim 3.8ms  start
+● neotest 39.13ms  start
+● neotest-bash 0.61ms  neotest
+● neotest-go 0.19ms  neotest
+● neotest-gtest 0.35ms  neotest
+● neotest-jest 0.31ms  neotest
+● neotest-plenary 0.19ms  neotest
+● neotest-python 0.24ms  neotest
+● neotest-rust 0.22ms  neotest
+● neotest-scala 0.3ms  neotest
+● neotest-vitest 0.3ms  neotest
+● neotest-zig 0.29ms  neotest
+● noice.nvim 7.18ms 󰢱 noice  config.remap
+● none-ls-extras.nvim 0.24ms  none-ls.nvim
+● none-ls.nvim 0.54ms  lsp-zero.nvim
+● nui.nvim 0.43ms  noice.nvim
+● nvim-cmp 10.33ms  start
+● nvim-dap 1.06ms  lsp-zero.nvim
+● nvim-dap-go 0.27ms  lsp-zero.nvim
+● nvim-dap-ui 0.28ms  lsp-zero.nvim
+● nvim-dap-virtual-text 0.26ms  lsp-zero.nvim
+● nvim-lspconfig 3.73ms  lsp-zero.nvim
+● nvim-nio 0.27ms  neotest
+● nvim-notify 4.14ms  noice.nvim
+● nvim-treesitter 10.83ms  refactoring.nvim
+● nvim-treesitter-context 0.96ms  start
+● nvim-ts-autotag 5.65ms  nvim-treesitter
+● nvim-ufo 25.96ms  start
+● nvim-web-devicons 0.45ms  lualine.nvim
+● oil.nvim 1.76ms  start
+● playground 0.56ms  start
+● plenary.nvim 0.44ms  refactoring.nvim
+● promise-async 0.35ms  nvim-ufo
+● refactoring.nvim 19.76ms  start
+● render-markdown 5.48ms  start
+● rose-pine 3.07ms  start
+● SchemaStore.nvim 0.08ms  lsp-zero.nvim
+● smart-open.nvim 20.6ms  start
+● sqlite.lua 0.39ms  smart-open.nvim
+● telescope-fzf-native.nvim 0.35ms  smart-open.nvim
+● telescope-fzy-native.nvim 0.34ms  smart-open.nvim
+● telescope.nvim 3.56ms 󰢱 telescope  refactoring.nvim
+● undotree 0.38ms  start
+● vim-dadbod 0.69ms  start
+● vim-dadbod-completion 0.48ms  start
+● vim-dadbod-ui 0.79ms  start
+● vim-fugitive 1.36ms  start
+● vimtex 1.42ms  start
+● vlime 0.12ms  start
+○ lazydev.nvim  lua
+○ luvit-meta
+○ nvim-metals  sbt  scala
+○ trouble.nvim  <leader>cs  <leader>cd  <leader>ce  <leader>ca  <leader>cc
 
 </details>
 
@@ -551,17 +556,13 @@ end, { silent = true, expr = true, desc = "LSP hover doc scroll down" })
 
 - actionlint
 - ansible-language-server ansiblels
-- ansible-lint
 - asm-lsp asm_lsp
 - asmfmt
 - bash-debug-adapter
 - bash-language-server bashls
 - beautysh
-- blue
-- buf
-- buf-language-server bufls
+- buf buf_ls
 - cbfmt
-- checkmake
 - clangd
 - cmakelint
 - codelldb
@@ -576,10 +577,8 @@ end, { silent = true, expr = true, desc = "LSP hover doc scroll down" })
 - emmet-language-server emmet_language_server
 - eslint-lsp eslint
 - firefox-debug-adapter
-- flake8
 - go-debug-adapter
 - goimports-reviser
-- golangci-lint
 - golangci-lint-langserver golangci_lint_ls
 - gomodifytags
 - gopls
@@ -594,18 +593,13 @@ end, { silent = true, expr = true, desc = "LSP hover doc scroll down" })
 - jdtls
 - js-debug-adapter
 - lua-language-server lua_ls
-- luacheck
 - marksman
 - neocmakelsp neocmake
-- ocaml-lsp ocamllsp
-- ocamlearlybird
-- ocamlformat
 - powershell-editor-services powershell_es
 - prettier
 - protolint
-- pyright
+- python-lsp-server pylsp
 - rust-analyzer rust_analyzer
-- semgrep
 - shellcheck
 - shfmt
 - sql-formatter
@@ -618,172 +612,11 @@ end, { silent = true, expr = true, desc = "LSP hover doc scroll down" })
 - terraform-ls terraformls
 - texlab
 - tflint
-- typescript-language-server tsserver
-- typos-lsp typos_lsp
+- typos
 - vue-language-server volar
 - yamlfmt
 - yamllint
 - zls
-
-```lua
--- lua
-"lua_ls",
-"stylua",
-"luacheck",
-
--- go
-"gopls",
-"gotests",
-"impl",
-"gomodifytags",
-"goimports-reviser",
-"staticcheck",
-"semgrep",
-"golangci_lint_ls",
-"golangci_lint",
-"delve",
-"go-debug-adapter",
-
--- javascript/typescript & vue
-"tsserver",
-"eslint",
-"volar",
-"prettier",
-"js-debug-adapter",
-"firefox-debug-adapter",
-
--- html/htmx & css/tailwind
-"html",
-"emmet_language_server",
-"htmx",
-"cssls",
-"tailwindcss",
-
--- python
-"pyright",
-"blue",
-"flake8",
-"debugpy",
-
--- c/cpp
-"clangd",
-"cpptools",
-
--- rust
-"rust_analyzer",
-"codelldb",
-
--- java
-"jdtls",
-"java-test",
-"java-debug-adapter",
-
--- scala
--- "scalameta/nvim-metals"
-
--- lisp
--- "vlime/vlime"
-
--- zig
-"zls",
-
--- ocaml
-"ocamllsp",
-"ocamlearlybird",
-"ocamlformat",
-
--- csharp
-"csharp_ls",
-"csharpier",
-
--- assembly
-"asm-lsp",
-"asmfmt",
-
--- markdown
-"marksman",
-"cbfmt",
-
--- latex & typos
-"texlab",
-typos_lsp = {
-    init_options = {
-        config = "~/typos.toml",
-    },
-},
-
--- shell
-"bashls",
-"powershell_es",
-"shellcheck",
-"shfmt",
-"beautysh",
-"bash-debug-adapter",
-
--- make & cmake
-"checkmake",
-"neocmake",
-"cmakelint",
-
--- json
-jsonls = {
-    settings = {
-        json = {
-            schemas = require("schemastore").json.schemas(),
-            validate = { enable = true },
-        },
-    },
-},
-
--- yaml
-yamlls = {
-    settings = {
-        yaml = {
-            schemaStore = {
-                enable = false,
-                url = "",
-            },
-            schemas = require("schemastore").yaml.schemas(),
-        },
-    },
-},
-"yamlfmt",
-"yamllint",
-
--- toml
-"taplo",
-
--- sql
-"sqlls",
-"sqlfluff",
-"sql-formatter",
-
--- protobuf
-"bufls",
-"buf",
-"protolint",
-
--- graphql
-"graphql",
-
--- docker/compose
-"dockerls",
-"docker_compose_language_service",
-
--- ci/cd
-"actionlint",
-
--- kubernetes/helm
-"helm_ls",
-
--- ansible
-"ansiblels",
-"ansible-lint",
-
--- opentofu
-"terraformls",
-"tflint",
-```
 
 </details>
 
@@ -807,4 +640,4 @@ yamlls = {
 
 </details>
 
-![neovim-demo](https://github.com/lavantien/dotfiles/blob/main/assets/neovim-demo.png)
+![neovim-demo](/assets/neovim-demo.png)
