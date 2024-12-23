@@ -1,5 +1,7 @@
 -- vim.opt.guicursor = ""
 
+vim.opt.ff = "unix"
+
 vim.opt.nu = true
 vim.opt.relativenumber = true
 
