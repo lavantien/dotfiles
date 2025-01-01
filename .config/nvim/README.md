@@ -6,6 +6,11 @@
 - Git, GH CLI, Neovim, GCC/LLVM-Clang, Go, NodeJS, Python3, Rust, Lua, Android/React Native, Java, Coursier/Scala, Ocaml, Zig, Lisp, C#/Dotnet, SQLite, Docker, K8s, OpenTf
 - Neovim Deps (on first run let them install don't close Neovim midway, `:Mason` to see progress); then [integrate ripgrep-all and fzf](https://github.com/phiresky/ripgrep-all/wiki/fzf-Integration), put the file in `~/.local/bin` and add the folder to `PATH`
 - Local LLMs via [LM Studio](https://lmstudio.ai/) (16+ gb ram, referably a RTX card).
+- Aider install:
+
+```bash
+curl -LsSf https://aider.chat/install.sh | sh
+```
 
 ```bash
 mkdir -p ~/notes \
@@ -38,6 +43,7 @@ mkdir -p ~/notes \
   - `choco install vifm vscode-ruby` on admin terminal
   - `cargo install cargo-update`, `go install github.com/Gelio/go-global-update@latest`
   - `winget install --source winget --exact --id JohnMacFarlane.Pandoc` and [TeX Live](https://www.tug.org/texlive/windows.html).
+  - `powershell -ExecutionPolicy ByPass -c "irm https://aider.chat/install.ps1 | iex"`
 - Install additional packages yourself if there are something missing, be mindful of adding the `env vars`
 - add to global `PATH` value `C:\Program Files\LLVM\bin`
 - Create `~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1` (`$profile`) and add these lines to it, then install [ohmyposh](https://ohmyposh.dev/docs/installation/windows):

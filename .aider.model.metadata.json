@@ -1,0 +1,7 @@
+{
+  "openai/deepseek-ai/DeepSeek-V3": {
+    "max_tokens": 131072,
+    "temperature": 0.1,
+    "top_p": 0.95
+  }
+}

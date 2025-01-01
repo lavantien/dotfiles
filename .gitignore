@@ -356,3 +356,7 @@ notes
 .local/share/Trash
 .local/share/teamviewer15/BuddyListCache
 .local/share/plasma-systemmonitor
+.local/bin
+.local/share/pipx/py
+.aider
+.aider.conf.yml
