@@ -224,6 +224,10 @@ brew install coreutils gcc gh go lazygit lazydocker fzf fd ripgrep bat tokei glo
 go install github.com/Gelio/go-global-update@latest && sudo apt install openjfx
 ```
 
+```bash
+go install github.com/veandco/go-sdl2@master
+```
+
 ### 8. Setup your `Git` environment
 
 - For `gh`, [`gh-f`](https://github.com/gennaro-tedesco/gh-f), run `gh auth login` and follow `HTTPS browser` instruction to setup `GitHub CLI`
@@ -499,6 +503,12 @@ http {
 ```
 
 </details>
+
+- [**Go SDL2**](https://github.com/veandco/go-sdl2)
+
+```bash
+go get -v github.com/veandco/go-sdl2/{sdl,img,mix,ttf}@latest
+```
 
 - [**GRPC Gateway**](https://github.com/grpc-ecosystem/grpc-gateway)
 
