@@ -361,3 +361,4 @@ notes
 .aider
 .aider.conf.yml
 .config/btop
+*.AppImage
