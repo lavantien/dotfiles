@@ -362,3 +362,4 @@ notes
 .aider.conf.yml
 .config/btop
 *.AppImage
+.lmstudio
