@@ -363,3 +363,5 @@ notes
 .config/btop
 *.AppImage
 .lmstudio
+.local/share/cloudflare-warp-gui
+.local/share/warp
