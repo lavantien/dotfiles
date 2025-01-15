@@ -607,6 +607,60 @@ return {
 		end,
 	},
 
+	{ -- AI Integration
+		"milanglacier/minuet-ai.nvim",
+		config = function()
+			require("minuet").setup({})
+			require("cmp").setup({
+				sources = {
+					{
+						{ name = "minuet" },
+					},
+				},
+				performance = {
+					fetching_timeout = 2000,
+				},
+			})
+			require("cmp").setup({
+				mapping = {
+					["<A-y>"] = require("minuet").make_cmp_map(),
+				},
+			})
+
+			-- require("blink-cmp").setup({
+			-- 	keymap = {
+			-- 		-- Manually invoke minuet completion.
+			-- 		["<A-y>"] = require("minuet").make_blink_map(),
+			-- 	},
+			-- 	sources = {
+			-- 		-- Enable minuet for autocomplete
+			-- 		default = { "lsp", "path", "buffer", "snippets", "minuet" },
+			-- 		-- For manual completion only, remove 'minuet' from default
+			-- 		providers = {
+			-- 			minuet = {
+			-- 				name = "minuet",
+			-- 				module = "minuet.blink",
+			-- 				score_offset = 8, -- Gives minuet higher priority among suggestions
+			-- 			},
+			-- 		},
+			-- 	},
+			-- })
+
+			require("minuet").setup({
+				provider = "codestral",
+				provider_options = {
+					codestral = {
+						optional = {
+							max_tokens = 32768,
+							stop = { "\n\n" },
+						},
+					},
+				},
+				context_window = 262144,
+			})
+		end,
+	},
+
 	{ -- Scala Language
 		"scalameta/nvim-metals",
 		dependencies = {

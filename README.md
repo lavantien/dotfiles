@@ -734,7 +734,8 @@ hx --health
 - Latest **Neovim Nightly/Prerelease required**, v0.11+ as of now. Or else some plugins will bug out.
 - Git, GH CLI, Neovim, GCC/LLVM-Clang, Go, NodeJS, Python3, Rust, Lua, Android/React Native, Java, Coursier/Scala, Ocaml, Zig, Lisp, C#/Dotnet, SQLite, Docker, K8s, OpenTf
 - Neovim Deps (on first run let them install don't close Neovim midway, `:Mason` to see progress); then [integrate ripgrep-all and fzf](https://github.com/phiresky/ripgrep-all/wiki/fzf-Integration), put the file in `~/.local/bin` and add the folder to `PATH`
-- Local LLMs via [LM Studio](https://lmstudio.ai/) (16+ gb ram, referably a RTX card).
+- AI FIM completion with free & unlimited Codestral API
+- Local LLMs via [LM Studio](https://lmstudio.ai/), [KoboldCpp](https://github.com/LostRuins/koboldcpp), and [Pinokio](https://pinokio.computer/) (16+ gb ram, referably a RTX card).
 - Aider install:
 
 ```bash

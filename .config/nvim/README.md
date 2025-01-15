@@ -5,7 +5,8 @@
 - Latest **Neovim Nightly/Prerelease required**, v0.11+ as of now. Or else some plugins will bug out.
 - Git, GH CLI, Neovim, GCC/LLVM-Clang, Go, NodeJS, Python3, Rust, Lua, Android/React Native, Java, Coursier/Scala, Ocaml, Zig, Lisp, C#/Dotnet, SQLite, Docker, K8s, OpenTf
 - Neovim Deps (on first run let them install don't close Neovim midway, `:Mason` to see progress); then [integrate ripgrep-all and fzf](https://github.com/phiresky/ripgrep-all/wiki/fzf-Integration), put the file in `~/.local/bin` and add the folder to `PATH`
-- Local LLMs via [LM Studio](https://lmstudio.ai/) (16+ gb ram, referably a RTX card).
+- AI FIM completion with free & unlimited Codestral API
+- Local LLMs via [LM Studio](https://lmstudio.ai/), [KoboldCpp](https://github.com/LostRuins/koboldcpp), and [Pinokio](https://pinokio.computer/) (16+ gb ram, referably a RTX card).
 - Aider install:
 
 ```bash
@@ -468,181 +469,23 @@ end, { silent = true, expr = true, desc = "LSP hover doc scroll down" })
 
 </details>
 
-## Plugins List
-
-<details>
-	<summary>(79)</summary>
-
-● cellular-automaton.nvim 0.11ms  start
-● cmp-buffer 0.09ms  nvim-cmp
-● cmp-cmdline 0.13ms  nvim-cmp
-● cmp-nvim-lsp 0.1ms  nvim-cmp
-● cmp-nvim-lsp-signature-help 0.11ms  nvim-cmp
-● cmp-path 0.1ms  nvim-cmp
-● cmp_luasnip 0.17ms  nvim-cmp
-● conform.nvim 0.67ms  lsp-zero.nvim
-● diffview.nvim 1.66ms  start
-● dressing.nvim 1.54ms  start
-● fidget.nvim 1.82ms  lsp-zero.nvim
-● FixCursorHold.nvim 0.58ms  neotest
-● friendly-snippets 0.12ms  LuaSnip
-● gitsigns.nvim 1.3ms  start
-● harpoon 4.32ms  start
-● indent-blankline.nvim 1.91ms  start
-● lazy.nvim 9.11ms  init.lua
-● lsp-zero.nvim 111.12ms  start
-● lspkind.nvim 0.14ms  nvim-cmp
-● lualine.nvim 12.16ms  start
-● LuaSnip 5.33ms  nvim-cmp
-● mason-lspconfig.nvim 0.07ms  lsp-zero.nvim
-● mason-null-ls.nvim 0.37ms  lsp-zero.nvim
-● mason-nvim-dap.nvim 0.04ms  lsp-zero.nvim
-● mason-tool-installer.nvim 1.67ms  lsp-zero.nvim
-● mason.nvim 3.66ms  lsp-zero.nvim
-● mini.nvim 3.8ms  start
-● neotest 39.13ms  start
-● neotest-bash 0.61ms  neotest
-● neotest-go 0.19ms  neotest
-● neotest-gtest 0.35ms  neotest
-● neotest-jest 0.31ms  neotest
-● neotest-plenary 0.19ms  neotest
-● neotest-python 0.24ms  neotest
-● neotest-rust 0.22ms  neotest
-● neotest-scala 0.3ms  neotest
-● neotest-vitest 0.3ms  neotest
-● neotest-zig 0.29ms  neotest
-● noice.nvim 7.18ms 󰢱 noice  config.remap
-● none-ls-extras.nvim 0.24ms  none-ls.nvim
-● none-ls.nvim 0.54ms  lsp-zero.nvim
-● nui.nvim 0.43ms  noice.nvim
-● nvim-cmp 10.33ms  start
-● nvim-dap 1.06ms  lsp-zero.nvim
-● nvim-dap-go 0.27ms  lsp-zero.nvim
-● nvim-dap-ui 0.28ms  lsp-zero.nvim
-● nvim-dap-virtual-text 0.26ms  lsp-zero.nvim
-● nvim-lspconfig 3.73ms  lsp-zero.nvim
-● nvim-nio 0.27ms  neotest
-● nvim-notify 4.14ms  noice.nvim
-● nvim-treesitter 10.83ms  refactoring.nvim
-● nvim-treesitter-context 0.96ms  start
-● nvim-ts-autotag 5.65ms  nvim-treesitter
-● nvim-ufo 25.96ms  start
-● nvim-web-devicons 0.45ms  lualine.nvim
-● oil.nvim 1.76ms  start
-● playground 0.56ms  start
-● plenary.nvim 0.44ms  refactoring.nvim
-● promise-async 0.35ms  nvim-ufo
-● refactoring.nvim 19.76ms  start
-● render-markdown 5.48ms  start
-● rose-pine 3.07ms  start
-● SchemaStore.nvim 0.08ms  lsp-zero.nvim
-● smart-open.nvim 20.6ms  start
-● sqlite.lua 0.39ms  smart-open.nvim
-● telescope-fzf-native.nvim 0.35ms  smart-open.nvim
-● telescope-fzy-native.nvim 0.34ms  smart-open.nvim
-● telescope.nvim 3.56ms 󰢱 telescope  refactoring.nvim
-● undotree 0.38ms  start
-● vim-dadbod 0.69ms  start
-● vim-dadbod-completion 0.48ms  start
-● vim-dadbod-ui 0.79ms  start
-● vim-fugitive 1.36ms  start
-● vimtex 1.42ms  start
-● vlime 0.12ms  start
-○ lazydev.nvim  lua
-○ luvit-meta
-○ nvim-metals  sbt  scala
-○ trouble.nvim  <leader>cs  <leader>cd  <leader>ce  <leader>ca  <leader>cc
-
-</details>
-
-## Languages Packages List
-
-<details>
-	<summary>(75)</summary>
-
-- actionlint
-- ansible-language-server ansiblels
-- asm-lsp asm_lsp
-- asmfmt
-- bash-debug-adapter
-- bash-language-server bashls
-- beautysh
-- buf buf_ls
-- cbfmt
-- clangd
-- cmakelint
-- codelldb
-- cpptools
-- csharp-language-server csharp_ls
-- csharpier
-- css-lsp cssls
-- debugpy
-- delve
-- docker-compose-language-service docker_compose_language_service
-- dockerfile-language-server dockerls
-- emmet-language-server emmet_language_server
-- eslint-lsp eslint
-- firefox-debug-adapter
-- go-debug-adapter
-- goimports-reviser
-- golangci-lint-langserver golangci_lint_ls
-- gomodifytags
-- gopls
-- gotests
-- graphql-language-service-cli graphql
-- helm-ls helm_ls
-- html-lsp html
-- htmx-lsp htmx
-- impl
-- java-debug-adapter
-- java-test
-- jdtls
-- js-debug-adapter
-- lua-language-server lua_ls
-- marksman
-- neocmakelsp neocmake
-- powershell-editor-services powershell_es
-- prettier
-- protolint
-- python-lsp-server pylsp
-- rust-analyzer rust_analyzer
-- shellcheck
-- shfmt
-- sql-formatter
-- sqlfluff
-- sqlls
-- staticcheck
-- stylua
-- tailwindcss-language-server tailwindcss
-- taplo
-- terraform-ls terraformls
-- texlab
-- tflint
-- typos
-- vue-language-server volar
-- yamlfmt
-- yamllint
-- zls
-
-</details>
-
-## References
+## references
 
 <details>
   <summary>expand</summary>
 
-- 0 to LSP: <https://youtu.be/w7i4amO_zaE>
-- Zero to IDE: <https://youtu.be/N93cTbtLCIM>
-- Effective Neovim: Instant IDE: <https://youtu.be/stqUbv-5u2s>
-- The Only Video You Need to Get Started with Neovim: <https://youtu.be/m8C0Cq9Uv9o>
-- Kickstart.nvim: <https://github.com/nvim-lua/kickstart.nvim>
-- ThePrimeagen/init.lua: <https://github.com/ThePrimeagen/init.lua>
-- TJDevries/config.nvim: <https://github.com/tjdevries/config.nvim>
-- Debugging in Neovim: <https://youtu.be/0moS8UHupGc>
-- Simple neovim debugging setup: <https://youtu.be/lyNfnI-B640>
-- My neovim autocomplete setup: explained: <https://youtu.be/22mrSjknDHI>
-- Oil.nvim - My Favorite Addition to my Neovim Config: <https://youtu.be/218PFRsvu2o>
-- Vim Dadbod - My Favorite SQL Plugin: <https://youtu.be/ALGBuFLzDSA>
+- 0 to lsp: <https://youtu.be/w7i4amo_zae>
+- zero to ide: <https://youtu.be/n93ctbtlcim>
+- effective neovim: instant ide: <https://youtu.be/stqubv-5u2s>
+- the only video you need to get started with neovim: <https://youtu.be/m8c0cq9uv9o>
+- kickstart.nvim: <https://github.com/nvim-lua/kickstart.nvim>
+- theprimeagen/init.lua: <https://github.com/theprimeagen/init.lua>
+- tjdevries/config.nvim: <https://github.com/tjdevries/config.nvim>
+- debugging in neovim: <https://youtu.be/0mos8uhupgc>
+- simple neovim debugging setup: <https://youtu.be/lynfni-b640>
+- my neovim autocomplete setup: explained: <https://youtu.be/22mrsjkndhi>
+- oil.nvim - my favorite addition to my neovim config: <https://youtu.be/218pfrsvu2o>
+- vim dadbod - my favorite sql plugin: <https://youtu.be/algbuflzdsa>
 
 </details>
 
