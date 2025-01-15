@@ -102,6 +102,7 @@ cargo +nightly install-update -a && npm -g update && go-global-update && winget 
 - Or via Telescope `<leader>vk`; the `<leader>i` group is for quick notes and mini games
 - In Neovim Normal Mode, hit `:nmap` to see the list of all bindings
 - Check `~/.config/nvim/lua/config/remap.lua` for detailed information
+- `<A-y>` for inline AI suggestions
 
 <details>
     <summary>remap.lua</summary>
@@ -466,6 +467,177 @@ vim.keymap.set({ "n", "i", "s" }, "<c-b>", function()
 	end
 end, { silent = true, expr = true, desc = "LSP hover doc scroll down" })
 ```
+
+</details>
+
+## Plugins List
+
+<details>
+	<summary>(80)</summary>
+
+- cellular-automaton.nvim 0.2ms  start
+- cmp-buffer 0.14ms  nvim-cmp
+- cmp-cmdline 0.21ms  nvim-cmp
+- cmp-nvim-lsp 0.18ms  nvim-cmp
+- cmp-nvim-lsp-signature-help 0.17ms  nvim-cmp
+- cmp-path 0.18ms  nvim-cmp
+- cmp_luasnip 0.23ms  nvim-cmp
+- conform.nvim 1.94ms  lsp-zero.nvim
+- diffview.nvim 1.99ms  start
+- dressing.nvim 1.78ms  start
+- fidget.nvim 4.54ms  lsp-zero.nvim
+- FixCursorHold.nvim 0.57ms  neotest
+- friendly-snippets 0.21ms  LuaSnip
+- gitsigns.nvim 3.65ms  start
+- harpoon 6.96ms  start
+- indent-blankline.nvim 10.66ms  start
+- lazy.nvim 7.94ms  init.lua
+- lsp-zero.nvim 164.87ms  start
+- lspkind.nvim 0.16ms  nvim-cmp
+- lualine.nvim 9.98ms  start
+- LuaSnip 7.38ms  nvim-cmp
+- mason-lspconfig.nvim 0.16ms  lsp-zero.nvim
+- mason-null-ls.nvim 0.58ms  lsp-zero.nvim
+- mason-nvim-dap.nvim 0.12ms  lsp-zero.nvim
+- mason-tool-installer.nvim 2.81ms  lsp-zero.nvim
+- mason.nvim 3.4ms  lsp-zero.nvim
+- mini.nvim 5.32ms  start
+- minuet-ai.nvim 2.27ms  start
+- neotest 48.39ms  start
+- neotest-bash 0.39ms  neotest
+- neotest-go 0.36ms  neotest
+- neotest-gtest 0.38ms  neotest
+- neotest-jest 0.4ms  neotest
+- neotest-plenary 0.44ms  neotest
+- neotest-python 0.37ms  neotest
+- neotest-rust 0.37ms  neotest
+- neotest-scala 0.43ms  neotest
+- neotest-vitest 0.44ms  neotest
+- neotest-zig 0.42ms  neotest
+- noice.nvim 23.65ms 󰢱 noice  config.remap
+- none-ls-extras.nvim 0.5ms  none-ls.nvim
+- none-ls.nvim 1.07ms  lsp-zero.nvim
+- nui.nvim 1.41ms  noice.nvim
+- nvim-cmp 15.17ms  start
+- nvim-dap 2.13ms  lsp-zero.nvim
+- nvim-dap-go 0.55ms  lsp-zero.nvim
+- nvim-dap-ui 0.6ms  lsp-zero.nvim
+- nvim-dap-virtual-text 0.53ms  lsp-zero.nvim
+- nvim-lspconfig 1.07ms 󰢱 lspconfig  nvim-ufo
+- nvim-nio 0.44ms  neotest
+- nvim-notify 20.88ms  noice.nvim
+- nvim-treesitter 16.79ms  render-markdown
+- nvim-treesitter-context 2.88ms  start
+- nvim-ts-autotag 9.01ms  nvim-treesitter
+- nvim-ufo 5.98ms  start
+- nvim-web-devicons 0.5ms  oil.nvim
+- oil.nvim 2.75ms  start
+- playground 4.15ms  start
+- plenary.nvim 0.37ms  refactoring.nvim
+- promise-async 0.54ms  nvim-ufo
+- refactoring.nvim 16.86ms  start
+- render-markdown 19.39ms  start
+- rose-pine 4.44ms  start
+- SchemaStore.nvim 0.19ms  lsp-zero.nvim
+- smart-open.nvim 15.32ms  start
+- sqlite.lua 0.57ms  smart-open.nvim
+- telescope-fzf-native.nvim 0.56ms  smart-open.nvim
+- telescope-fzy-native.nvim 0.59ms  smart-open.nvim
+- telescope.nvim 5.59ms 󰢱 telescope  refactoring.nvim
+- undotree 0.34ms  start
+- vim-dadbod 0.39ms  start
+- vim-dadbod-completion 0.24ms  start
+- vim-dadbod-ui 0.6ms  start
+- vim-fugitive 1.48ms  start
+- vimtex 0.49ms  start
+- vlime 0.32ms  start
+- lazydev.nvim  lua
+- luvit-meta
+- nvim-metals  scala  sbt
+- trouble.nvim  <leader>cs  <leader>cd  <leader>ce  <leader>ca  <leader>cc
+
+</details>
+
+## Languages Packages List
+
+<details>
+	<summary>(75)</summary>
+
+- actionlint
+- ansible-language-server ansiblels
+- ansible-lint
+- asm-lsp asm_lsp
+- asmfmt
+- bash-debug-adapter
+- bash-language-server bashls
+- beautysh
+- blue
+- buf buf_ls
+- buf-language-server
+- cbfmt
+- checkmake
+- clangd
+- cmakelint
+- codelldb
+- cpptools
+- csharp-language-server csharp_ls
+- csharpier
+- css-lsp cssls
+- debugpy
+- delve
+- docker-compose-language-service docker_compose_language_service
+- dockerfile-language-server dockerls
+- emmet-language-server emmet_language_server
+- eslint-lsp eslint
+- firefox-debug-adapter
+- flake8
+- go-debug-adapter
+- goimports-reviser
+- golangci-lint-langserver golangci_lint_ls
+- gomodifytags
+- gopls
+- gotests
+- graphql-language-service-cli graphql
+- helm-ls helm_ls
+- html-lsp html
+- htmx-lsp htmx
+- impl
+- java-debug-adapter
+- java-test
+- jdtls
+- js-debug-adapter
+- lua-language-server lua_ls
+- luacheck
+- marksman
+- neocmakelsp neocmake
+- ocamlearlybird
+- ocamlformat
+- powershell-editor-services powershell_es
+- prettier
+- protolint
+- pyright
+- python-lsp-server pylsp
+- rust-analyzer rust_analyzer
+- semgrep
+- shellcheck
+- shfmt
+- sql-formatter
+- sqlfluff
+- sqlls
+- staticcheck
+- stylua
+- tailwindcss-language-server tailwindcss
+- taplo
+- terraform-ls terraformls
+- texlab
+- tflint
+- typescript-language-server ts_ls
+- typos
+- typos-lsp typos_lsp
+- vue-language-server volar
+- yamlfmt
+- yamllint
+- zls
 
 </details>
 
