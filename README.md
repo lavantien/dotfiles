@@ -217,7 +217,7 @@ rustup toolchain install nightly && cargo +nightly install cargo-update --force 
 ### 7. Install `gcc`, `gh`, `neovim`, and other necessary `Brew` packages
 
 ```bash
-brew install coreutils gcc gh go lazygit lazydocker fzf fd ripgrep bat tokei glow ripgrep-all dua-cli pandoc texlive poppler ffmpeg eza navi broot just exiftool fdupes procs rsync watchman neovim openjdk ruby coursier lua maven node gopls rust-analyzer jdtls lua-language-server typescript-language-server marksman texlab yaml-language-server bash-language-server opentofu terraform-ls sql-language-server sqlfluff prettier delve vscode-langservers-extracted loc llvm dotenv-linter checkmake luarocks pkg-config macchina cmake-language-server python-lsp-server sql-language-server sql-lint gomodifytags golangci-lint hyperfine zoxide btop sccache vifm difftastic gcc@11 ocaml opam zig zls asdf roswell dotnet
+brew install coreutils gcc gh go lazygit lazydocker fzf fd ripgrep bat tokei glow ripgrep-all dua-cli pandoc texlive poppler ffmpeg eza navi broot just exiftool fdupes procs rsync watchman neovim openjdk ruby coursier lua maven node gopls rust-analyzer jdtls lua-language-server typescript-language-server marksman texlab yaml-language-server bash-language-server opentofu terraform-ls sql-language-server sqlfluff prettier delve vscode-langservers-extracted loc llvm dotenv-linter checkmake luarocks pkg-config macchina cmake-language-server python-lsp-server sql-language-server sql-lint gomodifytags golangci-lint hyperfine zoxide btop sccache vifm difftastic gcc@11 ocaml opam zig zls asdf roswell dotnet uv
 ```
 
 ```bash
