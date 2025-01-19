@@ -113,6 +113,10 @@ return {
 					"cssls",
 					"tailwindcss",
 
+					-- xml
+					"lemminx",
+					"xmlformatter",
+
 					-- python
 					"python-lsp-server",
 					"debugpy",

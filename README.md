@@ -1290,21 +1290,17 @@ end, { silent = true, expr = true, desc = "LSP hover doc scroll down" })
 ### Languages Packages List
 
 <details>
-	<summary>(75)</summary>
+	<summary>(66)</summary>
 
 - actionlint
 - ansible-language-server ansiblels
-- ansible-lint
 - asm-lsp asm_lsp
 - asmfmt
 - bash-debug-adapter
 - bash-language-server bashls
 - beautysh
-- blue
 - buf buf_ls
-- buf-language-server
 - cbfmt
-- checkmake
 - clangd
 - cmakelint
 - codelldb
@@ -1319,7 +1315,6 @@ end, { silent = true, expr = true, desc = "LSP hover doc scroll down" })
 - emmet-language-server emmet_language_server
 - eslint-lsp eslint
 - firefox-debug-adapter
-- flake8
 - go-debug-adapter
 - goimports-reviser
 - golangci-lint-langserver golangci_lint_ls
@@ -1335,19 +1330,15 @@ end, { silent = true, expr = true, desc = "LSP hover doc scroll down" })
 - java-test
 - jdtls
 - js-debug-adapter
+- lemminx
 - lua-language-server lua_ls
-- luacheck
 - marksman
 - neocmakelsp neocmake
-- ocamlearlybird
-- ocamlformat
 - powershell-editor-services powershell_es
 - prettier
 - protolint
-- pyright
 - python-lsp-server pylsp
 - rust-analyzer rust_analyzer
-- semgrep
 - shellcheck
 - shfmt
 - sql-formatter
@@ -1362,8 +1353,8 @@ end, { silent = true, expr = true, desc = "LSP hover doc scroll down" })
 - tflint
 - typescript-language-server ts_ls
 - typos
-- typos-lsp typos_lsp
 - vue-language-server volar
+- xmlformatter
 - yamlfmt
 - yamllint
 - zls
