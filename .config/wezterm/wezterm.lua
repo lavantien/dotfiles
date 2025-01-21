@@ -32,6 +32,7 @@ config.window_padding = {
 	top = 0,
 	bottom = 0,
 }
+config.scrollback_lines = 1000000
 
 local dimmer = { brightness = 0.02 }
 local bg_path = wezterm.home_dir .. "/assets"
