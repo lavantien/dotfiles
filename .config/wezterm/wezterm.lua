@@ -5,12 +5,20 @@ local config = {}
 wezterm.on("gui-startup", function(cmd)
 	local tab, pane, window = mux.spawn_window(cmd or {})
 	window:gui_window():maximize()
-	-- window:gui_window():toggle_fullscreen()
+	window:gui_window():toggle_fullscreen()
 end)
 
 if wezterm.config_builder then
 	config = wezterm.config_builder()
 end
+
+config.keys = {
+	{
+		key = "Enter",
+		mods = "ALT",
+		action = wezterm.action.DisableDefaultAssignment,
+	},
+}
 
 config.font = wezterm.font_with_fallback({
 	"Iosevka Nerd Font",
