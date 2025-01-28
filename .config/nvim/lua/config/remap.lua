@@ -314,8 +314,8 @@ keymaps = {
 },
 ]]
 
--- rendermarkdown
-vim.keymap.set("n", "<leader>tr", require("render-markdown").toggle, { desc = "Toggle Render Markdown" })
+-- markview
+vim.keymap.set("n", "<leader>tr", "<cmd>Markview Toggle<cr>", { desc = "Toggle Render Markdown" })
 
 -- noice
 local noice = require("noice")

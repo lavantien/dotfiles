@@ -1334,15 +1334,8 @@ return {
 	},
 
 	{ -- Markdown
-		"MeanderingProgrammer/markdown.nvim",
-		name = "render-markdown",
-		dependencies = { "nvim-treesitter/nvim-treesitter" },
-		config = function()
-			require("render-markdown").setup({
-				start_enabled = true,
-				max_file_size = 4.0,
-			})
-		end,
+		"OXY2DEV/markview.nvim",
+		lazy = false,
 	},
 
 	{ -- SQL/NoSQL Client
