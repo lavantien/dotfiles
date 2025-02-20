@@ -1,8 +1,0 @@
-[Desktop Entry]
-Name=LM Studio
-Comment=LM Studio
-Exec=/home/lavantien/Applications/LM-Studio-0.3.6-8-x64.AppImage
-Icon=/home/lavantien/Applications/Icons/lm-studio.png
-Terminal=false
-Type=Application
-Categories=Development;
