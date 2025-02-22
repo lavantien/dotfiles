@@ -1,13 +1,13 @@
 [init]
 	defaultBranch = main
 [core]
-	editor = nvim
+	editor = vim
 [merge]
 	tool = vimdiff
 [mergetool]
 	keepBackup = false
 [mergetool "vimdiff"]
-	cmd = nvim -d $MERGED $LOCAL $BASE $REMOTE -c '$wincmd w' -c 'wincmd J'
+	cmd = vim -d $MERGED $LOCAL $BASE $REMOTE -c '$wincmd w' -c 'wincmd J'
 	trustExitCode = false
 [diff]
     tool = difftastic
