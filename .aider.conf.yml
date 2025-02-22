@@ -1,0 +1,60 @@
+# openai-api-base: http://localhost:8080/v1
+# openai-api-base: https://glhf.chat/api/openai/v1
+# openai-api-base: https://api.kluster.ai/v1
+# openai-api-base: https://api.hyperbolic.xyz/v1
+api-key:
+  # - openai=
+  # - openai=
+  # - openai=
+  - openai=
+  - anthropic=
+  - github=
+  - mistral=
+  - codestral=
+  - gemini=
+  - deepseek=
+  - cohere=
+  - openrouter=
+  - xai=
+  - groq=
+  - together=
+architect: false
+# model: deepseek/deepseek-reasoner
+model: o3-mini
+# model: o1-mini
+# model: gemini/gemini-2.0-pro-exp-02-05
+# model: gemini/gemini-2.0-flash-thinking-exp-01-21
+# edit-format: diff
+editor-model: gpt-4o
+# editor-model: deepseek/deepseek-chat
+# editor-model: gemini/gemini-2.0-flash
+# editor-model: gemini/gemini-2.0-flash-lite-exp-02-05
+# editor-model: codestral/codestral-latest
+# editor-model: mistral/mistral-large-latest
+editor-edit-format: editor-diff
+weak-model: codestral/codestral-latest
+# weak-model: mistral/mistral-large-latest
+# weak-model: mistral/pixtral-large-latest
+read:
+# - SYSTEM_PROMPT_PROGRAMMING.xml
+# - PRELIMINARY_DESIGN.md
+yes-always: false
+auto-commits: true
+attribute-author: false
+attribute-committer: false
+show-diffs: false
+# test-cmd: go test ./... -v -race -cover -timeout 10s
+# auto-test: true
+map-tokens: 2048
+map-multiplier-no-files: 4
+subtree-only: true
+timeout: 301
+cache-prompts: true
+cache-keepalive-pings: 300
+verbose: false
+pretty: true
+vim: true
+editor: vim
+multiline: true
+detect-urls: false
+code-theme: coffee
