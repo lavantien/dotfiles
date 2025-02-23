@@ -4,7 +4,6 @@
 -- vim.keymap.set("n", "<leader>pv", vim.cmd.Ex, { desc = "Open Netrw file explorer" })
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move text down" })
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move text up" })
-vim.keymap.set("n", "J", "mzJ`z", { desc = "Remove newline underneath" })
 vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = "Jump down half page and centering" })
 vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = "Jump up half page and centering" })
 vim.keymap.set("n", "n", "nzzzv", { desc = "Go to next match and centering" })
