@@ -1,155 +1,103 @@
-# Neovim Cross-Platform Full IDE Minimal Setup From Scratch
+# Neovim Cross-Platform Full IDE Minimal Setup
 
-## Install
+This repository provides a minimal, robust, and cross-platform Neovim IDE setup that delivers an enhanced development experience with advanced features, multi-language support, and a streamlined configuration.
 
-<details>
-    <summary>Linux prepare (expand)</summary>
+## Table of Contents
+- [Overview](#overview)
+- [Installation](#installation)
+- [Features](#features)
+- [Key Bindings](#key-bindings)
+- [Plugins](#plugins)
+- [Languages Support](#languages-support)
+- [References](#references)
+- [License](#license)
 
-```bash
-sudo vi /etc/NetworkManager/conf.d/default-wifi-powersave-on.conf
-```
+## Overview
+This setup transforms Neovim into a full-featured IDE, supporting Lua, Go, JavaScript/TypeScript, Python, C/C++, Rust, Java, and many other languages. Designed for efficiency and ease of use, it integrates LSP, debugging, testing, and extensive customization options.
 
-```conf
-[connection]
-wifi.powersave = 2
-```
+## Installation
 
-```bash
-sudo systemctl restart NetworkManager
-```
+### Prerequisites
+- Latest Neovim Nightly/Prerelease (v0.11+)
+- Tools: Git, GH CLI, GCC/LLVM, Go, NodeJS, Python3, Rust, Lua, etc.
+- Ensure system configurations (like increased file watchers and open file limits) are applied.
 
-```bash
-sudo vi /etc/systemd/system.conf
-```
+### Linux Setup
+1. **System Configuration:**
+   - Configure WiFi power save:
+     ```bash
+     sudo vi /etc/NetworkManager/conf.d/default-wifi-powersave-on.conf
+     ```
+     and set:
+     ```conf
+     [connection]
+     wifi.powersave = 2
+     ```
+   - Restart NetworkManager:
+     ```bash
+     sudo systemctl restart NetworkManager
+     ```
+   - Increase open file limits:
+     ```bash
+     sudo vi /etc/systemd/system.conf
+     ```
+     Uncomment and set:
+     ```
+     DefaultLimitNOFILE=4096:2097152
+     ```
+     Similarly, update `/etc/systemd/user.conf`.
+   - Increase inotify watches:
+     ```bash
+     sudo sysctl fs.inotify.max_user_watches=2097152
+     sudo systemctl daemon-reexec
+     ```
+2. **File Setup:**
+   - Copy configuration files (`.bashrc`, `.bash_aliases`, `.gitconfig`) to your home directory.
+   - Copy the `assets` directory and set up `wezterm.lua` in `~/.config/wezterm/`.
+   - Place `git-clone-all.sh` in your development folder and execute it.
+   - Copy `.aider.conf.yml` and `.aider.model.metadata.json` to your home directory and configure API keys.
+3. **Finalize:**
+   - Reboot your system.
+   - Open Neovim (`nvim`) and wait for plugins to auto-install. Run `:Mason` and `:MasonUpdate` if needed.
 
-```conf
-# uncomment first
-DefaultLimitNOFILE=4096:2097152
-```
-
-```bash
-sudo vi /etc/systemd/user.conf
-```
-
-```conf
-# uncomment first
-DefaultLimitNOFILE=4096:2097152
-```
-
-```bash
-cat /proc/sys/fs/inotify/max_user_watches && sudo sysctl fs.inotify.max_user_watches=2097152
-```
-
-```bash
-sudo systemctl daemon-reexec
-```
-
-- copy `.bashrc`, `.bash_aliases`, and `.gitconfig` to `~/`
-- copy `assets` dir to `~/`
-- copy `wezterm.lua` to `~/.config/wezterm/`
-- copy `git-clone-all.sh` to `~/dev/personal/` and execute it
-- copy `.aider.conf.yml` and `.aider.model.metadata.json` to `~/` and add your own API keys
-- reboot
-
-```bash
-ulimit -n && mkdir -p ~/.local/bin
-```
-
-</details>
-
-- Latest **Neovim Nightly/Prerelease required**, v0.11+ as of now. Or else some plugins will bug out.
-- Git, GH CLI, Neovim, GCC/LLVM-Clang, Go, NodeJS, Python3, Rust, Lua, Android/React Native, Java, Coursier/Scala, Ocaml, Zig, Lisp, C#/Dotnet, SQLite, Docker, K8s, OpenTf
-- Neovim Deps (on first run let them install don't close Neovim midway, `:Mason` to see progress); then [integrate ripgrep-all and fzf](https://github.com/phiresky/ripgrep-all/wiki/fzf-Integration), put the file in `~/.local/bin` and add the folder to `PATH`
-- AI FIM completion with free & unlimited Codestral API
-- Local LLMs via [LM Studio](https://lmstudio.ai/), [KoboldCpp](https://github.com/LostRuins/koboldcpp), and [Pinokio](https://pinokio.computer/) (16+ gb ram, referably a RTX card).
-- Aider install:
-
-```bash
-curl -LsSf https://aider.chat/install.sh | sh
-```
-
-```bash
-mkdir -p ~/notes \
-&& cargo install sccache && cargo install coreutils \
-&& npm i -g neovim && cargo install tree-sitter-cli \
-&& ros install quicklisp && opam init && opam install ocaml-lsp-server odoc ocamlformat utop \
-&& dotnet dev-certs https --trust && dotnet tool install --global csharp-ls && dotnet tool install --global csharpier
-```
-
-<details>
-    <summary>If you're on Windows you need to (expand)</summary>
-
-- remove `make install_jsregexp` from `luasnip` build config
-- remove `checkmake`, `luacheck`, `semgrep`, `ansible-lint`, or other packages that don't support Windows from `mason-tools-installer` list
-- set the `HOME` environment variable to `C:\Users\<name>`; create `notes` folder in home
-- copy `.config/nvim/` directory to `C:\Users\<name>\AppData\Local\`
-- copy from `[init] to [pull]` inside `.gitconfig` to your config file location (`git config --list --show-origin --show-scope`)
-- copy `./typos.toml` file to `~/`
-- add to `PATH` this value `C:\Users\<name>\AppData\Local\nvim-data\mason\bin`
-- set the `RUSTC_WRAPPER` env var to `C:\Users\<name>\.cargo\bin\sccache.exe`
-- install [sqlite3](https://gist.github.com/zeljic/d8b542788b225b1bcb5fce169ee28c55), rename `sqlite3.dll` to `libsqlite3.dll` and `sqlite3.lib` to `libsqlite3.lib`, and add its location to`PATH`
-- Install `Android Studio`, [Android SDK](https://reactnative.dev/docs/set-up-your-environment), and [coursier/scala](https://www.scala-lang.org/download/)
-- Install all packages via [winget](https://winget.run/) if possible, then use `scoop install`, `cargo install`, `go install`, and `choco install` (requires admin shell) in this order
-  - `winget source reset --force` in admin shell
-  - `winget install Microsoft.VisualStudio.2019.BuildTools --override "--wait --passive --installPath C:\VS --addProductLang En-us --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"`
-  - `winget install gsudo TheDocumentFoundation.LibreOffice Git.Git GitHub.cli Docker.DockerDesktop GoLang.Go OpenJS.NodeJS Amazon.Corretto Rustlang.Rustup Diskuv.OCaml zig.zig ajeetdsouza.zoxide wez.wezterm JesseDuffield.lazygit JesseDuffield.Lazydocker wget`
-  - `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` and `Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression`
-  - `scoop install btop-lhm roswell`, `ros install quicklisp`, `dkml init --system`
-  - `scoop install main/golangci-lint`
-  - `choco install vifm vscode-ruby` on admin terminal
-  - `cargo install cargo-update`, `go install github.com/Gelio/go-global-update@latest`
-  - `winget install --source winget --exact --id JohnMacFarlane.Pandoc` and [TeX Live](https://www.tug.org/texlive/windows.html).
-  - `powershell -ExecutionPolicy ByPass -c "irm https://aider.chat/install.ps1 | iex"`
-- Install additional packages yourself if there are something missing, be mindful of adding the `env vars`
-- add to global `PATH` value `C:\Program Files\LLVM\bin`
-- Create `~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1` (`$profile`) and add these lines to it, then install [ohmyposh](https://ohmyposh.dev/docs/installation/windows):
-
-```powershell
-Invoke-Expression (& { (zoxide init powershell | Out-String) })
-oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\half-life.omp.json" | Invoke-Expression
-
-# aliases
-Set-Alias -Name n -Value nvim
-Set-Alias -Name vi -Value vim
-Set-Alias -Name g -Value git
-Set-Alias -Name d -Value docker
-Set-Alias -Name lg -Value lazygit
-Set-Alias -Name ld -Value lazydocker
-Set-Alias -Name df -Value difft
-Set-Alias -Name e -Value eza
-Set-Alias -Name v -Value vifm
-Set-Alias -Name f -Value fzf
-Set-Alias -Name r -Value rg
-Set-Alias -Name ff -Value ffmpeg
-Set-Alias -Name b -Value bat
-Set-Alias -Name t -Value tokei
-Set-Alias -Name r -Value rg
-Set-Alias -Name rs -Value rsync
-Set-Alias -Name cu -Value coreutils
-Set-Alias -Name j -Value just
-Set-Alias -Name h -Value hyperfine
-```
-
-```powershell
-cargo +nightly install-update -a && npm -g update && go-global-update && winget upgrade --all -u && scoop update
-```
-
-- `choco upgrade all -y` (in admin shell) to mass update all packages
-
-</details>
-
-- Run `nvim` the first time and wait for it to auto initialize plugins, then press `S` to sync packages
-- Run `:MasonUpdate` to install all registries, then `:Mason` and press `U` if there's any update
-- All language `servers`, `linters`, and `treesitters` are pre-installed when you first initialize Neovim
-- Make sure to run `$ nvim +che` to ensure all related dependencies are installed
+### Windows Setup
+Refer to the detailed Windows instructions (in the original configuration) for setup steps including environment variable adjustments, package installations, and file configurations.
 
 ## Features
+- **Multi-Language Support:** From Lua to C#/Dotnet, and more.
+- **Integrated IDE Tools:** LSP, debugging, testing frameworks, code actions, and snippet management.
+- **Optimized Workflow:** Custom keybindings, seamless git integration, and an intuitive UI.
+- **Extensive Customization:** Pre-configured themes (Gruvbox, Tokyo Night, Pine Rose) and robust plugin management.
 
-- Fully support lua, go, javascript/typescript & vue, html/htmx & css/tailwind, python, c/cpp, rust, java, scala, ocaml, zig, lisp, csharp/dotnet, assembly, markdown, latex & typos, bash, make & cmake, json, yaml, toml, sql, protobuf, graphql, docker/compose, ci/cd, kubernetes/helm, ansible, opentofu
-- Intellisense, Code Actions, Debugging, Testing, Diff View, Snippets, Hints, Code Objects, Pin Headers, Display Statuses, Token Tree, Fuzzy Picker
-- Surround, Autotag, Improved Floating UIs, Toggle Term, Notifications, Inline Diagnostics, Inline Eval, Statusbar, Multifiles Jumper, Refactoring, Clues
-- Smart Folds, Autolint, Notes Taking, Indentation Guides, Smart Help, Undo Tree, Git Integration, SQL/NoSQL Client, File Explorer, Cellular Automaton
-- Optimized Keymaps, Schemas Store, Highlight Patterns, Pre-setup 3 themes - `Gruvbox`, `Tokyo Night`, `Pine Rose`
+## Key Bindings
+Key bindings are primarily defined in `lua/config/remap.lua`. Highlights include:
+- `<leader>vk` for key mapping overview via Telescope.
+- `<A-y>` for system clipboard yanking.
+- `<leader>gt` to toggle the integrated terminal.
+- Additional bindings cover LSP functionalities, debugging controls, testing commands, and file management.
+
+## Plugins
+This setup integrates over 80 plugins, including:
+- `lsp-zero.nvim`
+- `telescope.nvim`
+- `nvim-cmp`
+- `neotest`
+- `nvim-dap`
+- `harpoon`
+- `noice.nvim`
+For a complete list, review the Plugins section in your configuration files.
+
+## Languages Support
+Supports many languages with dedicated LSP servers, linters, and debuggers. Check the Languages Packages List in this repository for details.
+
+## References
+- [0 to LSP](https://youtu.be/w7i4amo_zae)
+- [Zero to IDE](https://youtu.be/n93ctbtlcim)
+- [Effective Neovim: Instant IDE](https://youtu.be/stqubv-5u2s)
+- [The Only Video You Need for Neovim](https://youtu.be/m8c0cq9uv9o)
+
+## License
+See the [LICENSE](LICENSE) file for licensing details.
 
 ## Key Bindings
 
