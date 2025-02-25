@@ -7,7 +7,7 @@ config.tab_bar_at_bottom = true
 config.scrollback_lines = 1000000
 config.font_size = 17
 config.font = wezterm.font_with_fallback({
-	"Iosevka Nerd Font",
+	"IosevkaTerm Nerd Font",
 	"Noto Sans SC",
 })
 config.window_decorations = "TITLE | RESIZE"
