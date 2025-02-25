@@ -3,36 +3,38 @@
 # openai-api-base: https://api.kluster.ai/v1
 # openai-api-base: https://api.hyperbolic.xyz/v1
 api-key:
-  # - openai=
-  # - openai=
-  # - openai=
+  #- openai=
+  #- openai=
+  #- openai=
   - openai=
   - anthropic=
-  - github=
-  - mistral=
-  - codestral=
   - gemini=
   - deepseek=
-  - cohere=
-  - openrouter=
   - xai=
+  - codestral=
+  - mistral=
+  - cohere=
   - groq=
   - together=
+  - github=
+  - openrouter=
 architect: false
-# model: deepseek/deepseek-reasoner
 model: o3-mini
-# model: o1-mini
+# model: o1
+# model: anthropic/claude-3-7-sonnet-20250219
+# model: deepseek/deepseek-reasoner
 # model: gemini/gemini-2.0-pro-exp-02-05
 # model: gemini/gemini-2.0-flash-thinking-exp-01-21
 # edit-format: diff
-editor-model: gpt-4o
-# editor-model: deepseek/deepseek-chat
+# editor-model: gpt-4o
+editor-model: deepseek/deepseek-chat
 # editor-model: gemini/gemini-2.0-flash
-# editor-model: gemini/gemini-2.0-flash-lite-exp-02-05
+# editor-model: gemini/gemini-2.0-flash-lite
 # editor-model: codestral/codestral-latest
 # editor-model: mistral/mistral-large-latest
-editor-edit-format: editor-diff
+# editor-edit-format: editor-diff
 weak-model: codestral/codestral-latest
+# weak-model: gpt-4o-mini
 # weak-model: mistral/mistral-large-latest
 # weak-model: mistral/pixtral-large-latest
 read:

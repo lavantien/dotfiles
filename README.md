@@ -45,7 +45,7 @@ LSP, debugging, testing, and rich customization options, you can boost your prod
     - Copy your configuration files (e.g. `.bashrc`, `.bash_aliases`, `.gitconfig`) to your home directory.
     - Place the `assets` folder and set up `wezterm.lua` in `~/.config/wezterm/`.
     - Run `git-clone-all.sh` in your development folder.
-    - Configure API keys in `.aider.conf.yml` and `.aider.model.metadata.json`.
+    - Configure API keys in `.aider.conf.yml` and `.aider.model.settings.yml`.
 3.  **Finalize:**
     - **Reboot** your system.
     - Open Neovim (`nvim`) and allow plugins to auto-install.

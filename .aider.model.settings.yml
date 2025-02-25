@@ -1,0 +1,9 @@
+- name: o1
+  extra_params:
+    extra_body:
+      reasoning_effort: high
+
+- name: o3-mini
+  extra_params:
+    extra_body:
+      reasoning_effort: high
