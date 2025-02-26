@@ -10,13 +10,13 @@ api-key:
   - anthropic=
   - gemini=
   - deepseek=
-  - xai=
   - codestral=
   - mistral=
+  - github=
   - cohere=
+  - xai=
   - groq=
   - together=
-  - github=
   - openrouter=
 architect: false
 model: o3-mini
@@ -26,13 +26,13 @@ model: o3-mini
 # model: gemini/gemini-2.0-pro-exp-02-05
 # model: gemini/gemini-2.0-flash-thinking-exp-01-21
 # edit-format: diff
-# editor-model: gpt-4o
-editor-model: deepseek/deepseek-chat
+editor-model: gpt-4o
+# editor-model: deepseek/deepseek-chat
 # editor-model: gemini/gemini-2.0-flash
 # editor-model: gemini/gemini-2.0-flash-lite
 # editor-model: codestral/codestral-latest
 # editor-model: mistral/mistral-large-latest
-# editor-edit-format: editor-diff
+editor-edit-format: editor-diff
 weak-model: codestral/codestral-latest
 # weak-model: gpt-4o-mini
 # weak-model: mistral/mistral-large-latest
