@@ -264,6 +264,11 @@ return {
 					null_ls.builtins.diagnostics.sqlfluff.with({
 						extra_args = { "--dialect", "sqlite" },
 					}),
+					-- Explicitly configure prettier as the formatter for HTML
+					null_ls.builtins.formatting.prettier.with({
+						filetypes = { "html", "css", "javascript", "typescript", "json", "markdown", "yaml" },
+						prefer_local = "node_modules/.bin",
+					}),
 				},
 				border = "rounded",
 			})
