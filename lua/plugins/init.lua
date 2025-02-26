@@ -329,7 +329,13 @@ return {
 					group = augroup,
 					buffer = bufnr,
 					callback = function()
-						vim.lsp.buf.format({ async = true, timeout_ms = 5000 })
+						vim.lsp.buf.format({
+							async = true,
+							timeout_ms = 5000,
+							filter = function(client)
+								return client.name == "null-ls"
+							end,
+						})
 					end,
 				})
 			end
@@ -359,7 +365,13 @@ return {
 					vim.lsp.buf.rename()
 				end, { buffer = bufnr, remap = false, desc = "LSP rename symbol" })
 				vim.keymap.set({ "n", "x" }, "<F3>", function()
-					vim.lsp.buf.format({ async = true, timeout_ms = 5000 })
+					vim.lsp.buf.format({
+						async = true,
+						timeout_ms = 5000,
+						filter = function(client)
+							return client.name == "null-ls"
+						end,
+					})
 				end, { buffer = bufnr, remap = false, desc = "LSP format file" })
 				vim.keymap.set("n", "<F4>", function()
 					vim.lsp.buf.code_action()
