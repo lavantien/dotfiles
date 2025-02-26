@@ -245,6 +245,15 @@ return {
 				automatic_installation = false,
 				handlers = {
 					lsp_zero.default_setup,
+					html = function()
+						require("lspconfig").html.setup({
+							on_attach = function(client)
+								-- Disable formatting for HTML language server to avoid conflicts
+								client.server_capabilities.documentFormattingProvider = false
+								client.server_capabilities.documentRangeFormattingProvider = false
+							end,
+						})
+					end,
 					--[[
 					function(server_name)
 						local server = servers[server_name] or {}
