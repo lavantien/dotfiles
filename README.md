@@ -1,12 +1,6 @@
-# Neovim IDE Setup 🚀✨
+# SWE Dotfiles (Neovim, Wezterm, Ubuntu) - Battery Included
 
-Welcome to the **Neovim IDE Setup** repository! Transform your Neovim into a powerful, cross-platform IDE with a sleek configuration and an inspiring
-development experience. Enjoy enhanced multi-language support, smart tools, and a streamlined workflow.
-
-## Overview 📖
-
-This setup converts Neovim into a full-featured IDE for languages like Lua, Go, JavaScript/TypeScript, Python, C/C++, Rust, Java, and more. With integrated
-LSP, debugging, testing, and rich customization options, you can boost your productivity effortlessly.
+This setup covers basic linux/zsh/wezterm config and converts Neovim into a full-featured IDE for languages like Lua, Go, JavaScript/TypeScript, Python, C/C++, Rust, Java, and more. With integrated LSP, debugging, testing, and rich customization options, you can boost your productivity effortlessly.
 
 ## Installation 🔧
 
@@ -33,7 +27,7 @@ LSP, debugging, testing, and rich customization options, you can boost your prod
       sudo systemctl restart NetworkManager
       ```
     - **File Limits & Inotify Watches:**
-      Edit `/etc/systemd/system.conf` to set:
+      Edit `/etc/systemd/system.conf` and `user.conf` to set:
       ```
       DefaultLimitNOFILE=4096:2097152
       ```
@@ -41,6 +35,7 @@ LSP, debugging, testing, and rich customization options, you can boost your prod
       ```bash
       sudo sysctl fs.inotify.max_user_watches=2097152 && sudo systemctl daemon-reexec
       ```
+    - **Install all necessary packages**: zsh, zsh-suggestions, fzf, ripgrep, eza, sccache, go, rust, node, java, etc.
 2.  **File Setup:**
     - Deploy to destinations, and bring your own API keys to `.aider.conf.yml`:
     ```bash
