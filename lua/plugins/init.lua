@@ -31,13 +31,6 @@ return {
 					"saadparwaiz1/cmp_luasnip",
 				},
 			},
-			{ "jay-babu/mason-null-ls.nvim" },
-			{
-				"nvimtools/none-ls.nvim",
-				dependencies = {
-					"nvimtools/none-ls-extras.nvim",
-				},
-			},
 			{
 				"stevearc/conform.nvim",
 				opts = {},
@@ -227,7 +220,6 @@ return {
 				auto_update = true,
 				integrations = {
 					["mason-lspconfig"] = true,
-					["mason-null-ls"] = true,
 					["mason-nvim-dap"] = true,
 				},
 			})
@@ -255,24 +247,6 @@ return {
 				},
 			})
 			require("mason-nvim-dap").setup({
-				automatic_installation = false,
-				handlers = {},
-			})
-			local null_ls = require("null-ls")
-			null_ls.setup({
-				sources = {
-					null_ls.builtins.diagnostics.sqlfluff.with({
-						extra_args = { "--dialect", "sqlite" },
-					}),
-					-- Explicitly configure prettier as the formatter for HTML
-					null_ls.builtins.formatting.prettier.with({
-						filetypes = { "html", "css", "javascript", "typescript", "json", "markdown", "yaml" },
-						prefer_local = "node_modules/.bin",
-					}),
-				},
-				border = "rounded",
-			})
-			require("mason-null-ls").setup({
 				automatic_installation = false,
 				handlers = {},
 			})
