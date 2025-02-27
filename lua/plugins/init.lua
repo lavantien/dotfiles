@@ -245,51 +245,6 @@ return {
 				automatic_installation = false,
 				handlers = {
 					lsp_zero.default_setup,
-					html = function()
-						require("lspconfig").html.setup({
-							on_attach = function(client)
-								-- Disable formatting for HTML language server to avoid conflicts
-								client.server_capabilities.documentFormattingProvider = false
-								client.server_capabilities.documentRangeFormattingProvider = false
-							end,
-						})
-					end,
-					emmet_language_server = function()
-						require("lspconfig").emmet_language_server.setup({
-							on_attach = function(client)
-								-- Disable formatting for HTML language server to avoid conflicts
-								client.server_capabilities.documentFormattingProvider = false
-								client.server_capabilities.documentRangeFormattingProvider = false
-							end,
-						})
-					end,
-					htmx = function()
-						require("lspconfig").htmx.setup({
-							on_attach = function(client)
-								-- Disable formatting for HTML language server to avoid conflicts
-								client.server_capabilities.documentFormattingProvider = false
-								client.server_capabilities.documentRangeFormattingProvider = false
-							end,
-						})
-					end,
-					cssls = function()
-						require("lspconfig").cssls.setup({
-							on_attach = function(client)
-								-- Disable formatting for HTML language server to avoid conflicts
-								client.server_capabilities.documentFormattingProvider = false
-								client.server_capabilities.documentRangeFormattingProvider = false
-							end,
-						})
-					end,
-					tailwindcss = function()
-						require("lspconfig").tailwindcss.setup({
-							on_attach = function(client)
-								-- Disable formatting for HTML language server to avoid conflicts
-								client.server_capabilities.documentFormattingProvider = false
-								client.server_capabilities.documentRangeFormattingProvider = false
-							end,
-						})
-					end,
 					--[[
 					function(server_name)
 						local server = servers[server_name] or {}
@@ -332,9 +287,6 @@ return {
 						vim.lsp.buf.format({
 							async = true,
 							timeout_ms = 5000,
-							filter = function(client)
-								return client.name == "null-ls"
-							end,
 						})
 					end,
 				})
@@ -368,9 +320,6 @@ return {
 					vim.lsp.buf.format({
 						async = true,
 						timeout_ms = 5000,
-						filter = function(client)
-							return client.name == "null-ls"
-						end,
 					})
 				end, { buffer = bufnr, remap = false, desc = "LSP format file" })
 				vim.keymap.set("n", "<F4>", function()
