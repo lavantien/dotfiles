@@ -1,5 +1,8 @@
-cp .aider.conf.yml.example ~/.aider.conf.yml
-cp .aider.model.settings.yml ~/
 cp .bash_aliases ~/
-cp .bashrc ~/
+cp .zshrc ~/
 cp .gitconfig ~/
+mkdir -p ~/dev ~/.config/wezterm
+cp git-clone-all.sh ~/dev/
+cp wezterm.lua ~/.config/wezterm/
+cp .aider.model.settings.yml ~/
+cp .aider.conf.yml.example ~/.aider.conf.yml
