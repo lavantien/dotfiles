@@ -2,7 +2,7 @@ export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
 
 export ZSH="$HOME/.oh-my-zsh"
 
-ZSH_THEME="robbyrussell"
+ZSH_THEME="half-life"
 
 # ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
 # CASE_SENSITIVE="true"
@@ -23,7 +23,7 @@ ZSH_THEME="robbyrussell"
 # HIST_STAMPS="mm/dd/yyyy"
 # ZSH_CUSTOM=/path/to/new-custom-folder
 
-plugins=(git zsh-interactive-cd zsh-autosuggestions copypath copyfile)
+plugins=(zsh-interactive-cd zsh-autosuggestions copypath copyfile)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -58,16 +58,19 @@ if [ -f ~/.keys ]; then
     source ~/.keys
 fi
 
-# brew
-export HOMEBREW_MAKE_JOBS=16
-
-# Go
-export PATH="$PATH:home/lavantien/go/bin"
-
 # tools
 source "$HOME/.cargo/env"
 source <(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
 source <(zoxide init zsh)
 source <(fzf --zsh)
 source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# brew
+export HOMEBREW_MAKE_JOBS=16
+
+# Go
+export PATH="$PATH:$(go env GOPATH)/bin"
+
+# Cargo
+export RUSTC_WRAPPER="/home/linuxbrew/.linuxbrew/bin/sccache"
 
