@@ -19,15 +19,15 @@ api-key:
   - together=
   - openrouter=
 architect: true
-model: deepseek/deepseek-reasoner
-# model: o3-mini
+# model: deepseek/deepseek-reasoner
+model: o3-mini
 # model: o1
 # model: anthropic/claude-3-7-sonnet-20250219
 # model: gemini/gemini-2.0-pro-exp-02-05
 # model: gemini/gemini-2.0-flash-thinking-exp-01-21
 # edit-format: diff
-editor-model: deepseek/deepseek-chat
-# model: anthropic/claude-3-7-sonnet-20250219
+# editor-model: deepseek/deepseek-chat
+model: anthropic/claude-3-7-sonnet-20250219
 # editor-model: gpt-4o
 # editor-model: gemini/gemini-2.0-flash
 # editor-model: gemini/gemini-2.0-flash-lite
