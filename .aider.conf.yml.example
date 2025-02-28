@@ -27,7 +27,7 @@ model: o3-mini
 # model: gemini/gemini-2.0-flash-thinking-exp-01-21
 # edit-format: diff
 # editor-model: deepseek/deepseek-chat
-model: anthropic/claude-3-7-sonnet-20250219
+editor-model: anthropic/claude-3-7-sonnet-20250219
 # editor-model: gpt-4o
 # editor-model: gemini/gemini-2.0-flash
 # editor-model: gemini/gemini-2.0-flash-lite
