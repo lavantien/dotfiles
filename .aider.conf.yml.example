@@ -41,7 +41,7 @@ weak-model: codestral/codestral-latest
 read:
 # - SYSTEM_PROMPT_PROGRAMMING.xml
 # - PRELIMINARY_DESIGN.md
-yes-always: false
+yes-always: true
 auto-commits: true
 attribute-author: false
 attribute-committer: false
