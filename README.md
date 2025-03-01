@@ -86,6 +86,7 @@ Follow the original Windows instructions for environment adjustments, package in
 | `<A-S-y>`       | Normal                 | `[["+Y]]`                                                                     | Yank whole line to system clipboard          |
 | `<A-d>`         | Normal/Visual          | `[["_d]]`                                                                     | Delete without copying to clipboard          |
 | `<C-c>`         | Insert                 | `<Esc>`                                                                       | Escape/Exit Insert mode                      |
+| `<A-y>`         | Insert                 | `require("minuet").make_cmp_map`                                              | Manually invoke minuet completion            |
 | `Q`             | Normal                 | `<cmd>q<CR>`                                                                  | Quit                                         |
 | `A-S-q`         | Normal                 | `<cmd>tabclose<CR>`                                                           | Close tab                                    |
 | `<C-]>`         | Terminal               | `<C-\><C-n>`                                                                  | Exit terminal mode                           |
@@ -218,6 +219,8 @@ The configuration integrates over 80 plugins, such as:
   - [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim)
   - [ThePrimeagen's init.lua](https://github.com/theprimeagen/init.lua)
   - [tjdevries/config.nvim](https://github.com/tjdevries/config.nvim)
+- **Extras:**
+  - [Backup qBittorrent](https://github.com/cantalupo555/qbittorrent-backup-linux)
 
 ## License 📄
 
