@@ -3,10 +3,9 @@ oh-my-posh init pwsh --config 'C:\Users\savaka\scoop\apps\oh-my-posh\current\the
 
 # Basic command aliases
 Set-Alias -Name f -Value "Invoke-Fzf" -Description "fzf with bat preview"
-function Invoke-Fzf { fzf --preview 'bat --color=always --style=numbers --line-range=:1000 {}' }
+function Invoke-Fzf { & fzf --preview 'bat --color=always --style=numbers --line-range=:1000 {}' }
 
 Set-Alias -Name m -Value mpv
-Set-Alias -Name rs -Value rsync
 Set-Alias -Name ff -Value ffmpeg
 Set-Alias -Name df -Value difft
 Set-Alias -Name lg -Value lazygit
@@ -15,117 +14,142 @@ Set-Alias -Name b -Value bat
 Set-Alias -Name t -Value tokei
 
 # Directory listing aliases
-function Show-FileList { eza -a --group-directories-last }
+function Show-FileList { & eza -a --group-directories-last }
 Set-Alias -Name e -Value Show-FileList
 
-function Show-DetailedFileList { eza -la --group-directories-last }
+function Show-DetailedFileList { & eza -la --group-directories-last }
 Set-Alias -Name ls -Value Show-DetailedFileList
 
-# Git aliases - avoiding conflicts with built-in PowerShell aliases
-Set-Alias -Name gs -Value "git status"
+# Git aliases - with proper command execution
+function Git-Status { & git status }
+Set-Alias -Name gs -Value Git-Status
 
-# For gl (conflicts with Get-Location alias)
-function Git-Log { git log }
+function Git-Log { & git log }
 Set-Alias -Name gitl -Value Git-Log
 
-function Get-GitLogGraph { git log --graph }
+function Get-GitLogGraph { & git log --graph }
 Set-Alias -Name glg -Value Get-GitLogGraph
 
-function Get-GitLogFollow { git log --follow }
+function Get-GitLogFollow { & git log --follow }
 Set-Alias -Name glf -Value Get-GitLogFollow
 
-Set-Alias -Name gb -Value "git branch"
-Set-Alias -Name gbi -Value "git bisect"
-Set-Alias -Name gd -Value "git diff"
-Set-Alias -Name ga -Value "git add"
+function Git-Branch { & git branch }
+Set-Alias -Name gb -Value Git-Branch
 
-function Add-GitAll { git add . }
+function Git-Bisect { & git bisect }
+Set-Alias -Name gbi -Value Git-Bisect
+
+function Git-Diff { & git diff }
+Set-Alias -Name gd -Value Git-Diff
+
+function Git-Add { param([string]$path = "") & git add $path }
+Set-Alias -Name ga -Value Git-Add
+
+function Add-GitAll { & git add . }
 Set-Alias -Name gaa -Value Add-GitAll
 
-# For gcm (conflicts with Get-Command alias)
-function Git-CommitMessage([string]$message) { git commit -m $message }
+function Git-CommitMessage([string]$message) { & git commit -m $message }
 Set-Alias -Name gitcm -Value Git-CommitMessage
 
-# For gp (conflicts with Get-ItemProperty alias)
-function Git-Push { git push }
+function Git-Push { & git push }
 Set-Alias -Name gitp -Value Git-Push
 
-Set-Alias -Name gf -Value "git fetch"
+function Git-Fetch { & git fetch }
+Set-Alias -Name gf -Value Git-Fetch
 
-# For gm (conflicts with Get-Member alias)
-function Git-Merge { git merge }
+function Git-Merge { & git merge }
 Set-Alias -Name gitm -Value Git-Merge
 
-Set-Alias -Name gmt -Value "git mergetool"
-Set-Alias -Name gr -Value "git rebase"
+function Git-MergeTool { & git mergetool }
+Set-Alias -Name gmt -Value Git-MergeTool
 
-# For gc (conflicts with Get-Content alias)
-function Git-Checkout([string]$branch) { git checkout $branch }
+function Git-Rebase { & git rebase }
+Set-Alias -Name gr -Value Git-Rebase
+
+function Git-Checkout([string]$branch) { & git checkout $branch }
 Set-Alias -Name gitco -Value Git-Checkout
 
-function New-GitBranch([string]$branchName) { git checkout -b $branchName }
+function New-GitBranch([string]$branchName) { & git checkout -b $branchName }
 Set-Alias -Name gcb -Value New-GitBranch
 
-Set-Alias -Name gcp -Value "git cherry-pick"
-Set-Alias -Name gt -Value "git tag"
-Set-Alias -Name gw -Value "git worktree"
+function Git-CherryPick { & git cherry-pick }
+Set-Alias -Name gcp -Value Git-CherryPick
 
-function Add-GitWorktree([string]$path) { git worktree add $path }
+function Git-Tag { & git tag }
+Set-Alias -Name gt -Value Git-Tag
+
+function Git-Worktree { & git worktree }
+Set-Alias -Name gw -Value Git-Worktree
+
+function Add-GitWorktree([string]$path) { & git worktree add $path }
 Set-Alias -Name gwa -Value Add-GitWorktree
 
-function Remove-GitWorktree([string]$path) { git worktree delete $path }
+function Remove-GitWorktree([string]$path) { & git worktree delete $path }
 Set-Alias -Name gwd -Value Remove-GitWorktree
 
-Set-Alias -Name gws -Value "git worktree status"
-Set-Alias -Name gwc -Value "git worktree clean"
+function Git-WorktreeStatus { & git worktree status }
+Set-Alias -Name gws -Value Git-WorktreeStatus
 
-function Update-GitSubmodules { git submodule update --init --recursive }
+function Git-WorktreeClean { & git worktree clean }
+Set-Alias -Name gwc -Value Git-WorktreeClean
+
+function Update-GitSubmodules { & git submodule update --init --recursive }
 Set-Alias -Name gsuir -Value Update-GitSubmodules
 
 function Reset-GitRepository { 
-    git checkout -- .
-    git submodule foreach --recursive git checkout -- .
+    & git checkout -- .
+    & git submodule foreach --recursive git checkout -- .
 }
 Set-Alias -Name gnuke -Value Reset-GitRepository
 
 # Docker aliases
+function Docker-Command { param([string]$cmd) & docker $cmd }
 Set-Alias -Name d -Value docker
-Set-Alias -Name ds -Value "docker start"
-Set-Alias -Name dx -Value "docker stop"
-Set-Alias -Name dp -Value "docker ps"
 
-function Get-DockerAllContainers { docker ps -a }
+function Docker-Start([string]$container) { & docker start $container }
+Set-Alias -Name ds -Value Docker-Start
+
+function Docker-Stop([string]$container) { & docker stop $container }
+Set-Alias -Name dx -Value Docker-Stop
+
+function Docker-PS { & docker ps }
+Set-Alias -Name dp -Value Docker-PS
+
+function Get-DockerAllContainers { & docker ps -a }
 Set-Alias -Name dpa -Value Get-DockerAllContainers
 
-Set-Alias -Name di -Value "docker images"
-Set-Alias -Name dl -Value "docker logs"
+function Docker-Images { & docker images }
+Set-Alias -Name di -Value Docker-Images
 
-function Watch-DockerLogs([string]$container) { docker logs -f $container }
+function Docker-Logs([string]$container) { & docker logs $container }
+Set-Alias -Name dl -Value Docker-Logs
+
+function Watch-DockerLogs([string]$container) { & docker logs -f $container }
 Set-Alias -Name dlf -Value Watch-DockerLogs
 
-Set-Alias -Name dc -Value "docker compose"
-Set-Alias -Name dcp -Value "docker compose ps"
+function Docker-Compose([string]$command) { & docker compose $command }
+Set-Alias -Name dc -Value Docker-Compose
 
-function Get-DockerComposeAllContainers { docker compose ps -a }
+function Docker-ComposePS { & docker compose ps }
+Set-Alias -Name dcp -Value Docker-ComposePS
+
+function Get-DockerComposeAllContainers { & docker compose ps -a }
 Set-Alias -Name dcpa -Value Get-DockerComposeAllContainers
 
-Set-Alias -Name dcu -Value "docker compose up"
+function Docker-ComposeUp { & docker compose up }
+Set-Alias -Name dcu -Value Docker-ComposeUp
 
-function Start-DockerComposeWithBuild { docker compose up --build }
+function Start-DockerComposeWithBuild { & docker compose up --build }
 Set-Alias -Name dcub -Value Start-DockerComposeWithBuild
 
-Set-Alias -Name dcd -Value "docker compose down"
-Set-Alias -Name dcl -Value "docker compose logs"
+function Docker-ComposeDown { & docker compose down }
+Set-Alias -Name dcd -Value Docker-ComposeDown
 
-function Watch-DockerComposeLogs { docker compose logs -f }
+function Docker-ComposeLogs { & docker compose logs }
+Set-Alias -Name dcl -Value Docker-ComposeLogs
+
+function Watch-DockerComposeLogs { & docker compose logs -f }
 Set-Alias -Name dclf -Value Watch-DockerComposeLogs
 
-function Enter-DockerContainer([string]$container) { docker exec -it $container }
+function Enter-DockerContainer([string]$container) { & docker exec -it $container $args }
 Set-Alias -Name de -Value Enter-DockerContainer
-
-# Alternatively, you can forcibly remove the built-in aliases first, but this is less recommended
-# Remove-Item alias:gl -Force
-# Remove-Item alias:gcm -Force
-# Remove-Item alias:gp -Force
-# Remove-Item alias:gm -Force
-# Remove-Item alias:gc -Force
