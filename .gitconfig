@@ -2,6 +2,9 @@
 	defaultBranch = main
 [core]
 	editor = nvim
+	# Universal hooks path - works on both Windows and Unix-like systems
+	# Windows: C:/Users/YourName/.config/git/hooks
+	# Linux/macOS: ~/.config/git/hooks
 [merge]
 	tool = vimdiff
 [mergetool]
@@ -22,11 +25,31 @@
     dlog = "-c diff.external=difft log -p --ext-diff"
 [pull]
 	rebase = true
+
+# ============================================================================
+# PLATFORM-SPECIFIC CREDENTIAL HELPERS
+# ============================================================================
+
+# Linux/macOS - use gh if available via Homebrew
 [credential "https://github.com"]
-	helper = 
-	helper = !/home/linuxbrew/.linuxbrew/bin/gh auth git-credential
+    helper =
+    helper = !/home/linuxbrew/.linuxbrew/bin/gh auth git-credential
 [credential "https://gist.github.com"]
-	helper = 
-	helper = !/home/linuxbrew/.linuxbrew/bin/gh auth git-credential
+    helper =
+    helper = !/home/linuxbrew/.linuxbrew/bin/gh auth git-credential
+
+# Windows - gh is typically installed via scoop or winget
+# The deploy.ps1 script will update these paths automatically
+# [credential "https://github.com"]
+#     helper =
+#     helper = !"C:/Users/YourName/scoop/apps/gh/current/gh.exe" auth git-credential
+
 [http]
 	postBuffer = 524288000
+
+# ============================================================================
+# GIT HOOKS CONFIGURATION
+# ============================================================================
+# Hooks are managed via init.templatedir and core.hooksPath
+# Run: ./deploy.sh (Linux/macOS) or ./deploy.ps1 (Windows)
+# This will set up the universal hooks in ~/.config/git/hooks/

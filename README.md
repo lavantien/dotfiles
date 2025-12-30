@@ -1,227 +1,235 @@
-# SWE Dotfiles (Neovim, Wezterm, Ubuntu) - Battery Included
+# Universal Dotfiles
 
-This setup covers basic linux/zsh/wezterm config and converts Neovim into a full-featured IDE for languages like Lua, Go, JavaScript/TypeScript, Python, C/C++, Rust, Java, and more. With integrated LSP, debugging, testing, and rich customization options, you can boost your productivity effortlessly.
+Cross-platform dotfiles supporting **Windows 11 native**, **Linux (Ubuntu)**, and **macOS**.
 
-## Installation 🔧
+## Quick Start
 
-### Prerequisites
+### Windows
 
-- **Neovim Nightly/Prerelease (v0.11+).**
-- Essential tools: Git, GH CLI, GCC/LLVM, Go, NodeJS, Python3, Rust, Lua, etc.
-- System tweaks: Increase file watchers and open file limits.
+```powershell
+# Clone the repository
+git clone https://github.com/yourusername/dotfiles.git $HOME/dev/dotfiles
 
-### Linux Setup
+# Deploy
+cd $HOME/dev/dotfiles
+.\deploy.ps1
 
-1.  **System Setup:**
-    - **WiFi Power Save:**
-      ```bash
-      sudo vi /etc/NetworkManager/conf.d/default-wifi-powersave-on.conf
-      ```
-      Set:
-      ```
-      [connection]
-      wifi.powersave = 2
-      ```
-    - **Restart NetworkManager:**
-      ```bash
-      sudo systemctl restart NetworkManager
-      ```
-    - **File Limits & Inotify Watches:**
-      Edit `/etc/systemd/system.conf` and `user.conf` to set:
-      ```
-      DefaultLimitNOFILE=4096:2097152
-      ```
-      Then run:
-      ```bash
-      sudo sysctl fs.inotify.max_user_watches=2097152 && sudo systemctl daemon-reexec
-      ```
-    - **Install all necessary packages**: zsh, zsh-suggestions, fzf, ripgrep, eza, sccache, go, rust, node, java, etc.
-2.  **File Setup:**
-    - Deploy to destinations, and bring your own API keys to `.aider.conf.yml`:
-    ```bash
-    ./deploy.sh
-    ```
-    - Update repo of latest local changes:
-    ```bash
-    ./update.sh
-    ```
-3.  **Finalize:**
-    - **Reboot** your system.
-    - Automatically update all global packages:
-    ```bash
-    sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y \
-    && sudo snap refresh \
-    && rustup update && cargo install-update -a \
-    && npm -g update && go-global-update \
-    && brew upgrade \
-    && flatpak update -y
-    ```
-    - Open Neovim (`nvim`) and allow plugins to auto-install.
+# Reload PowerShell
+. $PROFILE
+```
 
-### Windows Setup
+### Linux/macOS
 
-Follow the original Windows instructions for environment adjustments, package installations, and file configurations.
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/dotfiles.git ~/dev/dotfiles
 
-## Features 💡
+# Deploy
+cd ~/dev/dotfiles
+chmod +x deploy.sh
+./deploy.sh
 
-- **Multi-Language Support:** Lua, Go, JS/TS, Python, C/C++, Rust, Java, and more.
-- **Integrated IDE Tools:** Virtual LSP, debugging, testing frameworks, code actions, and snippet management.
-- **Streamlined Workflow:** Custom keybindings, Git integration, and an intuitive UI.
-- **Customization:** Pre-configured themes (Gruvbox, Tokyo Night, Pine Rose) with flexible plugin management.
+# Reload shell
+source ~/.zshrc  # or source ~/.bashrc
+```
 
-## Key Bindings ⌨️
+## What Gets Installed
 
-### Detailed Keymap Overview
+| File | Windows | Linux | macOS | Description |
+|------|---------|-------|-------|-------------|
+| `Microsoft.PowerShell_profile.ps1` | ✓ | - | - | PowerShell profile |
+| `.zshrc` | - | ✓ | ✓ | Zsh configuration |
+| `.bash_aliases` | ✓* | ✓ | ✓ | Bash aliases (works in Zsh too) |
+| `.gitconfig` | ✓ | ✓ | ✓ | Git configuration |
+| `init.lua` | ✓ | ✓ | ✓ | Neovim config |
+| `lua/` | ✓ | ✓ | ✓ | Neovim plugins/config |
+| `wezterm.lua` | ✓ | ✓ | ✓ | Wezterm terminal |
+| `hooks/git/` | ✓ | ✓ | ✓ | Git hooks (pre-commit, commit-msg) |
+| `hooks/claude/` | ✓ | ✓ | ✓ | Claude Code quality check |
 
-| Key Combination | Mode(s)                | Command/Action                                                                | Description                                  |
-| --------------- | ---------------------- | ----------------------------------------------------------------------------- | -------------------------------------------- |
-| `J` (visual)    | Visual                 | `:m '>+1<CR>gv=gv`                                                            | Move text down                               |
-| `K` (visual)    | Visual                 | `:m '<-2<CR>gv=gv`                                                            | Move text up                                 |
-| `<C-d>`         | Normal                 | `<C-d>zz`                                                                     | Jump down half page and center view          |
-| `<C-u>`         | Normal                 | `<C-u>zz`                                                                     | Jump up half page and center view            |
-| `n`             | Normal                 | `nzzzv`                                                                       | Go to next match and center view             |
-| `N`             | Normal                 | `Nzzzv`                                                                       | Go to previous match and center view         |
-| `<A-p>`         | Visual (x)             | `[["_dP]]`                                                                    | Paste overwrite without yanking              |
-| `<A-y>`         | Normal/Visual          | `[["+y]]`                                                                     | Yank selected text to system clipboard       |
-| `<A-S-y>`       | Normal                 | `[["+Y]]`                                                                     | Yank whole line to system clipboard          |
-| `<A-d>`         | Normal/Visual          | `[["_d]]`                                                                     | Delete without copying to clipboard          |
-| `<C-c>`         | Insert                 | `<Esc>`                                                                       | Escape/Exit Insert mode                      |
-| `<A-y>`         | Insert                 | `require("minuet").make_cmp_map`                                              | Manually invoke minuet completion            |
-| `Q`             | Normal                 | `<cmd>q<CR>`                                                                  | Quit                                         |
-| `A-S-q`         | Normal                 | `<cmd>tabclose<CR>`                                                           | Close tab                                    |
-| `<C-]>`         | Terminal               | `<C-\><C-n>`                                                                  | Exit terminal mode                           |
-| `<leader>gt`    | Normal                 | `<cmd>split <bar> term<CR>`                                                   | Toggle terminal                              |
-| `<leader>g=`    | Normal                 | `vim.lsp.buf.format`                                                          | Format current file                          |
-| `<C-q>`         | Normal                 | `<cmd>cclose<CR>`                                                             | Close quickfix window                        |
-| `<C-k>`         | Normal                 | `<cmd>cnext<CR>zz`                                                            | Next quickfix item                           |
-| `<C-j>`         | Normal                 | `<cmd>cprev<CR>zz`                                                            | Previous quickfix item                       |
-| `<leader>k`     | Normal                 | `<cmd>lnext<CR>zz`                                                            | Next POI location                            |
-| `<leader>j`     | Normal                 | `<cmd>lprev<CR>zz`                                                            | Previous POI location                        |
-| `<A-j>`         | Normal/Terminal/Insert | `<C-w>j`                                                                      | Jump to bottom pane                          |
-| `<A-k>`         | Normal/Terminal/Insert | `<C-w>k`                                                                      | Jump to top pane                             |
-| `<A-h>`         | Normal/Terminal/Insert | `<C-w>h`                                                                      | Jump to left pane                            |
-| `<A-l>`         | Normal/Terminal/Insert | `<C-w>l`                                                                      | Jump to right pane                           |
-| `<A-t>`         | Normal                 | `<C-w>t`                                                                      | Jump to top left pane                        |
-| `<leader>s`     | Normal                 | `:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>`                          | Concurrently replace all matching words      |
-| `<leader>ii`    | Normal                 | `<cmd>e ~/.config/nvim/lua/plugins/init.lua<CR>`                              | Go to plugins init file                      |
-| `<leader>iq`    | Normal                 | `<cmd>e ~/notes/quick.md<CR>`                                                 | Go to personal quick note file               |
-| `<leader>ic`    | Normal                 | `<cmd>e ~/notes/checklist.md<CR>`                                             | Go to personal checklist file                |
-| `<leader>it`    | Normal                 | `<cmd>e ~/notes/temp.md<CR>`                                                  | Go to personal temp text file                |
-| `<leader>ij`    | Normal                 | `<cmd>e ~/notes/journal.md<CR>`                                               | Go to personal journal file                  |
-| `<leader>iw`    | Normal                 | `<cmd>e ~/notes/wiki.md<CR>`                                                  | Go to personal wiki file                     |
-| `<leader>ir`    | Normal                 | `<cmd>CellularAutomaton make_it_rain<CR>`                                     | Run Make It Rain animation                   |
-| `<leader>il`    | Normal                 | `<cmd>CellularAutomaton game_of_life<CR>`                                     | Run Game of Life animation                   |
-| `<C-/>`         | Normal                 | `builtin.grep_string({ search = vim.fn.input("Grep > ") })`                   | Grep string global via Telescope             |
-| `<C-p>`         | Normal                 | `builtin.find_files`                                                          | Browse files global via Telescope            |
-| `<leader>f`     | Normal                 | `builtin.current_buffer_fuzzy_find`                                           | Find string local via Telescope              |
-| `<leader>vf`    | Normal                 | `builtin.git_files`                                                           | Find git files global via Telescope          |
-| `<leader>vh`    | Normal                 | `builtin.help_tags`                                                           | Browse help tags via Telescope               |
-| `<leader>vp`    | Normal                 | `builtin.commands`                                                            | Browse commands via Telescope                |
-| `<leader>vk`    | Normal                 | `builtin.keymaps`                                                             | Browse keymaps via Telescope                 |
-| `<leader>vq`    | Normal                 | `builtin.quickfix`                                                            | Browse quickfix items local via Telescope    |
-| `<leader>vj`    | Normal                 | `builtin.jumplist`                                                            | Browse jumplist global via Telescope         |
-| `<leader>vm`    | Normal                 | `require("telescope").extensions.metals.commands()`                           | Browse Metals LSP commands                   |
-| `<leader>ac`    | Normal                 | `builtin.diagnostics`                                                         | Browse diagnostics items local via Telescope |
-| `<leader>ar`    | Normal                 | `builtin.lsp_references`                                                      | Browse LSP References via Telescope          |
-| `<leader>as`    | Normal                 | `builtin.lsp_document_symbols`                                                | Browse LSP Document Symbols via Telescope    |
-| `<leader>aw`    | Normal                 | `builtin.lsp_dynamic_workspace_symbols`                                       | Browse LSP Dynamic Workspace Symbols global  |
-| `<leader>ai`    | Normal                 | `builtin.lsp_implementations`                                                 | Browse LSP Implementations via Telescope     |
-| `<leader>ad`    | Normal                 | `builtin.lsp_definitions`                                                     | Browse LSP Definitions via Telescope         |
-| `<leader>at`    | Normal                 | `builtin.lsp_type_definitions`                                                | Browse LSP Type Definitions via Telescope    |
-| `<C-x>`         | Normal                 | `require("telescope").extensions.smart_open.smart_open()`                     | Open smart file picker in Telescope          |
-| `<leader>tf`    | Normal                 | `neotest.run.run()`                                                           | Test single function                         |
-| `<leader>ts`    | Normal                 | `neotest.run.stop()`                                                          | Test stop                                    |
-| `<leader>tb`    | Normal                 | `neotest.run.run(vim.fn.expand("%"))`                                         | Test single file                             |
-| `<leader>td`    | Normal                 | `neotest.run.run(".")`                                                        | Test all from current directory              |
-| `<leader>ta`    | Normal                 | `neotest.run.run(vim.fn.getcwd())`                                            | Test whole suite from root dir               |
-| `<leader>tm`    | Normal                 | `neotest.summary.toggle()`                                                    | Test summary toggle                          |
-| `<leader>tn`    | Normal                 | `neotest.run.run({ strategy = "dap" })`                                       | Debug nearest test                           |
-| `<leader>tg`    | Normal                 | `<cmd>ConfigureGtest<cr>`                                                     | Configure C++ google test                    |
-| `<leader>tww`   | Normal                 | `neotest.watch.toggle(vim.fn.expand("%"))`                                    | Test watch toggle current file               |
-| `<leader>tws`   | Normal                 | `neotest.watch.stop("")`                                                      | Test watch stop all position                 |
-| `<leader>to`    | Normal                 | `neotest.output.open({ enter = true })`                                       | Test output open                             |
-| `<leader>tp`    | Normal                 | `neotest.output_panel.toggle()`                                               | Test output toggle panel                     |
-| `<leader>tc`    | Normal                 | `neotest.output_panel.clear()`                                                | Test output clear panel                      |
-| `<leader>twj`   | Normal                 | `neotest.run.run({ jestCommand = "jest --watch " })`                          | Test Jest watch mode                         |
-| `<leader>twv`   | Normal                 | `neotest.run.run({ vitestCommand = "vitest --watch" })`                       | Run Watch                                    |
-| `<leader>twf`   | Normal                 | `neotest.run.run({ vim.fn.expand(" % "), vitestCommand = "vitest --watch" })` | Run Watch File                               |
-| `<F5>`          | Normal                 | `dap.continue`                                                                | Debug: Continue                              |
-| `<F6>`          | Normal                 | `dap.step_over`                                                               | Debug: Step over                             |
-| `<F7>`          | Normal                 | `dap.step_into`                                                               | Debug: Step into                             |
-| `<F8>`          | Normal                 | `dap.step_out`                                                                | Debug: Step out                              |
-| `<F9>`          | Normal                 | `function() dap.disconnect({ terminateDebuggee = true }); dap.close() end`    | Debug: Stop                                  |
-| `<leader>b`     | Normal                 | `dap.toggle_breakpoint`                                                       | Debug: Toggle breakpoint                     |
-| `<leader>B`     | Normal                 | `dap.set_breakpoint(vim.fn.input("Breakpoint condition: "))`                  | Debug: Set breakpoint condition              |
-| `<leader>ap`    | Normal                 | `dap.set_breakpoint(nil, nil, vim.fn.input("Log point message: "))`           | Debug: Set log point message                 |
-| `<leader>el`    | Normal                 | `dap.run_last`                                                                | Debug: Run last session                      |
-| `<leader>er`    | Normal                 | `dap.repl.open`                                                               | Debug: Open REPL                             |
-| `<leader>et`    | Normal                 | `require("dap-go").debug_test`                                                | Debug golang test                            |
-| `<leader>ee`    | Normal                 | `require("dapui").eval(nil, { enter = true })`                                | Debug evaluate expression                    |
-| `<leader>h`     | Normal                 | `harpoon:list():add()`                                                        | Add current location to Harpoon list         |
-| `<C-z>`         | Normal                 | `harpoon.ui:toggle_quick_menu(harpoon:list())`                                | Toggle Harpoon interactive list              |
-| `<C-a>`         | Normal                 | `harpoon:list():select(1)`                                                    | Go to 1st Harpoon location                   |
-| `<C-s>`         | Normal                 | `harpoon:list():select(2)`                                                    | Go to 2nd Harpoon location                   |
-| `<C-n>`         | Normal                 | `harpoon:list():select(3)`                                                    | Go to 3rd Harpoon location                   |
-| `<C-m>`         | Normal                 | `harpoon:list():select(4)`                                                    | Go to 4th Harpoon location                   |
-| `<C-A-P>`       | Normal                 | `harpoon:list():prev()`                                                       | Go to next Harpoon location                  |
-| `<C-A-N>`       | Normal                 | `harpoon:list():next()`                                                       | Go to previous Harpoon location              |
-| `<leader>re`    | Visual                 | `refactoring.refactor("Extract Function")`                                    | Refactor extract function                    |
-| `<leader>rf`    | Visual                 | `refactoring.refactor("Extract Function To File")`                            | Refactor extract function to file            |
-| `<leader>rv`    | Visual                 | `refactoring.refactor("Extract Variable")`                                    | Refactor extract variable                    |
-| `<leader>rI`    | Normal                 | `refactoring.refactor("Inline Function")`                                     | Refactor inline function                     |
-| `<leader>ri`    | Normal/Visual          | `refactoring.refactor("Inline Variable")`                                     | Refactor inline variable                     |
-| `<leader>rb`    | Normal                 | `refactoring.refactor("Extract Block")`                                       | Refactor extract block                       |
-| `<leader>rB`    | Normal                 | `refactoring.refactor("Extract Block To File")`                               | Refactor extract block to file               |
-| `<leader>rd`    | Normal/Visual          | `refactoring.debug.print_var()`                                               | Refactor debug print var                     |
-| `<leader>rD`    | Normal                 | `refactoring.debug.printf({ below = false })`                                 | Refactor debug printf                        |
-| `<leader>rc`    | Normal                 | `refactoring.debug.cleanup({})`                                               | Refactor debug cleanup                       |
-| `<leader>rt`    | Normal/Visual          | `refactoring.select_refactor()`                                               | Refactor select native thing                 |
-| `<leader>rr`    | Normal/Visual          | `require("telescope").extensions.refactoring.refactors()`                     | Refactor select operations via Telescope     |
-| `<leader>u`     | Normal                 | `vim.cmd.UndotreeToggle`                                                      | Toggle undo tree                             |
-| `<leader>gs`    | Normal                 | `vim.cmd.Git`                                                                 | Open git fugitive                            |
-| `<leader>gh`    | Normal                 | `<cmd>DiffviewFileHistory<cr>`                                                | Open history current branch                  |
-| `<leader>gf`    | Normal                 | `<cmd>DiffviewFileHistory %<cr>`                                              | Open history current file                    |
-| `<leader>gd`    | Normal                 | `<cmd>DiffviewOpen<cr>`                                                       | Open diff current index                      |
-| `<leader>gm`    | Normal                 | `<cmd>DiffviewOpen origin/main...HEAD<cr>`                                    | Open diff main                               |
-| `<leader>gc`    | Normal                 | `<cmd>DiffviewClose<cr>`                                                      | Close diff view                              |
-| `zR`            | Normal                 | `require("ufo").openAllFolds`                                                 | Open all folds                               |
-| `zM`            | Normal                 | `require("ufo").closeAllFolds`                                                | Close all folds                              |
-| `-`             | Normal                 | `<CMD>Oil<CR>`                                                                | Open parent directory                        |
-| `<space>-`      | Normal                 | `require("oil").toggle_float`                                                 | Open parent directory in floating window     |
-| `<leader>tr`    | Normal                 | `<cmd>Markview Toggle<cr>`                                                    | Toggle Render Markdown                       |
-| `<leader>nh`    | Normal                 | `noice.cmd("history")`                                                        | Noice history                                |
-| `<leader>nl`    | Normal                 | `noice.cmd("last")`                                                           | Noice last                                   |
-| `<leader>nd`    | Normal                 | `noice.cmd("dismiss")`                                                        | Noice dismiss                                |
-| `<leader>ne`    | Normal                 | `noice.cmd("errors")`                                                         | Noice errors                                 |
-| `<leader>nq`    | Normal                 | `noice.cmd("disable")`                                                        | Noice disable                                |
-| `<leader>nb`    | Normal                 | `noice.cmd("enable")`                                                         | Noice enable                                 |
-| `<leader>ns`    | Normal                 | `noice.cmd("stats")`                                                          | Noice debugging stats                        |
-| `<leader>nt`    | Normal                 | `noice.cmd("telescope")`                                                      | Noice open messages in Telescope             |
-| `<S-Enter>`     | Command                | `noice.redirect(vim.fn.getcmdline())`                                         | Redirect Cmdline                             |
-| `<c-f>`         | Normal/Insert/Select   | `require("noice.lsp").scroll(4)`                                              | LSP hover doc scroll up                      |
-| `<c-b>`         | Normal/Insert/Select   | `require("noice.lsp").scroll(-4)`                                             | LSP hover doc scroll down                    |
+*Via Git Bash or WSL
 
-## Plugins & Tools 🔌
+## Universal Git Hooks
 
-The configuration integrates over 80 plugins, such as:
+The hooks auto-detect your project type and run appropriate tools:
 
-- **LSP & Coding:** `lsp-zero.nvim`, `nvim-lspconfig`
-- **Navigation:** `telescope.nvim`, `oil.nvim`, `harpoon`
-- **Debugging & Testing:** `nvim-dap`, `neotest`
-- **UI Enhancements:** `noice.nvim`, `lualine.nvim`
+### Supported Languages
 
-## Resources & References 📚
+| Language | Format | Lint | Type Check | Test |
+|----------|--------|------|------------|------|
+| **Go** | gofmt/goimports | golangci-lint | go vet | go test |
+| **Rust** | cargo fmt | clippy | cargo check | cargo test |
+| **C/C++** | clang-format | clang-tidy/cppcheck | compiler | - |
+| **JavaScript/TypeScript** | Prettier | ESLint | tsc/svelte-check | vitest/jest |
+| **Python** | ruff/black | ruff/flake8 | mypy | pytest |
+| **C#** | dotnet format | Roslyn analyzers | dotnet build | dotnet test |
+| **Java** | spotless | checkstyle | javac | JUnit |
+| **Scala** | scalafmt | scalac | scalac | scalatest |
+| **PHP** | Pint/php-cs-fixer | PHPStan/Psalm | PHPStan/Psalm | PHPUnit |
 
-- **Video Tutorials:**
-  - [0 to LSP](https://youtu.be/w7i4amo_zae) 🎥
-  - [Zero to IDE](https://youtu.be/n93ctbtlcim) 🎥
-- **Guides & Repositories:**
-  - [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim)
-  - [ThePrimeagen's init.lua](https://github.com/theprimeagen/init.lua)
-  - [tjdevries/config.nvim](https://github.com/tjdevries/config.nvim)
-- **Extras:**
-  - [Backup qBittorrent](https://github.com/cantalupo555/qbittorrent-backup-linux)
+### Git Hooks Usage
 
-## License 📄
+```bash
+# Pre-commit: runs format/lint/check automatically
+git commit -m "feat: add new feature"
 
-See the [LICENSE](LICENSE) file for details.
+# Commit-msg: enforces conventional commits
+# Valid: feat(auth): add OAuth2 login
+# Valid: fix(api): resolve null pointer issue
+# Invalid: added new feature (will fail)
+```
+
+### Bypass Hooks
+
+```bash
+git commit --no-verify -m "message"
+```
+
+## Claude Code Hooks
+
+### Installation
+
+Add to `~/.claude/settings.json` (Linux/macOS) or `%USERPROFILE%\.claude\settings.json` (Windows):
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File ~/.claude/quality-check.ps1"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+## Shell Aliases
+
+Common aliases available in all shells:
+
+| Alias | Command |
+|-------|---------|
+| `n` | nvim (editor) |
+| `ls` | eza -la (detailed listing) |
+| `b` | bat (cat alternative) |
+| `f` | fzf (fuzzy finder) |
+| `lg` | lazygit |
+| `gs` | git status |
+| `ga` | git add |
+| `gcm` | git commit -m |
+| `gp` | git push |
+| `d` | docker |
+| `dc` | docker compose |
+
+## Platform-Specific Setup
+
+### Windows 11 Native
+
+**Package Manager**: Use [Scoop](https://scoop.sh) or [winget](https://learn.microsoft.com/en-us/windows/package-manager/)
+
+```powershell
+# Install via Scoop
+scoop install git neovim python go rust nodejs-lts
+scoop install lazygit fzf bat eza zoxide oh-my-posh
+scoop install docker
+```
+
+**Terminal**: Wezterm or Windows Terminal
+**PowerShell 7+** is recommended
+
+### Linux (Ubuntu)
+
+```bash
+# System tweaks
+sudo vi /etc/NetworkManager/conf.d/default-wifi-powersave-on.conf
+# Set: wifi.powersave = 2
+sudo systemctl restart NetworkManager
+
+# File limits
+sudo sysctl fs.inotify.max_user_watches=2097152
+
+# Install packages
+sudo apt update
+sudo apt install -y git neovim python3 python3-pip
+sudo apt install -y golang rustc cargo nodejs npm
+sudo apt install -y zsh zsh-autosuggestions fzf ripgrep eza
+```
+
+### macOS
+
+```bash
+# Install via Homebrew
+brew install git neovim python go rust node
+brew install lazygit fzf bat eza zoxide
+brew install --cask docker
+```
+
+## Neovim Configuration
+
+Full-featured Neovim IDE setup with:
+- **Multi-Language Support**: Lua, Go, JS/TS, Python, C/C++, Rust, Java, and more
+- **Integrated Tools**: LSP, debugging, testing, code actions
+- **Navigation**: Telescope, Oil, Harpoon
+- **Git Integration**: Fugitive, Diffview
+
+### Key Neovim Keybindings
+
+| Key | Mode | Action |
+|-----|------|--------|
+| `<C-p>` | Normal | Find files (Telescope) |
+| `<C-/>` | Normal | Grep string |
+| `<leader>f` | Normal | Find in current buffer |
+| `<leader>gt` | Normal | Toggle terminal |
+| `<leader>g=` | Normal | Format file |
+| `Q` | Normal | Quit |
+| `<F5>` | Normal | Debug: Continue |
+| `<leader>b` | Normal | Debug: Toggle breakpoint |
+| `<leader>tf` | Normal | Test function |
+| `<leader>ta` | Normal | Test all |
+| `<C-z>` | Normal | Harpoon menu |
+| `<leader>u` | Normal | Undo tree |
+| `-` | Normal | Oil file browser |
+
+See [hooks/README.md](hooks/README.md) for detailed hooks documentation.
+
+## Updating
+
+```bash
+# Pull latest changes
+cd ~/dev/dotfiles  # or $HOME/dev/dotfiles on Windows
+git pull
+
+# Re-run deploy script
+./deploy.sh  # or .\deploy.ps1 on Windows
+```
+
+## Directory Structure
+
+```
+dotfiles/
+├── .bash_aliases          # Bash aliases (universal)
+├── .zshrc                 # Zsh configuration
+├── Microsoft.PowerShell_profile.ps1  # PowerShell profile
+├── .gitconfig             # Git configuration
+├── init.lua               # Neovim config
+├── lua/                   # Neovim plugins/LSP
+├── wezterm.lua            # Wezterm terminal config
+├── deploy.sh              # Deploy script (Unix)
+├── deploy.ps1             # Deploy script (Windows)
+├── hooks/
+│   ├── README.md          # Hooks documentation
+│   ├── git/               # Git hooks
+│   └── claude/            # Claude Code hooks
+├── .claude/               # Claude Code configs
+└── assets/                # Background images, etc.
+```
+
+## License
+
+MIT

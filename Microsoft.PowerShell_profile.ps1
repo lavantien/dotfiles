@@ -1,155 +1,281 @@
-Invoke-Expression (& { (zoxide init powershell | Out-String) })
-oh-my-posh init pwsh --config 'C:\Users\savaka\scoop\apps\oh-my-posh\current\themes\robbyrussell.omp.json' | Invoke-Expression
+# Universal PowerShell Profile - Windows 10/11
+# Works with PowerShell 5+ and PowerShell 7+
+# Auto-detects available tools and falls back gracefully
 
-# Basic command aliases
-Set-Alias -Name f -Value "Invoke-Fzf" -Description "fzf with bat preview"
-function Invoke-Fzf { & fzf --preview 'bat --color=always --style=numbers --line-range=:1000 {}' }
+# ============================================================================
+# SHELL INTEGRATION
+# ============================================================================
 
-Set-Alias -Name m -Value mpv
-Set-Alias -Name ff -Value ffmpeg
-Set-Alias -Name df -Value difft
-Set-Alias -Name lg -Value lazygit
-Set-Alias -Name n -Value nvim
-Set-Alias -Name b -Value bat
-Set-Alias -Name t -Value tokei
+# zoxide (z - smarter cd)
+if (Get-Command zoxide -ErrorAction SilentlyContinue) {
+    Invoke-Expression (& { (zoxide init powershell | Out-String) })
+}
 
-# Directory listing aliases
-function Show-FileList { & eza -a --group-directories-last }
-Set-Alias -Name e -Value Show-FileList
+# oh-my-posh (prompt theme)
+if (Get-Command oh-my-posh -ErrorAction SilentlyContinue) {
+    # Try common theme locations
+    $themePaths = @(
+        "$env:USERPROFILE\scoop\apps\oh-my-posh\current\themes\robbyrussell.omp.json",
+        "$env:LOCALAPPDATA\Programs\oh-my-posh\themes\robbyrussell.omp.json",
+        "robbyrussell"
+    )
 
-function Show-DetailedFileList { & eza -la --group-directories-last }
-Set-Alias -Name ls -Value Show-DetailedFileList
+    foreach ($path in $themePaths) {
+        if (Test-Path $path) {
+            oh-my-posh init pwsh --config $path | Invoke-Expression
+            break
+        }
+    }
+}
 
-# Git aliases - with proper command execution
-function Git-Status { & git status }
+# ============================================================================
+# ALIASES - FILE OPERATIONS
+# ============================================================================
+
+# fzf with bat preview
+if (Get-Command fzf -ErrorAction SilentlyContinue) {
+    $null = New-Item -Path Function:\ -Name "Invoke-Fzf" -Value {
+        & fzf @args
+    } -Force
+    Set-Alias -Name f -Value Invoke-Fzf -Description "fzf fuzzy finder"
+
+    if (Get-Command bat -ErrorAction SilentlyContinue) {
+        $null = New-Item -Path Function:\ -Name "Invoke-Fzf" -Value {
+            & fzf --preview 'bat --color=always --style=numbers --line-range=:1000 {}' @args
+        } -Force
+    }
+}
+
+# Media and tools
+if (Get-Command mpv -ErrorAction SilentlyContinue) {
+    Set-Alias -Name m -Value mpv -Description "Media player"
+}
+if (Get-Command ffmpeg -ErrorAction SilentlyContinue) {
+    Set-Alias -Name ff -Value ffmpeg -Description "FFmpeg"
+}
+if (Get-Command difft -ErrorAction SilentlyContinue) {
+    Set-Alias -Name df -Value difft -Description "Difftastic diff tool"
+}
+if (Get-Command lazygit -ErrorAction SilentlyContinue) {
+    Set-Alias -Name lg -Value lazygit -Description "Lazy Git UI"
+}
+if (Get-Command nvim -ErrorAction SilentlyContinue) {
+    Set-Alias -Name n -Value nvim -Description "Neovim"
+} elseif (Get-Command vim -ErrorAction SilentlyContinue) {
+    Set-Alias -Name n -Value vim -Description "Vim"
+}
+if (Get-Command bat -ErrorAction SilentlyContinue) {
+    Set-Alias -Name b -Value bat -Description "Bat cat alternative"
+} elseif (Get-Command cat -ErrorAction SilentlyContinue) {
+    Set-Alias -Name b -Value cat -Description "Cat"
+}
+if (Get-Command tokei -ErrorAction SilentlyContinue) {
+    Set-Alias -Name t -Value tokei -Description "Code statistics"
+}
+
+# Directory listing - eza or fallback
+if (Get-Command eza -ErrorAction SilentlyContinue) {
+    function Show-FileList { & eza -a --group-directories-last @args }
+    Set-Alias -Name e -Value Show-FileList
+
+    function Show-DetailedFileList { & eza -la --group-directories-last @args }
+    Set-Alias -Name ls -Value Show-DetailedFileList
+} elseif (Get-Command exa -ErrorAction SilentlyContinue) {
+    function Show-FileList { & exa -a --group-directories-last @args }
+    Set-Alias -Name e -Value Show-FileList
+
+    function Show-DetailedFileList { & exa -la --group-directories-last @args }
+    Set-Alias -Name ls -Value Show-DetailedFileList
+}
+
+# ============================================================================
+# GIT ALIASES
+# ============================================================================
+function Git-Status { & git status @args }
 Set-Alias -Name gs -Value Git-Status
 
-function Git-Log { & git log }
+function Git-Log { & git log @args }
 Set-Alias -Name gitl -Value Git-Log
 
-function Get-GitLogGraph { & git log --graph }
+function Get-GitLogGraph { & git log --graph @args }
 Set-Alias -Name glg -Value Get-GitLogGraph
 
-function Get-GitLogFollow { & git log --follow }
+function Get-GitLogFollow { & git log --follow @args }
 Set-Alias -Name glf -Value Get-GitLogFollow
 
-function Git-Branch { & git branch }
+function Git-Branch { & git branch @args }
 Set-Alias -Name gb -Value Git-Branch
 
-function Git-Bisect { & git bisect }
+function Git-Bisect { & git bisect @args }
 Set-Alias -Name gbi -Value Git-Bisect
 
-function Git-Diff { & git diff }
+function Git-Diff { & git diff @args }
 Set-Alias -Name gd -Value Git-Diff
 
-function Git-Add { param([string]$path = "") & git add $path }
+function Git-Add { & git add @args }
 Set-Alias -Name ga -Value Git-Add
 
 function Add-GitAll { & git add . }
 Set-Alias -Name gaa -Value Add-GitAll
 
-function Git-CommitMessage([string]$message) { & git commit -m $message }
+function Git-CommitMessage { & git commit -m @args }
 Set-Alias -Name gitcm -Value Git-CommitMessage
 
-function Git-Push { & git push }
+function Git-Push { & git push @args }
 Set-Alias -Name gitp -Value Git-Push
 
-function Git-Fetch { & git fetch }
+function Git-Fetch { & git fetch @args }
 Set-Alias -Name gf -Value Git-Fetch
 
-function Git-Merge { & git merge }
+function Git-Merge { & git merge @args }
 Set-Alias -Name gitm -Value Git-Merge
 
-function Git-MergeTool { & git mergetool }
+function Git-MergeTool { & git mergetool @args }
 Set-Alias -Name gmt -Value Git-MergeTool
 
-function Git-Rebase { & git rebase }
+function Git-Rebase { & git rebase @args }
 Set-Alias -Name gr -Value Git-Rebase
 
-function Git-Checkout([string]$branch) { & git checkout $branch }
+function Git-Checkout { & git checkout @args }
 Set-Alias -Name gitco -Value Git-Checkout
 
-function New-GitBranch([string]$branchName) { & git checkout -b $branchName }
+function New-GitBranch { & git checkout -b @args }
 Set-Alias -Name gcb -Value New-GitBranch
 
-function Git-CherryPick { & git cherry-pick }
+function Git-CherryPick { & git cherry-pick @args }
 Set-Alias -Name gcp -Value Git-CherryPick
 
-function Git-Tag { & git tag }
+function Git-Tag { & git tag @args }
 Set-Alias -Name gt -Value Git-Tag
 
-function Git-Worktree { & git worktree }
+function Git-Worktree { & git worktree @args }
 Set-Alias -Name gw -Value Git-Worktree
 
-function Add-GitWorktree([string]$path) { & git worktree add $path }
+function Add-GitWorktree { & git worktree add @args }
 Set-Alias -Name gwa -Value Add-GitWorktree
 
-function Remove-GitWorktree([string]$path) { & git worktree delete $path }
+function Remove-GitWorktree { & git worktree delete @args }
 Set-Alias -Name gwd -Value Remove-GitWorktree
 
-function Git-WorktreeStatus { & git worktree status }
+function Git-WorktreeStatus { & git worktree status @args }
 Set-Alias -Name gws -Value Git-WorktreeStatus
 
-function Git-WorktreeClean { & git worktree clean }
+function Git-WorktreeClean { & git worktree clean @args }
 Set-Alias -Name gwc -Value Git-WorktreeClean
 
-function Update-GitSubmodules { & git submodule update --init --recursive }
+function Update-GitSubmodules { & git submodule update --init --recursive @args }
 Set-Alias -Name gsuir -Value Update-GitSubmodules
 
-function Reset-GitRepository { 
+function Reset-GitRepository {
     & git checkout -- .
     & git submodule foreach --recursive git checkout -- .
 }
 Set-Alias -Name gnuke -Value Reset-GitRepository
 
-# Docker aliases
-function Docker-Command { param([string]$cmd) & docker $cmd }
-Set-Alias -Name d -Value docker
+# ============================================================================
+# DOCKER ALIASES
+# ============================================================================
+if (Get-Command docker -ErrorAction SilentlyContinue) {
+    function Docker-Command { & docker @args }
+    Set-Alias -Name d -Value docker
 
-function Docker-Start([string]$container) { & docker start $container }
-Set-Alias -Name ds -Value Docker-Start
+    function Docker-Start { & docker start @args }
+    Set-Alias -Name ds -Value Docker-Start
 
-function Docker-Stop([string]$container) { & docker stop $container }
-Set-Alias -Name dx -Value Docker-Stop
+    function Docker-Stop { & docker stop @args }
+    Set-Alias -Name dx -Value Docker-Stop
 
-function Docker-PS { & docker ps }
-Set-Alias -Name dp -Value Docker-PS
+    function Docker-PS { & docker ps @args }
+    Set-Alias -Name dp -Value Docker-PS
 
-function Get-DockerAllContainers { & docker ps -a }
-Set-Alias -Name dpa -Value Get-DockerAllContainers
+    function Get-DockerAllContainers { & docker ps -a @args }
+    Set-Alias -Name dpa -Value Get-DockerAllContainers
 
-function Docker-Images { & docker images }
-Set-Alias -Name di -Value Docker-Images
+    function Docker-Images { & docker images @args }
+    Set-Alias -Name di -Value Docker-Images
 
-function Docker-Logs([string]$container) { & docker logs $container }
-Set-Alias -Name dl -Value Docker-Logs
+    function Docker-Logs { & docker logs @args }
+    Set-Alias -Name dl -Value Docker-Logs
 
-function Watch-DockerLogs([string]$container) { & docker logs -f $container }
-Set-Alias -Name dlf -Value Watch-DockerLogs
+    function Watch-DockerLogs { & docker logs -f @args }
+    Set-Alias -Name dlf -Value Watch-DockerLogs
 
-function Docker-Compose([string]$command) { & docker compose $command }
-Set-Alias -Name dc -Value Docker-Compose
+    function Docker-Compose { & docker compose @args }
+    Set-Alias -Name dc -Value Docker-Compose
 
-function Docker-ComposePS { & docker compose ps }
-Set-Alias -Name dcp -Value Docker-ComposePS
+    function Docker-ComposePS { & docker compose ps @args }
+    Set-Alias -Name dcp -Value Docker-ComposePS
 
-function Get-DockerComposeAllContainers { & docker compose ps -a }
-Set-Alias -Name dcpa -Value Get-DockerComposeAllContainers
+    function Get-DockerComposeAllContainers { & docker compose ps -a @args }
+    Set-Alias -Name dcpa -Value Get-DockerComposeAllContainers
 
-function Docker-ComposeUp { & docker compose up }
-Set-Alias -Name dcu -Value Docker-ComposeUp
+    function Docker-ComposeUp { & docker compose up @args }
+    Set-Alias -Name dcu -Value Docker-ComposeUp
 
-function Start-DockerComposeWithBuild { & docker compose up --build }
-Set-Alias -Name dcub -Value Start-DockerComposeWithBuild
+    function Start-DockerComposeWithBuild { & docker compose up --build @args }
+    Set-Alias -Name dcub -Value Start-DockerComposeWithBuild
 
-function Docker-ComposeDown { & docker compose down }
-Set-Alias -Name dcd -Value Docker-ComposeDown
+    function Docker-ComposeDown { & docker compose down @args }
+    Set-Alias -Name dcd -Value Docker-ComposeDown
 
-function Docker-ComposeLogs { & docker compose logs }
-Set-Alias -Name dcl -Value Docker-ComposeLogs
+    function Docker-ComposeLogs { & docker compose logs @args }
+    Set-Alias -Name dcl -Value Docker-ComposeLogs
 
-function Watch-DockerComposeLogs { & docker compose logs -f }
-Set-Alias -Name dclf -Value Watch-DockerComposeLogs
+    function Watch-DockerComposeLogs { & docker compose logs -f @args }
+    Set-Alias -Name dclf -Value Watch-DockerComposeLogs
 
-function Enter-DockerContainer([string]$container) { & docker exec -it $container $args }
-Set-Alias -Name de -Value Enter-DockerContainer
+    function Enter-DockerContainer { & docker exec -it @args }
+    Set-Alias -Name de -Value Enter-DockerContainer
+}
+
+# ============================================================================
+# ENVIRONMENT VARIABLES
+# ============================================================================
+
+# Editor
+$env:EDITOR = if (Get-Command nvim -ErrorAction SilentlyContinue) { "nvim" } else { "vim" }
+
+# Go
+if (Get-Command go -ErrorAction SilentlyContinue) {
+    $env:PATH += ";$(go env GOPATH)\bin"
+}
+
+# Node.js (global packages via scoop)
+if (Test-Path "$env:USERPROFILE\scoop\apps\nodejs-lts\current") {
+    $env:PATH += ";$env:USERPROFILE\scoop\apps\nodejs-lts\current"
+}
+
+# Rust
+if (Test-Path "$env:USERPROFILE\.cargo\bin") {
+    $env:PATH += ";$env:USERPROFILE\.cargo\bin"
+}
+
+# Python (via scoop)
+$scoopPython = "$env:USERPROFILE\scoop\apps\python\current"
+if (Test-Path $scoopPython) {
+    $env:PATH += ";$scoopPython"
+    $env:PATH += ";$scoopPython\Scripts"
+}
+
+# ============================================================================
+# HELPER FUNCTIONS
+# ============================================================================
+
+# Edit profile
+function Edit-Profile {
+    $profilePath = $PROFILE.CurrentUserCurrentHost
+    & $env:EDITOR $profilePath
+}
+Set-Alias -Name ep -Value Edit-Profile
+
+# Reload profile
+function Reload-Profile {
+    . $PROFILE.CurrentUserCurrentHost
+}
+Set-Alias -Name rp -Value Reload-Profile
+
+# Which command (like Unix)
+function Get-CommandPath {
+    Get-Command @args | Select-Object -ExpandProperty Source
+}
+Set-Alias -Name which -Value Get-CommandPath

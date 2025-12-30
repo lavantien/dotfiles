@@ -1,76 +1,151 @@
-export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
+# Universal Zsh Configuration - Linux, macOS, and Windows (WSL/Git Bash)
+# Auto-detects platform and available tools
 
+# ============================================================================
+# PATH
+# ============================================================================
+export PATH=$HOME/bin:$HOME/.local/bin:$PATH
+
+# Platform-specific PATH additions
+case "$(uname -s)" in
+    Linux*)
+        # Homebrew on Linux
+        if [ -d "/home/linuxbrew/.linuxbrew" ]; then
+            export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
+        fi
+        # Snap (Ubuntu)
+        if [ -d "/snap/bin" ]; then
+            export PATH="$PATH:/snap/bin"
+        fi
+        ;;
+    Darwin*)
+        # Homebrew on macOS
+        if [ -d "/opt/homebrew" ]; then
+            export PATH="/opt/homebrew/bin:$PATH"
+        elif [ -d "/usr/local" ]; then
+            export PATH="/usr/local/bin:$PATH"
+        fi
+        ;;
+    MINGW*|MSYS*|CYGWIN*)
+        # Git Bash on Windows
+        if [ -d "$HOME/scoop" ]; then
+            export PATH="$PATH:$HOME/scoop/shims"
+        fi
+        ;;
+esac
+
+# ============================================================================
+# OH MY ZSH
+# ============================================================================
 export ZSH="$HOME/.oh-my-zsh"
-
 ZSH_THEME="half-life"
 
-# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
-# CASE_SENSITIVE="true"
-# HYPHEN_INSENSITIVE="true"
-
-# zstyle ':omz:update' mode disabled  # disable automatic updates
-# zstyle ':omz:update' mode auto      # update automatically without asking
-# zstyle ':omz:update' mode reminder  # just remind me to update when it's time
-# zstyle ':omz:update' frequency 13
-
-# DISABLE_MAGIC_FUNCTIONS="true"
-# DISABLE_LS_COLORS="true"
-# DISABLE_AUTO_TITLE="true"
-# ENABLE_CORRECTION="true"
-# COMPLETION_WAITING_DOTS="true"
-
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
-# HIST_STAMPS="mm/dd/yyyy"
-# ZSH_CUSTOM=/path/to/new-custom-folder
-
-plugins=(zsh-interactive-cd zsh-autosuggestions copypath copyfile)
-
-source $ZSH/oh-my-zsh.sh
-
-# User configuration
-
-# export MANPATH="/usr/local/man:$MANPATH"
-
-export LANG=en_US.UTF-8
-
-if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='vim'
-else
-  export EDITOR='nvim'
+# Only load Oh My Zsh if installed
+if [ -d "$ZSH" ]; then
+    plugins=(zsh-interactive-cd zsh-autosuggestions copypath copyfile)
+    source $ZSH/oh-my-zsh.sh
 fi
 
-# export ARCHFLAGS="-arch $(uname -m)"
+# ============================================================================
+# EDITOR
+# ============================================================================
+export LANG=en_US.UTF-8
+if [[ -n $SSH_CONNECTION ]]; then
+    export EDITOR='vim'
+else
+    export EDITOR='nvim'
+fi
 
-# Set personal aliases, overriding those provided by Oh My Zsh libs,
-# plugins, and themes. Aliases can be placed here, though Oh My Zsh
-# users are encouraged to define aliases within a top-level file in
-# the $ZSH_CUSTOM folder, with .zsh extension. Examples:
-# - $ZSH_CUSTOM/aliases.zsh
-# - $ZSH_CUSTOM/macos.zsh
-# For a full list of active aliases, run `alias`.
-#
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
+# ============================================================================
+# SOURCE ADDITIONAL FILES
+# ============================================================================
+# Source bash aliases (they work in zsh too)
+if [ -f ~/.bash_aliases ]; then
+    source ~/.bash_aliases
+fi
 
-source ~/.bash_aliases
+# Source private keys file if exists
 if [ -f ~/.keys ]; then
     source ~/.keys
 fi
 
-# tools
-source "$HOME/.cargo/env"
-source <(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
-source <(zoxide init zsh)
-source <(fzf --zsh)
-source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# ============================================================================
+# TOOL CONFIGURATIONS (Auto-detect availability)
+# ============================================================================
 
-# brew
-export HOMEBREW_MAKE_JOBS=16
+# Cargo (Rust)
+if [ -f "$HOME/.cargo/env" ]; then
+    source "$HOME/.cargo/env"
+fi
+
+# Homebrew shellenv
+if command -v brew >/dev/null 2>&1; then
+    export HOMEBREW_MAKE_JOBS=16
+    # Already sourced via brew shellenv in PATH section for Linux
+fi
+
+# zoxide (z - smarter cd)
+if command -v zoxide >/dev/null 2>&1; then
+    eval "$(zoxide init zsh)"
+fi
+
+# fzf (fuzzy finder)
+if command -v fzf >/dev/null 2>&1; then
+    eval "$(fzf --zsh)"
+fi
+
+# zsh-syntax-highlighting
+if [ -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+    source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
+
+# macOS: check for Homebrew-installed zsh-syntax-highlighting
+if [ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+    source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
+
+# ============================================================================
+# LANGUAGE-SPECIFIC CONFIGURATIONS
+# ============================================================================
 
 # Go
-export PATH="$PATH:$(go env GOPATH)/bin"
+if command -v go >/dev/null 2>&1; then
+    export PATH="$PATH:$(go env GOPATH)/bin"
+fi
 
-# Cargo
-export RUSTC_WRAPPER="/home/linuxbrew/.linuxbrew/bin/sccache"
+# Rust sccache (compiler cache)
+if command -v sccache >/dev/null 2>&1; then
+    export RUSTC_WRAPPER=$(which sccache)
+fi
 
+# Node.js (global packages)
+if [ -d "$HOME/.npm-global" ]; then
+    export PATH="$HOME/.npm-global/bin:$PATH"
+fi
+
+# Python (pyenv)
+if command -v pyenv >/dev/null 2>&1; then
+    eval "$(pyenv init -)"
+fi
+
+# ============================================================================
+# PLATFORM-SPECIFIC SETTINGS
+# ============================================================================
+
+case "$(uname -s)" in
+    Linux*)
+        # Linux-specific settings
+        ;;
+
+    Darwin*)
+        # macOS-specific settings
+        # Fix for Unicode in Terminal
+        export LC_ALL=en_US.UTF-8
+        ;;
+
+    MINGW*|MSYS*|CYGWIN*)
+        # Git Bash on Windows-specific settings
+        # MSYS no convert paths
+        export MSYS_NO_PATHCONV=1
+        ;;
+esac

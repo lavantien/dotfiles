@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# Universal git commit-msg hook - Enforces conventional commits
+# Supports: Windows (Git Bash, WSL) and Linux/macOS
+
+commit_msg_file=$1
+commit_msg=$(cat "$commit_msg_file")
+
+# Skip if merge commit or revert
+if echo "$commit_msg" | grep -qE "^(Merge|Revert)"; then
+    exit 0
+fi
+
+# Pattern: type(scope)!: description or type(scope): description or type: description
+pattern="^(feat|fix|chore|docs|style|refactor|perf|test|build|ci|break|bump)(\(.+\))?!?: .{1,72}"
+
+if ! echo "$commit_msg" | grep -qE "$pattern"; then
+    echo ""
+    echo "Commit message does not follow Conventional Commits format."
+    echo ""
+    echo "Expected format: <type>(<scope>): <description>"
+    echo ""
+    echo "Types: feat, fix, chore, docs, style, refactor, perf, test, build, ci"
+    echo "Example: feat(auth): add OAuth2 login support"
+    echo ""
+    echo "To bypass this check, use: git commit --no-verify"
+    echo ""
+    exit 1
+fi
+
+# Check subject line length (max 72 chars for first line)
+first_line=$(echo "$commit_msg" | head -1)
+if [ ${#first_line} -gt 72 ]; then
+    echo "Subject line should be 72 characters or less."
+    echo "Current length: ${#first_line}"
+    exit 1
+fi
+
+# Check for empty line after subject
+if [ $(echo "$commit_msg" | wc -l) -gt 1 ]; then
+    second_line=$(echo "$commit_msg" | sed -n '2p')
+    if [ -n "$second_line" ]; then
+        echo "Please add a blank line between subject and body."
+        exit 1
+    fi
+fi
+
+exit 0
