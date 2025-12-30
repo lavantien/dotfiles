@@ -8,7 +8,7 @@ Cross-platform dotfiles supporting **Windows 11 native**, **Linux (Ubuntu)**, an
 
 ```powershell
 # Clone the repository
-git clone https://github.com/yourusername/dotfiles.git $HOME/dev/dotfiles
+git clone https://github.com/lavantien/dotfiles.git $HOME/dev/dotfiles
 
 # Deploy
 cd $HOME/dev/dotfiles
@@ -22,7 +22,7 @@ cd $HOME/dev/dotfiles
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/dotfiles.git ~/dev/dotfiles
+git clone https://github.com/lavantien/dotfiles.git ~/dev/dotfiles
 
 # Deploy
 cd ~/dev/dotfiles
