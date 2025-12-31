@@ -150,7 +150,7 @@ if (Test-Path "go.mod") {
 
     if (Get-Command golangci-lint -ErrorAction SilentlyContinue) {
         Write-Host "${CYAN}[LINT]${R} golangci-lint..."
-        $null = golangci-lint run 2>&1
+        $null = golangci-lint run --no-config ./... 2>&1
         $results += Format-Result "Lint" "golangci-lint" $true ""
     }
 }

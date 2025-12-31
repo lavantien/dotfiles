@@ -380,7 +380,7 @@ seconds=$((duration % 60))
 echo -e "\n${BLUE}========================================${NC}"
 echo -e "${BLUE}           Summary${NC}"
 echo -e "${BLUE}========================================${NC}"
-echo -e " ${GREEN}Updated:${NC} $updated"
+echo -e " ${GREEN}Completed:${NC} $updated"
 echo -e " ${YELLOW}Skipped:${NC} $skipped"
 if [ $failed -gt 0 ]; then
     echo -e " ${YELLOW}Failed:${NC}   $failed"

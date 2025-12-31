@@ -237,7 +237,12 @@ install_linters_formatters() {
         install_pip_global "ruff" ruff "0.1.0"
     fi
 
-    # goimports (via go install)
+    # gup (Go package manager - install first, then use it for other Go tools)
+    if cmd_exists go && ! cmd_exists gup; then
+        install_go_package "nao.vi/gup@latest" gup "0.12.0"
+    fi
+
+    # goimports (via gup if available, otherwise go install)
     if cmd_exists go; then
         install_go_package "golang.org/x/tools/cmd/goimports@latest" goimports "0.10.0"
     fi
@@ -388,6 +393,7 @@ update_all_repos() {
 
     log_step "Running update-all script..."
     bash "$update_script"
+    echo ""
     log_success "Update complete"
 }
 

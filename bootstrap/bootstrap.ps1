@@ -167,7 +167,12 @@ function Install-LintersFormatters {
         Install-PipGlobal "ruff" "ruff" "0.1.0"
     }
 
-    # goimports (via go install)
+    # gup (Go package manager - install first, then use it for other Go tools)
+    if ((Test-Command go) -and (-not (Test-Command gup))) {
+        Install-GoPackage "nao.vi/gup@latest" "gup" "0.12.0"
+    }
+
+    # goimports (via gup if available, otherwise go install)
     if (Test-Command go) {
         Install-GoPackage "golang.org/x/tools/cmd/goimports@latest" "goimports" "0.10.0"
     }

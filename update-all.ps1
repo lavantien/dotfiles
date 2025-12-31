@@ -273,7 +273,7 @@ $duration = (Get-Date) - $startTime
 Write-Host "`n${BLUE}========================================${R}"
 Write-Host "${BLUE}           Summary${R}"
 Write-Host "${BLUE}========================================${R}"
-Write-Host " ${GREEN}Updated:$R $updated"
+Write-Host " ${GREEN}Completed:$R $updated"
 Write-Host " ${YELLOW}Skipped:$R $skipped"
 if ($failed -gt 0) {
     Write-Host " ${YELLOW}Failed:$R   $failed"

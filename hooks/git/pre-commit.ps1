@@ -40,8 +40,8 @@ function Get-ProjectTypes {
     if (Test-Path "setup.py") { $types += "python" }
     if (Test-Path "poetry.lock") { $types += "python" }
 
-    $csproj = Get-ChildItem -Filter "*.csproj" -Recurse -Depth 2 -ErrorAction SilentlyContinue
-    if ($csproj) { $types += "csharp" }
+    $csFiles = Get-ChildItem -Filter "*.cs" -Recurse -Depth 3 -ErrorAction SilentlyContinue | Measure-Object
+    if ($csFiles.Count -gt 0) { $types += "csharp" }
 
     if (Test-Path "pom.xml") { $types += "java" }
     if (Test-Path "build.gradle") { $types += "java" }
@@ -51,7 +51,7 @@ function Get-ProjectTypes {
 
     # Check common subdirectories
     if ((Test-Path "frontend") -and (Test-Path "frontend\package.json")) { $types += "node-frontend" }
-    if ((Test-Path "backend") -and (Get-ChildItem -Path "backend" -Filter "*.csproj" -Recurse -Depth 2 -ErrorAction SilentlyContinue)) { $types += "csharp-backend" }
+    if ((Test-Path "backend") -and ((Get-ChildItem -Path "backend" -Filter "*.cs" -Recurse -Depth 3 -ErrorAction SilentlyContinue | Measure-Object).Count -gt 0)) { $types += "csharp-backend" }
 
     Pop-Location
     return $types
@@ -86,7 +86,7 @@ function Invoke-GoChecks {
     # Lint: golangci-lint
     if (Get-Command golangci-lint -ErrorAction SilentlyContinue) {
         Write-Host "Running golangci-lint..."
-        golangci-lint run --new-from-rev HEAD~1 2>$null
+        golangci-lint run --no-config ./... 2>$null
     }
 
     # Type check: go vet
@@ -162,10 +162,14 @@ function Invoke-NodeChecks {
     # Format: Prettier
     if ((Get-Command npx -ErrorAction SilentlyContinue) -or (Test-Path "node_modules\.bin\prettier.cmd")) {
         Write-Host "Running Prettier..."
-        $prettierResult = npx prettier --check . --plugin=prettier-plugin-svelte 2>&1
+        # Only use svelte plugin if actually installed
+        $prettierArgs = ""
+        if ((Test-Path "node_modules\prettier-plugin-svelte\index.js") -or (Test-Path "node_modules\prettier-plugin-svelte\dist\index.js")) {
+            $prettierArgs = "--plugin=prettier-plugin-svelte"
+        }
+        $null = npx prettier --check . $prettierArgs 2>&1
         if ($LASTEXITCODE -ne 0) {
-            npx prettier --write . --plugin=prettier-plugin-svelte 2>$null
-            if ($LASTEXITCODE -ne 0) { npx prettier --write . 2>$null }
+            npx prettier --write . $prettierArgs 2>&1 | Select-Object -First 5
             git add . 2>$null
             Write-Host "${YELLOW}Files formatted with Prettier.${R}"
         }
@@ -174,8 +178,8 @@ function Invoke-NodeChecks {
     # Lint: ESLint
     if ((Get-Command npx -ErrorAction SilentlyContinue) -or (Test-Path "node_modules\.bin\eslint.cmd")) {
         Write-Host "Running ESLint..."
-        $eslintResult = npx eslint . 2>&1
-        if ($LASTEXITCODE -gt 1) {
+        npx eslint . 2>&1 | Select-Object -First 20
+        if ($LASTEXITCODE -gt 0) {
             Write-Host "${RED}ESLint errors found.${R}"
             $script:failed = $true
         }

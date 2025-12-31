@@ -307,7 +307,7 @@ function Install-NpmGlobal {
     }
 }
 
-# Install via go install
+# Install via go install or gup
 function Install-GoPackage {
     param(
         [string]$Package,
@@ -325,33 +325,61 @@ function Install-GoPackage {
         return $false
     }
 
-    if (Test-NeedsInstall $CmdName $MinVersion) {
-        Write-Step "Installing $Package via go..."
+    # Get GOPATH and ensure it's in PATH (for current session + persist)
+    $goPath = go env GOPATH
+    if ($goPath) {
+        # Persist to User PATH for future sessions
+        if ("$env:PATH" -notlike "*$goPath\bin*") {
+            Add-ToPath "$goPath\bin"
+        }
+        # Also add to current session PATH so we can find commands immediately
+        if ("$env:PATH" -notlike "*$goPath\bin*") {
+            $env:PATH = "$goPath\bin;$env:PATH"
+        }
+    }
+
+    # Check if already installed (after ensuring GOPATH/bin in PATH)
+    if (Get-Command $CmdName -ErrorAction SilentlyContinue) {
+        Track-Skipped "$CmdName (already installed)"
+        return $true
+    }
+
+    # Try using gup if available
+    if (Get-Command gup -ErrorAction SilentlyContinue) {
+        Write-Step "Installing $Package via gup..."
         if ($DryRun) {
-            Write-Info "[DRY-RUN] Would go install $Package@latest"
+            Write-Info "[DRY-RUN] Would gup install $Package"
             Track-Installed $Package
             return $true
         }
 
         try {
-            go install ${Package}@latest *> $null
-            # Add GOPATH/bin to PATH if needed
-            $goPath = go env GOPATH
-            if ($goPath -and "$env:PATH" -notlike "*$goPath\bin*") {
-                Add-ToPath "$goPath\bin"
-            }
+            gup install $Package *> $null
             Track-Installed $Package
             return $true
         }
         catch {
-            Write-Warning ("Failed to install {0}: {1}" -f $Package, $_.Exception.Message)
-            Track-Failed $Package
-            return $false
+            Write-Warning "gup install failed, falling back to go install..."
         }
     }
-    else {
-        Track-Skipped $CmdName
+
+    # Fallback to go install
+    Write-Step "Installing $Package via go..."
+    if ($DryRun) {
+        Write-Info "[DRY-RUN] Would go install $Package@latest"
+        Track-Installed $Package
         return $true
+    }
+
+    try {
+        go install ${Package}@latest *> $null
+        Track-Installed $Package
+        return $true
+    }
+    catch {
+        Write-Warning ("Failed to install {0}: {1}" -f $Package, $_.Exception.Message)
+        Track-Failed $Package
+        return $false
     }
 }
 

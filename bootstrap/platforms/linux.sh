@@ -250,24 +250,43 @@ install_go_package() {
         return 1
     fi
 
-    if needs_install "$cmd_name" "$min_version"; then
-        log_step "Installing $package via go..."
-        if run_cmd "go install $package@latest"; then
-            # Add GOPATH/bin to PATH if needed
-            local gopath
-            gopath="$(go env GOPATH)"
-            if [[ -n "$gopath" && ":$PATH:" != *":$gopath/bin:"* ]]; then
-                ensure_path "$gopath/bin"
-            fi
+    # Get GOPATH and ensure it's in PATH (for current shell + persist)
+    local gopath
+    gopath="$(go env GOPATH)"
+    if [[ -n "$gopath" ]]; then
+        # Persist to shell profile for future sessions
+        ensure_path "$gopath/bin"
+        # Also add to current PATH so we can find commands immediately
+        if [[ ":$PATH:" != *":$gopath/bin:"* ]]; then
+            export PATH="$gopath/bin:$PATH"
+        fi
+    fi
+
+    # Check if already installed (after ensuring GOPATH/bin in PATH)
+    if cmd_exists "$cmd_name"; then
+        track_skipped "$cmd_name (already installed)"
+        return 0
+    fi
+
+    # Try using gup if available
+    if cmd_exists gup; then
+        log_step "Installing $package via gup..."
+        if run_cmd "gup install $package"; then
             track_installed "$package"
             return 0
         else
-            track_failed "$package"
-            return 1
+            log_warning "gup install failed, falling back to go install..."
         fi
-    else
-        track_skipped "$cmd_name"
+    fi
+
+    # Fallback to go install
+    log_step "Installing $package via go..."
+    if run_cmd "go install $package@latest"; then
+        track_installed "$package"
         return 0
+    else
+        track_failed "$package"
+        return 1
     fi
 }
 

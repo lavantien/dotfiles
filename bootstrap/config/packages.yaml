@@ -241,6 +241,15 @@ language_servers:
     install_package: -g dockerfile-language-server-nodejs
 
 linters_formatters:
+  - name: gup
+    display_name: Go Package Manager
+    platforms: [all]
+    check_cmd: gup
+    version_flag: --version
+    min_version: "0.12.0"
+    install_method: go_install
+    install_package: nao.vi/gup@latest
+
   - name: ruff
     display_name: Ruff (Python)
     platforms: [all]

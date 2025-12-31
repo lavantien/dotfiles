@@ -54,8 +54,7 @@ detect_projects() {
     [ -f "requirements.txt" ] && types+=("python")
     [ -f "setup.py" ] && types+=("python")
     [ -f "poetry.lock" ] && types+=("python")
-    find . -maxdepth 2 -name '*.csproj' >/dev/null 2>&1 && types+=("csharp")
-    find . -maxdepth 2 -name '*.sln' >/dev/null 2>&1 && types+=("csharp")
+    [ -n "$(find . -maxdepth 3 -name '*.cs' 2>/dev/null)" ] && types+=("csharp")
     [ -f "pom.xml" ] && types+=("java")
     [ -f "build.gradle" ] && types+=("java")
     [ -f "build.gradle.kts" ] && types+=("java")
@@ -66,7 +65,7 @@ detect_projects() {
     [ -f "meson.build" ] && types+=("cpp")
     # Check common subdirectories
     [ -d "frontend" ] && [ -f "frontend/package.json" ] && types+=("node-frontend")
-    [ -d "backend" ] && find backend -maxdepth 2 -name '*.csproj' >/dev/null 2>&1 && types+=("csharp-backend")
+    [ -d "backend" ] && [ -n "$(find backend -maxdepth 3 -name '*.cs' 2>/dev/null)" ] && types+=("csharp-backend")
     echo "${types[@]}"
 }
 
@@ -113,7 +112,7 @@ run_go_checks() {
     # Lint: golangci-lint
     if command_exists golangci-lint; then
         echo "Running golangci-lint..."
-        golangci-lint run --new-from-rev HEAD~1 2>/dev/null || golangci-lint run 2>/dev/null || echo -e "${YELLOW}Lint warnings found.${NC}"
+        golangci-lint run --no-config ./... 2>/dev/null || echo -e "${YELLOW}Lint warnings found.${NC}"
     fi
 
     # Type check: go vet
@@ -182,8 +181,14 @@ run_node_checks() {
     # Format: Prettier
     if npx prettier --version &>/dev/null 2>&1 || [ -f "node_modules/.bin/prettier" ]; then
         echo "Running Prettier..."
-        if ! npx prettier --check . --plugin=prettier-plugin-svelte 2>/dev/null; then
-            npx prettier --write . --plugin=prettier-plugin-svelte 2>/dev/null || npx prettier --write . 2>/dev/null
+        # Only use svelte plugin if actually installed
+        if [ -f "node_modules/prettier-plugin-svelte/index.js" ] || [ -f "node_modules/prettier-plugin-svelte/dist/index.js" ]; then
+            prettier_args="--plugin=prettier-plugin-svelte"
+        else
+            prettier_args=""
+        fi
+        if ! npx prettier --check . $prettier_args >/dev/null 2>&1; then
+            npx prettier --write . $prettier_args 2>&1 | head -5
             git add . 2>/dev/null || true
             echo -e "${YELLOW}Files formatted with Prettier.${NC}"
         fi
@@ -192,7 +197,7 @@ run_node_checks() {
     # Lint: ESLint
     if npx eslint --version &>/dev/null 2>&1 || [ -f "node_modules/.bin/eslint" ]; then
         echo "Running ESLint..."
-        if ! npx eslint . 2>/dev/null; then
+        if ! npx eslint . 2>&1 | head -20; then
             echo -e "${RED}ESLint errors found.${NC}"
             FAILED=1
         fi
