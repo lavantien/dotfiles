@@ -1,0 +1,446 @@
+# Package definitions for bootstrap system
+# This file defines all tools that can be installed by the bootstrap scripts
+#
+# Categories:
+#   - system_package_managers: Base package managers (brew, scoop, winget)
+#   - sdks: Programming language runtimes/SDKs
+#   - language_servers: LSP servers for editors
+#   - linters_formatters: Code quality tools
+#   - cli_tools: Command-line utilities
+#
+# Each tool defines:
+#   - name: Internal identifier
+#   - display_name: Human-readable name
+#   - platforms: Where this tool can be installed (all, linux, macos, windows)
+#   - check_cmd: Command to verify installation
+#   - version_flag: Flag to get version output (default: --version)
+#   - version_extract: Regex to extract version (optional)
+#   - min_version: Minimum required version
+#   - install: Platform-specific install commands
+#   - install_method: Alternative method (npm_global, go_install, cargo, pip_global, dotnet_tool)
+
+system_package_managers:
+  - name: brew
+    display_name: Homebrew
+    platforms: [macos, linux]
+    check_cmd: brew
+    version_flag: --version
+    min_version: "4.0.0"
+    install:
+      macos: '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+      linux: '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+
+  - name: scoop
+    display_name: Scoop
+    platforms: [windows]
+    check_cmd: scoop
+    version_flag: --version
+    min_version: "0.3.0"
+    install:
+      windows: 'Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force; Invoke-RestObject -Uri https://get.scoop.sh | Invoke-Expression'
+
+sdks:
+  - name: node
+    display_name: Node.js LTS
+    platforms: [all]
+    check_cmd: node
+    version_flag: --version
+    min_version: "18.0.0"
+    install:
+      macos: brew install node
+      linux_debian: sudo apt install -y nodejs npm
+      linux_fedora: sudo dnf install -y nodejs npm
+      linux_arch: sudo pacman -S --noconfirm nodejs npm
+      linux_opensuse: sudo zypper install -y nodejs npm
+      windows: scoop install nodejs-lts
+
+  - name: python
+    display_name: Python
+    platforms: [all]
+    check_cmd: python3
+    version_flag: --version
+    min_version: "3.9.0"
+    alt_check_cmd: python
+    install:
+      macos: brew install python
+      linux_debian: sudo apt install -y python3 python3-pip python3-venv
+      linux_fedora: sudo dnf install -y python3 python3-pip
+      linux_arch: sudo pacman -S --noconfirm python python-pip
+      linux_opensuse: sudo zypper install -y python3 python3-pip
+      windows: scoop install python
+
+  - name: go
+    display_name: Go
+    platforms: [all]
+    check_cmd: go
+    version_flag: version
+    min_version: "1.20.0"
+    install:
+      macos: brew install go
+      linux_debian: sudo apt install -y golang-go
+      linux_fedora: sudo dnf install -y golang
+      linux_arch: sudo pacman -S --noconfirm go
+      linux_opensuse: sudo zypper install -y go
+      windows: scoop install go
+
+  - name: rust
+    display_name: Rust
+    platforms: [all]
+    check_cmd: rustc
+    version_flag: --version
+    min_version: "1.70.0"
+    install:
+      all: 'curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y'
+      windows: scoop install rustup
+
+  - name: ruby
+    display_name: Ruby
+    platforms: [all]
+    check_cmd: ruby
+    version_flag: --version
+    min_version: "3.0.0"
+    install:
+      macos: brew install ruby
+      linux_debian: sudo apt install -y ruby
+      linux_fedora: sudo dnf install -y ruby
+      linux_arch: sudo pacman -S --noconfirm ruby
+      linux_opensuse: sudo zypper install -y ruby
+      windows: scoop install ruby
+
+  - name: php
+    display_name: PHP
+    platforms: [all]
+    check_cmd: php
+    version_flag: --version
+    min_version: "8.1.0"
+    install:
+      macos: brew install php
+      linux_debian: sudo apt install -y php php-cli
+      linux_fedora: sudo dnf install -y php-cli
+      linux_arch: sudo pacman -S --noconfirm php
+      linux_opensuse: sudo zypper install -y php-cli
+      windows: scoop install php
+
+  - name: dotnet
+    display_name: .NET SDK
+    platforms: [all]
+    check_cmd: dotnet
+    version_flag: --version
+    min_version: "7.0.0"
+    install:
+      macos: brew install dotnet-sdk
+      linux_debian: sudo apt install -y dotnet-sdk-7.0
+      linux_fedora: sudo dnf install -y dotnet-sdk-7.0
+      linux_arch: sudo pacman -S --noconfirm dotnet-sdk-7.0
+      linux_opensuse: sudo zypper install -y dotnet-sdk-7.0
+      windows: scoop install dotnet-sdk
+
+language_servers:
+  - name: lua_ls
+    display_name: Lua Language Server
+    platforms: [all]
+    check_cmd: lua-language-server
+    version_flag: --version
+    min_version: "3.9.0"
+    install:
+      macos: brew install lua-language-server
+      linux_debian: sudo apt install -y lua-language-server
+      linux_fedora: sudo dnf install -y lua-language-server
+      linux_arch: sudo pacman -S --noconfirm lua-language-server
+      linux_opensuse: sudo zypper install -y lua-language-server
+      windows: scoop install lua-language-server
+
+  - name: clangd
+    display_name: C/C++ Language Server
+    platforms: [all]
+    check_cmd: clangd
+    version_flag: --version
+    min_version: "15.0.0"
+    install:
+      macos: brew install llvm
+      linux_debian: sudo apt install -y clangd
+      linux_fedora: sudo dnf install -y clang-tools-extra
+      linux_arch: sudo pacman -S --noconfirm clang
+      linux_opensuse: sudo zypper install -y clang-tools
+      windows: scoop install llvm
+
+  - name: gopls
+    display_name: Go Language Server
+    platforms: [all]
+    check_cmd: gopls
+    version_flag: version
+    min_version: "0.14.0"
+    install_method: go_install
+    install_package: golang.org/x/tools/gopls@latest
+
+  - name: rust_analyzer
+    display_name: Rust Language Server
+    platforms: [all]
+    check_cmd: rust-analyzer
+    version_flag: --version
+    min_version: "2023-01-01"
+    install:
+      all: rustup component add rust-analyzer
+      windows: scoop install rust-analyzer
+
+  - name: pyright
+    display_name: Python Language Server
+    platforms: [all]
+    check_cmd: pyright
+    version_flag: --version
+    min_version: "1.1.300"
+    install_method: npm_global
+    install_package: -g pyright
+
+  - name: ts_ls
+    display_name: TypeScript Language Server
+    platforms: [all]
+    check_cmd: typescript-language-server
+    version_flag: --version
+    min_version: "3.0.0"
+    install_method: npm_global
+    install_package: -g typescript-language-server typescript
+
+  - name: jdtls
+    display_name: Java Language Server
+    platforms: [all]
+    check_cmd: jdtls
+    version_flag: --version
+    min_version: "1.9.0"
+    install:
+      macos: brew install eclipse-jdtls
+      linux_debian: sudo apt install -y eclipse-jdtls
+      linux_fedora: sudo dnf install -y eclipse-jdtls
+      windows: scoop install eclipse-jdtls
+
+  - name: csharp_ls
+    display_name: C# Language Server
+    platforms: [all]
+    check_cmd: csharp-ls
+    version_flag: --version
+    min_version: "2.0.0"
+    install_method: dotnet_tool
+    install_package: csharp-ls
+
+  - name: yamlls
+    display_name: YAML Language Server
+    platforms: [all]
+    check_cmd: yaml-language-server
+    version_flag: --version
+    min_version: "1.0.0"
+    install_method: npm_global
+    install_package: -g yaml-language-server
+
+  - name: docker_ls
+    display_name: Docker Language Server
+    platforms: [all]
+    check_cmd: docker-language-server
+    version_flag: --version
+    min_version: "0.12.0"
+    install_method: npm_global
+    install_package: -g dockerfile-language-server-nodejs
+
+linters_formatters:
+  - name: ruff
+    display_name: Ruff (Python)
+    platforms: [all]
+    check_cmd: ruff
+    version_flag: --version
+    min_version: "0.1.0"
+    install_method: pip_global
+    install_package: ruff
+
+  - name: prettier
+    display_name: Prettier
+    platforms: [all]
+    check_cmd: prettier
+    version_flag: --version
+    min_version: "3.0.0"
+    install_method: npm_global
+    install_package: -g prettier
+
+  - name: eslint
+    display_name: ESLint
+    platforms: [all]
+    check_cmd: eslint
+    version_flag: --version
+    min_version: "8.50.0"
+    install_method: npm_global
+    install_package: -g eslint
+
+  - name: goimports
+    display_name: Go Imports
+    platforms: [all]
+    check_cmd: goimports
+    version_flag: --version
+    min_version: "0.10.0"
+    install_method: go_install
+    install_package: golang.org/x/tools/cmd/goimports@latest
+
+  - name: golangci_lint
+    display_name: Go Lint
+    platforms: [all]
+    check_cmd: golangci-lint
+    version_flag: --version
+    min_version: "1.55.0"
+    install:
+      macos: brew install golangci-lint
+      linux_debian: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b "$(go env GOPATH)/bin"
+      linux_fedora: sudo dnf install -y golangci-lint
+      linux_arch: sudo pacman -S --noconfirm golangci-lint
+      windows: scoop install golangci-lint
+
+  - name: clang_format
+    display_name: Clang Format
+    platforms: [all]
+    check_cmd: clang-format
+    version_flag: --version
+    min_version: "15.0.0"
+    install:
+      macos: brew install llvm
+      linux_debian: sudo apt install -y clang-format
+      linux_fedora: sudo dnf install -y clang-tools-extra
+      linux_arch: sudo pacman -S --noconfirm clang
+      linux_opensuse: sudo zypper install -y clang-tools
+      windows: scoop install llvm
+
+cli_tools:
+  - name: fzf
+    display_name: Fuzzy Finder
+    platforms: [all]
+    check_cmd: fzf
+    version_flag: --version
+    min_version: "0.40.0"
+    install:
+      macos: brew install fzf
+      linux_debian: sudo apt install -y fzf
+      linux_fedora: sudo dnf install -y fzf
+      linux_arch: sudo pacman -S --noconfirm fzf
+      linux_opensuse: sudo zypper install -y fzf
+      windows: scoop install fzf
+
+  - name: zoxide
+    display_name: Zoxide
+    platforms: [all]
+    check_cmd: zoxide
+    version_flag: --version
+    min_version: "0.9.0"
+    install:
+      macos: brew install zoxide
+      linux_debian: sudo apt install -y zoxide
+      linux_fedora: sudo dnf install -y zoxide
+      linux_arch: sudo pacman -S --noconfirm zoxide
+      linux_opensuse: sudo zypper install -y zoxide
+      windows: scoop install zoxide
+
+  - name: bat
+    display_name: Bat
+    platforms: [all]
+    check_cmd: bat
+    version_flag: --version
+    min_version: "0.24.0"
+    install:
+      macos: brew install bat
+      linux_debian: sudo apt install -y bat
+      linux_fedora: sudo dnf install -y bat
+      linux_arch: sudo pacman -S --noconfirm bat
+      linux_opensuse: sudo zypper install -y bat
+      windows: scoop install bat
+
+  - name: eza
+    display_name: Eza
+    platforms: [all]
+    check_cmd: eza
+    version_flag: --version
+    min_version: "0.18.0"
+    install:
+      macos: brew install eza
+      linux_debian: sudo apt install -y eza
+      linux_fedora: sudo dnf install -y eza
+      linux_arch: sudo pacman -S --noconfirm eza
+      linux_opensuse: sudo zypper install -y eza
+      windows: scoop install eza
+
+  - name: lazygit
+    display_name: Lazygit
+    platforms: [all]
+    check_cmd: lazygit
+    version_flag: --version
+    min_version: "0.40.0"
+    install:
+      macos: brew install lazygit
+      linux_debian: sudo apt install -y lazygit
+      linux_fedora: sudo dnf install -y lazygit
+      linux_arch: sudo pacman -S --noconfirm lazygit
+      linux_opensuse: sudo zypper install -y lazygit
+      windows: scoop install lazygit
+
+  - name: gh
+    display_name: GitHub CLI
+    platforms: [all]
+    check_cmd: gh
+    version_flag: --version
+    min_version: "2.40.0"
+    install:
+      macos: brew install gh
+      linux_debian: sudo apt install -y gh
+      linux_fedora: sudo dnf install -y gh
+      linux_arch: sudo pacman -S --noconfirm github-cli
+      linux_opensuse: sudo zypper install -y gh
+      windows: scoop install gh
+
+  - name: tokei
+    display_name: Tokei
+    platforms: [all]
+    check_cmd: tokei
+    version_flag: --version
+    min_version: "12.0.0"
+    install:
+      macos: brew install tokei
+      linux_debian: sudo apt install -y tokei
+      linux_fedora: sudo dnf install -y tokei
+      linux_arch: sudo pacman -S --noconfirm tokei
+      linux_opensuse: sudo zypper install -y tokei
+      windows: scoop install tokei
+
+  - name: difftastic
+    display_name: Difftastic
+    platforms: [all]
+    check_cmd: difft
+    version_flag: --version
+    min_version: "0.60.0"
+    install:
+      macos: brew install difftastic
+      linux_debian: cargo install difftastic
+      linux_fedora: sudo dnf install -y difftastic
+      linux_arch: sudo pacman -S --noconfirm difftastic
+      linux_opensuse: sudo zypper install -y difftastic
+      windows: scoop install difftastic
+
+  - name: ripgrep
+    display_name: Ripgrep
+    platforms: [all]
+    check_cmd: rg
+    version_flag: --version
+    min_version: "13.0.0"
+    install:
+      macos: brew install ripgrep
+      linux_debian: sudo apt install -y ripgrep
+      linux_fedora: sudo dnf install -y ripgrep
+      linux_arch: sudo pacman -S --noconfirm ripgrep
+      linux_opensuse: sudo zypper install -y ripgrep
+      windows: scoop install ripgrep
+
+  - name: fd
+    display_name: fd-find
+    platforms: [all]
+    check_cmd: fd
+    version_flag: --version
+    min_version: "9.0.0"
+    install:
+      macos: brew install fd
+      linux_debian: sudo apt install -y fd-find
+      linux_fedora: sudo dnf install -y fd-find
+      linux_arch: sudo pacman -S --noconfirm fd
+      linux_opensuse: sudo zypper install -y fd-find
+      windows: scoop install fd

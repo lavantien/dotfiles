@@ -167,6 +167,14 @@ fi
 # ============================================================================
 if cmd_exists npm; then
     update_section "NPM (Node.js global packages)"
+    # Clean up invalid packages (names starting with dot from failed installs)
+    if npm list -g --depth=0 2>/dev/null | grep -q '\.opencode-ai-'; then
+        echo -e "${YELLOW}Cleaning up invalid npm packages...${NC}"
+        # Extract and uninstall invalid packages
+        npm list -g --depth=0 2>/dev/null | grep '\.opencode-ai-' | sed 's/^[+` ]*//' | while read -r pkg; do
+            npm uninstall -g "$pkg" >/dev/null 2>&1 || true
+        done
+    fi
     if npm update -g >/dev/null 2>&1; then
         update_success "npm"
     else

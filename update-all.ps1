@@ -44,7 +44,21 @@ $failed = 0
 Update-Section "NPM (Node.js global packages)"
 if (Get-Command npm -ErrorAction SilentlyContinue) {
     try {
-        npm update -g
+        # Clean up invalid packages (names starting with dot from failed installs)
+        $npmList = npm list -g --depth=0 2>&1
+        if ($npmList -match '\.opencode-ai-') {
+            Write-Host "${YELLOW}Cleaning up invalid npm packages...${R}"
+            # Get invalid package names and uninstall them
+            $invalidPackages = $npmList | Select-String -Pattern '^[\+\`]?\s*\.opencode-ai-\S+' | ForEach-Object {
+                $_.ToString().Trim() -replace '^[\+\`]?\s*', ''
+            }
+            foreach ($pkg in $invalidPackages) {
+                if ($pkg -match '\.opencode-ai-') {
+                    npm uninstall -g "$pkg" *> $null
+                }
+            }
+        }
+        npm update -g *> $null
         Update-Success
         $updated++
     } catch {

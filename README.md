@@ -13,6 +13,7 @@ A carefully crafted, production-grade dotfiles repository supporting **Windows 1
 
 - [Features](#features)
 - [Quick Start](#quick-start)
+- [Bootstrap / Fresh Machine Setup](#bootstrap--fresh-machine-setup)
 - [What Gets Installed](#what-gets-installed)
 - [Universal Git Hooks](#universal-git-hooks)
 - [Claude Code Integration](#claude-code-integration)
@@ -54,10 +55,10 @@ A carefully crafted, production-grade dotfiles repository supporting **Windows 1
 ### Windows (PowerShell 7+)
 
 ```powershell
-# Clone and deploy in one go
+# Clone and bootstrap (installs tools + deploys configs)
 git clone https://github.com/lavantien/dotfiles.git $HOME/dev/dotfiles
 cd $HOME/dev/dotfiles
-.\deploy.ps1
+.\bootstrap\bootstrap.ps1
 
 # Reload your shell
 . $PROFILE
@@ -66,11 +67,11 @@ cd $HOME/dev/dotfiles
 ### Linux / macOS
 
 ```bash
-# Clone and deploy
+# Clone and bootstrap (installs tools + deploys configs)
 git clone https://github.com/lavantien/dotfiles.git ~/dev/dotfiles
 cd ~/dev/dotfiles
-chmod +x deploy.sh
-./deploy.sh
+chmod +x bootstrap/bootstrap.sh
+./bootstrap/bootstrap.sh
 
 # Reload your shell
 exec zsh  # or source ~/.zshrc
@@ -85,6 +86,140 @@ which lg  # Should point to lazygit
 
 # Update everything
 up  # or update
+```
+
+---
+
+## Bootstrap / Fresh Machine Setup
+
+For a **fresh machine** or to **automatically install all development tools**, use the bootstrap script. This installs package managers, SDKs, language servers, linters, and CLI tools.
+
+### Windows (PowerShell 7+)
+
+```powershell
+# Clone and bootstrap in one go
+git clone https://github.com/lavantien/dotfiles.git $HOME/dev/dotfiles
+cd $HOME/dev/dotfiles
+.\bootstrap\bootstrap.ps1
+
+# Reload your shell
+. $PROFILE
+```
+
+### Linux / macOS
+
+```bash
+# Clone and bootstrap
+git clone https://github.com/lavantien/dotfiles.git ~/dev/dotfiles
+cd ~/dev/dotfiles
+chmod +x bootstrap/bootstrap.sh
+./bootstrap/bootstrap.sh
+
+# Reload your shell
+exec zsh  # or source ~/.zshrc
+```
+
+### Bootstrap Options
+
+```bash
+# Unix (Linux/macOS)
+./bootstrap/bootstrap.sh [options]
+
+# Windows (PowerShell)
+.\bootstrap\bootstrap.ps1 [options]
+```
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `-y, --yes` / `-Y` | Non-interactive mode (accept all prompts) | Prompt for confirmation |
+| `--dry-run` / `-DryRun` | Show what would be installed without installing | Install everything |
+| `--categories` / `-Categories` | Installation category: `minimal`, `sdk`, or `full` | `full` |
+| `--skip-update` / `-SkipUpdate` | Skip updating package managers first | Update package managers |
+| `-h, --help` / `-Help` | Show help message | - |
+
+### Installation Categories
+
+| Category | Description |
+|----------|-------------|
+| **minimal** | Foundation (package managers, git) + CLI tools only |
+| **sdk** | Minimal + programming language SDKs (Node, Python, Go, Rust) |
+| **full** | SDK + language servers + linters/formatters (default) |
+
+### What Gets Installed
+
+The bootstrap script installs tools in phases:
+
+| Phase | Category | Tools |
+|-------|----------|-------|
+| 1 | Foundation | Package managers (Homebrew, Scoop), git |
+| 2 | Core SDKs | Node.js, Python, Go, Rust |
+| 3 | Language Servers | clangd, gopls, rust-analyzer, pyright, typescript-language-server, yaml-language-server |
+| 4 | Linters & Formatters | prettier, eslint, ruff, goimports, golangci-lint, clang-format |
+| 5 | CLI Tools | fzf, zoxide, bat, eza, lazygit, gh, ripgrep, fd, tokei, difftastic |
+| 6 | Deploy Configs | Runs `deploy.sh` / `deploy.ps1` to copy configurations |
+| 7 | Update All | Runs `update-all.sh` / `update-all.ps1` to update packages and repos |
+
+### Package Sources
+
+| Tool Type | Windows | Linux | macOS |
+|-----------|---------|-------|-------|
+| System packages | Scoop (preferred), winget | apt, dnf, pacman, zypper | Homebrew |
+| Language servers | npm global, go install, cargo, rustup | npm global, go install, cargo, rustup | npm global, go install, cargo, rustup |
+| Linters | npm global, pip, go install | npm global, pip, go install | npm global, pip, go install |
+
+### Idempotency
+
+The bootstrap script is **idempotent** - you can run it multiple times safely:
+
+- Checks if tools are already installed
+- Compares versions against minimum requirements
+- Only installs or updates tools that are missing or outdated
+- Skips tools that meet requirements
+
+### Example Output
+
+```
+==== Bootstrap macOS Development Environment ====
+
+Options:
+  Interactive: true
+  Dry Run: false
+  Categories: full
+  Skip Update: false
+
+? Proceed with bootstrap? [y/N] y
+
+==== Phase 1: Foundation ====
+[STEP] Installing Homebrew...
+[OK] brew
+
+==== Phase 2: Core SDKs ====
+[STEP] Installing node via brew...
+[OK] node
+...
+
+==== Bootstrap Summary ====
+
+Installed: 15
+  - brew, node, python, go, rust, clangd, gopls, ...
+Skipped: 5
+  - git, fzf, bat, ...
+Failed: 0
+
+=== Bootstrap Complete ===
+Reload your shell to apply changes
+```
+
+### Existing Setups: Deploy Only
+
+If you already have all tools installed and just want to update configurations:
+
+```powershell
+# Windows
+.\deploy.ps1
+
+# Linux/macOS
+./deploy.sh
 ```
 
 ---
@@ -601,12 +736,14 @@ dotfiles/
 cd ~/dev/dotfiles  # or $HOME/dev/dotfiles on Windows
 git pull
 
-# Re-run deploy script
-./deploy.sh  # or .\deploy.ps1 on Windows
+# Re-run bootstrap (idempotent - safe to run anytime)
+./bootstrap/bootstrap.sh  # or .\bootstrap\bootstrap.ps1 on Windows
 
 # Reload your shell
 source ~/.zshrc  # or . $PROFILE on Windows
 ```
+
+**Note:** The bootstrap script is idempotent - it skips tools that are already installed and only updates what's needed. Running it multiple times is completely safe.
 
 ---
 
@@ -665,4 +802,4 @@ MIT
 
 ---
 
-**Note:** This dotfiles repository is designed to be idempotent. Running the deploy script multiple times is safe and will update your configurations with the latest changes.
+**Note:** This dotfiles repository is designed to be idempotent. The bootstrap script checks if tools are already installed before attempting installation, making it safe to run multiple times. For existing setups, running `bootstrap` will only install missing tools and deploy any new configuration changes.
