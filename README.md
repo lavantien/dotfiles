@@ -7,10 +7,22 @@
 
 A carefully crafted, production-grade dotfiles repository supporting **Windows 11 native**, **Linux (Ubuntu/Fedora/Arch)**, and **macOS**. One repository to rule them all auto-detecting your platform and tools, falling back gracefully when something is missing.
 
+## Source of Truth
+
+This repository is the **single source of truth** for my entire development environment. All configurations, tooling preferences, and AI assistant system instructions flow from here.
+
+When I update something in this dotfiles repo:
+1. Configurations are deployed to my home directory via the deploy script
+2. System instruction files (CLAUDE.md, AGENTS.md, GEMINI.md, RULES.md) are automatically distributed to all my GitHub repos via `git-update-repos.sh`
+3. Claude Code commits and pushes the distributed files using headless mode
+
+This ensures consistent behavior across all projects and all machines.
+
 ---
 
 ## Table of Contents
 
+- [Source of Truth](#source-of-truth)
 - [Features](#features)
 - [Quick Start](#quick-start)
 - [Bootstrap / Fresh Machine Setup](#bootstrap--fresh-machine-setup)
@@ -19,6 +31,7 @@ A carefully crafted, production-grade dotfiles repository supporting **Windows 1
 - [Claude Code Integration](#claude-code-integration)
 - [Universal Update All](#universal-update-all)
 - [Git Repository Management](#git-repository-management)
+  - [System Instruction Distribution](#system-instruction-distribution)
 - [Neovim Configuration](#neovim-configuration)
 - [Shell Aliases](#shell-aliases)
 - [Platform-Specific Setup](#platform-specific-setup)
@@ -449,7 +462,27 @@ Automatically clone new repositories and update existing ones from your GitHub a
 - Fetches all repositories for the specified user via GitHub API
 - Clones repositories that don't exist locally
 - Pulls latest changes for existing repositories
+- **Copies system instruction files** (CLAUDE.md, AGENTS.md, GEMINI.md, RULES.md) to each repo
+- **Invokes Claude Code** to commit and push the distributed files (if Claude CLI is available)
 - Shows summary of cloned, updated, and skipped repos
+
+### System Instruction Distribution
+
+The script automatically distributes AI assistant system instructions to all repositories:
+
+| File | Purpose |
+|------|---------|
+| `CLAUDE.md` | Claude Code project instructions and workflow guidelines |
+| `AGENTS.md` | Agent-specific behavior instructions |
+| `GEMINI.md` | Gemini-specific behavior instructions |
+| `RULES.md` | Master system prompt and rules |
+
+These files are:
+1. Copied from `~/dev/github/dotfiles/` to each repository after cloning/updating
+2. Committed and pushed via Claude Code in headless mode
+3. Always overwritten (source of truth pattern)
+
+This ensures every repository has consistent AI assistant behavior and follows the same development practices.
 
 ---
 
@@ -730,6 +763,10 @@ dotfiles/
 ├── git-clone-all.sh           # Bulk git clone helper (gh CLI)
 ├── git-update-repos.sh        # Update/clone all GitHub repos (Unix)
 ├── git-update-repos.ps1       # Update/clone all GitHub repos (Windows)
+├── CLAUDE.md                  # Claude Code project instructions (source of truth)
+├── AGENTS.md                  # Agent-specific instructions
+├── GEMINI.md                  # Gemini-specific instructions
+├── RULES.md                   # Master system prompt
 ├── .aider.conf.yml.example    # Aider AI config template
 ├── .aider.model.settings.yml  # Aider model settings
 ├── typos.toml                 # Typos spell check config

@@ -17,6 +17,17 @@ BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 NC='\033[0m'
 
+# Markdown files to sync to all repos
+MARKDOWN_FILES=(
+    "CLAUDE.md"
+    "AGENTS.md"
+    "GEMINI.md"
+    "RULES.md"
+)
+
+# Source directory for markdown files (dotfiles repo location)
+DOTFILES_DIR="$HOME/dev/github/dotfiles"
+
 # Parse arguments
 while getopts "u:d:s" opt; do
     case $opt in
@@ -45,6 +56,36 @@ fi
 
 echo -e "${CYAN}Fetching repositories for user: $USERNAME${NC}"
 echo
+
+# Copy system instruction markdown files to a repository
+# Usage: copy_markdown_files <repo_path>
+copy_markdown_files() {
+    local repo_path="$1"
+
+    # Skip if dotfiles dir (don't copy to self)
+    if [[ "$(cd "$repo_path" 2>/dev/null && pwd)" == "$(cd "$DOTFILES_DIR" 2>/dev/null && pwd)" ]]; then
+        return 0
+    fi
+
+    for md_file in "${MARKDOWN_FILES[@]}"; do
+        local source_file="$DOTFILES_DIR/$md_file"
+        if [[ -f "$source_file" ]]; then
+            cp -f "$source_file" "$repo_path/$md_file" 2>/dev/null
+        fi
+    done
+}
+
+# Commit and push markdown files using Claude CLI
+commit_with_claude() {
+    if ! command -v claude >/dev/null 2>&1; then
+        return 0
+    fi
+
+    echo -e "${BLUE}Claude CLI detected - committing system instructions...${NC}"
+    cd "$BASE_DIR"
+    claude -p "go into every repo inside this directory, commit the system instructions files, and push to origin"
+    cd - >/dev/null
+}
 
 # Fetch all repositories
 API_URL="https://api.github.com/users/$USERNAME/repos?per_page=100&type=all"
@@ -139,6 +180,8 @@ for i in "${!REPO_NAMES[@]}"; do
                 if git fetch origin --quiet 2>/dev/null && git pull --quiet 2>/dev/null; then
                     echo -e "${YELLOW}Updated${NC}"
                     ((UPDATED++))
+                    # Copy markdown files to existing repo
+                    copy_markdown_files "$REPO_PATH"
                 else
                     echo -e "${YELLOW}Error updating${NC}"
                     ((FAILED++))
@@ -159,12 +202,18 @@ for i in "${!REPO_NAMES[@]}"; do
         if git clone --quiet "$CLONE_URL" "$REPO_PATH" 2>/dev/null; then
             echo -e "${GREEN}Cloned${NC}"
             ((CLONED++))
+            # Copy markdown files to newly cloned repo
+            copy_markdown_files "$REPO_PATH"
         else
             echo -e "${YELLOW}Error cloning${NC}"
             ((FAILED++))
         fi
     fi
 done
+
+# Commit and push markdown files using Claude CLI if available
+echo
+commit_with_claude "$BASE_DIR"
 
 # Summary
 echo
