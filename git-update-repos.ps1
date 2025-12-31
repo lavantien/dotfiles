@@ -16,6 +16,12 @@ $YELLOW = "$E[33m"
 $BLUE = "$E[34m"
 $CYAN = "$E[36m"
 
+# Markdown files to sync to all repos
+$MARKDOWN_FILES = @("CLAUDE.md", "AGENTS.md", "GEMINI.md", "RULES.md")
+
+# Source directory for markdown files (dotfiles repo location)
+$DOTFILES_DIR = "$HOME\dev\github\dotfiles"
+
 Write-Host "${CYAN}========================================${R}"
 Write-Host "${CYAN}   GitHub Repos Updater${R}"
 Write-Host "${CYAN}========================================${R}"
@@ -31,6 +37,40 @@ if (-not (Test-Path $BaseDir)) {
 }
 
 Write-Host "${CYAN}Fetching repositories for user: $Username${R}`n"
+
+# Copy system instruction markdown files to a repository
+function Copy-MarkdownFiles {
+    param([string]$RepoPath)
+
+    # Skip if dotfiles dir (don't copy to self)
+    $dotfilesResolved = (Resolve-Path $DOTFILES_DIR -ErrorAction SilentlyContinue).Path
+    $repoResolved = (Resolve-Path $RepoPath -ErrorAction SilentlyContinue).Path
+
+    if ($dotfilesResolved -and $repoResolved -and $dotfilesResolved -eq $repoResolved) {
+        return
+    }
+
+    foreach ($mdFile in $MARKDOWN_FILES) {
+        $sourceFile = Join-Path $DOTFILES_DIR $mdFile
+        if (Test-Path $sourceFile) {
+            Copy-Item -Path $sourceFile -Destination $RepoPath -Force -ErrorAction SilentlyContinue
+        }
+    }
+}
+
+# Commit and push markdown files using Claude CLI
+function Commit-WithClaude {
+    # Check if claude CLI is available
+    $claudeCmd = Get-Command claude -ErrorAction SilentlyContinue
+    if (-not $claudeCmd) {
+        return
+    }
+
+    Write-Host "${BLUE}Claude CLI detected - committing system instructions...${R}"
+    Push-Location $BaseDir
+    claude -p --permission-mode bypassPermissions "go into every repo inside this directory, commit the system instructions files, and push to origin"
+    Pop-Location
+}
 
 # Fetch all repositories (including private if you have a token)
 $apiUrl = "https://api.github.com/users/$Username/repos?per_page=100&type=all"
@@ -93,6 +133,8 @@ foreach ($repo in $repos) {
                 Pop-Location
                 Write-Host "${YELLOW}Updated${R}"
                 $updated++
+                # Copy markdown files to existing repo
+                Copy-MarkdownFiles $repoPath
             } else {
                 Pop-Location
                 Write-Host "${YELLOW}Skipped (not a git repo)${R}"
@@ -110,12 +152,18 @@ foreach ($repo in $repos) {
             git clone --quiet $cloneUrl $repoPath 2>$null
             Write-Host "${GREEN}Cloned${R}"
             $cloned++
+            # Copy markdown files to newly cloned repo
+            Copy-MarkdownFiles $repoPath
         } catch {
             Write-Host "${YELLOW}Error cloning: $_${R}"
             $failed++
         }
     }
 }
+
+# Commit and push markdown files using Claude CLI if available
+Write-Host "`n"
+Commit-WithClaude
 
 # Summary
 Write-Host "`n${CYAN}========================================${R}"
