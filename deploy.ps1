@@ -1,6 +1,7 @@
 # Universal Deploy Script for Windows (PowerShell)
 # Auto-detects and deploys appropriate configurations
 
+# Handles OneDrive sync and various edge cases
 $ErrorActionPreference = 'Continue'
 
 # Colors
@@ -14,6 +15,21 @@ $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 Write-Host "${BLUE}Deploying dotfiles for Windows${R}"
 Write-Host "${BLUE}Script directory: $ScriptDir${R}"
+
+# ============================================================================
+# DETECT ONEDRIVE DOCUMENTS PATH
+# ============================================================================
+function Get-DocumentsPath {
+    # Try to get the actual Documents folder path (handles OneDrive sync)
+    try {
+        $docsPath = [Environment]::GetFolderPath("MyDocuments")
+        Write-Host "${YELLOW}Detected Documents path: $docsPath${R}"
+        return $docsPath
+    } catch {
+        # Fallback to USERPROFILE\Documents
+        return "$env:USERPROFILE\Documents"
+    }
+}
 
 # ============================================================================
 # COMMON DEPLOYMENT
@@ -60,6 +76,9 @@ function Deploy-Common {
     }
 
     # Copy update-all script
+    if (Test-Path "$ScriptDirupdate-all.sh") {
+        Copy-Item "$ScriptDirupdate-all.sh" "$env:USERPROFILEdev" -Force
+    }
     if (Test-Path "$ScriptDir\update-all.ps1") {
         Copy-Item "$ScriptDir\update-all.ps1" "$env:USERPROFILE\dev\" -Force
     }
@@ -113,23 +132,38 @@ function Deploy-ClaudeHooks {
 # ============================================================================
 # POWERSHELL PROFILE
 # ============================================================================
+# ============================================================================
+# POWERSHELL PROFILE (Handles OneDrive sync)
+# ============================================================================
 function Deploy-PowerShellProfile {
     Write-Host "${GREEN}Deploying PowerShell profile...${R}"
 
+    # Get the actual Documents folder path (handles OneDrive)
+    $docsPath = Get-DocumentsPath
+
     # PowerShell 7 profile path
-    $pwshDir = "$env:USERPROFILE\Documents\PowerShell"
-    $legacyDir = "$env:USERPROFILE\Documents\WindowsPowerShell"
+    $pwshDir = Join-Path $docsPath "PowerShell"
+    $legacyDir = Join-Path $docsPath "WindowsPowerShell"
 
     if (Get-Command pwsh -ErrorAction SilentlyContinue) {
         New-Item -ItemType Directory -Force -Path $pwshDir | Out-Null
         Copy-Item "$ScriptDir\Microsoft.PowerShell_profile.ps1" "$pwshDir\Microsoft.PowerShell_profile.ps1" -Force
-        Write-Host "${GREEN}PowerShell 7 profile deployed${R}"
+        Write-Host "${GREEN}PowerShell 7 profile deployed to: $pwshDir${R}"
     }
 
+    # Also deploy to legacy location if it exists
     if (Test-Path $legacyDir) {
         New-Item -ItemType Directory -Force -Path $legacyDir | Out-Null
         Copy-Item "$ScriptDir\Microsoft.PowerShell_profile.ps1" "$legacyDir\Microsoft.PowerShell_profile.ps1" -Force
-        Write-Host "${GREEN}Windows PowerShell (legacy) profile deployed${R}"
+        Write-Host "${GREEN}Windows PowerShell (legacy) profile deployed to: $legacyDir${R}"
+    }
+
+    # Deploy to both standard and OneDrive paths if they differ
+    $standardPath = "$env:USERPROFILE\Documents\PowerShell"
+    if ($pwshDir -ne $standardPath -and (Test-Path $standardPath -ErrorAction SilentlyContinue)) {
+        New-Item -ItemType Directory -Force -Path $standardPath | Out-Null
+        Copy-Item "$ScriptDir\Microsoft.PowerShell_profile.ps1" "$standardPath\Microsoft.PowerShell_profile.ps1" -Force
+        Write-Host "${GREEN}Also deployed to standard path: $standardPath${R}"
     }
 }
 

@@ -15,9 +15,9 @@ if (Get-Command zoxide -ErrorAction SilentlyContinue) {
 if (Get-Command oh-my-posh -ErrorAction SilentlyContinue) {
     # Try common theme locations
     $themePaths = @(
-        "$env:USERPROFILE\scoop\apps\oh-my-posh\current\themes\robbyrussell.omp.json",
-        "$env:LOCALAPPDATA\Programs\oh-my-posh\themes\robbyrussell.omp.json",
-        "robbyrussell"
+        "$env:USERPROFILE\scoop\apps\oh-my-posh\current\themes\catppuccin_mocha.omp.json",
+        "$env:LOCALAPPDATA\Programs\oh-my-posh\themes\catppuccin_mocha.omp.json",
+        "catppuccin_mocha"
     )
 
     foreach ($path in $themePaths) {
@@ -29,6 +29,18 @@ if (Get-Command oh-my-posh -ErrorAction SilentlyContinue) {
 }
 
 # ============================================================================
+
+# ============================================================================
+# PSREADLINE CONFIGURATION
+# ============================================================================
+Set-PSReadLineOption -PredictionSource History
+Set-PSReadLineOption -PredictionViewStyle ListView
+Set-PSReadLineOption -EditMode Emacs
+
+Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward
+Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward
+Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
+
 # ALIASES - FILE OPERATIONS
 # ============================================================================
 
@@ -272,7 +284,7 @@ Set-Alias -Name ep -Value Edit-Profile
 function Reload-Profile {
     . $PROFILE.CurrentUserCurrentHost
 }
-Set-Alias -Name rp -Value Reload-Profile
+Set-Alias -Name rprof -Value Reload-Profile -Force
 
 # Which command (like Unix)
 function Get-CommandPath {

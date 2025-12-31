@@ -76,7 +76,7 @@ if (Get-Command yarn -ErrorAction SilentlyContinue) {
 Update-Section "GUP (Go global packages)"
 if (Get-Command gup -ErrorAction SilentlyContinue) {
     try {
-        gup update -a
+        gup update
         Update-Success
         $updated++
     } catch {

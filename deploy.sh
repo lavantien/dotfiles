@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Universal Deploy Script - Works on Linux, macOS, and Windows (Git Bash/WSL)
 # Auto-detects platform and deploys appropriate configurations
+# Handles various edge cases: XDG dirs, OneDrive sync, multiple shells
 
 set -e
 
@@ -23,8 +24,12 @@ detect_os() {
 OS=$(detect_os)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# Support XDG_CONFIG_HOME
+XDG_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}"
+
 echo -e "${BLUE}Deploying dotfiles for: $OS${NC}"
 echo -e "${BLUE}Script directory: $SCRIPT_DIR${NC}"
+echo -e "${BLUE}Config directory: $XDG_CONFIG${NC}"
 
 # ============================================================================
 # COMMON DEPLOYMENT
@@ -33,7 +38,8 @@ deploy_common() {
     echo -e "${GREEN}Deploying common files...${NC}"
 
     # Create directories
-    mkdir -p "$HOME/.config"
+    mkdir -p "$XDG_CONFIG"
+    mkdir -p "$HOME/dev"
 
     # Copy bash aliases (works on all platforms)
     cp "$SCRIPT_DIR/.bash_aliases" "$HOME/"
@@ -43,25 +49,30 @@ deploy_common() {
 
     # Copy Neovim config
     if [ -f "$SCRIPT_DIR/init.lua" ]; then
-        mkdir -p "$HOME/.config/nvim"
-        cp "$SCRIPT_DIR/init.lua" "$HOME/.config/nvim/"
+        mkdir -p "$XDG_CONFIG/nvim"
+        cp "$SCRIPT_DIR/init.lua" "$XDG_CONFIG/nvim/"
     fi
 
     # Copy lua directory if exists
     if [ -d "$SCRIPT_DIR/lua" ]; then
-        mkdir -p "$HOME/.config/nvim"
-        cp -r "$SCRIPT_DIR/lua" "$HOME/.config/nvim/"
+        mkdir -p "$XDG_CONFIG/nvim"
+        cp -r "$SCRIPT_DIR/lua" "$XDG_CONFIG/nvim/"
     fi
 
     # Copy Wezterm config
     if [ -f "$SCRIPT_DIR/wezterm.lua" ]; then
-        mkdir -p "$HOME/.config/wezterm"
-        cp "$SCRIPT_DIR/wezterm.lua" "$HOME/.config/wezterm/"
+        mkdir -p "$XDG_CONFIG/wezterm"
+        cp "$SCRIPT_DIR/wezterm.lua" "$XDG_CONFIG/wezterm/"
     fi
 
     # Copy git clone script
-    mkdir -p "$HOME/dev"
     cp "$SCRIPT_DIR/git-clone-all.sh" "$HOME/dev/" 2>/dev/null || true
+
+    # Copy update-all scripts
+    if [ -f "$SCRIPT_DIR/update-all.sh" ]; then
+        cp "$SCRIPT_DIR/update-all.sh" "$HOME/dev/"
+        chmod +x "$HOME/dev/update-all.sh"
+    fi
 
     # Copy Aider configs
     cp "$SCRIPT_DIR/.aider.conf.yml.example" "$HOME/.aider.conf.yml" 2>/dev/null || true
@@ -75,7 +86,7 @@ deploy_common() {
 deploy_git_hooks() {
     echo -e "${GREEN}Deploying git hooks...${NC}"
 
-    local hooks_dir="$HOME/.config/git/hooks"
+    local hooks_dir="$XDG_CONFIG/git/hooks"
     mkdir -p "$hooks_dir"
 
     # Copy bash hooks
@@ -144,16 +155,26 @@ deploy_macos() {
 deploy_windows() {
     echo -e "${GREEN}Deploying Windows-specific configs...${NC}"
 
+    # Detect OneDrive Documents path
+    onedrive_docs="$HOME/OneDrive/Documents"
+    standard_docs="$HOME/Documents"
+
+    if [ -d "$onedrive_docs" ]; then
+        docs_path="$onedrive_docs"
+        echo -e "${YELLOW}Detected OneDrive Documents folder${NC}"
+    else
+        docs_path="$standard_docs"
+    fi
+
     # Copy PowerShell profile
     if [ -f "$SCRIPT_DIR/Microsoft.PowerShell_profile.ps1" ]; then
-        # Windows PowerShell profile path
-        pwsh_dir="$HOME/Documents/PowerShell"
-        legacy_dir="$HOME/Documents/WindowsPowerShell"
+        pwsh_dir="$docs_path/PowerShell"
+        legacy_dir="$docs_path/WindowsPowerShell"
 
-        if [ -d "$pwsh_dir" ] || command -v pwsh >/dev/null 2>&1; then
+        if command -v pwsh >/dev/null 2>&1; then
             mkdir -p "$pwsh_dir"
             cp "$SCRIPT_DIR/Microsoft.PowerShell_profile.ps1" "$pwsh_dir/Microsoft.PowerShell_profile.ps1"
-            echo -e "${GREEN}PowerShell 7 profile deployed${NC}"
+            echo -e "${GREEN}PowerShell 7 profile deployed to: $pwsh_dir${NC}"
         fi
 
         if [ -d "$legacy_dir" ]; then
@@ -161,10 +182,22 @@ deploy_windows() {
             cp "$SCRIPT_DIR/Microsoft.PowerShell_profile.ps1" "$legacy_dir/Microsoft.PowerShell_profile.ps1"
             echo -e "${GREEN}Windows PowerShell (legacy) profile deployed${NC}"
         fi
+
+        # Also deploy to standard path if different from OneDrive
+        if [ "$docs_path" != "$standard_docs" ] && [ -d "$standard_docs/PowerShell" ]; then
+            mkdir -p "$standard_docs/PowerShell"
+            cp "$SCRIPT_DIR/Microsoft.PowerShell_profile.ps1" "$standard_docs/PowerShell/Microsoft.PowerShell_profile.ps1"
+            echo -e "${GREEN}Also deployed to: $standard_docs/PowerShell${NC}"
+        fi
+    fi
+
+    # Copy update-all.ps1
+    if [ -f "$SCRIPT_DIR/update-all.ps1" ]; then
+        cp "$SCRIPT_DIR/update-all.ps1" "$HOME/dev/"
     fi
 
     # Git hooks - use PowerShell versions
-    local hooks_dir="$HOME/.config/git/hooks"
+    local hooks_dir="$XDG_CONFIG/git/hooks"
     mkdir -p "$hooks_dir"
 
     cp "$SCRIPT_DIR/hooks/git/pre-commit.ps1" "$hooks_dir/"
@@ -196,7 +229,7 @@ main() {
             ;;
         *)
             echo -e "${YELLOW}Unknown OS, deploying common files only${NC}"
-            deploy_linux  # Default to Linux
+            deploy_linux
             ;;
     esac
 
@@ -205,7 +238,3 @@ main() {
 }
 
 main
-
-# Copy update-all script to dev directory
-cp "$SCRIPT_DIR/update-all.sh" "$HOME/dev/" 2>/dev/null || true
-chmod +x "$HOME/dev/update-all.sh" 2>/dev/null || true
