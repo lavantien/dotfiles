@@ -65,8 +65,10 @@ deploy_common() {
         cp "$SCRIPT_DIR/wezterm.lua" "$XDG_CONFIG/wezterm/"
     fi
 
-    # Copy git clone script
+    # Copy git scripts
     cp "$SCRIPT_DIR/git-clone-all.sh" "$HOME/dev/" 2>/dev/null || true
+    cp "$SCRIPT_DIR/git-update-repos.sh" "$HOME/dev/" 2>/dev/null || true
+    chmod +x "$HOME/dev/git-update-repos.sh" 2>/dev/null || true
 
     # Copy update-all scripts
     if [ -f "$SCRIPT_DIR/update-all.sh" ]; then
@@ -191,9 +193,12 @@ deploy_windows() {
         fi
     fi
 
-    # Copy update-all.ps1
+    # Copy update-all.ps1 and git-update-repos.ps1
     if [ -f "$SCRIPT_DIR/update-all.ps1" ]; then
         cp "$SCRIPT_DIR/update-all.ps1" "$HOME/dev/"
+    fi
+    if [ -f "$SCRIPT_DIR/git-update-repos.ps1" ]; then
+        cp "$SCRIPT_DIR/git-update-repos.ps1" "$HOME/dev/"
     fi
 
     # Git hooks - use PowerShell versions

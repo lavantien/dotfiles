@@ -17,6 +17,7 @@ A carefully crafted, production-grade dotfiles repository supporting **Windows 1
 - [Universal Git Hooks](#universal-git-hooks)
 - [Claude Code Integration](#claude-code-integration)
 - [Universal Update All](#universal-update-all)
+- [Git Repository Management](#git-repository-management)
 - [Neovim Configuration](#neovim-configuration)
 - [Shell Aliases](#shell-aliases)
 - [Platform-Specific Setup](#platform-specific-setup)
@@ -104,6 +105,8 @@ up  # or update
 | `.claude/tdd-guard/` | * | * | * | TDD enforcement for Claude Code |
 | `update-all.ps1` | * | - | - | Universal package updater (Windows) |
 | `update-all.sh` | - | * | * | Universal package updater (Unix) |
+| `git-update-repos.ps1` | * | - | - | Update/clone all GitHub repos (Windows) |
+| `git-update-repos.sh` | * | * | * | Update/clone all GitHub repos (Unix) |
 | `.aider.conf.yml` | * | * | * | Aider AI coding assistant config |
 
 ---
@@ -283,6 +286,35 @@ up  # or: update
   Duration: 1m 45s
 ========================================
 ```
+
+---
+
+## Git Repository Management
+
+### Update/Clone All GitHub Repos
+
+Automatically clone new repositories and update existing ones from your GitHub account.
+
+```bash
+# PowerShell (Windows)
+.\git-update-repos.ps1 [-Username] "username" [-BaseDir] "path" [-UseSSH]
+
+# Bash (Linux/macOS)
+./git-update-repos.sh [-u username] [-d base_dir] [-s]
+```
+
+**Options:**
+| Option | Description | Default |
+|--------|-------------|---------|
+| `-Username` / `-u` | GitHub username | `lavantien` |
+| `-BaseDir` / `-d` | Base directory for repos | `$HOME/dev/github` |
+| `-UseSSH` / `-s` | Use SSH URLs instead of HTTPS | `false` |
+
+**What it does:**
+- Fetches all repositories for the specified user via GitHub API
+- Clones repositories that don't exist locally
+- Pulls latest changes for existing repositories
+- Shows summary of cloned, updated, and skipped repos
 
 ---
 
@@ -537,7 +569,9 @@ dotfiles/
 ├── deploy.ps1                 # Deploy script (Windows)
 ├── update-all.sh              # Universal update (Linux/macOS)
 ├── update-all.ps1             # Universal update (Windows)
-├── git-clone-all.sh           # Bulk git clone helper
+├── git-clone-all.sh           # Bulk git clone helper (gh CLI)
+├── git-update-repos.sh        # Update/clone all GitHub repos (Unix)
+├── git-update-repos.ps1       # Update/clone all GitHub repos (Windows)
 ├── .aider.conf.yml.example    # Aider AI config template
 ├── .aider.model.settings.yml  # Aider model settings
 ├── typos.toml                 # Typos spell check config

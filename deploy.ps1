@@ -64,10 +64,16 @@ function Deploy-Common {
         Copy-Item "$ScriptDir\wezterm.lua" "$env:USERPROFILE\.config\wezterm\" -Force
     }
 
-    # Copy git clone script
+    # Copy git scripts
     New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\dev" | Out-Null
     if (Test-Path "$ScriptDir\git-clone-all.sh") {
         Copy-Item "$ScriptDir\git-clone-all.sh" "$env:USERPROFILE\dev\" -Force
+    }
+    if (Test-Path "$ScriptDir\git-update-repos.ps1") {
+        Copy-Item "$ScriptDir\git-update-repos.ps1" "$env:USERPROFILE\dev\" -Force
+    }
+    if (Test-Path "$ScriptDir\git-update-repos.sh") {
+        Copy-Item "$ScriptDir\git-update-repos.sh" "$env:USERPROFILE\dev\" -Force
     }
 
     # Copy Aider configs
