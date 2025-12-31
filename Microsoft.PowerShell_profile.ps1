@@ -6,12 +6,7 @@
 # SHELL INTEGRATION
 # ============================================================================
 
-# zoxide (z - smarter cd)
-if (Get-Command zoxide -ErrorAction SilentlyContinue) {
-    Invoke-Expression (& { (zoxide init powershell | Out-String) })
-}
-
-# oh-my-posh (prompt theme)
+# oh-my-posh (prompt theme) - MUST come before zoxide so zoxide can wrap the prompt
 if (Get-Command oh-my-posh -ErrorAction SilentlyContinue) {
     # Try common theme locations
     $themePaths = @(
@@ -24,6 +19,37 @@ if (Get-Command oh-my-posh -ErrorAction SilentlyContinue) {
         if (Test-Path $path) {
             oh-my-posh init pwsh --config $path | Invoke-Expression
             break
+        }
+    }
+}
+
+# zoxide (z - smarter cd command) - MUST come after oh-my-posh to wrap the prompt
+if (Get-Command zoxide -ErrorAction SilentlyContinue) {
+    # Initialize zoxide without cmd (we'll define our own)
+    Invoke-Expression (& { (zoxide init powershell --cmd z | Out-String) })
+
+    # Enhanced zi (zoxide interactive) with fzf
+    if (Get-Command fzf -ErrorAction SilentlyContinue) {
+        # Remove zoxide's zi alias if it exists, then define our function
+        if (Test-Path Alias:zi) { Remove-Item Alias:zi -Force -ErrorAction SilentlyContinue }
+        function global:zi {
+            $path = zoxide query -l | fzf --height 50% --layout reverse --border --prompt="Directory> " --preview="eza -la --color=always {} 2>/dev/null 3>$null || Get-ChildItem {}"
+            if (-not [string]::IsNullOrEmpty($path)) {
+                Set-Location $path
+            }
+        }
+
+        # zd - jump to directory with partial match
+        function global:zd {
+            $query = $args[0]
+            if ([string]::IsNullOrEmpty($query)) {
+                $path = zoxide query -l | fzf --height 50% --layout reverse --border --prompt="Directory> " --preview="eza -la --color=always {} 2>/dev/null 3>$null || Get-ChildItem {}"
+            } else {
+                $path = zoxide query -l | fzf --height 50% --layout reverse --border --filter="$query" --preview="eza -la --color=always {} 2>/dev/null 3>$null || Get-ChildItem {}"
+            }
+            if (-not [string]::IsNullOrEmpty($path)) {
+                Set-Location $path
+            }
         }
     }
 }

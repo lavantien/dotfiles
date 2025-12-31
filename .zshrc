@@ -86,7 +86,26 @@ fi
 
 # zoxide (z - smarter cd)
 if command -v zoxide >/dev/null 2>&1; then
-    eval "$(zoxide init zsh)"
+    eval "$(zoxide init zsh --cmd z)"
+
+    # Enhanced zi (zoxide interactive) with fzf
+    if command -v fzf >/dev/null 2>&1; then
+        # Override zi with fzf-powered version
+        zi() {
+            local dir
+            dir=$(zoxide query -l | fzf --height 50% --layout reverse --border --prompt="Directory> " --preview="eza -la --color=always {} 2>/dev/null || ls -la {}") && cd "$dir"
+        }
+
+        # zd - jump to directory with partial filter
+        zd() {
+            local dir
+            if [ -n "$1" ]; then
+                dir=$(zoxide query -l | fzf --height 50% --layout reverse --border --filter="$1" --preview="eza -la --color=always {} 2>/dev/null || ls -la {}") && cd "$dir"
+            else
+                dir=$(zoxide query -l | fzf --height 50% --layout reverse --border --prompt="Directory> " --preview="eza -la --color=always {} 2>/dev/null || ls -la {}") && cd "$dir"
+            fi
+        }
+    fi
 fi
 
 # fzf (fuzzy finder)

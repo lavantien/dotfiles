@@ -550,6 +550,29 @@ Aliases work across **Bash, Zsh, and PowerShell** with auto-detection and gracef
 | `df` | difft | Difftastic diff |
 | `t` | tokei | Code statistics |
 
+### Directory Navigation (Zoxide)
+
+[Zoxide](https://github.com/ajeetdsouza/zoxide) is a smarter `cd` command that learns your directory navigation habits.
+
+| Alias | Command | Description |
+|-------|---------|-------------|
+| `z <pattern>` | zoxide | Jump to directory matching pattern (fuzzy match) |
+| `zi` | zoxide + fzf | Interactive directory selection with fzf |
+| `zd <filter>` | zoxide + fzf filter | Jump with partial filter, shows interactive if no match |
+
+**Examples:**
+```bash
+z dotfiles    # Jump to dotfiles directory
+z src         # Jump to most frequently used "src" directory
+zi            # Interactive fzf selection of all learned directories
+zd dot        # Filter to "dot", shows interactive if multiple matches
+```
+
+**How Zoxide Learns:**
+- Every time you use `z`, `zi`, or `zd`, zoxide remembers that directory
+- Over time, it builds a priority/ranking based on frequency and recency
+- Most-used directories appear first in `zi` selection
+
 ### Git Aliases
 
 | Alias | Command |
