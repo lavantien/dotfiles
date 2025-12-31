@@ -83,7 +83,7 @@ commit_with_claude() {
 
     echo -e "${BLUE}Claude CLI detected - committing system instructions...${NC}"
     cd "$BASE_DIR"
-    claude -p --permission-mode bypassPermissions "go into every repo inside this directory, commit the system instructions files, and push to origin"
+    claude -p --permission-mode bypassPermissions "go into every repo inside this directory, commit CLAUDE.md AGENTS.md GEMINI.md RULES.md with message 'chore: sync system instructions', and push to origin"
     cd - >/dev/null
 }
 

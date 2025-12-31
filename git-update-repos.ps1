@@ -68,7 +68,7 @@ function Commit-WithClaude {
 
     Write-Host "${BLUE}Claude CLI detected - committing system instructions...${R}"
     Push-Location $BaseDir
-    claude -p --permission-mode bypassPermissions "go into every repo inside this directory, commit the system instructions files, and push to origin"
+    claude -p --permission-mode bypassPermissions "go into every repo inside this directory, commit CLAUDE.md AGENTS.md GEMINI.md RULES.md with message 'chore: sync system instructions', and push to origin"
     Pop-Location
 }
 
