@@ -205,3 +205,7 @@ main() {
 }
 
 main
+
+# Copy update-all script to dev directory
+cp "$SCRIPT_DIR/update-all.sh" "$HOME/dev/" 2>/dev/null || true
+chmod +x "$HOME/dev/update-all.sh" 2>/dev/null || true

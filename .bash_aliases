@@ -103,3 +103,7 @@ if command -v docker >/dev/null 2>&1; then
     alias dclf="docker compose logs -f"
     alias de="docker exec -it"
 fi
+
+# Update all packages alias
+alias up="~/dev/update-all.sh"
+alias update="~/dev/update-all.sh"

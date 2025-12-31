@@ -59,6 +59,11 @@ function Deploy-Common {
         Copy-Item "$ScriptDir\.aider.conf.yml.example" "$env:USERPROFILE\.aider.conf.yml" -Force
     }
 
+    # Copy update-all script
+    if (Test-Path "$ScriptDir\update-all.ps1") {
+        Copy-Item "$ScriptDir\update-all.ps1" "$env:USERPROFILE\dev\" -Force
+    }
+
     Write-Host "${GREEN}Common files deployed.${R}"
 }
 
