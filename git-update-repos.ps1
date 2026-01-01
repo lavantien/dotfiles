@@ -77,8 +77,8 @@ function Commit-WithClaude {
     }
 
     Write-Host "${BLUE}Claude CLI detected - committing system instructions...${R}"
-    Write-Host "    ${CYAN}ANTHROPIC_LOG=debug${R} enabled for verbose output"
-    $env:ANTHROPIC_LOG = "debug"
+    Write-Host "    ${CYAN}ANTHROPIC_LOG=info${R} enabled (normal session output)"
+    $env:ANTHROPIC_LOG = "info"
     Push-Location $BaseDir
     claude -p --permission-mode bypassPermissions "go into every repo inside this directory, commit CLAUDE.md AGENTS.md GEMINI.md RULES.md with message 'chore: sync system instructions', and push to origin"
     Pop-Location

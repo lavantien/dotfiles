@@ -89,9 +89,9 @@ commit_with_claude() {
     fi
 
     echo -e "${BLUE}Claude CLI detected - committing system instructions...${NC}"
-    echo -e "    ${CYAN}ANTHROPIC_LOG=debug${NC} enabled for verbose output"
+    echo -e "    ${CYAN}ANTHROPIC_LOG=info${NC} enabled (normal session output)"
     cd "$BASE_DIR"
-    ANTHROPIC_LOG=debug claude -p --permission-mode bypassPermissions "go into every repo inside this directory, commit CLAUDE.md AGENTS.md GEMINI.md RULES.md with message 'chore: sync system instructions', and push to origin"
+    ANTHROPIC_LOG=info claude -p --permission-mode bypassPermissions "go into every repo inside this directory, commit CLAUDE.md AGENTS.md GEMINI.md RULES.md with message 'chore: sync system instructions', and push to origin"
     cd - >/dev/null
 }
 
