@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Universal coverage script - runs on all platforms
-# Detects platform and runs appropriate coverage tools
+# Uses bashcov (Ruby gem) for bash coverage, falls back to kcov or Docker
 
 set -e
 
@@ -9,16 +9,19 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
+CYAN='\033[0;36m'
 NC='\033[0m'
 
 # Parse arguments
 UPDATE_README=false
 VERBOSE=false
+FORCE_KCOV=false
 for arg in "$@"; do
     case $arg in
         --update-readme|-u) UPDATE_README=true ;;
         --verbose|-v) VERBOSE=true ;;
-        --help|-h) echo "Usage: $0 [--update-readme] [--verbose]"; exit 0 ;;
+        --force-kcov) FORCE_KCOV=true ;;
+        --help|-h) echo "Usage: $0 [--update-readme] [--verbose] [--force-kcov]"; exit 0 ;;
     esac
 done
 
@@ -31,7 +34,7 @@ case "$OS_TYPE" in
     *)          PLATFORM="unknown";;
 esac
 
-echo -e "${BLUE}=== Universal Code Coverage Report ===${NC}"
+echo -e "${CYAN}=== Universal Code Coverage Report ===${NC}"
 echo -e "Platform: ${GREEN}$PLATFORM${NC}"
 echo
 
@@ -40,48 +43,78 @@ cd "$REPO_ROOT"
 
 # Initialize coverage values
 BASH_COVERAGE=0
+BASH_METHOD="none"
 PS_COVERAGE=0
 
 # ============================================
-# Bash Coverage
+# Bash Coverage - Try bashcov first (cross-platform)
 # ============================================
 echo -e "${BLUE}[1/2] Bash Coverage${NC}"
 
-if [[ "$PLATFORM" == "windows" ]]; then
-    # Windows: Use Docker for actual bash coverage
-    echo "  Using Docker for bash coverage..."
+# Function to run bashcov
+run_bashcov() {
+    if command -v bashcov &>/dev/null; then
+        echo "  Using bashcov (Ruby gem) for bash coverage..."
 
-    if docker info &> /dev/null; then
-        # Check if Docker coverage script exists
-        if [[ -f "tests/coverage-docker.sh" ]]; then
-            chmod +x tests/coverage-docker.sh
-            bash_output=$(tests/coverage-docker.sh 2>&1)
+        # Find bats test files
+        local bats_tests=($(find tests -name "*.bats" 2>/dev/null))
 
-            # Extract coverage percentage from output
-            BASH_COVERAGE=$(echo "$bash_output" | grep -oP 'Bash:\s*\K[\d.]+' || echo "0.0")
+        if [[ ${#bats_tests[@]} -eq 0 ]]; then
+            echo -e "${YELLOW}  No BATS tests found${NC}"
+            return 1
+        fi
 
-            if [[ "$VERBOSE" == true ]]; then
-                echo "$bash_output"
+        if [[ "$VERBOSE" == true ]]; then
+            echo "  Running ${#bats_tests[@]} test files with bashcov..."
+        fi
+
+        # Run bashcov with bats
+        # bashcov wraps the command and tracks coverage
+        local coverage_dir="$REPO_ROOT/coverage/bash"
+        mkdir -p "$coverage_dir"
+
+        # Change to coverage directory so bashcov output goes there
+        cd "$coverage_dir"
+
+        # Run bats through bashcov
+        # bashcov runs bats and generates HTML coverage report
+        if bashcov bats "$REPO_ROOT/tests/bash/" 2>&1; then
+            cd "$REPO_ROOT"
+
+            # bashcov generates coverage/index.html
+            if [[ -f "$coverage_dir/index.html" ]]; then
+                echo "  HTML coverage report: $coverage_dir/index.html"
+                # Extract percentage from bashcov HTML report
+                # bashcov shows coverage as e.g., "87.5%" in the HTML
+                BASH_COVERAGE=$(grep -oP '\d+\.\d+%' "$coverage_dir/index.html" 2>/dev/null | head -1 | tr -d '%' || echo "0.0")
             else
-                echo "  Bash: ${BASH_COVERAGE}% (via Docker/kcov)"
+                echo -e "${YELLOW}  bashcov completed but no report found${NC}"
+                return 1
             fi
         else
-            echo -e "${YELLOW}  Warning: tests/coverage-docker.sh not found${NC}"
-            BASH_COVERAGE=0
+            cd "$REPO_ROOT"
+            echo -e "${YELLOW}  bashcov run failed, using fallback${NC}"
+            return 1
         fi
-    else
-        echo -e "${YELLOW}  Docker not available - using estimated bash coverage (25%)${NC}"
-        echo -e "${YELLOW}  Install Docker Desktop for actual coverage: https://www.docker.com/products/docker-desktop${NC}"
-        BASH_COVERAGE=25.0
+
+        if [[ "$BASH_COVERAGE" != "0.0" ]]; then
+            echo "  Bash: ${BASH_COVERAGE}% (via bashcov)"
+            BASH_METHOD="bashcov"
+            return 0
+        fi
     fi
-else
-    # Linux/macOS: Use kcov natively
-    if command -v kcov &> /dev/null; then
+    return 1
+}
+
+# Function to run kcov (Linux/macOS only, not Windows)
+run_kcov() {
+    if command -v kcov &>/dev/null; then
         echo "  Using kcov for bash coverage..."
 
-        # Run bash coverage
+        # Run bash coverage via kcov
         if [[ -f "tests/coverage-bash.sh" ]]; then
             chmod +x tests/coverage-bash.sh
+            local bash_output
             bash_output=$(tests/coverage-bash.sh 2>&1)
 
             # Extract coverage percentage from output
@@ -90,16 +123,66 @@ else
             if [[ "$VERBOSE" == true ]]; then
                 echo "$bash_output"
             else
-                echo "  Bash: ${BASH_COVERAGE}%"
+                echo "  Bash: ${BASH_COVERAGE}% (via kcov)"
             fi
-        else
-            echo -e "${YELLOW}  Warning: tests/coverage-bash.sh not found${NC}"
-            BASH_COVERAGE=0
+            BASH_METHOD="kcov"
+            return 0
         fi
-    else
-        echo -e "${YELLOW}  kcov not found - using estimated bash coverage (25%)${NC}"
-        echo -e "${YELLOW}  kcov should be installed by bootstrap.sh, or run: bootstrap/bootstrap.sh${NC}"
+    fi
+    return 1
+}
+
+# Function to run Docker kcov (Windows fallback)
+run_docker_kcov() {
+    if [[ "$PLATFORM" == "windows" ]] && docker info &>/dev/null; then
+        echo "  Using Docker for bash coverage (kcov in container)..."
+
+        if [[ -f "tests/coverage-docker.sh" ]]; then
+            chmod +x tests/coverage-docker.sh
+            local bash_output
+            bash_output=$(tests/coverage-docker.sh 2>&1)
+
+            BASH_COVERAGE=$(echo "$bash_output" | grep -oP 'Bash:\s*\K[\d.]+' || echo "0.0")
+
+            if [[ "$VERBOSE" == true ]]; then
+                echo "$bash_output"
+            else
+                echo "  Bash: ${BASH_COVERAGE}% (via Docker/kcov)"
+            fi
+            BASH_METHOD="docker"
+            return 0
+        fi
+    fi
+    return 1
+}
+
+# Try coverage methods in order
+if [[ "$FORCE_KCOV" == true ]]; then
+    # User explicitly requested kcov
+    if ! run_kcov && ! run_docker_kcov; then
+        echo -e "${YELLOW}  kcov not available - using estimated bash coverage (25%)${NC}"
         BASH_COVERAGE=25.0
+        BASH_METHOD="estimated"
+    fi
+else
+    # Try bashcov first (cross-platform)
+    if ! run_bashcov; then
+        # Fallback to kcov
+        if ! run_kcov; then
+            # Fallback to Docker on Windows
+            if ! run_docker_kcov; then
+                # Final fallback
+                echo -e "${YELLOW}  No coverage tool available${NC}"
+                echo -e "${YELLOW}  Install bashcov: gem install bashcov${NC}"
+                if [[ "$PLATFORM" == "windows" ]]; then
+                    echo -e "${YELLOW}  Or install Docker Desktop: https://www.docker.com/products/docker-desktop${NC}"
+                else
+                    echo -e "${YELLOW}  Or install kcov (should be installed by bootstrap.sh)${NC}"
+                fi
+                BASH_COVERAGE=25.0
+                BASH_METHOD="estimated"
+            fi
+        fi
     fi
 fi
 
@@ -110,7 +193,7 @@ echo
 # ============================================
 echo -e "${BLUE}[2/2] PowerShell Coverage${NC}"
 
-if command -v pwsh &> /dev/null; then
+if command -v pwsh &>/dev/null; then
     echo "  Using Pester for PowerShell coverage..."
 
     # Run PowerShell coverage script
@@ -138,12 +221,11 @@ echo
 # Combined Coverage
 # ============================================
 # Weighted average: 60% PowerShell + 40% Bash (based on script complexity)
-# Use awk for cross-platform compatibility
 COMBINED=$(awk "BEGIN {printf \"%.1f\", ($PS_COVERAGE * 0.6) + ($BASH_COVERAGE * 0.4)}")
 
 echo -e "${BLUE}=== Combined Coverage ===${NC}"
 echo -e "PowerShell: ${PS_COVERAGE}%"
-echo -e "Bash:       ${BASH_COVERAGE}%"
+echo -e "Bash:       ${BASH_COVERAGE}% (method: $BASH_METHOD)"
 echo -e "Combined:   ${GREEN}${COMBINED}%${NC}"
 
 # ============================================
@@ -200,7 +282,7 @@ cat > coverage.json << EOF
   "bash_coverage": ${BASH_COVERAGE},
   "combined_coverage": ${COMBINED},
   "platform": "${PLATFORM}",
-  "bash_method": "$([[ "$PLATFORM" == "windows" ]] && docker info &> /dev/null && echo "docker" || echo "kcov")",
+  "bash_method": "${BASH_METHOD}",
   "timestamp": "$(date -Iseconds 2>/dev/null || date)"
 }
 EOF
@@ -223,7 +305,7 @@ if [[ "$UPDATE_README" == true ]]; then
         # Check if badge exists and update or add it
         if grep -q '\[Coverage\](https://img.shields.io/badge/coverage' "$README"; then
             # Update existing badge
-            if command -v sed &> /dev/null; then
+            if command -v sed &>/dev/null; then
                 sed -i "s|!\[Coverage\](https://img.shields.io/badge/coverage-[^)]*)|${BADGE_MARKDOWN}|g" "$README" 2>/dev/null || \
                 sed -i '' "s|!\[Coverage\](https://img.shields.io/badge/coverage-[^)]*)|${BADGE_MARKDOWN}|g" "$README"
                 echo -e "${GREEN}Updated coverage badge in README.md${NC}"
