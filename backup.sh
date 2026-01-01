@@ -77,16 +77,21 @@ backup_file() {
     fi
 
     # Create destination directory if needed
-    mkdir -p "$(dirname "$dst")"
-
-    # Copy file/directory
-    if cp -r "$src" "$dst" 2>/dev/null; then
-        log_success "Backed up: $src"
-        return 0
-    else
-        log_error "Failed to backup: $src"
+    if ! mkdir -p "$(dirname "$dst")" 2>/dev/null; then
+        log_error "Failed to create directory: $(dirname "$dst")"
         return 1
     fi
+
+    # Copy file/directory with better error handling
+    local error_output
+    if ! error_output=$(cp -r "$src" "$dst" 2>&1); then
+        log_error "Failed to backup: $src"
+        log_error "Error: $error_output"
+        return 1
+    fi
+
+    log_success "Backed up: $src"
+    return 0
 }
 
 cleanup_old_backups() {
@@ -96,8 +101,16 @@ cleanup_old_backups() {
 
     log_info "Cleaning up old backups (keeping $KEEP_BACKUPS most recent)..."
 
+    # Check backup directory exists
+    if [[ ! -d "$BACKUP_DIR" ]]; then
+        return 0
+    fi
+
     # Get list of backup directories, sorted by name (which is timestamp)
-    local backups=($(ls -1t "$BACKUP_DIR" 2>/dev/null | grep -E '^[0-9]{8}-[0-9]{6}$' || true))
+    local backups=()
+    while IFS= read -r -d '' backup; do
+        backups+=("$(basename "$backup")")
+    done < <(find "$BACKUP_DIR" -maxdepth 1 -type d -regex '.*/[0-9]\{8\}-[0-9]\{6\}$' -print0 2>/dev/null | sort -rz)
 
     if [[ ${#backups[@]} -le $KEEP_BACKUPS ]]; then
         log_info "No old backups to remove (have ${#backups[@]}, keeping $KEEP_BACKUPS)"
@@ -105,16 +118,18 @@ cleanup_old_backups() {
     fi
 
     # Remove old backups
-    local to_remove=${backups[@]:$KEEP_BACKUPS}
+    local to_remove=("${backups[@]:$KEEP_BACKUPS}")
     for old_backup in "${to_remove[@]}"; do
         local backup_path="$BACKUP_DIR/$old_backup"
         if [[ "$DRY_RUN" == "true" ]]; then
             echo -e "  ${CYAN}[DRY-RUN]${NC} Would remove old backup: $backup_path"
         else
-            if rm -rf "$backup_path"; then
-                log_success "Removed old backup: $backup_path"
-            else
+            local error_output
+            if ! error_output=$(rm -rf "$backup_path" 2>&1); then
                 log_error "Failed to remove: $backup_path"
+                log_error "Error: $error_output"
+            else
+                log_success "Removed old backup: $backup_path"
             fi
         fi
     done

@@ -74,9 +74,19 @@ deploy_common() {
     # Copy git config
     cp "$SCRIPT_DIR/.gitconfig" "$HOME/"
 
-    # Copy Neovim config to root (user prefers init.lua at ~/)
+    # Copy Neovim config
     if [ -f "$SCRIPT_DIR/init.lua" ]; then
+        # Copy to root (user preference)
         cp "$SCRIPT_DIR/init.lua" "$HOME/"
+        # Also copy to XDG config location
+        mkdir -p "$XDG_CONFIG/nvim"
+        cp "$SCRIPT_DIR/init.lua" "$XDG_CONFIG/nvim/"
+    fi
+
+    # Copy Neovim lua directory if exists
+    if [ -d "$SCRIPT_DIR/lua" ]; then
+        mkdir -p "$XDG_CONFIG/nvim/lua"
+        cp -r "$SCRIPT_DIR/lua/"* "$XDG_CONFIG/nvim/lua/" 2>/dev/null || true
     fi
 
     # Copy Wezterm config
@@ -85,17 +95,22 @@ deploy_common() {
         cp "$SCRIPT_DIR/wezterm.lua" "$XDG_CONFIG/wezterm/"
     fi
 
-    # Copy git scripts
+    # Copy git scripts (both .sh and .ps1 versions)
     cp "$SCRIPT_DIR/git-clone-all.sh" "$HOME/dev/" 2>/dev/null || true
     cp "$SCRIPT_DIR/git-update-repos.sh" "$HOME/dev/" 2>/dev/null || true
+    cp "$SCRIPT_DIR/git-update-repos.ps1" "$HOME/dev/" 2>/dev/null || true
     cp "$SCRIPT_DIR/sync-system-instructions.sh" "$HOME/dev/" 2>/dev/null || true
+    cp "$SCRIPT_DIR/sync-system-instructions.ps1" "$HOME/dev/" 2>/dev/null || true
     chmod +x "$HOME/dev/git-update-repos.sh" 2>/dev/null || true
     chmod +x "$HOME/dev/sync-system-instructions.sh" 2>/dev/null || true
 
-    # Copy update-all scripts
+    # Copy update-all scripts (both .sh and .ps1 versions)
     if [ -f "$SCRIPT_DIR/update-all.sh" ]; then
         cp "$SCRIPT_DIR/update-all.sh" "$HOME/dev/"
         chmod +x "$HOME/dev/update-all.sh"
+    fi
+    if [ -f "$SCRIPT_DIR/update-all.ps1" ]; then
+        cp "$SCRIPT_DIR/update-all.ps1" "$HOME/dev/"
     fi
 
     # Copy Aider configs
@@ -114,10 +129,14 @@ deploy_git_hooks() {
     mkdir -p "$hooks_dir"
 
     # Copy bash hooks
-    cp "$SCRIPT_DIR/hooks/git/pre-commit" "$hooks_dir/"
-    cp "$SCRIPT_DIR/hooks/git/commit-msg" "$hooks_dir/"
-    chmod +x "$hooks_dir/pre-commit"
-    chmod +x "$hooks_dir/commit-msg"
+    cp "$SCRIPT_DIR/hooks/git/pre-commit" "$hooks_dir/" 2>/dev/null || true
+    cp "$SCRIPT_DIR/hooks/git/commit-msg" "$hooks_dir/" 2>/dev/null || true
+    chmod +x "$hooks_dir/pre-commit" 2>/dev/null || true
+    chmod +x "$hooks_dir/commit-msg" 2>/dev/null || true
+
+    # Copy PowerShell hooks too (for Windows/PowerShell git operations)
+    cp "$SCRIPT_DIR/hooks/git/pre-commit.ps1" "$hooks_dir/" 2>/dev/null || true
+    cp "$SCRIPT_DIR/hooks/git/commit-msg.ps1" "$hooks_dir/" 2>/dev/null || true
 
     # Configure git to use the hooks
     git config --global init.templatedir "$hooks_dir"
@@ -141,47 +160,68 @@ update_git_config() {
     local modified=false
     local fixes=()
 
-    # Detect platform and apply appropriate fixes using grep instead of =~
+    # Detect platform and apply appropriate fixes
     case "$OS" in
         windows)
             # On Windows (Git Bash/WSL): Remove Linuxbrew gh paths
-            if grep -q 'linuxbrew.*gh.*auth\|/home/linuxbrew' "$gitconfig" 2>/dev/null; then
+            # Match INI format: helper = !/home/linuxbrew/.linuxbrew/bin/gh auth git-credential
+            if grep -qE 'linuxbrew.*gh.*auth|/home/linuxbrew' "$gitconfig" 2>/dev/null; then
                 fixes+=("WSL/Linuxbrew gh credential helper")
-                # Remove linuxbrew gh credential lines (GNU sed and BSD sed)
-                sed -i '/linuxbrew.*gh.*auth.*git-credential/d' "$gitconfig" 2>/dev/null || \
-                sed -i '' '/linuxbrew.*gh.*auth.*git-credential/d' "$gitconfig" 2>/dev/null || true
+                # Use perl for better regex (works on Git Bash)
+                if command -v perl >/dev/null 2>&1; then
+                    perl -i -ne 'print unless /^\s*helper\s*=\s*!.*?linuxbrew.*?gh.*?auth.*?git-credential/' "$gitconfig" 2>/dev/null || true
+                    perl -i -ne 'print unless /^\s*helper\s*=\s*!.*?\/home\/linuxbrew\/.*?\.bin\/gh\s+auth\s+git-credential/' "$gitconfig" 2>/dev/null || true
+                else
+                    # Fallback to sed
+                    sed -i '/linuxbrew.*gh.*auth.*git-credential/d' "$gitconfig" 2>/dev/null || \
+                    sed -i '' '/linuxbrew.*gh.*auth.*git-credential/d' "$gitconfig" 2>/dev/null || true
+                fi
                 modified=true
             fi
 
             # On Windows: Remove absolute Windows paths to gh.exe
-            if grep -q 'gh\.exe' "$gitconfig" 2>/dev/null; then
+            # Match: helper = !"C:/Users/.../gh.exe" auth git-credential
+            if grep -qE 'gh\.exe' "$gitconfig" 2>/dev/null; then
                 fixes+=("absolute Windows path to gh.exe")
-                # Remove lines with gh.exe paths
-                sed -i '/gh\.exe.*auth/d' "$gitconfig" 2>/dev/null || \
-                sed -i '' '/gh\.exe.*auth/d' "$gitconfig" 2>/dev/null || true
+                if command -v perl >/dev/null 2>&1; then
+                    perl -i -ne 'print unless /^\s*helper\s*=\s*!".*?[A-Z]:\\/.*?gh\.exe"/' "$gitconfig" 2>/dev/null || true
+                else
+                    sed -i '/gh\.exe.*auth/d' "$gitconfig" 2>/dev/null || \
+                    sed -i '' '/gh\.exe.*auth/d' "$gitconfig" 2>/dev/null || true
+                fi
                 modified=true
             fi
             ;;
 
         linux|macos)
             # On Linux/macOS: Remove absolute Windows paths to gh.exe
-            if grep -q 'gh\.exe' "$gitconfig" 2>/dev/null; then
+            if grep -qE 'gh\.exe' "$gitconfig" 2>/dev/null; then
                 fixes+=("absolute Windows path to gh.exe")
-                sed -i '/gh\.exe.*auth/d' "$gitconfig" 2>/dev/null || \
-                sed -i '' '/gh\.exe.*auth/d' "$gitconfig" 2>/dev/null || true
+                if command -v perl >/dev/null 2>&1; then
+                    perl -i -ne 'print unless /^\s*helper\s*=\s*!".*?[A-Z]:\\/.*?gh\.exe"/' "$gitconfig" 2>/dev/null || true
+                else
+                    sed -i '/gh\.exe.*auth/d' "$gitconfig" 2>/dev/null || \
+                    sed -i '' '/gh\.exe.*auth/d' "$gitconfig" 2>/dev/null || true
+                fi
                 modified=true
             fi
             ;;
     esac
 
     # Universal cleanup: remove duplicate/empty helper lines
-    if grep -q '^\s*helper\s*=\s*$' "$gitconfig" 2>/dev/null; then
+    if grep -qE '^\s*helper\s*=\s*$' "$gitconfig" 2>/dev/null; then
         fixes+=("empty helper lines")
         # Remove empty helper lines (backup first for safety)
         cp "$gitconfig" "$gitconfig.bak"
-        grep -v '^\s*helper\s*=\s*$' "$gitconfig.bak" > "$gitconfig" 2>/dev/null || true
+        grep -vE '^\s*helper\s*=\s*$' "$gitconfig.bak" > "$gitconfig" 2>/dev/null || true
         rm -f "$gitconfig.bak"
         modified=true
+    fi
+
+    # Remove empty credential sections
+    if grep -E '\[credential "[^"]+"\]' "$gitconfig" 2>/dev/null | head -1 | grep -q .; then
+        # This is complex, skip for now or use perl
+        :
     fi
 
     if $modified; then

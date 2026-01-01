@@ -144,24 +144,35 @@ restore_file() {
     fi
 
     # Create destination directory if needed
-    mkdir -p "$(dirname "$dst")"
+    local dest_dir
+    dest_dir="$(dirname "$dst")"
+    if ! mkdir -p "$dest_dir" 2>/dev/null; then
+        log_error "Failed to create directory: $dest_dir"
+        return 1
+    fi
 
     # Backup existing file first
     if [[ -e "$dst" ]]; then
-        local timestamp=$(date +%Y%m%d-%H%M%S)
+        local timestamp
+        timestamp=$(date +%Y%m%d-%H%M%S)
         local backup_existing="$dst.dotfiles-backup-$timestamp"
-        cp -r "$dst" "$backup_existing"
-        log_info "Backed up existing: $dst → $backup_existing"
+        if ! cp -r "$dst" "$backup_existing" 2>/dev/null; then
+            log_warning "Failed to backup existing: $dst (continuing anyway)"
+        else
+            log_info "Backed up existing: $dst → $backup_existing"
+        fi
     fi
 
-    # Restore file
-    if cp -r "$src" "$dst" 2>/dev/null; then
-        log_success "Restored: $src → $dst"
-        return 0
-    else
+    # Restore file with better error handling
+    local error_output
+    if ! error_output=$(cp -r "$src" "$dst" 2>&1); then
         log_error "Failed to restore: $src → $dst"
+        log_error "Error: $error_output"
         return 1
     fi
+
+    log_success "Restored: $src → $dst"
+    return 0
 }
 
 # ============================================================================
