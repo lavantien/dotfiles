@@ -1,4 +1,6 @@
 {
-  "timestamp": "2026-01-02T05:05:31.7184124+07:00",
-  "coverage": 16.5
+  "ps_coverage": 16.5,
+  "combined_coverage": 20.3,
+  "timestamp": "2026-01-02T05:12:58.0344975+07:00",
+  "bash_coverage": 25.9
 }

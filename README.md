@@ -1,6 +1,6 @@
 # Universal Dotfiles
 
-![Coverage](https://img.shields.io/badge/coverage-21%25-red) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Coverage](https://img.shields.io/badge/coverage-20%25-red) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)](https://github.com/lavantien/dotfiles)
 
 Production-grade dotfiles supporting Windows 11, Linux (Ubuntu/Fedora/Arch), and macOS with intelligent auto-detection and graceful fallbacks. A truly Universal SWE Dotfiles (Neovim/WezTerm/zsh/pwsh, Claude Code/Git Hooks, Linux/Windows) with batteries included: 15+ LSP servers, 10+ language formatters/linters, TDD enforcement, and comprehensive Git and Claude Code workflow automation. All configured, tested, and just clone and run.
@@ -158,7 +158,7 @@ Intelligent Automation
 
 ### Quality Assurance
 
-- 380+ automated tests covering all major components
+- 270+ automated tests covering all major components
 - Conventional commits enforcement
 - Claude Code hooks for real-time quality checks
 - TDD guard to enforce test-driven development
@@ -525,11 +525,9 @@ Test Coverage
 
 | Suite | Tests | Description |
 |-------|-------|-------------|
-| PowerShell Unit | 124 | Bootstrap, config, deploy, git hooks, update-all |
-| PowerShell E2E | 126 | End-to-end integration tests |
-| Bash Unit | 56 | Shell script validation |
-| Bash E2E | 78 | End-to-end bash integration |
-| **Total** | **384** | Cross-platform test coverage |
+| PowerShell | 218 | Wrapper validation, bootstrap, config, git hooks, E2E |
+| Bash | 56 | Shell script unit and integration tests |
+| **Total** | **274** | Cross-platform test coverage |
 
 Test Areas Covered
 
@@ -635,7 +633,7 @@ The coverage scripts generate:
 
 - `coverage.json` - Combined coverage data for CI/CD
 - `coverage-badge.svg` - Dynamic badge for README
-- `coverage/bash/index.html` - Detailed HTML report (bashcov coverage)
+- `coverage/bashcov/index.html` - Detailed HTML report (bashcov coverage)
 
 Badge Color Scale
 
