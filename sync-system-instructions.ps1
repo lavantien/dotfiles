@@ -7,6 +7,9 @@ $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 # Derive .sh script name
 $shScript = Join-Path $ScriptDir "sync-system-instructions.sh"
 
+# Convert Windows path to Git Bash format (C:\... -> /c/...)
+$shScriptBash = $shScript -replace '\\', '/' -replace '^([A-Z]):', '/$1'
+
 # Ensure Git Bash is available
 if (-not (Get-Command bash -ErrorAction SilentlyContinue)) {
     Write-Error "Git Bash (bash.exe) not found. Please install Git for Windows."
@@ -32,5 +35,5 @@ for ($i = 0; $i -lt $args.Length; $i++) {
 }
 
 # Invoke the bash script with exit code propagation
-$exitCode = & bash $shScript $mappedArgs
+$exitCode = & bash $shScriptBash $mappedArgs
 exit $exitCode

@@ -7,6 +7,9 @@ $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 # Derive .sh script name
 $shScript = Join-Path $ScriptDir "deploy.sh"
 
+# Convert Windows path to Git Bash format (C:\... -> /c/...)
+$shScriptBash = $shScript -replace '\\', '/' -replace '^([A-Z]):', '/$1'
+
 # Ensure Git Bash is available
 if (-not (Get-Command bash -ErrorAction SilentlyContinue)) {
     Write-Error "Git Bash (bash.exe) not found. Please install Git for Windows."
@@ -16,5 +19,5 @@ if (-not (Get-Command bash -ErrorAction SilentlyContinue)) {
 
 # Invoke the bash script with exit code propagation
 # Pass all arguments through (deploy.sh doesn't take parameters currently)
-$exitCode = & bash $shScript $args
+$exitCode = & bash $shScriptBash $args
 exit $exitCode
