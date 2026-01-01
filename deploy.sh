@@ -128,6 +128,71 @@ deploy_git_hooks() {
 }
 
 # ============================================================================
+# UPDATE GIT CONFIG FOR PLATFORM-SPECIFIC FIXES
+# ============================================================================
+update_git_config() {
+    echo -e "${GREEN}Checking .gitconfig for platform-specific fixes...${NC}"
+
+    local gitconfig="$HOME/.gitconfig"
+    if [[ ! -f "$gitconfig" ]]; then
+        return
+    fi
+
+    local modified=false
+    local fixes=()
+
+    # Detect platform and apply appropriate fixes using grep instead of =~
+    case "$OS" in
+        windows)
+            # On Windows (Git Bash/WSL): Remove Linuxbrew gh paths
+            if grep -q 'linuxbrew.*gh.*auth\|/home/linuxbrew' "$gitconfig" 2>/dev/null; then
+                fixes+=("WSL/Linuxbrew gh credential helper")
+                # Remove linuxbrew gh credential lines (GNU sed and BSD sed)
+                sed -i '/linuxbrew.*gh.*auth.*git-credential/d' "$gitconfig" 2>/dev/null || \
+                sed -i '' '/linuxbrew.*gh.*auth.*git-credential/d' "$gitconfig" 2>/dev/null || true
+                modified=true
+            fi
+
+            # On Windows: Remove absolute Windows paths to gh.exe
+            if grep -q 'gh\.exe' "$gitconfig" 2>/dev/null; then
+                fixes+=("absolute Windows path to gh.exe")
+                # Remove lines with gh.exe paths
+                sed -i '/gh\.exe.*auth/d' "$gitconfig" 2>/dev/null || \
+                sed -i '' '/gh\.exe.*auth/d' "$gitconfig" 2>/dev/null || true
+                modified=true
+            fi
+            ;;
+
+        linux|macos)
+            # On Linux/macOS: Remove absolute Windows paths to gh.exe
+            if grep -q 'gh\.exe' "$gitconfig" 2>/dev/null; then
+                fixes+=("absolute Windows path to gh.exe")
+                sed -i '/gh\.exe.*auth/d' "$gitconfig" 2>/dev/null || \
+                sed -i '' '/gh\.exe.*auth/d' "$gitconfig" 2>/dev/null || true
+                modified=true
+            fi
+            ;;
+    esac
+
+    # Universal cleanup: remove duplicate/empty helper lines
+    if grep -q '^\s*helper\s*=\s*$' "$gitconfig" 2>/dev/null; then
+        fixes+=("empty helper lines")
+        # Remove empty helper lines (backup first for safety)
+        cp "$gitconfig" "$gitconfig.bak"
+        grep -v '^\s*helper\s*=\s*$' "$gitconfig.bak" > "$gitconfig" 2>/dev/null || true
+        rm -f "$gitconfig.bak"
+        modified=true
+    fi
+
+    if $modified; then
+        echo -e "${YELLOW}  Fixes applied: ${fixes[*]}${NC}"
+        echo -e "${GREEN}  .gitconfig updated${NC}"
+    else
+        echo -e "${GREEN}  .gitconfig is clean${NC}"
+    fi
+}
+
+# ============================================================================
 # CLAUDE CODE HOOKS
 # ============================================================================
 deploy_claude_hooks() {
@@ -263,6 +328,9 @@ main() {
             deploy_linux
             ;;
     esac
+
+    # Apply platform-specific .gitconfig fixes
+    update_git_config
 
     echo -e "${GREEN}=== Deployment Complete ===${NC}"
     echo -e "${YELLOW}Reload your shell to apply changes${NC}"
