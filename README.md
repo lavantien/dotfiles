@@ -15,17 +15,18 @@ Production-grade dotfiles supporting Windows 11, Linux (Ubuntu/Fedora/Arch), and
 - [4. Bridge Approach Note](#4-bridge-approach-note)
 - [5. Bootstrap Options](#5-bootstrap-options)
 - [6. Configuration (Optional)](#6-configuration-optional)
-- [7. Git Hooks](#7-git-hooks)
-- [8. Claude Code Integration](#8-claude-code-integration)
-- [9. Universal Update All](#9-universal-update-all)
-- [10. System Instructions Sync](#10-system-instructions-sync)
-- [11. Health Check & Troubleshooting](#11-health-check--troubleshooting)
-- [12. Testing](#12-testing)
-- [13. Code Coverage](#13-code-coverage)
-- [14. Updating](#14-updating)
-- [15. Shell Aliases](#15-shell-aliases)
-- [16. Neovim Keybindings](#16-neovim-keybindings)
-- [17. Additional Documentation](#17-additional-documentation)
+- [7. Fresh Install Guide](#7-fresh-install-guide)
+- [8. Git Hooks](#8-git-hooks)
+- [9. Claude Code Integration](#9-claude-code-integration)
+- [10. Universal Update All](#10-universal-update-all)
+- [11. System Instructions Sync](#11-system-instructions-sync)
+- [12. Health Check & Troubleshooting](#12-health-check--troubleshooting)
+- [13. Testing](#13-testing)
+- [14. Code Coverage](#14-code-coverage)
+- [15. Updating](#15-updating)
+- [16. Shell Aliases](#16-shell-aliases)
+- [17. Neovim Keybindings](#17-neovim-keybindings)
+- [18. Additional Documentation](#18-additional-documentation)
 
 ---
 
@@ -47,7 +48,7 @@ Developer Tools
 - 20+ package managers: Update everything with one command
 
 Quality Assurance
-- 250+ automated tests covering all major components
+- 380+ automated tests covering all major components
 - Conventional commits enforcement
 - Claude Code hooks for real-time quality checks
 - TDD guard to enforce test-driven development
@@ -59,7 +60,7 @@ Quality Assurance
 All scripts in this repository are idempotent. They intelligently detect what's already installed, compare versions, and only install or update tools that are missing or outdated. You can safely run any script multiple times without any harm.
 
 This applies to:
-- bootstrap/bootstrap.sh and bootstrap.ps1
+- bootstrap.sh and bootstrap.ps1
 - deploy.sh and deploy.ps1
 - update-all.sh and update-all.ps1
 - git-update-repos.sh and git-update-repos.ps1
@@ -84,8 +85,8 @@ Linux / macOS
 ```bash
 git clone https://github.com/lavantien/dotfiles.git ~/dev/dotfiles
 cd ~/dev/dotfiles
-chmod +x bootstrap/bootstrap.sh
-./bootstrap/bootstrap.sh
+chmod +x bootstrap.sh
+./bootstrap.sh
 
 exec zsh  # or source ~/.zshrc
 ```
@@ -175,7 +176,7 @@ Optional Customization
 cp .dotfiles.config.yaml.example ~/.dotfiles.config.yaml
 vim ~/.dotfiles.config.yaml
 
-./bootstrap/bootstrap.sh  # Auto-detects config
+./bootstrap.sh  # Auto-detects config
 ```
 
 Configuration Priority
@@ -197,7 +198,122 @@ Common Config Options
 
 ---
 
-## 7. Git Hooks
+## 7. Fresh Install Guide
+
+What gets installed on a fresh machine depends on the platform and category selected. This guide provides a comprehensive overview.
+
+### Windows (PowerShell 7+)
+
+Package Manager
+- Scoop (primary) - for most CLI tools and development tools
+- Why: User-scoped, no admin required, clean uninstall, faster than winget
+
+Core SDKs
+- Node.js LTS (18+) - JavaScript/TypeScript development
+- Python 3.9+ - General scripting and tooling
+- Go 1.20+ - Go language development
+- Rust (via rustup) - Systems programming
+
+Language Servers (for Neovim LSP)
+- clangd (from LLVM) - C/C++ completion and diagnostics
+- gopls - Go language server
+- rust-analyzer - Rust language server
+- pyright - Python type checking
+- typescript-language-server - JS/TS completion
+- yaml-language-server - YAML validation
+
+Linters & Formatters
+- prettier - Code formatter for JS/TS/JSON/CSS/YAML
+- eslint - JavaScript/TypeScript linter
+- ruff - Fast Python linter/formatter
+- goimports - Go import management
+- golangci-lint - Go comprehensive linting
+- clang-format - C/C++ formatting
+
+Essential CLI Tools
+- fzf - Fuzzy finder for files and commands
+- zoxide - Smart directory navigation (cd replacement)
+- bat - Better cat with syntax highlighting
+- eza - Better ls with colors and git status
+- lazygit - Terminal Git UI
+- gh - GitHub CLI tool
+- ripgrep (rg) - Faster grep alternative
+- fd - Faster find alternative
+- tokei - Code statistics (full category)
+- difftastic - Structured diff tool (full category)
+
+Testing & Coverage
+- bats - Bash testing framework (via npm)
+- Pester 5.7+ - PowerShell testing with code coverage
+- Docker Desktop - Optional, for bash coverage on Windows
+
+### Linux (Ubuntu/Fedora/Arch/openSUSE)
+
+Package Managers
+- System package manager (apt/dnf/pacman/zypper) - Native packages
+- Homebrew (optional) - For consistency across platforms
+- Snap/Flatpak - For GUI applications when needed
+
+Core SDKs
+- Node.js 18+ - JavaScript/TypeScript development
+- Python 3.9+ - Included on most distros, upgraded if needed
+- Go 1.20+ - Go language development
+- Rust (via rustup) - Systems programming
+
+Language Servers (for Neovim LSP)
+- clangd - C/C++ completion and diagnostics
+- gopls - Go language server
+- rust-analyzer - Rust language server
+- pyright - Python type checking
+- typescript-language-server - JS/TS completion
+- yaml-language-server - YAML validation
+
+Linters & Formatters
+- prettier - Code formatter for JS/TS/JSON/CSS/YAML
+- eslint - JavaScript/TypeScript linter
+- ruff - Fast Python linter/formatter
+- goimports - Go import management (via go install)
+- golangci-lint - Go comprehensive linting
+- clang-format/clang-tidy - C/C++ tools
+
+Essential CLI Tools
+- fzf - Fuzzy finder for files and commands
+- zoxide - Smart directory navigation
+- bat - Better cat with syntax highlighting
+- eza - Modern ls replacement
+- lazygit - Terminal Git UI
+- gh - GitHub CLI tool
+- ripgrep (rg) - Fast text search
+- fd - Fast file search
+- tokei - Code statistics (full category)
+- difftastic - Structured diff tool (full category)
+
+Testing & Coverage
+- bats - Bash testing framework (via npm or apt)
+- kcov - Bash code coverage with HTML reports
+
+### Installation Categories
+
+| Category | What's Installed | Use Case |
+|----------|------------------|----------|
+| minimal | Package managers, git, CLI tools only | Quick setup with minimal development tools |
+| sdk | minimal + Node.js, Python, Go | Developers who don't need Rust or language servers |
+| full | sdk + Rust + all LSPs + linters/formatters | Complete development environment (default) |
+
+### Why These Tools?
+
+Each tool serves a specific purpose in a modern development workflow:
+
+- Editor: Neovim with LSP support provides IDE-like features in the terminal
+- Navigation: fzf + zoxide = jump to any directory instantly
+- Git: lazygit visualizes branches and commits; gh integrates with GitHub
+- Search: ripgrep finds code faster than grep; fd finds files faster than find
+- Quality: Linters run automatically in git hooks to catch issues early
+- Testing: Pester and bats ensure scripts work across platforms
+
+---
+
+## 8. Git Hooks
 
 Supported Languages
 
@@ -241,7 +357,7 @@ git commit --no-verify -m "wip: emergency fix"
 
 ---
 
-## 8. Claude Code Integration
+## 9. Claude Code Integration
 
 First-class support for Claude Code with quality checks and TDD enforcement.
 
@@ -291,7 +407,7 @@ Deploy Claude Code Hooks
 
 ---
 
-## 9. Universal Update All
+## 10. Universal Update All
 
 One command to update everything on your system.
 
@@ -313,7 +429,7 @@ npm, yarn, pnpm, gup/go, cargo, rustup, pip/pip3, poetry, dotnet, gem, composer,
 
 ---
 
-## 10. System Instructions Sync
+## 11. System Instructions Sync
 
 Single source of truth for AI assistant instructions across all repositories.
 
@@ -354,7 +470,7 @@ Standalone Sync
 
 ---
 
-## 11. Health Check & Troubleshooting
+## 12. Health Check & Troubleshooting
 
 Health Check
 
@@ -382,7 +498,7 @@ For detailed troubleshooting, see QUICKREF.md.
 
 ---
 
-## 12. Testing
+## 13. Testing
 
 Comprehensive test suite ensuring reliability across all platforms and components.
 
@@ -390,11 +506,11 @@ Test Coverage
 
 | Suite | Tests | Description |
 |-------|-------|-------------|
-| PowerShell Unit | 35 | Bootstrap, config, deploy, git hooks |
-| PowerShell E2E | 215 | End-to-end integration tests |
-| Bash Unit | 78 | Shell script validation |
-| Bash E2E | 56 | End-to-end bash integration |
-| **Total** | **250+** | Cross-platform test coverage |
+| PowerShell Unit | 124 | Bootstrap, config, deploy, git hooks, update-all |
+| PowerShell E2E | 126 | End-to-end integration tests |
+| Bash Unit | 56 | Shell script validation |
+| Bash E2E | 78 | End-to-end bash integration |
+| **Total** | **384** | Cross-platform test coverage |
 
 Test Areas Covered
 
@@ -430,7 +546,7 @@ Test Philosophy
 
 ---
 
-## 13. Code Coverage
+## 14. Code Coverage
 
 Universal coverage measurement supporting both bash and PowerShell scripts with actual coverage on all platforms.
 
@@ -452,7 +568,7 @@ All coverage tools are automatically installed by the bootstrap scripts:
 
 ```bash
 # Linux/macOS
-./bootstrap/bootstrap.sh
+./bootstrap.sh
 # Installs: kcov, bats, and all dependencies
 
 # Windows PowerShell
@@ -518,20 +634,20 @@ Coverage Calculation
 
 ---
 
-## 14. Updating
+## 15. Updating
 
 ```bash
 cd ~/dev/dotfiles  # or $HOME/dev/dotfiles on Windows
 git pull
 
-./bootstrap/bootstrap.sh  # or .\bootstrap\bootstrap.ps1 on Windows
+./bootstrap.sh  # or .\bootstrap.ps1 on Windows
 
 source ~/.zshrc  # or . $PROFILE on Windows
 ```
 
 ---
 
-## 15. Shell Aliases
+## 16. Shell Aliases
 
 File Operations
 
@@ -599,7 +715,7 @@ Utility Aliases
 
 ---
 
-## 16. Neovim Keybindings
+## 17. Neovim Keybindings
 
 Leader key is Space.
 
@@ -662,7 +778,7 @@ LSP Mappings (using FzfLua)
 
 ---
 
-## 17. Additional Documentation
+## 18. Additional Documentation
 
 | Document | Purpose |
 |----------|---------|

@@ -195,5 +195,3 @@ function Test-SkipPackage {
     return $script:CONFIG_SKIP_PACKAGES -contains $Package
 }
 
-# Export functions
-Export-ModuleMember -Function Load-DotfilesConfig, Get-ConfigValue, Test-SkipPackage

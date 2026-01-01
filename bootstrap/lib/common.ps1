@@ -177,7 +177,10 @@ function Read-Confirmation {
 
     while ($true) {
         $response = Read-Host "? $Prompt [$options]"
-        $response = $response.Trim().ToLower()
+
+        if ($null -ne $response) {
+            $response = $response.Trim().ToLower()
+        }
 
         if ([string]::IsNullOrEmpty($response)) {
             $response = $Default
