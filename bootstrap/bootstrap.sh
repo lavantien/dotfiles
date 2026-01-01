@@ -2,6 +2,12 @@
 # Universal Bootstrap Script
 # Installs and configures development environment on Linux/macOS
 #
+# BRIDGE APPROACH:
+#   - Works without config file (uses hardcoded defaults - backward compatible)
+#   - Loads config file if present (~/.dotfiles.config.yaml) - forward compatible
+#   - Config library is optional - scripts work even if it's missing
+#   - Defaults: categories="full", interactive=true, no dry-run
+#
 # Usage:
 #   ./bootstrap.sh [options]
 #
@@ -20,13 +26,18 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LIB_DIR="$SCRIPT_DIR/lib"
 PLATFORMS_DIR="$SCRIPT_DIR/platforms"
-CONFIG_DIR="$SCRIPT_DIR/config"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Source library functions
 # shellcheck source=lib/common.sh
 source "$LIB_DIR/common.sh"
 # shellcheck source=lib/version-check.sh
 source "$LIB_DIR/version-check.sh"
+# shellcheck source=lib/config.sh
+# Config library is at root level, not in bootstrap/lib/
+if [[ -f "$ROOT_DIR/lib/config.sh" ]]; then
+    source "$ROOT_DIR/lib/config.sh"
+fi
 
 # Source platform-specific functions
 OS="$(detect_os)"
@@ -46,6 +57,31 @@ INTERACTIVE=true
 DRY_RUN=false
 CATEGORIES="full"
 SKIP_UPDATE=false
+AUTO_UPDATE_REPOS="false"
+BACKUP_BEFORE_DEPLOY="false"
+
+# ============================================================================
+# LOAD USER CONFIGURATION (OPTIONAL)
+# ============================================================================
+CONFIG_FILE="$HOME/.dotfiles.config.yaml"
+
+# Only try to load config if the config library was successfully sourced
+if declare -f load_dotfiles_config >/dev/null 2>&1; then
+    if [[ -f "$CONFIG_FILE" ]]; then
+        load_dotfiles_config "$CONFIG_FILE" 2>/dev/null || {
+            log_warning "Failed to load config file, using defaults"
+        }
+    fi
+
+    # Override defaults with config values (if get_config function exists)
+    if declare -f get_config >/dev/null 2>&1; then
+        CATEGORIES=$(get_config "categories" "$CATEGORIES")
+        AUTO_UPDATE_REPOS=$(get_config "auto_update_repos" "$AUTO_UPDATE_REPOS")
+        BACKUP_BEFORE_DEPLOY=$(get_config "backup_before_deploy" "$BACKUP_BEFORE_DEPLOY")
+    fi
+else
+    log_info "Config library not found, using hardcoded defaults"
+fi
 
 # ============================================================================
 # HELP

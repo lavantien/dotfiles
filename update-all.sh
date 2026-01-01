@@ -23,15 +23,193 @@ detect_os() {
 
 OS=$(detect_os)
 
-# Counters
-updated=0
-skipped=0
-failed=0
+# ============================================================================
+# LOAD USER CONFIGURATION
+# ============================================================================
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Helpers
-update_section() {
-    echo -e "\n${CYAN}[$(date '+%H:%M:%S')]${NC} ${BLUE}$1${NC}"
-}
+# Source config library if available
+if [[ -f "$SCRIPT_DIR/lib/config.sh" ]]; then
+    source "$SCRIPT_DIR/lib/config.sh"
+    CONFIG_FILE="$HOME/.dotfiles.config.yaml"
+    load_dotfiles_config "$CONFIG_FILE"
+else
+    # Defaults if config library not available
+    CONFIG_EDITOR="nvim"
+    CONFIG_TERMINAL="wezterm"
+    CONFIG_THEME="gruvbox-light"
+    CONFIG_CATEGORIES="full"
+    CONFIG_SKIP_PACKAGES=""
+fi
+
+# Get config values
+CONFIG_CATEGORIES=$(get_config "categories" "$CONFIG_CATEGORIES")
+CONFIG_SKIP_PACKAGES=$(get_config "skip_packages" "$CONFIG_SKIP_PACKAGES")
+
+     if [[ "$CONFIG_CATEGORIES" == "minimal" ]]; then
+        echo -e "\n${YELLOW}Skipping non-essential tools (minimal mode)${NC}"
+        return 0
+    fi
+
+    # Check if a package should be skipped
+    should_skip_package() {
+        local package="$1"
+        # Parse skip_packages list (space or comma separated)
+        local skip_list="$CONFIG_SKIP_PACKAGES"
+        if [[ -n "$skip_list" ]]; then
+            # Replace commas with spaces for consistency
+            skip_list="${skip_list//, / }"
+            for skip_pkg in $skip_list; do
+                if [[ "$skip_pkg" == "$package" ]]; then
+                    return 0
+                fi
+            done
+        fi
+        return 1
+    }
+
+    # Counters
+    updated=0
+    skipped=0
+    failed=0
+
+    # Helpers
+    update_section() {
+        echo -e "\n${CYAN}[$(date '+%H:%M:%S')]${NC} ${BLUE}$1${NC}"
+    }
+
+    update_success() {
+        local msg="${1:-Done}"
+        echo -e "${GREEN}✓ $msg${NC}"
+        ((updated++))
+    }
+
+    update_skip() {
+        echo -e "${YELLOW}⊘ Skipped: $1${NC}"
+        ((skipped++))
+    }
+
+    update_fail() {
+        echo -e "${YELLOW}✗ Failed: $1${NC}"
+        ((failed++))
+    }
+
+    # Command exists checker
+    cmd_exists() {
+        command -v "$1" >/dev/null 2>&1
+    }
+
+    # Check for available package managers
+    echo ""
+    echo -e "${CYAN}Checking package managers...${NC}"
+    has_manager=false
+
+    if [[ "$OS" == "linux" ]]; then
+        if cmd_exists apt; then
+            has_manager=true
+            echo -e "${GREEN}✓ APT (Debian/Ubuntu)${NC}"
+        else
+            echo -e "${YELLOW}⊘ APT not found${NC}"
+        fi
+
+        if cmd_exists dnf; then
+            has_manager=true
+            echo -e "${GREEN}✓ DNF (Fedora)${NC}"
+        else
+            echo -e "${YELLOW}⊘ DNF not found${NC}"
+        fi
+
+        if cmd_exists pacman; then
+            has_manager=true
+            echo -e "${GREEN}✓ Pacman (Arch)${NC}"
+        else
+            echo -e "${YELLOW}⊘ Pacman not found${NC}"
+        fi
+
+        if cmd_exists zypper; then
+            has_manager=true
+            echo -e "${GREEN}✓ Zypper (openSUSE)${NC}"
+        else
+            echo -e "${YELLOW}⊘ Zypper not found${NC}"
+        fi
+    fi
+
+    if cmd_exists brew; then
+        has_manager=true
+        echo -e "${GREEN}✓ Homebrew${NC}"
+    else
+        echo -e "${YELLOW}⊘ Homebrew not found${NC}"
+    fi
+
+    if cmd_exists snap; then
+        has_manager=true
+        echo -e "${GREEN}✓ Snap${NC}"
+    else
+        echo -e "${YELLOW}⊘ Snap not found${NC}"
+    fi
+
+    if cmd_exists flatpak; then
+        has_manager=true
+        echo -e "${GREEN}✓ Flatpak${NC}"
+    else
+        echo -e "${YELLOW}⊘ Flatpak not found${NC}"
+    fi
+
+    if cmd_exists npm; then
+        has_manager=true
+    else
+        echo -e "${YELLOW}⊘ npm not found${NC}"
+    fi
+
+    if [[ "$has_manager" == "false" ]]; then
+        echo -e "\n${RED}Error: No package managers found!${NC}"
+        echo -e "${YELLOW}Please install a package manager (apt, brew, npm, etc.)${NC}"
+        exit 1
+    fi
+
+    if cmd_exists pip || cmd_exists pip3; then
+        has_manager=true
+    else
+        echo -e "${YELLOW}⊘ pip not found${NC}"
+    fi
+
+    if cmd_exists go; then
+        has_manager=true
+    else
+        echo -e "${YELLOW}⊘ Go not found${NC}"
+    fi
+
+    if cmd_exists cargo; then
+        has_manager=true
+    else
+        echo -e "${YELLOW}⊘ Cargo not found${NC}"
+    fi
+
+    if cmd_exists dotnet; then
+        has_manager=true
+    else
+        echo -e "${YELLOW}⊘ dotnet not found${NC}"
+    fi
+
+    if cmd_exists gem; then
+        has_manager=true
+    else
+        echo -e "${YELLOW}⊘ Gem not found${NC}"
+    fi
+
+    if cmd_exists tlmgr; then
+        has_manager=true
+    else
+        echo -e "${YELLOW}⊘ tlmgr not found${NC}"
+    fi
+
+    if cmd_exists spin; then
+        has_manager=true
+    else
+        echo -e "${YELLOW}⊘ spin not found${NC}"
+    fi
+
+    echo ""
 
 update_success() {
     local msg="${1:-Done}"
@@ -53,6 +231,93 @@ update_fail() {
 cmd_exists() {
     command -v "$1" >/dev/null 2>&1
 }
+
+# ============================================================================
+# ERROR HANDLING & TIMEOUTS
+# ============================================================================
+
+# Check if any package managers are available
+check_prerequisites() {
+    local has_manager=false
+
+    echo -e "\n${CYAN}Checking prerequisites...${NC}"
+
+    # Check for system package managers
+    if cmd_exists apt || cmd_exists dnf || cmd_exists pacman || cmd_exists zypper; then
+        has_manager=true
+        echo -e "${GREEN}✓ System package manager found${NC}"
+    fi
+
+    # Check for language package managers
+    if cmd_exists brew; then
+        has_manager=true
+        echo -e "${GREEN}✓ Homebrew found${NC}"
+    fi
+
+    if cmd_exists npm; then
+        has_manager=true
+        echo -e "${GREEN}✓ npm found${NC}"
+    fi
+
+    if cmd_exists pip || cmd_exists pip3; then
+        has_manager=true
+        echo -e "${GREEN}✓ pip found${NC}"
+    fi
+
+    if cmd_exists go; then
+        has_manager=true
+        echo -e "${GREEN}✓ Go found${NC}"
+    fi
+
+    if cmd_exists cargo; then
+        has_manager=true
+        echo -e "${GREEN}✓ Cargo found${NC}"
+    fi
+
+    if cmd_exists dotnet; then
+        has_manager=true
+        echo -e "${GREEN}✓ dotnet found${NC}"
+    fi
+
+    if cmd_exists gem; then
+        has_manager=true
+        echo -e "${GREEN}✓ Gem found${NC}"
+    fi
+
+    if [[ "$has_manager" == "false" ]]; then
+        echo -e "\n${RED}Error: No package managers found!${NC}"
+        echo -e "${YELLOW}Please install a package manager (apt, brew, npm, etc.)${NC}"
+        exit 1
+    fi
+
+    echo ""
+}
+
+# Run command with timeout
+# Usage: run_with_timeout <timeout_seconds> <command>
+run_with_timeout() {
+    local timeout="${1:-300}"  # Default 5 minutes
+    local cmd="$2"
+    local output
+
+    if ! command -v timeout >/dev/null 2>&1; then
+        # If timeout command not available, just run normally
+        eval "$cmd"
+        return $?
+    fi
+
+    output=$(timeout $timeout bash -c "$cmd" 2>&1)
+    local exit_code=$?
+
+    if [ $exit_code -eq 124 ]; then
+        echo -e "${YELLOW}Command timed out after ${timeout}s${NC}"
+        return 124
+    fi
+
+    echo "$output"
+    return $exit_code
+}
+
 
 # Update helper: captures output, detects changes, reports appropriately
 update_and_report() {
@@ -149,6 +414,9 @@ echo -e "${BLUE}========================================${NC}"
 
 start_time=$(date +%s)
 
+# Run prerequisite checks
+check_prerequisites
+
 # ============================================================================
 # APT (Debian/Ubuntu)
 # ============================================================================
@@ -222,16 +490,27 @@ fi
 # ============================================================================
 # NPM (Node.js global packages)
 # ============================================================================
-if cmd_exists npm; then
-    update_section "NPM (Node.js global packages)"
-    # Clean up invalid packages (names starting with dot from failed installs)
-    if npm list -g --depth=0 2>/dev/null | grep -q '\.opencode-ai-'; then
-        echo -e "${YELLOW}Cleaning up invalid npm packages...${NC}"
-        # Extract and uninstall invalid packages
-        npm list -g --depth=0 2>/dev/null | grep '\.opencode-ai-' | sed 's/^[+` ]*//' | while read -r pkg; do
-            npm uninstall -g "$pkg" >/dev/null 2>&1 || true
-        done
-    fi
+update_section "NPM (Node.js global packages)"
+
+# Skip if in skip list
+if should_skip_package "npm"; then
+    update_skip "npm (in skip list)"
+else
+    if cmd_exists npm; then
+        # Clean up invalid packages (names starting with dot from failed installs)
+        if npm list -g --depth=0 2>/dev/null | grep -q '\.opencode-ai-'; then
+            echo -e "${YELLOW}Cleaning up invalid npm packages...${NC}"
+            # Extract and uninstall invalid packages
+            npm list -g --depth=0 2>/dev/null | grep '\.opencode-ai-' | sed 's/^[+` ]*//' | while read -r pkg; do
+                npm uninstall -g "$pkg" >/dev/null 2>&1 || true
+            done
+        fi
+
+        update_and_report "npm update -g" "npm"
+    else
+        update_skip "npm not found"
+        ((skipped++))
+fi
     update_and_report "npm update -g" "npm"
 else
     update_skip "npm not found"
@@ -240,21 +519,35 @@ fi
 # ============================================================================
 # YARN (global packages)
 # ============================================================================
-if cmd_exists yarn; then
-    update_section "YARN (global packages)"
-    update_and_report "yarn global upgrade" "yarn"
+update_section "YARN (global packages)"
+
+if should_skip_package "yarn"; then
+    update_skip "yarn (in skip list)"
+    ((skipped++))
 else
-    update_skip "yarn not found"
+    if cmd_exists yarn; then
+        update_and_report "yarn global upgrade" "yarn"
+    else
+        update_skip "yarn not found"
+        ((skipped++))
+    fi
 fi
 
 # ============================================================================
 # PNPM
 # ============================================================================
-if cmd_exists pnpm; then
-    update_section "PNPM (global packages)"
-    update_and_report "pnpm update -g" "pnpm"
+update_section "PNPM (global packages)"
+
+if should_skip_package "pnpm"; then
+    update_skip "pnpm (in skip list)"
+    ((skipped++))
 else
-    update_skip "pnpm not found"
+    if cmd_exists pnpm; then
+        update_and_report "pnpm update -g" "pnpm"
+    else
+        update_skip "pnpm not found"
+        ((skipped++))
+    fi
 fi
 
 # ============================================================================

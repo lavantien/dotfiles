@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 # Update/Clone All GitHub Repositories for a User
-# Usage: ./git-update-repos.sh [-u username] [-d base_dir] [-s] [--no-sync]
+# Usage: ./git-update-repos.sh [-u username] [-d base_dir] [-s] [--no-sync] [-c] [--commit]
 
 set -euo pipefail
 
-# Defaults
-USERNAME="lavantien"
-BASE_DIR="$HOME/dev/github"
+# Defaults (can be overridden by environment variables)
+USERNAME="${GITHUB_USERNAME:-$(git config user.name 2>/dev/null || echo "lavantien")}"
+BASE_DIR="${GIT_BASE_DIR:-$HOME/dev/github}"
 USE_SSH=false
 SYNC_INSTRUCTIONS=true
+AUTO_COMMIT=false
 
 # Colors
 RED='\033[0;31m'
@@ -29,17 +30,19 @@ while [[ $# -gt 0 ]]; do
         -d) BASE_DIR="$2"; shift 2 ;;
         -s) USE_SSH=true; shift ;;
         --no-sync) SYNC_INSTRUCTIONS=false; shift ;;
-        *) echo "Usage: $0 [-u username] [-d base_dir] [-s] [--no-sync]" >&2; exit 1 ;;
+        -c|--commit) AUTO_COMMIT=true; shift ;;
+        *) echo "Usage: $0 [-u username] [-d base_dir] [-s] [--no-sync] [-c|--commit]" >&2; exit 1 ;;
     esac
 done
 
 echo -e "${CYAN}========================================${NC}"
 echo -e "${CYAN}   GitHub Repos Updater${NC}"
 echo -e "${CYAN}========================================${NC}"
-echo -e "${BLUE}User:${NC}      $USERNAME"
-echo -e "${BLUE}Directory:${NC}  $BASE_DIR"
-echo -e "${BLUE}SSH:${NC}       $USE_SSH"
-echo -e "${BLUE}Sync:${NC}      $SYNC_INSTRUCTIONS"
+echo -e "${BLUE}User:${NC}       $USERNAME"
+echo -e "${BLUE}Directory:${NC}   $BASE_DIR"
+echo -e "${BLUE}SSH:${NC}        $USE_SSH"
+echo -e "${BLUE}Sync:${NC}       $SYNC_INSTRUCTIONS"
+echo -e "${BLUE}Auto-commit:${NC} $AUTO_COMMIT"
 echo -e "${CYAN}========================================${NC}"
 echo
 
@@ -181,7 +184,11 @@ if [[ "$SYNC_INSTRUCTIONS" == true ]]; then
     echo -e "${CYAN}========================================${NC}"
 
     if [[ -f "$SYNC_SCRIPT" ]]; then
-        bash "$SYNC_SCRIPT" -d "$BASE_DIR" -c
+        if [[ "$AUTO_COMMIT" == "true" ]]; then
+            bash "$SYNC_SCRIPT" -d "$BASE_DIR" -c
+        else
+            bash "$SYNC_SCRIPT" -d "$BASE_DIR"
+        fi
     else
         echo -e "${YELLOW}Warning: Sync script not found: $SYNC_SCRIPT${NC}"
     fi

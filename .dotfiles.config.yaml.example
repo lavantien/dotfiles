@@ -1,0 +1,36 @@
+# Dotfiles Configuration
+# Copy this file to ~/.dotfiles.config.yaml and customize
+# All fields are optional - defaults will be used if not specified
+
+# User preferences
+editor: nvim                 # Preferred editor: vim, nvim, code
+terminal: wezterm            # Terminal emulator: wezterm, alacritty, kitty
+theme: gruvbox-light          # Default theme for editors/tools
+
+# Bootstrap preferences
+categories: full              # Installation category: minimal, sdk, full
+auto_update_repos: false      # Automatically update all repos during bootstrap
+backup_before_deploy: false    # Create backup before deploying configs
+
+# Git preferences
+sign_commits: false           # Whether to sign git commits
+default_branch: main          # Default branch name for new repos
+
+# Repository management
+github_username: lavantien    # GitHub username for git-update-repos
+base_dir: ~/dev/github       # Base directory for repos
+auto_commit_changes: false    # Auto-commit changes (requires --commit flag to override)
+
+# Packages to skip during update/bootstrap
+skip_packages: []             # List of packages to skip: [docker, rust, cargo]
+
+# Platform-specific settings
+linux:
+  package_manager: auto        # auto, apt, dnf, pacman, zypper
+  display_server: x11         # x11, wayland
+
+windows:
+  package_manager: scoop       # scoop, winget, choco
+
+macos:
+  package_manager: brew        # brew

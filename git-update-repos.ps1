@@ -1,13 +1,25 @@
 #!/usr/bin/env pwsh
 # Update/Clone All GitHub Repositories for a User
-# Usage: .\git-update-repos.ps1 [-Username] "username" [-BaseDir] "path" [-UseSSH] [-NoSync]
+# Usage: .\git-update-repos.ps1 [-Username] "username" [-BaseDir] "path" [-UseSSH] [-NoSync] [-Commit]
 
 param(
-    [string]$Username = "lavantien",
-    [string]$BaseDir = "$HOME\dev\github",
+    [string]$Username,
+    [string]$BaseDir,
     [switch]$UseSSH,
-    [switch]$NoSync
-)
+    [switch]$NoSync,
+    [switch]$Commit
+    )
+
+# Set defaults with environment variable fallback
+if (-not $Username) {
+    $Username = if ($env:GITHUB_USERNAME) { $env:GITHUB_USERNAME }
+                 elseif (git config user.name 2>$null) { git config user.name }
+                 else { "lavantien" }
+}
+
+if (-not $BaseDir) {
+    $BaseDir = if ($env:GIT_BASE_DIR) { $env:GIT_BASE_DIR } else { "$HOME\dev\github" }
+}
 
 # Colors
 $E = [char]27
@@ -24,10 +36,11 @@ $SyncScript = Join-Path $ScriptDir "sync-system-instructions.ps1"
 Write-Host "${CYAN}========================================${R}"
 Write-Host "${CYAN}   GitHub Repos Updater${R}"
 Write-Host "${CYAN}========================================${R}"
-Write-Host "${BLUE}User:${R}      $Username"
-Write-Host "${BLUE}Directory:${R}  $BaseDir"
-Write-Host "${BLUE}SSH:${R}       $($UseSSH.IsPresent)"
-Write-Host "${BLUE}Sync:${R}      $(-not $NoSync.IsPresent)"
+Write-Host "${BLUE}User:${R}       $Username"
+Write-Host "${BLUE}Directory:${R}   $BaseDir"
+Write-Host "${BLUE}SSH:${R}        $($UseSSH.IsPresent)"
+Write-Host "${BLUE}Sync:${R}       $(-not $NoSync.IsPresent)"
+Write-Host "${BLUE}Auto-commit:${R} $($Commit.IsPresent)"
 Write-Host "${CYAN}========================================${R}`n"
 
 # Create base directory if it doesn't exist
@@ -130,7 +143,11 @@ if (-not $NoSync.IsPresent) {
     Write-Host "${CYAN}========================================${R}"
 
     if (Test-Path $SyncScript) {
-        & $SyncScript -BaseDir $BaseDir -Commit
+        if ($Commit.IsPresent) {
+            & $SyncScript -BaseDir $BaseDir -Commit
+        } else {
+            & $SyncScript -BaseDir $BaseDir
+        }
     } else {
         Write-Host "${YELLOW}Warning: Sync script not found: $SyncScript${R}"
     }

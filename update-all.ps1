@@ -31,6 +31,98 @@ function Update-Fail {
     Write-Host "${YELLOW}✗ Failed: $Message${R}"
 }
 
+# ============================================================================
+# ERROR HANDLING & TIMEOUTS
+# ============================================================================
+
+# Check if any package managers are available
+function Test-Prerequisites {
+    $hasManager = $false
+
+    Write-Host "`n${CYAN}Checking prerequisites...${R}"
+
+    # Check for package managers
+    if (Get-Command scoop -ErrorAction SilentlyContinue) {
+        $hasManager = $true
+        Write-Host "${GREEN}✓ Scoop found${R}"
+    }
+
+    if (Get-Command winget -ErrorAction SilentlyContinue) {
+        $hasManager = $true
+        Write-Host "${GREEN}✓ winget found${R}"
+    }
+
+    if (Get-Command choco -ErrorAction SilentlyContinue) {
+        $hasManager = $true
+        Write-Host "${GREEN}✓ Chocolatey found${R}"
+    }
+
+    if (Get-Command npm -ErrorAction SilentlyContinue) {
+        $hasManager = $true
+        Write-Host "${GREEN}✓ npm found${R}"
+    }
+
+    if (Get-Command pip -ErrorAction SilentlyContinue) {
+        $hasManager = $true
+        Write-Host "${GREEN}✓ pip found${R}"
+    }
+
+    if (Get-Command go -ErrorAction SilentlyContinue) {
+        $hasManager = $true
+        Write-Host "${GREEN}✓ Go found${R}"
+    }
+
+    if (Get-Command cargo -ErrorAction SilentlyContinue) {
+        $hasManager = $true
+        Write-Host "${GREEN}✓ Cargo found${R}"
+    }
+
+    if (Get-Command dotnet -ErrorAction SilentlyContinue) {
+        $hasManager = $true
+        Write-Host "${GREEN}✓ dotnet found${R}"
+    }
+
+    if (Get-Command gem -ErrorAction SilentlyContinue) {
+        $hasManager = $true
+        Write-Host "${GREEN}✓ Gem found${R}"
+    }
+
+    if (-not $hasManager) {
+        Write-Host "`n${RED}Error: No package managers found!${R}"
+        Write-Host "${YELLOW}Please install a package manager (scoop, winget, npm, etc.)${R}"
+        exit 1
+    }
+
+    Write-Host ""
+}
+
+# Run command with timeout
+# Usage: Invoke-WithTimeout [-Timeout] 300 -Command "command"
+function Invoke-WithTimeout {
+    param(
+        [int]$Timeout = 300,  # Default 5 minutes
+        [string]$Command
+    )
+
+    # PowerShell has built-in job-based timeout
+    $job = Start-Job -ScriptBlock ([scriptblock]::Create($Command)) -Name "TimeoutJob"
+
+    $completed = Wait-Job $job -Timeout $Timeout
+
+    if (-not $completed) {
+        Stop-Job $job
+        Remove-Job $job -Force
+        Write-Host "${YELLOW}Command timed out after ${Timeout}s${R}"
+        return $false
+    }
+
+    $output = Receive-Job $job
+    Remove-Job $job -Force
+
+    Write-Output $output
+    return $?
+}
+
 # Update helper: captures output, detects changes, reports appropriately
 function Update-AndReport {
     param([string]$Cmd, [string]$Name)
@@ -131,6 +223,9 @@ $startTime = Get-Date
 $updated = 0
 $skipped = 0
 $failed = 0
+
+# Run prerequisite checks
+Test-Prerequisites
 
 # NPM (Node.js global packages)
 Update-Section "NPM (Node.js global packages)"

@@ -27,9 +27,36 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Support XDG_CONFIG_HOME
 XDG_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}"
 
+# ============================================================================
+# LOAD USER CONFIGURATION
+# ============================================================================
+# Source config library if available
+if [[ -f "$SCRIPT_DIR/lib/config.sh" ]]; then
+    source "$SCRIPT_DIR/lib/config.sh"
+fi
+
+# Load user config
+CONFIG_FILE="$HOME/.dotfiles.config.yaml"
+load_dotfiles_config "$CONFIG_FILE"
+
+# Get config values (with defaults)
+CONFIG_EDITOR=$(get_config "editor" "nvim")
+CONFIG_THEME=$(get_config "theme" "gruvbox-light")
+CONFIG_CATEGORIES=$(get_config "categories" "full")
+CONFIG_AUTO_UPDATE_REPOS=$(get_config "auto_update_repos" "false")
+CONFIG_BACKUP_BEFORE_DEPLOY=$(get_config "backup_before_deploy" "false")
+
+# Show config status
+if [[ -f "$CONFIG_FILE" ]]; then
+    echo -e "${GREEN}Using config: $CONFIG_FILE${NC}"
+else
+    echo -e "${YELLOW}No config file found, using defaults${NC}"
+fi
+
 echo -e "${BLUE}Deploying dotfiles for: $OS${NC}"
 echo -e "${BLUE}Script directory: $SCRIPT_DIR${NC}"
 echo -e "${BLUE}Config directory: $XDG_CONFIG${NC}"
+echo -e "${BLUE}Categories: $CONFIG_CATEGORIES${NC}"
 
 # ============================================================================
 # COMMON DEPLOYMENT
@@ -104,6 +131,7 @@ deploy_git_hooks() {
     git config --global core.hooksPath "$hooks_dir"
 
     echo -e "${GREEN}Git hooks deployed to: $hooks_dir${NC}"
+    echo -e "${BLUE}Neovim editor preference: ${CONFIG_EDITOR:-nvim}${NC}"
 }
 
 # ============================================================================

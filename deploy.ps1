@@ -88,8 +88,8 @@ function Deploy-Common {
     }
 
     # Copy update-all script
-    if (Test-Path "$ScriptDirupdate-all.sh") {
-        Copy-Item "$ScriptDirupdate-all.sh" "$env:USERPROFILEdev" -Force
+    if (Test-Path "$ScriptDir\update-all.sh") {
+        Copy-Item "$ScriptDir\update-all.sh" "$env:USERPROFILE\dev\" -Force
     }
     if (Test-Path "$ScriptDir\update-all.ps1") {
         Copy-Item "$ScriptDir\update-all.ps1" "$env:USERPROFILE\dev\" -Force

@@ -1,6 +1,12 @@
 # Universal Bootstrap Script for Windows
 # Installs and configures development environment on Windows 10/11
 #
+# BRIDGE APPROACH:
+#   - Works without config file (uses hardcoded defaults - backward compatible)
+#   - Loads config file if present (~/.dotfiles.config.yaml) - forward compatible
+#   - Config library is optional - scripts work even if it's missing
+#   - Defaults: categories="full", interactive=true, no dry-run
+#
 # Usage:
 #   .\bootstrap.ps1 [options]
 #
@@ -29,6 +35,12 @@ $PlatformsDir = Join-Path $ScriptDir "platforms"
 # Source library functions
 . "$LibDir\common.ps1"
 . "$LibDir\version-check.ps1"
+
+# Source config library (optional - for custom configuration)
+$ConfigLibPath = Join-Path $ScriptDir "..\lib\config.ps1"
+if (Test-Path $ConfigLibPath) {
+    . "$ConfigLibPath"
+}
 
 # Source platform-specific functions
 . "$PlatformsDir\windows.ps1"
@@ -311,6 +323,31 @@ function Main {
         Write-Host "=== Dry Run Complete ===" -ForegroundColor Yellow
         Write-Host "Run without -DryRun to actually install" -ForegroundColor Yellow
     }
+}
+
+# ============================================================================
+# LOAD USER CONFIGURATION (OPTIONAL)
+# ============================================================================
+
+# Only try to load config if the config library was successfully sourced
+if (Get-Command Load-DotfilesConfig -ErrorAction SilentlyContinue) {
+    $ConfigFile = "$env:USERPROFILE\.dotfiles.config.yaml"
+
+    if (Test-Path $ConfigFile) {
+        try {
+            Load-DotfilesConfig -ConfigFile $ConfigFile
+            Write-Info "Config loaded from $ConfigFile"
+
+            # Override defaults with config values (if config was loaded)
+            if ($script:CONFIG_CATEGORIES) {
+                $Script:Categories = $script:CONFIG_CATEGORIES
+            }
+        } catch {
+            Write-Warning "Failed to load config file, using defaults"
+        }
+    }
+} else {
+    Write-Info "Config library not found, using hardcoded defaults"
 }
 
 # Run main
