@@ -2,6 +2,11 @@
 # Universal Bootstrap Script
 # Installs and configures development environment on Linux/macOS
 #
+# VERSION POLICY:
+#   All packages are installed or updated to their LATEST versions
+#   No hardcoded version numbers - always gets the newest stable release
+#   Run bootstrap again to update all tools to latest versions
+#
 # BRIDGE APPROACH:
 #   - Works without config file (uses hardcoded defaults - backward compatible)
 #   - Loads config file if present (~/.dotfiles.config.yaml) - forward compatible
@@ -161,34 +166,52 @@ install_foundation() {
 install_sdks() {
     print_header "Phase 2: Core SDKs"
 
-    # Node.js
+    # Node.js (always latest LTS)
     if [[ "$CATEGORIES" != "minimal" ]]; then
         if [[ "$OS" == "macos" ]]; then
-            install_brew_package node "18.0.0"
+            install_brew_package node "" ""
         elif [[ "$OS" == "linux" ]]; then
-            install_linux_package nodejs "18.0.0" node
+            install_linux_package nodejs "" node
         fi
     fi
 
-    # Python
+    # Python (always latest)
     if [[ "$OS" == "macos" ]]; then
-        install_brew_package python "3.9.0" python3
+        install_brew_package python "" python3
     elif [[ "$OS" == "linux" ]]; then
-        install_linux_package python3 "3.9.0" python3
+        install_linux_package python3 "" python3
     fi
 
-    # Go
+    # Go (always latest)
     if [[ "$CATEGORIES" != "minimal" ]]; then
         if [[ "$OS" == "macos" ]]; then
-            install_brew_package go "1.20.0"
+            install_brew_package go "" ""
         elif [[ "$OS" == "linux" ]]; then
-            install_linux_package golang "1.20.0" go
+            install_linux_package golang "" go
         fi
     fi
 
     # Rust
     if [[ "$CATEGORIES" == "full" ]]; then
         install_rustup
+    fi
+
+    # dotnet SDK
+    if [[ "$CATEGORIES" == "full" ]]; then
+        if [[ "$OS" == "macos" ]]; then
+            install_brew_package dotnet-sdk "" dotnet
+        elif [[ "$OS" == "linux" ]]; then
+            install_linux_package dotnet-sdk "" dotnet || true
+        fi
+    fi
+
+    # OpenJDK
+    if [[ "$CATEGORIES" == "full" ]]; then
+        if [[ "$OS" == "macos" ]]; then
+            install_brew_package openjdk "" javac
+        elif [[ "$OS" == "linux" ]]; then
+            install_linux_package default-jdk "" javac || true
+        fi
     fi
 
     log_success "SDKs installation complete"
@@ -205,23 +228,23 @@ install_language_servers() {
 
     print_header "Phase 3: Language Servers"
 
-    # lua_ls (via system package)
+    # lua_ls (via system package - always latest)
     if [[ "$OS" == "macos" ]]; then
-        install_brew_package lua-language-server "3.9.0" lua-language-server
+        install_brew_package lua-language-server "" lua-language-server
     elif [[ "$OS" == "linux" ]]; then
-        install_linux_package lua-language-server "3.9.0" lua-language-server || true
+        install_linux_package lua-language-server "" lua-language-server || true
     fi
 
-    # clangd (via system package)
+    # clangd (via system package - always latest)
     if [[ "$OS" == "macos" ]]; then
-        install_brew_package llvm "15.0.0" clangd
+        install_brew_package llvm "" clangd
     elif [[ "$OS" == "linux" ]]; then
-        install_linux_package clangd "15.0.0" clangd
+        install_linux_package clangd "" clangd
     fi
 
-    # gopls (via go install)
+    # gopls (via go install - always latest)
     if [[ "$CATEGORIES" == "full" ]] && cmd_exists go; then
-        install_go_package "golang.org/x/tools/gopls@latest" gopls "0.14.0"
+        install_go_package "golang.org/x/tools/gopls@latest" gopls ""
     fi
 
     # rust-analyzer (via rustup)
@@ -229,19 +252,58 @@ install_language_servers() {
         install_rust_analyzer_component
     fi
 
-    # pyright (via npm)
+    # pyright (via npm - always latest)
     if cmd_exists npm; then
-        install_npm_global pyright pyright "1.1.300"
+        install_npm_global pyright pyright ""
     fi
 
-    # TypeScript language server (via npm)
+    # TypeScript language server (via npm - always latest)
     if cmd_exists npm; then
-        install_npm_global typescript-language-server typescript-language-server "3.0.0"
+        install_npm_global typescript-language-server typescript-language-server ""
     fi
 
-    # YAML language server (via npm)
+    # YAML language server (via npm - always latest)
     if cmd_exists npm; then
-        install_npm_global yaml-language-server yaml-language-server "1.0.0"
+        install_npm_global yaml-language-server yaml-language-server ""
+    fi
+
+    # csharp-ls (via dotnet tool)
+    if [[ "$CATEGORIES" == "full" ]] && cmd_exists dotnet; then
+        install_dotnet_tool "csharp-ls" "csharp-ls" ""
+    fi
+
+    # jdtls (Java Language Server)
+    if [[ "$CATEGORIES" == "full" ]]; then
+        if [[ "$OS" == "macos" ]]; then
+            install_brew_package eclipse-jdt "" jdtls || true
+        elif [[ "$OS" == "linux" ]]; then
+            install_linux_package eclipse-jdt "" jdtls || true
+        fi
+    fi
+
+    # intelephense (PHP language server via npm)
+    if [[ "$CATEGORIES" == "full" ]] && cmd_exists npm; then
+        install_npm_global "intelephense" "intelephense" ""
+    fi
+
+    # Docker language servers (via npm - always latest)
+    if cmd_exists npm; then
+        install_npm_global "dockerfile-language-server-nodejs" "docker-language-server" ""
+        install_npm_global "docker-compose-language-service" "docker-compose-language-server" ""
+    fi
+
+    # tombi (TOML language server via npm - always latest)
+    if cmd_exists npm; then
+        install_npm_global "tombi" "tombi" ""
+    fi
+
+    # dartls (Dart language server - requires Dart SDK)
+    # Note: Dart SDK must be installed separately from https://dart.dev/get-dart
+    # This is optional and not installed by default
+
+    # tinymist (Typst language server via npm - always latest)
+    if [[ "$CATEGORIES" == "full" ]] && cmd_exists npm; then
+        install_npm_global "tinymist" "tinymist" ""
     fi
 
     log_success "Language servers installation complete"
@@ -258,48 +320,73 @@ install_linters_formatters() {
 
     print_header "Phase 4: Linters & Formatters"
 
-    # Prettier (via npm)
+    # Prettier (via npm - always latest)
     if cmd_exists npm; then
-        install_npm_global prettier prettier "3.0.0"
+        install_npm_global prettier prettier ""
     fi
 
-    # ESLint (via npm)
+    # ESLint (via npm - always latest)
     if cmd_exists npm; then
-        install_npm_global eslint eslint "8.50.0"
+        install_npm_global eslint eslint ""
     fi
 
-    # Ruff (via pip)
+    # Ruff (via pip - always latest)
     if cmd_exists python3 || cmd_exists python; then
-        install_pip_global "ruff" ruff "0.1.0"
+        install_pip_global "ruff" ruff ""
     fi
 
-    # gup (Go package manager - install first, then use it for other Go tools)
-    if cmd_exists go && ! cmd_exists gup; then
-        install_go_package "nao.vi/gup@latest" gup "0.12.0"
-    fi
-
-    # goimports (via gup if available, otherwise go install)
-    if cmd_exists go; then
-        install_go_package "golang.org/x/tools/cmd/goimports@latest" goimports "0.10.0"
-    fi
-
-    # golangci-lint
-    if cmd_exists go; then
-        if [[ "$OS" == "macos" ]]; then
-            install_brew_package golangci-lint "1.55.0" golangci-lint
-        elif [[ "$OS" == "linux" ]]; then
-            install_linux_package golangci-lint "1.55.0" golangci-lint || \
-                install_go_package "github.com/golangci/golangci-lint/cmd/golangci-lint@latest" golangci-lint "1.55.0"
+    # Additional Python tools (for full compatibility with git hooks - always latest)
+    if [[ "$CATEGORIES" == "full" ]]; then
+        if cmd_exists python3 || cmd_exists python; then
+            install_pip_global "black" black "" || true
+            install_pip_global "isort" isort "" || true
+            install_pip_global "mypy" mypy "" || true
         fi
     fi
 
-    # clang-format (usually comes with clangd)
+    # gup (Go package manager - always latest)
+    if cmd_exists go && ! cmd_exists gup; then
+        install_go_package "nao.vi/gup@latest" gup ""
+    fi
+
+    # goimports (via gup if available, otherwise go install - always latest)
+    if cmd_exists go; then
+        install_go_package "golang.org/x/tools/cmd/goimports@latest" goimports ""
+    fi
+
+    # golangci-lint (always latest)
+    if cmd_exists go; then
+        if [[ "$OS" == "macos" ]]; then
+            install_brew_package golangci-lint "" golangci-lint
+        elif [[ "$OS" == "linux" ]]; then
+            install_linux_package golangci-lint "" golangci-lint || \
+                install_go_package "github.com/golangci/golangci-lint/cmd/golangci-lint@latest" golangci-lint ""
+        fi
+    fi
+
+    # clang-format (usually comes with clangd - always latest)
     if ! cmd_exists clang-format; then
         if [[ "$OS" == "macos" ]]; then
-            install_brew_package llvm "15.0.0" clang-format
+            install_brew_package llvm "" clang-format
         elif [[ "$OS" == "linux" ]]; then
-            install_linux_package clang-format "15.0.0" clang-format
+            install_linux_package clang-format "" clang-format
         fi
+    fi
+
+    # Shell tools
+    if [[ "$CATEGORIES" == "full" ]]; then
+        if [[ "$OS" == "macos" ]]; then
+            install_brew_package shellcheck "" shellcheck
+            install_brew_package shfmt "" shfmt
+        elif [[ "$OS" == "linux" ]]; then
+            install_linux_package shellcheck "" shellcheck || true
+            install_linux_package shfmt "" shfmt || true
+        fi
+    fi
+
+    # scalafmt (via cargo)
+    if [[ "$CATEGORIES" == "full" ]] && cmd_exists cargo; then
+        install_cargo_package "scalafmt" "scalafmt" ""
     fi
 
     log_success "Linters & formatters installation complete"
@@ -312,90 +399,90 @@ install_linters_formatters() {
 install_cli_tools() {
     print_header "Phase 5: CLI Tools"
 
-    # fzf
+    # fzf (always latest)
     if [[ "$OS" == "macos" ]]; then
-        install_brew_package fzf "0.40.0"
+        install_brew_package fzf "" ""
     elif [[ "$OS" == "linux" ]]; then
-        install_linux_package fzf "0.40.0" fzf
+        install_linux_package fzf "" fzf
     fi
 
-    # zoxide
+    # zoxide (always latest)
     if [[ "$OS" == "macos" ]]; then
-        install_brew_package zoxide "0.9.0"
+        install_brew_package zoxide "" ""
     elif [[ "$OS" == "linux" ]]; then
-        install_linux_package zoxide "0.9.0" zoxide
+        install_linux_package zoxide "" zoxide
     fi
 
-    # bat
+    # bat (always latest)
     if [[ "$OS" == "macos" ]]; then
-        install_brew_package bat "0.24.0"
+        install_brew_package bat "" ""
     elif [[ "$OS" == "linux" ]]; then
-        install_linux_package bat "0.24.0" bat
+        install_linux_package bat "" bat
     fi
 
-    # eza (modern ls)
+    # eza (modern ls - always latest)
     if [[ "$OS" == "macos" ]]; then
-        install_brew_package eza "0.18.0"
+        install_brew_package eza "" ""
     elif [[ "$OS" == "linux" ]]; then
-        install_linux_package eza "0.18.0" eza || \
-        install_linux_package exa "0.18.0" eza || true
+        install_linux_package eza "" eza || \
+        install_linux_package exa "" eza || true
     fi
 
-    # lazygit
+    # lazygit (always latest)
     if [[ "$OS" == "macos" ]]; then
-        install_brew_package lazygit "0.40.0"
+        install_brew_package lazygit "" ""
     elif [[ "$OS" == "linux" ]]; then
-        install_linux_package lazygit "0.40.0" lazygit
+        install_linux_package lazygit "" lazygit
     fi
 
-    # gh (GitHub CLI)
+    # gh (GitHub CLI - always latest)
     if [[ "$OS" == "macos" ]]; then
-        install_brew_package gh "2.40.0"
+        install_brew_package gh "" ""
     elif [[ "$OS" == "linux" ]]; then
-        install_linux_package gh "2.40.0" gh
+        install_linux_package gh "" gh
     fi
 
-    # tokei (code stats)
+    # tokei (code stats - always latest)
     if [[ "$CATEGORIES" == "full" ]]; then
         if [[ "$OS" == "macos" ]]; then
-            install_brew_package tokei "12.0.0"
+            install_brew_package tokei "" ""
         elif [[ "$OS" == "linux" ]]; then
-            install_linux_package tokei "12.0.0" tokei
+            install_linux_package tokei "" tokei
         fi
     fi
 
-    # ripgrep
+    # ripgrep (always latest)
     if [[ "$CATEGORIES" != "minimal" ]]; then
         if [[ "$OS" == "macos" ]]; then
-            install_brew_package ripgrep "13.0.0" rg
+            install_brew_package ripgrep "" rg
         elif [[ "$OS" == "linux" ]]; then
-            install_linux_package ripgrep "13.0.0" rg
+            install_linux_package ripgrep "" rg
         fi
     fi
 
-    # fd
+    # fd (always latest)
     if [[ "$CATEGORIES" == "full" ]]; then
         if [[ "$OS" == "macos" ]]; then
-            install_brew_package fd "9.0.0" fd
+            install_brew_package fd "" fd
         elif [[ "$OS" == "linux" ]]; then
-            install_linux_package fd-find "9.0.0" fd || true
+            install_linux_package fd-find "" fd || true
         fi
     fi
 
-    # bats (testing framework)
+    # bats (testing framework - always latest)
     if cmd_exists npm; then
-        install_npm_global bats bats "1.10.0"
+        install_npm_global bats bats ""
     elif [[ "$OS" == "macos" ]]; then
-        install_brew_package bats "1.10.0"
+        install_brew_package bats ""
     elif [[ "$OS" == "linux" ]]; then
-        install_linux_package bats "1.10.0" bats
+        install_linux_package bats "" bats
     fi
 
-    # kcov (code coverage for bash - Linux/macOS only)
+    # kcov (code coverage for bash - Linux/macOS only - always latest)
     if [[ "$OS" == "macos" ]]; then
-        install_brew_package kcov "40" kcov
+        install_brew_package kcov "" kcov
     elif [[ "$OS" == "linux" ]]; then
-        install_linux_package kcov "38" kcov
+        install_linux_package kcov "" kcov
     fi
 
     log_success "CLI tools installation complete"

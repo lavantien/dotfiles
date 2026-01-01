@@ -133,7 +133,7 @@ function Git-Status { & git status @args }
 Set-Alias -Name gs -Value Git-Status
 
 function Git-Log { & git log @args }
-Set-Alias -Name gl -Value Git-Log
+Set-Alias -Name gl -Value Git-Log -Force
 
 function Get-GitLogGraph { & git log --graph @args }
 Set-Alias -Name glg -Value Get-GitLogGraph
@@ -157,10 +157,10 @@ function Add-GitAll { & git add . }
 Set-Alias -Name gaa -Value Add-GitAll
 
 function Git-CommitMessage { & git commit -m @args }
-Set-Alias -Name gcm -Value Git-CommitMessage
+Set-Alias -Name gcm -Value Git-CommitMessage -Force
 
 function Git-Push { & git push @args }
-Set-Alias -Name gp -Value Git-Push
+Set-Alias -Name gp -Value Git-Push -Force
 
 function Git-Fetch { & git fetch @args }
 Set-Alias -Name gf -Value Git-Fetch

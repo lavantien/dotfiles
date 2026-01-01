@@ -3,7 +3,7 @@
 ![Coverage](https://img.shields.io/badge/coverage-23%25-red) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)](https://github.com/lavantien/dotfiles)
 
-Production-grade dotfiles supporting Windows 11, Linux (Ubuntu/Fedora/Arch), and macOS with intelligent auto-detection and graceful fallbacks.
+Production-grade dotfiles supporting Windows 11, Linux (Ubuntu/Fedora/Arch), and macOS with intelligent auto-detection and graceful fallbacks. A truly Universal SWE Dotfiles (Neovim/WezTerm/zsh/pwsh, Claude Code/Git Hooks, Linux/Windows) with batteries included: 15+ LSP servers, 10+ language formatters/linters, TDD enforcement, and comprehensive Git and Claude Code workflow automation. All configured, tested, and just clone and run.
 
 ---
 
@@ -15,18 +15,17 @@ Production-grade dotfiles supporting Windows 11, Linux (Ubuntu/Fedora/Arch), and
 - [4. Bridge Approach Note](#4-bridge-approach-note)
 - [5. Bootstrap Options](#5-bootstrap-options)
 - [6. Configuration (Optional)](#6-configuration-optional)
-- [7. Fresh Install Guide](#7-fresh-install-guide)
-- [8. Git Hooks](#8-git-hooks)
-- [9. Claude Code Integration](#9-claude-code-integration)
-- [10. Universal Update All](#10-universal-update-all)
-- [11. System Instructions Sync](#11-system-instructions-sync)
-- [12. Health Check & Troubleshooting](#12-health-check--troubleshooting)
-- [13. Testing](#13-testing)
-- [14. Code Coverage](#14-code-coverage)
-- [15. Updating](#15-updating)
-- [16. Shell Aliases](#16-shell-aliases)
-- [17. Neovim Keybindings](#17-neovim-keybindings)
-- [18. Additional Documentation](#18-additional-documentation)
+- [7. Git Hooks](#7-git-hooks)
+- [8. Claude Code Integration](#8-claude-code-integration)
+- [9. Universal Update All](#9-universal-update-all)
+- [10. System Instructions Sync](#10-system-instructions-sync)
+- [11. Health Check & Troubleshooting](#11-health-check--troubleshooting)
+- [12. Testing](#12-testing)
+- [13. Code Coverage](#13-code-coverage)
+- [14. Updating](#14-updating)
+- [15. Shell Aliases](#15-shell-aliases)
+- [16. Neovim Keybindings](#16-neovim-keybindings)
+- [17. Additional Documentation](#17-additional-documentation)
 
 ---
 
@@ -41,17 +40,96 @@ Intelligent Automation
 - Auto-detection: Detects platform, tools, and project types automatically
 - Graceful fallbacks: Works even when some tools are not installed
 - OneDrive-aware: Handles synced Documents folders on Windows
+- Always latest: Bootstrap installs/updates all tools to latest versions
 
-Developer Tools
-- 15+ LSP servers: Lua, Go, Rust, C/C++, Python, JS/TS, Java, C#, Dart, Typst, Docker, YAML
-- 9+ languages in Git hooks: Auto-formats and lints on commit
-- 20+ package managers: Update everything with one command
+---
 
-Quality Assurance
+### What Gets Installed
+
+**Package Managers**
+- Windows: Scoop (CLI tools), winget (heavy apps like Visual Studio, LLVM)
+- Linux: System (apt/dnf/pacman/zypper), Homebrew (optional)
+- macOS: Homebrew (primary)
+
+**C/C++ Toolchain**
+- Windows: Visual Studio Community (latest), LLVM (latest)
+- Linux: GCC (latest), LLVM/Clang (latest)
+- macOS: LLVM/Clang (latest)
+
+**Core SDKs** (always latest)
+- Node.js LTS
+- Python 3.x
+- Go
+- Rust (via rustup)
+- dotnet LTS
+- OpenJDK LTS
+
+**Language Servers** (Neovim LSP + Claude Code - 15 servers)
+- clangd (C/C++)
+- csharp-ls (C#)
+- docker-language-server (Dockerfile)
+- docker-compose-language-server (Docker Compose)
+- gopls (Go)
+- intelephense (PHP)
+- jdtls (Java)
+- lua-language-server (Lua)
+- pyright (Python)
+- rust-analyzer (Rust)
+- tinymist (Typst)
+- tombi (TOML)
+- ts_ls (JavaScript/TypeScript)
+- yaml-language-server (YAML)
+- dartls (Dart - optional, requires Dart SDK)
+
+**Linters & Formatters** (for Git Hooks + Claude Code)
+- JS/TS: prettier, eslint, tsc
+- Python: ruff, black, isort, mypy
+- Go: goimports, go fmt, golangci-lint, go vet
+- Rust: cargo fmt, clippy, cargo check
+- C/C++: clang-format, clang-tidy, cppcheck
+- C#: dotnet format, dotnet build
+- Java: spotless, google-java-format, checkstyle
+- Bash: shellcheck, shfmt
+- PHP: Laravel Pint, php-cs-fixer, PHPStan, Psalm
+- Scala: scalafmt
+
+**Essential CLI Tools**
+- fzf - Fuzzy finder
+- zoxide - Smart cd navigation
+- bat - Better cat
+- eza - Better ls
+- lazygit - Terminal Git UI
+- gh - GitHub CLI
+- ripgrep (rg) - Fast grep
+- fd - Fast find
+- tokei - Code stats (full category)
+- difftastic - Structured diff (full category)
+
+**Testing & Coverage**
+- bats - Bash testing
+- Pester - PowerShell testing with coverage
+- kcov - Bash coverage reports
+
+---
+
+### Installation Categories
+
+| Category | What's Installed | Use Case |
+|----------|------------------|----------|
+| minimal | Package managers, git, CLI tools only | Quick setup |
+| sdk | minimal + Node.js, Python, Go, Rust, dotnet, JDK | No LSPs |
+| full | sdk + all LSPs + linters/formatters | Complete environment (default) |
+
+---
+
+### Quality Assurance
+
 - 380+ automated tests covering all major components
 - Conventional commits enforcement
 - Claude Code hooks for real-time quality checks
 - TDD guard to enforce test-driven development
+- Auto-formats and lints on commit for 15+ languages
+- 15+ LSP servers configured in Neovim for IDE-like experience
 
 ---
 
@@ -198,122 +276,7 @@ Common Config Options
 
 ---
 
-## 7. Fresh Install Guide
-
-What gets installed on a fresh machine depends on the platform and category selected. This guide provides a comprehensive overview.
-
-### Windows (PowerShell 7+)
-
-Package Manager
-- Scoop (primary) - for most CLI tools and development tools
-- Why: User-scoped, no admin required, clean uninstall, faster than winget
-
-Core SDKs
-- Node.js LTS (18+) - JavaScript/TypeScript development
-- Python 3.9+ - General scripting and tooling
-- Go 1.20+ - Go language development
-- Rust (via rustup) - Systems programming
-
-Language Servers (for Neovim LSP)
-- clangd (from LLVM) - C/C++ completion and diagnostics
-- gopls - Go language server
-- rust-analyzer - Rust language server
-- pyright - Python type checking
-- typescript-language-server - JS/TS completion
-- yaml-language-server - YAML validation
-
-Linters & Formatters
-- prettier - Code formatter for JS/TS/JSON/CSS/YAML
-- eslint - JavaScript/TypeScript linter
-- ruff - Fast Python linter/formatter
-- goimports - Go import management
-- golangci-lint - Go comprehensive linting
-- clang-format - C/C++ formatting
-
-Essential CLI Tools
-- fzf - Fuzzy finder for files and commands
-- zoxide - Smart directory navigation (cd replacement)
-- bat - Better cat with syntax highlighting
-- eza - Better ls with colors and git status
-- lazygit - Terminal Git UI
-- gh - GitHub CLI tool
-- ripgrep (rg) - Faster grep alternative
-- fd - Faster find alternative
-- tokei - Code statistics (full category)
-- difftastic - Structured diff tool (full category)
-
-Testing & Coverage
-- bats - Bash testing framework (via npm)
-- Pester 5.7+ - PowerShell testing with code coverage
-- Docker Desktop - Optional, for bash coverage on Windows
-
-### Linux (Ubuntu/Fedora/Arch/openSUSE)
-
-Package Managers
-- System package manager (apt/dnf/pacman/zypper) - Native packages
-- Homebrew (optional) - For consistency across platforms
-- Snap/Flatpak - For GUI applications when needed
-
-Core SDKs
-- Node.js 18+ - JavaScript/TypeScript development
-- Python 3.9+ - Included on most distros, upgraded if needed
-- Go 1.20+ - Go language development
-- Rust (via rustup) - Systems programming
-
-Language Servers (for Neovim LSP)
-- clangd - C/C++ completion and diagnostics
-- gopls - Go language server
-- rust-analyzer - Rust language server
-- pyright - Python type checking
-- typescript-language-server - JS/TS completion
-- yaml-language-server - YAML validation
-
-Linters & Formatters
-- prettier - Code formatter for JS/TS/JSON/CSS/YAML
-- eslint - JavaScript/TypeScript linter
-- ruff - Fast Python linter/formatter
-- goimports - Go import management (via go install)
-- golangci-lint - Go comprehensive linting
-- clang-format/clang-tidy - C/C++ tools
-
-Essential CLI Tools
-- fzf - Fuzzy finder for files and commands
-- zoxide - Smart directory navigation
-- bat - Better cat with syntax highlighting
-- eza - Modern ls replacement
-- lazygit - Terminal Git UI
-- gh - GitHub CLI tool
-- ripgrep (rg) - Fast text search
-- fd - Fast file search
-- tokei - Code statistics (full category)
-- difftastic - Structured diff tool (full category)
-
-Testing & Coverage
-- bats - Bash testing framework (via npm or apt)
-- kcov - Bash code coverage with HTML reports
-
-### Installation Categories
-
-| Category | What's Installed | Use Case |
-|----------|------------------|----------|
-| minimal | Package managers, git, CLI tools only | Quick setup with minimal development tools |
-| sdk | minimal + Node.js, Python, Go | Developers who don't need Rust or language servers |
-| full | sdk + Rust + all LSPs + linters/formatters | Complete development environment (default) |
-
-### Why These Tools?
-
-Each tool serves a specific purpose in a modern development workflow:
-
-- Editor: Neovim with LSP support provides IDE-like features in the terminal
-- Navigation: fzf + zoxide = jump to any directory instantly
-- Git: lazygit visualizes branches and commits; gh integrates with GitHub
-- Search: ripgrep finds code faster than grep; fd finds files faster than find
-- Quality: Linters run automatically in git hooks to catch issues early
-- Testing: Pester and bats ensure scripts work across platforms
-
----
-
-## 8. Git Hooks
+## 7. Git Hooks
 
 Supported Languages
 
@@ -326,6 +289,9 @@ Supported Languages
 | Python | ruff, black | ruff, flake8 | mypy |
 | C# | dotnet format | Roslyn analyzers | dotnet build |
 | Java | spotless, google-java-format | checkstyle | javac |
+| PHP | Laravel Pint, php-cs-fixer | PHPStan, Psalm | - |
+| Bash | shfmt | shellcheck | - |
+| Scala | scalafmt | scalac (compiler) | scalac |
 
 What Hooks Do
 
@@ -357,7 +323,7 @@ git commit --no-verify -m "wip: emergency fix"
 
 ---
 
-## 9. Claude Code Integration
+## 8. Claude Code Integration
 
 First-class support for Claude Code with quality checks and TDD enforcement.
 
@@ -385,6 +351,18 @@ Automatically runs format/lint/type-check after any file write operation:
 }
 ```
 
+Quality Check Tools Used
+
+Claude Code's quality check hook uses the same tools as the git hooks (see Section 8):
+
+| Category | Tools |
+|----------|-------|
+| **Formatters** | prettier, ruff, black, isort, goimports, go fmt, cargo fmt, clang-format, dotnet format, spotless, google-java-format, shfmt, scalafmt, php-cs-fixer, Laravel Pint |
+| **Linters** | eslint, ruff, flake8, golangci-lint, clippy, clang-tidy, cppcheck, mypy, shellcheck, PHPStan, Psalm, checkstyle |
+| **Type Checkers** | tsc, go vet, cargo check, mypy, dotnet build, javac |
+
+The quality check automatically detects the file type and runs the appropriate tool. See Section 8 (Git Hooks) for the complete language-by-language breakdown.
+
 TDD Guard
 
 Enforces Test-Driven Development practices when working with Claude Code:
@@ -407,7 +385,7 @@ Deploy Claude Code Hooks
 
 ---
 
-## 10. Universal Update All
+## 9. Universal Update All
 
 One command to update everything on your system.
 
@@ -429,7 +407,7 @@ npm, yarn, pnpm, gup/go, cargo, rustup, pip/pip3, poetry, dotnet, gem, composer,
 
 ---
 
-## 11. System Instructions Sync
+## 10. System Instructions Sync
 
 Single source of truth for AI assistant instructions across all repositories.
 
@@ -470,7 +448,7 @@ Standalone Sync
 
 ---
 
-## 12. Health Check & Troubleshooting
+## 11. Health Check & Troubleshooting
 
 Health Check
 
@@ -498,7 +476,7 @@ For detailed troubleshooting, see QUICKREF.md.
 
 ---
 
-## 13. Testing
+## 12. Testing
 
 Comprehensive test suite ensuring reliability across all platforms and components.
 
@@ -546,7 +524,7 @@ Test Philosophy
 
 ---
 
-## 14. Code Coverage
+## 13. Code Coverage
 
 Universal coverage measurement supporting both bash and PowerShell scripts with actual coverage on all platforms.
 
@@ -634,7 +612,7 @@ Coverage Calculation
 
 ---
 
-## 15. Updating
+## 14. Updating
 
 ```bash
 cd ~/dev/dotfiles  # or $HOME/dev/dotfiles on Windows
@@ -647,7 +625,7 @@ source ~/.zshrc  # or . $PROFILE on Windows
 
 ---
 
-## 16. Shell Aliases
+## 15. Shell Aliases
 
 File Operations
 
@@ -715,7 +693,7 @@ Utility Aliases
 
 ---
 
-## 17. Neovim Keybindings
+## 16. Neovim Keybindings
 
 Leader key is Space.
 
@@ -778,7 +756,7 @@ LSP Mappings (using FzfLua)
 
 ---
 
-## 18. Additional Documentation
+## 17. Additional Documentation
 
 | Document | Purpose |
 |----------|---------|
