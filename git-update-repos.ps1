@@ -50,11 +50,21 @@ function Copy-MarkdownFiles {
         return
     }
 
+    $copiedCount = 0
     foreach ($mdFile in $MARKDOWN_FILES) {
         $sourceFile = Join-Path $DOTFILES_DIR $mdFile
         if (Test-Path $sourceFile) {
-            Copy-Item -Path $sourceFile -Destination $RepoPath -Force -ErrorAction SilentlyContinue
+            try {
+                Copy-Item -Path $sourceFile -Destination $RepoPath -Force -ErrorAction Stop
+                Write-Host "    ${GREEN}copied${R} $mdFile"
+                $copiedCount++
+            } catch {
+                # Silently skip errors
+            }
         }
+    }
+    if ($copiedCount -gt 0) {
+        Write-Host "    ${BLUE}system instructions copied ($copiedCount files)${R}"
     }
 }
 
@@ -67,9 +77,12 @@ function Commit-WithClaude {
     }
 
     Write-Host "${BLUE}Claude CLI detected - committing system instructions...${R}"
+    Write-Host "    ${CYAN}ANTHROPIC_LOG=debug${R} enabled for verbose output"
+    $env:ANTHROPIC_LOG = "debug"
     Push-Location $BaseDir
     claude -p --permission-mode bypassPermissions "go into every repo inside this directory, commit CLAUDE.md AGENTS.md GEMINI.md RULES.md with message 'chore: sync system instructions', and push to origin"
     Pop-Location
+    Remove-Item Env:ANTHROPIC_LOG -ErrorAction SilentlyContinue
 }
 
 # Fetch all repositories (including private if you have a token)

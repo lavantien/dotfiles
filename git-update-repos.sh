@@ -67,12 +67,19 @@ copy_markdown_files() {
         return 0
     fi
 
+    local copied_count=0
     for md_file in "${MARKDOWN_FILES[@]}"; do
         local source_file="$DOTFILES_DIR/$md_file"
         if [[ -f "$source_file" ]]; then
-            cp -f "$source_file" "$repo_path/$md_file" 2>/dev/null
+            if cp -f "$source_file" "$repo_path/$md_file" 2>/dev/null; then
+                echo -e "    ${GREEN}copied${NC} $md_file"
+                ((copied_count++))
+            fi
         fi
     done
+    if [[ $copied_count -gt 0 ]]; then
+        echo -e "    ${BLUE}system instructions copied ($copied_count files)${NC}"
+    fi
 }
 
 # Commit and push markdown files using Claude CLI
@@ -82,8 +89,9 @@ commit_with_claude() {
     fi
 
     echo -e "${BLUE}Claude CLI detected - committing system instructions...${NC}"
+    echo -e "    ${CYAN}ANTHROPIC_LOG=debug${NC} enabled for verbose output"
     cd "$BASE_DIR"
-    claude -p --permission-mode bypassPermissions "go into every repo inside this directory, commit CLAUDE.md AGENTS.md GEMINI.md RULES.md with message 'chore: sync system instructions', and push to origin"
+    ANTHROPIC_LOG=debug claude -p --permission-mode bypassPermissions "go into every repo inside this directory, commit CLAUDE.md AGENTS.md GEMINI.md RULES.md with message 'chore: sync system instructions', and push to origin"
     cd - >/dev/null
 }
 
