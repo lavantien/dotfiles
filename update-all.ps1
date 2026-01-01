@@ -31,6 +31,98 @@ function Update-Fail {
     Write-Host "${YELLOW}✗ Failed: $Message${R}"
 }
 
+# Update helper: captures output, detects changes, reports appropriately
+function Update-AndReport {
+    param([string]$Cmd, [string]$Name)
+
+    $output = Invoke-Expression "$Cmd 2>&1"
+    $exitCode = $LASTEXITCODE
+
+    if ($exitCode -ne 0) {
+        Update-Fail $Name
+        $script:failed++
+        return
+    }
+
+    # Detect actual changes by looking for indicators and filtering out "already up to date" messages
+    $hasChanges = $output | Select-String -Pattern "changed|removed|added|upgraded|updating|installed" | Select-String -Pattern "already|up to date|nothing|no outdated|not in" -NotMatch
+
+    if ($hasChanges) {
+        # Show relevant output lines (filter out noisy parts)
+        $output | Where-Object { $_ -notmatch '^(npm warn|)$' } | Select-Object -First 20 | ForEach-Object { Write-Host $_ }
+        Update-Success $Name
+        $script:updated++
+    } else {
+        Write-Host "${GREEN}✓ Up to date${R}"
+        $script:updated++
+    }
+}
+
+# Update helper for pip (handles list and update loop)
+function Update-Pip {
+    param([string]$PipCmd, [string]$Name)
+
+    $output = ""
+    $changes = 0
+
+    # Upgrade pip first
+    $pipOutput = Invoke-Expression "$PipCmd install --upgrade pip 2>&1"
+    $output += $pipOutput + "`n"
+
+    # Update user packages only
+    $packages = Invoke-Expression "$PipCmd list --user --format=freeze 2>&1" | Where-Object { $_ -notmatch '^(pip|setuptools|wheel)==' }
+    foreach ($pkg in $packages) {
+        if ($pkg -match '^([^=]+)==') {
+            $packageName = $matches[1]
+            $pkgOutput = Invoke-Expression "$PipCmd install --upgrade --user $packageName 2>&1"
+            $output += $pkgOutput + "`n"
+            # Check if package was actually upgraded
+            if ($pkgOutput -match "installed|upgraded" -and $pkgOutput -notmatch "already|up to date|not installed|not a satisfied|Requirement already") {
+                $changes++
+            }
+        }
+    }
+
+    if ($changes -gt 0) {
+        $output | Where-Object { $_ -notmatch '^(Requirement already|)$' } | Select-Object -First 20 | ForEach-Object { Write-Host $_ }
+        Update-Success $Name
+        $script:updated++
+    } else {
+        Write-Host "${GREEN}✓ Up to date${R}"
+        $script:updated++
+    }
+}
+
+# Update helper for dotnet tools (handles list and update loop)
+function Update-DotnetTools {
+    $output = ""
+    $changes = 0
+
+    $tools = dotnet tool list 2>&1 | Select-Object -Skip 2 | Where-Object { $_ -match '\S' } | ForEach-Object {
+        if ($_ -match '^\s*(\S+)') { $matches[1] }
+    }
+
+    foreach ($tool in $tools) {
+        if ($tool -and $tool -ne 'Package Id') {
+            $toolOutput = dotnet tool update $tool 2>&1
+            $output += $toolOutput + "`n"
+            # Check if tool was actually upgraded
+            if ($toolOutput -match "successfully|updated|installed" -and $toolOutput -notmatch "already|up to date") {
+                $changes++
+            }
+        }
+    }
+
+    if ($changes -gt 0) {
+        $output | Where-Object { $_ -notmatch 'already up to date' } | Select-Object -First 20 | ForEach-Object { Write-Host $_ }
+        Update-Success "dotnet"
+        $script:updated++
+    } else {
+        Write-Host "${GREEN}✓ Up to date${R}"
+        $script:updated++
+    }
+}
+
 Write-Host "${BLUE}========================================${R}"
 Write-Host "${BLUE}   Universal Update All - Windows${R}"
 Write-Host "${BLUE}========================================${R}"
@@ -43,28 +135,21 @@ $failed = 0
 # NPM (Node.js global packages)
 Update-Section "NPM (Node.js global packages)"
 if (Get-Command npm -ErrorAction SilentlyContinue) {
-    try {
-        # Clean up invalid packages (names starting with dot from failed installs)
-        $npmList = npm list -g --depth=0 2>&1
-        if ($npmList -match '\.opencode-ai-') {
-            Write-Host "${YELLOW}Cleaning up invalid npm packages...${R}"
-            # Get invalid package names and uninstall them
-            $invalidPackages = $npmList | Select-String -Pattern '^[\+\`]?\s*\.opencode-ai-\S+' | ForEach-Object {
-                $_.ToString().Trim() -replace '^[\+\`]?\s*', ''
-            }
-            foreach ($pkg in $invalidPackages) {
-                if ($pkg -match '\.opencode-ai-') {
-                    npm uninstall -g "$pkg" *> $null
-                }
+    # Clean up invalid packages (names starting with dot from failed installs)
+    $npmList = npm list -g --depth=0 2>&1
+    if ($npmList -match '\.opencode-ai-') {
+        Write-Host "${YELLOW}Cleaning up invalid npm packages...${R}"
+        # Get invalid package names and uninstall them
+        $invalidPackages = $npmList | Select-String -Pattern '^[\+\`]?\s*\.opencode-ai-\S+' | ForEach-Object {
+            $_.ToString().Trim() -replace '^[\+\`]?\s*', ''
+        }
+        foreach ($pkg in $invalidPackages) {
+            if ($pkg -match '\.opencode-ai-') {
+                npm uninstall -g "$pkg" *> $null
             }
         }
-        npm update -g *> $null
-        Update-Success
-        $updated++
-    } catch {
-        Update-Fail "npm"
-        $failed++
     }
+    Update-AndReport "npm update -g" "npm"
 } else {
     Update-Skip "npm not found"
     $skipped++
@@ -73,14 +158,7 @@ if (Get-Command npm -ErrorAction SilentlyContinue) {
 # YARN (global packages)
 Update-Section "YARN (global packages)"
 if (Get-Command yarn -ErrorAction SilentlyContinue) {
-    try {
-        yarn global upgrade
-        Update-Success
-        $updated++
-    } catch {
-        Update-Fail "yarn"
-        $failed++
-    }
+    Update-AndReport "yarn global upgrade" "yarn"
 } else {
     Update-Skip "yarn not found"
     $skipped++
@@ -89,14 +167,7 @@ if (Get-Command yarn -ErrorAction SilentlyContinue) {
 # GUP (Go global packages)
 Update-Section "GUP (Go global packages)"
 if (Get-Command gup -ErrorAction SilentlyContinue) {
-    try {
-        gup update
-        Update-Success
-        $updated++
-    } catch {
-        Update-Fail "gup"
-        $failed++
-    }
+    Update-AndReport "gup update" "gup"
 } else {
     Update-Skip "gup not found"
     $skipped++
@@ -106,14 +177,7 @@ if (Get-Command gup -ErrorAction SilentlyContinue) {
 Update-Section "CARGO (Rust packages)"
 if (Get-Command cargo -ErrorAction SilentlyContinue) {
     if (Get-Command cargo-install-update -ErrorAction SilentlyContinue) {
-        try {
-            cargo install-update -a
-            Update-Success
-            $updated++
-        } catch {
-            Update-Fail "cargo-install-update"
-            $failed++
-        }
+        Update-AndReport "cargo install-update -a" "cargo"
     } else {
         Update-Skip "cargo-install-update not found (install: cargo install cargo-update)"
         $skipped++
@@ -126,23 +190,7 @@ if (Get-Command cargo -ErrorAction SilentlyContinue) {
 # DOTNET TOOLS
 Update-Section "DOTNET TOOLS"
 if (Get-Command dotnet -ErrorAction SilentlyContinue) {
-    try {
-        $tools = dotnet tool list 2>&1 | Select-Object -Skip 2 | Where-Object { $_ -match '\S' } | ForEach-Object {
-            if ($_ -match '^\s*(\S+)') {
-                $matches[1]
-            }
-        }
-        foreach ($tool in $tools) {
-            if ($tool -and $tool -ne 'Package Id') {
-                dotnet tool update $tool 2>$null
-            }
-        }
-        Update-Success
-        $updated++
-    } catch {
-        Update-Fail "dotnet tools"
-        $failed++
-    }
+    Update-DotnetTools
 } else {
     Update-Skip "dotnet not found"
     $skipped++
@@ -151,25 +199,7 @@ if (Get-Command dotnet -ErrorAction SilentlyContinue) {
 # PYTHON PIP
 Update-Section "PYTHON PIP"
 if (Get-Command pip -ErrorAction SilentlyContinue) {
-    try {
-        pip install --upgrade pip 2>$null
-        $packages = pip list --user --format=freeze 2>$null
-        if ($packages) {
-            $packages | ForEach-Object {
-                if ($_ -match '^([^=]+)==') {
-                    $pkg = $matches[1]
-                    if ($pkg -notmatch '^(pip|setuptools|wheel)$') {
-                        pip install --upgrade --user $pkg 2>$null
-                    }
-                }
-            }
-        }
-        Update-Success
-        $updated++
-    } catch {
-        Update-Fail "pip"
-        $failed++
-    }
+    Update-Pip "pip" "pip"
 } else {
     Update-Skip "pip not found"
     $skipped++
@@ -178,27 +208,13 @@ if (Get-Command pip -ErrorAction SilentlyContinue) {
 # PIP3 (alternative)
 if (Get-Command pip3 -ErrorAction SilentlyContinue) {
     Update-Section "PYTHON PIP3"
-    try {
-        pip3 install --upgrade pip 2>$null
-        Update-Success
-        $updated++
-    } catch {
-        Update-Fail "pip3"
-        $failed++
-    }
+    Update-Pip "pip3" "pip3"
 }
 
 # SCOOP (Windows package manager)
 Update-Section "SCOOP"
 if (Get-Command scoop -ErrorAction SilentlyContinue) {
-    try {
-        scoop update *
-        Update-Success
-        $updated++
-    } catch {
-        Update-Fail "scoop"
-        $failed++
-    }
+    Update-AndReport "scoop update *" "scoop"
 } else {
     Update-Skip "scoop not found"
     $skipped++
@@ -207,14 +223,7 @@ if (Get-Command scoop -ErrorAction SilentlyContinue) {
 # WINGET (Windows package manager)
 Update-Section "WINGET"
 if (Get-Command winget -ErrorAction SilentlyContinue) {
-    try {
-        winget upgrade --all --accept-source-agreements --accept-package-agreements 2>$null
-        Update-Success
-        $updated++
-    } catch {
-        Update-Fail "winget"
-        $failed++
-    }
+    Update-AndReport "winget upgrade --all --accept-source-agreements --accept-package-agreements" "winget"
 } else {
     Update-Skip "winget not found"
     $skipped++
@@ -223,14 +232,7 @@ if (Get-Command winget -ErrorAction SilentlyContinue) {
 # CHOCO (Chocolatey alternative)
 Update-Section "CHOCOLATEY"
 if (Get-Command choco -ErrorAction SilentlyContinue) {
-    try {
-        choco upgrade all -y
-        Update-Success
-        $updated++
-    } catch {
-        Update-Fail "choco"
-        $failed++
-    }
+    Update-AndReport "choco upgrade all -y" "choco"
 } else {
     Update-Skip "choco not found"
     $skipped++
@@ -239,14 +241,7 @@ if (Get-Command choco -ErrorAction SilentlyContinue) {
 # GEM (Ruby packages)
 Update-Section "RUBY GEM"
 if (Get-Command gem -ErrorAction SilentlyContinue) {
-    try {
-        gem update --user 2>$null
-        Update-Success
-        $updated++
-    } catch {
-        Update-Fail "gem"
-        $failed++
-    }
+    Update-AndReport "gem update --user 2>&1; if (`$LASTEXITCODE -ne 0) { gem update 2>&1 }" "gem"
 } else {
     Update-Skip "gem not found"
     $skipped++
@@ -255,14 +250,7 @@ if (Get-Command gem -ErrorAction SilentlyContinue) {
 # COMPOSER (PHP packages)
 Update-Section "COMPOSER (PHP global packages)"
 if (Get-Command composer -ErrorAction SilentlyContinue) {
-    try {
-        composer global update 2>$null
-        Update-Success
-        $updated++
-    } catch {
-        Update-Fail "composer"
-        $failed++
-    }
+    Update-AndReport "composer global update" "composer"
 } else {
     Update-Skip "composer not found"
     $skipped++
