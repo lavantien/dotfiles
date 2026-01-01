@@ -11,19 +11,54 @@ Production-grade dotfiles supporting Windows 11, Linux (Ubuntu/Fedora/Arch), and
 
 ## Table of Contents
 
-- [Core Features](#core-features)
+- [Bridge Approach Note](#bridge-approach-note)
 - [Idempotency Note](#idempotency-note)
+- [Core Features](#core-features)
 - [Quick Start](#quick-start)
 - [Configuration (Optional)](#configuration-optional)
 - [Bootstrap Options](#bootstrap-options)
 - [Neovim Keybindings](#neovim-keybindings)
 - [Shell Aliases](#shell-aliases)
 - [Git Hooks](#git-hooks)
+- [Claude Code Integration](#claude-code-integration)
 - [Universal Update All](#universal-update-all)
 - [System Instructions Sync](#system-instructions-sync)
 - [Health Check & Troubleshooting](#health-check--troubleshooting)
 - [Additional Documentation](#additional-documentation)
 - [Updating](#updating)
+
+---
+
+## Bridge Approach Note
+
+This repository uses a bridge approach that maintains backward compatibility while supporting optional configuration.
+
+Works perfectly without configuration:
+- Run bootstrap scripts directly - they use hardcoded defaults (categories: full)
+- Zero setup required
+- Existing workflows unchanged
+
+Optional configuration available:
+- Create ~/.dotfiles.config.yaml from example file
+- Customize settings like categories, editor, github_username, etc.
+- Scripts auto-detect and use config if present
+
+Priority: Command-line flags > Config file > Hardcoded defaults
+
+For details: See BRIDGE.md and QUICKREF.md
+
+---
+
+## Idempotency Note
+
+All scripts in this repository are idempotent. They intelligently detect what's already installed, compare versions, and only install or update tools that are missing or outdated. You can safely run any script multiple times without any harm.
+
+This applies to:
+- bootstrap/bootstrap.sh and bootstrap.ps1
+- deploy.sh and deploy.ps1
+- update-all.sh and update-all.ps1
+- git-update-repos.sh and git-update-repos.ps1
+- sync-system-instructions.sh and sync-system-instructions.ps1
 
 ---
 
@@ -36,7 +71,7 @@ Cross-Platform Support
 
 Intelligent Automation
 - Auto-detection: Detects platform, tools, and project types automatically
-- Graceful fallbacks: Works even when some tools aren't installed
+- Graceful fallbacks: Works even when some tools are not installed
 - OneDrive-aware: Handles synced Documents folders on Windows
 
 Developer Tools
@@ -51,19 +86,6 @@ Quality Assurance
 
 ---
 
-## Idempotency Note
-
-All scripts in this repository are idempotent. They intelligently detect what's already installed, compare versions, and only install or update tools that are missing or outdated. You can safely run any script multiple times without any harm.
-
-This applies to:
-- bootstrap/bootstrap.sh and bootstrap/bootstrap.ps1
-- deploy.sh and deploy.ps1
-- update-all.sh and update-all.ps1
-- git-update-repos.sh and git-update-repos.ps1
-- sync-system-instructions.sh and sync-system-instructions.ps1
-
----
-
 ## Quick Start
 
 Windows (PowerShell 7+)
@@ -75,8 +97,6 @@ cd $HOME/dev/dotfiles
 
 . $PROFILE
 ```
-
-Note: You can run `.\bootstrap.ps1` from the root directory or `.\bootstrap\bootstrap.ps1` directly - both work identically. The root-level script is a convenience wrapper that delegates to the bootstrap/ subdirectory.
 
 Linux / macOS
 
@@ -102,28 +122,10 @@ up  # or update
 
 ## Configuration (Optional)
 
-Bridge Approach Note
-
-This repository uses a bridge approach that maintains backward compatibility while supporting optional configuration.
-
-Works perfectly without configuration:
-- Run bootstrap scripts directly - they use hardcoded defaults (categories: full)
-- Zero setup required
-- Existing workflows unchanged
-
-Optional configuration available:
-- Create ~/.dotfiles.config.yaml from example file
-- Customize settings like categories, editor, github_username, etc.
-- Scripts auto-detect and use config if present
-
-Priority: Command-line flags > Config file > Hardcoded defaults
-
-For details: See BRIDGE.md and QUICKREF.md
-
 Default Behavior (No Config Needed)
 
 ```powershell
-.\bootstrap\bootstrap.ps1
+.\bootstrap.ps1
 
 # Uses hardcoded defaults:
 # - Categories: "full"
@@ -195,7 +197,9 @@ What Gets Installed
 
 ## Neovim Keybindings
 
-Editor Mappings
+Leader key is Space.
+
+Custom Keybindings
 
 | Keybinding | Mode | Action |
 |------------|------|--------|
@@ -214,7 +218,7 @@ Editor Mappings
 | `<Space>/` | Normal | Grep in current buffer (FzfLua) |
 | `<Space>z` | Normal | Live grep native (FzfLua) |
 
-LSP Mappings (`<Space>` + key, using FzfLua)
+Git Mappings (using FzfLua)
 
 | Key | Action |
 |-----|--------|
@@ -225,25 +229,36 @@ LSP Mappings (`<Space>` + key, using FzfLua)
 | gc | Git commits |
 | gl | Git blame |
 | gb | Git branches |
-| `\`` | LSP finder (definitions, refs, implementations) |
+| gt | Git tags |
+| gk | Git stash |
+
+LSP Mappings (using FzfLua)
+
+| Key | Action |
+|-----|--------|
+| `\` | LSP finder (definitions, refs, implementations) |
 | dd | Document diagnostics |
 | dw | Workspace diagnostics |
-| `,,` | Incoming calls |
-| `..` | Outgoing calls |
+| `,` | Incoming calls |
+| `.` | Outgoing calls |
 | a | Code actions |
 | s | Document symbols |
 | w | Workspace symbols |
 | r | References |
+| i | Implementations |
+| o | Type definitions |
+| j | Go to definition |
+| v | Go to declaration |
+
+---
+
+## Shell Aliases
+
 File Operations
 
 | Alias | Command | Description |
 |-------|---------|-------------|
-| n | nvim / vim | Open editor |
-| b | bat / cat | View file with syntax highlighting |
-| f | fzf --preview bat | Fuzzy finder with live preview |
 | ls | eza -la ... | Detailed directory listing |
-| e | eza -a ... | Simple directory listing |
-| m | mpv | Media player |
 | df | difft | Difftastic diff |
 | t | tokei | Code statistics |
 
