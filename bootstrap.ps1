@@ -1,16 +1,34 @@
-# Root-level bootstrap wrapper
-# Delegates to bootstrap/bootstrap.ps1 for actual implementation
+# Bootstrap Script Wrapper - Invokes bootstrap.sh via Git Bash
+# Usage: .\bootstrap.ps1 [-Category] "minimal|sdk|full"
 
+$ErrorActionPreference = 'Stop'
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$BootstrapDir = Join-Path $ScriptDir "bootstrap"
 
-# Check if bootstrap directory exists
-if (-not (Test-Path $BootstrapDir)) {
-    Write-Error "Error: Bootstrap directory not found at $BootstrapDir"
+# Derive .sh script name (root level bootstrap.sh)
+$shScript = Join-Path $ScriptDir "bootstrap.sh"
+
+# Ensure Git Bash is available
+if (-not (Get-Command bash -ErrorAction SilentlyContinue)) {
+    Write-Error "Git Bash (bash.exe) not found. Please install Git for Windows."
+    Write-Error "Download: https://git-scm.com/download/win"
     exit 1
 }
 
-# Delegate to actual bootstrap script
-$BootstrapScript = Join-Path $BootstrapDir "bootstrap.ps1"
-& $BootstrapScript @args
-exit $LASTEXITCODE
+# Map PowerShell parameter names to bash equivalents
+$mappedArgs = @()
+for ($i = 0; $i -lt $args.Length; $i++) {
+    switch ($args[$i]) {
+        "-Category" {
+            if ($i + 1 -lt $args.Length) {
+                $mappedArgs += "--category"
+                $mappedArgs += $args[$i + 1]
+                $i++
+            }
+        }
+        default { $mappedArgs += $args[$i] }
+    }
+}
+
+# Invoke the bash script with exit code propagation
+$exitCode = & bash $shScript $mappedArgs
+exit $exitCode
