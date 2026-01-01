@@ -199,56 +199,62 @@ What Gets Installed
 
 Leader key is Space.
 
-Custom Keybindings
+From init.lua:
 
 | Keybinding | Mode | Action |
 |------------|------|--------|
-| `-` | Normal | Open file browser (Oil) |
-| `<Space>q` | Normal | Quit |
-| `<Space>x` | Normal | Write and source config |
-| `<Space>` + `'` | Normal | Search forward (#) |
-| `<Space>pt` | Normal | Toggle Typst preview |
-| `<Space>ps` | Normal | Start Typst preview |
-| `<Space>pc` | Normal | Close Typst preview |
-| `<Space>;` | Normal | Typst preview pick |
-| `<Space>b` | Normal | Format buffer (LSP) |
-| `<Space>u` | Normal | Update plugins |
-| `<Space>e` | Normal | Fuzzy find everywhere (FzfLua) |
-| `<Space>f` | Normal | Find files (FzfLua) |
-| `<Space>/` | Normal | Grep in current buffer (FzfLua) |
-| `<Space>z` | Normal | Live grep native (FzfLua) |
+| - | Normal | Open parent directory (Oil) |
+| `<leader>q` | Normal | Quit |
+| `<leader>x` | Normal | Write and source config |
+| `<leader>'` | Normal | Search forward (#) |
+| `<leader>pt` | Normal | Toggle Typst preview |
+| `<leader>ps` | Normal | Start Typst preview |
+| `<leader>pc` | Normal | Close Typst preview |
+| `<leader>;` | Normal | Typst preview pick |
+| `<leader>b` | Normal | Format buffer (LSP) |
+| `<leader>u` | Normal | Update plugins |
+| `<leader>e` | Normal | Fuzzy find everywhere (FzfLua) |
+| `<leader>n` | Normal | Fuzzy combine (FzfLua) |
+| `<leader>/` | Normal | Grep in current buffer (FzfLua) |
+| `<leader>z` | Normal | Live grep native (FzfLua) |
+| `<leader>f` | Normal | Find files (FzfLua) |
+| `<leader>h` | Normal | Help tags (FzfLua) |
+| `<leader>k` | Normal | Keymaps (FzfLua) |
+| `<leader>l` | Normal | Location list (FzfLua) |
+| `<leader>m` | Normal | Marks (FzfLua) |
+| `<leader>t` | Normal | Quickfix (FzfLua) |
 
 Git Mappings (using FzfLua)
 
 | Key | Action |
 |-----|--------|
-| gf | Git files |
-| gs | Git status |
-| gd | Git diff |
-| gh | Git hunks |
-| gc | Git commits |
-| gl | Git blame |
-| gb | Git branches |
-| gt | Git tags |
-| gk | Git stash |
+| `<leader>gf` | Git files |
+| `<leader>gs` | Git status |
+| `<leader>gd` | Git diff |
+| `<leader>gh` | Git hunks |
+| `<leader>gc` | Git commits |
+| `<leader>gl` | Git blame |
+| `<leader>gb` | Git branches |
+| `<leader>gt` | Git tags |
+| `<leader>gk` | Git stash |
 
 LSP Mappings (using FzfLua)
 
 | Key | Action |
 |-----|--------|
-| `\` | LSP finder (definitions, refs, implementations) |
-| dd | Document diagnostics |
-| dw | Workspace diagnostics |
-| `,` | Incoming calls |
-| `.` | Outgoing calls |
-| a | Code actions |
-| s | Document symbols |
-| w | Workspace symbols |
-| r | References |
-| i | Implementations |
-| o | Type definitions |
-| j | Go to definition |
-| v | Go to declaration |
+| `<leader>\` | LSP finder (definitions, refs, implementations) |
+| `<leader>dd` | Document diagnostics |
+| `<leader>dw` | Workspace diagnostics |
+| `<leader>,` | Incoming calls |
+| `<leader>.` | Outgoing calls |
+| `<leader>a` | Code actions |
+| `<leader>s` | Document symbols |
+| `<leader>w` | Workspace symbols |
+| `<leader>r` | References |
+| `<leader>i` | Implementations |
+| `<leader>o` | Type definitions |
+| `<leader>j` | Go to definition |
+| `<leader>v` | Go to declaration |
 
 ---
 
