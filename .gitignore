@@ -5,3 +5,4 @@ lua/.luarc.json
 lazy-lock.json
 .claude/tdd-guard/data
 nul
+coverage/
