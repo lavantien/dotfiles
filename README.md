@@ -13,8 +13,9 @@ This repository is the **single source of truth** for my entire development envi
 
 When I update something in this dotfiles repo:
 1. Configurations are deployed to my home directory via the deploy script
-2. System instruction files (CLAUDE.md, AGENTS.md, GEMINI.md, RULES.md) are automatically distributed to all my GitHub repos via `git-update-repos.sh`
-3. Claude Code commits and pushes the distributed files using headless mode
+2. System instruction files (CLAUDE.md, AGENTS.md, GEMINI.md, RULES.md) can be distributed to all my GitHub repos via `sync-system-instructions.sh`
+3. The `git-update-repos` script automatically calls the sync script after cloning/updating repos
+4. Claude Code commits and pushes the distributed files using headless mode
 
 This ensures consistent behavior across all projects and all machines.
 
@@ -30,8 +31,9 @@ This ensures consistent behavior across all projects and all machines.
 - [Universal Git Hooks](#universal-git-hooks)
 - [Claude Code Integration](#claude-code-integration)
 - [Universal Update All](#universal-update-all)
-- [Git Repository Management](#git-repository-management)
-  - [System Instruction Distribution](#system-instruction-distribution)
+- [System Instructions Sync](#system-instructions-sync)
+  - [Standalone Sync](#standalone-sync)
+  - [Git Repository Management](#git-repository-management)
 - [Neovim Configuration](#neovim-configuration)
 - [Shell Aliases](#shell-aliases)
 - [Platform-Specific Setup](#platform-specific-setup)
@@ -255,6 +257,8 @@ If you already have all tools installed and just want to update configurations:
 | `update-all.sh` | - | * | * | Universal package updater (Unix) |
 | `git-update-repos.ps1` | * | - | - | Update/clone all GitHub repos (Windows) |
 | `git-update-repos.sh` | * | * | * | Update/clone all GitHub repos (Unix) |
+| `sync-system-instructions.ps1` | * | - | - | Sync system instructions to all repos (Windows) |
+| `sync-system-instructions.sh` | * | * | * | Sync system instructions to all repos (Unix) |
 | `.aider.conf.yml` | * | * | * | Aider AI coding assistant config |
 
 ---
@@ -437,38 +441,11 @@ up  # or: update
 
 ---
 
-## Git Repository Management
+## System Instructions Sync
 
-### Update/Clone All GitHub Repos
+The system instruction distribution is now modularized. You can sync AI assistant instructions to all repositories independently or as part of the repo update process.
 
-Automatically clone new repositories and update existing ones from your GitHub account.
-
-```bash
-# PowerShell (Windows)
-.\git-update-repos.ps1 [-Username] "username" [-BaseDir] "path" [-UseSSH]
-
-# Bash (Linux/macOS)
-./git-update-repos.sh [-u username] [-d base_dir] [-s]
-```
-
-**Options:**
-| Option | Description | Default |
-|--------|-------------|---------|
-| `-Username` / `-u` | GitHub username | `lavantien` |
-| `-BaseDir` / `-d` | Base directory for repos | `$HOME/dev/github` |
-| `-UseSSH` / `-s` | Use SSH URLs instead of HTTPS | `false` |
-
-**What it does:**
-- Fetches all repositories for the specified user via GitHub API
-- Clones repositories that don't exist locally
-- Pulls latest changes for existing repositories
-- **Copies system instruction files** (CLAUDE.md, AGENTS.md, GEMINI.md, RULES.md) to each repo
-- **Invokes Claude Code** to commit and push the distributed files (if Claude CLI is available)
-- Shows summary of cloned, updated, and skipped repos
-
-### System Instruction Distribution
-
-The script automatically distributes AI assistant system instructions to all repositories:
+### System Instruction Files
 
 | File | Purpose |
 |------|---------|
@@ -477,12 +454,80 @@ The script automatically distributes AI assistant system instructions to all rep
 | `GEMINI.md` | Gemini-specific behavior instructions |
 | `RULES.md` | Master system prompt and rules |
 
-These files are:
-1. Copied from `~/dev/github/dotfiles/` to each repository after cloning/updating
-2. Committed and pushed via Claude Code in headless mode
-3. Always overwritten (source of truth pattern)
+### Standalone Sync
 
-This ensures every repository has consistent AI assistant behavior and follows the same development practices.
+When you need to distribute updated system instructions without cloning/updating repos:
+
+```bash
+# PowerShell (Windows)
+.\sync-system-instructions.ps1 [-BaseDir] "path" [-Commit] [-Push]
+
+# Bash (Linux/macOS)
+./sync-system-instructions.sh [-d base_dir] [-c] [-p]
+```
+
+**Options:**
+| Option | Description | Default |
+|--------|-------------|---------|
+| `-BaseDir` / `-d` | Base directory containing repos | `$HOME/dev/github` |
+| `-Commit` / `-c` | Commit changes after syncing | `false` |
+| `-Push` / `-p` | Push changes after committing | `false` |
+
+**What it does:**
+- Scans all repositories in the base directory
+- Compares system instruction files with the dotfiles source
+- Copies only changed files to each repository
+- Skips the dotfiles repo itself (source of truth)
+- Optionally commits changes via git or Claude CLI
+- Optionally pushes changes to origin
+
+**Example:**
+```bash
+# Sync and commit using Claude CLI
+./sync-system-instructions.sh -d ~/dev/github -c
+
+# Sync, commit, and push
+./sync-system-instructions.sh -d ~/dev/github -c -p
+```
+
+### Git Repository Management
+
+The `git-update-repos` script automatically calls the sync script after cloning/updating repositories.
+
+#### Update/Clone All GitHub Repos
+
+```bash
+# PowerShell (Windows)
+.\git-update-repos.ps1 [-Username] "username" [-BaseDir] "path" [-UseSSH] [-NoSync]
+
+# Bash (Linux/macOS)
+./git-update-repos.sh [-u username] [-d base_dir] [-s] [--no-sync]
+```
+
+**Options:**
+| Option | Description | Default |
+|--------|-------------|---------|
+| `-Username` / `-u` | GitHub username | `lavantien` |
+| `-BaseDir` / `-d` | Base directory for repos | `$HOME/dev/github` |
+| `-UseSSH` / `-s` | Use SSH URLs instead of HTTPS | `false` |
+| `-NoSync` / `--no-sync` | Skip syncing system instructions | `false` |
+
+**What it does:**
+- Fetches all repositories for the specified user via GitHub API
+- Clones repositories that don't exist locally
+- Pulls latest changes for existing repositories
+- **Calls `sync-system-instructions`** to distribute system instruction files
+- **Invokes Claude Code** to commit and push the distributed files (if Claude CLI is available)
+- Shows summary of cloned, updated, and skipped repos
+
+**Example:**
+```bash
+# Update all repos and sync instructions (default)
+./git-update-repos.sh
+
+# Update repos but skip instruction sync
+./git-update-repos.sh --no-sync
+```
 
 ---
 
@@ -763,6 +808,8 @@ dotfiles/
 ├── git-clone-all.sh           # Bulk git clone helper (gh CLI)
 ├── git-update-repos.sh        # Update/clone all GitHub repos (Unix)
 ├── git-update-repos.ps1       # Update/clone all GitHub repos (Windows)
+├── sync-system-instructions.sh  # Sync system instructions to all repos (Unix)
+├── sync-system-instructions.ps1 # Sync system instructions to all repos (Windows)
 ├── CLAUDE.md                  # Claude Code project instructions (source of truth)
 ├── AGENTS.md                  # Agent-specific instructions
 ├── GEMINI.md                  # Gemini-specific instructions
