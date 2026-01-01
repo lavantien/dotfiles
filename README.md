@@ -236,6 +236,60 @@ LSP Mappings (`<Space>` + key)
 | j | Go to definition |
 | v | Go to declaration |
 
+Hidden Plugin Commands (FzfLua)
+
+Access via `:FzfLua.<command>`:
+
+| Command | Action |
+|---------|--------|
+| `:FzfLua.global` | Fuzzy find everywhere |
+| `:FzfLua.files` | Find files |
+| `:FzfLua.grep_curbuf` | Grep in current buffer |
+| `:FzfLua.live_grep_native` | Live grep |
+| `:FzfLua.helptags` | Help tags |
+| `:FzfLua.keymaps` | Keymaps |
+| `:FzfLua.loclist` | Location list |
+| `:FzfLua.marks` | Marks |
+| `:FzfLua.quickfix` | Quickfix |
+| `:FzfLua.git_files` | Git files |
+| `:FzfLua.git_status` | Git status |
+| `:FzfLua.git_diff` | Git diff |
+| `:FzfLua.git_hunks` | Git hunks |
+| `:FzfLua.git_commits` | Git commits |
+| `:FzfLua.git_blame` | Git blame |
+| `:FzfLua.git_branches` | Git branches |
+| `:FzfLua.git_tags` | Git tags |
+| `:FzfLua.git_stash` | Git stash |
+| `:FzfLua.lsp_finder` | LSP finder (definitions, refs, implementations) |
+| `:FzfLua.lsp_document_diagnostics` | Document diagnostics |
+| `:FzfLua.lsp_workspace_diagnostics` | Workspace diagnostics |
+| `:FzfLua.lsp_incoming_calls` | Incoming calls |
+| `:FzfLua.lsp_outgoing_calls` | Outgoing calls |
+| `:FzfLua.lsp_code_actions` | Code actions |
+| `:FzfLua.lsp_document_symbols` | Document symbols |
+| `:FzfLua.lsp_live_workspace_symbols` | Live workspace symbols |
+| `:FzfLua.lsp_references` | References |
+| `:FzfLua.lsp_implementations` | Implementations |
+| `:FzfLua.lsp_typedefs` | Type definitions |
+
+---
+
+## Wezterm Hotkeys
+
+Default Terminal Hotkeys
+
+| Keybinding | Action |
+|------------|--------|
+| ALT+Enter | Disable default assignment |
+
+Theme and Appearance
+
+- Color scheme: rose-pine
+- Font: IosevkaTerm Nerd Font (17pt)
+- Window decorations: TITLE | RESIZE
+- Tab bar: Disabled
+- Window padding: 0
+
 ---
 
 ## Shell Aliases
