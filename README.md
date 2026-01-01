@@ -1,6 +1,6 @@
 # Universal Dotfiles
 
-![Coverage](https://img.shields.io/badge/coverage-23%25-red) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Coverage](https://img.shields.io/badge/coverage-21%25-red) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)](https://github.com/lavantien/dotfiles)
 
 Production-grade dotfiles supporting Windows 11, Linux (Ubuntu/Fedora/Arch), and macOS with intelligent auto-detection and graceful fallbacks. A truly Universal SWE Dotfiles (Neovim/WezTerm/zsh/pwsh, Claude Code/Git Hooks, Linux/Windows) with batteries included: 15+ LSP servers, 10+ language formatters/linters, TDD enforcement, and comprehensive Git and Claude Code workflow automation. All configured, tested, and just clone and run.
@@ -9,27 +9,61 @@ Production-grade dotfiles supporting Windows 11, Linux (Ubuntu/Fedora/Arch), and
 
 ## Table of Contents
 
-- [1. Core Features](#1-core-features)
-- [2. Idempotency Note](#2-idempotency-note)
-- [3. Quick Start](#3-quick-start)
-- [4. Bridge Approach Note](#4-bridge-approach-note)
-- [5. Bootstrap Options](#5-bootstrap-options)
-- [6. Configuration (Optional)](#6-configuration-optional)
-- [7. Git Hooks](#7-git-hooks)
-- [8. Claude Code Integration](#8-claude-code-integration)
-- [9. Universal Update All](#9-universal-update-all)
-- [10. System Instructions Sync](#10-system-instructions-sync)
-- [11. Health Check & Troubleshooting](#11-health-check--troubleshooting)
-- [12. Testing](#12-testing)
-- [13. Code Coverage](#13-code-coverage)
-- [14. Updating](#14-updating)
-- [15. Shell Aliases](#15-shell-aliases)
-- [16. Neovim Keybindings](#16-neovim-keybindings)
-- [17. Additional Documentation](#17-additional-documentation)
+- [1. Architecture Note](#1-architecture-note)
+- [2. Core Features](#2-core-features)
+- [3. Idempotency Note](#3-idempotency-note)
+- [4. Quick Start](#4-quick-start)
+- [5. Bridge Approach Note](#5-bridge-approach-note)
+- [6. Bootstrap Options](#6-bootstrap-options)
+- [7. Configuration (Optional)](#7-configuration-optional)
+- [8. Git Hooks](#8-git-hooks)
+- [9. Claude Code Integration](#9-claude-code-integration)
+- [10. Universal Update All](#10-universal-update-all)
+- [11. System Instructions Sync](#11-system-instructions-sync)
+- [12. Health Check & Troubleshooting](#12-health-check--troubleshooting)
+- [13. Testing](#13-testing)
+- [14. Code Coverage](#14-code-coverage)
+- [15. Updating](#15-updating)
+- [16. Shell Aliases](#16-shell-aliases)
+- [17. Neovim Keybindings](#17-neovim-keybindings)
+- [18. Additional Documentation](#18-additional-documentation)
 
 ---
 
-## 1. Core Features
+## 1. Architecture Note
+
+**.sh scripts are the single source of truth.** All core logic lives in bash scripts (*.sh).
+
+**.ps1 scripts are thin compatibility wrappers.** On Windows, PowerShell scripts invoke their .sh counterparts via Git Bash, providing a native Windows experience while maintaining a single implementation.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Windows (PowerShell)                     │
+├─────────────────────────────────────────────────────────────┤
+│  script.ps1  ──►  bash script.sh  ──►  Core Logic           │
+│  (wrapper)        (Git Bash)          (source of truth)     │
+└─────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│                    Linux / macOS                            │
+├─────────────────────────────────────────────────────────────┤
+│  ./script.sh  ──►  Core Logic                               │
+│  (direct)          (source of truth)                        │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Benefits:**
+- Single implementation to maintain and test
+- .sh scripts work natively on Linux/macOS and via Git Bash on Windows
+- .ps1 wrappers provide Windows convenience with familiar parameter names
+- All features develop in .sh first, then automatically available on Windows
+
+**Git Installation:**
+On Windows, Git (including Git Bash) is automatically installed via winget during bootstrap. No manual installation required.
+
+---
+
+## 2. Core Features
 
 Cross-Platform Support
 - Windows 11: Native PowerShell 7+ support
@@ -108,7 +142,7 @@ Intelligent Automation
 **Testing & Coverage**
 - bats - Bash testing
 - Pester - PowerShell testing with coverage
-- kcov - Bash coverage reports
+- bashcov - Bash coverage reports (universal, Ruby gem)
 
 ---
 
@@ -133,20 +167,24 @@ Intelligent Automation
 
 ---
 
-## 2. Idempotency Note
+## 3. Idempotency Note
 
 All scripts in this repository are idempotent. They intelligently detect what's already installed, compare versions, and only install or update tools that are missing or outdated. You can safely run any script multiple times without any harm.
 
-This applies to:
-- bootstrap.sh and bootstrap.ps1
-- deploy.sh and deploy.ps1
-- update-all.sh and update-all.ps1
-- git-update-repos.sh and git-update-repos.ps1
-- sync-system-instructions.sh and sync-system-instructions.ps1
+This applies to all core scripts (.sh is source of truth, .ps1 is wrapper):
+- bootstrap.sh / bootstrap.ps1
+- deploy.sh / deploy.ps1
+- update-all.sh / update-all.ps1
+- git-update-repos.sh / git-update-repos.ps1
+- sync-system-instructions.sh / sync-system-instructions.ps1
+- backup.sh / backup.ps1
+- restore.sh / restore.ps1
+- healthcheck.sh / healthcheck.ps1
+- uninstall.sh / uninstall.ps1
 
 ---
 
-## 3. Quick Start
+## 4. Quick Start
 
 Windows (PowerShell 7+)
 
@@ -154,6 +192,9 @@ Windows (PowerShell 7+)
 git clone https://github.com/lavantien/dotfiles.git $HOME/dev/dotfiles
 cd $HOME/dev/dotfiles
 .\bootstrap.ps1
+
+# Git (including Git Bash) is auto-installed via winget during bootstrap
+# No manual Git installation required
 
 . $PROFILE
 ```
@@ -180,7 +221,7 @@ up  # or update
 
 ---
 
-## 4. Bridge Approach Note
+## 5. Bridge Approach Note
 
 This repository uses a bridge approach that maintains backward compatibility while supporting optional configuration.
 
@@ -200,7 +241,7 @@ For details: See BRIDGE.md and QUICKREF.md
 
 ---
 
-## 5. Bootstrap Options
+## 6. Bootstrap Options
 
 Installation Categories
 
@@ -229,13 +270,13 @@ What Gets Installed
 | 3: Language Servers | clangd, gopls, rust-analyzer, pyright, typescript-language-server, yaml-language-server |
 | 4: Linters & Formatters | prettier, eslint, ruff, goimports, golangci-lint, clang-format |
 | 5: CLI Tools | fzf, zoxide, bat, eza, lazygit, gh, ripgrep, fd, tokei, difftastic |
-| 5: Testing & Coverage | bats (all), kcov (Linux/macOS), Pester (Windows) |
+| 5: Testing & Coverage | bats (all), bashcov (all), Pester (Windows) |
 | 6: Deploy Configs | Runs deploy.sh / deploy.ps1 to copy configurations |
 | 7: Update All | Runs update-all.sh / update-all.ps1 to update packages and repos |
 
 ---
 
-## 6. Configuration (Optional)
+## 7. Configuration (Optional)
 
 Default Behavior (No Config Needed)
 
@@ -276,7 +317,7 @@ Common Config Options
 
 ---
 
-## 7. Git Hooks
+## 8. Git Hooks
 
 Supported Languages
 
@@ -323,7 +364,7 @@ git commit --no-verify -m "wip: emergency fix"
 
 ---
 
-## 8. Claude Code Integration
+## 9. Claude Code Integration
 
 First-class support for Claude Code with quality checks and TDD enforcement.
 
@@ -385,7 +426,7 @@ Deploy Claude Code Hooks
 
 ---
 
-## 9. Universal Update All
+## 10. Universal Update All
 
 One command to update everything on your system.
 
@@ -407,7 +448,7 @@ npm, yarn, pnpm, gup/go, cargo, rustup, pip/pip3, poetry, dotnet, gem, composer,
 
 ---
 
-## 10. System Instructions Sync
+## 11. System Instructions Sync
 
 Single source of truth for AI assistant instructions across all repositories.
 
@@ -448,7 +489,7 @@ Standalone Sync
 
 ---
 
-## 11. Health Check & Troubleshooting
+## 12. Health Check & Troubleshooting
 
 Health Check
 
@@ -476,7 +517,7 @@ For detailed troubleshooting, see QUICKREF.md.
 
 ---
 
-## 12. Testing
+## 13. Testing
 
 Comprehensive test suite ensuring reliability across all platforms and components.
 
@@ -524,21 +565,23 @@ Test Philosophy
 
 ---
 
-## 13. Code Coverage
+## 14. Code Coverage
 
-Universal coverage measurement supporting both bash and PowerShell scripts with actual coverage on all platforms.
+Universal coverage measurement using bashcov for bash scripts and Pester for PowerShell scripts.
+
+**bashcov** (primary, universal) - Ruby gem that provides bash coverage on all platforms (Windows/Linux/macOS) without Docker.
+
+**Pester** - PowerShell code coverage using AST-based analysis.
 
 Coverage Tools
 
 | Platform | Bash | PowerShell |
 |----------|------|------------|
-| Linux | kcov (actual) | Pester (actual) |
-| macOS | kcov (actual) | Pester (actual) |
-| Windows | Docker + kcov (actual) | Pester (actual) |
+| Windows | bashcov (Ruby gem) | Pester |
+| Linux | bashcov (Ruby gem) | Pester |
+| macOS | bashcov (Ruby gem) | Pester |
 
-**kcov** provides line-by-line bash coverage using DWARF debugging information. It runs tests with instrumentation and produces HTML reports. On Windows, kcov runs via Docker container.
-
-**Pester** provides PowerShell code coverage using AST-based analysis.
+**No Docker required** - bashcov works natively on all platforms with Ruby.
 
 Tool Installation (Automatic)
 
@@ -547,24 +590,25 @@ All coverage tools are automatically installed by the bootstrap scripts:
 ```bash
 # Linux/macOS
 ./bootstrap.sh
-# Installs: kcov, bats, and all dependencies
+# Installs: Ruby, bashcov gem, bats, and all dependencies
 
 # Windows PowerShell
 .\bootstrap.ps1
-# Installs: Pester, bats
-# Note: kcov runs in Docker - Docker Desktop must be installed separately
+# Installs: Ruby (Scoop), bashcov gem, Pester, bats
 ```
 
-Windows Docker Requirement
+Manual Installation
 
-Bash coverage on Windows requires Docker Desktop. The bootstrap script can install Docker Desktop via winget (interactive mode), or you can install it manually.
+If needed, install manually:
 
-| Tool | Install Source |
-|------|----------------|
-| kcov (Linux/macOS) | brew/apt/dnf (via bootstrap) |
-| bats | npm (via bootstrap) |
-| Pester (Windows) | PowerShellGet (via bootstrap) |
-| Docker (Windows) | winget (via bootstrap, interactive) or Manual |
+```bash
+# bashcov (requires Ruby first)
+gem install bashcov
+
+# Verify installation
+bashcov --version
+bats --version
+```
 
 Running Coverage Reports
 
@@ -591,7 +635,7 @@ The coverage scripts generate:
 
 - `coverage.json` - Combined coverage data for CI/CD
 - `coverage-badge.svg` - Dynamic badge for README
-- `coverage/kcov/index.html` - Detailed HTML report (kcov coverage)
+- `coverage/bash/index.html` - Detailed HTML report (bashcov coverage)
 
 Badge Color Scale
 
@@ -607,12 +651,12 @@ Badge Color Scale
 Coverage Calculation
 
 - **PowerShell**: Measured via Pester v5.7+ code coverage feature
-- **Bash**: Measured via kcov (native on Linux/macOS, via Docker on Windows)
+- **Bash**: Measured via bashcov (universal Ruby gem, works on all platforms)
 - **Combined**: Weighted average (60% PowerShell + 40% bash based on codebase complexity)
 
 ---
 
-## 14. Updating
+## 15. Updating
 
 ```bash
 cd ~/dev/dotfiles  # or $HOME/dev/dotfiles on Windows
@@ -625,7 +669,7 @@ source ~/.zshrc  # or . $PROFILE on Windows
 
 ---
 
-## 15. Shell Aliases
+## 16. Shell Aliases
 
 File Operations
 
@@ -693,7 +737,7 @@ Utility Aliases
 
 ---
 
-## 16. Neovim Keybindings
+## 17. Neovim Keybindings
 
 Leader key is Space.
 
@@ -756,7 +800,7 @@ LSP Mappings (using FzfLua)
 
 ---
 
-## 17. Additional Documentation
+## 18. Additional Documentation
 
 | Document | Purpose |
 |----------|---------|
