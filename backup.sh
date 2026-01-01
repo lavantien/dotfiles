@@ -21,7 +21,6 @@ DRY_RUN=false
 KEEP_BACKUPS=5
 BACKUP_DIR="$HOME/.dotfiles-backup"
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-CURRENT_BACKUP="$BACKUP_DIR/$TIMESTAMP"
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
@@ -52,6 +51,9 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
+
+# Set CURRENT_BACKUP after argument parsing (so --backup-dir takes effect)
+CURRENT_BACKUP="$BACKUP_DIR/$TIMESTAMP"
 
 # ============================================================================
 # BACKUP FUNCTIONS
@@ -107,10 +109,15 @@ cleanup_old_backups() {
     fi
 
     # Get list of backup directories, sorted by name (which is timestamp)
+    # Filter for timestamp format: YYYYMMDD-HHMMSS
     local backups=()
     while IFS= read -r -d '' backup; do
-        backups+=("$(basename "$backup")")
-    done < <(find "$BACKUP_DIR" -maxdepth 1 -type d -regex '.*/[0-9]\{8\}-[0-9]\{6\}$' -print0 2>/dev/null | sort -rz)
+        local dirname=$(basename "$backup")
+        # Check if dirname matches timestamp pattern
+        if [[ "$dirname" =~ ^[0-9]{8}-[0-9]{6}$ ]]; then
+            backups+=("$dirname")
+        fi
+    done < <(find "$BACKUP_DIR" -maxdepth 1 -type d -print0 2>/dev/null | sort -rz)
 
     if [[ ${#backups[@]} -le $KEEP_BACKUPS ]]; then
         log_info "No old backups to remove (have ${#backups[@]}, keeping $KEEP_BACKUPS)"

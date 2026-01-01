@@ -87,7 +87,7 @@ list_backups() {
         local manifest="$backup_path/MANIFEST.txt"
 
         if [[ -d "$backup_path" ]] && [[ -f "$manifest" ]]; then
-            $found
+            found=true
             echo ""
             echo -e "${BLUE}Backup:${NC}   $backup"
             echo -e "${BLUE}Path:${NC}     $backup_path"
