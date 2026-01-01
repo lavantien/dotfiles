@@ -1,11 +1,12 @@
 #!/usr/bin/env pwsh
 # Update/Clone All GitHub Repositories for a User
-# Usage: .\git-update-repos.ps1 [-Username] "username" [-BaseDir] "path" [-UseSSH]
+# Usage: .\git-update-repos.ps1 [-Username] "username" [-BaseDir] "path" [-UseSSH] [-NoSync]
 
 param(
     [string]$Username = "lavantien",
     [string]$BaseDir = "$HOME\dev\github",
-    [switch]$UseSSH
+    [switch]$UseSSH,
+    [switch]$NoSync
 )
 
 # Colors
@@ -16,18 +17,17 @@ $YELLOW = "$E[33m"
 $BLUE = "$E[34m"
 $CYAN = "$E[36m"
 
-# Markdown files to sync to all repos
-$MARKDOWN_FILES = @("CLAUDE.md", "AGENTS.md", "GEMINI.md", "RULES.md")
-
-# Source directory for markdown files (dotfiles repo location)
-$DOTFILES_DIR = "$HOME\dev\github\dotfiles"
+# Path to sync script (relative to this script)
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$SyncScript = Join-Path $ScriptDir "sync-system-instructions.ps1"
 
 Write-Host "${CYAN}========================================${R}"
 Write-Host "${CYAN}   GitHub Repos Updater${R}"
 Write-Host "${CYAN}========================================${R}"
-Write-Host "${BLUE}User:${R}     $Username"
-Write-Host "${BLUE}Directory:${R} $BaseDir"
-Write-Host "${BLUE}SSH:${R}      $($UseSSH.IsPresent)"
+Write-Host "${BLUE}User:${R}      $Username"
+Write-Host "${BLUE}Directory:${R}  $BaseDir"
+Write-Host "${BLUE}SSH:${R}       $($UseSSH.IsPresent)"
+Write-Host "${BLUE}Sync:${R}      $(-not $NoSync.IsPresent)"
 Write-Host "${CYAN}========================================${R}`n"
 
 # Create base directory if it doesn't exist
@@ -37,53 +37,6 @@ if (-not (Test-Path $BaseDir)) {
 }
 
 Write-Host "${CYAN}Fetching repositories for user: $Username${R}`n"
-
-# Copy system instruction markdown files to a repository
-function Copy-MarkdownFiles {
-    param([string]$RepoPath)
-
-    # Skip if dotfiles dir (don't copy to self)
-    $dotfilesResolved = (Resolve-Path $DOTFILES_DIR -ErrorAction SilentlyContinue).Path
-    $repoResolved = (Resolve-Path $RepoPath -ErrorAction SilentlyContinue).Path
-
-    if ($dotfilesResolved -and $repoResolved -and $dotfilesResolved -eq $repoResolved) {
-        return
-    }
-
-    $copiedCount = 0
-    foreach ($mdFile in $MARKDOWN_FILES) {
-        $sourceFile = Join-Path $DOTFILES_DIR $mdFile
-        if (Test-Path $sourceFile) {
-            try {
-                Copy-Item -Path $sourceFile -Destination $RepoPath -Force -ErrorAction Stop
-                Write-Host "    ${GREEN}copied${R} $mdFile"
-                $copiedCount++
-            } catch {
-                # Silently skip errors
-            }
-        }
-    }
-    if ($copiedCount -gt 0) {
-        Write-Host "    ${BLUE}system instructions copied ($copiedCount files)${R}"
-    }
-}
-
-# Commit and push markdown files using Claude CLI
-function Commit-WithClaude {
-    # Check if claude CLI is available
-    $claudeCmd = Get-Command claude -ErrorAction SilentlyContinue
-    if (-not $claudeCmd) {
-        return
-    }
-
-    Write-Host "${BLUE}Claude CLI detected - committing system instructions...${R}"
-    Write-Host "    ${CYAN}ANTHROPIC_LOG=info${R} enabled (normal session output)"
-    $env:ANTHROPIC_LOG = "info"
-    Push-Location $BaseDir
-    claude -p --permission-mode bypassPermissions "go into every repo inside this directory, commit CLAUDE.md AGENTS.md GEMINI.md RULES.md with message 'chore: sync system instructions', and push to origin"
-    Pop-Location
-    Remove-Item Env:ANTHROPIC_LOG -ErrorAction SilentlyContinue
-}
 
 # Fetch all repositories (including private if you have a token)
 $apiUrl = "https://api.github.com/users/$Username/repos?per_page=100&type=all"
@@ -146,8 +99,6 @@ foreach ($repo in $repos) {
                 Pop-Location
                 Write-Host "${YELLOW}Updated${R}"
                 $updated++
-                # Copy markdown files to existing repo
-                Copy-MarkdownFiles $repoPath
             } else {
                 Pop-Location
                 Write-Host "${YELLOW}Skipped (not a git repo)${R}"
@@ -165,8 +116,6 @@ foreach ($repo in $repos) {
             git clone --quiet $cloneUrl $repoPath 2>$null
             Write-Host "${GREEN}Cloned${R}"
             $cloned++
-            # Copy markdown files to newly cloned repo
-            Copy-MarkdownFiles $repoPath
         } catch {
             Write-Host "${YELLOW}Error cloning: $_${R}"
             $failed++
@@ -174,9 +123,18 @@ foreach ($repo in $repos) {
     }
 }
 
-# Commit and push markdown files using Claude CLI if available
-Write-Host "`n"
-Commit-WithClaude
+# Sync system instructions to all repos
+if (-not $NoSync.IsPresent) {
+    Write-Host "`n${CYAN}========================================${R}"
+    Write-Host "${CYAN}   Syncing System Instructions${R}"
+    Write-Host "${CYAN}========================================${R}"
+
+    if (Test-Path $SyncScript) {
+        & $SyncScript -BaseDir $BaseDir -Commit
+    } else {
+        Write-Host "${YELLOW}Warning: Sync script not found: $SyncScript${R}"
+    }
+}
 
 # Summary
 Write-Host "`n${CYAN}========================================${R}"

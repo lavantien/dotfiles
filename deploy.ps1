@@ -75,6 +75,12 @@ function Deploy-Common {
     if (Test-Path "$ScriptDir\git-update-repos.sh") {
         Copy-Item "$ScriptDir\git-update-repos.sh" "$env:USERPROFILE\dev\" -Force
     }
+    if (Test-Path "$ScriptDir\sync-system-instructions.ps1") {
+        Copy-Item "$ScriptDir\sync-system-instructions.ps1" "$env:USERPROFILE\dev\" -Force
+    }
+    if (Test-Path "$ScriptDir\sync-system-instructions.sh") {
+        Copy-Item "$ScriptDir\sync-system-instructions.sh" "$env:USERPROFILE\dev\" -Force
+    }
 
     # Copy Aider configs
     if (Test-Path "$ScriptDir\.aider.conf.yml.example") {

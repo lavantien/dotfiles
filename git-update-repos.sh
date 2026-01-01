@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Update/Clone All GitHub Repositories for a User
-# Usage: ./git-update-repos.sh [-u username] [-d base_dir] [-s]
+# Usage: ./git-update-repos.sh [-u username] [-d base_dir] [-s] [--no-sync]
 
 set -euo pipefail
 
@@ -8,6 +8,7 @@ set -euo pipefail
 USERNAME="lavantien"
 BASE_DIR="$HOME/dev/github"
 USE_SSH=false
+SYNC_INSTRUCTIONS=true
 
 # Colors
 RED='\033[0;31m'
@@ -17,33 +18,28 @@ BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 NC='\033[0m'
 
-# Markdown files to sync to all repos
-MARKDOWN_FILES=(
-    "CLAUDE.md"
-    "AGENTS.md"
-    "GEMINI.md"
-    "RULES.md"
-)
-
-# Source directory for markdown files (dotfiles repo location)
-DOTFILES_DIR="$HOME/dev/github/dotfiles"
+# Path to sync script (relative to this script)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SYNC_SCRIPT="$SCRIPT_DIR/sync-system-instructions.sh"
 
 # Parse arguments
-while getopts "u:d:s" opt; do
-    case $opt in
-        u) USERNAME="$OPTARG" ;;
-        d) BASE_DIR="$OPTARG" ;;
-        s) USE_SSH=true ;;
-        *) echo "Usage: $0 [-u username] [-d base_dir] [-s]" >&2; exit 1 ;;
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -u) USERNAME="$2"; shift 2 ;;
+        -d) BASE_DIR="$2"; shift 2 ;;
+        -s) USE_SSH=true; shift ;;
+        --no-sync) SYNC_INSTRUCTIONS=false; shift ;;
+        *) echo "Usage: $0 [-u username] [-d base_dir] [-s] [--no-sync]" >&2; exit 1 ;;
     esac
 done
 
 echo -e "${CYAN}========================================${NC}"
 echo -e "${CYAN}   GitHub Repos Updater${NC}"
 echo -e "${CYAN}========================================${NC}"
-echo -e "${BLUE}User:${NC}     $USERNAME"
-echo -e "${BLUE}Directory:${NC} $BASE_DIR"
-echo -e "${BLUE}SSH:${NC}      $USE_SSH"
+echo -e "${BLUE}User:${NC}      $USERNAME"
+echo -e "${BLUE}Directory:${NC}  $BASE_DIR"
+echo -e "${BLUE}SSH:${NC}       $USE_SSH"
+echo -e "${BLUE}Sync:${NC}      $SYNC_INSTRUCTIONS"
 echo -e "${CYAN}========================================${NC}"
 echo
 
@@ -56,44 +52,6 @@ fi
 
 echo -e "${CYAN}Fetching repositories for user: $USERNAME${NC}"
 echo
-
-# Copy system instruction markdown files to a repository
-# Usage: copy_markdown_files <repo_path>
-copy_markdown_files() {
-    local repo_path="$1"
-
-    # Skip if dotfiles dir (don't copy to self)
-    if [[ "$(cd "$repo_path" 2>/dev/null && pwd)" == "$(cd "$DOTFILES_DIR" 2>/dev/null && pwd)" ]]; then
-        return 0
-    fi
-
-    local copied_count=0
-    for md_file in "${MARKDOWN_FILES[@]}"; do
-        local source_file="$DOTFILES_DIR/$md_file"
-        if [[ -f "$source_file" ]]; then
-            if cp -f "$source_file" "$repo_path/$md_file" 2>/dev/null; then
-                echo -e "    ${GREEN}copied${NC} $md_file"
-                ((copied_count++))
-            fi
-        fi
-    done
-    if [[ $copied_count -gt 0 ]]; then
-        echo -e "    ${BLUE}system instructions copied ($copied_count files)${NC}"
-    fi
-}
-
-# Commit and push markdown files using Claude CLI
-commit_with_claude() {
-    if ! command -v claude >/dev/null 2>&1; then
-        return 0
-    fi
-
-    echo -e "${BLUE}Claude CLI detected - committing system instructions...${NC}"
-    echo -e "    ${CYAN}ANTHROPIC_LOG=info${NC} enabled (normal session output)"
-    cd "$BASE_DIR"
-    ANTHROPIC_LOG=info claude -p --permission-mode bypassPermissions "go into every repo inside this directory, commit CLAUDE.md AGENTS.md GEMINI.md RULES.md with message 'chore: sync system instructions', and push to origin"
-    cd - >/dev/null
-}
 
 # Fetch all repositories
 API_URL="https://api.github.com/users/$USERNAME/repos?per_page=100&type=all"
@@ -188,8 +146,6 @@ for i in "${!REPO_NAMES[@]}"; do
                 if git fetch origin --quiet 2>/dev/null && git pull --quiet 2>/dev/null; then
                     echo -e "${YELLOW}Updated${NC}"
                     ((UPDATED++))
-                    # Copy markdown files to existing repo
-                    copy_markdown_files "$REPO_PATH"
                 else
                     echo -e "${YELLOW}Error updating${NC}"
                     ((FAILED++))
@@ -210,8 +166,6 @@ for i in "${!REPO_NAMES[@]}"; do
         if git clone --quiet "$CLONE_URL" "$REPO_PATH" 2>/dev/null; then
             echo -e "${GREEN}Cloned${NC}"
             ((CLONED++))
-            # Copy markdown files to newly cloned repo
-            copy_markdown_files "$REPO_PATH"
         else
             echo -e "${YELLOW}Error cloning${NC}"
             ((FAILED++))
@@ -219,9 +173,19 @@ for i in "${!REPO_NAMES[@]}"; do
     fi
 done
 
-# Commit and push markdown files using Claude CLI if available
-echo
-commit_with_claude "$BASE_DIR"
+# Sync system instructions to all repos
+if [[ "$SYNC_INSTRUCTIONS" == true ]]; then
+    echo
+    echo -e "${CYAN}========================================${NC}"
+    echo -e "${CYAN}   Syncing System Instructions${NC}"
+    echo -e "${CYAN}========================================${NC}"
+
+    if [[ -f "$SYNC_SCRIPT" ]]; then
+        bash "$SYNC_SCRIPT" -d "$BASE_DIR" -c
+    else
+        echo -e "${YELLOW}Warning: Sync script not found: $SYNC_SCRIPT${NC}"
+    fi
+fi
 
 # Summary
 echo
