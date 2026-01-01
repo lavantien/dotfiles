@@ -9,6 +9,7 @@ $shScript = Join-Path $ScriptDir "backup.sh"
 
 # Convert Windows path to Git Bash format (C:\... -> /c/...)
 $shScriptBash = $shScript -replace '\\', '/' -replace '^([A-Z]):', '/$1'
+$shScriptBash = '/' + $shScriptBash.Substring(1).ToLower() + $shScriptBash.Substring(2)
 
 # Ensure Git Bash is available
 if (-not (Get-Command bash -ErrorAction SilentlyContinue)) {
