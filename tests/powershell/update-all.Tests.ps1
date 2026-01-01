@@ -1,155 +1,146 @@
-# Unit tests for update-all.ps1
-# Tests update logic, timeout handling, and prerequisites
+# Unit tests for update-all.ps1 wrapper
+# Tests that the wrapper correctly invokes update-all.sh via Git Bash
 
-Describe "Update All Helpers" {
+Describe "Update-All Script - Structure" {
 
     BeforeAll {
-        # Source update-all functions
         $Script:RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
-        $updateAllPath = Join-Path $RepoRoot "update-all.ps1"
-        . $updateAllPath
+        $Script:UpdateAllPs1 = Join-Path $RepoRoot "update-all.ps1"
+        $Script:UpdateAllSh = Join-Path $RepoRoot "update-all.sh"
     }
 
-    BeforeEach {
-        # Reset counters before each test
-        $script:updated = 0
-        $script:skipped = 0
-        $script:failed = 0
-    }
+    Context "Script Files Exist" {
 
-    Context "Update Status Functions" {
-
-        It "Update-Success outputs success message" {
-            $output = Update-Success "test" 6>&1
-            $output | Should -Match "test"
+        It "update-all.ps1 exists and is readable" {
+            Test-Path $Script:UpdateAllPs1 | Should -Be $true
         }
 
-        It "Update-Skip outputs skip message" {
-            $output = Update-Skip "test reason" 6>&1
-            $output | Should -Match "Skipped"
-            $output | Should -Match "test reason"
-        }
-
-        It "Update-Fail outputs fail message" {
-            $output = Update-Fail "test failure" 6>&1
-            $output | Should -Match "Failed"
-        }
-
-        It "Update-Section outputs formatted section header" {
-            $output = Update-Section "Test Section" 6>&1
-            $output | Should -Match "Test Section"
+        It "update-all.sh exists as source of truth" {
+            Test-Path $Script:UpdateAllSh | Should -Be $true
         }
     }
 
-    Context "Command Existence" {
+    Context "Wrapper Pattern" {
 
-        It "Get-Command returns command for existing tools" {
-            $cmd = Get-Command ls -ErrorAction SilentlyContinue
-            $cmd | Should -Not -Be $null
+        It "update-all.ps1 is a wrapper that invokes update-all.sh" {
+            $content = Get-Content $Script:UpdateAllPs1 -Raw
+            $content | Should -Match "update-all\.sh"
+            $content | Should -Match "& bash"
         }
 
-        It "Get-Command returns null for non-existent tools" {
-            $cmd = Get-Command nonexistent_command_xyz123 -ErrorAction SilentlyContinue
-            $cmd | Should -Be $null
-        }
-    }
-
-    Context "Timeout Handling" {
-
-        It "Invoke-WithTimeout executes quick command" {
-            $output = Invoke-WithTimeout -Timeout 10 -Command "Write-Host 'quick command'"
-            $output | Should -Not -Be $false
+        It "Wrapper derives .sh path from script location" {
+            $content = Get-Content $Script:UpdateAllPs1 -Raw
+            $content | Should -Match "MyInvocation\.MyCommand\.Path"
+            $content | Should -Match "Join-Path.*ScriptDir"
         }
 
-        It "Invoke-WithTimeout times out long-running commands" {
-            # This test takes ~5 seconds to run
-            $result = Invoke-WithTimeout -Timeout 1 -Command "Start-Sleep -Seconds 5"
-            $result | Should -Be $false
-        }
-    }
-
-    Context "Prerequisites Check" {
-
-        It "Test-Prerequisites does not throw error" {
-            { Test-Prerequisites } | Should -Not -Throw
-        }
-    }
-
-    Context "Update Logic" {
-
-        It "Update-AndReport handles errors gracefully" {
-            $script:failed = 0
-            # Use a command that fails with stderr output
-            Update-AndReport -Cmd "cmd /c 'exit 1'" -Name "test"
-            # The function should handle the error without throwing
-            $script:failed | Should -BeGreaterOrEqual 0
-        }
-
-        It "Update-AndReport succeeds on successful command" {
-            $script:updated = 0
-            Update-AndReport -Cmd "Write-Host 'test'" -Name "test"
-            $script:updated | Should -BeGreaterOrEqual 0
-        }
-    }
-
-    Context "PowerShell Update Helpers" {
-
-        It "Update-Pip handles empty package list" {
-            # Mock pip to return empty
-            { Update-Pip -PipCmd "echo" -Name "test" } | Should -Not -Throw
-        }
-
-        It "Update-DotnetTools handles empty tool list" {
-            # Mock dotnet to return empty
-            { Update-DotnetTools } | Should -Not -Throw
+        It "Wrapper has error action preference set to Stop" {
+            $content = Get-Content $Script:UpdateAllPs1 -Raw
+            $content | Should -Match '\$ErrorActionPreference.*Stop'
         }
     }
 }
 
-Describe "Update All Summary" {
+Describe "Update-All Script - Git Bash Detection" {
 
     BeforeAll {
-        # Source update-all functions for this describe block
         $Script:RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
-        $updateAllPath = Join-Path $RepoRoot "update-all.ps1"
-        . $updateAllPath
+        $Script:UpdateAllPs1 = Join-Path $RepoRoot "update-all.ps1"
     }
 
-    It "Calculates duration correctly" {
-        $startTime = Get-Date "2024-01-01 10:00:00"
-        $endTime = Get-Date "2024-01-01 10:05:30"
-        $duration = $endTime - $startTime
-
-        $duration.TotalMinutes | Should -Be 5.5
+    It "Checks for Git Bash availability" {
+        $content = Get-Content $Script:UpdateAllPs1 -Raw
+        $content | Should -Match "Get-Command bash"
     }
 
-    It "Formats duration as mm:ss" {
-        $duration = [TimeSpan]::FromMinutes(5.5)
-        $formatted = "{0:mm\:ss}" -f $duration
-        $formatted | Should -Be "05:30"
+    It "Provides helpful error message when bash not found" {
+        $content = Get-Content $Script:UpdateAllPs1 -Raw
+        $content | Should -Match "Git Bash.*not found"
+        $content | Should -Match "git-scm\.com/download/win"
+    }
+
+    It "Exits with error code 1 when bash not found" {
+        $content = Get-Content $Script:UpdateAllPs1 -Raw
+        $content | Should -Match "exit 1"
     }
 }
 
-Describe "Sourced Guard Pattern" {
+Describe "Update-All Script - Exit Code Propagation" {
 
     BeforeAll {
-        # Source update-all functions for this describe block
         $Script:RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
-        $updateAllPath = Join-Path $RepoRoot "update-all.ps1"
-        . $updateAllPath
+        $Script:UpdateAllPs1 = Join-Path $RepoRoot "update-all.ps1"
     }
 
-    It "Start-UpdateAll function exists" {
-        $cmd = Get-Command Start-UpdateAll -ErrorAction SilentlyContinue
-        $cmd | Should -Not -Be $null
+    It "Propagates exit code from bash script" {
+        $content = Get-Content $Script:UpdateAllPs1 -Raw
+        $content | Should -Match '\$exitCode.*=.*& bash'
+        $content | Should -Match 'exit \$exitCode'
+    }
+}
+
+Describe "Update-All Script - Argument Passing" {
+
+    BeforeAll {
+        $Script:RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+        $Script:UpdateAllPs1 = Join-Path $RepoRoot "update-all.ps1"
     }
 
-    It "Functions are available when sourced" {
-        $functions = @("Update-Section", "Update-Success", "Update-Skip", "Update-Fail", "Test-Prerequisites", "Invoke-WithTimeout", "Update-AndReport", "Update-Pip", "Update-DotnetTools")
+    It "Passes all arguments through to bash script" {
+        $content = Get-Content $Script:UpdateAllPs1 -Raw
+        $content | Should -Match '\$args'
+    }
 
-        foreach ($func in $functions) {
-            $cmd = Get-Command $func -ErrorAction SilentlyContinue
-            $cmd | Should -Not -Be $null
-        }
+    It "Uses proper argument syntax for bash invocation" {
+        $content = Get-Content $Script:UpdateAllPs1 -Raw
+        # Verify bash is invoked
+        $content | Should -Match 'bash'
+        # Verify variable names are used
+        $content | Should -Match '\$shScript'
+        $content | Should -Match '\$args'
+    }
+}
+
+Describe "Update-All Script - Source of Truth" {
+
+    BeforeAll {
+        $Script:RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+        $Script:UpdateAllPs1 = Join-Path $RepoRoot "update-all.ps1"
+        $Script:UpdateAllSh = Join-Path $RepoRoot "update-all.sh"
+    }
+
+    It "update-all.sh has significantly more lines than update-all.ps1" {
+        $ps1Lines = (Get-Content $Script:UpdateAllPs1).Count
+        $shLines = (Get-Content $Script:UpdateAllSh).Count
+        $shLines | Should -BeGreaterThan ($ps1Lines * 2) "Because .sh is source of truth with all logic"
+    }
+
+    It "update-all.sh contains update logic" {
+        $content = Get-Content $Script:UpdateAllSh -Raw
+        $content | Should -Match "update|upgrade|install" "Should have update operations"
+    }
+
+    It "update-all.ps1 does NOT contain update functions" {
+        $content = Get-Content $Script:UpdateAllPs1 -Raw
+        $content | Should -Not -Match "function Update-" "Wrapper should not define update functions"
+    }
+}
+
+Describe "Update-All Script - Documentation" {
+
+    BeforeAll {
+        $Script:RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+        $Script:UpdateAllPs1 = Join-Path $RepoRoot "update-all.ps1"
+    }
+
+    It "Has comment header explaining wrapper purpose" {
+        $content = Get-Content $Script:UpdateAllPs1 -Raw
+        $content | Should -Match "# Update All Script Wrapper"
+        $content | Should -Match "Invokes update-all\.sh via Git Bash"
+    }
+
+    It "Documents usage in header comment" {
+        $content = Get-Content $Script:UpdateAllPs1 -Raw
+        $content | Should -Match "Updates all package managers"
     }
 }
