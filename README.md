@@ -71,10 +71,12 @@ Windows (PowerShell 7+)
 ```powershell
 git clone https://github.com/lavantien/dotfiles.git $HOME/dev/dotfiles
 cd $HOME/dev/dotfiles
-.\bootstrap\bootstrap.ps1
+.\bootstrap.ps1
 
 . $PROFILE
 ```
+
+Note: You can run `.\bootstrap.ps1` from the root directory or `.\bootstrap\bootstrap.ps1` directly - both work identically. The root-level script is a convenience wrapper that delegates to the bootstrap/ subdirectory.
 
 Linux / macOS
 
@@ -198,18 +200,18 @@ Editor Mappings
 | Keybinding | Mode | Action |
 |------------|------|--------|
 | - | Normal | Open file browser (Oil) |
-| <leader>b | Normal | Format buffer |
-| <leader>e | Normal | Fuzzy find everywhere |
-| <leader>f | Normal | Find files |
-| <leader>/ | Normal | Grep in current buffer |
-| <leader>z | Normal | Live grep (native) |
-| <leader>pt | Normal | Toggle Typst preview |
-| <leader>ps | Normal | Start live preview |
-| <leader>pc | Normal | Close live preview |
-| <leader>u | Normal | Update plugins |
-| <leader>q | Normal | Quit |
+| <space>b | Normal | Format buffer |
+| <space>e | Normal | Fuzzy find everywhere |
+| <space>f | Normal | Find files |
+| <space>/ | Normal | Grep in current buffer |
+| <space>z | Normal | Live grep (native) |
+| <space>pt | Normal | Toggle Typst preview |
+| <space>ps | Normal | Start live preview |
+| <space>pc | Normal | Close live preview |
+| <space>u | Normal | Update plugins |
+| <space>q | Normal | Quit |
 
-LSP Mappings (<leader> + key)
+LSP Mappings (<space> + key)
 
 | Key | Action |
 |-----|--------|
@@ -349,6 +351,56 @@ Bypass Hooks (Emergency)
 
 ```bash
 git commit --no-verify -m "wip: emergency fix"
+```
+
+---
+
+## Claude Code Integration
+
+First-class support for Claude Code with quality checks and TDD enforcement.
+
+Quality Check Hook
+
+Automatically runs format/lint/type-check after any file write operation:
+
+```json
+// ~/.claude/settings.json (Linux/macOS)
+// %USERPROFILE%\.claude\settings.json (Windows)
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File ~/.claude/quality-check.ps1"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+TDD Guard
+
+Enforces Test-Driven Development practices when working with Claude Code:
+- Red-Green-Refactor cycle enforcement
+- Prevents adding multiple tests at once
+- Prevents over-implementation
+- Ensures tests exist before implementation
+
+The TDD guard instructions are located at .claude/tdd-guard/data/instructions.md.
+
+Deploy Claude Code Hooks
+
+```bash
+# The deploy script automatically copies Claude hooks to:
+# ~/.claude/ (Linux/macOS)
+# %USERPROFILE%\.claude\ (Windows)
+
+# Just add hooks configuration to your Claude Code settings.json
 ```
 
 ---
