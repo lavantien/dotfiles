@@ -9,60 +9,27 @@ Production-grade dotfiles supporting Windows 11, Linux (Ubuntu/Fedora/Arch), and
 
 ## Table of Contents
 
-- [Bridge Approach Note](#bridge-approach-note)
-- [Idempotency Note](#idempotency-note)
-- [Core Features](#core-features)
-- [Quick Start](#quick-start)
-- [Configuration (Optional)](#configuration-optional)
-- [Bootstrap Options](#bootstrap-options)
-- [Neovim Keybindings](#neovim-keybindings)
-- [Shell Aliases](#shell-aliases)
-- [Git Hooks](#git-hooks)
-- [Claude Code Integration](#claude-code-integration)
-- [Universal Update All](#universal-update-all)
-- [System Instructions Sync](#system-instructions-sync)
-- [Health Check & Troubleshooting](#health-check--troubleshooting)
-- [Testing](#testing)
-- [Code Coverage](#code-coverage)
-- [Additional Documentation](#additional-documentation)
-- [Updating](#updating)
+- [1. Core Features](#1-core-features)
+- [2. Idempotency Note](#2-idempotency-note)
+- [3. Quick Start](#3-quick-start)
+- [4. Bridge Approach Note](#4-bridge-approach-note)
+- [5. Bootstrap Options](#5-bootstrap-options)
+- [6. Configuration (Optional)](#6-configuration-optional)
+- [7. Git Hooks](#7-git-hooks)
+- [8. Claude Code Integration](#8-claude-code-integration)
+- [9. Universal Update All](#9-universal-update-all)
+- [10. System Instructions Sync](#10-system-instructions-sync)
+- [11. Health Check & Troubleshooting](#11-health-check--troubleshooting)
+- [12. Testing](#12-testing)
+- [13. Code Coverage](#13-code-coverage)
+- [14. Updating](#14-updating)
+- [15. Shell Aliases](#15-shell-aliases)
+- [16. Neovim Keybindings](#16-neovim-keybindings)
+- [17. Additional Documentation](#17-additional-documentation)
 
 ---
 
-## Bridge Approach Note
-
-This repository uses a bridge approach that maintains backward compatibility while supporting optional configuration.
-
-Works perfectly without configuration:
-- Run bootstrap scripts directly - they use hardcoded defaults (categories: full)
-- Zero setup required
-- Existing workflows unchanged
-
-Optional configuration available:
-- Create ~/.dotfiles.config.yaml from example file
-- Customize settings like categories, editor, github_username, etc.
-- Scripts auto-detect and use config if present
-
-Priority: Command-line flags > Config file > Hardcoded defaults
-
-For details: See BRIDGE.md and QUICKREF.md
-
----
-
-## Idempotency Note
-
-All scripts in this repository are idempotent. They intelligently detect what's already installed, compare versions, and only install or update tools that are missing or outdated. You can safely run any script multiple times without any harm.
-
-This applies to:
-- bootstrap/bootstrap.sh and bootstrap.ps1
-- deploy.sh and deploy.ps1
-- update-all.sh and update-all.ps1
-- git-update-repos.sh and git-update-repos.ps1
-- sync-system-instructions.sh and sync-system-instructions.ps1
-
----
-
-## Core Features
+## 1. Core Features
 
 Cross-Platform Support
 - Windows 11: Native PowerShell 7+ support
@@ -87,7 +54,20 @@ Quality Assurance
 
 ---
 
-## Quick Start
+## 2. Idempotency Note
+
+All scripts in this repository are idempotent. They intelligently detect what's already installed, compare versions, and only install or update tools that are missing or outdated. You can safely run any script multiple times without any harm.
+
+This applies to:
+- bootstrap/bootstrap.sh and bootstrap.ps1
+- deploy.sh and deploy.ps1
+- update-all.sh and update-all.ps1
+- git-update-repos.sh and git-update-repos.ps1
+- sync-system-instructions.sh and sync-system-instructions.ps1
+
+---
+
+## 3. Quick Start
 
 Windows (PowerShell 7+)
 
@@ -121,7 +101,62 @@ up  # or update
 
 ---
 
-## Configuration (Optional)
+## 4. Bridge Approach Note
+
+This repository uses a bridge approach that maintains backward compatibility while supporting optional configuration.
+
+Works perfectly without configuration:
+- Run bootstrap scripts directly - they use hardcoded defaults (categories: full)
+- Zero setup required
+- Existing workflows unchanged
+
+Optional configuration available:
+- Create ~/.dotfiles.config.yaml from example file
+- Customize settings like categories, editor, github_username, etc.
+- Scripts auto-detect and use config if present
+
+Priority: Command-line flags > Config file > Hardcoded defaults
+
+For details: See BRIDGE.md and QUICKREF.md
+
+---
+
+## 5. Bootstrap Options
+
+Installation Categories
+
+| Category | Description |
+|----------|-------------|
+| minimal | Foundation (package managers, git) + CLI tools only |
+| sdk | Minimal + programming language SDKs (Node, Python, Go, Rust) |
+| full | SDK + language servers + linters/formatters (default) |
+
+Command-Line Options
+
+| Option | Bash | PowerShell | Default |
+|--------|-------|-----------|---------|
+| Non-interactive | -y, --yes | -Y | Prompt for confirmation |
+| Dry-run | --dry-run | -DryRun | Install everything |
+| Categories | --categories sdk | -Categories sdk | full |
+| Skip update | --skip-update | -SkipUpdate | Update package managers |
+| Help | -h, --help | -Help | Show help |
+
+What Gets Installed
+
+| Phase | Tools |
+|-------|-------|
+| 1: Foundation | Package managers (Homebrew, Scoop), git |
+| 2: Core SDKs | Node.js, Python, Go, Rust |
+| 3: Language Servers | clangd, gopls, rust-analyzer, pyright, typescript-language-server, yaml-language-server |
+| 4: Linters & Formatters | prettier, eslint, ruff, goimports, golangci-lint, clang-format |
+| 5: CLI Tools | fzf, zoxide, bat, eza, lazygit, gh, ripgrep, fd, tokei, difftastic |
+| 5: Testing & Coverage | bats (all), kcov (Linux/macOS), Pester (Windows) |
+| 6: Deploy Configs | Runs deploy.sh / deploy.ps1 to copy configurations |
+| 7: Update All | Runs update-all.sh / update-all.ps1 to update packages and repos |
+
+---
+
+## 6. Configuration (Optional)
 
 Default Behavior (No Config Needed)
 
@@ -162,173 +197,7 @@ Common Config Options
 
 ---
 
-## Bootstrap Options
-
-Installation Categories
-
-| Category | Description |
-|----------|-------------|
-| minimal | Foundation (package managers, git) + CLI tools only |
-| sdk | Minimal + programming language SDKs (Node, Python, Go, Rust) |
-| full | SDK + language servers + linters/formatters (default) |
-
-Command-Line Options
-
-| Option | Bash | PowerShell | Default |
-|--------|-------|-----------|---------|
-| Non-interactive | -y, --yes | -Y | Prompt for confirmation |
-| Dry-run | --dry-run | -DryRun | Install everything |
-| Categories | --categories sdk | -Categories sdk | full |
-| Skip update | --skip-update | -SkipUpdate | Update package managers |
-| Help | -h, --help | -Help | Show help |
-
-What Gets Installed
-
-| Phase | Tools |
-|-------|-------|
-| 1: Foundation | Package managers (Homebrew, Scoop), git |
-| 2: Core SDKs | Node.js, Python, Go, Rust |
-| 3: Language Servers | clangd, gopls, rust-analyzer, pyright, typescript-language-server, yaml-language-server |
-| 4: Linters & Formatters | prettier, eslint, ruff, goimports, golangci-lint, clang-format |
-| 5: CLI Tools | fzf, zoxide, bat, eza, lazygit, gh, ripgrep, fd, tokei, difftastic |
-| 5: Testing & Coverage | bats (all), kcov (Linux/macOS), Pester (Windows) |
-| 6: Deploy Configs | Runs deploy.sh / deploy.ps1 to copy configurations |
-| 7: Update All | Runs update-all.sh / update-all.ps1 to update packages and repos |
-
----
-
-## Neovim Keybindings
-
-Leader key is Space.
-
-From init.lua:
-
-| Keybinding | Mode | Action |
-|------------|------|--------|
-| - | Normal | Open parent directory (Oil) |
-| `<leader>q` | Normal | Quit |
-| `<leader>x` | Normal | Write and source config |
-| `<leader>'` | Normal | Search forward (#) |
-| `<leader>pt` | Normal | Toggle Typst preview |
-| `<leader>ps` | Normal | Start Typst preview |
-| `<leader>pc` | Normal | Close Typst preview |
-| `<leader>;` | Normal | Typst preview pick |
-| `<leader>b` | Normal | Format buffer (LSP) |
-| `<leader>u` | Normal | Update plugins |
-| `<leader>e` | Normal | Fuzzy find everywhere (FzfLua) |
-| `<leader>n` | Normal | Fuzzy combine (FzfLua) |
-| `<leader>/` | Normal | Grep in current buffer (FzfLua) |
-| `<leader>z` | Normal | Live grep native (FzfLua) |
-| `<leader>f` | Normal | Find files (FzfLua) |
-| `<leader>h` | Normal | Help tags (FzfLua) |
-| `<leader>k` | Normal | Keymaps (FzfLua) |
-| `<leader>l` | Normal | Location list (FzfLua) |
-| `<leader>m` | Normal | Marks (FzfLua) |
-| `<leader>t` | Normal | Quickfix (FzfLua) |
-
-Git Mappings (using FzfLua)
-
-| Key | Action |
-|-----|--------|
-| `<leader>gf` | Git files |
-| `<leader>gs` | Git status |
-| `<leader>gd` | Git diff |
-| `<leader>gh` | Git hunks |
-| `<leader>gc` | Git commits |
-| `<leader>gl` | Git blame |
-| `<leader>gb` | Git branches |
-| `<leader>gt` | Git tags |
-| `<leader>gk` | Git stash |
-
-LSP Mappings (using FzfLua)
-
-| Key | Action |
-|-----|--------|
-| `<leader>\` | LSP finder (definitions, refs, implementations) |
-| `<leader>dd` | Document diagnostics |
-| `<leader>dw` | Workspace diagnostics |
-| `<leader>,` | Incoming calls |
-| `<leader>.` | Outgoing calls |
-| `<leader>a` | Code actions |
-| `<leader>s` | Document symbols |
-| `<leader>w` | Workspace symbols |
-| `<leader>r` | References |
-| `<leader>i` | Implementations |
-| `<leader>o` | Type definitions |
-| `<leader>j` | Go to definition |
-| `<leader>v` | Go to declaration |
-
----
-
-## Shell Aliases
-
-File Operations
-
-| Alias | Command | Description |
-|-------|---------|-------------|
-| ls | eza -la ... | Detailed directory listing |
-| df | difft | Difftastic diff |
-| t | tokei | Code statistics |
-
-Directory Navigation (Zoxide)
-
-| Alias | Description |
-|-------|-------------|
-| z <pattern> | Jump to directory matching pattern (fuzzy match) |
-| zi | Interactive directory selection with fzf |
-| zd <filter> | Jump with partial filter, shows interactive if no match |
-
-Git Aliases
-
-| Alias | Command |
-|-------|---------|
-| gs | git status |
-| gl | git log |
-| glg | git log --graph |
-| glf | git log --follow |
-| gb | git branch |
-| gd | git diff |
-| ga | git add |
-| gaa | git add . |
-| gcm | git commit -m |
-| gp | git push |
-| gf | git fetch |
-| gm | git merge |
-| gc | git checkout |
-| gcb | git checkout -b |
-| gt | git tag |
-
-Docker Aliases
-
-| Alias | Command |
-|-------|---------|
-| d | docker |
-| ds | docker start |
-| dx | docker stop |
-| dp | docker ps |
-| dpa | docker ps -a |
-| di | docker images |
-| dl | docker logs |
-| dlf | docker logs -f |
-| dc | docker compose |
-| dcp | docker compose ps |
-| dcpa | docker compose ps -a |
-| dcu | docker compose up |
-| dcd | docker compose down |
-| dcl | docker compose logs |
-| dclf | docker compose logs -f |
-
-Utility Aliases
-
-| Alias | Description |
-|-------|-------------|
-| up / update | Update all packages |
-| ep | Edit profile |
-| rprof | Reload profile |
-
----
-
-## Git Hooks
+## 7. Git Hooks
 
 Supported Languages
 
@@ -372,7 +241,7 @@ git commit --no-verify -m "wip: emergency fix"
 
 ---
 
-## Claude Code Integration
+## 8. Claude Code Integration
 
 First-class support for Claude Code with quality checks and TDD enforcement.
 
@@ -422,7 +291,7 @@ Deploy Claude Code Hooks
 
 ---
 
-## Universal Update All
+## 9. Universal Update All
 
 One command to update everything on your system.
 
@@ -444,7 +313,7 @@ npm, yarn, pnpm, gup/go, cargo, rustup, pip/pip3, poetry, dotnet, gem, composer,
 
 ---
 
-## System Instructions Sync
+## 10. System Instructions Sync
 
 Single source of truth for AI assistant instructions across all repositories.
 
@@ -485,7 +354,7 @@ Standalone Sync
 
 ---
 
-## Health Check & Troubleshooting
+## 11. Health Check & Troubleshooting
 
 Health Check
 
@@ -513,7 +382,7 @@ For detailed troubleshooting, see QUICKREF.md.
 
 ---
 
-## Testing
+## 12. Testing
 
 Comprehensive test suite ensuring reliability across all platforms and components.
 
@@ -561,7 +430,7 @@ Test Philosophy
 
 ---
 
-## Code Coverage
+## 13. Code Coverage
 
 Universal coverage measurement supporting both bash and PowerShell scripts with actual coverage on all platforms.
 
@@ -649,18 +518,7 @@ Coverage Calculation
 
 ---
 
-## Additional Documentation
-
-| Document | Purpose |
-|----------|---------|
-| QUICKREF.md | Quick reference card and common tasks |
-| BRIDGE.md | Bridge approach and configuration system |
-| FIX_SUMMARY.md | What was fixed and why |
-| COMPLETION_SUMMARY.md | Complete verification summary |
-
----
-
-## Updating
+## 14. Updating
 
 ```bash
 cd ~/dev/dotfiles  # or $HOME/dev/dotfiles on Windows
@@ -670,6 +528,148 @@ git pull
 
 source ~/.zshrc  # or . $PROFILE on Windows
 ```
+
+---
+
+## 15. Shell Aliases
+
+File Operations
+
+| Alias | Command | Description |
+|-------|---------|-------------|
+| ls | eza -la ... | Detailed directory listing |
+| df | difft | Difftastic diff |
+| t | tokei | Code statistics |
+
+Directory Navigation (Zoxide)
+
+| Alias | Description |
+|-------|-------------|
+| z <pattern> | Jump to directory matching pattern (fuzzy match) |
+| zi | Interactive directory selection with fzf |
+| zd <filter> | Jump with partial filter, shows interactive if no match |
+
+Git Aliases
+
+| Alias | Command |
+|-------|---------|
+| gs | git status |
+| gl | git log |
+| glg | git log --graph |
+| glf | git log --follow |
+| gb | git branch |
+| gd | git diff |
+| ga | git add |
+| gaa | git add . |
+| gcm | git commit -m |
+| gp | git push |
+| gf | git fetch |
+| gm | git merge |
+| gc | git checkout |
+| gcb | git checkout -b |
+| gt | git tag |
+
+Docker Aliases
+
+| Alias | Command |
+|-------|---------|
+| d | docker |
+| ds | docker start |
+| dx | docker stop |
+| dp | docker ps |
+| dpa | docker ps -a |
+| di | docker images |
+| dl | docker logs |
+| dlf | docker logs -f |
+| dc | docker compose |
+| dcp | docker compose ps |
+| dcpa | docker compose ps -a |
+| dcu | docker compose up |
+| dcd | docker compose down |
+| dcl | docker compose logs |
+| dclf | docker compose logs -f |
+
+Utility Aliases
+
+| Alias | Description |
+|-------|-------------|
+| up / update | Update all packages |
+| ep | Edit profile |
+| rprof | Reload profile |
+
+---
+
+## 16. Neovim Keybindings
+
+Leader key is Space.
+
+From init.lua:
+
+| Keybinding | Mode | Action |
+|------------|------|--------|
+| - | Normal | Open parent directory (Oil) |
+| `<leader>q` | Normal | Quit |
+| `<leader>x` | Normal | Write and source config |
+| `<leader>'` | Normal | Search forward (#) |
+| `<leader>pt` | Normal | Toggle Typst preview |
+| `<leader>ps` | Normal | Start Typst preview |
+| `<leader>pc` | Normal | Close Typst preview |
+| `<leader>;` | Normal | Typst preview pick |
+| `<leader>b` | Normal | Format buffer (LSP) |
+| `<leader>u` | Normal | Update plugins |
+| `<leader>e` | Normal | Fuzzy find everywhere (FzfLua) |
+| `<leader>n` | Normal | Fuzzy combine (FzfLua) |
+| `<leader>/` | Normal | Grep in current buffer (FzfLua) |
+| `<leader>z` | Normal | Live grep native (FzfLua) |
+| `<leader>f` | Normal | Find files (FzfLua) |
+| `<leader>h` | Normal | Help tags (FzfLua) |
+| `<leader>k` | Normal | Keymaps (FzfLua) |
+| `<leader>l` | Normal | Location list (FzfLua) |
+| `<leader>m` | Normal | Marks (FzfLua) |
+| `<leader>t` | Normal | Quickfix (FzfLua) |
+
+Git Mappings (using FzfLua)
+
+| Key | Action |
+|-----|--------|
+| `<leader>gf` | Git files |
+| `<leader>gs` | Git status |
+| `<leader>gd` | Git diff |
+| `<leader>gh` | Git hunks |
+| `<leader>gc` | Git commits |
+| `<leader>gl` | Git blame |
+| `<leader>gb` | Git branches |
+| `<leader>gt` | Git tags |
+| `<leader>gk` | Git stash |
+
+LSP Mappings (using FzfLua)
+
+| Key | Action |
+|-----|--------|
+| `<leader>\` | LSP finder (definitions, refs, implementations) |
+| `<leader>dd` | Document diagnostics |
+| `<leader>dw` | Workspace diagnostics |
+| `<leader>,` | Incoming calls |
+| `<leader>.` | Outgoing calls |
+| `<leader>a` | Code actions |
+| `<leader>s` | Document symbols |
+| `<leader>w` | Workspace symbols |
+| `<leader>r` | References |
+| `<leader>i` | Implementations |
+| `<leader>o` | Type definitions |
+| `<leader>j` | Go to definition |
+| `<leader>v` | Go to declaration |
+
+---
+
+## 17. Additional Documentation
+
+| Document | Purpose |
+|----------|---------|
+| QUICKREF.md | Quick reference card and common tasks |
+| BRIDGE.md | Bridge approach and configuration system |
+| FIX_SUMMARY.md | What was fixed and why |
+| COMPLETION_SUMMARY.md | Complete verification summary |
 
 ---
 
