@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE report PUBLIC "-//JACOCO//DTD Report 1.1//EN" "report.dtd"[]>
-<report name="Pester (01/01/2026 22:05:30)">
-  <sessioninfo id="this" start="1767305123868" dump="1767305130962" />
+<report name="Pester (01/01/2026 22:12:57)">
+  <sessioninfo id="this" start="1767305570940" dump="1767305577298" />
   <package name="dotfiles">
     <class name="dotfiles/deploy" sourcefilename="deploy.ps1">
       <method name="&lt;script&gt;" desc="()" line="4">
