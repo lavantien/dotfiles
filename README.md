@@ -525,9 +525,9 @@ Test Coverage
 
 | Suite | Tests | Description |
 |-------|-------|-------------|
-| PowerShell | 218 | Wrapper validation, bootstrap, config, git hooks, E2E |
+| PowerShell | 141 | Wrapper validation, bootstrap, config, git hooks, E2E |
 | Bash | 233 | Unit tests for deploy, backup, restore, healthcheck, uninstall, sync, git-update |
-| **Total** | **451** | Cross-platform test coverage |
+| **Total** | **374** | Cross-platform test coverage |
 
 Test Areas Covered
 
