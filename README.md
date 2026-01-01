@@ -199,19 +199,22 @@ Editor Mappings
 
 | Keybinding | Mode | Action |
 |------------|------|--------|
-| - | Normal | Open file browser (Oil) |
-| `<Space>b` | Normal | Format buffer |
-| `<Space>e` | Normal | Fuzzy find everywhere |
-| `<Space>f` | Normal | Find files |
-| `<Space>/` | Normal | Grep in current buffer |
-| `<Space>z` | Normal | Live grep (native) |
-| `<Space>pt` | Normal | Toggle Typst preview |
-| `<Space>ps` | Normal | Start live preview |
-| `<Space>pc` | Normal | Close live preview |
-| `<Space>u` | Normal | Update plugins |
+| `-` | Normal | Open file browser (Oil) |
 | `<Space>q` | Normal | Quit |
+| `<Space>x` | Normal | Write and source config |
+| `<Space>` + `'` | Normal | Search forward (#) |
+| `<Space>pt` | Normal | Toggle Typst preview |
+| `<Space>ps` | Normal | Start Typst preview |
+| `<Space>pc` | Normal | Close Typst preview |
+| `<Space>;` | Normal | Typst preview pick |
+| `<Space>b` | Normal | Format buffer (LSP) |
+| `<Space>u` | Normal | Update plugins |
+| `<Space>e` | Normal | Fuzzy find everywhere (FzfLua) |
+| `<Space>f` | Normal | Find files (FzfLua) |
+| `<Space>/` | Normal | Grep in current buffer (FzfLua) |
+| `<Space>z` | Normal | Live grep native (FzfLua) |
 
-LSP Mappings (`<Space>` + key)
+LSP Mappings (`<Space>` + key, using FzfLua)
 
 | Key | Action |
 |-----|--------|
@@ -222,78 +225,15 @@ LSP Mappings (`<Space>` + key)
 | gc | Git commits |
 | gl | Git blame |
 | gb | Git branches |
-| `\` | LSP finder (definitions, refs, implementations) |
+| `\`` | LSP finder (definitions, refs, implementations) |
 | dd | Document diagnostics |
 | dw | Workspace diagnostics |
-| `,` | Incoming calls |
-| `.` | Outgoing calls |
+| `,,` | Incoming calls |
+| `..` | Outgoing calls |
 | a | Code actions |
 | s | Document symbols |
 | w | Workspace symbols |
 | r | References |
-| i | Implementations |
-| o | Type definitions |
-| j | Go to definition |
-| v | Go to declaration |
-
-Hidden Plugin Commands (FzfLua)
-
-Access via `:FzfLua.<command>`:
-
-| Command | Action |
-|---------|--------|
-| `:FzfLua.global` | Fuzzy find everywhere |
-| `:FzfLua.files` | Find files |
-| `:FzfLua.grep_curbuf` | Grep in current buffer |
-| `:FzfLua.live_grep_native` | Live grep |
-| `:FzfLua.helptags` | Help tags |
-| `:FzfLua.keymaps` | Keymaps |
-| `:FzfLua.loclist` | Location list |
-| `:FzfLua.marks` | Marks |
-| `:FzfLua.quickfix` | Quickfix |
-| `:FzfLua.git_files` | Git files |
-| `:FzfLua.git_status` | Git status |
-| `:FzfLua.git_diff` | Git diff |
-| `:FzfLua.git_hunks` | Git hunks |
-| `:FzfLua.git_commits` | Git commits |
-| `:FzfLua.git_blame` | Git blame |
-| `:FzfLua.git_branches` | Git branches |
-| `:FzfLua.git_tags` | Git tags |
-| `:FzfLua.git_stash` | Git stash |
-| `:FzfLua.lsp_finder` | LSP finder (definitions, refs, implementations) |
-| `:FzfLua.lsp_document_diagnostics` | Document diagnostics |
-| `:FzfLua.lsp_workspace_diagnostics` | Workspace diagnostics |
-| `:FzfLua.lsp_incoming_calls` | Incoming calls |
-| `:FzfLua.lsp_outgoing_calls` | Outgoing calls |
-| `:FzfLua.lsp_code_actions` | Code actions |
-| `:FzfLua.lsp_document_symbols` | Document symbols |
-| `:FzfLua.lsp_live_workspace_symbols` | Live workspace symbols |
-| `:FzfLua.lsp_references` | References |
-| `:FzfLua.lsp_implementations` | Implementations |
-| `:FzfLua.lsp_typedefs` | Type definitions |
-
----
-
-## Wezterm Hotkeys
-
-Default Terminal Hotkeys
-
-| Keybinding | Action |
-|------------|--------|
-| ALT+Enter | Disable default assignment |
-
-Theme and Appearance
-
-- Color scheme: rose-pine
-- Font: IosevkaTerm Nerd Font (17pt)
-- Window decorations: TITLE | RESIZE
-- Tab bar: Disabled
-- Window padding: 0
-
----
-
-## Shell Aliases
-
 File Operations
 
 | Alias | Command | Description |
