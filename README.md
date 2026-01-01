@@ -200,18 +200,18 @@ Editor Mappings
 | Keybinding | Mode | Action |
 |------------|------|--------|
 | - | Normal | Open file browser (Oil) |
-| <space>b | Normal | Format buffer |
-| <space>e | Normal | Fuzzy find everywhere |
-| <space>f | Normal | Find files |
-| <space>/ | Normal | Grep in current buffer |
-| <space>z | Normal | Live grep (native) |
-| <space>pt | Normal | Toggle Typst preview |
-| <space>ps | Normal | Start live preview |
-| <space>pc | Normal | Close live preview |
-| <space>u | Normal | Update plugins |
-| <space>q | Normal | Quit |
+| `<Space>b` | Normal | Format buffer |
+| `<Space>e` | Normal | Fuzzy find everywhere |
+| `<Space>f` | Normal | Find files |
+| `<Space>/` | Normal | Grep in current buffer |
+| `<Space>z` | Normal | Live grep (native) |
+| `<Space>pt` | Normal | Toggle Typst preview |
+| `<Space>ps` | Normal | Start live preview |
+| `<Space>pc` | Normal | Close live preview |
+| `<Space>u` | Normal | Update plugins |
+| `<Space>q` | Normal | Quit |
 
-LSP Mappings (<space> + key)
+LSP Mappings (`<Space>` + key)
 
 | Key | Action |
 |-----|--------|
@@ -222,11 +222,11 @@ LSP Mappings (<space> + key)
 | gc | Git commits |
 | gl | Git blame |
 | gb | Git branches |
-| \ | LSP finder (definitions, refs, implementations) |
+| `\` | LSP finder (definitions, refs, implementations) |
 | dd | Document diagnostics |
 | dw | Workspace diagnostics |
-| , | Incoming calls |
-| . | Outgoing calls |
+| `,` | Incoming calls |
+| `.` | Outgoing calls |
 | a | Code actions |
 | s | Document symbols |
 | w | Workspace symbols |
