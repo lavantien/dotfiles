@@ -183,29 +183,50 @@ function Deploy-PowerShellProfile {
 # UPDATE GIT CONFIG FOR WINDOWS
 # ============================================================================
 function Update-GitConfig {
-    Write-Host "${GREEN}Checking .gitconfig for Windows-specific fixes...${R}"
+    Write-Host "${GREEN}Checking .gitconfig for platform-specific fixes...${R}"
 
     $gitConfigPath = "$env:USERPROFILE\.gitconfig"
-    if (Test-Path $gitConfigPath) {
-        $content = Get-Content $gitConfigPath -Raw
-        $modified = $false
+    if (-not (Test-Path $gitConfigPath)) {
+        return
+    }
 
-        # Remove WSL/Linuxbrew gh credential helper on Windows
-        # Use gh's native git-credential-gh helper or Windows Credential Manager
-        if ($content -match 'linuxbrew.*gh auth git-credential') {
-            Write-Host "  Removing WSL gh credential helper (use 'gh auth setup' or Windows Credential Manager)" -ForegroundColor Yellow
-            # Remove the problematic gh credential lines
-            $content = $content -replace 'credential\.https://github\.com\.helper=.*linuxbrew.*gh.*\r?\n?', ''
-            $content = $content -replace 'credential\.https://gist\.github\.com\.helper=.*linuxbrew.*gh.*\r?\n?', ''
-            $modified = $true
-        }
+    $content = Get-Content $gitConfigPath -Raw
+    $originalContent = $content
+    $modified = $false
+    $fixes = @()
 
-        if ($modified) {
-            $content | Set-Content $gitConfigPath -NoNewline
-            Write-Host "  .gitconfig updated" -ForegroundColor Green
-        } else {
-            Write-Host "  .gitconfig is clean" -ForegroundColor Green
-        }
+    # Fix 1: Remove WSL/Linuxbrew gh credential helper on Windows (INI format)
+    # This handles cross-platform dotfiles where Linux paths leak into Windows config
+    if ($content -match '/home/linuxbrew|/usr/local/bin.*gh auth|linuxbrew.*gh.*auth') {
+        $fixes += "WSL/Linuxbrew gh credential helper"
+        # Remove lines containing linuxbrew gh with auth git-credential
+        $content = $content -replace '\s*helper\s*=\s*!.*?/home/linuxbrew/.*?\.bin/gh\s+auth\s+git-credential.*?\r?\n', ''
+        $content = $content -replace '\s*helper\s*=\s*!.*?linuxbrew.*?gh.*?auth.*?git-credential.*?\r?\n', ''
+        $modified = $true
+    }
+
+    # Fix 2: Remove absolute Windows paths to gh (breaks across machines)
+    # Matches: helper = !"C:/Users/.../gh.exe" auth git-credential
+    if ($content -match 'helper\s*=\s*!"[A-Z]:/.*?gh\.exe"') {
+        $fixes += "absolute Windows path to gh.exe"
+        $content = $content -replace '\s*helper\s*=\s*!"[A-Z]:/.*?gh\.exe".*?\r?\n', ''
+        $modified = $true
+    }
+
+    # Fix 3: Remove duplicate/empty helper lines in credential sections
+    # Clean up sections like: helper = \n    helper = actual-value
+    $content = $content -replace '(\s*helper\s*=\s*\r?\n){2,}', "    helper =`r`n"
+    $content = $content -replace '(\s*helper\s*=\s*)\r?\n\s*`[credential "', "`r`n[credential `""
+
+    # Fix 4: Remove empty credential sections
+    $content = $content -replace '\[credential "[^"]+"\]\r?\n(\s*#.*\r?\n)*\s*\r?\n(?=\s*\[|\Z)', ''
+
+    if ($modified) {
+        $content | Set-Content $gitConfigPath -NoNewline
+        Write-Host "  Fixes applied: $($fixes -join ', ')" -ForegroundColor Yellow
+        Write-Host "  .gitconfig updated (using Windows Credential Manager or gh native auth)" -ForegroundColor Green
+    } else {
+        Write-Host "  .gitconfig is clean" -ForegroundColor Green
     }
 }
 
