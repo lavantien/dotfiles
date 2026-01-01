@@ -17,7 +17,9 @@ install_apt_package() {
     if needs_install "$check_cmd" "$min_version"; then
         log_step "Installing $package via apt..."
         if [[ "$DRY_RUN" == "false" ]]; then
-            sudo apt update >/dev/null 2>&1 || true
+            if ! sudo apt update >/dev/null 2>&1; then
+                log_warning "apt update failed, continuing anyway"
+            fi
             if run_cmd "sudo apt install -y $package"; then
                 track_installed "$package"
                 return 0

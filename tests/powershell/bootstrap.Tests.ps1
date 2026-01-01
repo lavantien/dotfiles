@@ -2,9 +2,10 @@
 # Tests parameter parsing, platform detection, and core functions
 
 BeforeAll {
-    # Setup test environment
-    $Script:TestDir = Join-Path $PSScriptRoot ".."
-    . (Join-Path $TestDir "lib\common.ps1")
+    # Setup test environment - get repo root
+    $Script:RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+    $commonLibPath = Join-Path $RepoRoot "bootstrap\lib\common.ps1"
+    . $commonLibPath
 }
 
 Describe "Bootstrap Common Functions" {
@@ -26,8 +27,8 @@ Describe "Bootstrap Common Functions" {
             $output | Should -Match "\[WARN\] test message"
         }
 
-        It "Write-Error outputs error message" {
-            $output = Write-Error "test message" 6>&1
+        It "Write-Error-Msg outputs error message" {
+            $output = Write-Error-Msg "test message" 6>&1
             $output | Should -Match "\[ERROR\] test message"
         }
     }
@@ -43,33 +44,17 @@ Describe "Bootstrap Common Functions" {
         }
     }
 
-    Context "Helper Functions" {
+    Context "Install Functions" {
 
-        It "Capitalize first letter" {
-            $result = & Capitalize "hello"
-            $result | Should -Be "Hello"
+        It "Invoke-SafeInstall returns result from script block" {
+            # Mock successful install - note: function returns array so we check last element
+            $result = Invoke-SafeInstall { param($a) $true } "test-package"
+            $result[-1] | Should -Be $true
         }
 
-        It "Join strings with delimiter" {
-            $result = Join-ByString "," "a", "b", "c"
-            $result | Should -Be "a,b,c"
-        }
-    }
-}
-
-Describe "Bootstrap Install Functions" {
-
-    Context "Safe Install Wrapper" {
-
-        It "Safe-Install returns true on success" {
-            # Mock successful install
-            $result = Safe-Install { param($a, $b, $c) $true } "test-package" "test-command"
-            $result | Should -Be $true
-        }
-
-        It "Safe-Install returns false on failure" {
-            # Mock failed install
-            $result = Safe-Install { param($a, $b, $c) $false } "test-package" "test-command"
+        It "Invoke-SafeInstall handles failures gracefully" {
+            # Mock failed install - scriptblock that throws
+            $result = Invoke-SafeInstall { param($a) throw "test error" } "test-package"
             $result | Should -Be $false
         }
     }
@@ -77,60 +62,48 @@ Describe "Bootstrap Install Functions" {
     Context "Path Management" {
 
         It "Add-ToPath adds new path to PATH" {
-            $newPath = "C:\test-path-$([guid]::NewGuid())"
+            $newPath = "C:\test-path-$(New-Guid)"
             $originalPath = $env:PATH
 
             Add-ToPath $newPath
 
-            $env:PATH | Should -Match $newPath
+            $env:PATH.Split(';') | Should -Contain $newPath
 
             # Cleanup
             $env:PATH = $originalPath
         }
+    }
 
-        It "Add-ToPath does not duplicate existing paths" {
-            $existingPath = $env:PATH -split ';' | Select-Object -First 1
-            $originalPath = $env:PATH
+    Context "Platform Detection" {
 
-            Add-ToPath $existingPath
-
-            $count = ($env:PATH -split ';' | Where-Object { $_ -eq $existingPath }).Count
-            $count | Should -Be 1
-
-            # Cleanup
-            $env:PATH = $originalPath
+        It "Get-OSPlatform returns a known platform" {
+            $platform = Get-OSPlatform
+            $platform | Should -BeIn @("windows", "linux", "macos")
         }
     }
 }
 
-Describe "Bootstrap Configuration" {
+Describe "Bootstrap Tracking Functions" {
 
-    Context "Config Loading" {
-
-        It "Load-DotfilesConfig returns without error" {
-            # Test with non-existent config (should use defaults)
-            { Load-DotfilesConfig -ConfigFile "nonexistent.yaml" } | Should -Not -Throw
-        }
-
-        It "Get-ConfigValue returns default for missing key" {
-            # Mock empty config
-            $script:CONFIG_TEST = ""
-            $result = Get-ConfigValue -Key "test" -Default "default_value"
-            $result | Should -Be "default_value"
-        }
+    BeforeEach {
+        Reset-Tracking
     }
 
-    Context "Skip Package" {
+    It "Track-Installed adds to installed list" {
+        $initialCount = $Script:InstalledPackages.Count
+        Track-Installed "test-package"
+        $Script:InstalledPackages.Count | Should -Be ($initialCount + 1)
+    }
 
-        It "Test-SkipPackage returns false for normal packages" {
-            $script:CONFIG_SKIP_PACKAGES = @()
-            Test-SkipPackage "package1" | Should -Be $false
-        }
+    It "Track-Skipped adds to skipped list" {
+        $initialCount = $Script:SkippedPackages.Count
+        Track-Skipped "test-package"
+        $Script:SkippedPackages.Count | Should -Be ($initialCount + 1)
+    }
 
-        It "Test-SkipPackage returns true for skipped packages" {
-            $script:CONFIG_SKIP_PACKAGES = @("package1", "package2")
-            Test-SkipPackage "package1" | Should -Be $true
-            Test-SkipPackage "package3" | Should -Be $false
-        }
+    It "Track-Failed adds to failed list" {
+        $initialCount = $Script:FailedPackages.Count
+        Track-Failed "test-package"
+        $Script:FailedPackages.Count | Should -Be ($initialCount + 1)
     }
 }

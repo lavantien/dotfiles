@@ -453,3 +453,17 @@ cli_tools:
       linux_arch: sudo pacman -S --noconfirm fd
       linux_opensuse: sudo zypper install -y fd-find
       windows: scoop install fd
+
+  - name: bats
+    display_name: BASH Automated Testing System
+    platforms: [all]
+    check_cmd: bats
+    version_flag: --version
+    min_version: "1.10.0"
+    install:
+      macos: brew install bats
+      linux_debian: sudo apt install -y bats
+      linux_fedora: sudo dnf install -y bats
+      linux_arch: sudo pacman -S --noconfirm bats
+      linux_opensuse: sudo zypper install -y bats
+      windows: npm install -g bats

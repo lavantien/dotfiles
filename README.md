@@ -1,8 +1,6 @@
 # Universal Dotfiles
 
-Cross-platform development environment that just works everywhere.
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Coverage](https://img.shields.io/badge/coverage-23%25-red) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)](https://github.com/lavantien/dotfiles)
 
 Production-grade dotfiles supporting Windows 11, Linux (Ubuntu/Fedora/Arch), and macOS with intelligent auto-detection and graceful fallbacks.
@@ -24,6 +22,8 @@ Production-grade dotfiles supporting Windows 11, Linux (Ubuntu/Fedora/Arch), and
 - [Universal Update All](#universal-update-all)
 - [System Instructions Sync](#system-instructions-sync)
 - [Health Check & Troubleshooting](#health-check--troubleshooting)
+- [Testing](#testing)
+- [Code Coverage](#code-coverage)
 - [Additional Documentation](#additional-documentation)
 - [Updating](#updating)
 
@@ -80,6 +80,7 @@ Developer Tools
 - 20+ package managers: Update everything with one command
 
 Quality Assurance
+- 250+ automated tests covering all major components
 - Conventional commits enforcement
 - Claude Code hooks for real-time quality checks
 - TDD guard to enforce test-driven development
@@ -190,6 +191,7 @@ What Gets Installed
 | 3: Language Servers | clangd, gopls, rust-analyzer, pyright, typescript-language-server, yaml-language-server |
 | 4: Linters & Formatters | prettier, eslint, ruff, goimports, golangci-lint, clang-format |
 | 5: CLI Tools | fzf, zoxide, bat, eza, lazygit, gh, ripgrep, fd, tokei, difftastic |
+| 5: Testing & Coverage | bats (all), kcov (Linux/macOS), Pester (Windows) |
 | 6: Deploy Configs | Runs deploy.sh / deploy.ps1 to copy configurations |
 | 7: Update All | Runs update-all.sh / update-all.ps1 to update packages and repos |
 
@@ -508,6 +510,142 @@ Quick Troubleshooting
 | zoxide not jumping to directories | Use directories normally for a few days to let zoxide learn |
 
 For detailed troubleshooting, see QUICKREF.md.
+
+---
+
+## Testing
+
+Comprehensive test suite ensuring reliability across all platforms and components.
+
+Test Coverage
+
+| Suite | Tests | Description |
+|-------|-------|-------------|
+| PowerShell Unit | 35 | Bootstrap, config, deploy, git hooks |
+| PowerShell E2E | 215 | End-to-end integration tests |
+| Bash Unit | 78 | Shell script validation |
+| Bash E2E | 56 | End-to-end bash integration |
+| **Total** | **250+** | Cross-platform test coverage |
+
+Test Areas Covered
+
+- Bootstrap Process: Platform detection, package installation, idempotency
+- Configuration System: YAML parsing, defaults, platform-specific settings
+- Deployment: File copying, backup behavior, OneDrive handling
+- Git Hooks: Commit message validation, project type detection, pre-commit checks
+- Update Scripts: Package manager detection, timeout handling, safety features
+- Edge Cases: Error handling, missing dependencies, graceful failures
+
+Running Tests
+
+```bash
+# PowerShell tests
+cd tests/powershell
+pwsh -NoProfile -File run-tests.ps1
+
+# Run specific test suite
+pwsh -NoProfile -File check-git-e2e.ps1
+
+# Bash tests (requires bats)
+cd tests/bash
+bats bootstrap_test.bats
+bats git-hooks_test.bats
+```
+
+Test Philosophy
+
+- Unit tests verify individual functions and components
+- E2E tests validate real-world workflows in isolated environments
+- Tests are self-contained and clean up after themselves
+- All tests are deterministic and can run in any order
+
+---
+
+## Code Coverage
+
+Universal coverage measurement supporting both bash and PowerShell scripts with actual coverage on all platforms.
+
+Coverage Tools
+
+| Platform | Bash | PowerShell |
+|----------|------|------------|
+| Linux | kcov (actual) | Pester (actual) |
+| macOS | kcov (actual) | Pester (actual) |
+| Windows | Docker + kcov (actual) | Pester (actual) |
+
+**kcov** provides line-by-line bash coverage using DWARF debugging information. It runs tests with instrumentation and produces HTML reports. On Windows, kcov runs via Docker container.
+
+**Pester** provides PowerShell code coverage using AST-based analysis.
+
+Tool Installation (Automatic)
+
+All coverage tools are automatically installed by the bootstrap scripts:
+
+```bash
+# Linux/macOS
+./bootstrap/bootstrap.sh
+# Installs: kcov, bats, and all dependencies
+
+# Windows PowerShell
+.\bootstrap.ps1
+# Installs: Pester, bats
+# Note: kcov runs in Docker - Docker Desktop must be installed separately
+```
+
+Windows Docker Requirement
+
+Bash coverage on Windows requires Docker Desktop. The bootstrap script can install Docker Desktop via winget (interactive mode), or you can install it manually.
+
+| Tool | Install Source |
+|------|----------------|
+| kcov (Linux/macOS) | brew/apt/dnf (via bootstrap) |
+| bats | npm (via bootstrap) |
+| Pester (Windows) | PowerShellGet (via bootstrap) |
+| Docker (Windows) | winget (via bootstrap, interactive) or Manual |
+
+Running Coverage Reports
+
+```bash
+# Universal script (all platforms)
+./tests/coverage.sh
+
+# Bash-only coverage via Docker (all platforms)
+./tests/coverage-docker.sh
+
+# Bash-only coverage native (Linux/macOS)
+./tests/coverage-bash.sh
+
+# PowerShell-only coverage
+pwsh -NoProfile -File tests/powershell/coverage.ps1
+
+# Windows - full report with README update
+.\tests\coverage-report.ps1 -UpdateReadme
+```
+
+Coverage Output
+
+The coverage scripts generate:
+
+- `coverage.json` - Combined coverage data for CI/CD
+- `coverage-badge.svg` - Dynamic badge for README
+- `coverage/kcov/index.html` - Detailed HTML report (kcov coverage)
+
+Badge Color Scale
+
+| Coverage | Color |
+|----------|-------|
+| >= 80% | brightgreen |
+| >= 70% | green |
+| >= 60% | yellowgreen |
+| >= 50% | yellow |
+| >= 40% | orange |
+| < 40% | red |
+
+Coverage Calculation
+
+- **PowerShell**: Measured via Pester v5.7+ code coverage feature
+- **Bash**: Measured via kcov (native on Linux/macOS, via Docker on Windows)
+- **Combined**: Weighted average (60% PowerShell + 40% bash based on codebase complexity)
 
 ---
 

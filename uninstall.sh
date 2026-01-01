@@ -69,18 +69,14 @@ DOTFILES_FILES=(
     "$HOME/.gitconfig"
     "$HOME/.gitignore"
     "$HOME/.gitattributes"
-    "$HOME/.config/nvim"
     "$HOME/.config/wezterm"
     "$HOME/.config/git"
     "$HOME/.config/powershell"
-    "$HOME/.config/nvim/init.lua"
     "$HOME/init.lua"
     "$HOME/wezterm.lua"
     "$HOME/.aider.conf.yml"
     "$HOME/.editorconfig"
     "$HOME/.claude"
-    "$HOME/.config/nvim/lua"
-    "$HOME/.config/nvim/after"
 )
 
 # ============================================================================

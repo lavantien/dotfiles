@@ -1,0 +1,35 @@
+FROM ubuntu:22.04
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    build-essential \
+    cmake \
+    libcurl4-openssl-dev \
+    libelf-dev \
+    libdw-dev \
+    binutils-dev \
+    libssl-dev \
+    python3 \
+    bc \
+    dos2unix \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install kcov from source (latest version)
+RUN git clone https://github.com/SimonKagstrom/kcov.git /tmp/kcov && \
+    cd /tmp/kcov && \
+    mkdir build && cd build && \
+    cmake .. && \
+    make && \
+    make install && \
+    ldconfig && \
+    rm -rf /tmp/kcov
+
+# Install bats
+RUN curl -L https://github.com/bats-core/bats-core/archive/v1.10.0.tar.gz | tar -xz && \
+    cd bats-core-1.10.0 && \
+    ./install.sh /usr/local && \
+    rm -rf /tmp/bats-core-1.10.0
+
+WORKDIR /workspace

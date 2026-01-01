@@ -87,7 +87,8 @@ check_command() {
     if command -v "$cmd" >/dev/null 2>&1; then
         if [[ -n "$min_version" ]]; then
             local version=$($cmd --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
-            if [[ "$version" < "$min_version" ]]; then
+            # Use sort -V for proper semantic version comparison
+            if [[ "$(printf '%s\n' "$version" "$min_version" | sort -V | head -1)" != "$min_version" ]]; then
                 log_check "$name"
                 log_fail "Version $version < $min_version"
                 record_result "$name" "fail" "Version $version (min: $min_version)"

@@ -382,6 +382,22 @@ install_cli_tools() {
         fi
     fi
 
+    # bats (testing framework)
+    if cmd_exists npm; then
+        install_npm_global bats bats "1.10.0"
+    elif [[ "$OS" == "macos" ]]; then
+        install_brew_package bats "1.10.0"
+    elif [[ "$OS" == "linux" ]]; then
+        install_linux_package bats "1.10.0" bats
+    fi
+
+    # kcov (code coverage for bash - Linux/macOS only)
+    if [[ "$OS" == "macos" ]]; then
+        install_brew_package kcov "40" kcov
+    elif [[ "$OS" == "linux" ]]; then
+        install_linux_package kcov "38" kcov
+    fi
+
     log_success "CLI tools installation complete"
     return 0
 }

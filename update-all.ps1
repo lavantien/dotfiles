@@ -215,153 +215,159 @@ function Update-DotnetTools {
     }
 }
 
-Write-Host "${BLUE}========================================${R}"
-Write-Host "${BLUE}   Universal Update All - Windows${R}"
-Write-Host "${BLUE}========================================${R}"
+# Main execution function - wrapped to allow sourcing for testing
+function Start-UpdateAll {
+    Write-Host "${BLUE}========================================${R}"
+    Write-Host "${BLUE}   Universal Update All - Windows${R}"
+    Write-Host "${BLUE}========================================${R}"
 
-$startTime = Get-Date
-$updated = 0
-$skipped = 0
-$failed = 0
+    $startTime = Get-Date
+    $updated = 0
+    $skipped = 0
+    $failed = 0
 
-# Run prerequisite checks
-Test-Prerequisites
+    # Run prerequisite checks
+    Test-Prerequisites
 
-# NPM (Node.js global packages)
-Update-Section "NPM (Node.js global packages)"
-if (Get-Command npm -ErrorAction SilentlyContinue) {
-    # Clean up invalid packages (names starting with dot from failed installs)
-    $npmList = npm list -g --depth=0 2>&1
-    if ($npmList -match '\.opencode-ai-') {
-        Write-Host "${YELLOW}Cleaning up invalid npm packages...${R}"
-        # Get invalid package names and uninstall them
-        $invalidPackages = $npmList | Select-String -Pattern '^[\+\`]?\s*\.opencode-ai-\S+' | ForEach-Object {
-            $_.ToString().Trim() -replace '^[\+\`]?\s*', ''
-        }
-        foreach ($pkg in $invalidPackages) {
-            if ($pkg -match '\.opencode-ai-') {
-                npm uninstall -g "$pkg" *> $null
+    # NPM (Node.js global packages)
+    Update-Section "NPM (Node.js global packages)"
+    if (Get-Command npm -ErrorAction SilentlyContinue) {
+        # Clean up invalid packages (names starting with dot from failed installs)
+        $npmList = npm list -g --depth=0 2>&1
+        if ($npmList -match '\.opencode-ai-') {
+            Write-Host "${YELLOW}Cleaning up invalid npm packages...${R}"
+            # Get invalid package names and uninstall them
+            $invalidPackages = $npmList | Select-String -Pattern '^[\+\`]?\s*\.opencode-ai-\S+' | ForEach-Object {
+                $_.ToString().Trim() -replace '^[\+\`]?\s*', ''
+            }
+            foreach ($pkg in $invalidPackages) {
+                if ($pkg -match '\.opencode-ai-') {
+                    npm uninstall -g "$pkg" *> $null
+                }
             }
         }
-    }
-    Update-AndReport "npm update -g" "npm"
-} else {
-    Update-Skip "npm not found"
-    $skipped++
-}
-
-# YARN (global packages)
-Update-Section "YARN (global packages)"
-if (Get-Command yarn -ErrorAction SilentlyContinue) {
-    Update-AndReport "yarn global upgrade" "yarn"
-} else {
-    Update-Skip "yarn not found"
-    $skipped++
-}
-
-# GUP (Go global packages)
-Update-Section "GUP (Go global packages)"
-if (Get-Command gup -ErrorAction SilentlyContinue) {
-    Update-AndReport "gup update" "gup"
-} else {
-    Update-Skip "gup not found"
-    $skipped++
-}
-
-# CARGO (Rust packages)
-Update-Section "CARGO (Rust packages)"
-if (Get-Command cargo -ErrorAction SilentlyContinue) {
-    if (Get-Command cargo-install-update -ErrorAction SilentlyContinue) {
-        Update-AndReport "cargo install-update -a" "cargo"
+        Update-AndReport "npm update -g" "npm"
     } else {
-        Update-Skip "cargo-install-update not found (install: cargo install cargo-update)"
+        Update-Skip "npm not found"
         $skipped++
     }
-} else {
-    Update-Skip "cargo not found"
-    $skipped++
+
+    # YARN (global packages)
+    Update-Section "YARN (global packages)"
+    if (Get-Command yarn -ErrorAction SilentlyContinue) {
+        Update-AndReport "yarn global upgrade" "yarn"
+    } else {
+        Update-Skip "yarn not found"
+        $skipped++
+    }
+
+    # GUP (Go global packages)
+    Update-Section "GUP (Go global packages)"
+    if (Get-Command gup -ErrorAction SilentlyContinue) {
+        Update-AndReport "gup update" "gup"
+    } else {
+        Update-Skip "gup not found"
+        $skipped++
+    }
+
+    # CARGO (Rust packages)
+    Update-Section "CARGO (Rust packages)"
+    if (Get-Command cargo -ErrorAction SilentlyContinue) {
+        if (Get-Command cargo-install-update -ErrorAction SilentlyContinue) {
+            Update-AndReport "cargo install-update -a" "cargo"
+        } else {
+            Update-Skip "cargo-install-update not found (install: cargo install cargo-update)"
+            $skipped++
+        }
+    } else {
+        Update-Skip "cargo not found"
+        $skipped++
+    }
+
+    # DOTNET TOOLS
+    Update-Section "DOTNET TOOLS"
+    if (Get-Command dotnet -ErrorAction SilentlyContinue) {
+        Update-DotnetTools
+    } else {
+        Update-Skip "dotnet not found"
+        $skipped++
+    }
+
+    # PYTHON PIP
+    Update-Section "PYTHON PIP"
+    if (Get-Command pip -ErrorAction SilentlyContinue) {
+        Update-Pip "pip" "pip"
+    } else {
+        Update-Skip "pip not found"
+        $skipped++
+    }
+
+    # PIP3 (alternative)
+    if (Get-Command pip3 -ErrorAction SilentlyContinue) {
+        Update-Section "PYTHON PIP3"
+        Update-Pip "pip3" "pip3"
+    }
+
+    # SCOOP (Windows package manager)
+    Update-Section "SCOOP"
+    if (Get-Command scoop -ErrorAction SilentlyContinue) {
+        Update-AndReport "scoop update *" "scoop"
+    } else {
+        Update-Skip "scoop not found"
+        $skipped++
+    }
+
+    # WINGET (Windows package manager)
+    Update-Section "WINGET"
+    if (Get-Command winget -ErrorAction SilentlyContinue) {
+        Update-AndReport "winget upgrade --all --accept-source-agreements --accept-package-agreements" "winget"
+    } else {
+        Update-Skip "winget not found"
+        $skipped++
+    }
+
+    # CHOCO (Chocolatey alternative)
+    Update-Section "CHOCOLATEY"
+    if (Get-Command choco -ErrorAction SilentlyContinue) {
+        Update-AndReport "choco upgrade all -y" "choco"
+    } else {
+        Update-Skip "choco not found"
+        $skipped++
+    }
+
+    # GEM (Ruby packages)
+    Update-Section "RUBY GEM"
+    if (Get-Command gem -ErrorAction SilentlyContinue) {
+        Update-AndReport "gem update --user 2>&1; if (`$LASTEXITCODE -ne 0) { gem update 2>&1 }" "gem"
+    } else {
+        Update-Skip "gem not found"
+        $skipped++
+    }
+
+    # COMPOSER (PHP packages)
+    Update-Section "COMPOSER (PHP global packages)"
+    if (Get-Command composer -ErrorAction SilentlyContinue) {
+        Update-AndReport "composer global update" "composer"
+    } else {
+        Update-Skip "composer not found"
+        $skipped++
+    }
+
+    # SUMMARY
+    $duration = (Get-Date) - $startTime
+    Write-Host "`n${BLUE}========================================${R}"
+    Write-Host "${BLUE}           Summary${R}"
+    Write-Host "${BLUE}========================================${R}"
+    Write-Host " ${GREEN}Completed:$R $updated"
+    Write-Host " ${YELLOW}Skipped:$R $skipped"
+    if ($failed -gt 0) {
+        Write-Host " ${YELLOW}Failed:$R   $failed"
+    }
+    Write-Host " ${CYAN}Duration:$R $($duration.ToString('mm\:ss'))"
+    Write-Host "${BLUE}========================================${R}"
 }
 
-# DOTNET TOOLS
-Update-Section "DOTNET TOOLS"
-if (Get-Command dotnet -ErrorAction SilentlyContinue) {
-    Update-DotnetTools
-} else {
-    Update-Skip "dotnet not found"
-    $skipped++
+# Only run main if script is executed (not sourced)
+if ($MyInvocation.InvocationName -eq $MyInvocation.MyCommand.Name) {
+    Start-UpdateAll
 }
-
-# PYTHON PIP
-Update-Section "PYTHON PIP"
-if (Get-Command pip -ErrorAction SilentlyContinue) {
-    Update-Pip "pip" "pip"
-} else {
-    Update-Skip "pip not found"
-    $skipped++
-}
-
-# PIP3 (alternative)
-if (Get-Command pip3 -ErrorAction SilentlyContinue) {
-    Update-Section "PYTHON PIP3"
-    Update-Pip "pip3" "pip3"
-}
-
-# SCOOP (Windows package manager)
-Update-Section "SCOOP"
-if (Get-Command scoop -ErrorAction SilentlyContinue) {
-    Update-AndReport "scoop update *" "scoop"
-} else {
-    Update-Skip "scoop not found"
-    $skipped++
-}
-
-# WINGET (Windows package manager)
-Update-Section "WINGET"
-if (Get-Command winget -ErrorAction SilentlyContinue) {
-    Update-AndReport "winget upgrade --all --accept-source-agreements --accept-package-agreements" "winget"
-} else {
-    Update-Skip "winget not found"
-    $skipped++
-}
-
-# CHOCO (Chocolatey alternative)
-Update-Section "CHOCOLATEY"
-if (Get-Command choco -ErrorAction SilentlyContinue) {
-    Update-AndReport "choco upgrade all -y" "choco"
-} else {
-    Update-Skip "choco not found"
-    $skipped++
-}
-
-# GEM (Ruby packages)
-Update-Section "RUBY GEM"
-if (Get-Command gem -ErrorAction SilentlyContinue) {
-    Update-AndReport "gem update --user 2>&1; if (`$LASTEXITCODE -ne 0) { gem update 2>&1 }" "gem"
-} else {
-    Update-Skip "gem not found"
-    $skipped++
-}
-
-# COMPOSER (PHP packages)
-Update-Section "COMPOSER (PHP global packages)"
-if (Get-Command composer -ErrorAction SilentlyContinue) {
-    Update-AndReport "composer global update" "composer"
-} else {
-    Update-Skip "composer not found"
-    $skipped++
-}
-
-# SUMMARY
-$duration = (Get-Date) - $startTime
-Write-Host "`n${BLUE}========================================${R}"
-Write-Host "${BLUE}           Summary${R}"
-Write-Host "${BLUE}========================================${R}"
-Write-Host " ${GREEN}Completed:$R $updated"
-Write-Host " ${YELLOW}Skipped:$R $skipped"
-if ($failed -gt 0) {
-    Write-Host " ${YELLOW}Failed:$R   $failed"
-}
-Write-Host " ${CYAN}Duration:$R $($duration.ToString('mm\:ss'))"
-Write-Host "${BLUE}========================================${R}"
-
-exit 0

@@ -125,12 +125,13 @@ foreach ($repo in $repos) {
     } else {
         # Repo doesn't exist, clone it
         Write-Host "[$repoName] " -NoNewline
-        try {
-            git clone --quiet $cloneUrl $repoPath 2>$null
+        $cloneOutput = git clone $cloneUrl $repoPath 2>&1
+        if ($LASTEXITCODE -eq 0) {
             Write-Host "${GREEN}Cloned${R}"
             $cloned++
-        } catch {
-            Write-Host "${YELLOW}Error cloning: $_${R}"
+        } else {
+            Write-Host "${YELLOW}Error cloning${R}"
+            Write-Host $cloneOutput
             $failed++
         }
     }

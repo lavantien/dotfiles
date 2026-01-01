@@ -35,12 +35,6 @@ else
     NC='\033[0m'
 fi
 
-echo -e "${BLUE}Pre-commit checks...${NC}"
-
-FAILED=0
-PROJECT_ROOT=$(git rev-parse --show-toplevel)
-cd "$PROJECT_ROOT"
-
 # ============================================================================
 # PROJECT TYPE DETECTION
 # ============================================================================
@@ -68,9 +62,6 @@ detect_projects() {
     [ -d "backend" ] && [ -n "$(find backend -maxdepth 3 -name '*.cs' 2>/dev/null)" ] && types+=("csharp-backend")
     echo "${types[@]}"
 }
-
-PROJECTS=($(detect_projects))
-[ ${#PROJECTS[@]} -eq 0 ] && echo -e "${YELLOW}No recognized project type found.${NC}" && exit 0
 
 # ============================================================================
 # CROSS-PLATFORM COMMAND HELPERS
@@ -375,28 +366,45 @@ run_php_checks() {
 # ============================================================================
 # RUN CHECKS FOR DETECTED PROJECTS
 # ============================================================================
-for project in "${PROJECTS[@]}"; do
-    case $project in
-        go) run_go_checks ;;
-        rust) run_rust_checks ;;
-        c) run_c_checks ;;
-        cpp) run_c_checks ;;
-        node|node-frontend) cd frontend 2>/dev/null || cd .; run_node_checks; cd "$PROJECT_ROOT" ;;
-        python) run_python_checks ;;
-        csharp|csharp-backend) cd backend 2>/dev/null || cd .; run_csharp_checks; cd "$PROJECT_ROOT" ;;
-        java) run_java_checks ;;
-        scala) run_scala_checks ;;
-        php) run_php_checks ;;
-    esac
-done
+# Main execution function - wrapped to allow sourcing for tests
+_pre_commit_main() {
+    echo -e "${BLUE}Pre-commit checks...${NC}"
 
-# ============================================================================
-# RESULT
-# ============================================================================
-if [ $FAILED -eq 1 ]; then
-    echo -e "\n${RED}Pre-commit checks failed. Fix issues or use --no-verify to bypass.${NC}"
-    exit 1
+    FAILED=0
+    PROJECT_ROOT=$(git rev-parse --show-toplevel)
+    cd "$PROJECT_ROOT"
+
+    PROJECTS=($(detect_projects))
+    [ ${#PROJECTS[@]} -eq 0 ] && echo -e "${YELLOW}No recognized project type found.${NC}" && exit 0
+
+    for project in "${PROJECTS[@]}"; do
+        case $project in
+            go) run_go_checks ;;
+            rust) run_rust_checks ;;
+            c) run_c_checks ;;
+            cpp) run_c_checks ;;
+            node|node-frontend) cd frontend 2>/dev/null || cd .; run_node_checks; cd "$PROJECT_ROOT" ;;
+            python) run_python_checks ;;
+            csharp|csharp-backend) cd backend 2>/dev/null || cd .; run_csharp_checks; cd "$PROJECT_ROOT" ;;
+            java) run_java_checks ;;
+            scala) run_scala_checks ;;
+            php) run_php_checks ;;
+        esac
+    done
+
+    # ============================================================================
+    # RESULT
+    # ============================================================================
+    if [ $FAILED -eq 1 ]; then
+        echo -e "\n${RED}Pre-commit checks failed. Fix issues or use --no-verify to bypass.${NC}"
+        exit 1
+    fi
+
+    echo -e "${GREEN}All checks passed!${NC}"
+    exit 0
+}
+
+# Only run main if script is executed (not sourced)
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    _pre_commit_main
 fi
-
-echo -e "${GREEN}All checks passed!${NC}"
-exit 0

@@ -62,9 +62,8 @@ _parse_config_with_yq() {
     CONFIG_BASE_DIR=$(yq eval '.base_dir // ""' "$config_file")
     CONFIG_AUTO_COMMIT=$(yq eval '.auto_commit_changes // "false"' "$config_file")
 
-    # Parse skip_packages as space-separated string
-    local skip_list=$(yq eval '.skip_packages // []' "$config_file")
-    CONFIG_SKIP_PACKAGES=$(echo "$skip_list" | grep -oP '"\K[^"]+' | tr '\n' ' ' | sed 's/ $//')
+    # Parse skip_packages as space-separated string using yq's join operator
+    CONFIG_SKIP_PACKAGES=$(yq eval '.skip_packages // [] | join(" ")' "$config_file" 2>/dev/null)
 
     # Platform-specific settings
     CONFIG_LINUX_PACKAGE_MANAGER=$(yq eval '.linux.package_manager // "auto"' "$config_file")
@@ -159,7 +158,12 @@ should_skip_package() {
         return 1
     fi
 
-    for skip in $CONFIG_SKIP_PACKAGES; do
+    # Replace commas with spaces for consistent parsing
+    local skip_list="${CONFIG_SKIP_PACKAGES//,/ }"
+    # Also handle comma-space (replace with space)
+    skip_list="${skip_list//, / }"
+
+    for skip in $skip_list; do
         if [[ "$skip" == "$package" ]]; then
             return 0
         fi

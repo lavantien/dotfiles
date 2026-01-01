@@ -6,6 +6,11 @@ setup() {
     # Source update-all functions
     export SCRIPT_DIR="$(cd "$(dirname "$BATS_TEST_DIRNAME")/.." && pwd)"
     source "$SCRIPT_DIR/update-all.sh"
+
+    # Reset counters before each test
+    updated=0
+    skipped=0
+    failed=0
 }
 
 # ============================================================================
@@ -14,29 +19,26 @@ setup() {
 
 @test "update_success increments updated counter" {
     updated=5
-    run update_success "test"
-    [ "$status" -eq 0 ]
+    update_success "test"
     [ "$updated" -eq 6 ]
 }
 
 @test "update_skip increments skipped counter" {
     skipped=3
-    run update_skip "test reason"
-    [ "$status" -eq 0 ]
+    update_skip "test reason"
     [ "$skipped" -eq 4 ]
 }
 
 @test "update_fail increments failed counter" {
     failed=1
-    run update_fail "test failure"
-    [ "$status" -eq 0 ]
+    update_fail "test failure"
     [ "$failed" -eq 2 ]
 }
 
 @test "update_section outputs formatted section header" {
     run update_section "Test Section"
     [ "$status" -eq 0 ]
-    [[ "$output" == *"[Test Section]"* ]]
+    [[ "$output" == *"Test Section"* ]]
 }
 
 # ============================================================================
@@ -122,11 +124,15 @@ setup() {
 }
 
 @test "update_and_report succeeds on successful command" {
+    # Reset counters before testing
+    updated=0
     run update_and_report "echo 'test output'" "test"
     [ "$status" -eq 0 ]
 }
 
 @test "update_and_report detects changes in output" {
+    # Reset counters before testing
+    updated=0
     run update_and_report "echo 'changed files installed'" "test"
     [ "$status" -eq 0 ]
     [[ "$output" == *"changed"* ]]

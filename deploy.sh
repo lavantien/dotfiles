@@ -74,16 +74,9 @@ deploy_common() {
     # Copy git config
     cp "$SCRIPT_DIR/.gitconfig" "$HOME/"
 
-    # Copy Neovim config
+    # Copy Neovim config to root (user prefers init.lua at ~/)
     if [ -f "$SCRIPT_DIR/init.lua" ]; then
-        mkdir -p "$XDG_CONFIG/nvim"
-        cp "$SCRIPT_DIR/init.lua" "$XDG_CONFIG/nvim/"
-    fi
-
-    # Copy lua directory if exists
-    if [ -d "$SCRIPT_DIR/lua" ]; then
-        mkdir -p "$XDG_CONFIG/nvim"
-        cp -r "$SCRIPT_DIR/lua" "$XDG_CONFIG/nvim/"
+        cp "$SCRIPT_DIR/init.lua" "$HOME/"
     fi
 
     # Copy Wezterm config

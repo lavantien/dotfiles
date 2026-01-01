@@ -227,6 +227,64 @@ function Install-CLITools {
         Install-ScoopPackage $pkg.Package $pkg.MinVersion $pkg.Cmd
     }
 
+    # BATS (testing framework via npm - not in Scoop main bucket)
+    if (Test-Command npm) {
+        Install-NpmGlobal "bats" "bats" "1.10.0"
+    }
+
+    # Pester (PowerShell testing framework with code coverage)
+    if (-not (Get-Module -ListAvailable -Name Pester)) {
+        Write-Step "Installing Pester for PowerShell testing..."
+        if (-not $DryRun) {
+            Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Scope CurrentUser | Out-Null
+            Install-Module -Name Pester -MinimumVersion 5.7 -Force -Scope CurrentUser -SkipPublisherCheck
+            Write-Success "Pester installed"
+        }
+        else {
+            Write-Info "[DRY-RUN] Would install Pester"
+        }
+    }
+    else {
+        Write-Info "Pester already installed"
+        Track-Skipped "Pester"
+    }
+
+    # Docker (for bash coverage on Windows)
+    if (-not (Test-Command docker)) {
+        Write-Warning "Docker not found - bash coverage on Windows requires Docker Desktop"
+        if ($Script:Interactive) {
+            $installDocker = Read-Confirmation "Install Docker Desktop via winget?" "n"
+            if ($installDocker) {
+                Write-Step "Installing Docker Desktop via winget..."
+                if (-not $DryRun) {
+                    winget install --id Docker.DockerDesktop --accept-package-agreements --accept-source-agreements
+                    Write-Success "Docker Desktop installed - please restart your shell and start Docker Desktop"
+                }
+                else {
+                    Write-Info "[DRY-RUN] Would install Docker Desktop via winget"
+                }
+            }
+            else {
+                Write-Info "Install Docker Desktop from: https://www.docker.com/products/docker-desktop"
+            }
+        }
+        else {
+            Write-Info "Install Docker Desktop from: https://www.docker.com/products/docker-desktop"
+        }
+    }
+    else {
+        # Verify Docker is running
+        $dockerRunning = $false
+        try {
+            $null = docker info 2>&1
+            $dockerRunning = $true
+            Write-Info "Docker is available for bash coverage"
+        }
+        catch {
+            Write-Warning "Docker is installed but not running - bash coverage will be unavailable"
+        }
+    }
+
     Write-Success "CLI tools installation complete"
     return $true
 }

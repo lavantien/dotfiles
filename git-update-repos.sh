@@ -146,7 +146,7 @@ for i in "${!REPO_NAMES[@]}"; do
 
         if cd "$REPO_PATH" 2>/dev/null; then
             if git rev-parse --git-dir >/dev/null 2>&1; then
-                if git fetch origin --quiet 2>/dev/null && git pull --quiet 2>/dev/null; then
+                if git fetch origin && git pull; then
                     echo -e "${YELLOW}Updated${NC}"
                     ((UPDATED++))
                 else
@@ -166,7 +166,7 @@ for i in "${!REPO_NAMES[@]}"; do
         # Repo doesn't exist, clone it
         echo -n "[$REPO_NAME] "
 
-        if git clone --quiet "$CLONE_URL" "$REPO_PATH" 2>/dev/null; then
+        if git clone "$CLONE_URL" "$REPO_PATH"; then
             echo -e "${GREEN}Cloned${NC}"
             ((CLONED++))
         else

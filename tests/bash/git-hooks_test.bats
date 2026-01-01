@@ -15,8 +15,12 @@ setup() {
     git config user.name "Test User"
 
     # Copy pre-commit hook
-    export SCRIPT_DIR="$(cd "$(dirname "$BATS_TEST_DIRNAME")/../.." && pwd)"
+    # tests/bash/ -> tests/ -> repo root
+    export SCRIPT_DIR="$(cd "$(dirname "$BATS_TEST_DIRNAME")/.." && pwd)"
     export HOOKS_DIR="$SCRIPT_DIR/hooks/git"
+
+    # Source the pre-commit hook to access functions
+    source "$HOOKS_DIR/pre-commit"
 }
 
 teardown() {
@@ -80,12 +84,16 @@ teardown() {
 # ============================================================================
 
 @test "cmd_exists returns success for existing commands" {
-    run cmd_exists ls
+    # Source the hook again in this test scope
+    source "$HOOKS_DIR/pre-commit"
+    run command_exists ls
     [ "$status" -eq 0 ]
 }
 
 @test "cmd_exists returns failure for non-existent commands" {
-    run cmd_exists nonexistent_command_xyz123
+    # Source the hook again in this test scope
+    source "$HOOKS_DIR/pre-commit"
+    run command_exists nonexistent_command_xyz123
     [ "$status" -ne 0 ]
 }
 
