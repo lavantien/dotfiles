@@ -70,18 +70,50 @@ function Show-Help {
 function Install-Foundation {
     Write-Header "Phase 1: Foundation"
 
-    # Ensure Scoop is installed
-    Ensure-Scoop
-
-    # Ensure git is installed
+    # Ensure git is installed first (needed for Scoop and Git Bash for .sh wrapper scripts)
+    # Try winget first since it includes Git Bash which is required for .sh script invocation via .ps1 wrappers
     if (-not (Test-Command git)) {
-        Write-Step "Installing git..."
-        Install-ScoopPackage "git" "" "git"
+        Write-Step "Installing git (includes Git Bash for .sh scripts)..."
+        if ($DryRun) {
+            Write-Info "[DRY-RUN] Would install Git for Windows via winget"
+            Track-Installed "git"
+        }
+        else {
+            $gitInstalled = $false
+            # Try winget first (preferred - comes with Windows, includes Git Bash)
+            if (Get-Command winget -ErrorAction SilentlyContinue) {
+                try {
+                    winget install --id Git.Git --accept-source-agreements --accept-package-agreements *> $null
+                    if (Test-Command git) {
+                        Write-Success "Git installed via winget"
+                        Track-Installed "git"
+                        $gitInstalled = $true
+                        # Refresh PATH for current session
+                        $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
+                    }
+                }
+                catch {
+                    Write-Warning "winget install failed: $_"
+                }
+            }
+
+            # Fall back to Scoop if winget failed or wasn't available
+            if (-not $gitInstalled) {
+                if (-not (Get-Command scoop -ErrorAction SilentlyContinue)) {
+                    Write-Info "Installing Scoop first..."
+                    Ensure-Scoop
+                }
+                Install-ScoopPackage "git" "" "git"
+            }
+        }
     }
     else {
         Write-Info "git already installed"
         Track-Skipped "git"
     }
+
+    # Ensure Scoop is installed
+    Ensure-Scoop
 
     Write-Success "Foundation complete"
     return $true
@@ -341,6 +373,41 @@ function Install-CLITools {
         Install-NpmGlobal "bats" "bats" ""
     }
 
+    # Ruby + bashcov (code coverage for bash - cross-platform, universal)
+    if (-not (Test-Command ruby)) {
+        Write-Step "Installing Ruby..."
+        # Use Scoop for Ruby (includes RubyGems)
+        Install-ScoopPackage "ruby" "" "ruby"
+    }
+    else {
+        Write-Info "Ruby already installed"
+        Track-Skipped "ruby"
+    }
+
+    # bashcov (Ruby gem for bash coverage - universal, works on all platforms)
+    if ((Test-Command ruby) -and (-not (Test-Command bashcov))) {
+        Write-Step "Installing bashcov (Ruby gem for bash coverage)..."
+        if (-not $DryRun) {
+            if (ruby --version) {
+                gem install bashcov *> $null
+                if (Test-Command bashcov) {
+                    Write-Success "bashcov installed"
+                    Track-Installed "bashcov"
+                }
+                else {
+                    Write-Warning "Failed to install bashcov - try: gem install bashcov"
+                }
+            }
+        }
+        else {
+            Write-Info "[DRY-RUN] Would install bashcov"
+        }
+    }
+    elseif (Test-Command bashcov) {
+        Write-Info "bashcov already installed"
+        Track-Skipped "bashcov"
+    }
+
     # Pester (PowerShell testing framework with code coverage - always latest)
     if (-not (Get-Module -ListAvailable -Name Pester)) {
         Write-Step "Installing Pester for PowerShell testing..."
@@ -358,11 +425,11 @@ function Install-CLITools {
         Track-Skipped "Pester"
     }
 
-    # Docker (for bash coverage on Windows)
+    # Docker (optional - only needed for kcov fallback, bashcov is preferred)
     if (-not (Test-Command docker)) {
-        Write-Warning "Docker not found - bash coverage on Windows requires Docker Desktop"
+        Write-Info "Docker not found - bashcov is the primary coverage tool (Docker optional for kcov fallback)"
         if ($Script:Interactive) {
-            $installDocker = Read-Confirmation "Install Docker Desktop via winget?" "n"
+            $installDocker = Read-Confirmation "Install Docker Desktop (optional, for kcov fallback)?" "n"
             if ($installDocker) {
                 Write-Step "Installing Docker Desktop via winget..."
                 if (-not $DryRun) {
