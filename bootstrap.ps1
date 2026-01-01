@@ -7,10 +7,10 @@ $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 # Derive .sh script name (root level bootstrap.sh)
 $shScript = Join-Path $ScriptDir "bootstrap.sh"
 
-# Convert Windows path to Git Bash format (C:\... -> /c/...)
-# Git Bash expects Unix-style paths with lowercase drive letter
-$shScriptBash = $shScript -replace '\\', '/' -replace '^([A-Z]):', '/$1'
-$shScriptBash = '/' + $shScriptBash.Substring(1).ToLower() + $shScriptBash.Substring(2)
+# Convert Windows path to Git Bash format
+# Git Bash on Windows automatically converts paths like C:/path to /c/path
+$shScriptBash = $shScript -replace '\\', '/'
+$shScriptBash = $shScriptBash -replace '^([A-Z]):/', '/$1/'
 
 # Ensure Git Bash is available
 if (-not (Get-Command bash -ErrorAction SilentlyContinue)) {
@@ -34,6 +34,9 @@ for ($i = 0; $i -lt $args.Length; $i++) {
     }
 }
 
+# Debug: show what will be executed
+# Write-Host "Executing: bash $shScriptBash $mappedArgs"
+
 # Invoke the bash script with exit code propagation
-$exitCode = & bash $shScriptBash $mappedArgs
+$exitCode = & bash $shScriptBash @mappedArgs
 exit $exitCode

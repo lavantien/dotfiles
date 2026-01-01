@@ -7,9 +7,9 @@ $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 # Derive .sh script name
 $shScript = Join-Path $ScriptDir "git-update-repos.sh"
 
-# Convert Windows path to Git Bash format (C:\... -> /c/...)
-$shScriptBash = $shScript -replace '\\', '/' -replace '^([A-Z]):', '/$1'
-$shScriptBash = '/' + $shScriptBash.Substring(1).ToLower() + $shScriptBash.Substring(2)
+# Convert Windows path to Git Bash format
+$shScriptBash = $shScript -replace '\\', '/'
+$shScriptBash = $shScriptBash -replace '^([A-Z]):/', '/$1/'
 
 # Ensure Git Bash is available
 if (-not (Get-Command bash -ErrorAction SilentlyContinue)) {
@@ -44,5 +44,5 @@ for ($i = 0; $i -lt $args.Length; $i++) {
 }
 
 # Invoke the bash script with exit code propagation
-$exitCode = & bash $shScriptBash $mappedArgs
+$exitCode = & bash $shScriptBash @mappedArgs
 exit $exitCode
