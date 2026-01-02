@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Universal Update All Script - Linux/macOS
+# Universal Update All Script - Linux/macOS/Windows (Git Bash)
 # Updates all package managers and tools
+# On Windows (Git Bash), skips Linux-only package managers that require sudo
 
 set -e
 
@@ -17,8 +18,26 @@ detect_os() {
     case "$(uname -s)" in
         Linux*)     echo "linux" ;;
         Darwin*)    echo "macos" ;;
+        MINGW*|MSYS*|CYGWIN*)
+            echo "windows"
+            ;;
         *)          echo "unknown" ;;
     esac
+}
+
+# Check if running on Windows (Git Bash/MSYS/MINGW/CYGWIN)
+is_windows() {
+    # Multiple checks for robustness
+    [[ -n "$MSYSTEM" ]] || [[ "$(uname -s)" =~ (MINGW|MSYS|CYGWIN) ]] || [[ -d "/mnt/c/Windows" ]]
+}
+
+# Check if we should use sudo (false on Windows, true on Linux/macOS for system packages)
+should_use_sudo() {
+    # Never use sudo on Windows (even if Windows sudo exists)
+    if is_windows; then
+        return 1
+    fi
+    return 0
 }
 
 # Command exists checker
@@ -102,10 +121,12 @@ check_prerequisites() {
 
     echo -e "\n${CYAN}Checking prerequisites...${NC}"
 
-    # Check for system package managers
-    if cmd_exists apt || cmd_exists dnf || cmd_exists pacman || cmd_exists zypper; then
-        has_manager=true
-        echo -e "${GREEN}✓ System package manager found${NC}"
+    # Check for system package managers (skip on Windows even if WSL is available)
+    if ! is_windows; then
+        if cmd_exists apt || cmd_exists dnf || cmd_exists pacman || cmd_exists zypper; then
+            has_manager=true
+            echo -e "${GREEN}✓ System package manager found${NC}"
+        fi
     fi
 
     # Check for language package managers
@@ -184,6 +205,12 @@ update_and_report() {
     local name="$2"
     local output
     local changes
+
+    # Safety: On Windows, strip sudo from commands to prevent accidental elevation prompts
+    # This is a defensive measure in case any Linux-only commands slip through guards
+    if is_windows; then
+        cmd="${cmd//sudo /}"
+    fi
 
     output=$(eval "$cmd" 2>&1)
     local exit_code=$?
@@ -397,9 +424,11 @@ _main() {
     check_prerequisites
 
     # ============================================================================
-    # APT (Debian/Ubuntu)
+    # APT (Debian/Ubuntu) - Skip on Windows (even if WSL is available)
     # ============================================================================
-    if cmd_exists apt; then
+    if is_windows; then
+        update_skip "apt (skipped on Windows)"
+    elif cmd_exists apt; then
         update_section "APT (system packages)"
         update_and_report "sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y" "apt"
     else
@@ -407,9 +436,11 @@ _main() {
     fi
 
     # ============================================================================
-    # DNF (Fedora)
+    # DNF (Fedora) - Skip on Windows
     # ============================================================================
-    if cmd_exists dnf; then
+    if is_windows; then
+        update_skip "dnf (skipped on Windows)"
+    elif cmd_exists dnf; then
         update_section "DNF (Fedora packages)"
         update_and_report "sudo dnf upgrade -y" "dnf"
     else
@@ -417,9 +448,11 @@ _main() {
     fi
 
     # ============================================================================
-    # PACMAN (Arch Linux)
+    # PACMAN (Arch Linux) - Skip on Windows
     # ============================================================================
-    if cmd_exists pacman; then
+    if is_windows; then
+        update_skip "pacman (skipped on Windows)"
+    elif cmd_exists pacman; then
         update_section "PACMAN (Arch packages)"
         update_and_report "sudo pacman -Syu --noconfirm" "pacman"
     else
@@ -427,9 +460,11 @@ _main() {
     fi
 
     # ============================================================================
-    # ZYPPER (openSUSE)
+    # ZYPPER (openSUSE) - Skip on Windows
     # ============================================================================
-    if cmd_exists zypper; then
+    if is_windows; then
+        update_skip "zypper (skipped on Windows)"
+    elif cmd_exists zypper; then
         update_section "ZYPPER (openSUSE packages)"
         update_and_report "sudo zypper dup -y" "zypper"
     else
@@ -447,9 +482,11 @@ _main() {
     fi
 
     # ============================================================================
-    # SNAP
+    # SNAP - Skip on Windows (requires sudo)
     # ============================================================================
-    if cmd_exists snap; then
+    if is_windows; then
+        update_skip "snap (skipped on Windows)"
+    elif cmd_exists snap; then
         update_section "SNAP"
         update_and_report "sudo snap refresh" "snap"
     else
@@ -622,9 +659,11 @@ _main() {
     fi
 
     # ============================================================================
-    # TLMGR (TeX Live)
+    # TLMGR (TeX Live) - Skip on Windows (requires sudo)
     # ============================================================================
-    if cmd_exists tlmgr; then
+    if is_windows; then
+        update_skip "tlmgr (skipped on Windows)"
+    elif cmd_exists tlmgr; then
         update_section "TLmgr (TeX Live)"
         update_and_report "sudo tlmgr update --self && sudo tlmgr update --all" "tlmgr"
     else

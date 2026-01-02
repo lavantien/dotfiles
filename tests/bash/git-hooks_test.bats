@@ -252,3 +252,78 @@ teardown() {
     run bash "$HOOKS_DIR/commit-msg" "$commit_msg_file"
     [ "$status" -ne 0 ]
 }
+
+# ============================================================================
+# HOOK INTEGRITY TESTS (regression prevention)
+# These tests detect if hook files have been truncated or corrupted
+# ============================================================================
+
+@test "hook_integrity: pre-commit hook exists and is not truncated" {
+    local hook_path="$HOOKS_DIR/pre-commit"
+    [ -f "$hook_path" ]
+
+    # Check minimum line count (full implementation is ~400+ lines)
+    local line_count=$(wc -l < "$hook_path")
+    [ "$line_count" -gt 50 ]
+}
+
+@test "hook_integrity: commit-msg hook exists and is not truncated" {
+    local hook_path="$HOOKS_DIR/commit-msg"
+    [ -f "$hook_path" ]
+
+    # Check minimum line count (full implementation is ~40+ lines)
+    local line_count=$(wc -l < "$hook_path")
+    [ "$line_count" -gt 20 ]
+}
+
+@test "hook_integrity: pre-commit contains essential functions" {
+    local hook_path="$HOOKS_DIR/pre-commit"
+    local content=$(cat "$hook_path")
+
+    # Check for key functions that exist in full implementation
+    echo "$content" | grep -q "detect_os"
+    echo "$content" | grep -q "detect_projects"
+    echo "$content" | grep -q "run_go_checks"
+    echo "$content" | grep -q "run_rust_checks"
+    echo "$content" | grep -q "run_node_checks"
+    echo "$content" | grep -q "run_python_checks"
+}
+
+@test "hook_integrity: commit-msg validates conventional commits" {
+    local hook_path="$HOOKS_DIR/commit-msg"
+    local content=$(cat "$hook_path")
+
+    # Check for conventional commits pattern
+    echo "$content" | grep -q "feat|fix|chore"
+    echo "$content" | grep -q "72"
+}
+
+@test "hook_integrity: pre-commit.ps1 exists and is not truncated" {
+    local hook_path="$HOOKS_DIR/pre-commit.ps1"
+    [ -f "$hook_path" ]
+
+    # Check minimum line count (full implementation is ~400+ lines)
+    local line_count=$(wc -l < "$hook_path")
+    [ "$line_count" -gt 50 ]
+}
+
+@test "hook_integrity: commit-msg.ps1 exists and is not truncated" {
+    local hook_path="$HOOKS_DIR/commit-msg.ps1"
+    [ -f "$hook_path" ]
+
+    # Check minimum line count (full implementation is ~40+ lines)
+    local line_count=$(wc -l < "$hook_path")
+    [ "$line_count" -gt 20 ]
+}
+
+@test "hook_integrity: pre-commit.ps1 contains essential functions" {
+    local hook_path="$HOOKS_DIR/pre-commit.ps1"
+    local content=$(cat "$hook_path")
+
+    # Check for key functions that exist in full implementation
+    echo "$content" | grep -q "Get-ProjectTypes"
+    echo "$content" | grep -q "Invoke-GoChecks\|run_go_checks"
+    echo "$content" | grep -q "Invoke-RustChecks\|run_rust_checks"
+    echo "$content" | grep -q "Invoke-NodeChecks\|run_node_checks"
+    echo "$content" | grep -q "Invoke-PythonChecks\|run_python_checks"
+}

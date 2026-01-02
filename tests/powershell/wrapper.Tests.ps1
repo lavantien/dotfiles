@@ -100,7 +100,7 @@ Describe "Wrapper Script - Invocation Pattern" {
             $wrapperContent = Get-Content (Join-Path $Script:RepoRoot "deploy.ps1") -Raw
             $wrapperContent | Should -Match "Split-Path"
             $wrapperContent | Should -Match "MyInvocation"
-            $wrapperContent | Should -Match "Join-Path"
+            $wrapperContent | Should -Match "ScriptDir"
             $wrapperContent | Should -Match '\.sh'
         }
     }
@@ -186,5 +186,140 @@ Describe "Wrapper Script - Documentation" {
     It "backup.ps1 documents parameters" {
         $wrapperContent = Get-Content (Join-Path $Script:RepoRoot "backup.ps1") -Raw
         $wrapperContent | Should -Match "Usage:"
+    }
+}
+
+Describe "Wrapper Script - Regression Tests" {
+
+    BeforeAll {
+        $Script:RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+        $bashWrappers = @(
+            "backup.ps1",
+            "restore.ps1",
+            "deploy.ps1",
+            "healthcheck.ps1",
+            "uninstall.ps1",
+            "update-all.ps1",
+            "sync-system-instructions.ps1",
+            "git-update-repos.ps1"
+        )
+    }
+
+    Context "bootstrap.ps1 Platform Detection" {
+
+        It "bootstrap.ps1 calls Windows-native bootstrap first" {
+            $content = Get-Content (Join-Path $Script:RepoRoot "bootstrap.ps1") -Raw
+            # Should check for bootstrap/bootstrap.ps1
+            $content | Should -Match 'bootstrap\\bootstrap\.ps1'
+            # Should have a variable name like windowsBootstrap
+            $content | Should -Match 'windowsBootstrap|windowsBootstrap'
+            # Should invoke it with splatting if found
+            $content | Should -Match '&.*windowsBootstrap|& \$windowsBootstrap'
+        }
+
+        It "bootstrap.ps1 has parameter hashtable for Windows bootstrap" {
+            $content = Get-Content (Join-Path $Script:RepoRoot "bootstrap.ps1") -Raw
+            # Should build splattable parameters hashtable
+            $content | Should -Match '\$params\s*=\s*@\{\}'
+            # Should use splatting (@params) not string concatenation
+            $content | Should -Match '@params'
+        }
+
+        It "bootstrap.ps1 only falls back to bash if Windows bootstrap missing" {
+            $content = Get-Content (Join-Path $Script:RepoRoot "bootstrap.ps1") -Raw
+            # Should have Test-Path check before invoking Windows bootstrap
+            $content | Should -Match 'Test-Path.*windowsBootstrap'
+            # The bash fallback should come after the Windows bootstrap check
+            $windowsBootstrapPos = $content.IndexOf('bootstrap\\bootstrap.ps1')
+            $bashFallbackPos = $content.IndexOf('./bootstrap.sh')
+            $bashFallbackPos | Should -BeGreaterThan $windowsBootstrapPos "Because bash fallback should come after Windows bootstrap check"
+        }
+    }
+
+    Context "Login Shell Usage" {
+
+        It "Wrapper uses login shell (-l flag) for proper PATH setup" {
+            foreach ($script in $bashWrappers) {
+                $content = Get-Content (Join-Path $Script:RepoRoot $script) -Raw
+                $content | Should -Match '-l.*"-c"|"-l".*"-c"' "Because $script should use login shell for proper Git Bash environment"
+            }
+        }
+
+        It "Wrapper does NOT use absolute paths to invoke bash scripts" {
+            foreach ($script in $bashWrappers) {
+                $content = Get-Content (Join-Path $Script:RepoRoot $script) -Raw
+                # Should NOT use patterns like: bash /c/Users/.../script.sh
+                # Should use relative paths like: ./script.sh
+                $content | Should -Match '\./[\w-]+\.sh' "Because $script should use relative path to avoid conversion issues"
+            }
+        }
+
+        It "Wrapper changes directory before invoking bash" {
+            foreach ($script in $bashWrappers) {
+                $content = Get-Content (Join-Path $Script:RepoRoot $script) -Raw
+                # Should Set-Location to script directory
+                $content | Should -Match 'Set-Location.*ScriptDir|cd.*ScriptDir'
+                # Should have try/finally to restore location
+                $content | Should -Match 'finally'
+                $content | Should -Match 'Set-Location.*origLocation'
+            }
+        }
+    }
+
+    Context "Array Splatting" {
+
+        It "Wrapper uses @ for splatting bash args, not $" {
+            foreach ($script in $bashWrappers) {
+                $content = Get-Content (Join-Path $Script:RepoRoot $script) -Raw
+                # Should use & bash @bashArgs, not & bash $bashArgs
+                $content | Should -Match '& bash @bashArgs|& bash @\$bashArgs' "Because $script should use @ for array splatting"
+            }
+        }
+
+        It "Wrapper does not incorrectly pass args with $ prefix" {
+            foreach ($script in $bashWrappers) {
+                $content = Get-Content (Join-Path $Script:RepoRoot $script) -Raw
+                # Should NOT contain patterns like & bash $bashArgs (wrong splatting)
+                $content | Should -Not -Match '& bash \$\w+\s*$' "Because $script should not use $var for array splatting (line end)"
+                # Note: We allow @bashArgs patterns
+            }
+        }
+    }
+
+    Context "Path Construction" {
+
+        It "Wrapper constructs bash args array with -c flag" {
+            foreach ($script in $bashWrappers) {
+                $content = Get-Content (Join-Path $Script:RepoRoot $script) -Raw
+                # Should build args array with -l and -c flags
+                $content | Should -Match '\$bashArgs|@bashArgs'
+                $content | Should -Match '"-c"'
+            }
+        }
+
+        It "Wrapper uses relative script path in -c command string" {
+            foreach ($script in $bashWrappers) {
+                $content = Get-Content (Join-Path $Script:RepoRoot $script) -Raw
+                # The -c command should use ./script.sh, not absolute path
+                $content | Should -Match '\./[\w-]+\.sh\s*\$argList|"\./[\w-]+\.sh'
+            }
+        }
+    }
+
+    Context "Exit Code Handling" {
+
+        It "Wrapper captures LASTEXITCODE from bash invocation" {
+            foreach ($script in $bashWrappers) {
+                $content = Get-Content (Join-Path $Script:RepoRoot $script) -Raw
+                $content | Should -Match '\$exitCode\s*=\s*\$LASTEXITCODE|\$LASTEXITCODE'
+            }
+        }
+
+        It "Wrapper exits with captured exit code" {
+            foreach ($script in $bashWrappers) {
+                $content = Get-Content (Join-Path $Script:RepoRoot $script) -Raw
+                $content | Should -Match 'exit\s+\$exitCode'
+            }
+        }
     }
 }

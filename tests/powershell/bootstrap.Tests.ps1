@@ -65,12 +65,18 @@ Describe "Bootstrap Common Functions" {
             $newPath = "C:\test-path-$(New-Guid)"
             $originalPath = $env:PATH
 
-            Add-ToPath $newPath
+            # Create the directory first (Add-ToPath only adds to session PATH if it exists)
+            New-Item -ItemType Directory -Path $newPath -Force | Out-Null
+            try {
+                Add-ToPath $newPath
 
-            $env:PATH.Split(';') | Should -Contain $newPath
-
-            # Cleanup
-            $env:PATH = $originalPath
+                $env:PATH.Split(';') | Should -Contain $newPath
+            }
+            finally {
+                # Cleanup
+                Remove-Item -Path $newPath -Force -ErrorAction SilentlyContinue
+                $env:PATH = $originalPath
+            }
         }
     }
 
@@ -95,15 +101,30 @@ Describe "Bootstrap Tracking Functions" {
         $Script:InstalledPackages.Count | Should -Be ($initialCount + 1)
     }
 
+    It "Track-Installed adds description when provided" {
+        Track-Installed "test-package" "test description"
+        $Script:InstalledPackages[-1] | Should -Be "test-package (test description)"
+    }
+
     It "Track-Skipped adds to skipped list" {
         $initialCount = $Script:SkippedPackages.Count
         Track-Skipped "test-package"
         $Script:SkippedPackages.Count | Should -Be ($initialCount + 1)
     }
 
+    It "Track-Skipped adds description when provided" {
+        Track-Skipped "test-package" "test description"
+        $Script:SkippedPackages[-1] | Should -Be "test-package (test description)"
+    }
+
     It "Track-Failed adds to failed list" {
         $initialCount = $Script:FailedPackages.Count
         Track-Failed "test-package"
         $Script:FailedPackages.Count | Should -Be ($initialCount + 1)
+    }
+
+    It "Track-Failed adds description when provided" {
+        Track-Failed "test-package" "test description"
+        $Script:FailedPackages[-1] | Should -Be "test-package (test description)"
     }
 }

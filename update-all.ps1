@@ -1,16 +1,30 @@
 # Update All Script Wrapper - Invokes update-all.sh via Git Bash
 # Updates all package managers and tools
+# On Windows (Git Bash), the bash script detects Windows and skips Linux-only commands
 
 $ErrorActionPreference = 'Stop'
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
-# Derive .sh script name
-$shScript = Join-Path $ScriptDir "update-all.sh"
+# Ensure Git Bash is available
+if (-not (Get-Command bash -ErrorAction SilentlyContinue)) {
+    Write-Error "Git Bash (bash.exe) not found. Please install Git for Windows."
+    Write-Error "Download: https://git-scm.com/download/win"
+    exit 1
+}
 
-# Convert Windows path to Git Bash format
-$shScriptBash = $shScript -replace '\\', '/'
-$shScriptBash = $shScriptBash -replace '^([A-Z]):/', '/$1/'
+# Change to script directory and invoke bash as login shell
+# Using -l (login shell) ensures proper PATH and mount point setup
+# Using relative path avoids path conversion issues
+$origLocation = Get-Location
+try {
+    Set-Location $ScriptDir
+    $argList = $args -join ' '
+    $bashArgs = @("-l", "-c", "./update-all.sh $argList")
+    & bash @bashArgs
+    $exitCode = $LASTEXITCODE
+}
+finally {
+    Set-Location $origLocation
+}
 
-# Invoke the bash script with exit code propagation
-$exitCode = & bash $shScriptBash @args
 exit $exitCode

@@ -1,9 +1,9 @@
 # Universal Dotfiles
 
-![Coverage](https://img.shields.io/badge/coverage-20%25-red) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Coverage](https://img.shields.io/badge/coverage-27%25-red) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)](https://github.com/lavantien/dotfiles)
 
-Production-grade dotfiles supporting Windows 11, Linux (Ubuntu/Fedora/Arch), and macOS with intelligent auto-detection and graceful fallbacks. A truly Universal SWE Dotfiles (Neovim/WezTerm/zsh/pwsh, Claude Code/Git Hooks, Linux/Windows) with batteries included: 15+ LSP servers, 10+ language formatters/linters, TDD enforcement, and comprehensive Git and Claude Code workflow automation. All configured, tested, and just clone and run.
+Production-grade dotfiles supporting Windows 11, Linux (Ubuntu/Fedora/Arch), and macOS with intelligent auto-detection and graceful fallbacks. A fully vibecoding-enabled dotfiles with complete AI-assisted development support: 15+ LSP servers, 10+ language formatters/linters, TDD enforcement, comprehensive Git and Claude Code workflow automation, and MCP server integration. All configured, tested, and just clone and run.
 
 ---
 
@@ -36,12 +36,25 @@ Production-grade dotfiles supporting Windows 11, Linux (Ubuntu/Fedora/Arch), and
 
 **.ps1 scripts are thin compatibility wrappers.** On Windows, PowerShell scripts invoke their .sh counterparts via Git Bash, providing a native Windows experience while maintaining a single implementation.
 
+**Exception: bootstrap.ps1** - This wrapper has a Windows-native bootstrap (`bootstrap/bootstrap.ps1`) that is invoked first on Windows for better platform integration. It only falls back to the bash script if the Windows-native version is unavailable.
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    Windows (PowerShell)                     │
 ├─────────────────────────────────────────────────────────────┤
 │  script.ps1  ──►  bash script.sh  ──►  Core Logic           │
 │  (wrapper)        (Git Bash)          (source of truth)     │
+└─────────────────────────────────────────────────────────────┘
+│                    bootstrap.ps1 (special case)             │
+├─────────────────────────────────────────────────────────────┤
+│  bootstrap.ps1  ──►  bootstrap/bootstrap.ps1  ──►  Windows  │
+│  (wrapper)           (Windows-native)         bootstrap      │
+│                            │                                 │
+│                            └── (fallback)                   │
+│                                 │                            │
+│                                 ▼                            │
+│                            bash bootstrap.sh  ──►  Core     │
+│                                               (source)      │
 └─────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────┐
@@ -57,6 +70,10 @@ Production-grade dotfiles supporting Windows 11, Linux (Ubuntu/Fedora/Arch), and
 - .sh scripts work natively on Linux/macOS and via Git Bash on Windows
 - .ps1 wrappers provide Windows convenience with familiar parameter names
 - All features develop in .sh first, then automatically available on Windows
+- Windows-native bootstrap provides better platform integration
+
+**Line Endings:**
+The repository uses `.gitattributes` to enforce LF line endings for shell scripts and CRLF for PowerShell scripts. Git is configured during bootstrap to maintain these conventions.
 
 **Git Installation:**
 On Windows, Git (including Git Bash) is automatically installed via winget during bootstrap. No manual installation required.
@@ -144,6 +161,13 @@ Intelligent Automation
 - Pester - PowerShell testing with coverage
 - bashcov - Bash coverage reports (universal, Ruby gem)
 
+**Claude Code MCP Servers** (auto-installed via npm for full category)
+- context7 - Up-to-date library documentation and code examples
+- playwright - Browser automation and E2E testing
+- repomix - Pack repositories for full-context AI exploration
+
+Note: For OpenCode AI CLI compatibility, these locally installed MCP servers are used by the bootstrap scripts. The bootstrap installs them globally via npm so they're available for both Claude Code and OpenCode AI configurations.
+
 ---
 
 ### Installation Categories
@@ -152,24 +176,156 @@ Intelligent Automation
 |----------|------------------|----------|
 | minimal | Package managers, git, CLI tools only | Quick setup |
 | sdk | minimal + Node.js, Python, Go, Rust, dotnet, JDK | No LSPs |
-| full | sdk + all LSPs + linters/formatters | Complete environment (default) |
+| full | sdk + all LSPs + linters/formatters + MCP servers | Complete environment (default) |
 
 ---
 
 ### Quality Assurance
 
-- 270+ automated tests covering all major components
+- 435 automated tests covering all major components
 - Conventional commits enforcement
 - Claude Code hooks for real-time quality checks
 - TDD guard to enforce test-driven development
 - Auto-formats and lints on commit for 15+ languages
 - 15+ LSP servers configured in Neovim for IDE-like experience
+- Hook integrity tests prevent regression (detect truncation, missing functions)
+- Global CLAUDE.md deployed to ~/.claude/ for consistent AI coding practices
+- MCP servers (context7, playwright, repomix) auto-installed globally via npm
 
 ---
 
 ## 3. Idempotency Note
 
 All scripts in this repository are idempotent. They intelligently detect what's already installed, compare versions, and only install or update tools that are missing or outdated. You can safely run any script multiple times without any harm.
+
+**Example: Idempotent Bootstrap Run**
+
+Here's a real example of running `bootstrap.ps1 -y` when all tools are already installed:
+
+```
+~\....\dotfiles  main  .\bootstrap.ps1 -y
+[INFO] Config loaded from C:\Users\lavantien\.dotfiles.config.yaml
+
+==== Bootstrap Windows Development Environment ====
+
+Options:
+  Interactive: False
+  Dry Run: False
+  Categories: full
+  Skip Update: False
+
+
+==== Phase 1: Foundation ====
+
+[INFO] Repo .gitattributes will enforce line endings
+[OK] Foundation complete
+
+==== Phase 2: Core SDKs ====
+
+[OK] SDKs installation complete
+
+==== Phase 3: Language Servers ====
+
+[OK] Language servers installation complete
+
+==== Phase 4: Linters & Formatters ====
+
+[STEP] Ensuring development directories are in PATH...
+[OK] Linters & formatters installation complete
+
+==== Phase 5: CLI Tools ====
+
+[OK] CLI tools installation complete
+
+==== Phase 5.25: MCP Servers ====
+
+[OK] MCP server installation complete
+
+==== Phase 5.5: Development Tools ====
+
+[OK] Development tools installation complete
+
+==== Phase 6: Deploying Configurations ====
+
+[STEP] Running deploy script...
+[OK] Configurations deployed
+
+==== Phase 7: Updating All Repositories and Packages ====
+
+[STEP] Running update-all script...
+[OK] Update complete
+
+==== Bootstrap Summary ====
+
+Installed: 0
+
+Skipped: 56
+  - git (version control)
+  - scoop (package manager)
+  - git autocrlf already configured
+  - GitHub SSH key already in known_hosts
+  - node (Node.js runtime)
+  - python (Python runtime)
+  - go (Go runtime)
+  - rust (Rust toolchain)
+  - dotnet (.NET SDK)
+  - OpenJDK (Java development)
+  - clangd (C/C++ LSP)
+  - gopls (Go LSP)
+  - rust-analyzer (Rust LSP)
+  - pyright (Python LSP)
+  - typescript-language-server (TypeScript LSP)
+  - yaml-language-server (YAML LSP)
+  - lua-language-server (Lua LSP)
+  - csharp-ls (C# LSP)
+  - jdtls (Java LSP)
+  - intelephense (PHP LSP)
+  - docker-langserver (Docker LSP)
+  - tombi (TOML LSP)
+  - tinymist (Nim LSP)
+  - prettier (code formatter)
+  - eslint (JavaScript linter)
+  - ruff (Python linter)
+  - black (Python formatter)
+  - isort (Python import sorter)
+  - mypy (Python type checker)
+  - goimports (Go import organizer)
+  - golangci-lint (Go linter)
+  - shellcheck (Shell script analyzer)
+  - shfmt (Shell script formatter)
+  - coursier (JVM dependency manager)
+  - scalafmt (Scala formatter)
+  - fzf (fuzzy finder)
+  - zoxide (smart directory navigation)
+  - bat (enhanced cat)
+  - eza (enhanced ls)
+  - lazygit (Git TUI)
+  - gh (GitHub CLI)
+  - rg (text search)
+  - fd (file finder)
+  - tokei (code stats)
+  - difft (diff viewer)
+  - bats (Bash testing)
+  - ruby (Ruby runtime)
+  - bashcov (code coverage)
+  - Pester (PowerShell testing)
+  - context7-mcp (documentation lookup)
+  - playwright-mcp (browser automation)
+  - repomix (repository packer)
+  - vscode (code editor)
+  - latex (document preparation)
+  - claude-code (AI CLI)
+  - opencode (AI CLI)
+
+=== Bootstrap Complete ===
+All tools are available in the current session
+```
+
+Notice how:
+- **0 items were installed** - everything was already present
+- **56 items were skipped** - detected as already installed
+- **No redundant work** - each package checked once
+- **Clean exit** - no errors, no warnings
 
 This applies to all core scripts (.sh is source of truth, .ps1 is wrapper):
 - bootstrap.sh / bootstrap.ps1
@@ -259,7 +415,26 @@ Command-Line Options
 | Dry-run | --dry-run | -DryRun | Install everything |
 | Categories | --categories sdk | -Categories sdk | full |
 | Skip update | --skip-update | -SkipUpdate | Update package managers |
+| Verbose | --verbose | -VerboseMode | Show detailed output |
 | Help | -h, --help | -Help | Show help |
+
+**New Feature: Tool Descriptions**
+The bootstrap summary now includes brief descriptions for each tool in parentheses, making it easier to understand what was installed:
+
+```
+Installed: 5
+  - git (version control)
+  - fzf (fuzzy finder)
+  - ripgrep (text search)
+  - bat (cat alternative)
+  - lazygit (Git TUI)
+
+Skipped: 2
+  - node (Node.js runtime)
+  - go (Go runtime)
+```
+
+Use `--verbose` / `-VerboseMode` to see details for all items including those that were already installed.
 
 What Gets Installed
 
@@ -366,7 +541,105 @@ git commit --no-verify -m "wip: emergency fix"
 
 ## 9. Claude Code Integration
 
-First-class support for Claude Code with quality checks and TDD enforcement.
+First-class support for Claude Code with quality checks, TDD enforcement, and MCP server integration.
+
+### Global CLAUDE.md
+
+The deploy script automatically copies CLAUDE.md to ~/.claude/ for project-agnostic AI coding instructions:
+
+- TDD workflow enforcement
+- Tool usage guidelines (Repomix, Context7, Playwright)
+- Context hygiene and compaction rules
+- Parallel exploration with Task tool
+- Language-specific pitfalls (CGO_ENABLED for Go, gen directory handling)
+
+### MCP Server Integration
+
+MCP (Model Context Protocol) servers extend Claude Code with additional tools. The bootstrap script auto-installs these servers globally via npm:
+
+| MCP | Purpose |
+|-----|---------|
+| context7 | Up-to-date library documentation and code examples |
+| playwright | Browser automation and E2E testing |
+| repomix | Pack repositories for full-context AI exploration |
+
+These are installed globally and can be configured in your Claude Code `~/.claude.json` or project `.mcp.json`. For OpenCode AI CLI compatibility, the same locally installed MCP servers are utilized.
+
+#### Installing Claude Code Plugins
+
+To install the full suite of Claude Code plugins, use the `/plugins` command in Claude Code:
+
+**Step 1: Add Plugin Marketplaces**
+
+```
+/plugins
+```
+
+Then add these two marketplaces:
+- `anthropics/claude-plugins-official`
+- `yamadashy/repomix`
+
+**Step 2: Install Plugins**
+
+After adding the marketplaces, install the following plugins:
+
+**From yamadashy/repomix marketplace:**
+- `repomix` - Pack repositories for full-context AI exploration
+
+**From anthropics/claude-plugins-official marketplace:**
+
+**Language Server Plugins:**
+- `typescript-lsp` - TypeScript/JavaScript language server
+- `pyright-lsp` - Python language server (Pyright)
+- `gopls-lsp` - Go language server
+- `rust-analyzer-lsp` - Rust language server
+- `clangd-lsp` - C/C++ language server (clangd)
+- `csharp-lsp` - C# language server
+- `jdtls-lsp` - Java language server (Eclipse JDT.LS)
+- `lua-lsp` - Lua language server
+- `php-lsp` - PHP language server (Intelephense)
+
+**Development Workflow:**
+- `feature-dev` - Comprehensive feature development with specialized agents
+- `frontend-design` - Create distinctive, production-grade frontend interfaces
+- `agent-sdk-dev` - Development kit for the Claude Agent SDK
+
+**Code Review & Git:**
+- `code-review` - Automated PR review with confidence-based scoring
+- `pr-review-toolkit` - Comprehensive PR review agents (comments, tests, error handling, type design)
+- `commit-commands` - Git commit workflows including commit, push, and PR creation
+
+**MCP Integration:**
+- `context7` - Up-to-date library documentation and code examples
+- `playwright` - Browser automation and end-to-end testing
+
+**Quality & Utilities:**
+- `security-guidance` - Security reminder hook for potential issues
+- `explanatory-output-style` - Educational insights about implementation choices
+- `ralph-wiggum` - Interactive self-referential AI loops for iterative development
+
+#### Example MCP Configuration
+
+If you prefer to configure MCP servers manually instead of using plugins:
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@context7/mcp-server"]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@executeautomation/playwright-mcp-server"]
+    },
+    "repomix": {
+      "command": "npx",
+      "args": ["-y", "repomix"]
+    }
+  }
+}
+```
 
 Quality Check Hook
 
@@ -417,12 +690,45 @@ The TDD guard instructions are located at .claude/tdd-guard/data/instructions.md
 Deploy Claude Code Hooks
 
 ```bash
-# The deploy script automatically copies Claude hooks to:
+# The deploy script automatically copies to:
 # ~/.claude/ (Linux/macOS)
 # %USERPROFILE%\.claude\ (Windows)
+#
+# - quality-check.ps1 (PostToolUse hook for format/lint/type-check)
+# - CLAUDE.md (Global AI coding instructions)
+# - tdd-guard/ (TDD enforcement instructions)
 
 # Just add hooks configuration to your Claude Code settings.json
 ```
+
+### AI CLI Tools & Pricing
+
+This dotfiles setup is optimized for multiple AI CLI tools. The system instructions, MCP servers, hooks, linters, formatters, and checkers work across all major agentic coding tools:
+
+| Tool | System Instructions | Notes |
+|------|---------------------|-------|
+| Claude Code | `CLAUDE.md` | Anthropic's official CLI |
+| OpenCode | `AGENTS.md` | Works with GLM via `npx @z_ai/coding-helper` |
+| CodexCLI | `AGENTS.md` | Alternative AI CLI |
+| Factory Droid | `AGENTS.md` | Alternative AI CLI |
+| Gemini CLI | `GEMINI.md` | Free rate-limited usage (Gemini 2.5 Pro & 2.5 Flash) |
+
+#### Recommended: GLM Coding Max Plan
+
+I use Claude Code with the **GLM Coding Max $288 plan** (first-timer + holiday season deals). This is the **best price-to-performance option** for Claude Code:
+
+- **Comparable performance** to latest Sonnet/Opus level models
+- **Better speed** than Anthropic's direct models
+- **2400 prompts per 5-hour window** vs 800 on $200 Claude Max 20x plan
+- **No weekly limit** - seemingly unlimited usage for a full day
+- **2 parallel instances** supported
+- **Much better deal** than Anthropic's Claude Max plans
+
+OpenCode works out of the box with GLM (via `npx @z_ai/coding-helper`, just like Claude Code). It also provides generous free usage for promoted/experimental models year-round.
+
+Gemini CLI offers rate-limited free usage of Gemini 2.5 Pro and 2.5 Flash.
+
+All our system instructions setup, linters, formatters, checkers, and MCP/hooks cover the best agentic coding tools available today.
 
 ---
 
@@ -525,28 +831,31 @@ Test Coverage
 
 | Suite | Tests | Description |
 |-------|-------|-------------|
-| PowerShell | 141 | Wrapper validation, bootstrap, config, git hooks, E2E |
-| Bash | 233 | Unit tests for deploy, backup, restore, healthcheck, uninstall, sync, git-update |
-| **Total** | **374** | Cross-platform test coverage |
+| PowerShell | 177 | Wrapper validation, bootstrap, config, git hooks, E2E, regression, integration, hook integrity |
+| Bash | 258 | Unit tests for deploy, backup, restore, healthcheck, uninstall, sync, git-update, hook integrity |
+| **Total** | **435** | Cross-platform test coverage |
 
 Test Areas Covered
 
-- Bootstrap Process: Platform detection, package installation, idempotency
+- Bootstrap Process: Platform detection, package installation, idempotency, correct platform bootstrap invocation
 - Configuration System: YAML parsing, defaults, platform-specific settings
 - Deployment: File copying, backup behavior, OneDrive handling
 - Git Hooks: Commit message validation, project type detection, pre-commit checks
 - Update Scripts: Package manager detection, timeout handling, safety features
 - Edge Cases: Error handling, missing dependencies, graceful failures
+- Regression Tests: Pattern-based tests to prevent known bugs from returning (e.g., wrapper path handling, array splatting, login shell usage, hook file truncation)
+- Integration Tests: Isolated mock environments to verify actual runtime behavior (e.g., Windows vs Linux bootstrap selection)
 
 Running Tests
 
 ```bash
-# PowerShell tests
+# PowerShell tests - all suites
 cd tests/powershell
 pwsh -NoProfile -File run-tests.ps1
 
 # Run specific test suite
-pwsh -NoProfile -File check-git-e2e.ps1
+pwsh -NoProfile -File wrapper.Tests.ps1        # Pattern-based regression tests
+pwsh -NoProfile -File bootstrap-integration.Tests.ps1  # Integration tests with mocks
 
 # Bash tests (requires bats)
 cd tests/bash
@@ -558,6 +867,8 @@ Test Philosophy
 
 - Unit tests verify individual functions and components
 - E2E tests validate real-world workflows in isolated environments
+- Regression tests use pattern matching to prevent known bugs from returning
+- Integration tests use mocked environments to verify runtime behavior without side effects
 - Tests are self-contained and clean up after themselves
 - All tests are deterministic and can run in any order
 
