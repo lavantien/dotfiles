@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [4.1] - 2026-01-02
+
+### Fixed
+- Script entry point mermaid diagram alignment
+
+### Changed
+- Updated coverage reporting with real coverage measurements (43.9% combined: 41.9% PowerShell + 46.9% Bash)
+- Enhanced documentation with sequence diagram in Architecture section
+- Improved documentation structure: removed inline navigation links, kept only footer Back to Top
+- Refined subsection formatting: removed separators within subsections
+
+---
+
 ## [4.0] - 2026-01-02
 
 ### Major Architecture Changes
@@ -237,6 +250,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date | Major Changes |
 |---------|------|---------------|
+| 4.1 | 2026-01-02 | Documentation improvements, real coverage reporting |
 | 4.0 | 2026-01-02 | Shell-first architecture, comprehensive testing, config system |
 | 3.3.3 | 2026-01-01 | Bootstrap enhancements, PowerShell fixes |
 | 3.3 | 2026-01-01 | PowerShell syntax fixes |
@@ -278,7 +292,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v4.0...HEAD
+[Unreleased]: https://github.com/lavantien/dotfiles/compare/v4.1...HEAD
+[4.1]: https://github.com/lavantien/dotfiles/compare/v4.0...v4.1
 [4.0]: https://github.com/lavantien/dotfiles/compare/v3.3.3...v4.0
 [3.3.3]: https://github.com/lavantien/dotfiles/compare/v3.3...v3.3.3
 [3.3]: https://github.com/lavantien/dotfiles/compare/v3.2...v3.3

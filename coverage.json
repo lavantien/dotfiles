@@ -1,6 +1,8 @@
 {
-  "timestamp": "2026-01-02T13:14:36.3740694+07:00",
-  "ps_coverage": 3.0,
-  "combined_coverage": 20.3,
-  "bash_coverage": 46.2
+  "ps_coverage": 41.91,
+  "bash_coverage": 46.9,
+  "combined_coverage": 43.9,
+  "platform": "windows",
+  "bash_method": "docker",
+  "timestamp": "2026-01-02T16:39:47+07:00"
 }

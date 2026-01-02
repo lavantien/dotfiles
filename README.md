@@ -1,6 +1,6 @@
 # Universal Dotfiles
 
-![Coverage](https://img.shields.io/badge/coverage-20%25-orange) [![Security](https://img.shields.io/badge/security-reviewed-brightgreen)](https://github.com/lavantien/dotfiles#security) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Coverage](https://img.shields.io/badge/coverage-43%25-red) [![Security](https://img.shields.io/badge/security-reviewed-brightgreen)](https://github.com/lavantien/dotfiles#security) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)](https://github.com/lavantien/dotfiles)
 
 Production-grade dotfiles supporting Windows 11, Linux (Ubuntu/Fedora/Arch), and macOS with intelligent auto-detection and graceful fallbacks. A fully vibecoding-enabled dotfiles with complete AI-assisted development support: 15+ LSP servers, 10+ language formatters/linters, TDD enforcement, comprehensive Git and Claude Code workflow automation, and MCP server integration. All configured, tested, and just clone and run.
