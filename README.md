@@ -456,7 +456,7 @@ graph LR
     end
 
     subgraph "Platform Detection"
-        AUTO[detect_os()<br/>auto-detect platform]
+        AUTO["detect_os()<br/>auto-detect platform"]
     end
 
     subgraph "Platform-Specific"
@@ -466,7 +466,7 @@ graph LR
     end
 
     subgraph "Common Functions"
-        COMMON[deploy_common<br/>deploy_git_hooks<br/>deploy_claude_hooks]
+        COMMON["deploy_common<br/>deploy_git_hooks<br/>deploy_claude_hooks"]
     end
 
     BOOTSTRAP --> AUTO
