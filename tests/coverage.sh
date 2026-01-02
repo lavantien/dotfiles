@@ -251,10 +251,9 @@ fi
 # Calculate badge width (matches shields.io format)
 # ============================================
 # "coverage" label = ~61px, value text varies by length
-COVERAGE_INT=${COMBINED%.*}
 LABEL_WIDTH=61
 # Estimate value width: ~4px per character plus padding
-VALUE_TEXT="${COVERAGE_INT}%"
+VALUE_TEXT="${COMBINED}%"
 VALUE_LENGTH=${#VALUE_TEXT}
 VALUE_WIDTH=$((VALUE_LENGTH * 9 + 17))  # ~9px per char + padding
 BADGE_WIDTH=$((LABEL_WIDTH + VALUE_WIDTH))

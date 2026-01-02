@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE report PUBLIC "-//JACOCO//DTD Report 1.1//EN" "report.dtd"[]>
-<report name="Pester (01/02/2026 18:53:52)">
-  <sessioninfo id="this" start="1767379982222" dump="1767380032440" />
+<report name="Pester (01/02/2026 18:57:25)">
+  <sessioninfo id="this" start="1767380200746" dump="1767380245078" />
   <package name="dotfiles">
     <class name="dotfiles/backup" sourcefilename="backup.ps1">
       <method name="&lt;script&gt;" desc="()" line="4">

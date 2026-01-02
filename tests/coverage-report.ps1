@@ -204,8 +204,8 @@ else { $badgeColor = "#e05d44" }  # red
 
 # Calculate badge width (matches shields.io format)
 $labelWidth = 61
-$valueText = "$([math]::Round($combinedCoverage))%"
-$valueLength = $valueText.Length
+$displayValue = "$combinedCoverage%"
+$valueLength = $displayValue.Length
 $valueWidth = $valueLength * 9 + 17
 $badgeWidth = $labelWidth + $valueWidth
 
