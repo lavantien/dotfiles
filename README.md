@@ -548,6 +548,31 @@ graph TB
     style CLAUDE fill:#FFD700
 ```
 
+### Script Execution Flow
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant PS as PowerShell
+    participant Wrapper as script.ps1
+    participant GB as Git Bash
+    participant Core as script.sh
+
+    User->>PS: .\script.ps1 -Params
+    PS->>Wrapper: Invoke with parameters
+
+    Note over Wrapper: Convert parameters to bash format
+    Wrapper->>Wrapper: Convert Windows paths to Git Bash format
+
+    Wrapper->>GB: bash script.sh --converted-params
+    GB->>Core: Execute core logic
+
+    Core-->>GB: Exit code & output
+    GB-->>Wrapper: Return results
+    Wrapper-->>PS: Convert output for PowerShell
+    PS-->>User: Display results
+```
+
 **Benefits:**
 - Single implementation to maintain and test
 - .sh scripts work natively on Linux/macOS and via Git Bash on Windows
