@@ -32,7 +32,7 @@ Production-grade dotfiles supporting Windows 11, Linux (Ubuntu/Fedora/Arch), and
 
 ---
 
-## 1. Core Features [↑](#table-of-contents)
+## 1. Core Features
 
 Cross-Platform Support
 - Windows 11: Native PowerShell 7+ support
@@ -148,7 +148,7 @@ Note: For OpenCode AI CLI compatibility, these locally installed MCP servers are
 
 [↑ Back to Top](#table-of-contents)
 
-## 2. Idempotency Note [↑](#table-of-contents)
+## 2. Idempotency Note
 
 All scripts in this repository are idempotent. They intelligently detect what's already installed, compare versions, and only install or update tools that are missing or outdated. You can safely run any script multiple times without any harm.
 
@@ -296,7 +296,7 @@ This applies to all core scripts (.sh is source of truth, .ps1 is wrapper):
 
 [↑ Back to Top](#table-of-contents)
 
-## 3. Quick Start [↑](#table-of-contents)
+## 3. Quick Start
 
 Windows (PowerShell 7+)
 
@@ -352,7 +352,7 @@ All scripts work on Windows (PowerShell), Linux, and macOS (bash). Use `.ps1` on
 
 [↑ Back to Top](#table-of-contents)
 
-## 4. Bridge Approach Note [↑](#table-of-contents)
+## 4. Bridge Approach Note
 
 This repository uses a bridge approach that maintains backward compatibility while supporting optional configuration.
 
@@ -374,7 +374,7 @@ For details: See BRIDGE.md and QUICKREF.md
 
 [↑ Back to Top](#table-of-contents)
 
-## 5. Architecture Note [↑](#table-of-contents)
+## 5. Architecture Note
 
 **.sh scripts are the single source of truth.** All core logic lives in bash scripts (*.sh).
 
@@ -573,7 +573,7 @@ On Windows, Git (including Git Bash) is automatically installed via winget durin
 
 [↑ Back to Top](#table-of-contents)
 
-## 6. Bootstrap Options [↑](#table-of-contents)
+## 6. Bootstrap Options
 
 Installation Categories
 
@@ -629,7 +629,7 @@ What Gets Installed
 
 [↑ Back to Top](#table-of-contents)
 
-## 7. Configuration (Optional) [↑](#table-of-contents)
+## 7. Configuration (Optional)
 
 Default Behavior (No Config Needed)
 
@@ -672,7 +672,7 @@ Common Config Options
 
 [↑ Back to Top](#table-of-contents)
 
-## 8. Git Hooks [↑](#table-of-contents)
+## 8. Git Hooks
 
 Supported Languages
 
@@ -721,7 +721,7 @@ git commit --no-verify -m "wip: emergency fix"
 
 [↑ Back to Top](#table-of-contents)
 
-## 9. Claude Code Integration [↑](#table-of-contents)
+## 9. Claude Code Integration
 
 First-class support for Claude Code with quality checks, TDD enforcement, and MCP server integration.
 
@@ -916,7 +916,7 @@ All our system instructions setup, linters, formatters, checkers, and MCP/hooks 
 
 [↑ Back to Top](#table-of-contents)
 
-## 10. Universal Update All [↑](#table-of-contents)
+## 10. Universal Update All
 
 One command to update everything on your system.
 
@@ -940,7 +940,7 @@ npm, yarn, pnpm, gup/go, cargo, rustup, pip/pip3, poetry, dotnet, gem, composer,
 
 [↑ Back to Top](#table-of-contents)
 
-## 11. System Instructions Sync [↑](#table-of-contents)
+## 11. System Instructions Sync
 
 Single source of truth for AI assistant instructions across all repositories.
 
@@ -983,7 +983,7 @@ Standalone Sync
 
 [↑ Back to Top](#table-of-contents)
 
-## 12. Health Check & Troubleshooting [↑](#table-of-contents)
+## 12. Health Check & Troubleshooting
 
 Health Check
 
@@ -1013,7 +1013,7 @@ For detailed troubleshooting, see QUICKREF.md.
 
 [↑ Back to Top](#table-of-contents)
 
-## 13. Testing [↑](#table-of-contents)
+## 13. Testing
 
 Comprehensive test suite ensuring reliability across all platforms and components.
 
@@ -1066,7 +1066,7 @@ Test Philosophy
 
 [↑ Back to Top](#table-of-contents)
 
-## 14. Code Coverage [↑](#table-of-contents)
+## 14. Code Coverage
 
 Universal coverage measurement using bashcov for bash scripts and Pester for PowerShell scripts.
 
@@ -1159,7 +1159,7 @@ Coverage Calculation
 
 [↑ Back to Top](#table-of-contents)
 
-## 15. Security [↑](#table-of-contents)
+## 15. Security
 
 This project follows security best practices for personal development automation tools.
 
@@ -1271,7 +1271,7 @@ If you discover a legitimate security vulnerability (e.g., a path that allows un
 
 [↑ Back to Top](#table-of-contents)
 
-## 16. Updating [↑](#table-of-contents)
+## 16. Updating
 
 ```bash
 cd ~/dev/dotfiles  # or $HOME/dev/dotfiles on Windows
@@ -1286,7 +1286,7 @@ source ~/.zshrc  # or . $PROFILE on Windows
 
 [↑ Back to Top](#table-of-contents)
 
-## 17. Shell Aliases [↑](#table-of-contents)
+## 17. Shell Aliases
 
 File Operations
 
@@ -1356,7 +1356,7 @@ Utility Aliases
 
 [↑ Back to Top](#table-of-contents)
 
-## 18. Neovim Keybindings [↑](#table-of-contents)
+## 18. Neovim Keybindings
 
 Leader key is Space.
 
@@ -1421,7 +1421,7 @@ LSP Mappings (using FzfLua)
 
 [↑ Back to Top](#table-of-contents)
 
-## 19. Legacy Museum [↑](#table-of-contents)
+## 19. Legacy Museum
 
 The following files and directories are kept for historical reference but are no longer actively used in the dotfiles. They represent earlier approaches and tools that have been superseded by better alternatives or are now obsolete.
 
@@ -1480,7 +1480,7 @@ This repository has a **rich 3-year history** spanning from June 2023 to January
 
 [↑ Back to Top](#table-of-contents)
 
-## 20. Additional Documentation [↑](#table-of-contents)
+## 20. Additional Documentation
 
 | Document | Purpose |
 |----------|---------|
