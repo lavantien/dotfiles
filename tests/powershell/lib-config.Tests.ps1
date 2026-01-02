@@ -277,7 +277,7 @@ Describe "config.ps1 - _ParseConfigSimple" {
     }
 
     It "Handles macos section" {
-        $tempFile = [System.IO.Path]::GetTempFileName()]
+        $tempFile = [System.IO.Path]::GetTempFileName()
         try {
             "macos:" | Out-File $tempFile
             "package_manager: brew" | Out-File $tempFile -Append

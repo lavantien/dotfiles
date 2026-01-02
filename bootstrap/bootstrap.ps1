@@ -599,6 +599,109 @@ function Install-DevelopmentTools {
         Track-Skipped "vscode" "code editor"
     }
 
+    # Visual Studio Community (via winget - full IDE for C#, C++, etc.)
+    # Check for VS using vswhere or devenv
+    $vsInstalled = $false
+    $vsWherePath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+    if (Test-Path $vsWherePath) {
+        # vswhere can detect VS installations
+        $vsInfo = & $vsWherePath -latest -property displayName 2>$null
+        if ($vsInfo -match "Visual Studio") {
+            $vsInstalled = $true
+        }
+    }
+    elseif (Test-Command devenv) {
+        $vsInstalled = $true
+    }
+
+    if (-not $vsInstalled) {
+        Write-Step "Installing Visual Studio Community (latest)..."
+        if (-not $DryRun) {
+            if (Get-Command winget -ErrorAction SilentlyContinue) {
+                try {
+                    # Install VS Community with core workloads
+                    # --add Microsoft.VisualStudio.Workload.ManagedDesktop (C#, VB.NET)
+                    # --add Microsoft.VisualStudio.Workload.NativeDesktop (C++)
+                    # --add Microsoft.VisualStudio.Workload.NetCoreTools (modern .NET)
+                    # --add Microsoft.VisualStudio.Workload.Node (Node.js development)
+                    winget install --id Microsoft.VisualStudio.Community --accept-package-agreements --accept-source-agreements --override "--wait --passive --add Microsoft.VisualStudio.Workload.ManagedDesktop --add Microsoft.VisualStudio.Workload.NativeDesktop --add Microsoft.VisualStudio.Workload.NetCoreTools" *> $null
+
+                    # Verify installation
+                    if (Test-Path $vsWherePath) {
+                        $vsInfo = & $vsWherePath -latest -property displayName 2>$null
+                        if ($vsInfo -match "Visual Studio") {
+                            Write-Success "Visual Studio Community installed"
+                            Track-Installed "visual-studio" "full IDE"
+                        }
+                        else {
+                            Write-Warning "Visual Studio installation may still be in progress (large download)"
+                            Track-Installed "visual-studio" "full IDE (installing)"
+                        }
+                    }
+                    else {
+                        Write-Info "Visual Studio installation initiated - may require completion/restart"
+                        Track-Installed "visual-studio" "full IDE (pending)"
+                    }
+                }
+                catch {
+                    Write-Warning "Visual Studio installation failed: $_"
+                    Write-Info "Install manually from: https://visualstudio.microsoft.com/downloads/"
+                    Track-Failed "visual-studio" "full IDE"
+                }
+            }
+            else {
+                Write-Warning "winget not available - install Visual Studio from: https://visualstudio.microsoft.com/downloads/"
+                Track-Failed "visual-studio" "full IDE"
+            }
+        }
+        else {
+            Write-Info "[DRY-RUN] Would install Visual Studio Community via winget"
+            Track-Installed "visual-studio" "full IDE"
+        }
+    }
+    else {
+        Write-VerboseInfo "Visual Studio already installed"
+        Track-Skipped "visual-studio" "full IDE"
+    }
+
+    # LLVM (via winget - includes clang, clangd, lldb, etc.)
+    # LLVM is the backbone for many dev tools and Windows features
+    if (-not (Test-Command clang)) {
+        Write-Step "Installing LLVM (clang toolchain)..."
+        if (-not $DryRun) {
+            if (Get-Command winget -ErrorAction SilentlyContinue) {
+                try {
+                    winget install --id LLVM.LLVM --accept-package-agreements --accept-source-agreements *> $null
+                    if (Test-Command clang) {
+                        Write-Success "LLVM installed"
+                        Track-Installed "llvm" "C/C++ toolchain"
+                    }
+                    else {
+                        Write-Warning "LLVM installation may have failed - try installing from: https://llvm.org/"
+                        Track-Failed "llvm" "C/C++ toolchain"
+                    }
+                }
+                catch {
+                    Write-Warning "LLVM installation failed: $_"
+                    Write-Info "Install manually from: https://llvm.org/"
+                    Track-Failed "llvm" "C/C++ toolchain"
+                }
+            }
+            else {
+                Write-Warning "winget not available - install LLVM from: https://llvm.org/"
+                Track-Failed "llvm" "C/C++ toolchain"
+            }
+        }
+        else {
+            Write-Info "[DRY-RUN] Would install LLVM via winget"
+            Track-Installed "llvm" "C/C++ toolchain"
+        }
+    }
+    else {
+        Write-VerboseInfo "LLVM already installed"
+        Track-Skipped "llvm" "C/C++ toolchain"
+    }
+
     # LaTeX (via scoop extras-plus bucket)
     if (-not (Test-Command pdflatex)) {
         Write-Step "Installing LaTeX (TeX Live)..."

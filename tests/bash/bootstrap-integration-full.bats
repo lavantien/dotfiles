@@ -2,12 +2,10 @@
 # Tests the complete bootstrap flow with mocked dependencies
 
 # Setup - load the common library
-load "../bash/test_helper/bats-support/load.bash"
-load "../bash/test_helper/bats-assert/load.bash"
+load test_helper
 
 # Source the library functions to test
-BOOTSTRAP_DIR="$(cd "$(dirname "$BATS_TEST_FILENAME")" && pwd)/../bootstrap"
-export BOOTSTRAP_DIR
+export SCRIPT_DIR="$(cd "$(dirname "$BATS_TEST_DIRNAME")/.." && pwd)"
 
 setup() {
     # Reset tracking arrays
@@ -46,8 +44,8 @@ setup() {
 }
 
 @test "get_os_platform returns valid platform" {
-    if [ -f "$BOOTSTRAP_DIR/lib/common.sh" ]; then
-        source "$BOOTSTRAP_DIR/lib/common.sh"
+    if [ -f "$SCRIPT_DIR/bootstrap/lib/common.sh" ]; then
+        source "$SCRIPT_DIR/bootstrap/lib/common.sh"
         run get_os_platform
         [ "$status" -eq 0 ]
         [[ "$output" =~ (linux|macos|windows|unknown) ]]
@@ -55,8 +53,8 @@ setup() {
 }
 
 @test "compare_versions compares correctly" {
-    if [ -f "$BOOTSTRAP_DIR/lib/version-check.sh" ]; then
-        source "$BOOTSTRAP_DIR/lib/version-check.sh"
+    if [ -f "$SCRIPT_DIR/bootstrap/lib/version-check.sh" ]; then
+        source "$SCRIPT_DIR/bootstrap/lib/version-check.sh"
         run compare_versions "1.2.3" "1.2.0"
         [ "$status" -eq 0 ]
         
@@ -69,8 +67,8 @@ setup() {
 }
 
 @test "needs_install returns true when command not found" {
-    if [ -f "$BOOTSTRAP_DIR/lib/version-check.sh" ]; then
-        source "$BOOTSTRAP_DIR/lib/version-check.sh"
+    if [ -f "$SCRIPT_DIR/bootstrap/lib/version-check.sh" ]; then
+        source "$SCRIPT_DIR/bootstrap/lib/version-check.sh"
         run needs_install "nonexistent-command-xyz"
         [ "$status" -eq 0 ]
     fi
@@ -158,8 +156,8 @@ setup() {
 }
 
 @test "Version extraction handles output" {
-    if [ -f "$BOOTSTRAP_DIR/lib/version-check.sh" ]; then
-        source "$BOOTSTRAP_DIR/lib/version-check.sh"
+    if [ -f "$SCRIPT_DIR/bootstrap/lib/version-check.sh" ]; then
+        source "$SCRIPT_DIR/bootstrap/lib/version-check.sh"
         
         # Test with a command that exists
         run get_tool_version "ls"

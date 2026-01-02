@@ -404,3 +404,317 @@ EOF
     run should_skip_package "python"
     [ "$status" -ne 0 ]
 }
+
+# ============================================================================
+# YQ FALLBACK PARSER EDGE CASES
+# ============================================================================
+
+@test "_parse_config_simple handles array-like values in skip_packages" {
+    cat > /tmp/test-config-array.yaml <<EOF
+skip_packages:
+  - git
+  - node
+  - python
+EOF
+    _parse_config_simple /tmp/test-config-array.yaml
+
+    # Simple parser may not handle YAML arrays properly
+    # This test documents current behavior
+    [ -n "$CONFIG_SKIP_PACKAGES" ]
+}
+
+@test "_parse_config_simple handles empty config file" {
+    cat > /tmp/test-config-empty-file.yaml <<EOF
+EOF
+    run _parse_config_simple /tmp/test-config-empty-file.yaml
+    [ "$status" -eq 0 ]
+}
+
+@test "_parse_config_simple handles only comments" {
+    cat > /tmp/test-config-only-comments.yaml <<EOF
+# Comment line 1
+# Comment line 2
+# Comment line 3
+EOF
+    run _parse_config_simple /tmp/test-config-only-comments.yaml
+    [ "$status" -eq 0 ]
+}
+
+@test "_parse_config_simple handles malformed lines gracefully" {
+    cat > /tmp/test-config-malformed.yaml <<EOF
+editor: nvim
+invalid line without colon
+terminal: alacritty
+: key without name
+categories: minimal
+EOF
+    run _parse_config_simple /tmp/test-config-malformed.yaml
+    [ "$status" -eq 0 ]
+    # Should parse valid lines
+    [ "$CONFIG_EDITOR" = "nvim" ]
+    [ "$CONFIG_TERMINAL" = "alacritty" ]
+    [ "$CONFIG_CATEGORIES" = "minimal" ]
+}
+
+@test "_parse_config_simple handles values with colons" {
+    cat > /tmp/test-config-colons-in-value.yaml <<EOF
+base_dir: C:/Users/test/dev
+time_format: 12:30:45
+EOF
+    _parse_config_simple /tmp/test-config-colons-in-value.yaml
+
+    # Should handle paths with colons (but may not be perfect)
+    [ -n "$CONFIG_BASE_DIR" ]
+}
+
+@test "_parse_config_simple handles single quotes" {
+    cat > /tmp/test-config-single-quotes.yaml <<EOF
+editor: 'vim'
+base_dir: '~/dev'
+EOF
+    _parse_config_simple /tmp/test-config-single-quotes.yaml
+
+    [ "$CONFIG_EDITOR" = "vim" ]
+    [ "$CONFIG_BASE_DIR" = "~/dev" ]
+}
+
+@test "_parse_config_simple handles double quotes" {
+    cat > /tmp/test-config-double-quotes.yaml <<EOF
+editor: "nvim"
+base_dir: "~/dev/repos"
+EOF
+    _parse_config_simple /tmp/test-config-double-quotes.yaml
+
+    [ "$CONFIG_EDITOR" = "nvim" ]
+    [ "$CONFIG_BASE_DIR" = "~/dev/repos" ]
+}
+
+@test "_parse_config_simple handles multiline values" {
+    cat > /tmp/test-config-multiline.yaml <<EOF
+editor: nvim
+categories: minimal
+# Multiline description (though not standard in our simple parser)
+description: A long
+description that spans
+EOF
+    run _parse_config_simple /tmp/test-config-multiline.yaml
+    [ "$status" -eq 0 ]
+    [ "$CONFIG_EDITOR" = "nvim" ]
+}
+
+@test "_parse_config_simple handles numeric values" {
+    cat > /tmp/test-config-numeric.yaml <<EOF
+port: 8080
+count: 42
+EOF
+    _parse_config_simple /tmp/test-config-numeric.yaml
+
+    # Numeric values are parsed as strings
+    [ -n "$CONFIG_PORT" ]
+}
+
+@test "_parse_config_simple handles tab indentation" {
+    cat > /tmp/test-config-tabs.yaml <<EOF
+linux:
+	package_manager: apt
+	display_server: wayland
+EOF
+    _parse_config_simple /tmp/test-config-tabs.yaml
+
+    # May not handle tabs perfectly due to bash word splitting
+    [ -n "$CONFIG_LINUX_PACKAGE_MANAGER" ]
+}
+
+@test "_parse_config_simple handles deeply nested sections" {
+    cat > /tmp/test-config-nested.yaml <<EOF
+linux:
+  package_manager: apt
+  display_server:
+    type: wayland
+    compositor: sway
+EOF
+    _parse_config_simple /tmp/test-config-nested.yaml
+
+    # Simple parser only handles 2-level nesting
+    [ "$CONFIG_LINUX_PACKAGE_MANAGER" = "apt" ]
+}
+
+@test "_parse_config_simple handles special characters in values" {
+    cat > /tmp/test-config-special.yaml <<EOF
+editor: nvim-qt
+base_dir: ~/dev/test_project
+theme: gruvbox-light
+EOF
+    _parse_config_simple /tmp/test-config-special.yaml
+
+    [ "$CONFIG_EDITOR" = "nvim-qt" ]
+    [ "$CONFIG_BASE_DIR" = "~/dev/test_project" ]
+    [ "$CONFIG_THEME" = "gruvbox-light" ]
+}
+
+@test "_parse_config_simple handles underscores in keys" {
+    cat > /tmp/test-config-underscores.yaml <<EOF
+auto_update_repos: true
+backup_before_deploy: false
+sign_commits: true
+EOF
+    _parse_config_simple /tmp/test-config-underscores.yaml
+
+    [ "$CONFIG_AUTO_UPDATE_REPOS" = "true" ]
+    [ "$CONFIG_BACKUP_BEFORE_DEPLOY" = "false" ]
+    [ "$CONFIG_SIGN_COMMITS" = "true" ]
+}
+
+@test "_parse_config_simple handles true/false boolean strings" {
+    cat > /tmp/test-config-bool-strings.yaml <<EOF
+auto_update_repos: true
+sign_commits: false
+backup_before_deploy: true
+EOF
+    _parse_config_simple /tmp/test-config-bool-strings.yaml
+
+    [ "$CONFIG_AUTO_UPDATE_REPOS" = "true" ]
+    [ "$CONFIG_SIGN_COMMITS" = "false" ]
+    [ "$CONFIG_BACKUP_BEFORE_DEPLOY" = "true" ]
+}
+
+@test "_parse_config_simple handles yes/no boolean alternatives" {
+    cat > /tmp/test-config-yesno.yaml <<EOF
+auto_update_repos: yes
+sign_commits: no
+EOF
+    _parse_config_simple /tmp/test-config-yesno.yaml
+
+    [ "$CONFIG_AUTO_UPDATE_REPOS" = "yes" ]
+    [ "$CONFIG_SIGN_COMMITS" = "no" ]
+}
+
+@test "_parse_config_simple handles zero values" {
+    cat > /tmp/test-config-zero.yaml <<EOF
+count: 0
+enabled: false
+EOF
+    _parse_config_simple /tmp/test-config-zero.yaml
+
+    [ "$CONFIG_COUNT" = "0" ]
+    [ "$CONFIG_ENABLED" = "false" ]
+}
+
+@test "_parse_config_simple handles section markers without values" {
+    cat > /tmp/test-config-section-only.yaml <<EOF
+linux:
+windows:
+macos:
+EOF
+    run _parse_config_simple /tmp/test-config-section-only.yaml
+    [ "$status" -eq 0 ]
+}
+
+@test "_parse_config_simple handles empty values" {
+    cat > /tmp/test-config-empty-values.yaml <<EOF
+editor:
+terminal: alacritty
+theme:
+EOF
+    _parse_config_simple /tmp/test-config-empty-values.yaml
+
+    [ "$CONFIG_TERMINAL" = "alacritty" ]
+}
+
+# ============================================================================
+# CROSS-PLATFORM CONFIG TESTS
+# ============================================================================
+
+@test "load_dotfiles_config handles Windows paths" {
+    cat > /tmp/test-config-windows.yaml <<EOF
+base_dir: C:/Users/test/dev
+windows:
+  package_manager: scoop
+EOF
+    load_dotfiles_config /tmp/test-config-windows.yaml
+
+    [[ "$CONFIG_BASE_DIR" == *"C:"* ]] || [[ "$CONFIG_BASE_DIR" == *"Users"* ]]
+    [ "$CONFIG_WINDOWS_PACKAGE_MANAGER" = "scoop" ]
+}
+
+@test "load_dotfiles_config handles Unix paths" {
+    cat > /tmp/test-config-unix.yaml <<EOF
+base_dir: ~/dev/github
+linux:
+  package_manager: apt
+EOF
+    load_dotfiles_config /tmp/test-config-unix.yaml
+
+    [[ "$CONFIG_BASE_DIR" == *"~"* ]] || [[ "$CONFIG_BASE_DIR" == *"dev"* ]]
+    [ "$CONFIG_LINUX_PACKAGE_MANAGER" = "apt" ]
+}
+
+# ============================================================================
+# CONFIG PARSER ROBUSTNESS
+# ============================================================================
+
+@test "_parse_config_simple handles trailing whitespace" {
+    cat > /tmp/test-config-trailing.yaml <<EOF
+editor: vim
+terminal: alacritty
+categories: minimal
+EOF
+    _parse_config_simple /tmp/test-config-trailing.yaml
+
+    [ "$CONFIG_EDITOR" = "vim" ]
+    [ "$CONFIG_TERMINAL" = "alacritty" ]
+    [ "$CONFIG_CATEGORIES" = "minimal" ]
+}
+
+@test "_parse_config_simple handles multiple consecutive spaces" {
+    cat > /tmp/test-config-multi-space.yaml <<EOF
+editor:     vim
+terminal:     alacritty
+categories:     minimal
+EOF
+    _parse_config_simple /tmp/test-config-multi-space.yaml
+
+    [ "$CONFIG_EDITOR" = "vim" ]
+    [ "$CONFIG_TERMINAL" = "alacritty" ]
+    [ "$CONFIG_CATEGORIES" = "minimal" ]
+}
+
+@test "_parse_config_simple handles mixed line endings" {
+    printf 'editor: vim\r\nterminal: alacritty\n' > /tmp/test-config-mixed-eol.yaml
+    run _parse_config_simple /tmp/test-config-mixed-eol.yaml
+    [ "$status" -eq 0 ]
+}
+
+@test "_parse_config_simple handles UTF-8 characters" {
+    cat > /tmp/test-config-utf8.yaml <<EOF
+editor: nvim
+theme: gruvbox-light
+github_username: müller
+EOF
+    _parse_config_simple /tmp/test-config-utf8.yaml
+
+    [ "$CONFIG_EDITOR" = "nvim" ]
+    [ "$CONFIG_THEME" = "gruvbox-light" ]
+    [ "$CONFIG_GITHUB_USERNAME" = "müller" ]
+}
+
+@test "_parse_config_simple handles very long values" {
+    local long_path="/very/long/path/to/some/directory/that/goes/on/and/on/and/on/and/on/and/on"
+    cat > /tmp/test-config-long.yaml <<EOF
+base_dir: $long_path
+EOF
+    _parse_config_simple /tmp/test-config-long.yaml
+
+    [[ "$CONFIG_BASE_DIR" == *"$long_path"* ]]
+}
+
+@test "_parse_config_simple handles values with equals sign" {
+    cat > /tmp/test-config-equals.yaml <<EOF
+theme: color=dark
+editor: name=nvim
+EOF
+    _parse_config_simple /tmp/test-config-equals.yaml
+
+    [ "$CONFIG_THEME" = "color=dark" ]
+    [ "$CONFIG_EDITOR" = "name=nvim" ]
+}

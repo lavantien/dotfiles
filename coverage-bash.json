@@ -1,7 +1,0 @@
-{
-  "bash_coverage": 46.9,
-  "timestamp": "2026-01-02T16:38:53+07:00",
-  "tool": "kcov",
-  "platform": "docker",
-  "docker_image": "dotfiles-test:latest"
-}

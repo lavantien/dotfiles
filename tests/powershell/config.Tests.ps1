@@ -423,7 +423,7 @@ editor: "value\xwith\invalid\escape"
         $configFile = Join-Path $env:TEMP "large-$(New-Guid).yaml"
         $sb = [System.Text.StringBuilder]::new()
         for ($i = 0; $i -lt 1000; $i++) {
-            [void]$sb.AppendLine("key$i: value$i")
+            [void]$sb.AppendLine("key${i}: value${i}")
         }
         $sb.ToString() | Out-File $configFile -Encoding utf8
 

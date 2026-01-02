@@ -9,7 +9,7 @@
 # VERSION PATTERNS
 # ============================================================================
 # Regex patterns to extract version numbers from tool output
-declare -A VERSION_PATTERNS=(
+declare -gA VERSION_PATTERNS=(
     # Programming Languages
     ["node"]="v?([0-9]+\.[0-9]+\.[0-9]+)"
     ["nodejs"]="v?([0-9]+\.[0-9]+\.[0-9]+)"
@@ -86,7 +86,7 @@ declare -A VERSION_PATTERNS=(
 )
 
 # Version flags for tools that don't use --version
-declare -A VERSION_FLAGS=(
+declare -gA VERSION_FLAGS=(
     ["go"]="version"
     ["cargo"]="--version"
     ["scoop"]="--version"

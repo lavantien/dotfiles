@@ -6,6 +6,17 @@ BeforeAll {
     $Script:RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
     $commonLibPath = Join-Path $RepoRoot "bootstrap\lib\common.ps1"
     . $commonLibPath
+
+    # Helper function to remove path from User environment variable (registry)
+    function Remove-FromPath {
+        param([string]$Path)
+
+        $currentPath = [Environment]::GetEnvironmentVariable("Path", "User")
+        if ($currentPath -like "*$Path*") {
+            $newPath = ($currentPath -split ';' | Where-Object { $_ -ne $Path }) -join ';'
+            [Environment]::SetEnvironmentVariable("Path", $newPath, "User")
+        }
+    }
 }
 
 Describe "Bootstrap Common Functions" {
@@ -73,7 +84,8 @@ Describe "Bootstrap Common Functions" {
                 $env:PATH.Split(';') | Should -Contain $newPath
             }
             finally {
-                # Cleanup
+                # Cleanup - remove from registry before removing directory
+                Remove-FromPath $newPath
                 Remove-Item -Path $newPath -Force -ErrorAction SilentlyContinue
                 $env:PATH = $originalPath
             }
@@ -231,6 +243,8 @@ Describe "Bootstrap Error Handling" {
                 $env:PATH.Split(';') | Should -Contain $newPath
             }
             finally {
+                # Cleanup - remove from registry before removing directory
+                Remove-FromPath $newPath
                 Remove-Item -Path $newPath -Force -ErrorAction SilentlyContinue
                 $env:PATH = $originalPath
             }
@@ -245,6 +259,8 @@ Describe "Bootstrap Error Handling" {
                 { Add-ToPath $relativePath } | Should -Not -Throw
             }
             finally {
+                # Cleanup - remove from registry before removing directory
+                Remove-FromPath $relativePath
                 Remove-Item -Path $relativePath -Force -ErrorAction SilentlyContinue
                 $env:PATH = $originalPath
             }
@@ -618,6 +634,16 @@ Describe "Bootstrap.ps1 Phase Functions" {
             $ast.Extent.Text | Should -Match "vscode|VisualStudioCode"
         }
 
+        It "Install-DevelopmentTools installs Visual Studio Community" {
+            $ast = [System.Management.Automation.Language.Parser]::ParseFile($Script:BootstrapPath, [ref]$null, [ref]$null)
+            $ast.Extent.Text | Should -Match "Visual Studio|VisualStudio\.Community|vswhere"
+        }
+
+        It "Install-DevelopmentTools installs LLVM" {
+            $ast = [System.Management.Automation.Language.Parser]::ParseFile($Script:BootstrapPath, [ref]$null, [ref]$null)
+            $ast.Extent.Text | Should -Match "LLVM|clang"
+        }
+
         It "Install-DevelopmentTools installs LaTeX" {
             $ast = [System.Management.Automation.Language.Parser]::ParseFile($Script:BootstrapPath, [ref]$null, [ref]$null)
             $ast.Extent.Text | Should -Match "pdflatex|LaTeX|texlive"
@@ -694,7 +720,7 @@ Describe "Bootstrap.ps1 Phase Functions" {
 
         It "Main calls Main at script end" {
             $ast = [System.Management.Automation.Language.Parser]::ParseFile($Script:BootstrapPath, [ref]$null, [ref]$null)
-            $ast.Extent.Text | Should -Match "^Main\s*$"
+            $ast.Extent.Text | Should -Match "(?m)^Main\s*$"
         }
     }
 
@@ -766,17 +792,17 @@ Describe "Bootstrap.ps1 Phase Functions" {
 
         It "Sources common.ps1 library" {
             $ast = [System.Management.Automation.Language.Parser]::ParseFile($Script:BootstrapPath, [ref]$null, [ref]$null)
-            $ast.Extent.Text | Should -Match "\\. .*common\.ps1"
+            $ast.Extent.Text | Should -Match "\..*common\.ps1"
         }
 
         It "Sources version-check.ps1 library" {
             $ast = [System.Management.Automation.Language.Parser]::ParseFile($Script:BootstrapPath, [ref]$null, [ref]$null)
-            $ast.Extent.Text | Should -Match "\\. .*version-check\.ps1"
+            $ast.Extent.Text | Should -Match "\..*version-check\.ps1"
         }
 
         It "Sources windows.ps1 platform file" {
             $ast = [System.Management.Automation.Language.Parser]::ParseFile($Script:BootstrapPath, [ref]$null, [ref]$null)
-            $ast.Extent.Text | Should -Match "\\. .*windows\.ps1"
+            $ast.Extent.Text | Should -Match "\..*windows\.ps1"
         }
 
         It "Sources config.ps1 if available" {

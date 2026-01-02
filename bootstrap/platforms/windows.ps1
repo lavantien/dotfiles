@@ -84,6 +84,7 @@ function Get-PackageDescription {
 
         # Core runtimes
         "git" { return "version control" }
+        "llvm" { return "C/C++ toolchain" }
         "node" { return "Node.js runtime" }
         "nodejs" { return "Node.js runtime" }
         "python" { return "Python runtime" }
@@ -139,6 +140,7 @@ function Get-PackageDescription {
         "bashcov" { return "code coverage" }
         "Pester" { return "PowerShell testing" }
         "vscode" { return "code editor" }
+        "visual-studio" { return "full IDE" }
         "latex" { return "document preparation" }
         "claude-code" { return "AI CLI" }
         "opencode" { return "AI CLI" }
@@ -882,5 +884,5 @@ function Add-ToPath {
 
 function Refresh-Path {
     # Refresh PATH for current session
-    $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+    $env:Path = [System.Environment]::GetEnvironmentVariable("Path","User") + ";" + [System.Environment]::GetEnvironmentVariable("Path","Machine")
 }

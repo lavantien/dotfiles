@@ -349,7 +349,7 @@ function Refresh-Path {
     # Refresh PATH for current session
     $machinePath = [Environment]::GetEnvironmentVariable("Path", "Machine")
     $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
-    $env:Path = "$machinePath;$userPath"
+    $env:Path = "$userPath;$machinePath"
 }
 
 # Initialize user PATH with all common development tool directories

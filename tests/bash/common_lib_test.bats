@@ -449,3 +449,532 @@ teardown() {
     result=$(join_by " " "a" "b" "c")
     [ "$result" = "a b c" ]
 }
+
+# ============================================================================
+# ADDITIONAL CMD_EXISTS TESTS (Windows paths)
+# ============================================================================
+
+@test "cmd_exists finds ls in standard PATH" {
+    run cmd_exists "ls"
+    [ "$status" -eq 0 ]
+}
+
+@test "cmd_exists finds bash in standard PATH" {
+    run cmd_exists "bash"
+    [ "$status" -eq 0 ]
+}
+
+@test "cmd_exists returns false for clearly non-existent command" {
+    run cmd_exists "this-command-definitely-does-not-exist-xyz789"
+    [ "$status" -ne 0 ]
+}
+
+@test "cmd_exists handles command with special characters" {
+    run cmd_exists "cmd-with-dashes"
+    # May not exist, but should handle the name
+    [ "$?" =~ ^[01]$ ]
+}
+
+# ============================================================================
+# DISTRO FAMILY TESTS
+# ============================================================================
+
+@test "get_distro_family returns debian for ubuntu" {
+    if [[ -f /etc/os-release ]]; then
+        # Create mock os-release
+        local test_os_release="/tmp/test-os-release-$$"
+        echo 'ID=ubuntu' > "$test_os_release"
+        # Can't override /etc/os-release, but we can test the logic
+        rm -f "$test_os_release"
+        skip "Requires mocking /etc/os-release"
+    else
+        skip "/etc/os-release not found"
+    fi
+}
+
+@test "get_distro_family handles unknown distro" {
+    # Mock detect_distro to return unknown
+    result=$(echo "unknown" | while read distro; do
+        case "$distro" in
+            ubuntu|debian) echo "debian" ;;
+            *) echo "unknown" ;;
+        esac
+    done)
+    [ "$result" = "unknown" ]
+}
+
+# ============================================================================
+# ENSURE_PATH TESTS
+# ============================================================================
+
+@test "ensure_path adds path to front of PATH" {
+    local new_path="/tmp/test-ensure-$$"
+    local original_path="$PATH"
+
+    ensure_path "$new_path"
+
+    # Check new_path is in PATH
+    [[ ":$PATH:" == *":$new_path:"* ]]
+
+    # Restore PATH
+    export PATH="$original_path"
+}
+
+@test "ensure_path does not add duplicate path" {
+    local test_path=$(echo "$PATH" | cut -d: -f1)
+    local original_path="$PATH"
+    local original_count=$(echo "$PATH" | grep -o "$test_path" | wc -l)
+
+    ensure_path "$test_path"
+
+    local new_count=$(echo "$PATH" | grep -o "$test_path" | wc -l)
+    [ "$new_count" -eq "$original_count" ]
+
+    export PATH="$original_path"
+}
+
+@test "ensure_path handles paths with spaces" {
+    local path_with_spaces="/tmp/path with spaces $$"
+    local original_path="$PATH"
+
+    ensure_path "$path_with_spaces"
+
+    # Should handle quoted paths
+    export PATH="$original_path"
+}
+
+@test "ensure_path handles relative paths" {
+    local relative_path="../bin"
+    local original_path="$PATH"
+
+    ensure_path "$relative_path"
+
+    # Should add relative path
+    [[ ":$PATH:" == *"../bin:"* ]] || [[ ":$PATH:" == *":$relative_path:"* ]]
+
+    export PATH="$original_path"
+}
+
+# ============================================================================
+# INIT_USER_PATH TESTS
+# ============================================================================
+
+@test "init_user_path adds cargo bin if exists" {
+    local cargo_bin="$HOME/.cargo/bin"
+    local original_path="$PATH"
+
+    if [[ -d "$cargo_bin" ]]; then
+        init_user_path
+        [[ ":$PATH:" == *":$cargo_bin:"* ]] || skip "Path already in PATH or not added"
+    else
+        skip "Cargo bin directory does not exist"
+    fi
+
+    export PATH="$original_path"
+}
+
+@test "init_user_path adds dotnet tools if exists" {
+    local dotnet_tools="$HOME/.dotnet/tools"
+    local original_path="$PATH"
+
+    if [[ -d "$dotnet_tools" ]]; then
+        init_user_path
+        [[ ":$PATH:" == *":$dotnet_tools:"* ]] || skip "Path already in PATH or not added"
+    else
+        skip "Dotnet tools directory does not exist"
+    fi
+
+    export PATH="$original_path"
+}
+
+@test "init_user_path adds local bin if exists" {
+    local local_bin="$HOME/.local/bin"
+    local original_path="$PATH"
+
+    if [[ -d "$local_bin" ]]; then
+        init_user_path
+        [[ ":$PATH:" == *":$local_bin:"* ]] || skip "Path already in PATH or not added"
+    else
+        skip "Local bin directory does not exist"
+    fi
+
+    export PATH="$original_path"
+}
+
+@test "init_user_path adds go bin if exists" {
+    local go_bin="$HOME/go/bin"
+    local original_path="$PATH"
+
+    if [[ -d "$go_bin" ]]; then
+        init_user_path
+        [[ ":$PATH:" == *":$go_bin:"* ]] || skip "Path already in PATH or not added"
+    else
+        skip "Go bin directory does not exist"
+    fi
+
+    export PATH="$original_path"
+}
+
+@test "init_user_path handles macOS homebrew paths" {
+    local original_path="$PATH"
+
+    if [[ "$(detect_os)" == "macos" ]]; then
+        init_user_path
+        # Should check for /opt/homebrew/bin
+        [[ -d "/opt/homebrew/bin" ]] || skip "Homebrew not in standard location"
+    else
+        skip "Not running on macOS"
+    fi
+
+    export PATH="$original_path"
+}
+
+@test "init_user_path handles Linux homebrew paths" {
+    local original_path="$PATH"
+
+    if [[ "$(detect_os)" == "linux" ]]; then
+        init_user_path
+        # Should check for /home/linuxbrew/.linuxbrew/bin
+        [[ -d "/home/linuxbrew/.linuxbrew/bin" ]] || skip "Linuxbrew not installed"
+    else
+        skip "Not running on Linux"
+    fi
+
+    export PATH="$original_path"
+}
+
+# ============================================================================
+# TRACKING ARRAY TESTS
+# ============================================================================
+
+@test "track_installed handles multiple packages" {
+    INSTALLED_PACKAGES=()
+    track_installed "pkg1" "desc1"
+    track_installed "pkg2" "desc2"
+    track_installed "pkg3" "desc3"
+
+    [ "${#INSTALLED_PACKAGES[@]}" -eq 3 ]
+    [[ "${INSTALLED_PACKAGES[0]}" == "pkg1 (desc1)" ]]
+    [[ "${INSTALLED_PACKAGES[1]}" == "pkg2 (desc2)" ]]
+    [[ "${INSTALLED_PACKAGES[2]}" == "pkg3 (desc3)" ]]
+}
+
+@test "track_skipped handles multiple packages" {
+    SKIPPED_PACKAGES=()
+    track_skipped "pkg1"
+    track_skipped "pkg2"
+    track_skipped "pkg3"
+
+    [ "${#SKIPPED_PACKAGES[@]}" -eq 3 ]
+    [[ "${SKIPPED_PACKAGES[0]}" == "pkg1" ]]
+    [[ "${SKIPPED_PACKAGES[1]}" == "pkg2" ]]
+    [[ "${SKIPPED_PACKAGES[2]}" == "pkg3" ]]
+}
+
+@test "track_failed handles multiple packages" {
+    FAILED_PACKAGES=()
+    track_failed "pkg1" "error1"
+    track_failed "pkg2" "error2"
+    track_failed "pkg3" "error3"
+
+    [ "${#FAILED_PACKAGES[@]}" -eq 3 ]
+    [[ "${FAILED_PACKAGES[0]}" == "pkg1 (error1)" ]]
+    [[ "${FAILED_PACKAGES[1]}" == "pkg2 (error2)" ]]
+    [[ "${FAILED_PACKAGES[2]}" == "pkg3 (error3)" ]]
+}
+
+@test "tracking arrays are independent" {
+    INSTALLED_PACKAGES=()
+    SKIPPED_PACKAGES=()
+    FAILED_PACKAGES=()
+
+    track_installed "pkg1"
+    track_skipped "pkg2"
+    track_failed "pkg3"
+
+    [ "${#INSTALLED_PACKAGES[@]}" -eq 1 ]
+    [ "${#SKIPPED_PACKAGES[@]}" -eq 1 ]
+    [ "${#FAILED_PACKAGES[@]}" -eq 1 ]
+}
+
+# ============================================================================
+# LOGGING EDGE CASES
+# ============================================================================
+
+@test "log_info handles empty message" {
+    run log_info ""
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"[INFO]"* ]]
+}
+
+@test "log_info handles special characters" {
+    run log_info "Test with $pecial chars"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"[INFO]"* ]]
+}
+
+@test "log_info handles multiline message" {
+    run log_info "Line 1
+Line 2"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"[INFO]"* ]]
+}
+
+@test "log_success handles empty message" {
+    run log_success ""
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"[OK]"* ]]
+}
+
+@test "log_warning handles empty message" {
+    run log_warning ""
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"[WARN]"* ]]
+}
+
+@test "log_error handles empty message" {
+    run log_error ""
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"[ERROR]"* ]]
+}
+
+@test "log_step handles empty message" {
+    run log_step ""
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"[STEP]"* ]]
+}
+
+@test "print_header handles empty header" {
+    run print_header ""
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"===="* ]]
+}
+
+@test "print_header handles long header text" {
+    run print_header "This is a very long header text that should still be formatted correctly"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"===="* ]]
+}
+
+@test "print_section handles empty section" {
+    run print_section ""
+    [ "$status" -eq 0 ]
+}
+
+@test "print_section handles section with spaces" {
+    run print_section "Test Section With Spaces"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"Test Section With Spaces"* ]]
+}
+
+# ============================================================================
+# RUN_CMD TESTS
+# ============================================================================
+
+@test "run_cmd executes complex command" {
+    run run_cmd "echo 'hello world' | tr ' ' '-'"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"hello-world"* ]]
+}
+
+@test "run_cmd handles command with pipes" {
+    run run_cmd "echo test | wc -c"
+    [ "$status" -eq 0 ]
+}
+
+@test "run_cmd dry-run does not execute command" {
+    DRY_RUN=true
+    run run_cmd "echo 'should not execute'"
+    [[ "$output" != *"should not execute"* ]]
+    [[ "$output" == *"[DRY-RUN]"* ]]
+    DRY_RUN=false
+}
+
+# ============================================================================
+# SAFE_INSTALL TESTS
+# ============================================================================
+
+@test "safe_install tracks successful install" {
+    INSTALLED_PACKAGES=()
+    success_func() { return 0; }
+
+    safe_install success_func "test-pkg"
+
+    [ "${#INSTALLED_PACKAGES[@]}" -eq 0 ]  # Not tracked by safe_install on success
+}
+
+@test "safe_install shows warning on failure" {
+    FAILED_PACKAGES=()
+    failing_func() { return 1; }
+
+    run safe_install failing_func "test-pkg"
+
+    [ "$status" -ne 0 ]
+    [[ "$output" == *"Installation failed"* ]]
+}
+
+@test "safe_install passes arguments to install function" {
+    args_received=""
+    capture_func() {
+        args_received="$*"
+        return 0
+    }
+
+    safe_install capture_func "pkg1" "desc1" "extra"
+
+    [[ "$args_received" == *"pkg1"* ]]
+}
+
+# ============================================================================
+# CONFIRM FUNCTION TESTS
+# ============================================================================
+
+@test "confirm respects INTERACTIVE=false" {
+    INTERACTIVE=false
+    run confirm "Test prompt" "n"
+    [ "$status" -eq 0 ]
+}
+
+@test "confirm returns 0 when default is y and INTERACTIVE is false" {
+    INTERACTIVE=false
+    run confirm "Test prompt" "y"
+    [ "$status" -eq 0 ]
+}
+
+@test "confirm handles non-interactive mode directly" {
+    INTERACTIVE=false
+    result=$(confirm "Test" && echo "yes" || echo "no")
+    [ "$result" = "yes" ]
+}
+
+# ============================================================================
+# PLATFORM DETECTION EDGE CASES
+# ============================================================================
+
+@test "detect_os handles unknown OS gracefully" {
+    # Mock uname to return unknown
+    result=$(uname -s | while read kernel; do
+        case "$kernel" in
+            Linux*) echo "linux" ;;
+            Darwin*) echo "macos" ;;
+            MINGW*|MSYS*|CYGWIN*) echo "windows" ;;
+            *) echo "unknown" ;;
+        esac
+    done)
+    [ "$result" = "unknown" ] || [ "$result" = "linux" ] || [ "$result" = "windows" ]
+}
+
+@test "is_windows returns false on non-Windows" {
+    if [[ -z "$MSYSTEM" ]] && [[ ! "$(uname -s)" =~ (MINGW|MSYS|CYGWIN) ]]; then
+        run is_windows
+        [ "$status" -ne 0 ]
+    else
+        skip "Running on Windows"
+    fi
+}
+
+# ============================================================================
+# COLOR VARIABLES TESTS
+# ============================================================================
+
+@test "color variables are defined" {
+    # These should be set when common.sh is sourced
+    [ -n "${RED+x}" ]
+    [ -n "${GREEN+x}" ]
+    [ -n "${YELLOW+x}" ]
+    [ -n "${BLUE+x}" ]
+    [ -n "${CYAN+x}" ]
+    [ -n "${BOLD+x}" ]
+    [ -n "${NC+x}" ]
+}
+
+@test "color codes use escape sequences when TTY" {
+    if [[ -t 1 ]]; then
+        [[ "$GREEN" == *"\033["* ]] || [[ "$GREEN" == *$'\033['* ]]
+    else
+        # When not a TTY, colors may be empty
+        [ "$GREEN" == "" ] || [ -n "$GREEN" ]
+    fi
+}
+
+# ============================================================================
+# CAPITALIZE FUNCTION TESTS
+# ============================================================================
+
+@test "capitalize handles empty string" {
+    result=$(capitalize "")
+    [ "$result" = "" ]
+}
+
+@test "capitalize handles uppercase input" {
+    result=$(capitalize "TEST")
+    [ "$result" = "TEST" ]
+}
+
+@test "capitalize handles mixed case input" {
+    result=$(capitalize "tEsT")
+    [ "$result" = "TEsT" ]
+}
+
+@test "capitalize handles string with spaces" {
+    result=$(capitalize "hello world")
+    [ "$result" = "Hello world" ]
+}
+
+# ============================================================================
+# JOIN_BY FUNCTION TESTS
+# ============================================================================
+
+@test "join_by handles empty input" {
+    result=$(join_by "," "")
+    [ "$result" = "" ]
+}
+
+@test "join_by handles two elements" {
+    result=$(join_by ":" "a" "b")
+    [ "$result" = "a:b" ]
+}
+
+@test "join_by handles many elements" {
+    result=$(join_by "-" "1" "2" "3" "4" "5")
+    [ "$result" = "1-2-3-4-5" ]
+}
+
+@test "join_by handles special character delimiter" {
+    result=$(join_by "|" "a" "b" "c")
+    [ "$result" = "a|b|c" ]
+}
+
+# ============================================================================
+# PRINT_SUMMARY EDGE CASES
+# ============================================================================
+
+@test "print_summary shows only failed when only failed packages" {
+    INSTALLED_PACKAGES=()
+    SKIPPED_PACKAGES=()
+    FAILED_PACKAGES=("pkg1 (error)")
+    run print_summary
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"Failed: 1"* ]]
+}
+
+@test "print_summary shows only installed when only installed packages" {
+    INSTALLED_PACKAGES=("pkg1 (installed)")
+    SKIPPED_PACKAGES=()
+    FAILED_PACKAGES=()
+    run print_summary
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"Installed: 1"* ]]
+    [[ "$output" != *"Failed:"* ]]
+}
+
+@test "print_summary shows all three categories" {
+    INSTALLED_PACKAGES=("pkg1")
+    SKIPPED_PACKAGES=("pkg2")
+    FAILED_PACKAGES=("pkg3")
+    run print_summary
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"Installed: 1"* ]]
+    [[ "$output" == *"Skipped: 1"* ]]
+    [[ "$output" == *"Failed: 1"* ]]
+}

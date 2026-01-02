@@ -1,8 +1,11 @@
 {
-  "ps_coverage": 41.91,
-  "bash_coverage": 46.9,
-  "combined_coverage": 43.9,
-  "platform": "windows",
-  "bash_method": "docker",
-  "timestamp": "2026-01-02T16:39:47+07:00"
+  "ps_coverage": 41.2,
+  "timestamp": "2026-01-02T21:04:08.6650806+07:00",
+  "ps_commands_executed": 826,
+  "bash_coverage": 31.2,
+  "bash_weight": 0.98,
+  "ps_weight": 0.02,
+  "bash_method": "kcov",
+  "combined_coverage": 31.4,
+  "ps_commands_analyzed": 2005
 }
