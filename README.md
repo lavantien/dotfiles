@@ -5,8 +5,6 @@
 
 Production-grade dotfiles supporting Windows 11, Linux (Ubuntu/Fedora/Arch), and macOS with intelligent auto-detection and graceful fallbacks. A fully vibecoding-enabled dotfiles with complete AI-assisted development support: 15+ LSP servers, 10+ language formatters/linters, TDD enforcement, comprehensive Git and Claude Code workflow automation, and MCP server integration. All configured, tested, and just clone and run.
 
----
-
 ## Table of Contents
 
 - [1. Core Features](#1-core-features)
@@ -44,8 +42,6 @@ Intelligent Automation
 - Graceful fallbacks: Works even when some tools are not installed
 - OneDrive-aware: Handles synced Documents folders on Windows
 - Always latest: Bootstrap installs/updates all tools to latest versions
-
----
 
 ### What Gets Installed
 
@@ -120,8 +116,6 @@ Intelligent Automation
 
 Note: For OpenCode AI CLI compatibility, these locally installed MCP servers are used by the bootstrap scripts. The bootstrap installs them globally via npm so they're available for both Claude Code and OpenCode AI configurations.
 
----
-
 ### Installation Categories
 
 | Category | What's Installed | Use Case |
@@ -129,8 +123,6 @@ Note: For OpenCode AI CLI compatibility, these locally installed MCP servers are
 | minimal | Package managers, git, CLI tools only | Quick setup |
 | sdk | minimal + Node.js, Python, Go, Rust, dotnet, JDK | No LSPs |
 | full | sdk + all LSPs + linters/formatters + MCP servers | Complete environment (default) |
-
----
 
 ### Quality Assurance
 
@@ -1488,8 +1480,6 @@ This repository has a **rich 3-year history** spanning from June 2023 to January
 | BRIDGE.md | Bridge approach and configuration system |
 | FIX_SUMMARY.md | What was fixed and why |
 | COMPLETION_SUMMARY.md | Complete verification summary |
-
----
 
 ## License
 
