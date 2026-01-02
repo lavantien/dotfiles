@@ -231,15 +231,17 @@ echo -e "Combined:   ${GREEN}${COMBINED}%${NC}"
 # ============================================
 # Badge Color
 # ============================================
-if (( $(echo "$COMBINED >= 80" | bc -l 2>/dev/null || echo 0) )); then
-    BADGE_COLOR="brightgreen"
-elif (( $(echo "$COMBINED >= 70" | bc -l 2>/dev/null || echo 0) )); then
+if (( $(echo "$COMBINED >= 89" | bc -l 2>/dev/null || echo 0) )); then
+    BADGE_COLOR="violet"
+elif (( $(echo "$COMBINED >= 74" | bc -l 2>/dev/null || echo 0) )); then
+    BADGE_COLOR="indigo"
+elif (( $(echo "$COMBINED >= 59" | bc -l 2>/dev/null || echo 0) )); then
+    BADGE_COLOR="blue"
+elif (( $(echo "$COMBINED >= 44" | bc -l 2>/dev/null || echo 0) )); then
     BADGE_COLOR="green"
-elif (( $(echo "$COMBINED >= 60" | bc -l 2>/dev/null || echo 0) )); then
-    BADGE_COLOR="yellowgreen"
-elif (( $(echo "$COMBINED >= 50" | bc -l 2>/dev/null || echo 0) )); then
+elif (( $(echo "$COMBINED >= 29" | bc -l 2>/dev/null || echo 0) )); then
     BADGE_COLOR="yellow"
-elif (( $(echo "$COMBINED >= 40" | bc -l 2>/dev/null || echo 0) )); then
+elif (( $(echo "$COMBINED >= 15" | bc -l 2>/dev/null || echo 0) )); then
     BADGE_COLOR="orange"
 else
     BADGE_COLOR="red"
@@ -298,16 +300,15 @@ if [[ "$UPDATE_README" == true ]]; then
 
     README="README.md"
     if [[ -f "$README" ]]; then
-        # Generate shields.io badge URL
-        BADGE_URL="https://img.shields.io/badge/coverage-$(echo "$COMBINED" | cut -d. -f1)%25-${BADGE_COLOR}"
-        BADGE_MARKDOWN="![Coverage](${BADGE_URL})"
+        # Generate badge markdown (use local file)
+        BADGE_MARKDOWN="![Coverage](coverage-badge.svg)"
 
         # Check if badge exists and update or add it
-        if grep -q '\[Coverage\](https://img.shields.io/badge/coverage' "$README"; then
+        if grep -qE '\[Coverage\]\((https://img.shields.io/badge/coverage-[^)]+|coverage-badge.svg)' "$README"; then
             # Update existing badge
             if command -v sed &>/dev/null; then
-                sed -i "s|!\[Coverage\](https://img.shields.io/badge/coverage-[^)]*)|${BADGE_MARKDOWN}|g" "$README" 2>/dev/null || \
-                sed -i '' "s|!\[Coverage\](https://img.shields.io/badge/coverage-[^)]*)|${BADGE_MARKDOWN}|g" "$README"
+                sed -i -E "s|!\[Coverage\]\((https://img.shields.io/badge/coverage-[^)]+|coverage-badge.svg\)|${BADGE_MARKDOWN}|g" "$README" 2>/dev/null || \
+                sed -i '' -E "s|!\[Coverage\]\((https://img.shields.io/badge/coverage-[^)]+|coverage-badge.svg\)|${BADGE_MARKDOWN}|g" "$README"
                 echo -e "${GREEN}Updated coverage badge in README.md${NC}"
             fi
         else

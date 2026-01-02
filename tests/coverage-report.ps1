@@ -193,12 +193,13 @@ Write-Host "`n  Combined: $combinedCoverage% (weighted: bash $([math]::Round($ba
 
 #region Badge Generation
 
-# Determine badge color (shields.io named colors)
-if ($combinedCoverage -ge 80) { $badgeColor = "brightgreen" }
-elseif ($combinedCoverage -ge 70) { $badgeColor = "green" }
-elseif ($combinedCoverage -ge 60) { $badgeColor = "yellowgreen" }
-elseif ($combinedCoverage -ge 50) { $badgeColor = "yellow" }
-elseif ($combinedCoverage -ge 40) { $badgeColor = "orange" }
+# Determine badge color (7 rainbow colors, equal ~14% ranges)
+if ($combinedCoverage -ge 89) { $badgeColor = "violet" }
+elseif ($combinedCoverage -ge 74) { $badgeColor = "indigo" }
+elseif ($combinedCoverage -ge 59) { $badgeColor = "blue" }
+elseif ($combinedCoverage -ge 44) { $badgeColor = "green" }
+elseif ($combinedCoverage -ge 29) { $badgeColor = "yellow" }
+elseif ($combinedCoverage -ge 15) { $badgeColor = "orange" }
 else { $badgeColor = "red" }
 
 # Generate SVG badge
@@ -255,16 +256,15 @@ if ($UpdateReadme) {
     if (Test-Path $readmePath) {
         $readmeContent = Get-Content $readmePath -Raw
 
-        # Generate shields.io badge URL
-        $badgeUrl = "https://img.shields.io/badge/coverage-$([math]::Floor($combinedCoverage))%25-$badgeColor"
-        $badgeMarkdown = "![Coverage]($badgeUrl)"
+        # Generate badge markdown (use local file)
+        $badgeMarkdown = "![Coverage](coverage-badge.svg)"
 
         # Check if coverage badge already exists
-        $badgePattern = '!\[Coverage\]\(https://img\.shields\.io/badge/coverage-[^)]+\)'
+        $badgePattern = '!\[Coverage\]\(https://img\.shields\.io/badge/coverage-[^)]+\)|!\[Coverage\]\(coverage-badge\.svg\)'
 
         if ($readmeContent -match $badgePattern) {
             # Update existing badge
-            $readmeContent = $readmeContent -replace $badgePattern, "![Coverage]($badgeUrl)"
+            $readmeContent = $readmeContent -replace $badgePattern, $badgeMarkdown
             Write-Host "`nUpdated coverage badge in README.md"
         }
         else {

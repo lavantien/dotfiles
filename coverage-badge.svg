@@ -7,7 +7,7 @@
   </linearGradient>
   <g class="nc">
     <rect x="0" width="95" height="20" fill="#555"/>
-    <rect x="95" width="65" height="20" fill="#red"/>
+    <rect x="95" width="65" height="20" fill="#yellow"/>
     <rect width="160" height="20" fill="url(#s)"/>
   </g>
   <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" text-rendering="geometricPrecision" font-size="11">
