@@ -69,10 +69,16 @@ BASH_TEST_FILES=(
 SOURCE_DIRS=(
     "bootstrap"
     "hooks/git"
+    "hooks/claude"
     "lib"
     "deploy.sh"
     "update-all.sh"
     "git-update-repos.sh"
+    "backup.sh"
+    "restore.sh"
+    "healthcheck.sh"
+    "uninstall.sh"
+    "sync-system-instructions.sh"
 )
 
 echo -e "${GREEN}Running tests with kcov...${NC}"
@@ -92,7 +98,7 @@ for test_file in "${BASH_TEST_FILES[@]}"; do
         # --include-pattern: only include source directories
         kcov \
             --exclude-pattern="/*test*,*.bats,*test*,*/tests/*" \
-            --include-pattern="bootstrap,hooks,lib,deploy.sh,update-all.sh,git-update-repos.sh" \
+            --include-pattern="bootstrap,hooks,lib,deploy.sh,update-all.sh,git-update-repos.sh,backup.sh,restore.sh,healthcheck.sh,uninstall.sh,sync-system-instructions.sh" \
             "$kcov_output" \
             bats "$test_file" || true
     fi

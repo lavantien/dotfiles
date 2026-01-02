@@ -6,13 +6,30 @@ $config = [PesterConfiguration]::Default
 # Enable code coverage
 $config.CodeCoverage.Enabled = $true
 
-# Paths to analyze for coverage
+# Paths to analyze for coverage - all production PowerShell scripts
 $config.CodeCoverage.Path = @(
+    # Root entry point scripts
+    "bootstrap.ps1",
+    "deploy.ps1",
+    "update-all.ps1",
+    "backup.ps1",
+    "restore.ps1",
+    "healthcheck.ps1",
+    "uninstall.ps1",
+    "git-update-repos.ps1",
+    "sync-system-instructions.ps1",
+    "update-all-windows.ps1",
+    # Bootstrap internal scripts
+    "bootstrap\bootstrap.ps1",
     "bootstrap\lib\common.ps1",
+    "bootstrap\lib\version-check.ps1",
+    "bootstrap\platforms\windows.ps1",
+    # Library scripts
+    "lib\config.ps1",
+    # Git hooks
     "hooks\git\pre-commit.ps1",
     "hooks\git\commit-msg.ps1",
-    "deploy.ps1",
-    "update-all.ps1"
+    "hooks\claude\quality-check.ps1"
 )
 
 # Run tests

@@ -41,11 +41,28 @@ Write-Host "Calculating PowerShell coverage..."
 $config = [PesterConfiguration]::Default
 $config.CodeCoverage.Enabled = $true
 $config.CodeCoverage.Path = @(
+    # Root entry point scripts
+    "bootstrap.ps1",
+    "deploy.ps1",
+    "update-all.ps1",
+    "backup.ps1",
+    "restore.ps1",
+    "healthcheck.ps1",
+    "uninstall.ps1",
+    "git-update-repos.ps1",
+    "sync-system-instructions.ps1",
+    "update-all-windows.ps1",
+    # Bootstrap internal scripts
+    "bootstrap\bootstrap.ps1",
     "bootstrap\lib\common.ps1",
+    "bootstrap\lib\version-check.ps1",
+    "bootstrap\platforms\windows.ps1",
+    # Library scripts
+    "lib\config.ps1",
+    # Git hooks
     "hooks\git\pre-commit.ps1",
     "hooks\git\commit-msg.ps1",
-    "deploy.ps1",
-    "update-all.ps1"
+    "hooks\claude\quality-check.ps1"
 )
 $config.Run.Path = 'tests\powershell'
 $config.Run.PassThru = $true

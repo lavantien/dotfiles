@@ -6,3 +6,4 @@ lazy-lock.json
 .claude/tdd-guard/data
 nul
 coverage/
+.claude/settings.local.json
