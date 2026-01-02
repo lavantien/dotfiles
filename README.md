@@ -126,7 +126,7 @@ Note: For OpenCode AI CLI compatibility, these locally installed MCP servers are
 
 ### Quality Assurance
 
-- 435 automated tests covering all major components
+- 1783 automated tests covering all major components (1348 PowerShell + 435 Bash)
 - Conventional commits enforcement
 - Claude Code hooks for real-time quality checks
 - TDD guard to enforce test-driven development
