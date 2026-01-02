@@ -11,6 +11,7 @@
 
 $Script:VersionPatterns = @{
     # Programming Languages
+    "git" = 'git version ([0-9]+\.[0-9]+\.[0-9]+)'
     "node" = 'v?([0-9]+\.[0-9]+\.[0-9]+)'
     "nodejs" = 'v?([0-9]+\.[0-9]+\.[0-9]+)'
     "npm" = 'v?([0-9]+\.[0-9]+\.[0-9]+)'
@@ -151,14 +152,15 @@ function Compare-Versions {
         [string]$Required
     )
 
-    # Clean version strings - remove 'v' prefix and suffixes
-    $Installed = $Installed -replace '^v', '' -replace '[-+].*$', ''
-    $Required = $Required -replace '^v', '' -replace '[-+].*$', ''
-
-    # Handle date-based versions (e.g., 2023-01-01)
+    # Handle date-based versions (e.g., 2023-01-01) BEFORE cleaning
+    # The cleaning step removes hyphens which are part of date format
     if ($Installed -match '^\d{4}-\d{2}-\d{2}$' -and $Required -match '^\d{4}-\d{2}-\d{2}$') {
         return [datetime]::Parse($Installed) -ge [datetime]::Parse($Required)
     }
+
+    # Clean version strings - remove 'v' prefix and suffixes
+    $Installed = $Installed -replace '^v', '' -replace '[-+].*$', ''
+    $Required = $Required -replace '^v', '' -replace '[-+].*$', ''
 
     # Split into arrays
     $installedParts = $Installed -split '\.'

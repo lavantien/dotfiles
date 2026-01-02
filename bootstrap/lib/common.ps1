@@ -154,7 +154,14 @@ function Test-Command {
     }
 
     # Try Get-Command first (PowerShell native)
-    $cmd = Get-Command -Name $Command -ErrorAction SilentlyContinue
+    # Use try-catch to handle errors during code coverage instrumentation
+    $cmd = $null
+    try {
+        $cmd = Get-Command -Name $Command -ErrorAction Stop
+    }
+    catch {
+        # Command doesn't exist, $cmd remains null
+    }
     if ($cmd) {
         return $true
     }
@@ -309,7 +316,7 @@ function Invoke-SafeInstall {
     )
 
     try {
-        & $InstallFunc
+        $null = & $InstallFunc
         return $true
     }
     catch {

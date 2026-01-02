@@ -2,8 +2,12 @@
 # Supports: Scoop (preferred), winget
 
 # Source parent libraries if not already loaded
-# . "$PSScriptRoot\..\lib\common.ps1"
-# . "$PSScriptRoot\..\lib\version-check.ps1"
+if (-not (Get-Command -Name Test-Command -ErrorAction SilentlyContinue)) {
+    . "$PSScriptRoot\..\lib\common.ps1"
+}
+if (-not (Get-Command -Name Test-NeedsInstall -ErrorAction SilentlyContinue)) {
+    . "$PSScriptRoot\..\lib\version-check.ps1"
+}
 
 # ============================================================================
 # GIT CONFIGURATION
@@ -145,7 +149,7 @@ function Get-PackageDescription {
         "claude-code" { return "AI CLI" }
         "opencode" { return "AI CLI" }
 
-        default { return "" }
+        default { return $Package }
     }
 }
 
@@ -470,7 +474,8 @@ function Install-GoPackage {
     }
 
     # Get GOPATH and ensure it's in PATH (for current session + persist)
-    $goPath = go env GOPATH
+    # Skip in DryRun mode to avoid calling external go command
+    $goPath = if ($DryRun) { "" } else { go env GOPATH }
     if ($goPath) {
         # Persist to User PATH for future sessions
         if ("$env:PATH" -notlike "*$goPath\bin*") {
@@ -611,7 +616,7 @@ function Get-CoursierExe {
         return $csBin
     }
 
-    # Fallback to command name
+    # Fallback to command name (may be in PATH)
     return "coursier"
 }
 

@@ -19,7 +19,8 @@ $script:failed = 0
 # Command exists checker
 function Test-Command {
     param([string]$Name)
-    Get-Command $Name -ErrorAction SilentlyContinue | Out-Null
+    $null = Get-Command $Name -ErrorAction SilentlyContinue
+    return $?
 }
 
 # Run command and capture output

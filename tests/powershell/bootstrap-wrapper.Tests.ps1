@@ -28,22 +28,22 @@ Describe "Parameter mapping for Windows bootstrap" {
 
     It "Maps -y to Y parameter" {
         $ast = [System.Management.Automation.Language.Parser]::ParseFile($Script:BootstrapPs1, [ref]$null, [ref]$null)
-        $ast.Extent.Text | Should -Match '-y.*-Y.*--yes'
+        $ast.Extent.Text | Should -Match '(?s)-y.*-Y.*--yes'
     }
 
     It "Maps -DryRun to DryRun parameter" {
         $ast = [System.Management.Automation.Language.Parser]::ParseFile($Script:BootstrapPs1, [ref]$null, [ref]$null)
-        $ast.Extent.Text | Should -Match "-DryRun.*DryRun"
+        $ast.Extent.Text | Should -Match "(?s)-DryRun.*DryRun"
     }
 
     It "Maps -Categories to Categories parameter" {
         $ast = [System.Management.Automation.Language.Parser]::ParseFile($Script:BootstrapPs1, [ref]$null, [ref]$null)
-        $ast.Extent.Text | Should -Match "-Categories.*Categories"
+        $ast.Extent.Text | Should -Match "(?s)-Categories.*Categories"
     }
 
     It "Maps -SkipUpdate to SkipUpdate parameter" {
         $ast = [System.Management.Automation.Language.Parser]::ParseFile($Script:BootstrapPs1, [ref]$null, [ref]$null)
-        $ast.Extent.Text | Should -Match "-SkipUpdate.*SkipUpdate"
+        $ast.Extent.Text | Should -Match "(?s)-SkipUpdate.*SkipUpdate"
     }
 
     It "Handles -h/--help for showing help" {

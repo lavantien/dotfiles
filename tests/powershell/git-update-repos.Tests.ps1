@@ -111,11 +111,12 @@ Describe "Git-Update-Repos Parameter Mapping" {
 
         It "Maps complex parameter combination" {
             $result = Get-MappedArgs @("-Username", "testuser", "-BaseDir", "/repos", "-Commit")
-            $result.Count | Should -Be 4
+            $result.Count | Should -Be 5
             $result[0] | Should -Be "--username"
             $result[1] | Should -Be "testuser"
             $result[2] | Should -Be "--base-dir"
             $result[3] | Should -Be "/repos"
+            $result[4] | Should -Be "--commit"
         }
     }
 

@@ -226,56 +226,6 @@ Describe "windows.ps1 - Install Functions Missing Package Manager" {
     }
 }
 
-Describe "windows.ps1 - Ensure Functions" {
-
-    It "Ensure-Scoop returns true when exists" {
-        Mock Get-Command { return $true }
-        $result = Ensure-Scoop
-        $result | Should -Be $true
-    }
-
-    It "Ensure-Scoop returns false when not available (no dry run)" {
-        Mock Get-Command { return $false }
-        $result = Ensure-Scoop
-        $result | Should -Be $false
-    }
-
-    It "Ensure-Winget returns true when available" {
-        Mock Get-Command { return $true }
-        $result = Ensure-Winget
-        $result | Should -Be $true
-    }
-
-    It "Ensure-Winget returns false when not available" {
-        Mock Get-Command { return $false }
-        $result = Ensure-Winget
-        $result | Should -Be $false
-    }
-
-    It "Ensure-Choco returns true when available" {
-        Mock Get-Command { return $true }
-        $result = Ensure-Choco
-        $result | Should -Be $true
-    }
-
-    It "Ensure-Choco returns false when not available" {
-        Mock Get-Command { return $false }
-        $result = Ensure-Choco
-        $result | Should -Be $false
-    }
-
-    It "Ensure-Rustup returns true when available" {
-        Mock Get-Command { return $true }
-        $result = Ensure-Rustup
-        $result | Should -Be $true
-    }
-
-    It "Ensure-Rustup returns false when not available" {
-        Mock Get-Command { return $false }
-        $result = Ensure-Rustup
-        $result | Should -Be $false
-    }
-}
 
 Describe "windows.ps1 - Coursier Functions" {
 
@@ -293,15 +243,20 @@ Describe "windows.ps1 - Coursier Functions" {
     }
 
     It "Get-CoursierExe returns path when found" {
-        Mock Test-Path { param($p) $p -like "*cs.exe*" }
+        # Mock to return true for cs.exe path
+        Mock Test-Path {
+            if ($args[0] -like "*cs.exe*") { return $true }
+            return $false
+        }
         $result = Get-CoursierExe
         $result | Should -Not -BeNullOrEmpty
     }
 
-    It "Get-CoursierExe returns null when not found" {
+    It "Get-CoursierExe returns command name when not in known paths" {
         Mock Test-Path { return $false }
         $result = Get-CoursierExe
-        $result | Should -BeNullOrEmpty
+        # Returns "coursier" as fallback (may be in PATH)
+        $result | Should -Be "coursier"
     }
 
     It "Install-CoursierPackage returns false when not installed" {

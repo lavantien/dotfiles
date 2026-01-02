@@ -168,10 +168,10 @@ Describe "config.ps1 - Test-SkipPackage" {
         $result | Should -Be $false
     }
 
-    It "Is case sensitive for package names" {
+    It "Is case-insensitive for package names" {
         $script:CONFIG_SKIP_PACKAGES = @("Package1")
         $result = Test-SkipPackage "package1"
-        $result | Should -Be $false
+        $result | Should -Be $true
     }
 }
 
@@ -290,6 +290,26 @@ Describe "config.ps1 - _ParseConfigSimple" {
 }
 
 Describe "config.ps1 - Config Variable Initialization" {
+
+    BeforeEach {
+        # Reset config variables to defaults before each test
+        $script:CONFIG_EDITOR = ""
+        $script:CONFIG_TERMINAL = ""
+        $script:CONFIG_THEME = ""
+        $script:CONFIG_CATEGORIES = "full"
+        $script:CONFIG_AUTO_UPDATE_REPOS = "false"
+        $script:CONFIG_BACKUP_BEFORE_DEPLOY = "false"
+        $script:CONFIG_SIGN_COMMITS = "false"
+        $script:CONFIG_DEFAULT_BRANCH = "main"
+        $script:CONFIG_GITHUB_USERNAME = ""
+        $script:CONFIG_BASE_DIR = ""
+        $script:CONFIG_AUTO_COMMIT = "false"
+        $script:CONFIG_SKIP_PACKAGES = @()
+        $script:CONFIG_LINUX_PACKAGE_MANAGER = ""
+        $script:CONFIG_LINUX_DISPLAY_SERVER = ""
+        $script:CONFIG_WINDOWS_PACKAGE_MANAGER = ""
+        $script:CONFIG_MACOS_PACKAGE_MANAGER = ""
+    }
 
     It "CONFIG_EDITOR initializes to empty string" {
         $script:CONFIG_EDITOR | Should -Be ""

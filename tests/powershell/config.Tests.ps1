@@ -371,8 +371,8 @@ editor: vim
 
         # File exists with duplicate keys (last one wins in YAML)
         Test-Path $configFile | Should -Be $true
-        $content = Get-Content $configFile -Raw
-        ($content | Select-String "editor").Count | Should -BeGreaterOrEqual 2
+        $lines = Get-Content $configFile
+        ($lines | Where-Object { $_ -like "*editor*" }).Count | Should -BeGreaterOrEqual 2
         Remove-Item $configFile -ErrorAction SilentlyContinue
     }
 
@@ -450,8 +450,9 @@ editor: "value\xwith\invalid\escape"
         $CONFIG_SKIP_PACKAGES = "npm NPM Npm"
         $package = "npm"
         $skipList = $CONFIG_SKIP_PACKAGES -replace ',', ' ' -split ' '
-        # Case sensitive matching - only exact match
-        $exactMatches = $skipList | Where-Object { $_ -eq $package }
+        # PowerShell -eq is case-insensitive by default, so all 3 match
+        # Use -ceq for case-sensitive comparison
+        $exactMatches = $skipList | Where-Object { $_ -ceq $package }
         $exactMatches.Count | Should -Be 1
     }
 
