@@ -156,6 +156,9 @@ install_foundation() {
         log_info "git already installed"
     fi
 
+    # Configure git and add GitHub to known_hosts (platform-specific function)
+    configure_git_settings
+
     log_success "Foundation complete"
     return 0
 }
@@ -288,8 +291,9 @@ install_language_servers() {
 
     # Docker language servers (via npm - always latest)
     if cmd_exists npm; then
-        install_npm_global "dockerfile-language-server-nodejs" "docker-language-server" ""
-        install_npm_global "docker-compose-language-service" "docker-compose-language-server" ""
+        # dockerfile-language-server (binary: docker-langserver)
+        install_npm_global "dockerfile-language-server-nodejs" "docker-langserver" ""
+        # Note: @microsoft/compose-language-service has no binary, skip
     fi
 
     # tombi (TOML language server via npm - always latest)
@@ -384,10 +388,16 @@ install_linters_formatters() {
         fi
     fi
 
-    # scalafmt (via cargo)
-    if [[ "$CATEGORIES" == "full" ]] && cmd_exists cargo; then
-        install_cargo_package "scalafmt" "scalafmt" ""
+    # scalafmt (via brew on macOS - Scala tool, NOT available via cargo)
+    if [[ "$CATEGORIES" == "full" ]]; then
+        if [[ "$OS" == "macos" ]]; then
+            install_brew_package scalafmt "" scalafmt
+        fi
     fi
+
+    # Initialize user PATH with all common development directories
+    # This runs AFTER tool installations so directories exist and can be added
+    init_user_path
 
     log_success "Linters & formatters installation complete"
     return 0
@@ -511,6 +521,225 @@ install_cli_tools() {
 }
 
 # ============================================================================
+# PHASE 5.25: MCP SERVERS (Model Context Protocol servers for Claude Code)
+# ============================================================================
+install_mcp_servers() {
+    print_header "Phase 5.25: MCP Servers"
+
+    # Skip if npm is not available
+    if ! cmd_exists npm; then
+        log_warning "npm not found, skipping MCP server installation"
+        return 0
+    fi
+
+    # Context7 - Up-to-date library documentation and code examples
+    if ! npm list -g @context7/mcp-server >/dev/null 2>&1; then
+        log_step "Installing context7 MCP server..."
+        if [[ "$DRY_RUN" == "true" ]]; then
+            log_info "[DRY-RUN] Would npm install -g @context7/mcp-server"
+            track_installed "context7-mcp" "documentation lookup"
+        else
+            if npm install -g @context7/mcp-server >/dev/null 2>&1; then
+                log_success "context7 MCP server installed"
+                track_installed "context7-mcp" "documentation lookup"
+            else
+                log_warning "Failed to install context7 MCP server"
+                track_failed "context7-mcp" "documentation lookup"
+            fi
+        fi
+    else
+        track_skipped "context7-mcp" "documentation lookup"
+    fi
+
+    # Playwright - Browser automation and E2E testing
+    if ! npm list -g @executeautomation/playwright-mcp-server >/dev/null 2>&1; then
+        log_step "Installing playwright MCP server..."
+        if [[ "$DRY_RUN" == "true" ]]; then
+            log_info "[DRY-RUN] Would npm install -g @executeautomation/playwright-mcp-server"
+            track_installed "playwright-mcp" "browser automation"
+        else
+            if npm install -g @executeautomation/playwright-mcp-server >/dev/null 2>&1; then
+                log_success "playwright MCP server installed"
+                track_installed "playwright-mcp" "browser automation"
+            else
+                log_warning "Failed to install playwright MCP server"
+                track_failed "playwright-mcp" "browser automation"
+            fi
+        fi
+    else
+        track_skipped "playwright-mcp" "browser automation"
+    fi
+
+    # Repomix - Pack repositories for full-context AI exploration
+    if ! cmd_exists repomix; then
+        log_step "Installing repomix..."
+        if [[ "$DRY_RUN" == "true" ]]; then
+            log_info "[DRY-RUN] Would npm install -g repomix"
+            track_installed "repomix" "repository packer"
+        else
+            if npm install -g repomix >/dev/null 2>&1; then
+                log_success "repomix installed"
+                track_installed "repomix" "repository packer"
+            else
+                log_warning "Failed to install repomix"
+                track_failed "repomix" "repository packer"
+            fi
+        fi
+    else
+        track_skipped "repomix" "repository packer"
+    fi
+
+    log_success "MCP server installation complete"
+    return 0
+}
+
+# ============================================================================
+# PHASE 5.5: DEVELOPMENT TOOLS (Editors, LaTeX, AI Coding Assistants)
+# ============================================================================
+install_development_tools() {
+    print_header "Phase 5.5: Development Tools"
+
+    # VS Code (system-wide installation - avoids plugin auth issues)
+    if ! cmd_exists code; then
+        log_step "Installing VS Code (system-wide)..."
+        if [[ "$DRY_RUN" == "true" ]]; then
+            log_info "[DRY-RUN] Would install VS Code"
+            track_installed "vscode" "code editor"
+        else
+            if [[ "$OS" == "macos" ]] && declare -f install_brew_cask >/dev/null; then
+                # macOS: use brew cask (installs in /Applications)
+                # Note: brew cask is macOS-only, not available on Linux
+                if install_brew_cask "visual-studio-code" "code"; then
+                    log_success "VS Code installed"
+                fi
+            elif [[ "$OS" == "linux" ]]; then
+                # Linux: install system-wide using official Microsoft package
+                # Detect distro and use appropriate method
+                if [[ -f /etc/debian_version ]]; then
+                    # Debian/Ubuntu: download and install .deb
+                    log_info "Installing VS Code via .deb package..."
+                    if curl -fL https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64 -o /tmp/code_amd64.deb >/dev/null 2>&1; then
+                        if sudo dpkg -i /tmp/code_amd64.deb >/dev/null 2>&1; then
+                            sudo apt-get install -f -y >/dev/null 2>&1  # Fix dependencies
+                            log_success "VS Code installed system-wide via .deb"
+                            track_installed "vscode" "code editor"
+                        else
+                            log_error "Failed to install VS Code .deb"
+                            track_failed "vscode" "code editor"
+                        fi
+                        rm -f /tmp/code_amd64.deb
+                    else
+                        log_error "Failed to download VS Code .deb"
+                        track_failed "vscode" "code editor"
+                    fi
+                elif [[ -f /etc/redhat-release ]] || [[ -f /etc/fedora-release ]]; then
+                    # Fedora/RHEL: download and install .rpm
+                    log_info "Installing VS Code via .rpm package..."
+                    if curl -fL https://code.visualstudio.com/sha/download?build=stable&os=linux-rpm-x64 -o /tmp/code_amd64.rpm >/dev/null 2>&1; then
+                        if sudo dnf install -y /tmp/code_amd64.rpm >/dev/null 2>&1 || \
+                           sudo rpm -i /tmp/code_amd64.rpm >/dev/null 2>&1; then
+                            log_success "VS Code installed system-wide via .rpm"
+                            track_installed "vscode" "code editor"
+                        else
+                            log_error "Failed to install VS Code .rpm"
+                            track_failed "vscode" "code editor"
+                        fi
+                        rm -f /tmp/code_amd64.rpm
+                    else
+                        log_error "Failed to download VS Code .rpm"
+                        track_failed "vscode" "code editor"
+                    fi
+                elif [[ -f /etc/arch-release ]]; then
+                    # Arch: use yay or paravail from AUR, or fallback to manual
+                    if cmd_exists yay; then
+                        yay -S --noconfirm visual-studio-code-bin >/dev/null 2>&1 && \
+                        log_success "VS Code installed via yay" && \
+                        track_installed "vscode" "code editor"
+                    else
+                        log_warning "Install VS Code from AUR: yay -S visual-studio-code-bin"
+                        track_failed "vscode" "code editor"
+                    fi
+                else
+                    # Fallback: try Microsoft's repository script
+                    if curl -fL https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64 -o /tmp/code_amd64.deb >/dev/null 2>&1; then
+                        sudo dpkg -i /tmp/code_amd64.deb >/dev/null 2>&1 && \
+                        log_success "VS Code installed system-wide" && \
+                        track_installed "vscode" "code editor" && \
+                        rm -f /tmp/code_amd64.deb
+                    else
+                        log_warning "Install VS Code from: https://code.visualstudio.com/"
+                        track_failed "vscode" "code editor"
+                    fi
+                fi
+            fi
+        fi
+    else
+        log_info "VS Code already installed"
+        track_skipped "vscode" "code editor"
+    fi
+
+    # LaTeX (TeX Live)
+    if ! cmd_exists pdflatex; then
+        log_step "Installing LaTeX (TeX Live)..."
+        if [[ "$DRY_RUN" == "true" ]]; then
+            log_info "[DRY-RUN] Would install LaTeX"
+            track_installed "latex" "document preparation"
+        else
+            if [[ "$OS" == "macos" ]]; then
+                # Use basictex for smaller installation, or mactex-no-gui for full
+                if install_brew_cask "basictex" "pdflatex"; then
+                    log_success "LaTeX (BasicTeX) installed"
+                fi
+            elif [[ "$OS" == "linux" ]]; then
+                if install_linux_package "texlive" "" "pdflatex"; then
+                    log_success "LaTeX (TeX Live) installed"
+                fi
+            fi
+        fi
+    else
+        log_info "LaTeX already installed"
+        track_skipped "latex" "document preparation"
+    fi
+
+    # Claude Code CLI (via npm)
+    if cmd_exists npm; then
+        if ! cmd_exists claude; then
+            log_step "Installing Claude Code CLI..."
+            if [[ "$DRY_RUN" == "true" ]]; then
+                log_info "[DRY-RUN] Would install Claude Code CLI"
+            else
+                if install_npm_global "@anthropic-ai/claude-code" "claude"; then
+                    log_success "Claude Code CLI installed"
+                fi
+            fi
+        else
+            log_info "Claude Code CLI already installed"
+            track_skipped "claude-code" "AI CLI"
+        fi
+
+        # OpenCode AI CLI (via npm)
+        if ! cmd_exists opencode; then
+            log_step "Installing OpenCode AI CLI..."
+            if [[ "$DRY_RUN" == "true" ]]; then
+                log_info "[DRY-RUN] Would install OpenCode AI CLI"
+            else
+                if install_npm_global "opencode-ai" "opencode"; then
+                    log_success "OpenCode AI CLI installed"
+                fi
+            fi
+        else
+            log_info "OpenCode AI CLI already installed"
+            track_skipped "opencode" "AI CLI"
+        fi
+    else
+        log_warning "npm not found - skipping Claude Code and OpenCode AI CLI"
+    fi
+
+    log_success "Development tools installation complete"
+    return 0
+}
+
+# ============================================================================
 # PHASE 6: DEPLOY CONFIGURATIONS
 # ============================================================================
 deploy_configs() {
@@ -604,6 +833,16 @@ main() {
         log_warning "Some CLI tools failed to install"
     }
 
+    if [[ "$CATEGORIES" != "minimal" ]]; then
+        install_mcp_servers || {
+            log_warning "Some MCP servers failed to install"
+        }
+    fi
+
+    install_development_tools || {
+        log_warning "Some development tools failed to install"
+    }
+
     deploy_configs
     update_all_repos
 
@@ -611,7 +850,8 @@ main() {
 
     if [[ "$DRY_RUN" == "false" ]]; then
         echo -e "${GREEN}=== Bootstrap Complete ===${NC}"
-        echo -e "${YELLOW}Reload your shell to apply changes${NC}"
+        echo -e "${GREEN}All tools are available in the current session.${NC}"
+        echo -e "${CYAN}For new shells, PATH has been updated automatically.${NC}"
     else
         echo -e "${YELLOW}=== Dry Run Complete ===${NC}"
         echo -e "${YELLOW}Run without --dry-run to actually install${NC}"

@@ -331,6 +331,24 @@ EOF
     [ -f "$TEST_TMP_DIR/.claude/tdd-guard/data.txt" ]
 }
 
+@test "deploy: copies CLAUDE.md to global .claude directory" {
+    # Create test CLAUDE.md
+    echo "# Test CLAUDE.md" > "$SCRIPT_DIR/CLAUDE.md"
+
+    run deploy_claude_hooks
+    [ "$status" -eq 0 ]
+    [ -f "$TEST_TMP_DIR/.claude/CLAUDE.md" ]
+}
+
+@test "deploy: handles missing CLAUDE.md gracefully" {
+    # Remove CLAUDE.md if it exists
+    rm -f "$SCRIPT_DIR/CLAUDE.md"
+
+    run deploy_claude_hooks
+    [ "$status" -eq 0 ]
+    # Should not fail, just skip the copy
+}
+
 # ============================================================================
 # PLATFORM-SPECIFIC DEPLOYMENT
 # ============================================================================

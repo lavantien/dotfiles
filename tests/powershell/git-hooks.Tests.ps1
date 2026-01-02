@@ -402,3 +402,117 @@ Describe "Git Hooks - Edge Cases" {
         }
     }
 }
+
+Describe "Git Hooks - Integrity (Regression Prevention)" {
+
+    BeforeAll {
+        $Script:RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+        $Script:HooksDir = Join-Path $RepoRoot "hooks\git"
+    }
+
+    Context "Hook File Integrity" {
+
+        It "pre-commit.ps1 exists and is not truncated" {
+            $hookPath = Join-Path $Script:HooksDir "pre-commit.ps1"
+            Test-Path $hookPath | Should -Be $true
+
+            # Check minimum line count (full implementation is ~400+ lines)
+            $content = Get-Content $hookPath
+            $content.Count | Should -BeGreaterThan 50
+        }
+
+        It "commit-msg.ps1 exists and is not truncated" {
+            $hookPath = Join-Path $Script:HooksDir "commit-msg.ps1"
+            Test-Path $hookPath | Should -Be $true
+
+            # Check minimum line count (full implementation is ~40+ lines)
+            $content = Get-Content $hookPath
+            $content.Count | Should -BeGreaterThan 20
+        }
+
+        It "pre-commit hook (bash) exists and is not truncated" {
+            $hookPath = Join-Path $Script:HooksDir "pre-commit"
+            Test-Path $hookPath | Should -Be $true
+
+            # Check minimum line count (full implementation is ~400+ lines)
+            $content = Get-Content $hookPath
+            $content.Count | Should -BeGreaterThan 50
+        }
+
+        It "commit-msg hook (bash) exists and is not truncated" {
+            $hookPath = Join-Path $Script:HooksDir "commit-msg"
+            Test-Path $hookPath | Should -Be $true
+
+            # Check minimum line count (full implementation is ~40+ lines)
+            $content = Get-Content $hookPath
+            $content.Count | Should -BeGreaterThan 20
+        }
+    }
+
+    Context "Hook Content Validation" {
+
+        It "pre-commit.ps1 contains essential language check functions" {
+            $hookPath = Join-Path $Script:HooksDir "pre-commit.ps1"
+            $content = Get-Content $hookPath -Raw
+
+            # Check for key language check functions
+            $content | Should -Match "function Invoke-GoChecks|Invoke-GoChecks"
+            $content | Should -Match "function Invoke-RustChecks|Invoke-RustChecks"
+            $content | Should -Match "function Invoke-NodeChecks|Invoke-NodeChecks"
+            $content | Should -Match "function Invoke-PythonChecks|Invoke-PythonChecks"
+            $content | Should -Match "function Invoke-CSharpChecks|Invoke-CSharpChecks"
+        }
+
+        It "pre-commit.ps1 contains Get-ProjectTypes function" {
+            $hookPath = Join-Path $Script:HooksDir "pre-commit.ps1"
+            $content = Get-Content $hookPath -Raw
+            $content | Should -Match "function Get-ProjectTypes"
+        }
+
+        It "commit-msg.ps1 contains conventional commits validation" {
+            $hookPath = Join-Path $Script:HooksDir "commit-msg.ps1"
+            $content = Get-Content $hookPath -Raw
+
+            # Check for conventional commits pattern
+            $content | Should -Match "feat|fix|chore"
+            $content | Should -Match "72"
+        }
+
+        It "pre-commit (bash) contains essential functions" {
+            $hookPath = Join-Path $Script:HooksDir "pre-commit"
+            $content = Get-Content $hookPath -Raw
+
+            # Check for key functions
+            $content | Should -Match "detect_os\(\)"
+            $content | Should -Match "detect_projects\(\)"
+            $content | Should -Match "run_go_checks\(\)"
+            $content | Should -Match "run_rust_checks\(\)"
+            $content | Should -Match "run_node_checks\(\)"
+            $content | Should -Match "run_python_checks\(\)"
+        }
+
+        It "commit-msg (bash) contains conventional commits validation" {
+            $hookPath = Join-Path $Script:HooksDir "commit-msg"
+            $content = Get-Content $hookPath -Raw
+
+            # Check for conventional commits pattern
+            $content | Should -Match "feat|fix|chore"
+            $content | Should -Match "72"
+        }
+    }
+
+    Context "Hook Shebang and Permissions" {
+
+        It "pre-commit (bash) has valid shebang" {
+            $hookPath = Join-Path $Script:HooksDir "pre-commit"
+            $firstLine = Get-Content $hookPath -TotalCount 1
+            $firstLine | Should -Match "#!/bin/bash|#!/usr/bin/env bash"
+        }
+
+        It "commit-msg (bash) has valid shebang" {
+            $hookPath = Join-Path $Script:HooksDir "commit-msg"
+            $firstLine = Get-Content $hookPath -TotalCount 1
+            $firstLine | Should -Match "#!/bin/bash|#!/usr/bin/env bash"
+        }
+    }
+}

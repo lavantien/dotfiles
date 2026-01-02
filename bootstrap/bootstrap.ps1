@@ -20,6 +20,7 @@
 #   -DryRun           Show what would be installed without installing
 #   -Categories       minimal|sdk|full (default: full)
 #   -SkipUpdate       Skip updating package managers first
+#   -VerboseMode      Show detailed output including skipped items
 #   -Help             Show this help
 
 [CmdletBinding()]
@@ -27,7 +28,8 @@ param(
     [switch]$Y = $false,
     [switch]$DryRun = $false,
     [string]$Categories = "full",
-    [switch]$SkipUpdate = $false
+    [switch]$SkipUpdate = $false,
+    [switch]$VerboseMode = $false
 )
 
 # ============================================================================
@@ -54,6 +56,7 @@ if (Test-Path $ConfigLibPath) {
 $Script:Interactive = -not $Y
 $Script:DryRun = $DryRun
 $Script:Categories = $Categories
+$Script:Verbose = $VerboseMode
 
 # ============================================================================
 # SHOW HELP
@@ -76,7 +79,7 @@ function Install-Foundation {
         Write-Step "Installing git (includes Git Bash for .sh scripts)..."
         if ($DryRun) {
             Write-Info "[DRY-RUN] Would install Git for Windows via winget"
-            Track-Installed "git"
+            Track-Installed "git" "version control"
         }
         else {
             $gitInstalled = $false
@@ -86,7 +89,7 @@ function Install-Foundation {
                     winget install --id Git.Git --accept-source-agreements --accept-package-agreements *> $null
                     if (Test-Command git) {
                         Write-Success "Git installed via winget"
-                        Track-Installed "git"
+                        Track-Installed "git" "version control"
                         $gitInstalled = $true
                         # Refresh PATH for current session
                         $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
@@ -108,12 +111,15 @@ function Install-Foundation {
         }
     }
     else {
-        Write-Info "git already installed"
-        Track-Skipped "git"
+        Write-VerboseInfo "git already installed"
+        Track-Skipped "git" "version control"
     }
 
     # Ensure Scoop is installed
     Ensure-Scoop
+
+    # Configure git and add GitHub to known_hosts
+    Configure-GitSettings
 
     Write-Success "Foundation complete"
     return $true
@@ -152,16 +158,16 @@ function Install-SDKs {
             Write-Step "Installing dotnet SDK via winget..."
             if (-not $DryRun) {
                 winget install --id Microsoft.DotNet.SDK.8 --accept-source-agreements --accept-package-agreements *> $null
-                Track-Installed "dotnet"
+                Track-Installed "dotnet" ".NET SDK"
             }
             else {
                 Write-Info "[DRY-RUN] Would install dotnet SDK via winget"
-                Track-Installed "dotnet"
+                Track-Installed "dotnet" ".NET SDK"
             }
         }
         else {
-            Write-Info "dotnet already installed"
-            Track-Skipped "dotnet"
+            Write-VerboseInfo "dotnet already installed"
+            Track-Skipped "dotnet" ".NET SDK"
         }
     }
 
@@ -172,16 +178,16 @@ function Install-SDKs {
             Write-Step "Installing OpenJDK via winget..."
             if (-not $DryRun) {
                 winget install --id Microsoft.OpenJDK.21 --accept-source-agreements --accept-package-agreements *> $null
-                Track-Installed "OpenJDK"
+                Track-Installed "OpenJDK" "Java development"
             }
             else {
                 Write-Info "[DRY-RUN] Would install OpenJDK via winget"
-                Track-Installed "OpenJDK"
+                Track-Installed "OpenJDK" "Java development"
             }
         }
         else {
-            Write-Info "OpenJDK already installed"
-            Track-Skipped "OpenJDK"
+            Write-VerboseInfo "OpenJDK already installed"
+            Track-Skipped "OpenJDK" "Java development"
         }
     }
 
@@ -251,8 +257,11 @@ function Install-LanguageServers {
 
     # Docker language servers (via npm - always latest)
     if (Test-Command npm) {
-        Install-NpmGlobal "dockerfile-language-server-nodejs" "docker-language-server" ""
-        Install-NpmGlobal "docker-compose-language-service" "docker-compose-language-server" ""
+        # dockerfile-language-server (binary: docker-langserver)
+        if (Test-Command npm) {
+            Install-NpmGlobal "dockerfile-language-server-nodejs" "docker-langserver" ""
+        }
+        # Note: @microsoft/compose-language-service has no binary, skip version check
     }
 
     # tombi (TOML language server via npm - always latest)
@@ -327,13 +336,19 @@ function Install-LintersFormatters {
         Install-ScoopPackage "shfmt" "" "shfmt"
     }
 
-    # scalafmt (via cargo)
-    if ($Script:Categories -eq "full" -and (Test-Command cargo)) {
-        Install-CargoPackage "scalafmt" "scalafmt" ""
+    # scalafmt (via Coursier - Scala tool, NOT available via cargo)
+    if ($Script:Categories -eq "full") {
+        # Ensure Coursier is installed first
+        Ensure-Coursier
+        Install-CoursierPackage "scalafmt" "" "scalafmt"
     }
 
     # clang-tidy (for C/C++) - already installed with LLVM
     # clang-format is also from LLVM
+
+    # Initialize user PATH with all common development directories
+    # This runs AFTER tool installations so directories exist and can be added
+    Initialize-UserPath
 
     Write-Success "Linters & formatters installation complete"
     return $true
@@ -380,8 +395,8 @@ function Install-CLITools {
         Install-ScoopPackage "ruby" "" "ruby"
     }
     else {
-        Write-Info "Ruby already installed"
-        Track-Skipped "ruby"
+        Write-VerboseInfo "Ruby already installed"
+        Track-Skipped "ruby" "Ruby runtime"
     }
 
     # bashcov (Ruby gem for bash coverage - universal, works on all platforms)
@@ -392,7 +407,7 @@ function Install-CLITools {
                 gem install bashcov *> $null
                 if (Test-Command bashcov) {
                     Write-Success "bashcov installed"
-                    Track-Installed "bashcov"
+                    Track-Installed "bashcov" "code coverage"
                 }
                 else {
                     Write-Warning "Failed to install bashcov - try: gem install bashcov"
@@ -404,8 +419,8 @@ function Install-CLITools {
         }
     }
     elseif (Test-Command bashcov) {
-        Write-Info "bashcov already installed"
-        Track-Skipped "bashcov"
+        Write-VerboseInfo "bashcov already installed"
+        Track-Skipped "bashcov" "code coverage"
     }
 
     # Pester (PowerShell testing framework with code coverage - always latest)
@@ -421,8 +436,8 @@ function Install-CLITools {
         }
     }
     else {
-        Write-Info "Pester already installed"
-        Track-Skipped "Pester"
+        Write-VerboseInfo "Pester already installed"
+        Track-Skipped "Pester" "PowerShell testing"
     }
 
     # Docker (optional - only needed for kcov fallback, bashcov is preferred)
@@ -454,7 +469,7 @@ function Install-CLITools {
         try {
             $null = docker info 2>&1
             $dockerRunning = $true
-            Write-Info "Docker is available for bash coverage"
+            Write-VerboseInfo "Docker is available for bash coverage"
         }
         catch {
             Write-Warning "Docker is installed but not running - bash coverage will be unavailable"
@@ -462,6 +477,191 @@ function Install-CLITools {
     }
 
     Write-Success "CLI tools installation complete"
+    return $true
+}
+
+# ============================================================================
+# PHASE 5.25: MCP SERVERS (Model Context Protocol servers for Claude Code)
+# ============================================================================
+function Install-MCPServers {
+    Write-Header "Phase 5.25: MCP Servers"
+
+    # Skip if npm is not available
+    if (-not (Get-Command npm -ErrorAction SilentlyContinue)) {
+        Write-Warning "npm not found, skipping MCP server installation"
+        return $true
+    }
+
+    # Context7 - Up-to-date library documentation and code examples
+    $alreadyInstalled = npm list -g @context7/mcp-server 2>$null
+    if (-not $alreadyInstalled) {
+        Write-Step "Installing context7 MCP server..."
+        if (-not $DryRun) {
+            if (npm install -g @context7/mcp-server *> $null) {
+                Write-Success "context7 MCP server installed"
+                Track-Installed "context7-mcp" "documentation lookup"
+            }
+            else {
+                Write-Warning "Failed to install context7 MCP server"
+                Track-Failed "context7-mcp" "documentation lookup"
+            }
+        }
+        else {
+            Write-Info "[DRY-RUN] Would npm install -g @context7/mcp-server"
+            Track-Installed "context7-mcp" "documentation lookup"
+        }
+    }
+    else {
+        Track-Skipped "context7-mcp" "documentation lookup"
+    }
+
+    # Playwright - Browser automation and E2E testing
+    $alreadyInstalled = npm list -g @executeautomation/playwright-mcp-server 2>$null
+    if (-not $alreadyInstalled) {
+        Write-Step "Installing playwright MCP server..."
+        if (-not $DryRun) {
+            if (npm install -g @executeautomation/playwright-mcp-server *> $null) {
+                Write-Success "playwright MCP server installed"
+                Track-Installed "playwright-mcp" "browser automation"
+            }
+            else {
+                Write-Warning "Failed to install playwright MCP server"
+                Track-Failed "playwright-mcp" "browser automation"
+            }
+        }
+        else {
+            Write-Info "[DRY-RUN] Would npm install -g @executeautomation/playwright-mcp-server"
+            Track-Installed "playwright-mcp" "browser automation"
+        }
+    }
+    else {
+        Track-Skipped "playwright-mcp" "browser automation"
+    }
+
+    # Repomix - Pack repositories for full-context AI exploration
+    if (-not (Test-Command repomix)) {
+        Write-Step "Installing repomix..."
+        if (-not $DryRun) {
+            if (npm install -g repomix *> $null) {
+                Write-Success "repomix installed"
+                Track-Installed "repomix" "repository packer"
+            }
+            else {
+                Write-Warning "Failed to install repomix"
+                Track-Failed "repomix" "repository packer"
+            }
+        }
+        else {
+            Write-Info "[DRY-RUN] Would npm install -g repomix"
+            Track-Installed "repomix" "repository packer"
+        }
+    }
+    else {
+        Track-Skipped "repomix" "repository packer"
+    }
+
+    Write-Success "MCP server installation complete"
+    return $true
+}
+
+# ============================================================================
+# PHASE 5.5: DEVELOPMENT TOOLS (Editors, LaTeX, AI Coding Assistants)
+# ============================================================================
+function Install-DevelopmentTools {
+    Write-Header "Phase 5.5: Development Tools"
+
+    # VS Code (via winget for system-wide installation - avoids plugin auth issues)
+    if (-not (Test-Command code)) {
+        Write-Step "Installing VS Code (system-wide via winget)..."
+        if (-not $DryRun) {
+            if (Get-Command winget -ErrorAction SilentlyContinue) {
+                winget install --id Microsoft.VisualStudioCode --accept-package-agreements --accept-source-agreements *> $null
+                if (Test-Command code) {
+                    Write-Success "VS Code installed system-wide via winget"
+                    Track-Installed "vscode" "code editor"
+                }
+                else {
+                    Write-Warning "VS Code installation may have failed - try installing from: https://code.visualstudio.com/"
+                    Track-Failed "vscode" "code editor"
+                }
+            }
+            else {
+                Write-Warning "winget not available - install VS Code from: https://code.visualstudio.com/"
+                Track-Failed "vscode" "code editor"
+            }
+        }
+        else {
+            Write-Info "[DRY-RUN] Would install VS Code via winget"
+        }
+    }
+    else {
+        Write-VerboseInfo "VS Code already installed"
+        Track-Skipped "vscode" "code editor"
+    }
+
+    # LaTeX (via scoop extras-plus bucket)
+    if (-not (Test-Command pdflatex)) {
+        Write-Step "Installing LaTeX (TeX Live)..."
+        if (-not $DryRun) {
+            # Add extras-plus bucket for texlive
+            $buckets = scoop bucket list 2>$null
+            if ($buckets -notmatch "extras-plus") {
+                Write-Info "Adding extras-plus bucket for TeX Live..."
+                scoop bucket add extras-plus https://github.com/Scoopforge/Extras-Plus *> $null
+            }
+            if (Install-ScoopPackage "texlive" "" "pdflatex") {
+                Write-Success "LaTeX (TeX Live) installed"
+            }
+        }
+        else {
+            Write-Info "[DRY-RUN] Would install LaTeX (TeX Live)"
+        }
+    }
+    else {
+        Write-VerboseInfo "LaTeX already installed"
+        Track-Skipped "latex" "document preparation"
+    }
+
+    # Claude Code CLI (via npm)
+    if (Test-Command npm) {
+        if (-not (Test-Command claude)) {
+            Write-Step "Installing Claude Code CLI..."
+            if (-not $DryRun) {
+                if (Install-NpmGlobal "@anthropic-ai/claude-code" "claude" "") {
+                    Write-Success "Claude Code CLI installed"
+                }
+            }
+            else {
+                Write-Info "[DRY-RUN] Would install Claude Code CLI"
+            }
+        }
+        else {
+            Write-VerboseInfo "Claude Code CLI already installed"
+            Track-Skipped "claude-code" "AI CLI"
+        }
+
+        # OpenCode AI CLI (via npm)
+        if (-not (Test-Command opencode)) {
+            Write-Step "Installing OpenCode AI CLI..."
+            if (-not $DryRun) {
+                if (Install-NpmGlobal "opencode-ai" "opencode" "") {
+                    Write-Success "OpenCode AI CLI installed"
+                }
+            }
+            else {
+                Write-Info "[DRY-RUN] Would install OpenCode AI CLI"
+            }
+        }
+        else {
+            Write-VerboseInfo "OpenCode AI CLI already installed"
+            Track-Skipped "opencode" "AI CLI"
+        }
+    }
+    else {
+        Write-Warning "npm not found - skipping Claude Code and OpenCode AI CLI"
+    }
+
+    Write-Success "Development tools installation complete"
     return $true
 }
 
@@ -495,6 +695,8 @@ function Deploy-Configs {
 function Update-All {
     Write-Header "Phase 7: Updating All Repositories and Packages"
 
+    # Use the bash update-all script via PowerShell wrapper
+    # The bash script has Windows detection and will skip Linux-only commands
     $updateScript = Join-Path $ScriptDir "..\update-all.ps1"
 
     if (-not (Test-Path $updateScript)) {
@@ -544,6 +746,10 @@ function Main {
     $null = Install-LanguageServers
     $null = Install-LintersFormatters
     $null = Install-CLITools
+    if ($Categories -ne "minimal") {
+        $null = Install-MCPServers
+    }
+    $null = Install-DevelopmentTools
     $null = Deploy-Configs
     $null = Update-All
 
@@ -551,7 +757,8 @@ function Main {
 
     if (-not $DryRun) {
         Write-Host "=== Bootstrap Complete ===" -ForegroundColor Green
-        Write-Host "Please restart your shell or run: . `$PROFILE" -ForegroundColor Yellow
+        Write-Host "All tools are available in the current session." -ForegroundColor Green
+        Write-Host "For new shells, PATH has been updated automatically." -ForegroundColor Cyan
     }
     else {
         Write-Host "=== Dry Run Complete ===" -ForegroundColor Yellow

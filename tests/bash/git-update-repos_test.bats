@@ -6,6 +6,9 @@ setup() {
     export TEST_TMP_DIR="$BATS_TMPDIR/dotfiles-git-update-test-$$"
     export HOME="$TEST_TMP_DIR"
 
+    # Bypass SSH host key prompts during tests
+    export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+
     # Create test directory structure
     mkdir -p "$TEST_TMP_DIR/dev/github"
 }

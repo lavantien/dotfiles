@@ -241,6 +241,12 @@ deploy_claude_hooks() {
     mkdir -p "$HOME/.claude"
     cp "$SCRIPT_DIR/hooks/claude/quality-check.ps1" "$HOME/.claude/"
 
+    # Copy CLAUDE.md to global .claude folder for project-agnostic instructions
+    if [ -f "$SCRIPT_DIR/CLAUDE.md" ]; then
+        cp "$SCRIPT_DIR/CLAUDE.md" "$HOME/.claude/"
+        echo -e "${GREEN}CLAUDE.md deployed to: $HOME/.claude/${NC}"
+    fi
+
     # Copy TDD guard if exists in repo
     if [ -d "$SCRIPT_DIR/.claude/tdd-guard" ]; then
         mkdir -p "$HOME/.claude/tdd-guard"

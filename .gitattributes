@@ -1,0 +1,32 @@
+# Auto detect text files and normalize line endings to LF
+* text=auto eol=lf
+
+# Shell scripts - must use LF (Git Bash fails with CRLF)
+*.sh text eol=lf
+*.bats text eol=lf
+
+# PowerShell scripts - use CRLF on Windows (native format)
+*.ps1 text eol=crlf
+
+# Source code files
+*.go text eol=lf
+*.js text eol=lf
+*.ts text eol=lf
+*.py text eol=lf
+*.rb text eol=lf
+*.rs text eol=lf
+
+# Configuration files
+*.json text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.toml text eol=lf
+*.ini text eol=lf
+
+# Markdown and documentation
+*.md text eol=lf
+*.txt text eol=lf
+
+# Git hooks
+hooks/* text eol=lf
+.git/* text eol=lf
