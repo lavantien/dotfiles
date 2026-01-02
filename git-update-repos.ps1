@@ -4,13 +4,6 @@
 $ErrorActionPreference = 'Stop'
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
-# Derive .sh script name
-$shScript = Join-Path $ScriptDir "git-update-repos.sh"
-
-# Convert Windows path to Git Bash format
-$shScriptBash = $shScript -replace '\\', '/'
-$shScriptBash = $shScriptBash -replace '^([A-Z]):/', '/$1/'
-
 # Ensure Git Bash is available
 if (-not (Get-Command bash -ErrorAction SilentlyContinue)) {
     Write-Error "Git Bash (bash.exe) not found. Please install Git for Windows."
@@ -43,6 +36,19 @@ for ($i = 0; $i -lt $args.Length; $i++) {
     }
 }
 
-# Invoke the bash script with exit code propagation
-$exitCode = & bash $shScriptBash @mappedArgs
+# Change to script directory and invoke bash as login shell
+# Using -l (login shell) ensures proper PATH and mount point setup
+# Using relative path avoids path conversion issues
+$origLocation = Get-Location
+try {
+    Set-Location $ScriptDir
+    $argList = $mappedArgs -join ' '
+    $bashArgs = @("-l", "-c", "./git-update-repos.sh $argList")
+    & bash @bashArgs
+    $exitCode = $LASTEXITCODE
+}
+finally {
+    Set-Location $origLocation
+}
+
 exit $exitCode

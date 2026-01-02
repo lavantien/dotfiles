@@ -1,17 +1,56 @@
-# Bootstrap Script Wrapper - Invokes bootstrap.sh via Git Bash
-# Usage: .\bootstrap.ps1 [-Category] "minimal|sdk|full"
+# Bootstrap Script Wrapper - Delegates to the appropriate bootstrap
+# On Windows: invokes bootstrap/bootstrap.ps1 (native PowerShell)
+# On Unix (via Git Bash): invokes bootstrap.sh (bash script)
 
 $ErrorActionPreference = 'Stop'
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
-# Derive .sh script name (root level bootstrap.sh)
-$shScript = Join-Path $ScriptDir "bootstrap.sh"
+# On Windows, use the native PowerShell bootstrap
+$windowsBootstrap = Join-Path $ScriptDir "bootstrap\bootstrap.ps1"
+if (Test-Path $windowsBootstrap) {
+    # Build splattable parameters hashtable
+    $params = @{}
+    $i = 0
+    while ($i -lt $args.Length) {
+        $arg = $args[$i]
+        switch ($arg) {
+            { $_ -in "-y", "-Y", "--yes" } {
+                $params["Y"] = $true
+                $i++
+            }
+            { $_ -in "-DryRun", "--dry-run" } {
+                $params["DryRun"] = $true
+                $i++
+            }
+            { $_ -in "-Categories", "--categories", "-Category" } {
+                if ($i + 1 -lt $args.Length) {
+                    $params["Categories"] = $args[$i + 1]
+                    $i += 2
+                } else {
+                    $i++
+                }
+            }
+            { $_ -in "-SkipUpdate", "--skip-update" } {
+                $params["SkipUpdate"] = $true
+                $i++
+            }
+            { $_ -in "-h", "-?", "--help" } {
+                # Show help using PowerShell's built-in mechanism
+                Get-Help -Full $windowsBootstrap
+                exit 0
+            }
+            default {
+                # Pass through unknown arguments
+                $i++
+            }
+        }
+    }
 
-# Convert Windows path to Git Bash format
-# Git Bash on Windows automatically converts paths like C:/path to /c/path
-$shScriptBash = $shScript -replace '\\', '/'
-$shScriptBash = $shScriptBash -replace '^([A-Z]):/', '/$1/'
+    & $windowsBootstrap @params
+    exit $LASTEXITCODE
+}
 
+# Fall back to bash script (for Git Bash on Windows or Unix systems)
 # Ensure Git Bash is available
 if (-not (Get-Command bash -ErrorAction SilentlyContinue)) {
     Write-Error "Git Bash (bash.exe) not found. Please install Git for Windows."
@@ -21,22 +60,53 @@ if (-not (Get-Command bash -ErrorAction SilentlyContinue)) {
 
 # Map PowerShell parameter names to bash equivalents
 $mappedArgs = @()
-for ($i = 0; $i -lt $args.Length; $i++) {
-    switch ($args[$i]) {
-        "-Category" {
+$i = 0
+while ($i -lt $args.Length) {
+    $arg = $args[$i]
+    switch ($arg) {
+        { $_ -in "-y", "-Y", "--yes" } {
+            $mappedArgs += "--yes"
+            $i++
+        }
+        { $_ -in "-DryRun", "--dry-run" } {
+            $mappedArgs += "--dry-run"
+            $i++
+        }
+        { $_ -in "-Categories", "--categories", "-Category" } {
             if ($i + 1 -lt $args.Length) {
-                $mappedArgs += "--category"
+                $mappedArgs += "--categories"
                 $mappedArgs += $args[$i + 1]
+                $i += 2
+            } else {
                 $i++
             }
         }
-        default { $mappedArgs += $args[$i] }
+        { $_ -in "-SkipUpdate", "--skip-update" } {
+            $mappedArgs += "--skip-update"
+            $i++
+        }
+        { $_ -in "-h", "--help" } {
+            $mappedArgs += "--help"
+            $i++
+        }
+        default {
+            $mappedArgs += $arg
+            $i++
+        }
     }
 }
 
-# Debug: show what will be executed
-# Write-Host "Executing: bash $shScriptBash $mappedArgs"
+# Change to script directory and invoke bash as login shell
+$origLocation = Get-Location
+try {
+    Set-Location $ScriptDir
+    $argList = $mappedArgs -join ' '
+    $bashArgs = @("-l", "-c", "./bootstrap.sh $argList")
+    & bash @bashArgs
+    $exitCode = $LASTEXITCODE
+}
+finally {
+    Set-Location $origLocation
+}
 
-# Invoke the bash script with exit code propagation
-$exitCode = & bash $shScriptBash @mappedArgs
 exit $exitCode

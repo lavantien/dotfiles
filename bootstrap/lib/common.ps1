@@ -12,6 +12,7 @@ $Script:FailedPackages = @()
 if (-not (Test-Path variable:Script:Interactive)) { $Script:Interactive = $true }
 if (-not (Test-Path variable:Script:DryRun)) { $Script:DryRun = $false }
 if (-not (Test-Path variable:Script:Categories)) { $Script:Categories = "full" }
+if (-not (Test-Path variable:Script:Verbose)) { $Script:Verbose = $false }
 
 # ============================================================================
 # COLORS
@@ -32,6 +33,13 @@ function Write-Color {
 function Write-Info {
     param([string]$Message)
     Write-Color "[INFO] $Message" Cyan
+}
+
+function Write-VerboseInfo {
+    param([string]$Message)
+    if ($Script:Verbose) {
+        Write-Color "[INFO] $Message" Cyan
+    }
 }
 
 function Write-Success {
@@ -69,18 +77,39 @@ function Write-Section {
 # PROGRESS TRACKING
 # ============================================================================
 function Track-Installed {
-    param([string]$Package)
-    $Script:InstalledPackages += $Package
+    param(
+        [string]$Name,
+        [string]$Description = ""
+    )
+    if ($Description) {
+        $Script:InstalledPackages += "$Name ($Description)"
+    } else {
+        $Script:InstalledPackages += $Name
+    }
 }
 
 function Track-Skipped {
-    param([string]$Package)
-    $Script:SkippedPackages += $Package
+    param(
+        [string]$Name,
+        [string]$Description = ""
+    )
+    if ($Description) {
+        $Script:SkippedPackages += "$Name ($Description)"
+    } else {
+        $Script:SkippedPackages += $Name
+    }
 }
 
 function Track-Failed {
-    param([string]$Package)
-    $Script:FailedPackages += $Package
+    param(
+        [string]$Name,
+        [string]$Description = ""
+    )
+    if ($Description) {
+        $Script:FailedPackages += "$Name ($Description)"
+    } else {
+        $Script:FailedPackages += $Name
+    }
 }
 
 function Write-Summary {
@@ -119,6 +148,11 @@ function Reset-Tracking {
 function Test-Command {
     param([string]$Command)
 
+    # Guard against null or empty command
+    if ([string]::IsNullOrEmpty($Command)) {
+        return $false
+    }
+
     # Try Get-Command first (PowerShell native)
     $cmd = Get-Command -Name $Command -ErrorAction SilentlyContinue
     if ($cmd) {
@@ -128,7 +162,51 @@ function Test-Command {
     # Fallback: try using where.exe for Windows executables
     if ($IsWindows -or $true) {  # Always true on Windows PowerShell
         $null = where.exe $Command 2>$null
-        return $?
+        if ($?) {
+            return $true
+        }
+
+        # Additional check: Python Scripts directory (common for pip-installed tools)
+        # Check both generic and version-specific paths (e.g., Python\Python313\Scripts)
+        $pythonBaseDir = Join-Path $env:APPDATA "Python"
+        if (Test-Path $pythonBaseDir) {
+            # Check version-specific directories first (Python313\Scripts, Python312\Scripts, etc.)
+            $pythonScriptsDirs = @()
+            Get-ChildItem $pythonBaseDir -Directory -ErrorAction SilentlyContinue |
+                Where-Object { $_.Name -match "^Python\d+" } |
+                ForEach-Object { $pythonScriptsDirs += (Join-Path $_.FullName "Scripts") }
+
+            # Also check the generic Scripts directory
+            $pythonScriptsDirs += Join-Path $pythonBaseDir "Scripts"
+
+            foreach ($scriptsDir in $pythonScriptsDirs) {
+                if (Test-Path $scriptsDir) {
+                    $exePath = Join-Path $scriptsDir "$Command.exe"
+                    if (Test-Path $exePath) {
+                        return $true
+                    }
+                }
+            }
+        }
+
+        # Additional check: User's local bin directories
+        $localBins = @(
+            "$env:USERPROFILE\.cargo\bin",
+            "$env:USERPROFILE\.local\bin",
+            "$env:USERPROFILE\.dotnet\tools",
+            # Coursier (Scala/Clojure/JVM tool installer) - Windows uses LOCALAPPDATA
+            "$env:LOCALAPPDATA\Coursier\data\bin"
+        )
+        foreach ($binDir in $localBins) {
+            if (Test-Path $binDir) {
+                # Check for both .exe and .bat (Coursier apps on Windows use .bat)
+                $exePath = Join-Path $binDir "$Command.exe"
+                $batPath = Join-Path $binDir "$Command.bat"
+                if ((Test-Path $exePath) -or (Test-Path $batPath)) {
+                    return $true
+                }
+            }
+        }
     }
 
     return $false
@@ -255,8 +333,15 @@ function Add-ToPath {
 
     if ($currentPath -notlike "*$Path*") {
         [Environment]::SetEnvironmentVariable("Path", "$currentPath;$Path", $target)
-        $env:Path += ";$Path"
         Write-Info "Added to PATH ($target): $Path"
+    }
+
+    # Always add to current session PATH if the directory exists
+    # This ensures tools are available immediately in the current session
+    if (Test-Path $Path) {
+        if ($env:Path -notlike "*$Path*") {
+            $env:Path += ";$Path"
+        }
     }
 }
 
@@ -265,6 +350,77 @@ function Refresh-Path {
     $machinePath = [Environment]::GetEnvironmentVariable("Path", "Machine")
     $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
     $env:Path = "$machinePath;$userPath"
+}
+
+# Initialize user PATH with all common development tool directories
+# This ensures tools installed via package managers are discoverable
+function Initialize-UserPath {
+    [CmdletBinding()]
+    param()
+
+    Write-Step "Ensuring development directories are in PATH..."
+
+    $pathsAdded = 0
+
+    # Common user bin directories for development tools
+    $userPaths = @(
+        # Cargo (Rust)
+        "$env:USERPROFILE\.cargo\bin",
+        # .NET tools
+        "$env:USERPROFILE\.dotnet\tools",
+        # Go (if GOPATH not set or using default)
+        "$env:USERPROFILE\go\bin",
+        # Scoop (Windows package manager)
+        "$env:USERPROFILE\scoop\shims",
+        # Coursier (Scala/Clojure/JVM tool installer) - Windows uses LOCALAPPDATA
+        "$env:LOCALAPPDATA\Coursier\data\bin",
+        # pnpm (Node.js package manager)
+        "$env:LOCALAPPDATA\pnpm",
+        # npm global (may vary by version)
+        "$env:APPDATA\npm"
+    )
+
+    # Python pip user packages - check version-specific directories
+    $pythonBaseDir = Join-Path $env:APPDATA "Python"
+    if (Test-Path $pythonBaseDir) {
+        # Find all version-specific Python directories (Python313, Python312, etc.)
+        $pythonVersionDirs = Get-ChildItem $pythonBaseDir -Directory -ErrorAction SilentlyContinue |
+            Where-Object { $_.Name -match "^Python\d+" }
+
+        foreach ($versionDir in $pythonVersionDirs) {
+            $scriptsPath = Join-Path $versionDir.FullName "Scripts"
+            if (Test-Path $scriptsPath) {
+                $userPaths += $scriptsPath
+            }
+        }
+
+        # Also check the generic Scripts directory
+        $genericScriptsPath = Join-Path $pythonBaseDir "Scripts"
+        if (Test-Path $genericScriptsPath) {
+            $userPaths += $genericScriptsPath
+        }
+    }
+
+    $currentUserPath = [Environment]::GetEnvironmentVariable("Path", "User")
+
+    foreach ($path in $userPaths) {
+        if (Test-Path $path) {
+            if ($currentUserPath -notlike "*$path*") {
+                Add-ToPath -Path $path -User
+                $pathsAdded++
+            }
+        }
+    }
+
+    # Refresh current session PATH
+    Refresh-Path
+
+    if ($pathsAdded -gt 0) {
+        Write-Success "Added $pathsAdded director(y/ies) to PATH"
+    }
+    else {
+        Write-VerboseInfo "All development directories already in PATH"
+    }
 }
 
 # ============================================================================

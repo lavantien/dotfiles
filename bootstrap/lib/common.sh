@@ -47,9 +47,35 @@ declare -a INSTALLED_PACKAGES=()
 declare -a SKIPPED_PACKAGES=()
 declare -a FAILED_PACKAGES=()
 
-track_installed() { INSTALLED_PACKAGES+=("$1"); }
-track_skipped() { SKIPPED_PACKAGES+=("$1"); }
-track_failed() { FAILED_PACKAGES+=("$1"); }
+track_installed() {
+    local name="$1"
+    local desc="${2:-}"
+    if [[ -n "$desc" ]]; then
+        INSTALLED_PACKAGES+=("$name ($desc)")
+    else
+        INSTALLED_PACKAGES+=("$name")
+    fi
+}
+
+track_skipped() {
+    local name="$1"
+    local desc="${2:-}"
+    if [[ -n "$desc" ]]; then
+        SKIPPED_PACKAGES+=("$name ($desc)")
+    else
+        SKIPPED_PACKAGES+=("$name")
+    fi
+}
+
+track_failed() {
+    local name="$1"
+    local desc="${2:-}"
+    if [[ -n "$desc" ]]; then
+        FAILED_PACKAGES+=("$name ($desc)")
+    else
+        FAILED_PACKAGES+=("$name")
+    fi
+}
 
 print_summary() {
     print_header "Bootstrap Summary"
@@ -78,7 +104,41 @@ print_summary() {
 # COMMAND EXISTENCE CHECK
 # ============================================================================
 cmd_exists() {
-    command -v "$1" >/dev/null 2>&1
+    # Standard check
+    command -v "$1" >/dev/null 2>&1 && return 0
+
+    # Additional checks for Windows (Git Bash/MSYS)
+    # Check common user bin directories that might not be in PATH yet
+    if [[ -n "$MSYSTEM" ]] || [[ "$(uname -s)" =~ (MINGW|MSYS|CYGWIN) ]]; then
+        local cmd="$1"
+        local home_bin="$HOME"
+        local local_bins=(
+            "$HOME/.cargo/bin"
+            "$HOME/.local/bin"
+            "$HOME/.dotnet/tools"
+        )
+
+        # Add version-specific Python Scripts directories (Python313/Scripts, etc.)
+        if [[ -d "$APPDATA/Python" ]]; then
+            for python_dir in "$APPDATA"/Python/Python*/Scripts; do
+                # Expand glob and check if directory exists (handles case where glob doesn't match)
+                [[ -d "$python_dir" ]] && local_bins+=("$python_dir")
+            done
+            # Also check generic Scripts directory
+            [[ -d "$APPDATA/Python/Scripts" ]] && local_bins+=("$APPDATA/Python/Scripts")
+        fi
+
+        for bin_dir in "${local_bins[@]}"; do
+            # Convert Windows paths if needed
+            if [[ -d "$bin_dir" ]]; then
+                if [[ -f "$bin_dir/$cmd" ]] || [[ -f "$bin_dir/$cmd.exe" ]]; then
+                    return 0
+                fi
+            fi
+        done
+    fi
+
+    return 1
 }
 
 # ============================================================================
@@ -91,6 +151,21 @@ detect_os() {
         MINGW*|MSYS*|CYGWIN*) echo "windows" ;;
         *)          echo "unknown" ;;
     esac
+}
+
+# Check if running on Windows (Git Bash/MSYS/MINGW/CYGWIN)
+# Multiple checks for robustness across different environments
+is_windows() {
+    [[ -n "$MSYSTEM" ]] || [[ "$(uname -s)" =~ (MINGW|MSYS|CYGWIN) ]] || [[ -d "/mnt/c/Windows" ]]
+}
+
+# Check if we should use sudo (false on Windows, true on Linux/macOS for system packages)
+should_use_sudo() {
+    # Never use sudo on Windows (even if Windows sudo exists)
+    if [[ -n "$MSYSTEM" ]] || [[ "$(uname -s)" =~ (MINGW|MSYS|CYGWIN) ]] || [[ -d "/mnt/c/Windows" ]]; then
+        return 1
+    fi
+    return 0
 }
 
 detect_distro() {
@@ -212,6 +287,66 @@ ensure_path() {
         if [[ -n "$profile" && -w "$profile" ]]; then
             echo "export PATH=\"$new_path:\$PATH\"" >> "$profile"
         fi
+    fi
+}
+
+# Initialize user PATH with all common development tool directories
+# This ensures tools installed via package managers are discoverable
+init_user_path() {
+    local paths_added=0
+    local os
+    os="$(detect_os)"
+
+    log_step "Ensuring development directories are in PATH..."
+
+    # Common user bin directories for development tools
+    local cargo_bin="$HOME/.cargo/bin"
+    local dotnet_tools="$HOME/.dotnet/tools"
+    local local_bin="$HOME/.local/bin"
+    local go_bin="$HOME/go/bin"
+
+    # Platform-specific paths
+    local platform_paths=()
+
+    if [[ "$os" == "macos" ]]; then
+        platform_paths+=("/opt/homebrew/bin")
+        platform_paths+=("/usr/local/bin")
+    elif [[ "$os" == "linux" ]]; then
+        platform_paths+=("/home/linuxbrew/.linuxbrew/bin")
+        platform_paths+=("$HOME/.linuxbrew/bin")
+    elif [[ "$os" == "windows" ]]; then
+        # Windows (Git Bash/MSYS) paths
+        local localappdata_pnpm="$LOCALAPPDATA/pnpm"
+        local appdata_npm="$APPDATA/npm"
+        local scoop_shims="$HOME/scoop/shims"
+
+        # Python Scripts - check version-specific directories first
+        if [[ -d "$APPDATA/Python" ]]; then
+            # Add all version-specific Python Scripts directories (Python313/Scripts, etc.)
+            for python_dir in "$APPDATA"/Python/Python*/Scripts; do
+                [[ -d "$python_dir" ]] && platform_paths+=("$python_dir")
+            done
+            # Also check generic Scripts directory
+            [[ -d "$APPDATA/Python/Scripts" ]] && platform_paths+=("$APPDATA/Python/Scripts")
+        fi
+
+        [[ -d "$localappdata_pnpm" ]] && platform_paths+=("$localappdata_pnpm")
+        [[ -d "$appdata_npm" ]] && platform_paths+=("$appdata_npm")
+        [[ -d "$scoop_shims" ]] && platform_paths+=("$scoop_shims")
+    fi
+
+    # Add all paths that exist
+    for path in "$cargo_bin" "$dotnet_tools" "$local_bin" "$go_bin" "${platform_paths[@]}"; do
+        if [[ -d "$path" ]]; then
+            ensure_path "$path"
+            ((paths_added++)) || true
+        fi
+    done
+
+    if [[ $paths_added -gt 0 ]]; then
+        log_success "Added $paths_added director(y/ies) to PATH"
+    else
+        log_info "All development directories already in PATH"
     fi
 }
 
