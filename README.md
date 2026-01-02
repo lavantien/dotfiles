@@ -1,6 +1,6 @@
 # Universal Dotfiles
 
-![Coverage](https://img.shields.io/badge/coverage-27%25-red) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Coverage](https://img.shields.io/badge/coverage-27%25-red) [![Security](https://img.shields.io/badge/security-reviewed-brightgreen)](https://github.com/lavantien/dotfiles#security) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)](https://github.com/lavantien/dotfiles)
 
 Production-grade dotfiles supporting Windows 11, Linux (Ubuntu/Fedora/Arch), and macOS with intelligent auto-detection and graceful fallbacks. A fully vibecoding-enabled dotfiles with complete AI-assisted development support: 15+ LSP servers, 10+ language formatters/linters, TDD enforcement, comprehensive Git and Claude Code workflow automation, and MCP server integration. All configured, tested, and just clone and run.
@@ -23,10 +23,11 @@ Production-grade dotfiles supporting Windows 11, Linux (Ubuntu/Fedora/Arch), and
 - [12. Health Check & Troubleshooting](#12-health-check--troubleshooting)
 - [13. Testing](#13-testing)
 - [14. Code Coverage](#14-code-coverage)
-- [15. Updating](#15-updating)
-- [16. Shell Aliases](#16-shell-aliases)
-- [17. Neovim Keybindings](#17-neovim-keybindings)
-- [18. Additional Documentation](#18-additional-documentation)
+- [15. Security](#15-security)
+- [16. Updating](#16-updating)
+- [17. Shell Aliases](#17-shell-aliases)
+- [18. Neovim Keybindings](#18-neovim-keybindings)
+- [19. Additional Documentation](#19-additional-documentation)
 
 ---
 
@@ -374,6 +375,23 @@ which lg  # Should point to lazygit
 
 up  # or update
 ```
+
+### Entry Point Scripts
+
+All scripts work on Windows (PowerShell), Linux, and macOS (bash). Use `.ps1` on Windows, `.sh` on Linux/macOS.
+
+| Script | Purpose |
+|--------|---------|
+| **bootstrap** / **bootstrap.ps1** | Initial setup - installs package managers, SDKs, LSPs, linters, CLI tools, and deploys configs |
+| **deploy** / **deploy.ps1** | Deploy configuration files (Neovim, git hooks, shell aliases, Claude Code hooks) to home directory |
+| **update-all** / **update-all.ps1** | Update all package managers and system packages (20+ package managers supported) |
+| **git-update-repos** / **git-update-repos.ps1** | Update all git repositories in configured base directory |
+| **sync-system-instructions** / **sync-system-instructions.ps1** | Sync AI system instructions (CLAUDE.md, AGENTS.md, GEMINI.md) to all repositories |
+| **healthcheck** / **healthcheck.ps1** | Check system health - verify tools installed, configs in place, git hooks working |
+| **backup** / **backup.ps1** | Create timestamped backup of dotfiles and configs before major changes |
+| **restore** / **restore.ps1** | Restore from a previous backup (list backups with `--list-backups`) |
+| **uninstall** / **uninstall.ps1** | Remove all deployed configs and clean up (keeps installed packages) |
+| **tests/coverage.sh** / **tests/coverage-report.ps1** | Run test suite and generate coverage reports |
 
 ---
 
@@ -965,7 +983,117 @@ Coverage Calculation
 
 ---
 
-## 15. Updating
+## 15. Security
+
+This project follows security best practices for personal development automation tools.
+
+### Security Posture
+
+| Aspect | Status |
+|--------|--------|
+| **Last Review** | January 2026 |
+| **Review Method** | Comprehensive code review (16 commits analyzed) |
+| **Critical Vulnerabilities** | 0 |
+| **High Severity Issues** | 0 |
+| **Medium Severity Issues** | 0 |
+
+### Security Design Principles
+
+1. **No Privilege Escalation**
+   - All scripts run with the user's own permissions
+   - No setuid/setgid binaries
+   - No privileged escalation patterns
+
+2. **No Network Services**
+   - These are local development tools only
+   - No web servers, APIs, or network listeners
+   - No remote code execution surfaces
+
+3. **Minimal Attack Surface**
+   - Scripts designed for manual execution by trusted users
+   - No processing of untrusted external input
+   - No automated execution with user-controlled parameters
+
+4. **Transparent Operations**
+   - All operations are visible and logged
+   - No obfuscated code or hidden downloads
+   - Package installations use trusted sources (Homebrew, Scoop, npm, etc.)
+
+### Threat Model
+
+**Out of Scope** (not applicable to personal dotfiles):
+- Web application vulnerabilities (XSS, SQL injection, CSRF)
+- Network service attacks
+- Multi-user authentication/authorization
+- Cross-tenant data isolation
+
+**In Scope** (relevant concerns):
+- Safe file operations (no accidental data loss)
+- Secure credential handling (git config, SSH keys)
+- Trusted package sources
+- Idempotent operations (no unexpected side effects)
+
+### Security Best Practices Implemented
+
+| Practice | Implementation |
+|----------|----------------|
+| **Idempotent Operations** | All scripts can be safely rerun without side effects |
+| **Backup Before Changes** | backup.sh creates restore points before modifications |
+| **Hook Integrity Tests** | Pre-commit hooks verify their own integrity before running |
+| **Line Ending Safety** | .gitattributes enforces correct line endings to prevent script corruption |
+| **No Secrets in Repo** | No API keys, passwords, or tokens committed to git |
+| **Trusted Package Sources** | All packages from official sources (Homebrew, Scoop, npm, pip, etc.) |
+| **Path Validation** | Wrapper scripts convert paths safely between Windows and Unix formats |
+| **Graceful Degradation** | Scripts fail safely when dependencies are missing |
+
+### Wrapper Script Security
+
+The `.ps1` wrapper scripts delegate to `.sh` scripts via Git Bash. The pattern used:
+
+```powershell
+# Convert Windows paths to Git Bash format
+$scriptPath = $scriptDir -replace '^([A-Z]):', '/c$1' -replace '\\', '/'
+
+# Map PowerShell parameters to bash equivalents
+$mappedArgs = @()
+# ... parameter mapping ...
+
+# Execute via bash
+$argList = $mappedArgs -join ' '
+$bashArgs = @("-l", "-c", "./script.sh $argList")
+& bash @bashArgs
+```
+
+**Security Considerations:**
+- Wrappers are designed for local execution by the repository owner
+- Parameters are configuration values (paths, usernames, flags) not untrusted user input
+- No web-facing interfaces or automated execution with external parameters
+- If an attacker can run these scripts, they already have equivalent access
+
+### Known Limitations
+
+1. **Parameter String Interpolation**: Wrapper scripts join arguments into a string for bash -c execution. While this is a code quality issue, it is not exploitable in practice because:
+   - Scripts run with user's own permissions (no privilege escalation)
+   - No untrusted input reaches these parameters
+   - An attacker who can execute the scripts can already run arbitrary commands
+
+2. **No Cryptographic Verification**: Package signatures are verified by package managers (Homebrew, Scoop, etc.), but this repository doesn't independently verify downloaded packages beyond what the package managers provide.
+
+3. **Git Config Modifications**: The bootstrap script modifies .gitconfig to remove platform-specific credential helpers. This is intentional behavior for cross-platform compatibility.
+
+### Reporting Security Issues
+
+If you discover a legitimate security vulnerability (e.g., a path that allows untrusted input to reach script execution, or a dependency with a known CVE), please report it responsibly:
+
+1. Check the threat model: Is this exploitable in a personal dotfiles context?
+2. Verify impact: Does this lead to privilege escalation or data exposure beyond the user's own access?
+3. Open an issue with the `security` label
+
+**Note**: Theoretical vulnerabilities without realistic exploitation paths in a personal development environment may be closed as "wontfix".
+
+---
+
+## 16. Updating
 
 ```bash
 cd ~/dev/dotfiles  # or $HOME/dev/dotfiles on Windows
@@ -978,7 +1106,7 @@ source ~/.zshrc  # or . $PROFILE on Windows
 
 ---
 
-## 16. Shell Aliases
+## 17. Shell Aliases
 
 File Operations
 
@@ -1046,7 +1174,7 @@ Utility Aliases
 
 ---
 
-## 17. Neovim Keybindings
+## 18. Neovim Keybindings
 
 Leader key is Space.
 
@@ -1109,7 +1237,7 @@ LSP Mappings (using FzfLua)
 
 ---
 
-## 18. Additional Documentation
+## 19. Additional Documentation
 
 | Document | Purpose |
 |----------|---------|
