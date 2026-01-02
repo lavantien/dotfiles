@@ -193,34 +193,48 @@ Write-Host "`n  Combined: $combinedCoverage% (weighted: bash $([math]::Round($ba
 
 #region Badge Generation
 
-# Determine badge color (7 rainbow colors, equal ~14% ranges)
+# Determine badge color (shields.io hex values)
 if ($combinedCoverage -ge 89) { $badgeColor = "violet" }
 elseif ($combinedCoverage -ge 74) { $badgeColor = "indigo" }
-elseif ($combinedCoverage -ge 59) { $badgeColor = "blue" }
-elseif ($combinedCoverage -ge 44) { $badgeColor = "green" }
-elseif ($combinedCoverage -ge 29) { $badgeColor = "yellow" }
-elseif ($combinedCoverage -ge 15) { $badgeColor = "orange" }
-else { $badgeColor = "red" }
+elseif ($combinedCoverage -ge 59) { $badgeColor = "#007ec6" }  # blue
+elseif ($combinedCoverage -ge 44) { $badgeColor = "#97ca00" }  # green
+elseif ($combinedCoverage -ge 29) { $badgeColor = "#dfb317" }  # yellow
+elseif ($combinedCoverage -ge 15) { $badgeColor = "#fe7d37" }  # orange
+else { $badgeColor = "#e05d44" }  # red
 
-# Generate SVG badge
+# Calculate badge width (matches shields.io format)
+$labelWidth = 61
+$valueText = "$([math]::Round($combinedCoverage))%"
+$valueLength = $valueText.Length
+$valueWidth = $valueLength * 9 + 17
+$badgeWidth = $labelWidth + $valueWidth
+
+# Calculate text positions (scaled coordinates)
+$labelCenter = $labelWidth * 10
+$valueCenter = ($labelWidth * 10) + ($valueWidth * 10 / 2)
+$valueTextLength = $valueLength * 90
+
+# Generate SVG badge (shields.io format)
 $badgeSvg = @"
-<svg xmlns="http://www.w3.org/2000/svg" width="160" height="20" role="img" aria-label="Code coverage: $combinedCoverage%">
-  <title>Code coverage: $combinedCoverage%</title>
+<svg xmlns="http://www.w3.org/2000/svg" width="$badgeWidth" height="20" role="img" aria-label="coverage: $combinedCoverage%">
+  <title>coverage: $combinedCoverage%</title>
   <linearGradient id="s" x2="0" y2="100%">
-    <stop offset="0%" stop-color="#bbb" stop-opacity=".1"/>
-    <stop offset="1%" stop-opacity=".1"/>
-    <stop offset="100%" stop-color="#555" stop-opacity=".1"/>
+    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+    <stop offset="1" stop-opacity=".1"/>
   </linearGradient>
-  <g class="nc">
-    <rect x="0" width="95" height="20" fill="#555"/>
-    <rect x="95" width="65" height="20" fill="#$badgeColor"/>
-    <rect width="160" height="20" fill="url(#s)"/>
+  <clipPath id="r">
+    <rect width="$badgeWidth" height="20" rx="3" fill="#fff"/>
+  </clipPath>
+  <g clip-path="url(#r)">
+    <rect width="$labelWidth" height="20" fill="#555"/>
+    <rect x="$labelWidth" width="$valueWidth" height="20" fill="$badgeColor"/>
+    <rect width="$badgeWidth" height="20" fill="url(#s)"/>
   </g>
-  <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" text-rendering="geometricPrecision" font-size="11">
-    <text x="48" y="15" fill="#010101" fill-opacity=".3">coverage</text>
-    <text x="48" y="14">coverage</text>
-    <text x="127" y="15" fill="#010101" fill-opacity=".3">$combinedCoverage%</text>
-    <text x="127" y="14">$combinedCoverage%</text>
+  <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" text-rendering="geometricPrecision" font-size="110">
+    <text aria-hidden="true" x="305" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)" textLength="510">coverage</text>
+    <text x="305" y="140" transform="scale(.1)" fill="#fff" textLength="510">coverage</text>
+    <text aria-hidden="true" x="$valueCenter" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)" textLength="$valueTextLength">$combinedCoverage%</text>
+    <text x="$valueCenter" y="140" transform="scale(.1)" fill="#fff" textLength="$valueTextLength">$combinedCoverage%</text>
   </g>
 </svg>
 "@

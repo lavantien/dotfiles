@@ -229,46 +229,60 @@ echo -e "Bash:       ${BASH_COVERAGE}% (method: $BASH_METHOD)"
 echo -e "Combined:   ${GREEN}${COMBINED}%${NC}"
 
 # ============================================
-# Badge Color
+# Badge Color (shields.io hex values)
 # ============================================
 if (( $(echo "$COMBINED >= 89" | bc -l 2>/dev/null || echo 0) )); then
     BADGE_COLOR="violet"
 elif (( $(echo "$COMBINED >= 74" | bc -l 2>/dev/null || echo 0) )); then
     BADGE_COLOR="indigo"
 elif (( $(echo "$COMBINED >= 59" | bc -l 2>/dev/null || echo 0) )); then
-    BADGE_COLOR="blue"
+    BADGE_COLOR="#007ec6"  # blue
 elif (( $(echo "$COMBINED >= 44" | bc -l 2>/dev/null || echo 0) )); then
-    BADGE_COLOR="green"
+    BADGE_COLOR="#97ca00"  # green
 elif (( $(echo "$COMBINED >= 29" | bc -l 2>/dev/null || echo 0) )); then
-    BADGE_COLOR="yellow"
+    BADGE_COLOR="#dfb317"  # yellow
 elif (( $(echo "$COMBINED >= 15" | bc -l 2>/dev/null || echo 0) )); then
-    BADGE_COLOR="orange"
+    BADGE_COLOR="#fe7d37"  # orange
 else
-    BADGE_COLOR="red"
+    BADGE_COLOR="#e05d44"  # red
 fi
 
 # ============================================
-# Generate SVG Badge
+# Calculate badge width (matches shields.io format)
+# ============================================
+# "coverage" label = ~61px, value text varies by length
+COVERAGE_INT=${COMBINED%.*}
+LABEL_WIDTH=61
+# Estimate value width: ~4px per character plus padding
+VALUE_TEXT="${COVERAGE_INT}%"
+VALUE_LENGTH=${#VALUE_TEXT}
+VALUE_WIDTH=$((VALUE_LENGTH * 9 + 17))  # ~9px per char + padding
+BADGE_WIDTH=$((LABEL_WIDTH + VALUE_WIDTH))
+
+# ============================================
+# Generate SVG Badge (shields.io format)
 # ============================================
 BADGE_SVG="coverage-badge.svg"
 cat > "$BADGE_SVG" << EOF
-<svg xmlns="http://www.w3.org/2000/svg" width="160" height="20" role="img" aria-label="Code coverage: ${COMBINED}%">
-  <title>Code coverage: ${COMBINED}%</title>
+<svg xmlns="http://www.w3.org/2000/svg" width="${BADGE_WIDTH}" height="20" role="img" aria-label="coverage: ${COMBINED}%">
+  <title>coverage: ${COMBINED}%</title>
   <linearGradient id="s" x2="0" y2="100%">
-    <stop offset="0%" stop-color="#bbb" stop-opacity=".1"/>
-    <stop offset="1%" stop-opacity=".1"/>
-    <stop offset="100%" stop-color="#555" stop-opacity=".1"/>
+    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+    <stop offset="1" stop-opacity=".1"/>
   </linearGradient>
-  <g class="nc">
-    <rect x="0" width="95" height="20" fill="#555"/>
-    <rect x="95" width="65" height="20" fill="#${BADGE_COLOR}"/>
-    <rect width="160" height="20" fill="url(#s)"/>
+  <clipPath id="r">
+    <rect width="${BADGE_WIDTH}" height="20" rx="3" fill="#fff"/>
+  </clipPath>
+  <g clip-path="url(#r)">
+    <rect width="${LABEL_WIDTH}" height="20" fill="#555"/>
+    <rect x="${LABEL_WIDTH}" width="${VALUE_WIDTH}" height="20" fill="${BADGE_COLOR}"/>
+    <rect width="${BADGE_WIDTH}" height="20" fill="url(#s)"/>
   </g>
-  <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" text-rendering="geometricPrecision" font-size="11">
-    <text x="48" y="15" fill="#010101" fill-opacity=".3">coverage</text>
-    <text x="48" y="14">coverage</text>
-    <text x="127" y="15" fill="#010101" fill-opacity=".3">${COMBINED}%</text>
-    <text x="127" y="14">${COMBINED}%</text>
+  <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" text-rendering="geometricPrecision" font-size="110">
+    <text aria-hidden="true" x="305" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)" textLength="510">coverage</text>
+    <text x="305" y="140" transform="scale(.1)" fill="#fff" textLength="510">coverage</text>
+    <text aria-hidden="true" x="$((LABEL_WIDTH * 10 + VALUE_WIDTH * 10 / 2))" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)" textLength="$((VALUE_LENGTH * 90))">${COMBINED}%</text>
+    <text x="$((LABEL_WIDTH * 10 + VALUE_WIDTH * 10 / 2))" y="140" transform="scale(.1)" fill="#fff" textLength="$((VALUE_LENGTH * 90))">${COMBINED}%</text>
   </g>
 </svg>
 EOF

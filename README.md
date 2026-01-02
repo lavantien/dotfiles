@@ -126,7 +126,7 @@ Note: For OpenCode AI CLI compatibility, these locally installed MCP servers are
 
 ### Quality Assurance
 
-- 1783 automated tests covering all major components (1348 PowerShell + 435 Bash)
+- 2221 automated tests covering all major components (1259 PowerShell + 962 Bash)
 - Conventional commits enforcement
 - Claude Code hooks for real-time quality checks
 - TDD guard to enforce test-driven development
@@ -1038,9 +1038,9 @@ Test Coverage
 
 | Suite | Tests | Description |
 |-------|-------|-------------|
-| PowerShell | 1348 | Wrapper validation, bootstrap, config, git hooks, E2E, regression, integration, hook integrity |
-| Bash | 435 | Unit tests for deploy, backup, restore, healthcheck, uninstall, sync, git-update, hook integrity |
-| **Total** | **1783** | Cross-platform test coverage |
+| PowerShell | 1259 | Wrapper validation, bootstrap, config, git hooks, E2E, regression, integration, hook integrity |
+| Bash | 962 | Unit tests for deploy, backup, restore, healthcheck, uninstall, sync, git-update, hook integrity |
+| **Total** | **2221** | Cross-platform test coverage |
 
 Test Areas Covered
 
