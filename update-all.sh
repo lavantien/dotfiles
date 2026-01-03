@@ -27,8 +27,8 @@ detect_os() {
 
 # Check if running on Windows (Git Bash/MSYS/MINGW/CYGWIN)
 is_windows() {
-    # Multiple checks for robustness
-    [[ -n "$MSYSTEM" ]] || [[ "$(uname -s)" =~ (MINGW|MSYS|CYGWIN) ]] || [[ -d "/mnt/c/Windows" ]]
+    # Note: Do NOT check for /mnt/c/Windows - that exists in WSL too
+    [[ -n "$MSYSTEM" ]] || [[ "$(uname -s)" =~ (MINGW|MSYS|CYGWIN) ]]
 }
 
 # Check if we should use sudo (false on Windows, true on Linux/macOS for system packages)
@@ -55,6 +55,9 @@ if [[ -f "$SCRIPT_DIR/lib/config.sh" ]]; then
     source "$SCRIPT_DIR/lib/config.sh"
     CONFIG_FILE="$HOME/.dotfiles.config.yaml"
     load_dotfiles_config "$CONFIG_FILE"
+    # Get config values (only when library is available)
+    CONFIG_CATEGORIES=$(get_config "categories" "$CONFIG_CATEGORIES")
+    CONFIG_SKIP_PACKAGES=$(get_config "skip_packages" "$CONFIG_SKIP_PACKAGES")
 else
     # Defaults if config library not available
     CONFIG_EDITOR="nvim"
@@ -63,10 +66,6 @@ else
     CONFIG_CATEGORIES="full"
     CONFIG_SKIP_PACKAGES=""
 fi
-
-# Get config values
-CONFIG_CATEGORIES=$(get_config "categories" "$CONFIG_CATEGORIES")
-CONFIG_SKIP_PACKAGES=$(get_config "skip_packages" "$CONFIG_SKIP_PACKAGES")
 
 # Check if a package should be skipped
 should_skip_package() {
@@ -158,11 +157,6 @@ check_prerequisites() {
     if cmd_exists dotnet; then
         has_manager=true
         echo -e "${GREEN}✓ dotnet found${NC}"
-    fi
-
-    if cmd_exists gem; then
-        has_manager=true
-        echo -e "${GREEN}✓ Gem found${NC}"
     fi
 
     if [[ "$has_manager" == "false" ]]; then
@@ -392,12 +386,6 @@ _main() {
         has_manager=true
     else
         echo -e "${YELLOW}⊘ dotnet not found${NC}"
-    fi
-
-    if cmd_exists gem; then
-        has_manager=true
-    else
-        echo -e "${YELLOW}⊘ Gem not found${NC}"
     fi
 
     if cmd_exists tlmgr; then
@@ -636,16 +624,6 @@ _main() {
         update_and_report "poetry self update" "poetry"
     else
         update_skip "poetry not found"
-    fi
-
-    # ============================================================================
-    # GEM (Ruby packages)
-    # ============================================================================
-    if cmd_exists gem; then
-        update_section "RUBY GEM"
-        update_and_report "gem update --user 2>&1 || gem update 2>&1" "gem"
-    else
-        update_skip "gem not found"
     fi
 
     # ============================================================================

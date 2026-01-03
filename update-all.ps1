@@ -5,8 +5,23 @@
 $ErrorActionPreference = 'Stop'
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
-# Ensure Git Bash is available
-if (-not (Get-Command bash -ErrorAction SilentlyContinue)) {
+# Find Git Bash explicitly (avoid WSL bash from C:\Windows\System32)
+$gitBashPaths = @(
+    "$env:LOCALAPPDATA\Programs\Git\bin\bash.exe",
+    "${env:ProgramFiles}\Git\bin\bash.exe",
+    "${env:ProgramFiles(x86)}\Git\bin\bash.exe",
+    "$env:USERPROFILE\scoop\apps\git\current\usr\bin\bash.exe"
+)
+
+$GitBash = $null
+foreach ($path in $gitBashPaths) {
+    if (Test-Path $path) {
+        $GitBash = $path
+        break
+    }
+}
+
+if (-not $GitBash) {
     Write-Error "Git Bash (bash.exe) not found. Please install Git for Windows."
     Write-Error "Download: https://git-scm.com/download/win"
     exit 1
@@ -20,7 +35,7 @@ try {
     Set-Location $ScriptDir
     $argList = $args -join ' '
     $bashArgs = @("-l", "-c", "./update-all.sh $argList")
-    & bash @bashArgs
+    & $GitBash @bashArgs
     $exitCode = $LASTEXITCODE
 }
 finally {

@@ -4,11 +4,18 @@
 $ErrorActionPreference = 'Stop'
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
-# Ensure Git Bash is available
-if (-not (Get-Command bash -ErrorAction SilentlyContinue)) {
-    Write-Error "Git Bash (bash.exe) not found. Please install Git for Windows."
-    Write-Error "Download: https://git-scm.com/download/win"
-    exit 1
+# Find Git Bash explicitly (avoid WSL bash from C:\Windows\System32)
+$GitBash = & {
+    $gitBashPaths = @(
+        "$env:LOCALAPPDATA\Programs\Git\bin\bash.exe",
+        "${env:ProgramFiles}\Git\bin\bash.exe",
+        "${env:ProgramFiles(x86)}\Git\bin\bash.exe",
+        "$env:USERPROFILE\scoop\apps\git\current\usr\bin\bash.exe"
+    )
+    foreach ($path in $gitBashPaths) {
+        if (Test-Path $path) { return $path }
+    }
+    throw "Git Bash (bash.exe) not found. Please install Git for Windows from https://git-scm.com/download/win"
 }
 
 # Map PowerShell parameter names to bash equivalents
@@ -36,7 +43,7 @@ try {
     Set-Location $ScriptDir
     $argList = $mappedArgs -join ' '
     $bashArgs = @("-l", "-c", "./sync-system-instructions.sh $argList")
-    & bash @bashArgs
+    & $GitBash @bashArgs
     $exitCode = $LASTEXITCODE
 }
 finally {
