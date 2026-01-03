@@ -8,13 +8,17 @@ BeforeAll {
     . $commonLibPath
 
     # Helper function to remove path from User environment variable (registry)
+    # SAFETY: Only removes paths that were actually added by tests, with safety checks
     function Remove-FromPath {
         param([string]$Path)
 
         $currentPath = [Environment]::GetEnvironmentVariable("Path", "User")
         if ($currentPath -like "*$Path*") {
-            $newPath = ($currentPath -split ';' | Where-Object { $_ -ne $Path }) -join ';'
-            [Environment]::SetEnvironmentVariable("Path", $newPath, "User")
+            $newPath = ($currentPath -split ';' | Where-Object { $_ -ne $Path -and $_ -ne '' }) -join ';'
+            # SAFETY: Never set PATH to empty - only update if result is non-empty
+            if ($newPath -and $newPath.Trim() -ne '') {
+                [Environment]::SetEnvironmentVariable("Path", $newPath, "User")
+            }
         }
     }
 }

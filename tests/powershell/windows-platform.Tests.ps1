@@ -209,6 +209,7 @@ Describe "Install-ScoopPackage" {
 
     BeforeEach {
         Reset-Tracking
+        $Script:DryRun = $false
     }
 
     Context "When Scoop is installed and package needs install" {
@@ -910,6 +911,19 @@ Describe "Install-RustAnalyzerComponent" {
 
 Describe "Add-ToPath" {
 
+    BeforeEach {
+        # SAFETY: Save original PATH to restore after tests
+        $Script:OriginalPath = $env:Path
+    }
+
+    AfterEach {
+        # SAFETY: Always restore original PATH, even if test fails
+        $env:Path = $Script:OriginalPath
+        # SAFETY: DO NOT modify registry PATH from tests - too dangerous
+        # The test session PATH is restored above, which is sufficient
+        # Registry cleanup is skipped to prevent corrupting the user's actual PATH
+    }
+
     It "Adds path to user PATH when not already present" {
         # Cannot mock static methods, so we test the function doesn't throw
         # and PATH modifications work in the current session
@@ -925,6 +939,16 @@ Describe "Add-ToPath" {
 }
 
 Describe "Refresh-Path" {
+
+    BeforeEach {
+        # SAFETY: Save original PATH to restore after tests
+        $Script:OriginalPath = $env:Path
+    }
+
+    AfterEach {
+        # SAFETY: Always restore original PATH, even if test fails
+        $env:Path = $Script:OriginalPath
+    }
 
     It "Refreshes PATH from environment variables" {
         # Cannot mock static methods, test that function doesn't throw

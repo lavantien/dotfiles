@@ -1,11 +1,11 @@
-﻿{
-    "ps_commands_analyzed":  2034,
-    "bash_coverage":  31.2,
-    "timestamp":  "2026-01-03T13:04:20.2299832+07:00",
-    "bash_weight":  0.98,
-    "combined_coverage":  31.3,
-    "bash_method":  "kcov",
-    "ps_coverage":  38.3,
-    "ps_weight":  0.02,
-    "ps_commands_executed":  779
+{
+  "ps_commands_executed": 914,
+  "bash_weight": 0.98,
+  "bash_coverage": 31.2,
+  "bash_method": "kcov",
+  "combined_coverage": 31.4,
+  "timestamp": "2026-01-03T17:10:43.6259353+07:00",
+  "ps_commands_analyzed": 2170,
+  "ps_coverage": 42.1,
+  "ps_weight": 0.02
 }

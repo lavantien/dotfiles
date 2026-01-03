@@ -488,28 +488,7 @@ install_cli_tools() {
         install_linux_package bats "" bats
     fi
 
-    # Ruby + bashcov (code coverage for bash - cross-platform, universal)
-    if ! cmd_exists ruby; then
-        log_step "Installing Ruby..."
-        if [[ "$OS" == "macos" ]]; then
-            # macOS comes with Ruby, but brew version is more up-to-date
-            install_brew_package ruby "" ruby
-        elif [[ "$OS" == "linux" ]]; then
-            install_linux_package ruby "" ruby
-        fi
-    fi
-
-    # bashcov (Ruby gem for bash coverage - universal, works on all platforms)
-    if cmd_exists ruby && ! cmd_exists bashcov; then
-        log_step "Installing bashcov (Ruby gem for bash coverage)..."
-        if ! gem install bashcov >/dev/null 2>&1; then
-            log_warning "Failed to install bashcov - try: gem install bashcov"
-        else
-            log_success "bashcov installed"
-        fi
-    fi
-
-    # kcov (fallback code coverage for bash - Linux/macOS only)
+    # kcov (code coverage for bash - Linux/macOS only)
     if [[ "$OS" == "macos" ]]; then
         install_brew_package kcov "" kcov
     elif [[ "$OS" == "linux" ]]; then

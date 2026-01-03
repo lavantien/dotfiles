@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [4.2] - 2026-01-03
+
+### Fixed
+
+**Bootstrap Idempotency & PATH Detection**
+- Fixed PATH detection for npm, Python, and winget-installed packages
+- Enhanced Initialize-UserPath to add all Scoop app current directories (not just current/bin)
+- Fixed Add-ToPath to use exact matching instead of substring matching
+- Added WinGet Links directory to Refresh-Path preservation list
+- Moved PATH initialization to beginning of Main function for early tool detection
+
+**Test Infrastructure**
+- Fixed test bugs that were wiping User PATH registry entries
+- Removed dangerous registry PATH cleanup from AfterEach blocks
+- Added safety checks to prevent empty PATH conditions
+
+### Changed
+
+- Updated test counts from 2221 to 3221 (2181 PowerShell + 1040 Bash)
+- Updated idempotence documentation with latest bootstrap output (57 skipped items)
+- Enhanced PATH preservation to include WinGet Links for winget-installed tools
+- Improved coverage reporting to 31.4% combined (42.1% PowerShell + 31.2% Bash)
+
+---
+
 ## [4.1] - 2026-01-02
 
 ### Fixed
@@ -250,6 +275,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date | Major Changes |
 |---------|------|---------------|
+| 4.2 | 2026-01-03 | Bootstrap idempotency fixes, PATH detection improvements |
 | 4.1 | 2026-01-02 | Documentation improvements, real coverage reporting |
 | 4.0 | 2026-01-02 | Shell-first architecture, comprehensive testing, config system |
 | 3.3.3 | 2026-01-01 | Bootstrap enhancements, PowerShell fixes |
@@ -292,7 +318,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v4.1...HEAD
+[Unreleased]: https://github.com/lavantien/dotfiles/compare/v4.2...HEAD
+[4.2]: https://github.com/lavantien/dotfiles/compare/v4.1...v4.2
 [4.1]: https://github.com/lavantien/dotfiles/compare/v4.0...v4.1
 [4.0]: https://github.com/lavantien/dotfiles/compare/v3.3.3...v4.0
 [3.3.3]: https://github.com/lavantien/dotfiles/compare/v3.3...v3.3.3

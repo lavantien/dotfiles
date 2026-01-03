@@ -96,7 +96,6 @@ function Get-PackageDescription {
         "rust" { return "Rust toolchain" }
         "dotnet" { return ".NET SDK" }
         "OpenJDK" { return "Java development" }
-        "ruby" { return "Ruby runtime" }
 
         # Language servers
         "clangd" { return "C/C++ LSP" }
@@ -141,7 +140,6 @@ function Get-PackageDescription {
         "bats" { return "Bash testing" }
 
         # Development tools
-        "bashcov" { return "code coverage" }
         "Pester" { return "PowerShell testing" }
         "vscode" { return "code editor" }
         "visual-studio" { return "full IDE" }
@@ -189,34 +187,79 @@ function Install-ScoopPackage {
         [string]$CheckCmd = $Package
     )
 
-    if (-not (Get-Command scoop -ErrorAction SilentlyContinue)) {
+    # Get Scoop installation path - check both possible locations
+    $scoopScript = "$env:USERPROFILE\scoop\apps\scoop\current\bin\scoop.ps1"
+    $scoopInstalled = Test-Path $scoopScript
+
+    # Check if scoop command is available (may be mocked in tests)
+    $scoopCommandAvailable = Get-Command scoop -ErrorAction SilentlyContinue
+
+    # Helper to invoke Scoop directly, bypassing the broken shim
+    # The shim passes '-y' as first argument which breaks Scoop's command parsing
+    function Invoke-Scoop {
+        param([string[]]$Arguments)
+        if ($scoopInstalled) {
+            & $scoopScript @Arguments 2>&1
+        }
+        elseif ($scoopCommandAvailable) {
+            # Fall back to scoop command for tests/mock scenarios
+            scoop @Arguments 2>&1
+        }
+    }
+
+    # Early return if command is already available (for idempotency and efficiency)
+    if (-not (Test-NeedsInstall $CheckCmd $MinVersion)) {
+        Track-Skipped $CheckCmd (Get-PackageDescription $CheckCmd)
+        return $true
+    }
+
+    # Check if Scoop is available before attempting installation
+    if (-not $scoopInstalled -and -not $scoopCommandAvailable -and -not $DryRun) {
         Write-Warning "Scoop not installed, skipping $Package"
         Track-Failed $Package (Get-PackageDescription $Package)
         return $false
     }
 
-    if (Test-NeedsInstall $CheckCmd $MinVersion) {
-        Write-Step "Installing $Package via Scoop..."
-        if ($DryRun) {
-            Write-Info "[DRY-RUN] Would install: $Package"
-            Track-Installed $Package (Get-PackageDescription $Package)
-            return $true
-        }
+    # Check if scoop already has this package installed (for idempotency)
+    # This handles the case where the command isn't in PATH yet but Scoop has it
+    if (-not $DryRun -and ($scoopInstalled -or $scoopCommandAvailable)) {
+        $scoopList = Invoke-Scoop -Arguments "list"
+        # Scoop list returns objects with Name property - check directly
+        $scoopHasPackage = $scoopList | Where-Object { $_.Name -eq $Package }
 
-        try {
-            scoop install $Package *> $null
-            Track-Installed $Package (Get-PackageDescription $Package)
+        if ($scoopHasPackage) {
+            # Package installed by scoop - trust scoop's state and skip
+            # Some packages (like TeX Live) don't create traditional shims
+            Track-Skipped $Package (Get-PackageDescription $Package)
             return $true
-        }
-        catch {
-            Write-Warning ("Failed to install {0}: {1}" -f $Package, $_.Exception.Message)
-            Track-Failed $Package (Get-PackageDescription $Package)
-            return $false
         }
     }
-    else {
-        Track-Skipped $CheckCmd (Get-PackageDescription $CheckCmd)
+
+    Write-Step "Installing $Package via Scoop..."
+    if ($DryRun) {
+        Write-Info "[DRY-RUN] Would install: $Package"
+        Track-Installed $Package (Get-PackageDescription $Package)
         return $true
+    }
+
+    try {
+        $output = Invoke-Scoop -Arguments @("install", $Package)
+        # Check if scoop reported "already installed"
+        $outputString = $output -join "`n"
+        if ($outputString -match "already installed") {
+            Track-Skipped $Package (Get-PackageDescription $Package)
+        }
+        else {
+            Track-Installed $Package (Get-PackageDescription $Package)
+        }
+        # Refresh PATH so the newly installed tool can be found in subsequent checks
+        Refresh-Path
+        return $true
+    }
+    catch {
+        Write-Warning ("Failed to install {0}: {1}" -f $Package, $_.Exception.Message)
+        Track-Failed $Package (Get-PackageDescription $Package)
+        return $false
     }
 }
 
@@ -226,10 +269,47 @@ function Install-ScoopPackages {
         [string[]]$Packages
     )
 
+    # Handle empty packages list
+    if ($null -eq $Packages -or $Packages.Count -eq 0) {
+        return $true
+    }
+
+    # Get Scoop installation path
+    $scoopScript = "$env:USERPROFILE\scoop\apps\scoop\current\bin\scoop.ps1"
+    $scoopInstalled = Test-Path $scoopScript
+
+    # Check if scoop command is available (may be mocked in tests)
+    $scoopCommandAvailable = Get-Command scoop -ErrorAction SilentlyContinue
+
+    # Helper to invoke Scoop directly, bypassing the broken shim
+    function Invoke-ScoopBulk {
+        param([string[]]$Arguments)
+        if ($scoopInstalled) {
+            & $scoopScript @Arguments 2>&1
+        }
+        elseif ($scoopCommandAvailable) {
+            # Fall back to scoop command for tests/mock scenarios
+            scoop @Arguments 2>&1
+        }
+    }
+
+    # Get list of packages already installed by scoop (for idempotency)
+    # Skip this check in dry-run mode or when Scoop isn't actually installed
+    $scoopList = if ($DryRun) { @() } elseif ($scoopInstalled -or $scoopCommandAvailable) { Invoke-ScoopBulk -Arguments "list" } else { @() }
+
     $toInstall = @()
 
     foreach ($pkg in $Packages) {
-        if (Test-NeedsInstall $pkg "") {
+        # Check if scoop already has this package
+        # Scoop list returns objects with Name property - check directly
+        $alreadyInstalled = $scoopList | Where-Object { $_.Name -eq $pkg }
+
+        if ($alreadyInstalled) {
+            # Package installed by scoop - trust scoop's state and skip
+            # Some packages (like TeX Live) don't create traditional shims
+            Track-Skipped $pkg (Get-PackageDescription $pkg)
+        }
+        elseif (Test-NeedsInstall $pkg "") {
             $toInstall += $pkg
         }
         else {
@@ -238,6 +318,15 @@ function Install-ScoopPackages {
     }
 
     if ($toInstall.Count -gt 0) {
+        # Check if Scoop is available before attempting installation
+        if (-not $scoopInstalled -and -not $scoopCommandAvailable -and -not $DryRun) {
+            Write-Warning "Scoop not installed"
+            foreach ($pkg in $toInstall) {
+                Track-Failed $pkg (Get-PackageDescription $pkg)
+            }
+            return $false
+        }
+
         Write-Step "Installing $($toInstall.Count) packages via Scoop..."
         if ($DryRun) {
             Write-Info "[DRY-RUN] Would install: $($toInstall -join ', ')"
@@ -248,9 +337,18 @@ function Install-ScoopPackages {
         }
 
         try {
-            scoop install @toInstall *> $null
+            $output = Invoke-ScoopBulk -Arguments (@("install") + $toInstall)
+            # Refresh PATH so the newly installed tools can be found in subsequent checks
+            Refresh-Path
+
+            # Parse output to determine which packages were actually installed vs skipped
             foreach ($pkg in $toInstall) {
-                Track-Installed $pkg (Get-PackageDescription $pkg)
+                if ($output -match "$pkg.*already installed" -or $output -match "'$pkg' is already installed") {
+                    Track-Skipped $pkg (Get-PackageDescription $pkg)
+                }
+                else {
+                    Track-Installed $pkg (Get-PackageDescription $pkg)
+                }
             }
             return $true
         }
@@ -275,10 +373,16 @@ function Add-ScoopBucket {
         return $true
     }
 
-    $buckets = scoop bucket list 2>$null
+    # Get Scoop installation path
+    $scoopScript = "$env:USERPROFILE\scoop\apps\scoop\current\bin\scoop.ps1"
+    if (-not (Test-Path $scoopScript)) {
+        return $false
+    }
+
+    $buckets = & $scoopScript bucket list 2>&1
     if ($Bucket -notin $buckets) {
         Write-Step "Adding Scoop bucket: $Bucket"
-        scoop bucket add $Bucket *> $null
+        & $scoopScript bucket add $Bucket *> $null
     }
 }
 
@@ -315,6 +419,14 @@ function Install-WingetPackage {
         $CheckCmd = ($Id -split '\.')[-1]
     }
 
+    # Check if winget already has this package installed (for idempotency)
+    $wingetList = winget list --id $Id --exact 2>&1
+    if ($LASTEXITCODE -eq 0 -and $wingetList -match $Id) {
+        # Package already installed by winget - trust winget's state
+        Track-Skipped $DisplayName (Get-PackageDescription $DisplayName)
+        return $true
+    }
+
     if (Test-NeedsInstall $CheckCmd $MinVersion) {
         Write-Step "Installing $DisplayName via winget..."
         if ($DryRun) {
@@ -324,8 +436,19 @@ function Install-WingetPackage {
         }
 
         try {
-            winget install --id $Id --accept-source-agreements --accept-package-agreements *> $null
-            Track-Installed $DisplayName (Get-PackageDescription $DisplayName)
+            $output = winget install --id $Id --accept-source-agreements --accept-package-agreements 2>&1
+            # Check if winget reported "already installed"
+            if ($output -match "already installed" -or $LASTEXITCODE -eq 0) {
+                if ($output -match "already installed") {
+                    Track-Skipped $DisplayName (Get-PackageDescription $DisplayName)
+                }
+                else {
+                    Track-Installed $DisplayName (Get-PackageDescription $DisplayName)
+                }
+            }
+            else {
+                Track-Installed $DisplayName (Get-PackageDescription $DisplayName)
+            }
             return $true
         }
         catch {
@@ -634,11 +757,12 @@ function Ensure-Coursier {
     }
 
     try {
-        # Coursier is available via scoop
-        if (Get-Command scoop -ErrorAction SilentlyContinue) {
-            scoop install coursier *> $null
-            # Refresh PATH for current session
-            $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
+        # Coursier is available via scoop - use direct path to avoid broken shim
+        $scoopScript = "$env:USERPROFILE\scoop\apps\scoop\current\bin\scoop.ps1"
+        if (Test-Path $scoopScript) {
+            & $scoopScript install coursier *> $null
+            # Refresh PATH for current session (uses safe Refresh-Path from common.ps1)
+            Refresh-Path
             Track-Installed "coursier" (Get-PackageDescription "coursier")
             return $true
         }
@@ -876,18 +1000,5 @@ function Install-RustAnalyzerComponent {
 # ============================================================================
 # PATH MANAGEMENT
 # ============================================================================
-function Add-ToPath {
-    param([string]$Path)
-
-    $currentPath = [Environment]::GetEnvironmentVariable("Path", "User")
-    if ($currentPath -notlike "*$Path*") {
-        [Environment]::SetEnvironmentVariable("Path", "$currentPath;$Path", "User")
-        $env:Path += ";$Path"
-        Write-Info "Added to PATH: $Path"
-    }
-}
-
-function Refresh-Path {
-    # Refresh PATH for current session
-    $env:Path = [System.Environment]::GetEnvironmentVariable("Path","User") + ";" + [System.Environment]::GetEnvironmentVariable("Path","Machine")
-}
+# Add-ToPath is now sourced from common.ps1 with safety checks for empty User PATH
+# Refresh-Path is now sourced from common.ps1 with safety checks

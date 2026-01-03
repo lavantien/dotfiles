@@ -168,8 +168,10 @@ function Test-Command {
 
     # Fallback: try using where.exe for Windows executables
     if ($IsWindows -or $true) {  # Always true on Windows PowerShell
-        $null = where.exe $Command 2>$null
-        if ($?) {
+        $ErrorActionPreference = 'SilentlyContinue'
+        $result = where.exe $Command 2>&1
+        $ErrorActionPreference = 'Continue'
+        if ($result) {
             return $true
         }
 
@@ -338,25 +340,79 @@ function Add-ToPath {
     $target = if ($User) { "User" } else { "Machine" }
     $currentPath = [Environment]::GetEnvironmentVariable("Path", $target)
 
-    if ($currentPath -notlike "*$Path*") {
-        [Environment]::SetEnvironmentVariable("Path", "$currentPath;$Path", $target)
+    # Check if path is already in PATH (exact match, not substring)
+    $pathParts = $currentPath -split ';'
+    $alreadyInPath = $pathParts -contains $Path
+
+    if (-not $alreadyInPath) {
+        # SAFETY: Handle empty currentPath to avoid leading semicolon
+        if ([string]::IsNullOrWhiteSpace($currentPath)) {
+            [Environment]::SetEnvironmentVariable("Path", $Path, $target)
+        } else {
+            [Environment]::SetEnvironmentVariable("Path", "$currentPath;$Path", $target)
+        }
         Write-Info "Added to PATH ($target): $Path"
     }
 
     # Always add to current session PATH if the directory exists
     # This ensures tools are available immediately in the current session
     if (Test-Path $Path) {
-        if ($env:Path -notlike "*$Path*") {
+        $sessionPathParts = $env:Path -split ';'
+        if ($Path -notin $sessionPathParts) {
             $env:Path += ";$Path"
         }
     }
 }
 
 function Refresh-Path {
-    # Refresh PATH for current session
+    # Refresh PATH for current session from registry
+    # SAFETY: Preserve current session PATH as fallback to prevent data loss
+    $originalPath = $env:Path
+
     $machinePath = [Environment]::GetEnvironmentVariable("Path", "Machine")
     $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
-    $env:Path = "$userPath;$machinePath"
+
+    # Safety check: if both are null/empty, keep original PATH
+    if ([string]::IsNullOrWhiteSpace($machinePath) -and [string]::IsNullOrWhiteSpace($userPath)) {
+        Write-Warning "Both User and Machine PATH registry values are empty. Preserving current session PATH."
+        return
+    }
+
+    # Build PATH from registry values, filtering out empty values
+    $pathParts = @()
+    if (-not [string]::IsNullOrWhiteSpace($userPath)) {
+        $pathParts += $userPath -split ';'
+    }
+    if (-not [string]::IsNullOrWhiteSpace($machinePath)) {
+        $pathParts += $machinePath -split ';'
+    }
+
+    # Preserve important system paths that may not be in registry
+    # WindowsApps is added dynamically by Windows for Store apps (winget, etc.)
+    # WinGet Links is where winget installs package shims
+    $systemPathsToPreserve = @(
+        "$env:LOCALAPPDATA\Microsoft\WindowsApps",
+        "$env:LOCALAPPDATA\Microsoft\WinGet\Links"
+    )
+
+    foreach ($sysPath in $systemPathsToPreserve) {
+        if (Test-Path $sysPath -ErrorAction SilentlyContinue) {
+            # Check if it's in original PATH but not in registry PATH
+            $originalHasPath = $originalPath -split ';' | Where-Object { $_ -eq $sysPath }
+            $registryHasPath = $pathParts | Where-Object { $_ -eq $sysPath }
+            if ($originalHasPath -and -not $registryHasPath) {
+                $pathParts += $sysPath
+            }
+        }
+    }
+
+    if ($pathParts.Count -gt 0) {
+        $env:Path = ($pathParts | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Select-Object -Unique) -join ';'
+    } else {
+        # Fallback to original if something went wrong
+        $env:Path = $originalPath
+        Write-Warning "Failed to build PATH from registry. Preserving current session PATH."
+    }
 }
 
 # Initialize user PATH with all common development tool directories
@@ -387,7 +443,21 @@ function Initialize-UserPath {
         "$env:APPDATA\npm"
     )
 
-    # Python pip user packages - check version-specific directories
+    # Python installation directories (LOCALAPPDATA for Windows Store/official installer)
+    $pythonProgramDir = Join-Path $env:LOCALAPPDATA "Programs\Python"
+    if (Test-Path $pythonProgramDir) {
+        $pythonVersionDirs = Get-ChildItem $pythonProgramDir -Directory -ErrorAction SilentlyContinue |
+            Where-Object { $_.Name -match "^Python\d+" }
+        foreach ($versionDir in $pythonVersionDirs) {
+            $userPaths += $versionDir.FullName
+            $scriptsPath = Join-Path $versionDir.FullName "Scripts"
+            if (Test-Path $scriptsPath) {
+                $userPaths += $scriptsPath
+            }
+        }
+    }
+
+    # Python pip user packages - check version-specific directories (APPDATA for pip user)
     $pythonBaseDir = Join-Path $env:APPDATA "Python"
     if (Test-Path $pythonBaseDir) {
         # Find all version-specific Python directories (Python313, Python312, etc.)
@@ -408,11 +478,28 @@ function Initialize-UserPath {
         }
     }
 
+    # Scoop app bin directories (nodejs, ruby, etc.)
+    $scoopAppsDir = Join-Path $env:USERPROFILE "scoop\apps"
+    if (Test-Path $scoopAppsDir) {
+        # Add current bin directories for scoop apps
+        $scoopCurrentBins = Get-ChildItem $scoopAppsDir -Directory -ErrorAction SilentlyContinue |
+            Where-Object { Test-Path (Join-Path $_.FullName "current\bin") } |
+            ForEach-Object { Join-Path $_.FullName "current\bin" }
+        $userPaths += $scoopCurrentBins
+
+        # Also add the app directories themselves (some apps put binaries directly in current/)
+        $scoopCurrentDirs = Get-ChildItem $scoopAppsDir -Directory -ErrorAction SilentlyContinue |
+            Where-Object { Test-Path (Join-Path $_.FullName "current") } |
+            ForEach-Object { Join-Path $_.FullName "current" }
+        $userPaths += $scoopCurrentDirs
+    }
+
     $currentUserPath = [Environment]::GetEnvironmentVariable("Path", "User")
+    $existingPaths = $currentUserPath -split ';'
 
     foreach ($path in $userPaths) {
         if (Test-Path $path) {
-            if ($currentUserPath -notlike "*$path*") {
+            if ($path -notin $existingPaths) {
                 Add-ToPath -Path $path -User
                 $pathsAdded++
             }

@@ -346,10 +346,6 @@ function Install-LintersFormatters {
     # clang-tidy (for C/C++) - already installed with LLVM
     # clang-format is also from LLVM
 
-    # Initialize user PATH with all common development directories
-    # This runs AFTER tool installations so directories exist and can be added
-    Initialize-UserPath
-
     Write-Success "Linters & formatters installation complete"
     return $true
 }
@@ -571,12 +567,23 @@ function Install-DevelopmentTools {
     Write-Header "Phase 5.5: Development Tools"
 
     # VS Code (via winget for system-wide installation - avoids plugin auth issues)
-    if (-not (Test-Command code)) {
+    $vscodeAlreadyInstalled = $false
+    if (Get-Command winget -ErrorAction SilentlyContinue) {
+        $wingetList = winget list --id Microsoft.VisualStudioCode 2>&1
+        if ($LASTEXITCODE -eq 0 -and $wingetList -match "Microsoft.VisualStudioCode") {
+            $vscodeAlreadyInstalled = $true
+        }
+    }
+
+    if (-not $vscodeAlreadyInstalled -and -not (Test-Command code)) {
         Write-Step "Installing VS Code (system-wide via winget)..."
         if (-not $DryRun) {
             if (Get-Command winget -ErrorAction SilentlyContinue) {
                 winget install --id Microsoft.VisualStudioCode --accept-package-agreements --accept-source-agreements *> $null
-                if (Test-Command code) {
+                Refresh-Path  # Refresh PATH to pick up newly installed VS Code
+                # Check winget list to verify installation (more reliable than Test-Command for PATH issues)
+                $wingetList = winget list --id Microsoft.VisualStudioCode 2>&1
+                if ($LASTEXITCODE -eq 0 -and $wingetList -match "Microsoft.VisualStudioCode") {
                     Write-Success "VS Code installed system-wide via winget"
                     Track-Installed "vscode" "code editor"
                 }
@@ -672,6 +679,7 @@ function Install-DevelopmentTools {
             if (Get-Command winget -ErrorAction SilentlyContinue) {
                 try {
                     winget install --id LLVM.LLVM --accept-package-agreements --accept-source-agreements *> $null
+                    Refresh-Path  # Refresh PATH to pick up newly installed LLVM
                     if (Test-Command clang) {
                         Write-Success "LLVM installed"
                         Track-Installed "llvm" "C/C++ toolchain"
@@ -706,14 +714,21 @@ function Install-DevelopmentTools {
     if (-not (Test-Command pdflatex)) {
         Write-Step "Installing LaTeX (TeX Live)..."
         if (-not $DryRun) {
-            # Add extras-plus bucket for texlive
-            $buckets = scoop bucket list 2>$null
-            if ($buckets -notmatch "extras-plus") {
-                Write-Info "Adding extras-plus bucket for TeX Live..."
-                scoop bucket add extras-plus https://github.com/Scoopforge/Extras-Plus *> $null
+            # Check if scoop is available
+            if (Get-Command scoop -ErrorAction SilentlyContinue) {
+                # Add extras-plus bucket for texlive (if not already added)
+                $buckets = scoop bucket list 2>$null
+                if ($buckets -notmatch "extras-plus") {
+                    Write-Info "Adding extras-plus bucket for TeX Live..."
+                    scoop bucket add extras-plus https://github.com/Scoopforge/Extras-Plus *> $null
+                }
+                if (Install-ScoopPackage "texlive" "" "pdflatex") {
+                    Write-Success "LaTeX (TeX Live) installed"
+                }
             }
-            if (Install-ScoopPackage "texlive" "" "pdflatex") {
-                Write-Success "LaTeX (TeX Live) installed"
+            else {
+                Write-Warning "Scoop not available - install LaTeX from: https://tug.org/texlive/"
+                Track-Failed "latex" "document preparation"
             }
         }
         else {
@@ -837,6 +852,15 @@ function Main {
             Write-Host "Aborted."
             exit 0
         }
+    }
+
+    # CRITICAL: Initialize PATH first before any installations
+    # This ensures:
+    # 1. User PATH is restored if tests wiped it
+    # 2. Already-installed tools are detected correctly
+    # 3. Current session PATH is refreshed from registry
+    if (-not $DryRun) {
+        Initialize-UserPath
     }
 
     # Run phases

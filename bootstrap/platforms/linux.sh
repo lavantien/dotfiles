@@ -56,7 +56,6 @@ get_package_description() {
         fd-find|fd) echo "find alternative" ;;
         difft) echo "diff viewer" ;;
         bats) echo "bash testing" ;;
-        ruby) echo "Ruby runtime" ;;
         kcov) echo "code coverage" ;;
         vscode) echo "code editor" ;;
         latex|texlive) echo "document preparation" ;;

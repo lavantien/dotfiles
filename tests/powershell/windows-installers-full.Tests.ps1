@@ -283,10 +283,10 @@ Describe "windows.ps1 - All Get-PackageDescription calls" {
         "ripgrep", "fd", "fzf", "bat", "eza", "zoxide", "jq", "tokei",
         "difft", "node", "npm", "python", "pip", "go", "cargo", "rust",
         "rustup", "rust-analyzer", "dotnet", "clangd", "gopls", "pyright",
-        "prettier", "eslint", "ruff", "black", "bats", "bashcov", "Pester",
+        "prettier", "eslint", "ruff", "black", "bats", "Pester",
         "msys2", "llvm", "make", "cmake", "curl", "wget", "vim", "neovim",
         "emacs", "helix", "java", "kotlin", "scala", "clojure", "haskell",
-        "lua", "perl", "ruby", "deno", "bun", "zig", "swift"
+        "lua", "perl", "deno", "bun", "zig", "swift"
     )
 
     It "Returns description for all known packages" {

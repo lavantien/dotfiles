@@ -138,14 +138,18 @@ Describe "common.ps1 - Test-Command" {
 Describe "common.ps1 - Add-ToPath" {
 
     BeforeEach {
+        # SAFETY: Save original PATH to restore after tests
+        $Script:OriginalPath = $env:Path
         $testPath = "C:\Test-Path-$(New-Guid)"
         $env:Path = ($env:Path -split ';' | Where-Object { $_ -ne $testPath }) -join ';'
     }
 
     AfterEach {
-        # Cleanup: remove from environment
-        [Environment]::SetEnvironmentVariable("Path", ([Environment]::GetEnvironmentVariable("Path", "User") -replace [regex]::Escape(";$testPath"), ''), "User")
-        $env:Path = ($env:Path -split ';' | Where-Object { $_ -ne $testPath }) -join ';'
+        # SAFETY: Always restore original PATH, even if test fails
+        $env:Path = $Script:OriginalPath
+        # SAFETY: DO NOT modify registry PATH from tests - too dangerous
+        # The test session PATH is restored above, which is sufficient
+        # Registry cleanup is skipped to prevent corrupting the user's actual PATH
     }
 
     It "Adds path to User scope" {
@@ -191,6 +195,16 @@ Describe "common.ps1 - Initialize-UserPath" {
 }
 
 Describe "common.ps1 - Refresh-Path" {
+
+    BeforeEach {
+        # SAFETY: Save original PATH to restore after tests
+        $Script:OriginalPath = $env:Path
+    }
+
+    AfterEach {
+        # SAFETY: Always restore original PATH, even if test fails
+        $env:Path = $Script:OriginalPath
+    }
 
     It "Executes without error" {
         { Refresh-Path } | Should -Not -Throw

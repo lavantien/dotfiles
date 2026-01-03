@@ -126,7 +126,7 @@ Note: For OpenCode AI CLI compatibility, these locally installed MCP servers are
 
 ### Quality Assurance
 
-- 2221 automated tests covering all major components (1259 PowerShell + 962 Bash)
+- 3221 automated tests covering all major components (2181 PowerShell + 1040 Bash)
 - Conventional commits enforcement
 - Claude Code hooks for real-time quality checks
 - TDD guard to enforce test-driven development
@@ -160,9 +160,12 @@ Options:
   Categories: full
   Skip Update: False
 
+[STEP] Ensuring development directories are in PATH...
 
 ==== Phase 1: Foundation ====
 
+[STEP] Configuring git line endings (core.autocrlf=input)...
+[INFO] Set core.autocrlf=input (LF normalization enabled)
 [INFO] Repo .gitattributes will enforce line endings
 [OK] Foundation complete
 
@@ -205,10 +208,9 @@ Options:
 
 Installed: 0
 
-Skipped: 56
+Skipped: 57
   - git (version control)
   - scoop (package manager)
-  - git autocrlf already configured
   - GitHub SSH key already in known_hosts
   - node (Node.js runtime)
   - python (Python runtime)
@@ -259,17 +261,20 @@ Skipped: 56
   - playwright-mcp (browser automation)
   - repomix (repository packer)
   - vscode (code editor)
+  - visual-studio (full IDE)
+  - llvm (C/C++ toolchain)
   - latex (document preparation)
   - claude-code (AI CLI)
   - opencode (AI CLI)
 
 === Bootstrap Complete ===
-All tools are available in the current session
+All tools are available in the current session.
+For new shells, PATH has been updated automatically.
 ```
 
 Notice how:
 - **0 items were installed** - everything was already present
-- **56 items were skipped** - detected as already installed
+- **57 items were skipped** - detected as already installed
 - **No redundant work** - each package checked once
 - **Clean exit** - no errors, no warnings
 
@@ -1038,9 +1043,9 @@ Test Coverage
 
 | Suite | Tests | Description |
 |-------|-------|-------------|
-| PowerShell | 1259 | Wrapper validation, bootstrap, config, git hooks, E2E, regression, integration, hook integrity |
-| Bash | 962 | Unit tests for deploy, backup, restore, healthcheck, uninstall, sync, git-update, hook integrity |
-| **Total** | **2221** | Cross-platform test coverage |
+| PowerShell | 2181 | Wrapper validation, bootstrap, config, git hooks, E2E, regression, integration, hook integrity |
+| Bash | 1040 | Unit tests for deploy, backup, restore, healthcheck, uninstall, sync, git-update, hook integrity |
+| **Total** | **3221** | Cross-platform test coverage |
 
 Test Areas Covered
 
