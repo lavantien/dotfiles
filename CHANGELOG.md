@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [4.4] - 2026-01-07
+
+### Changed
+
+**git-update-repos: GitHub CLI Integration**
+- Migrated from public GitHub API to authenticated `gh repo list` command
+- Now fetches ALL repositories (public **and private**) via authenticated API
+- Added GitHub CLI (`gh`) requirement check with helpful error messages
+- Removed curl/wget-based API fetching and pagination logic
+- Simplified JSON parsing using `jq` when available, falls back to grep/sed
+
+**Documentation**
+- Updated README Section 11 with comprehensive git-update-repos documentation
+- Added parameters table with Bash and PowerShell equivalents
+- Documented gh CLI requirement and authentication flow
+- Updated script entry point description to mention private repo support
+
+### Fixed
+
+**git-update-repos**
+- Fixed issue where only public repositories were being cloned/updated
+- Script now correctly handles all repos for authenticated user via `gh` CLI
+
+---
+
 ## [4.3] - 2026-01-07
 
 ### Fixed
@@ -303,6 +328,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date | Major Changes |
 |---------|------|---------------|
+| 4.4 | 2026-01-07 | git-update-repos migrated to gh CLI for public+private repo support |
 | 4.3 | 2026-01-07 | Fixed goimports reinstall, removed Ruby/bashcov, kcov-only coverage |
 | 4.2 | 2026-01-03 | Bootstrap idempotency fixes, PATH detection improvements |
 | 4.1 | 2026-01-02 | Documentation improvements, real coverage reporting |
@@ -347,7 +373,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v4.3...HEAD
+[Unreleased]: https://github.com/lavantien/dotfiles/compare/v4.4...HEAD
+[4.4]: https://github.com/lavantien/dotfiles/compare/v4.3...v4.4
 [4.3]: https://github.com/lavantien/dotfiles/compare/v4.2...v4.3
 [4.2]: https://github.com/lavantien/dotfiles/compare/v4.1...v4.2
 [4.1]: https://github.com/lavantien/dotfiles/compare/v4.0...v4.1

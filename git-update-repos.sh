@@ -4,6 +4,19 @@
 
 set -euo pipefail
 
+# Check for GitHub CLI
+if ! command -v gh >/dev/null 2>&1; then
+    echo -e "${RED}Error: GitHub CLI (gh) not found${NC}" >&2
+    echo -e "${YELLOW}Install it from: https://cli.github.com/${NC}" >&2
+    echo -e "${YELLOW}Or run your bootstrap script${NC}" >&2
+    exit 1
+fi
+
+if ! gh auth status >/dev/null 2>&1; then
+    echo -e "${RED}Error: gh not authenticated. Run: gh auth login${NC}" >&2
+    exit 1
+fi
+
 # Defaults (can be overridden by environment variables)
 USERNAME="${GITHUB_USERNAME:-$(git config user.name 2>/dev/null || echo "lavantien")}"
 BASE_DIR="${GIT_BASE_DIR:-$HOME/dev/github}"
@@ -53,72 +66,34 @@ if [[ ! -d "$BASE_DIR" ]]; then
     echo
 fi
 
-echo -e "${CYAN}Fetching repositories for user: $USERNAME${NC}"
-echo
+echo -e "${CYAN}Fetching repositories via GitHub CLI...${NC}"
 
-# Fetch all repositories
-API_URL="https://api.github.com/users/$USERNAME/repos?per_page=100&type=all"
+# Fetch repos using gh CLI
+REPOS_JSON=$(gh repo list --json name,sshUrl,url --limit 1000)
 
-if ! command -v curl >/dev/null 2>&1 && ! command -v wget >/dev/null 2>&1; then
-    echo -e "${YELLOW}Error: Neither curl nor wget found${NC}" >&2
-    exit 1
-fi
-
-# Fetch repos using curl or wget
-if command -v curl >/dev/null 2>&1; then
-    REPOS_JSON=$(curl -s "$API_URL")
-else
-    REPOS_JSON=$(wget -qO- "$API_URL")
-fi
-
-# Parse repos (simple jq-free parsing)
-REPO_COUNT=0
+# Initialize arrays
 CLONE_URLS=()
+SSH_URLS=()
 REPO_NAMES=()
 
-while IFS= read -r line; do
-    if [[ $line =~ \"clone_url\":\ \"([^\"]+)\" ]]; then
-        CLONE_URLS+=("${BASH_REMATCH[1]}")
-    fi
-    if [[ $line =~ \"ssh_url\":\ \"([^\"]+)\" ]]; then
-        SSH_URLS+=("${BASH_REMATCH[1]}")
-    fi
-    if [[ $line =~ \"name\":\ \"([^\"]+)\" ]]; then
-        REPO_NAMES+=("${BASH_REMATCH[1]}")
-    fi
-done <<< "$REPOS_JSON"
-
-REPO_COUNT=${#REPO_NAMES[@]}
-
-# Handle pagination if more than 100 repos
-PAGE=2
-while [[ $REPO_COUNT -gt 0 ]] && [[ $((REPO_COUNT % 100)) -eq 0 ]]; do
-    PAGE_URL="$API_URL&page=$PAGE"
-    if command -v curl >/dev/null 2>&1; then
-        MORE_JSON=$(curl -s "$PAGE_URL")
-    else
-        MORE_JSON=$(wget -qO- "$PAGE_URL")
-    fi
-
-    if [[ -z "$MORE_JSON" ]] || [[ "$MORE_JSON" == "[]" ]]; then
-        break
-    fi
-
+# Parse JSON into arrays
+if command -v jq >/dev/null 2>&1; then
+    while IFS='|' read -r name ssh_url web_url; do
+        REPO_NAMES+=("$name")
+        SSH_URLS+=("$ssh_url")
+        CLONE_URLS+=("${web_url}.git")  # Construct HTTPS clone URL
+    done < <(echo "$REPOS_JSON" | jq -r '.[] | "\(.name)|\(.sshUrl)|\(.url)"')
+else
+    # Fallback: simple grep/sed parsing if jq not available
     while IFS= read -r line; do
-        if [[ $line =~ \"clone_url\":\ \"([^\"]+)\" ]]; then
-            CLONE_URLS+=("${BASH_REMATCH[1]}")
-        fi
-        if [[ $line =~ \"ssh_url\":\ \"([^\"]+)\" ]]; then
-            SSH_URLS+=("${BASH_REMATCH[1]}")
-        fi
-        if [[ $line =~ \"name\":\ \"([^\"]+)\" ]]; then
-            REPO_NAMES+=("${BASH_REMATCH[1]}")
-        fi
-    done <<< "$MORE_JSON"
-
-    REPO_COUNT=${#REPO_NAMES[@]}
-    ((PAGE++))
-done
+        name=$(echo "$line" | grep -oP '"name":\s*"\K[^"]+' || true)
+        ssh_url=$(echo "$line" | grep -oP '"sshUrl":\s*"\K[^"]+' || true)
+        web_url=$(echo "$line" | grep -oP '"url":\s*"\K[^"]+' || true)
+        [[ -n "$name" ]] && REPO_NAMES+=("$name")
+        [[ -n "$ssh_url" ]] && SSH_URLS+=("$ssh_url")
+        [[ -n "$web_url" ]] && CLONE_URLS+=("${web_url}.git")
+    done <<< "$REPOS_JSON"
+fi
 
 echo -e "${GREEN}Found ${#REPO_NAMES[@]} repositories${NC}"
 echo

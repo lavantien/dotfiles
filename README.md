@@ -392,7 +392,7 @@ All scripts work on Windows (PowerShell), Linux, and macOS (bash). Use `.ps1` on
 | **bootstrap** / **bootstrap.ps1** | Initial setup - installs package managers, SDKs, LSPs, linters, CLI tools, and deploys configs |
 | **deploy** / **deploy.ps1** | Deploy configuration files (Neovim, git hooks, shell aliases, Claude Code hooks) to home directory |
 | **update-all** / **update-all.ps1** | Update all package managers and system packages (20+ package managers supported) |
-| **git-update-repos** / **git-update-repos.ps1** | Update all git repositories in configured base directory |
+| **git-update-repos** / **git-update-repos.ps1** | Clone/update ALL GitHub repos (public + private) via gh CLI, optionally sync system instructions |
 | **sync-system-instructions** / **sync-system-instructions.ps1** | Sync AI system instructions (CLAUDE.md, AGENTS.md, GEMINI.md) to all repositories |
 | **healthcheck** / **healthcheck.ps1** | Check system health - verify tools installed, configs in place, git hooks working |
 | **backup** / **backup.ps1** | Create timestamped backup of dotfiles and configs before major changes |
@@ -1042,16 +1042,48 @@ Files Distributed
 
 Git Repository Management
 
+The `git-update-repos` script fetches ALL your GitHub repositories (public **and private**) and keeps them synchronized.
+
+**Requirements:**
+- GitHub CLI (`gh`) must be installed and authenticated (`gh auth login`)
+- Bootstrap installs `gh` automatically
+
+**How It Works:**
+- Uses `gh repo list` to fetch ALL repos via authenticated API (not public API)
+- Clones new repos that don't exist locally
+- Updates existing repos via `git pull`
+- Optionally syncs AI system instructions to all repos
+
 ```bash
-# Update all repos (includes instruction sync)
+# Bash / Linux/macOS - Update all repos in default directory (~/dev/github)
 ./git-update-repos.sh
 
-# Same with auto-commit
-./git-update-repos.sh -c
+# Specify custom base directory
+./git-update-repos.sh -d ~/dev/github
 
-# Windows
-.\git-update-repos.ps1 -Commit
+# Skip syncing system instructions (just clone/update repos)
+./git-update-repos.sh --no-sync
+
+# Use SSH URLs instead of HTTPS
+./git-update-repos.sh -s
+
+# Windows PowerShell
+.\git-update-repos.ps1
+.\git-update-repos.ps1 -BaseDir "C:\Users\cariy\dev\github"
+.\git-update-repos.ps1 -NoSync
+.\git-update-repos.ps1 -UseSSH
 ```
+
+**Parameters:**
+
+| Bash | PowerShell | Default | Description |
+|------|-----------|---------|-------------|
+| `-d <dir>` | `-BaseDir <path>` | `~/dev/github` | Directory to store repos |
+| `-s` | `-UseSSH` | HTTPS | Use SSH URLs for cloning |
+| `--no-sync` | `-NoSync` | Sync enabled | Skip syncing system instructions |
+| `-c` | `-Commit` | No commit | Auto-commit when syncing instructions |
+
+**Note:** The `-u/--username` parameter is accepted but ignored. The script uses your authenticated `gh` identity, which is more secure and always returns your complete repository list (including private repos).
 
 Standalone Sync
 
