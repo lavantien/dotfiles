@@ -186,7 +186,6 @@ Here's a real example of running `bootstrap.ps1 -y` when all tools are already i
 
 ```
 ~\....\dotfiles  main  .\bootstrap.ps1 -y
-[INFO] Config loaded from C:\Users\lavantien\.dotfiles.config.yaml
 
 ==== Bootstrap Windows Development Environment ====
 
@@ -215,7 +214,9 @@ Options:
 
 ==== Phase 4: Linters & Formatters ====
 
-[STEP] Ensuring development directories are in PATH...
+[INFO] Laravel Pint already installed
+[INFO] PHPStan already installed
+[INFO] Psalm already installed
 [OK] Linters & formatters installation complete
 
 ==== Phase 5: CLI Tools ====
@@ -244,7 +245,7 @@ Options:
 
 Installed: 0
 
-Skipped: 57
+Skipped: 75
   - git (version control)
   - scoop (package manager)
   - GitHub SSH key already in known_hosts
@@ -259,6 +260,10 @@ Skipped: 57
   - rust-analyzer (Rust LSP)
   - pyright (Python LSP)
   - typescript-language-server (TypeScript LSP)
+  - vscode-html-language-server (vscode-html-language-server)
+  - vscode-css-language-server (vscode-css-language-server)
+  - svelte-language-server (svelte-language-server)
+  - bash-language-server (bash-language-server)
   - yaml-language-server (YAML LSP)
   - lua-language-server (Lua LSP)
   - csharp-ls (C# LSP)
@@ -269,16 +274,32 @@ Skipped: 57
   - tinymist (Nim LSP)
   - prettier (code formatter)
   - eslint (JavaScript linter)
+  - stylelint (stylelint)
+  - svelte-check (svelte-check)
+  - repomix (repomix)
   - ruff (Python linter)
   - black (Python formatter)
   - isort (Python import sorter)
   - mypy (Python type checker)
+  - pytest (pytest)
   - goimports (Go import organizer)
   - golangci-lint (Go linter)
   - shellcheck (Shell script analyzer)
   - shfmt (Shell script formatter)
+  - cppcheck (cppcheck)
+  - php (php)
+  - composer (composer)
+  - pint (PHP code style)
+  - phpstan (PHP static analysis)
+  - psalm (PHP static analysis)
   - coursier (JVM dependency manager)
   - scalafmt (Scala formatter)
+  - coursier (JVM dependency manager)
+  - scalafix (scalafix)
+  - coursier (JVM dependency manager)
+  - metals (metals)
+  - stylua (stylua)
+  - selene (selene)
   - fzf (fuzzy finder)
   - zoxide (smart directory navigation)
   - bat (enhanced cat)
@@ -293,6 +314,7 @@ Skipped: 57
   - Pester (PowerShell testing)
   - context7-mcp (documentation lookup)
   - playwright-mcp (browser automation)
+  - repomix (repository packer (uses npx -y repomix --mcp))
   - vscode (code editor)
   - visual-studio (full IDE)
   - llvm (C/C++ toolchain)
@@ -307,7 +329,7 @@ For new shells, PATH has been updated automatically.
 
 Notice how:
 - **0 items were installed** - everything was already present
-- **57 items were skipped** - detected as already installed
+- **75 items were skipped** - detected as already installed
 - **No redundant work** - each package checked once
 - **Clean exit** - no errors, no warnings
 
