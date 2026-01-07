@@ -79,6 +79,10 @@ REPO_NAMES=()
 # Parse JSON into arrays
 if command -v jq >/dev/null 2>&1; then
     while IFS='|' read -r name ssh_url web_url; do
+        # Strip carriage returns (\r) that may appear on Windows
+        name="${name//$'\r'/}"
+        ssh_url="${ssh_url//$'\r'/}"
+        web_url="${web_url//$'\r'/}"
         REPO_NAMES+=("$name")
         SSH_URLS+=("$ssh_url")
         CLONE_URLS+=("${web_url}.git")  # Construct HTTPS clone URL
@@ -123,19 +127,19 @@ for i in "${!REPO_NAMES[@]}"; do
             if git rev-parse --git-dir >/dev/null 2>&1; then
                 if git fetch origin && git pull; then
                     echo -e "${YELLOW}Updated${NC}"
-                    ((UPDATED++))
+                    UPDATED=$((UPDATED + 1))
                 else
                     echo -e "${YELLOW}Error updating${NC}"
-                    ((FAILED++))
+                    FAILED=$((FAILED + 1))
                 fi
             else
                 echo -e "${YELLOW}Skipped (not a git repo)${NC}"
-                ((SKIPPED++))
+                SKIPPED=$((SKIPPED + 1))
             fi
             cd - >/dev/null
         else
             echo -e "${YELLOW}Error accessing${NC}"
-            ((FAILED++))
+            FAILED=$((FAILED + 1))
         fi
     else
         # Repo doesn't exist, clone it
@@ -143,10 +147,10 @@ for i in "${!REPO_NAMES[@]}"; do
 
         if git clone "$CLONE_URL" "$REPO_PATH"; then
             echo -e "${GREEN}Cloned${NC}"
-            ((CLONED++))
+            CLONED=$((CLONED + 1))
         else
             echo -e "${YELLOW}Error cloning${NC}"
-            ((FAILED++))
+            FAILED=$((FAILED + 1))
         fi
     fi
 done
