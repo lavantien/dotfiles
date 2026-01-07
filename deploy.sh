@@ -258,6 +258,79 @@ deploy_claude_hooks() {
 }
 
 # ============================================================================
+# MCP CONFIGS (Model Context Protocol for OpenCode and Claude Code)
+# ============================================================================
+deploy_mcp_configs() {
+    echo -e "${GREEN}Deploying MCP configs...${NC}"
+
+    # -------------------------------------------------------------------------
+    # OpenCode Configuration
+    # -------------------------------------------------------------------------
+    local opencode_config_dir="$XDG_CONFIG/opencode"
+    local opencode_config="$opencode_config_dir/opencode.json"
+    local opencode_template="$SCRIPT_DIR/.config/opencode/opencode.json"
+
+    if [[ -f "$opencode_template" ]]; then
+        mkdir -p "$opencode_config_dir"
+
+        if [[ ! -f "$opencode_config" ]]; then
+            # Config doesn't exist, create from template
+            cp "$opencode_template" "$opencode_config"
+            echo -e "${GREEN}OpenCode config created: $opencode_config${NC}"
+        else
+            # Config exists - perform smart merge to add missing universal MCPs
+            if command -v jq >/dev/null 2>&1; then
+                # Check if any universal MCP is missing and add it
+                local universal_mcps=("context7" "playwright" "repomix")
+                local merged=false
+
+                for mcp in "${universal_mcps[@]}"; do
+                    if ! jq -e ".mcp.\"$mcp\"" "$opencode_config" >/dev/null 2>&1; then
+                        # MCP is missing, add it from template
+                        local mcp_config=$(jq ".mcp.\"$mcp\"" "$opencode_template")
+                        jq --arg mcp "$mcp" --argjson config "$mcp_config" '.mcp[$mcp] = $config' "$opencode_config" > "${opencode_config}.tmp"
+                        mv "${opencode_config}.tmp" "$opencode_config"
+                        merged=true
+                        echo -e "${GREEN}Added missing MCP to OpenCode config: $mcp${NC}"
+                    fi
+                done
+
+                if [[ "$merged" == "false" ]]; then
+                    echo -e "${BLUE}OpenCode config exists with all universal MCPs, preserving user configuration${NC}"
+                fi
+            else
+                echo -e "${YELLOW}jq not found, skipping smart merge of OpenCode MCPs${NC}"
+                echo -e "${BLUE}OpenCode config exists, preserving user configuration${NC}"
+            fi
+        fi
+    else
+        echo -e "${YELLOW}OpenCode template not found at $opencode_template${NC}"
+    fi
+
+    # -------------------------------------------------------------------------
+    # Claude Code Configuration
+    # Note: MCP servers are managed via plugins, not this config
+    # -------------------------------------------------------------------------
+    local claude_config="$HOME/.claude.json"
+    local claude_template="$SCRIPT_DIR/.claude.json.template"
+
+    if [[ -f "$claude_template" ]]; then
+        if [[ ! -f "$claude_config" ]]; then
+            # Config doesn't exist, create from template
+            cp "$claude_template" "$claude_config"
+            echo -e "${GREEN}Claude Code config created: $claude_config${NC}"
+        else
+            echo -e "${BLUE}Claude Code config exists, preserving user configuration${NC}"
+            echo -e "${BLUE}MCP servers are managed via plugins${NC}"
+        fi
+    else
+        echo -e "${YELLOW}Claude Code template not found at $claude_template${NC}"
+    fi
+
+    echo -e "${GREEN}MCP configs deployment complete${NC}"
+}
+
+# ============================================================================
 # PLATFORM-SPECIFIC
 # ============================================================================
 deploy_linux() {
@@ -358,6 +431,7 @@ deploy_windows() {
 main() {
     deploy_common
     deploy_claude_hooks
+    deploy_mcp_configs
 
     case $OS in
         linux)

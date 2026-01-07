@@ -3,7 +3,7 @@
 ![Coverage](coverage-badge.svg) [![Security](https://img.shields.io/badge/security-reviewed-brightgreen)](https://github.com/lavantien/dotfiles#security) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)](https://github.com/lavantien/dotfiles)
 
-Production-grade dotfiles supporting Windows 11, Linux (Ubuntu/Fedora/Arch), and macOS with intelligent auto-detection and graceful fallbacks. A fully vibecoding-enabled dotfiles with complete AI-assisted development support: 15+ LSP servers, 10+ language formatters/linters, TDD enforcement, comprehensive Git and Claude Code workflow automation, and MCP server integration. All configured, tested, and just clone and run.
+Production-grade dotfiles supporting Windows 11, Linux (Ubuntu/Fedora/Arch), and macOS with intelligent auto-detection and graceful fallbacks. A fully vibecoding-enabled dotfiles with complete AI-assisted development support: **23 LSP servers**, **40+ tools** (formatters, linters, testers), TDD enforcement, comprehensive Git hooks, and Claude Code integration. All configured, tested, and just clone and run.
 
 ## Table of Contents
 
@@ -63,34 +63,69 @@ Intelligent Automation
 - dotnet LTS
 - OpenJDK LTS
 
-**Language Servers** (Neovim LSP + Claude Code - 15 servers)
+**Language Servers** (Neovim LSP + Claude Code - 23 servers)
+- bashls (Bash/Shell)
 - clangd (C/C++)
 - csharp-ls (C#)
 - docker-language-server (Dockerfile)
 - docker-compose-language-server (Docker Compose)
 - gopls (Go)
+- html (HTML)
+- cssls (CSS/SCSS/SASS)
 - intelephense (PHP)
 - jdtls (Java)
 - lua-language-server (Lua)
+- metals (Scala)
+- powershell_es (PowerShell)
 - pyright (Python)
 - rust-analyzer (Rust)
+- svelte (Svelte)
 - tinymist (Typst)
 - tombi (TOML)
 - ts_ls (JavaScript/TypeScript)
 - yaml-language-server (YAML)
 - dartls (Dart - optional, requires Dart SDK)
 
+**Complete Language Tool Matrix**
+
+| Language | LSP | Tester | Formatter | Linter | Type Check |
+|----------|-----|--------|-----------|--------|------------|
+| **Bash** | bashls | bats | shfmt | shellcheck | - |
+| **PowerShell** | powershell_es | Pester | Invoke-Formatter | PSScriptAnalyzer | PSScriptAnalyzer |
+| **Go** | gopls | go test | gofmt, goimports | golangci-lint | go vet |
+| **Rust** | rust_analyzer | cargo test | rustfmt | clippy | cargo check |
+| **Python** | pyright | pytest | ruff, black | ruff | mypy |
+| **JavaScript/TypeScript** | ts_ls | jest | prettier | eslint | tsc |
+| **HTML** | html | - | prettier | - | - |
+| **CSS/SCSS/SASS** | cssls | - | prettier | stylelint | - |
+| **Svelte** | svelte | - | prettier | - | svelte-check |
+| **C/C++** | clangd | Catch2 | clang-format | clang-tidy, cppcheck | compiler |
+| **C#** | csharp_ls | dotnet test | dotnet format | Roslyn analyzers | dotnet build |
+| **Java** | jdtls | JUnit | checkstyle | checkstyle | javac |
+| **PHP** | intelephense | php, PHPUnit | pint | PHPStan, Psalm | - |
+| **Scala** | metals | ScalaTest | scalafmt | scalafix | scalac |
+| **Lua** | lua_ls | busted | stylua | selene | - |
+| **Typst** | tinymist | built-in | tinymist | tinymist | - |
+| **Dockerfile** | docker_ls | - | - | hadolint | - |
+| **YAML** | yamlls | - | prettier | yamllint | - |
+| **TOML** | tombi | - | taplo | - | - |
+
 **Linters & Formatters** (for Git Hooks + Claude Code)
-- JS/TS: prettier, eslint, tsc
-- Python: ruff, black, isort, mypy
+- HTML: prettier
+- CSS/SCSS/SASS: prettier, stylelint
+- JS/TS/JSX/TSX: prettier, eslint, tsc
+- Python: ruff (format + lint), black, isort, mypy, pytest
 - Go: goimports, go fmt, golangci-lint, go vet
 - Rust: cargo fmt, clippy, cargo check
 - C/C++: clang-format, clang-tidy, cppcheck
 - C#: dotnet format, dotnet build
-- Java: spotless, google-java-format, checkstyle
+- Java: checkstyle
 - Bash: shellcheck, shfmt
-- PHP: Laravel Pint, php-cs-fixer, PHPStan, Psalm
-- Scala: scalafmt
+- PowerShell: Invoke-Formatter, PSScriptAnalyzer
+- PHP: php, composer, pint, PHPStan, Psalm
+- Scala: scalafmt, scalafix
+- Lua: stylua, selene, busted
+- Svelte: prettier, svelte-check
 
 **Essential CLI Tools**
 - fzf - Fuzzy finder
@@ -102,19 +137,20 @@ Intelligent Automation
 - ripgrep (rg) - Fast grep
 - fd - Fast find
 - tokei - Code stats (full category)
-- difftastic - Structured diff (full category)
+- repomix - Pack repositories for AI exploration (full category)
 
 **Testing & Coverage**
 - bats - Bash testing
+- busted - Lua testing
+- pytest - Python testing
 - Pester - PowerShell testing with coverage
-- bashcov - Bash coverage reports (universal, Ruby gem)
+- kcov - Bash coverage reports (universal)
 
 **Claude Code MCP Servers** (auto-installed via npm for full category)
 - context7 - Up-to-date library documentation and code examples
 - playwright - Browser automation and E2E testing
-- repomix - Pack repositories for full-context AI exploration
 
-Note: For OpenCode AI CLI compatibility, these locally installed MCP servers are used by the bootstrap scripts. The bootstrap installs them globally via npm so they're available for both Claude Code and OpenCode AI configurations.
+Note: These MCP servers are installed globally via npm during bootstrap. For OpenCode AI CLI, they're configured in `~/.config/opencode/opencode.json`. For Claude Code, MCP servers are primarily managed via plugins (see Section 9).
 
 ### Installation Categories
 
@@ -126,13 +162,13 @@ Note: For OpenCode AI CLI compatibility, these locally installed MCP servers are
 
 ### Quality Assurance
 
-- 3221 automated tests covering all major components (2181 PowerShell + 1040 Bash)
-- Conventional commits enforcement
-- Claude Code hooks for real-time quality checks
-- TDD guard to enforce test-driven development
-- Auto-formats and lints on commit for 15+ languages
-- 15+ LSP servers configured in Neovim for IDE-like experience
-- Hook integrity tests prevent regression (detect truncation, missing functions)
+- Comprehensive automated tests covering all major components (PowerShell + Bash)
+- **Conventional commits enforcement** via git commit-msg hook
+- **Pre-commit hooks** that auto-format and lint for 16+ languages
+- **Claude Code quality hooks** for real-time format/lint/type-check after file writes
+- **TDD guard** to enforce test-driven development practices
+- **23 LSP servers** configured in Neovim for IDE-like experience
+- **Hook integrity tests** prevent regression (detect truncation, missing functions)
 - Global CLAUDE.md deployed to ~/.claude/ for consistent AI coding practices
 - MCP servers (context7, playwright, repomix) auto-installed globally via npm
 
@@ -254,12 +290,9 @@ Skipped: 57
   - tokei (code stats)
   - difft (diff viewer)
   - bats (Bash testing)
-  - ruby (Ruby runtime)
-  - bashcov (code coverage)
   - Pester (PowerShell testing)
   - context7-mcp (documentation lookup)
   - playwright-mcp (browser automation)
-  - repomix (repository packer)
   - vscode (code editor)
   - visual-studio (full IDE)
   - llvm (C/C++ toolchain)
@@ -639,12 +672,13 @@ What Gets Installed
 | Phase | Tools |
 |-------|-------|
 | 1: Foundation | Package managers (Homebrew, Scoop), git |
-| 2: Core SDKs | Node.js, Python, Go, Rust |
-| 3: Language Servers | clangd, gopls, rust-analyzer, pyright, typescript-language-server, yaml-language-server |
-| 4: Linters & Formatters | prettier, eslint, ruff, goimports, golangci-lint, clang-format |
-| 5: CLI Tools | fzf, zoxide, bat, eza, lazygit, gh, ripgrep, fd, tokei, difftastic |
-| 5: Testing & Coverage | bats (all), bashcov (all), Pester (Windows) |
-| 6: Deploy Configs | Runs deploy.sh / deploy.ps1 to copy configurations |
+| 2: Core SDKs | Node.js, Python, Go, Rust, dotnet, OpenJDK |
+| 3: Language Servers | clangd, gopls, rust-analyzer, pyright, ts_ls, html, cssls, svelte, bashls, intelephense, metals, yaml-language-server, lua-language-server, jdtls, csharp-ls, docker-ls, tombi, tinymist, powershell_es |
+| 4: Linters & Formatters | prettier, eslint, stylelint, ruff, black, isort, mypy, pytest, goimports, golangci-lint, clang-format, clang-tidy, cppcheck, php, composer, pint, phpstan, psalm, shellcheck, shfmt, scalafmt, scalafix, stylua, selene, busted, checkstyle, svelte-check, repomix, PSScriptAnalyzer |
+| 5: CLI Tools | fzf, zoxide, bat, eza, lazygit, gh, ripgrep, fd, tokei |
+| 5.25: MCP Servers | context7-mcp, playwright-mcp (via npm) |
+| 5.5: Development Tools | Additional CLI utilities |
+| 6: Deploy Configs | Runs deploy.sh / deploy.ps1 to copy configurations (including git hooks, Claude Code hooks, Neovim config) |
 | 7: Update All | Runs update-all.sh / update-all.ps1 to update packages and repos |
 
 ---
@@ -698,18 +732,24 @@ Common Config Options
 
 Supported Languages
 
-| Language | Formatter | Linter | Type Check |
-|----------|-----------|--------|------------|
-| Go | gofmt, goimports | golangci-lint | go vet |
-| Rust | cargo fmt | clippy | cargo check |
-| C/C++ | clang-format | clang-tidy, cppcheck | compiler |
-| JS/TS | Prettier | ESLint | tsc, svelte-check |
-| Python | ruff, black | ruff, flake8 | mypy |
-| C# | dotnet format | Roslyn analyzers | dotnet build |
-| Java | spotless, google-java-format | checkstyle | javac |
-| PHP | Laravel Pint, php-cs-fixer | PHPStan, Psalm | - |
-| Bash | shfmt | shellcheck | - |
-| Scala | scalafmt | scalac (compiler) | scalac |
+| Language | Formatter | Linter | Type Check | LSP |
+|----------|-----------|--------|------------|-----|
+| HTML | prettier | - | - | html |
+| CSS/SCSS/SASS | prettier | stylelint | - | cssls |
+| Svelte | prettier | - | svelte-check | svelte |
+| Go | gofmt, goimports | golangci-lint | go vet | gopls |
+| Rust | cargo fmt | clippy | cargo check | rust_analyzer |
+| C/C++ | clang-format | clang-tidy, cppcheck | compiler | clangd |
+| JS/TS | Prettier | ESLint | tsc | ts_ls |
+| Python | ruff, black | ruff | mypy | pyright |
+| C# | dotnet format | Roslyn analyzers | dotnet build | csharp_ls |
+| Java | checkstyle | checkstyle | javac | jdtls |
+| PHP | Laravel Pint | PHPStan, Psalm | php, PHPUnit | intelephense |
+| Bash | shfmt | shellcheck | - | bashls |
+| PowerShell | Invoke-Formatter | PSScriptAnalyzer | PSScriptAnalyzer | powershell_es |
+| Scala | scalafmt | scalafix | scalac | metals |
+| Lua | stylua | selene | - | lua_ls |
+| Typst | tinymist | tinymist | - | tinymist |
 
 What Hooks Do
 
@@ -759,15 +799,16 @@ The deploy script automatically copies CLAUDE.md to ~/.claude/ for project-agnos
 
 ### MCP Server Integration
 
-MCP (Model Context Protocol) servers extend Claude Code with additional tools. The bootstrap script auto-installs these servers globally via npm:
+MCP (Model Context Protocol) servers extend AI coding tools with additional capabilities. The bootstrap script auto-installs these servers globally via npm:
 
 | MCP | Purpose |
 |-----|---------|
 | context7 | Up-to-date library documentation and code examples |
 | playwright | Browser automation and E2E testing |
-| repomix | Pack repositories for full-context AI exploration |
 
-These are installed globally and can be configured in your Claude Code `~/.claude.json` or project `.mcp.json`. For OpenCode AI CLI compatibility, the same locally installed MCP servers are utilized.
+**OpenCode AI CLI**: Configured in `~/.config/opencode/opencode.json` with smart merge on deploy - universal MCPs are added if missing while preserving your existing MCPs and credentials.
+
+**Claude Code**: MCP servers are primarily managed via plugins (see plugin installation below). The `~/.claude.json` template is minimal (`{"mcpServers": {}}`) since plugins handle MCP integration.
 
 #### Installing Claude Code Plugins
 
@@ -822,28 +863,29 @@ After adding the marketplaces, install the following plugins:
 - `explanatory-output-style` - Educational insights about implementation choices
 - `ralph-wiggum` - Interactive self-referential AI loops for iterative development
 
-#### Example MCP Configuration
+#### OpenCode Configuration Example
 
-If you prefer to configure MCP servers manually instead of using plugins:
+For OpenCode AI CLI, the deploy script creates/updates `~/.config/opencode/opencode.json`:
 
 ```json
 {
-  "mcpServers": {
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
     "context7": {
-      "command": "npx",
-      "args": ["-y", "@context7/mcp-server"]
+      "type": "local",
+      "command": ["cmd", "/c", "npx", "-y", "@upstash/context7-mcp"],
+      "timeout": 30000
     },
     "playwright": {
-      "command": "npx",
-      "args": ["-y", "@executeautomation/playwright-mcp-server"]
-    },
-    "repomix": {
-      "command": "npx",
-      "args": ["-y", "repomix"]
+      "type": "local",
+      "command": ["cmd", "/c", "npx", "-y", "@playwright/mcp"],
+      "timeout": 30000
     }
   }
 }
 ```
+
+The deploy script smart-merges this config - adding missing universal MCPs while preserving your existing MCPs and credentials.
 
 Quality Check Hook
 
@@ -875,9 +917,9 @@ Claude Code's quality check hook uses the same tools as the git hooks (see Secti
 
 | Category | Tools |
 |----------|-------|
-| **Formatters** | prettier, ruff, black, isort, goimports, go fmt, cargo fmt, clang-format, dotnet format, spotless, google-java-format, shfmt, scalafmt, php-cs-fixer, Laravel Pint |
-| **Linters** | eslint, ruff, flake8, golangci-lint, clippy, clang-tidy, cppcheck, mypy, shellcheck, PHPStan, Psalm, checkstyle |
-| **Type Checkers** | tsc, go vet, cargo check, mypy, dotnet build, javac |
+| **Formatters** | prettier, ruff, black, isort, goimports, go fmt, cargo fmt, clang-format, dotnet format, checkstyle (via Gradle), shfmt, scalafmt, stylua, pint |
+| **Linters** | eslint, stylelint, ruff, golangci-lint, clippy, clang-tidy, cppcheck, mypy, shellcheck, PHPStan, Psalm, selene, scalafix |
+| **Type Checkers** | tsc, svelte-check, go vet, cargo check, mypy, dotnet build, javac |
 
 The quality check automatically detects the file type and runs the appropriate tool. See Section 8 (Git Hooks) for the complete language-by-language breakdown.
 
@@ -902,20 +944,21 @@ Deploy Claude Code Hooks
 # - CLAUDE.md (Global AI coding instructions)
 # - tdd-guard/ (TDD enforcement instructions)
 
-# Just add hooks configuration to your Claude Code settings.json
+# Just add hooks configuration to your Claude Code settings.json:
+# - For PostToolUse hook to run quality checks
 ```
 
 ### AI CLI Tools & Pricing
 
 This dotfiles setup is optimized for multiple AI CLI tools. The system instructions, MCP servers, hooks, linters, formatters, and checkers work across all major agentic coding tools:
 
-| Tool | System Instructions | Notes |
-|------|---------------------|-------|
-| Claude Code | `CLAUDE.md` | Anthropic's official CLI |
-| OpenCode | `AGENTS.md` | Works with GLM via `npx @z_ai/coding-helper` |
-| CodexCLI | `AGENTS.md` | Alternative AI CLI |
-| Factory Droid | `AGENTS.md` | Alternative AI CLI |
-| Gemini CLI | `GEMINI.md` | Free rate-limited usage (Gemini 2.5 Pro & 2.5 Flash) |
+| Tool | System Instructions | MCP Config | Notes |
+|------|---------------------|------------|-------|
+| Claude Code | `CLAUDE.md` | Plugins | Anthropic's official CLI |
+| OpenCode | `AGENTS.md` | `~/.config/opencode/opencode.json` | Works with GLM via `npx @z_ai/coding-helper` |
+| CodexCLI | `AGENTS.md` | - | Alternative AI CLI |
+| Factory Droid | `AGENTS.md` | - | Alternative AI CLI |
+| Gemini CLI | `GEMINI.md` | - | Free rate-limited usage (Gemini 2.5 Pro & 2.5 Flash) |
 
 #### Recommended: GLM Coding Max Plan
 
@@ -932,7 +975,7 @@ OpenCode works out of the box with GLM (via `npx @z_ai/coding-helper`, just like
 
 Gemini CLI offers rate-limited free usage of Gemini 2.5 Pro and 2.5 Flash.
 
-All our system instructions setup, linters, formatters, checkers, and MCP/hooks cover the best agentic coding tools available today.
+All our system instructions setup, linters, formatters, checkers, and MCP integration (OpenCode via `opencode.json`, Claude Code via plugins) cover the best agentic coding tools available today.
 
 ---
 
@@ -956,7 +999,7 @@ System Package Managers:
 APT, DNF, Pacman, Zypper, Homebrew, Snap, Flatpak, Scoop, winget, Chocolatey
 
 Language Package Managers:
-npm, yarn, pnpm, gup/go, cargo, rustup, pip/pip3, poetry, dotnet, gem, composer, tlmgr
+npm, yarn, pnpm, gup/go, cargo, rustup, pip/pip3, poetry, dotnet, composer, tlmgr
 
 ---
 
@@ -1043,20 +1086,21 @@ Test Coverage
 
 | Suite | Tests | Description |
 |-------|-------|-------------|
-| PowerShell | 2181 | Wrapper validation, bootstrap, config, git hooks, E2E, regression, integration, hook integrity |
-| Bash | 1040 | Unit tests for deploy, backup, restore, healthcheck, uninstall, sync, git-update, hook integrity |
-| **Total** | **3221** | Cross-platform test coverage |
+| PowerShell | 100+ | Wrapper validation, bootstrap, config, git hooks, E2E, regression, integration, hook integrity |
+| Bash | 50+ | Unit tests for deploy, backup, restore, healthcheck, uninstall, sync, git-update, hook integrity |
+| **Total** | **150+** | Cross-platform test coverage |
 
 Test Areas Covered
 
 - Bootstrap Process: Platform detection, package installation, idempotency, correct platform bootstrap invocation
 - Configuration System: YAML parsing, defaults, platform-specific settings
 - Deployment: File copying, backup behavior, OneDrive handling
-- Git Hooks: Commit message validation, project type detection, pre-commit checks
+- Git Hooks: Commit message validation (Conventional Commits), pre-commit formatting/linting
+- New Tools: Tests verify each new tool is included in bootstrap scripts
 - Update Scripts: Package manager detection, timeout handling, safety features
 - Edge Cases: Error handling, missing dependencies, graceful failures
-- Regression Tests: Pattern-based tests to prevent known bugs from returning (e.g., wrapper path handling, array splatting, login shell usage, hook file truncation)
-- Integration Tests: Isolated mock environments to verify actual runtime behavior (e.g., Windows vs Linux bootstrap selection)
+- Regression Tests: Pattern-based tests to prevent known bugs from returning
+- Integration Tests: Isolated mock environments to verify actual runtime behavior
 
 Running Tests
 
@@ -1090,9 +1134,9 @@ Test Philosophy
 
 ## 14. Code Coverage
 
-Universal coverage measurement using bashcov for bash scripts and Pester for PowerShell scripts.
+Universal coverage measurement using kcov for bash scripts and Pester for PowerShell scripts.
 
-**bashcov** (primary, universal) - Ruby gem that provides bash coverage on all platforms (Windows/Linux/macOS) without Docker.
+**kcov** (primary, universal) - Code coverage tool that works with bash scripts on all platforms.
 
 **Pester** - PowerShell code coverage using AST-based analysis.
 
@@ -1100,11 +1144,11 @@ Coverage Tools
 
 | Platform | Bash | PowerShell |
 |----------|------|------------|
-| Windows | bashcov (Ruby gem) | Pester |
-| Linux | bashcov (Ruby gem) | Pester |
-| macOS | bashcov (Ruby gem) | Pester |
+| Windows | kcov (via Docker) | Pester |
+| Linux | kcov (native) | Pester |
+| macOS | kcov (native) | Pester |
 
-**No Docker required** - bashcov works natively on all platforms with Ruby.
+**Note**: kcov is used natively on Linux/macOS. On Windows, kcov runs via Docker for consistency.
 
 Tool Installation (Automatic)
 
@@ -1113,11 +1157,11 @@ All coverage tools are automatically installed by the bootstrap scripts:
 ```bash
 # Linux/macOS
 ./bootstrap.sh
-# Installs: Ruby, bashcov gem, bats, and all dependencies
+# Installs: kcov, bats, and all dependencies
 
 # Windows PowerShell
 .\bootstrap.ps1
-# Installs: Ruby (Scoop), bashcov gem, Pester, bats
+# Installs: kcov (Scoop), Pester, bats
 ```
 
 Manual Installation
@@ -1125,11 +1169,15 @@ Manual Installation
 If needed, install manually:
 
 ```bash
-# bashcov (requires Ruby first)
-gem install bashcov
+# kcov (Linux)
+sudo apt install kcov  # Ubuntu/Debian
+sudo dnf install kcov  # Fedora
+
+# kcov (macOS - may require compilation)
+brew install kcov
 
 # Verify installation
-bashcov --version
+kcov --version
 bats --version
 ```
 
@@ -1158,7 +1206,7 @@ The coverage scripts generate:
 
 - `coverage.json` - Combined coverage data for CI/CD
 - `coverage-badge.svg` - Dynamic badge for README
-- `coverage/bashcov/index.html` - Detailed HTML report (bashcov coverage)
+- `coverage/kcov/index.html` - Detailed HTML report (kcov coverage)
 
 Badge Color Scale (7 Rainbow Colors)
 
@@ -1175,8 +1223,8 @@ Badge Color Scale (7 Rainbow Colors)
 Coverage Calculation
 
 - **PowerShell**: Measured via Pester v5.7+ code coverage feature
-- **Bash**: Measured via bashcov (universal Ruby gem, works on all platforms)
-- **Combined**: Weighted average (60% PowerShell + 40% bash based on codebase complexity)
+- **Bash**: Measured via kcov (code coverage tool for bash scripts)
+- **Combined**: Weighted average based on actual codebase distribution
 
 ---
 
@@ -1446,7 +1494,9 @@ LSP Mappings (using FzfLua)
 
 ## 19. Legacy Museum
 
-The following files and directories are kept for historical reference but are no longer actively used in the dotfiles. They represent earlier approaches and tools that have been superseded by better alternatives or are now obsolete.
+The following files and directories are kept in the repository for historical reference but are no longer actively used. They represent earlier approaches and tools that have been superseded by better alternatives or are now obsolete.
+
+**Note**: These files remain in the repository but are not deployed or used by current scripts. They are preserved for reference purposes.
 
 This repository has a **rich 3-year history** spanning from June 2023 to January 2026, evolving through multiple major iterations and architectural changes.
 

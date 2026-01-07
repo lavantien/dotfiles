@@ -265,6 +265,26 @@ install_language_servers() {
         install_npm_global typescript-language-server typescript-language-server ""
     fi
 
+    # HTML language server (via npm - always latest)
+    if cmd_exists npm; then
+        install_npm_global "vscode-html-languageserver-bin" "vscode-html-language-server" ""
+    fi
+
+    # CSS language server (via npm - always latest)
+    if cmd_exists npm; then
+        install_npm_global "vscode-css-languageserver-bin" "vscode-css-language-server" ""
+    fi
+
+    # Svelte language server (via npm - always latest)
+    if [[ "$CATEGORIES" == "full" ]] && cmd_exists npm; then
+        install_npm_global "svelte-language-server" "svelte-language-server" ""
+    fi
+
+    # bash-language-server (via npm - always latest)
+    if cmd_exists npm; then
+        install_npm_global "bash-language-server" "bash-language-server" ""
+    fi
+
     # YAML language server (via npm - always latest)
     if cmd_exists npm; then
         install_npm_global yaml-language-server yaml-language-server ""
@@ -334,6 +354,21 @@ install_linters_formatters() {
         install_npm_global eslint eslint ""
     fi
 
+    # Stylelint (CSS/SCSS linter via npm - always latest)
+    if cmd_exists npm; then
+        install_npm_global stylelint stylelint ""
+    fi
+
+    # svelte-check (Svelte type checker via npm - always latest)
+    if [[ "$CATEGORIES" == "full" ]] && cmd_exists npm; then
+        install_npm_global "svelte-check" "svelte-check" ""
+    fi
+
+    # repomix (Pack repositories for AI exploration via npm - always latest)
+    if [[ "$CATEGORIES" == "full" ]] && cmd_exists npm; then
+        install_npm_global "repomix" "repomix" ""
+    fi
+
     # Ruff (via pip - always latest)
     if cmd_exists python3 || cmd_exists python; then
         install_pip_global "ruff" ruff ""
@@ -345,6 +380,7 @@ install_linters_formatters() {
             install_pip_global "black" black "" || true
             install_pip_global "isort" isort "" || true
             install_pip_global "mypy" mypy "" || true
+            install_pip_global "pytest" pytest "" || true
         fi
     fi
 
@@ -377,6 +413,105 @@ install_linters_formatters() {
         fi
     fi
 
+    # cppcheck (C++ static analysis - always latest)
+    if [[ "$CATEGORIES" == "full" ]]; then
+        if [[ "$OS" == "macos" ]]; then
+            install_brew_package cppcheck "" cppcheck
+        elif [[ "$OS" == "linux" ]]; then
+            install_linux_package cppcheck "" cppcheck || true
+        fi
+    fi
+
+    # catch2 (C++ testing framework)
+    if [[ "$CATEGORIES" == "full" ]]; then
+        if [[ "$OS" == "macos" ]]; then
+            install_brew_package catch2 "" catch2
+        elif [[ "$OS" == "linux" ]]; then
+            install_linux_package catch2 "" catch2 || true
+        fi
+    fi
+
+    # php (PHP runtime - prerequisite for composer)
+    if [[ "$CATEGORIES" == "full" ]]; then
+        if [[ "$OS" == "macos" ]]; then
+            install_brew_package php "" php
+        elif [[ "$OS" == "linux" ]]; then
+            install_linux_package php "" php || true
+        fi
+    fi
+
+    # composer (PHP package manager - prerequisite for PHP tools)
+    if [[ "$CATEGORIES" == "full" ]]; then
+        if [[ "$OS" == "macos" ]]; then
+            install_brew_package composer "" composer
+        elif [[ "$OS" == "linux" ]]; then
+            if ! cmd_exists composer; then
+                log_step "Installing composer..."
+                if [[ "$DRY_RUN" == "true" ]]; then
+                    log_info "[DRY-RUN] Would install composer"
+                else
+                    curl -sS https://getcomposer.org/installer | php >/dev/null 2>&1 && \
+                        sudo mv composer.phar /usr/local/bin/composer 2>/dev/null || \
+                        mv composer.phar "$HOME/.local/bin/composer" 2>/dev/null || true
+                fi
+            else
+                log_info "composer already installed"
+                track_skipped "composer" "PHP package manager"
+            fi
+        fi
+    fi
+
+    # Laravel Pint (PHP code style via composer global)
+    if [[ "$CATEGORIES" == "full" ]] && cmd_exists composer; then
+        if ! composer global show laravel/pint >/dev/null 2>&1; then
+            log_step "Installing Laravel Pint..."
+            if [[ "$DRY_RUN" == "true" ]]; then
+                log_info "[DRY-RUN] Would composer global require laravel/pint"
+            else
+                composer global require laravel/pint >/dev/null 2>&1 && \
+                    track_installed "pint" "PHP code style" || \
+                    track_failed "pint" "PHP code style"
+            fi
+        else
+            log_info "Laravel Pint already installed"
+            track_skipped "pint" "PHP code style"
+        fi
+    fi
+
+    # PHPStan (PHP static analysis via composer global)
+    if [[ "$CATEGORIES" == "full" ]] && cmd_exists composer; then
+        if ! composer global show phpstan/phpstan >/dev/null 2>&1; then
+            log_step "Installing PHPStan..."
+            if [[ "$DRY_RUN" == "true" ]]; then
+                log_info "[DRY-RUN] Would composer global require phpstan/phpstan"
+            else
+                composer global require phpstan/phpstan >/dev/null 2>&1 && \
+                    track_installed "phpstan" "PHP static analysis" || \
+                    track_failed "phpstan" "PHP static analysis"
+            fi
+        else
+            log_info "PHPStan already installed"
+            track_skipped "phpstan" "PHP static analysis"
+        fi
+    fi
+
+    # Psalm (PHP static analysis via composer global)
+    if [[ "$CATEGORIES" == "full" ]] && cmd_exists composer; then
+        if ! composer global show vimeo/psalm >/dev/null 2>&1; then
+            log_step "Installing Psalm..."
+            if [[ "$DRY_RUN" == "true" ]]; then
+                log_info "[DRY-RUN] Would composer global require vimeo/psalm"
+            else
+                composer global require vimeo/psalm >/dev/null 2>&1 && \
+                    track_installed "psalm" "PHP static analysis" || \
+                    track_failed "psalm" "PHP static analysis"
+            fi
+        else
+            log_info "Psalm already installed"
+            track_skipped "psalm" "PHP static analysis"
+        fi
+    fi
+
     # Shell tools
     if [[ "$CATEGORIES" == "full" ]]; then
         if [[ "$OS" == "macos" ]]; then
@@ -392,6 +527,88 @@ install_linters_formatters() {
     if [[ "$CATEGORIES" == "full" ]]; then
         if [[ "$OS" == "macos" ]]; then
             install_brew_package scalafmt "" scalafmt
+        fi
+    fi
+
+    # scalafix (Scala linter via coursier)
+    if [[ "$CATEGORIES" == "full" ]]; then
+        if cmd_exists coursier; then
+            if ! cmd_exists scalafix; then
+                coursier install scalafix >/dev/null 2>&1 && \
+                    track_installed "scalafix" "Scala linter" || \
+                    track_failed "scalafix" "Scala linter"
+            else
+                log_info "scalafix already installed"
+                track_skipped "scalafix" "Scala linter"
+            fi
+        fi
+    fi
+
+    # Metals (Scala language server via coursier)
+    if [[ "$CATEGORIES" == "full" ]]; then
+        if cmd_exists coursier; then
+            if ! cmd_exists metals; then
+                coursier install metals >/dev/null 2>&1 && \
+                    track_installed "metals" "Scala language server" || \
+                    track_failed "metals" "Scala language server"
+            else
+                log_info "metals already installed"
+                track_skipped "metals" "Scala language server"
+            fi
+        fi
+    fi
+
+    # checkstyle (Java linter)
+    if [[ "$CATEGORIES" == "full" ]]; then
+        if [[ "$OS" == "macos" ]]; then
+            install_brew_package checkstyle "" checkstyle
+        elif [[ "$OS" == "linux" ]]; then
+            install_linux_package checkstyle "" checkstyle || true
+        fi
+    fi
+
+    # stylua (Lua formatter)
+    if [[ "$CATEGORIES" == "full" ]]; then
+        if [[ "$OS" == "macos" ]]; then
+            install_brew_package stylua "" stylua
+        elif [[ "$OS" == "linux" ]]; then
+            if ! cmd_exists stylua; then
+                if cmd_exists cargo; then
+                    cargo install stylua >/dev/null 2>&1 && \
+                        track_installed "stylua" "Lua formatter" || \
+                        track_failed "stylua" "Lua formatter"
+                fi
+            else
+                log_info "stylua already installed"
+                track_skipped "stylua" "Lua formatter"
+            fi
+        fi
+    fi
+
+    # selene (Lua linter)
+    if [[ "$CATEGORIES" == "full" ]]; then
+        if [[ "$OS" == "macos" ]]; then
+            install_brew_package selene "" selene
+        elif [[ "$OS" == "linux" ]]; then
+            if ! cmd_exists selene; then
+                if cmd_exists cargo; then
+                    cargo install selene >/dev/null 2>&1 && \
+                        track_installed "selene" "Lua linter" || \
+                        track_failed "selene" "Lua linter"
+                fi
+            else
+                log_info "selene already installed"
+                track_skipped "selene" "Lua linter"
+            fi
+        fi
+    fi
+
+    # busted (Lua testing framework)
+    if [[ "$CATEGORIES" == "full" ]]; then
+        if [[ "$OS" == "macos" ]]; then
+            install_brew_package busted "" busted
+        elif [[ "$OS" == "linux" ]]; then
+            install_linux_package busted "" busted || true
         fi
     fi
 
@@ -512,13 +729,13 @@ install_mcp_servers() {
     fi
 
     # Context7 - Up-to-date library documentation and code examples
-    if ! npm list -g @context7/mcp-server >/dev/null 2>&1; then
+    if ! npm list -g @upstash/context7-mcp >/dev/null 2>&1; then
         log_step "Installing context7 MCP server..."
         if [[ "$DRY_RUN" == "true" ]]; then
-            log_info "[DRY-RUN] Would npm install -g @context7/mcp-server"
+            log_info "[DRY-RUN] Would npm install -g @upstash/context7-mcp"
             track_installed "context7-mcp" "documentation lookup"
         else
-            if npm install -g @context7/mcp-server >/dev/null 2>&1; then
+            if npm install -g @upstash/context7-mcp >/dev/null 2>&1; then
                 log_success "context7 MCP server installed"
                 track_installed "context7-mcp" "documentation lookup"
             else
@@ -531,13 +748,13 @@ install_mcp_servers() {
     fi
 
     # Playwright - Browser automation and E2E testing
-    if ! npm list -g @executeautomation/playwright-mcp-server >/dev/null 2>&1; then
+    if ! npm list -g @playwright/mcp >/dev/null 2>&1; then
         log_step "Installing playwright MCP server..."
         if [[ "$DRY_RUN" == "true" ]]; then
-            log_info "[DRY-RUN] Would npm install -g @executeautomation/playwright-mcp-server"
+            log_info "[DRY-RUN] Would npm install -g @playwright/mcp"
             track_installed "playwright-mcp" "browser automation"
         else
-            if npm install -g @executeautomation/playwright-mcp-server >/dev/null 2>&1; then
+            if npm install -g @playwright/mcp >/dev/null 2>&1; then
                 log_success "playwright MCP server installed"
                 track_installed "playwright-mcp" "browser automation"
             else
@@ -550,23 +767,10 @@ install_mcp_servers() {
     fi
 
     # Repomix - Pack repositories for full-context AI exploration
-    if ! cmd_exists repomix; then
-        log_step "Installing repomix..."
-        if [[ "$DRY_RUN" == "true" ]]; then
-            log_info "[DRY-RUN] Would npm install -g repomix"
-            track_installed "repomix" "repository packer"
-        else
-            if npm install -g repomix >/dev/null 2>&1; then
-                log_success "repomix installed"
-                track_installed "repomix" "repository packer"
-            else
-                log_warning "Failed to install repomix"
-                track_failed "repomix" "repository packer"
-            fi
-        fi
-    else
-        track_skipped "repomix" "repository packer"
-    fi
+    # Note: repomix MCP mode is invoked via npx -y repomix --mcp
+    # The repomix package itself has built-in MCP support via --mcp flag
+    # No global installation needed - npx handles it on-demand
+    track_skipped "repomix" "repository packer (uses npx -y repomix --mcp)"
 
     log_success "MCP server installation complete"
     return 0

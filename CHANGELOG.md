@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [4.3] - 2026-01-07
+
+### Fixed
+
+**Go Package Installation**
+- Fixed `goimports` reinstall issue by normalizing GOPATH paths before comparison
+- Changed from wildcard pattern matching to exact array matching for registry PATH checks
+- Always add `$GOPATH/bin` to current session PATH unconditionally for immediate tool availability
+
+### Removed
+
+**Ruby Runtime & bashcov**
+- Removed Ruby runtime from bootstrap (no longer needed)
+- Removed bashcov gem installation
+- Removed ruby from version-check patterns (both PowerShell and Bash)
+- Removed ruby from packages.yaml configuration
+- Updated coverage strategy: kcov is now used exclusively
+  - Linux/macOS: native kcov
+  - Windows: kcov via Docker
+
+### Changed
+
+- Updated README to reflect kcov-only coverage strategy
+- Removed gem from supported language package managers list
+- Updated coverage tools table to show "kcov (via Docker)" for Windows
+
+---
+
 ## [4.2] - 2026-01-03
 
 ### Fixed
@@ -275,6 +303,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date | Major Changes |
 |---------|------|---------------|
+| 4.3 | 2026-01-07 | Fixed goimports reinstall, removed Ruby/bashcov, kcov-only coverage |
 | 4.2 | 2026-01-03 | Bootstrap idempotency fixes, PATH detection improvements |
 | 4.1 | 2026-01-02 | Documentation improvements, real coverage reporting |
 | 4.0 | 2026-01-02 | Shell-first architecture, comprehensive testing, config system |
@@ -318,7 +347,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v4.2...HEAD
+[Unreleased]: https://github.com/lavantien/dotfiles/compare/v4.3...HEAD
+[4.3]: https://github.com/lavantien/dotfiles/compare/v4.2...v4.3
 [4.2]: https://github.com/lavantien/dotfiles/compare/v4.1...v4.2
 [4.1]: https://github.com/lavantien/dotfiles/compare/v4.0...v4.1
 [4.0]: https://github.com/lavantien/dotfiles/compare/v3.3.3...v4.0

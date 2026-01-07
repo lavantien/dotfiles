@@ -478,7 +478,7 @@ function Initialize-UserPath {
         }
     }
 
-    # Scoop app bin directories (nodejs, ruby, etc.)
+    # Scoop app bin directories (nodejs, go, etc.)
     $scoopAppsDir = Join-Path $env:USERPROFILE "scoop\apps"
     if (Test-Path $scoopAppsDir) {
         # Add current bin directories for scoop apps

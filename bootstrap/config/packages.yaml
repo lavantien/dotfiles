@@ -93,20 +93,6 @@ sdks:
       all: 'curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y'
       windows: scoop install rustup
 
-  - name: ruby
-    display_name: Ruby
-    platforms: [all]
-    check_cmd: ruby
-    version_flag: --version
-    min_version: "3.0.0"
-    install:
-      macos: brew install ruby
-      linux_debian: sudo apt install -y ruby
-      linux_fedora: sudo dnf install -y ruby
-      linux_arch: sudo pacman -S --noconfirm ruby
-      linux_opensuse: sudo zypper install -y ruby
-      windows: scoop install ruby
-
   - name: php
     display_name: PHP
     platforms: [all]

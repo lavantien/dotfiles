@@ -67,6 +67,21 @@ function Show-Help {
     }
 }
 
+# Helper function to invoke composer safely (uses Scoop shim path directly)
+function Invoke-ComposerSafe {
+    param([string[]]$Arguments)
+    $scoopShims = Join-Path $env:USERPROFILE "scoop\shims"
+    # Scoop creates .cmd shims for most apps (not .exe)
+    $composerPath = Join-Path $scoopShims "composer.cmd"
+    if (Test-Path $composerPath) {
+        & $composerPath @Arguments
+        return $?
+    }
+    # Fallback to standard PATH lookup
+    composer @Arguments
+    return $?
+}
+
 # ============================================================================
 # PHASE 1: FOUNDATION
 # ============================================================================
@@ -117,6 +132,13 @@ function Install-Foundation {
 
     # Ensure Scoop is installed
     Ensure-Scoop
+
+    # Ensure Scoop shims are in PATH for current session
+    # Scoop adds shims to PATH in shell profiles, but current session doesn't have it yet
+    $scoopShims = Join-Path $env:USERPROFILE "scoop\shims"
+    if ((Test-Path $scoopShims) -and ($env:Path -notlike "*$scoopShims*")) {
+        $env:Path = "$scoopShims;$env:Path"
+    }
 
     # Configure git and add GitHub to known_hosts
     Configure-GitSettings
@@ -228,6 +250,26 @@ function Install-LanguageServers {
         Install-NpmGlobal "typescript-language-server" "typescript-language-server" ""
     }
 
+    # HTML language server (via npm - always latest)
+    if (Test-Command npm) {
+        Install-NpmGlobal "vscode-html-languageserver-bin" "vscode-html-language-server" ""
+    }
+
+    # CSS language server (via npm - always latest)
+    if (Test-Command npm) {
+        Install-NpmGlobal "vscode-css-languageserver-bin" "vscode-css-language-server" ""
+    }
+
+    # Svelte language server (via npm - full category)
+    if ($Script:Categories -eq "full" -and (Test-Command npm)) {
+        Install-NpmGlobal "svelte-language-server" "svelte-language-server" ""
+    }
+
+    # bash-language-server (via npm - always latest)
+    if (Test-Command npm) {
+        Install-NpmGlobal "bash-language-server" "bash-language-server" ""
+    }
+
     # YAML language server (via npm - always latest)
     if (Test-Command npm) {
         Install-NpmGlobal "yaml-language-server" "yaml-language-server" ""
@@ -302,6 +344,21 @@ function Install-LintersFormatters {
         Install-NpmGlobal "eslint" "eslint" ""
     }
 
+    # Stylelint (CSS/SCSS linter via npm - always latest)
+    if (Test-Command npm) {
+        Install-NpmGlobal "stylelint" "stylelint" ""
+    }
+
+    # svelte-check (Svelte type checker via npm - full category)
+    if ($Script:Categories -eq "full" -and (Test-Command npm)) {
+        Install-NpmGlobal "svelte-check" "svelte-check" ""
+    }
+
+    # repomix (Pack repositories for AI exploration via npm - full category)
+    if ($Script:Categories -eq "full" -and (Test-Command npm)) {
+        Install-NpmGlobal "repomix" "repomix" ""
+    }
+
     # Ruff (via pip - always latest)
     if (Test-Command python) {
         Install-PipGlobal "ruff" "ruff" ""
@@ -312,6 +369,7 @@ function Install-LintersFormatters {
         Install-PipGlobal "black" "black" ""
         Install-PipGlobal "isort" "isort" ""
         Install-PipGlobal "mypy" "mypy" ""
+        Install-PipGlobal "pytest" "pytest" ""
     }
 
     # gup (Go package manager - always latest)
@@ -336,11 +394,181 @@ function Install-LintersFormatters {
         Install-ScoopPackage "shfmt" "" "shfmt"
     }
 
+    # cppcheck (C++ static analysis)
+    if ($Script:Categories -eq "full") {
+        Install-ScoopPackage "cppcheck" "" "cppcheck"
+    }
+
+    # catch2 (C++ testing framework)
+    if ($Script:Categories -eq "full") {
+        # catch2 available via vcpkg, not scoop
+        # Skip for now - users can install via vcpkg if needed
+    }
+
+    # php-nts (PHP runtime - prerequisite for composer)
+    if ($Script:Categories -eq "full") {
+        Install-ScoopPackage "php-nts" "" "php"
+    }
+
+    # composer (PHP package manager - prerequisite for PHP tools)
+    if ($Script:Categories -eq "full") {
+        Install-ScoopPackage "composer" "" "composer"
+        # Ensure Scoop shims are in PATH for current session
+        # Scoop installs shims to ~/scoop/shims but they might not be in registry PATH yet
+        $scoopShims = Join-Path $env:USERPROFILE "scoop\shims"
+        if ((Test-Path $scoopShims) -and ($env:Path -notlike "*$scoopShims*")) {
+            $env:Path = "$scoopShims;$env:Path"
+        }
+    }
+
+    # Enable required PHP extensions (for composer to work)
+    if ($Script:Categories -eq "full" -and -not $DryRun) {
+        $phpIni = Join-Path $env:USERPROFILE "scoop\persist\php-nts\cli\php.ini"
+        if (Test-Path $phpIni) {
+            $extensions = @('openssl', 'curl', 'fileinfo', 'mbstring', 'zip')
+            $content = Get-Content $phpIni -Raw
+            $updated = $false
+            foreach ($ext in $extensions) {
+                if ($content -match ";extension=$ext") {
+                    $content = $content -replace ";extension=$ext", "extension=$ext"
+                    $updated = $true
+                }
+            }
+            if ($updated) {
+                Set-Content $phpIni -Value $content -NoNewline
+                Write-Info "PHP extensions enabled: $($extensions -join ', ')"
+            }
+        }
+    }
+
+    # Laravel Pint (PHP code style via composer global)
+    if ($Script:Categories -eq "full") {
+        $scoopShims = Join-Path $env:USERPROFILE "scoop\shims"
+        $composerShim = Join-Path $scoopShims "composer.cmd"
+        if (-not (Test-Path $composerShim)) {
+            Write-Warning "Composer not found at $composerShim, skipping Laravel Pint installation"
+            Track-Skipped "pint" "PHP code style"
+        }
+        elseif (-not (Invoke-ComposerSafe @("global", "show", "laravel/pint") 2>$null)) {
+            Write-Step "Installing Laravel Pint..."
+            if ($DryRun) {
+                Write-Info "[DRY-RUN] Would composer global require laravel/pint"
+            }
+            else {
+                Invoke-ComposerSafe @("global", "require", "laravel/pint") 2>$null | Out-Null
+                if ($?) {
+                    Write-Success "Laravel Pint installed"
+                    Track-Installed "pint" "PHP code style"
+                }
+                else {
+                    Track-Failed "pint" "PHP code style"
+                }
+            }
+        }
+        else {
+            Write-Info "Laravel Pint already installed"
+            Track-Skipped "pint" "PHP code style"
+        }
+    }
+
+    # PHPStan (PHP static analysis via composer global)
+    if ($Script:Categories -eq "full") {
+        $scoopShims = Join-Path $env:USERPROFILE "scoop\shims"
+        $composerShim = Join-Path $scoopShims "composer.cmd"
+        if (-not (Test-Path $composerShim)) {
+            Write-Warning "Composer not found at $composerShim, skipping PHPStan installation"
+            Track-Skipped "phpstan" "PHP static analysis"
+        }
+        elseif (-not (Invoke-ComposerSafe @("global", "show", "phpstan/phpstan") 2>$null)) {
+            Write-Step "Installing PHPStan..."
+            if ($DryRun) {
+                Write-Info "[DRY-RUN] Would composer global require phpstan/phpstan"
+            }
+            else {
+                Invoke-ComposerSafe @("global", "require", "phpstan/phpstan") 2>$null | Out-Null
+                if ($?) {
+                    Write-Success "PHPStan installed"
+                    Track-Installed "phpstan" "PHP static analysis"
+                }
+                else {
+                    Track-Failed "phpstan" "PHP static analysis"
+                }
+            }
+        }
+        else {
+            Write-Info "PHPStan already installed"
+            Track-Skipped "phpstan" "PHP static analysis"
+        }
+    }
+
+    # Psalm (PHP static analysis via composer global)
+    if ($Script:Categories -eq "full") {
+        $scoopShims = Join-Path $env:USERPROFILE "scoop\shims"
+        $composerShim = Join-Path $scoopShims "composer.cmd"
+        if (-not (Test-Path $composerShim)) {
+            Write-Warning "Composer not found at $composerShim, skipping Psalm installation"
+            Track-Skipped "psalm" "PHP static analysis"
+        }
+        elseif (-not (Invoke-ComposerSafe @("global", "show", "vimeo/psalm") 2>$null)) {
+            Write-Step "Installing Psalm..."
+            if ($DryRun) {
+                Write-Info "[DRY-RUN] Would composer global require vimeo/psalm"
+            }
+            else {
+                Invoke-ComposerSafe @("global", "require", "vimeo/psalm") 2>$null | Out-Null
+                if ($?) {
+                    Write-Success "Psalm installed"
+                    Track-Installed "psalm" "PHP static analysis"
+                }
+                else {
+                    Track-Failed "psalm" "PHP static analysis"
+                }
+            }
+        }
+        else {
+            Write-Info "Psalm already installed"
+            Track-Skipped "psalm" "PHP static analysis"
+        }
+    }
+
     # scalafmt (via Coursier - Scala tool, NOT available via cargo)
     if ($Script:Categories -eq "full") {
         # Ensure Coursier is installed first
         Ensure-Coursier
         Install-CoursierPackage "scalafmt" "" "scalafmt"
+    }
+
+    # scalafix (Scala linter via coursier)
+    if ($Script:Categories -eq "full") {
+        Ensure-Coursier
+        if (Test-Command coursier) {
+            Install-CoursierPackage "scalafix" "" "scalafix"
+        }
+    }
+
+    # Metals (Scala language server via coursier)
+    if ($Script:Categories -eq "full") {
+        Ensure-Coursier
+        if (Test-Command coursier) {
+            Install-CoursierPackage "metals" "" "metals"
+        }
+    }
+
+    # stylua (Lua formatter)
+    if ($Script:Categories -eq "full") {
+        Install-ScoopPackage "stylua" "" "stylua"
+    }
+
+    # selene (Lua linter)
+    if ($Script:Categories -eq "full") {
+        Install-ScoopPackage "selene" "" "selene"
+    }
+
+    # checkstyle (Java linter)
+    if ($Script:Categories -eq "full") {
+        # checkstyle not typically installed globally on Windows
+        # Use via IDE or build tools (Maven/Gradle)
+        # Comment added for documentation purposes
     }
 
     # clang-tidy (for C/C++) - already installed with LLVM
@@ -384,41 +612,6 @@ function Install-CLITools {
         Install-NpmGlobal "bats" "bats" ""
     }
 
-    # Ruby + bashcov (code coverage for bash - cross-platform, universal)
-    if (-not (Test-Command ruby)) {
-        Write-Step "Installing Ruby..."
-        # Use Scoop for Ruby (includes RubyGems)
-        Install-ScoopPackage "ruby" "" "ruby"
-    }
-    else {
-        Write-VerboseInfo "Ruby already installed"
-        Track-Skipped "ruby" "Ruby runtime"
-    }
-
-    # bashcov (Ruby gem for bash coverage - universal, works on all platforms)
-    if ((Test-Command ruby) -and (-not (Test-Command bashcov))) {
-        Write-Step "Installing bashcov (Ruby gem for bash coverage)..."
-        if (-not $DryRun) {
-            if (ruby --version) {
-                gem install bashcov *> $null
-                if (Test-Command bashcov) {
-                    Write-Success "bashcov installed"
-                    Track-Installed "bashcov" "code coverage"
-                }
-                else {
-                    Write-Warning "Failed to install bashcov - try: gem install bashcov"
-                }
-            }
-        }
-        else {
-            Write-Info "[DRY-RUN] Would install bashcov"
-        }
-    }
-    elseif (Test-Command bashcov) {
-        Write-VerboseInfo "bashcov already installed"
-        Track-Skipped "bashcov" "code coverage"
-    }
-
     # Pester (PowerShell testing framework with code coverage - always latest)
     if (-not (Get-Module -ListAvailable -Name Pester)) {
         Write-Step "Installing Pester for PowerShell testing..."
@@ -436,11 +629,11 @@ function Install-CLITools {
         Track-Skipped "Pester" "PowerShell testing"
     }
 
-    # Docker (optional - only needed for kcov fallback, bashcov is preferred)
+    # Docker (optional - needed for kcov coverage on Windows; kcov is native on Linux/macOS)
     if (-not (Test-Command docker)) {
-        Write-Info "Docker not found - bashcov is the primary coverage tool (Docker optional for kcov fallback)"
+        Write-Info "Docker not found - kcov via Docker is used for bash coverage on Windows"
         if ($Script:Interactive) {
-            $installDocker = Read-Confirmation "Install Docker Desktop (optional, for kcov fallback)?" "n"
+            $installDocker = Read-Confirmation "Install Docker Desktop (optional, for kcov coverage)?" "n"
             if ($installDocker) {
                 Write-Step "Installing Docker Desktop via winget..."
                 if (-not $DryRun) {
@@ -489,11 +682,11 @@ function Install-MCPServers {
     }
 
     # Context7 - Up-to-date library documentation and code examples
-    $alreadyInstalled = npm list -g @context7/mcp-server 2>$null
-    if (-not $alreadyInstalled) {
+    npm list -g @upstash/context7-mcp *> $null
+    if ($LASTEXITCODE -ne 0) {
         Write-Step "Installing context7 MCP server..."
         if (-not $DryRun) {
-            if (npm install -g @context7/mcp-server *> $null) {
+            if (npm install -g @upstash/context7-mcp *> $null) {
                 Write-Success "context7 MCP server installed"
                 Track-Installed "context7-mcp" "documentation lookup"
             }
@@ -512,11 +705,11 @@ function Install-MCPServers {
     }
 
     # Playwright - Browser automation and E2E testing
-    $alreadyInstalled = npm list -g @executeautomation/playwright-mcp-server 2>$null
-    if (-not $alreadyInstalled) {
+    npm list -g @playwright/mcp *> $null
+    if ($LASTEXITCODE -ne 0) {
         Write-Step "Installing playwright MCP server..."
         if (-not $DryRun) {
-            if (npm install -g @executeautomation/playwright-mcp-server *> $null) {
+            if (npm install -g @playwright/mcp *> $null) {
                 Write-Success "playwright MCP server installed"
                 Track-Installed "playwright-mcp" "browser automation"
             }
@@ -535,26 +728,10 @@ function Install-MCPServers {
     }
 
     # Repomix - Pack repositories for full-context AI exploration
-    if (-not (Test-Command repomix)) {
-        Write-Step "Installing repomix..."
-        if (-not $DryRun) {
-            if (npm install -g repomix *> $null) {
-                Write-Success "repomix installed"
-                Track-Installed "repomix" "repository packer"
-            }
-            else {
-                Write-Warning "Failed to install repomix"
-                Track-Failed "repomix" "repository packer"
-            }
-        }
-        else {
-            Write-Info "[DRY-RUN] Would npm install -g repomix"
-            Track-Installed "repomix" "repository packer"
-        }
-    }
-    else {
-        Track-Skipped "repomix" "repository packer"
-    }
+    # Note: repomix MCP mode is invoked via npx -y repomix --mcp
+    # The repomix package itself has built-in MCP support via --mcp flag
+    # No global installation needed - npx handles it on-demand
+    Track-Skipped "repomix" "repository packer (uses npx -y repomix --mcp)"
 
     Write-Success "MCP server installation complete"
     return $true

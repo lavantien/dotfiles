@@ -196,6 +196,7 @@ function Install-ScoopPackage {
 
     # Helper to invoke Scoop directly, bypassing the broken shim
     # The shim passes '-y' as first argument which breaks Scoop's command parsing
+    # NOTE: If Get-FileHash is missing (PS 5.1 issue), use: pwsh -NoProfile -Command "& scoop.ps1 install <package>"
     function Invoke-Scoop {
         param([string[]]$Arguments)
         if ($scoopInstalled) {
@@ -600,14 +601,19 @@ function Install-GoPackage {
     # Skip in DryRun mode to avoid calling external go command
     $goPath = if ($DryRun) { "" } else { go env GOPATH }
     if ($goPath) {
-        # Persist to User PATH for future sessions
-        if ("$env:PATH" -notlike "*$goPath\bin*") {
-            Add-ToPath "$goPath\bin"
+        # Normalize path (convert forward slashes to backslashes, remove trailing slashes)
+        $goPath = $goPath -replace '[\\/]', '\'
+        $goPath = $goPath.TrimEnd('\')
+        $goPathBin = "$goPath\bin"
+
+        # Persist to User PATH for future sessions (check if already in registry PATH)
+        $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
+        if (($userPath -split ';') -notcontains $goPathBin) {
+            Add-ToPath $goPathBin
         }
-        # Also add to current session PATH so we can find commands immediately
-        if ("$env:PATH" -notlike "*$goPath\bin*") {
-            $env:PATH = "$goPath\bin;$env:PATH"
-        }
+
+        # Always add to current session PATH so we can find commands immediately
+        $env:PATH = "$goPathBin;$env:PATH"
     }
 
     # Check if already installed (after ensuring GOPATH/bin in PATH)

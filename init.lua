@@ -64,6 +64,12 @@ vim.lsp.enable({
     'rust_analyzer',
     'pyright',
     'ts_ls',
+    'html',
+    'cssls',
+    'svelte',
+    'bashls',
+    'powershell_es',
+    'metals',
     'jdtls',
     'csharp_ls',
     'dartls',
@@ -72,6 +78,7 @@ vim.lsp.enable({
     'docker_compose_language_service',
     'yamlls',
     'tombi',
+    'intelephense',
     'codebook'
 })
 
