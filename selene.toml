@@ -1,0 +1,47 @@
+-- Selene configuration for Neovim Lua files
+includes = [
+    "lua/?.lua",
+    "lua/?/init.lua",
+    ".config/nvim/?.lua",
+    ".config/nvim/?/init.lua",
+]
+
+exclude = [
+    "node_modules/",
+    "vendor/",
+    ".git/",
+]
+
+[vim]
+any = true
+global = true
+read_only = false
+
+[vim.api]
+any = true
+global = true
+read_only = false
+
+[vim.fn]
+any = true
+global = true
+read_only = false
+
+[vim.loop]
+any = true
+global = true
+read_only = false
+
+[vim.uv]
+any = true
+global = true
+read_only = false
+
+[FzfLua]
+global = true
+read_only = false
+
+-- Define other Neovim globals
+[defaults]
+global = true
+read_only = false

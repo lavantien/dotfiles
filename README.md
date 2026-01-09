@@ -3,7 +3,7 @@
 ![Coverage](coverage-badge.svg) [![Security](https://img.shields.io/badge/security-reviewed-brightgreen)](#security) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)](https://github.com/lavantien/dotfiles)
 
-Production-grade dotfiles for Windows 11, Linux (Ubuntu/Fedora/Arch), and macOS. Auto-detecting, gracefully degrading, fully vibecoding-enabled with **24 LSP servers**, **40+ tools**, TDD enforcement, comprehensive Git hooks, and Claude Code integration.
+Production-grade dotfiles for Windows 11, Linux (Ubuntu/Fedora/Arch), and macOS. Auto-detecting, gracefully degrading, fully vibecoding-enabled with **23 LSP servers**, **32 Treesitter parsers**, **40+ tools**, TDD enforcement, comprehensive Git hooks, and Claude Code integration.
 
 ## Table of Contents
 

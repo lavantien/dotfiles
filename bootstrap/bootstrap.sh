@@ -906,6 +906,25 @@ install_mcp_servers() {
 		return 0
 	fi
 
+	# tree-sitter-cli - Required for nvim-treesitter auto_install to work optimally
+	if ! cmd_exists tree-sitter; then
+		log_step "Installing tree-sitter-cli..."
+		if [[ "$DRY_RUN" == "true" ]]; then
+			log_info "[DRY-RUN] Would npm install -g tree-sitter-cli"
+			track_installed "tree-sitter-cli" "Treesitter parser compiler"
+		else
+			if npm install -g tree-sitter-cli >/dev/null 2>&1; then
+				log_success "tree-sitter-cli installed"
+				track_installed "tree-sitter-cli" "Treesitter parser compiler"
+			else
+				log_warning "Failed to install tree-sitter-cli"
+				track_failed "tree-sitter-cli" "Treesitter parser compiler"
+			fi
+		fi
+	else
+		track_skipped "tree-sitter-cli" "Treesitter parser compiler"
+	fi
+
 	# Context7 - Up-to-date library documentation and code examples
 	if ! npm list -g @upstash/context7-mcp >/dev/null 2>&1; then
 		log_step "Installing context7 MCP server..."

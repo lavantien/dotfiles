@@ -68,7 +68,6 @@ vim.lsp.enable({
 	"cssls",
 	"svelte",
 	"bashls",
-	"powershell_es",
 	"metals",
 	"jdtls",
 	"csharp_ls",
@@ -191,6 +190,82 @@ require("nvim-web-devicons").setup()
 require("fidget").setup({})
 require("typst-preview").setup()
 require("livepreview").setup()
+
+-- Treesitter configuration (v2.0+ for Neovim 0.12)
+-- Note: nvim-treesitter no longer has ensure_installed/auto_install
+-- Parsers must be installed manually via :TSInstall <lang>
+local ok, ts_config = pcall(require, "nvim-treesitter.config")
+if ok then
+	ts_config.setup({
+		install_dir = vim.fn.stdpath("data") .. "/site",
+	})
+
+	-- Auto-install parsers for common languages on startup
+	local ok_install, ts_install = pcall(require, "nvim-treesitter.install")
+	if ok_install then
+		local parsers_to_install = {
+			-- Core & config
+			"lua",
+			"vim",
+			"vimdoc",
+			"query",
+			-- System languages
+			"c",
+			"cpp",
+			"rust",
+			"go",
+			"python",
+			"java",
+			"c_sharp",
+			"php",
+			"scala",
+			-- Web & frontend
+			"javascript",
+			"typescript",
+			"tsx",
+			"jsx",
+			"html",
+			"css",
+			"scss",
+			"svelte",
+			-- Data & config formats
+			"yaml",
+			"json",
+			"toml",
+			-- Documentation
+			"markdown",
+			"markdown_inline",
+			-- DevOps & infrastructure
+			"bash",
+			"powershell",
+			"dockerfile",
+			-- Typesetting
+			"typst",
+		}
+
+		-- Get already installed parsers
+		local installed = ts_config.get_installed("parsers")
+
+		-- Filter out already installed ones
+		local to_install = vim.tbl_filter(function(p)
+			return not vim.list_contains(installed, p)
+		end, parsers_to_install)
+
+		-- Install missing parsers asynchronously
+		if #to_install > 0 then
+			vim.schedule(function()
+				ts_install.install(to_install, { summary = true })
+			end)
+		end
+	end
+
+	-- Enable Treesitter highlighting for all installed parsers
+	vim.defer_fn(function()
+		for _, lang in ipairs(ts_config.get_installed("parsers")) do
+			vim.treesitter.language.add(lang)
+		end
+	end, 100)
+end
 
 vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
 vim.keymap.set("n", "<leader>q", ":quit<CR>")

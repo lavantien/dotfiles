@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.2] - 2026-01-10
+
+### Added
+
+**Neovim Treesitter Support**
+- Added tree-sitter-cli installation to bootstrap scripts (Linux/macOS/Windows)
+- Implemented auto-install of 32 Treesitter parsers on Neovim startup
+- Parsers: lua, vim, vimdoc, query, c, cpp, rust, go, python, java, c_sharp, php, scala, javascript, typescript, tsx, jsx, html, css, scss, svelte, yaml, json, toml, markdown, markdown_inline, bash, powershell, dockerfile, typst
+- Cross-platform parser installation with automatic dependency checking
+
+### Changed
+
+**Neovim 0.12 Compatibility**
+- Updated nvim-treesitter configuration for v2.0 API (complete rewrite)
+- Replaced deprecated `nvim-treesitter.configs` with new `nvim-treesitter.config`
+- Removed `ensure_installed`, `auto_install`, `sync_install` options (no longer supported)
+- Implemented manual parser installation via Lua API with startup auto-install
+- Added conditional Treesitter language loading for installed parsers
+
+**Linux Platform**
+- Removed powershell_es LSP from Neovim configuration (requires pwsh on Linux)
+- Treesitter PowerShell parser remains available for syntax highlighting
+
+### Fixed
+
+- Neovim LSP error when opening PowerShell files on Linux (pwsh not found)
+- Treesitter parsers not installing automatically with new nvim-treesitter v2.0
+
+---
+
 ## [5.1] - 2026-01-10
 
 ### Changed
