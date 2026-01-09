@@ -26,52 +26,46 @@ Production-grade dotfiles for Windows 11, Linux (Ubuntu/Fedora/Arch), and macOS.
 
 ### Prerequisites (Optional - for Docker/Kubernetes development)
 
-If you need Docker and Kubernetes support, install these first:
+**Note**: bootstrap.sh installs kubectl, helm, and docker-compose automatically. Only install Docker Desktop manually if you need the full GUI and development experience.
 
-**Docker Engine (Ubuntu)**
+**Docker Desktop for Linux (Ubuntu 22.04/24.04)**
 ```bash
-# Add Docker's official GPG key and repository
-sudo apt update
-sudo apt install -y ca-certificates curl
+# Set up Docker's apt repository
+sudo apt-get update
+sudo apt-get install -y ca-certificates curl
 sudo install -m 0755 -d /etc/apt/keyrings
 sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
 sudo chmod a+r /etc/apt/keyrings/docker.asc
 
 # Add the repository
-sudo tee /etc/apt/sources.list.d/docker.sources <<EOF
-Types: deb
-URIs: https://download.docker.com/linux/ubuntu
-Suites: $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")
-Components: stable
-Signed-By: /etc/apt/keyrings/docker.asc
-EOF
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update
 
-# Install Docker
-sudo apt update
-sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+# Download and install Docker Desktop
+wget https://desktop.docker.com/linux/main/amd64/docker-desktop-amd64.deb
+sudo apt-get install ./docker-desktop-amd64.deb
 
-# Add your user to docker group (optional, to avoid sudo)
-sudo usermod -aG docker $USER
-newgrp docker  # Log out and back in for this to take effect
+# Start Docker Desktop
+systemctl --user start docker-desktop
+
+# Enable Docker Desktop to start on sign-in
+systemctl --user enable docker-desktop
 ```
 
-**minikube (Local Kubernetes)**
+For other Linux distributions, see [official Docker Desktop docs](https://docs.docker.com/desktop/setup/install/linux/).
+
+**minikube (Local Kubernetes - Optional)**
 ```bash
 # Download and install minikube
 curl -LO https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64
 sudo install minikube-linux-amd64 /usr/local/bin/minikube
 rm minikube-linux-amd64
 
-# Start minikube (requires Docker or a VM manager)
+# Start minikube (requires Docker Desktop or a VM manager)
 minikube start
-```
-
-**kubectl** (installed by bootstrap.sh, or manually):
-```bash
-# Via curl (latest stable release)
-curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-chmod +x kubectl
-sudo mv kubectl /usr/local/bin/kubectl
 ```
 
 ### Dotfiles Installation
