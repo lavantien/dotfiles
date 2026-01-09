@@ -30,6 +30,7 @@ if command -v lazygit >/dev/null 2>&1; then
     alias lg="lazygit"
 fi
 
+# Editor alias - prefers Neovim 0.12 (installed via snap edge)
 if command -v nvim >/dev/null 2>&1; then
     alias n="nvim"
 elif command -v vim >/dev/null 2>&1; then

@@ -1,0 +1,315 @@
+#!/bin/bash
+# Git pre-commit hook - Runs formatters, linters, and type checkers on staged files
+# Supports: Go, Rust, Python, JS/TS, C/C++, C#, PHP, Bash, Scala, Lua, Docker Compose, Helm, Kubernetes
+
+# Detect if being sourced for testing (skip execution)
+if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
+    # Being sourced - set flag and skip to function definitions
+    PRE_COMMIT_HOOK_SOURCED=1
+else
+    set -e
+fi
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+NC='\033[0m' # No Color
+
+# Track if any changes were made or issues found
+CHANGES_MADE=0
+ISSUES_FOUND=0
+
+# Get list of staged files - only when not sourced
+if [[ -z "$PRE_COMMIT_HOOK_SOURCED" ]]; then
+    STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -v '^vendor/' | grep -v '^node_modules/' || true)
+
+    if [ -z "$STAGED_FILES" ]; then
+        exit 0
+    fi
+
+    echo -e "${GREEN}Running pre-commit checks...${NC}"
+fi
+
+# Function to check if command exists
+cmd_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+# Function to run formatter and re-stage files
+run_formatter() {
+    local files="$1"
+    local cmd="$2"
+    local name="$3"
+
+    if [ -z "$files" ]; then
+        return
+    fi
+
+    echo -e "  ${YELLOW}Running $name...${NC}"
+
+    if eval "$cmd" $files 2>/dev/null; then
+        # Re-stage formatted files
+        echo "$files" | xargs git add 2>/dev/null || true
+        CHANGES_MADE=1
+    else
+        echo -e "  ${RED}$name failed or made changes${NC}"
+        ISSUES_FOUND=1
+    fi
+}
+
+# Main execution block - process files when not sourced
+if [[ -z "$PRE_COMMIT_HOOK_SOURCED" ]]; then
+
+# Go files (*.go)
+GO_FILES=$(echo "$STAGED_FILES" | grep -E '\.go$' || true)
+if [ -n "$GO_FILES" ]; then
+    if cmd_exists gofmt; then
+        run_formatter "$GO_FILES" "gofmt -w" "gofmt"
+    fi
+    if cmd_exists goimports; then
+        run_formatter "$GO_FILES" "goimports -w" "goimports"
+    fi
+    if cmd_exists golangci-lint; then
+        echo -e "  ${YELLOW}Running golangci-lint...${NC}"
+        if ! golangci-lint run $GO_FILES 2>/dev/null; then
+            echo -e "  ${RED}golangci-lint found issues${NC}"
+            ISSUES_FOUND=1
+        fi
+    fi
+    if cmd_exists go; then
+        echo -e "  ${YELLOW}Running go vet...${NC}"
+        if ! go vet $GO_FILES 2>/dev/null; then
+            echo -e "  ${RED}go vet found issues${NC}"
+            ISSUES_FOUND=1
+        fi
+    fi
+fi
+
+# Rust files (*.rs)
+RUST_FILES=$(echo "$STAGED_FILES" | grep -E '\.rs$' || true)
+if [ -n "$RUST_FILES" ]; then
+    if cmd_exists rustfmt; then
+        run_formatter "$RUST_FILES" "rustfmt" "rustfmt"
+    fi
+    if cmd_exists cargo; then
+        echo -e "  ${YELLOW}Running cargo check...${NC}"
+        if ! cargo check 2>/dev/null; then
+            echo -e "  ${RED}cargo check failed${NC}"
+            ISSUES_FOUND=1
+        fi
+        echo -e "  ${YELLOW}Running clippy...${NC}"
+        if ! cargo clippy --all-targets --all-features 2>/dev/null; then
+            echo -e "  ${RED}clippy found issues${NC}"
+            ISSUES_FOUND=1
+        fi
+    fi
+fi
+
+# Python files (*.py)
+PY_FILES=$(echo "$STAGED_FILES" | grep -E '\.py$' || true)
+if [ -n "$PY_FILES" ]; then
+    if cmd_exists ruff; then
+        run_formatter "$PY_FILES" "ruff format" "ruff format"
+        echo -e "  ${YELLOW}Running ruff check...${NC}"
+        if ! ruff check $PY_FILES --fix 2>/dev/null; then
+            echo -e "  ${RED}ruff check found issues${NC}"
+            ISSUES_FOUND=1
+        fi
+    fi
+    if cmd_exists mypy; then
+        echo -e "  ${YELLOW}Running mypy...${NC}"
+        if ! mypy $PY_FILES 2>/dev/null; then
+            echo -e "  ${YELLOW}mypy found type issues (non-blocking)${NC}"
+        fi
+    fi
+fi
+
+# JavaScript/TypeScript files (*.js, *.ts, *.tsx, *.jsx)
+JS_FILES=$(echo "$STAGED_FILES" | grep -E '\.(js|ts|tsx|jsx)$' || true)
+if [ -n "$JS_FILES" ]; then
+    if cmd_exists prettier; then
+        run_formatter "$JS_FILES" "prettier --write" "prettier"
+    fi
+    if cmd_exists eslint; then
+        echo -e "  ${YELLOW}Running eslint...${NC}"
+        if ! eslint $JS_FILES --fix 2>/dev/null; then
+            echo -e "  ${RED}eslint found issues${NC}"
+            ISSUES_FOUND=1
+        fi
+    fi
+    if cmd_exists tsc; then
+        echo -e "  ${YELLOW}Running tsc...${NC}"
+        if ! tsc --noEmit 2>/dev/null; then
+            echo -e "  ${YELLOW}tsc found type issues (non-blocking)${NC}"
+        fi
+    fi
+fi
+
+# HTML files (*.html, *.htm)
+HTML_FILES=$(echo "$STAGED_FILES" | grep -E '\.(html|htm)$' || true)
+if [ -n "$HTML_FILES" ]; then
+    if cmd_exists prettier; then
+        run_formatter "$HTML_FILES" "prettier --write" "prettier (HTML)"
+    fi
+fi
+
+# CSS/SCSS/SASS files (*.css, *.scss, *.sass)
+CSS_FILES=$(echo "$STAGED_FILES" | grep -E '\.(css|scss|sass)$' || true)
+if [ -n "$CSS_FILES" ]; then
+    if cmd_exists prettier; then
+        run_formatter "$CSS_FILES" "prettier --write" "prettier (CSS)"
+    fi
+    if cmd_exists stylelint; then
+        echo -e "  ${YELLOW}Running stylelint...${NC}"
+        if ! stylelint $CSS_FILES --fix 2>/dev/null; then
+            echo -e "  ${RED}stylelint found issues${NC}"
+            ISSUES_FOUND=1
+        fi
+    fi
+fi
+
+# Svelte files (*.svelte)
+SVELTE_FILES=$(echo "$STAGED_FILES" | grep -E '\.svelte$' || true)
+if [ -n "$SVELTE_FILES" ]; then
+    if cmd_exists prettier; then
+        run_formatter "$SVELTE_FILES" "prettier --write" "prettier (Svelte)"
+    fi
+    if cmd_exists svelte-check; then
+        echo -e "  ${YELLOW}Running svelte-check...${NC}"
+        if ! svelte-check 2>/dev/null; then
+            echo -e "  ${YELLOW}svelte-check found issues (non-blocking)${NC}"
+        fi
+    fi
+fi
+
+# C/C++ files (*.c, *.cpp, *.h, *.hpp)
+C_FILES=$(echo "$STAGED_FILES" | grep -E '\.(c|cpp|h|hpp)$' || true)
+if [ -n "$C_FILES" ]; then
+    if cmd_exists clang-format; then
+        run_formatter "$C_FILES" "clang-format -i" "clang-format"
+    fi
+    if cmd_exists clang-tidy; then
+        echo -e "  ${YELLOW}Running clang-tidy...${NC}"
+        for file in $C_FILES; do
+            if [ -f "$file" ]; then
+                if ! clang-tidy "$file" 2>/dev/null; then
+                    echo -e "  ${YELLOW}clang-tidy found issues in $file (non-blocking)${NC}"
+                fi
+            fi
+        done
+    fi
+fi
+
+# C# files (*.cs)
+CS_FILES=$(echo "$STAGED_FILES" | grep -E '\.cs$' || true)
+if [ -n "$CS_FILES" ]; then
+    if cmd_exists dotnet; then
+        echo -e "  ${YELLOW}Running dotnet format...${NC}"
+        if ! dotnet format 2>/dev/null; then
+            echo -e "  ${YELLOW}dotnet format made changes or had issues${NC}"
+        fi
+    fi
+fi
+
+# PHP files (*.php)
+PHP_FILES=$(echo "$STAGED_FILES" | grep -E '\.php$' || true)
+if [ -n "$PHP_FILES" ]; then
+    if cmd_exists pint; then
+        run_formatter "$PHP_FILES" "pint" "pint"
+    fi
+    if cmd_exists phpstan; then
+        echo -e "  ${YELLOW}Running phpstan...${NC}"
+        if ! phpstan analyse $PHP_FILES 2>/dev/null; then
+            echo -e "  ${YELLOW}phpstan found issues (non-blocking)${NC}"
+        fi
+    fi
+fi
+
+# Bash/Shell files (*.sh, *.bash)
+SH_FILES=$(echo "$STAGED_FILES" | grep -E '\.(sh|bash)$' || true)
+if [ -n "$SH_FILES" ]; then
+    if cmd_exists shfmt; then
+        run_formatter "$SH_FILES" "shfmt -w" "shfmt"
+    fi
+    if cmd_exists shellcheck; then
+        echo -e "  ${YELLOW}Running shellcheck...${NC}"
+        if ! shellcheck $SH_FILES 2>/dev/null; then
+            echo -e "  ${RED}shellcheck found issues${NC}"
+            ISSUES_FOUND=1
+        fi
+    fi
+fi
+
+# Scala files (*.scala)
+SCALA_FILES=$(echo "$STAGED_FILES" | grep -E '\.scala$' || true)
+if [ -n "$SCALA_FILES" ]; then
+    if cmd_exists scalafmt; then
+        run_formatter "$SCALA_FILES" "scalafmt" "scalafmt"
+    fi
+    if cmd_exists scalafix; then
+        echo -e "  ${YELLOW}Running scalafix...${NC}"
+        if ! scalafix $SCALA_FILES 2>/dev/null; then
+            echo -e "  ${YELLOW}scalafix found issues (non-blocking)${NC}"
+        fi
+    fi
+fi
+
+# Lua files (*.lua)
+LUA_FILES=$(echo "$STAGED_FILES" | grep -E '\.lua$' || true)
+if [ -n "$LUA_FILES" ]; then
+    if cmd_exists stylua; then
+        run_formatter "$LUA_FILES" "stylua" "stylua"
+    fi
+    if cmd_exists selene; then
+        echo -e "  ${YELLOW}Running selene...${NC}"
+        if ! selene $LUA_FILES 2>/dev/null; then
+            echo -e "  ${YELLOW}selene found issues (non-blocking)${NC}"
+        fi
+    fi
+fi
+
+# YAML files (*.yaml, *.yml) - Docker Compose, Helm, Kubernetes
+YAML_FILES=$(echo "$STAGED_FILES" | grep -E '\.(yaml|yml)$' || true)
+if [ -n "$YAML_FILES" ]; then
+    if cmd_exists prettier; then
+        run_formatter "$YAML_FILES" "prettier --write" "prettier (YAML)"
+    fi
+    if cmd_exists yamllint; then
+        echo -e "  ${YELLOW}Running yamllint...${NC}"
+        if ! yamllint $YAML_FILES 2>/dev/null; then
+            echo -e "  ${RED}yamllint found issues${NC}"
+            ISSUES_FOUND=1
+        fi
+    fi
+fi
+
+# Dockerfile files
+DOCKER_FILES=$(echo "$STAGED_FILES" | grep -E 'Dockerfile|\.dockerfile$' || true)
+if [ -n "$DOCKER_FILES" ]; then
+    if cmd_exists hadolint; then
+        echo -e "  ${YELLOW}Running hadolint...${NC}"
+        for file in $DOCKER_FILES; do
+            if [ -f "$file" ]; then
+                if ! hadolint "$file" 2>/dev/null; then
+                    echo -e "  ${YELLOW}hadolint found issues in $file (non-blocking)${NC}"
+                fi
+            fi
+        done
+    fi
+fi
+
+# Summary
+if [ $CHANGES_MADE -eq 1 ]; then
+    echo -e "${GREEN}Formatters applied and files re-staged.${NC}"
+fi
+
+if [ $ISSUES_FOUND -eq 1 ]; then
+    echo -e "${RED}Pre-commit checks found issues. Please fix them before committing.${NC}"
+    exit 1
+fi
+
+echo -e "${GREEN}Pre-commit checks passed!${NC}"
+exit 0
+
+fi  # End of main execution block

@@ -7,10 +7,6 @@ lazy-lock.json
 nul
 coverage/
 .claude/settings.local.json
-.claude/ralph-loop.local.md
-.claude/.ralph-loop.local.md
-coverage-core.json
-coverage-core.xml
-coverage-detailed.xml
-coverage-ps.xml
-coverage-bash.json
+.claude/*.local.md
+coverage-*.json
+coverage-*.xml

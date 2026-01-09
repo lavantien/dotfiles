@@ -1,0 +1,67 @@
+#!/bin/bash
+# Git commit-msg hook - Enforces Conventional Commits specification
+# Validates: type(scope): subject format with 72-char subject limit
+
+COMMIT_MSG_FILE=$1
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+
+# Skip validation for merge commits
+if echo "$COMMIT_MSG" | grep -qE "^Merge branch|^Merge remote-tracking"; then
+    exit 0
+fi
+
+# Skip validation for revert commits (they follow their own convention)
+if echo "$COMMIT_MSG" | grep -qE "^Revert "; then
+    exit 0
+fi
+
+# Get the first line (subject)
+SUBJECT=$(echo "$COMMIT_MSG" | head -n 1)
+
+# Check for empty commit message
+if [ -z "$SUBJECT" ]; then
+    echo "ERROR: Commit message cannot be empty." >&2
+    echo "Expected format: type(scope): description" >&2
+    echo "Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert" >&2
+    exit 1
+fi
+
+# Conventional Commits pattern: type(scope): description
+# Type is required, scope is optional
+CONVENTIONAL_PATTERN="^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\(.+\))?: .{1,72}"
+
+if ! echo "$SUBJECT" | grep -qE "$CONVENTIONAL_PATTERN"; then
+    echo "ERROR: Commit message does not follow Conventional Commits format." >&2
+    echo "" >&2
+    echo "Expected format: type(scope): description" >&2
+    echo "" >&2
+    echo "Type (required): feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert" >&2
+    echo "Scope (optional): component or module in parentheses" >&2
+    echo "Description: brief description (max 72 characters)" >&2
+    echo "" >&2
+    echo "Examples:" >&2
+    echo "  feat(api): add user authentication endpoint" >&2
+    echo "  fix(auth): resolve token expiration issue" >&2
+    echo "  docs: update installation instructions" >&2
+    echo "  test(auth): add unit tests for login flow" >&2
+    echo "" >&2
+    echo "Your subject: $SUBJECT" >&2
+    echo "Subject length: ${#SUBJECT} characters (max 72)" >&2
+    exit 1
+fi
+
+# Check for blank line after subject
+# Get lines 2-3 (the line immediately after subject)
+SECOND_LINE=$(echo "$COMMIT_MSG" | sed -n '2p')
+
+if [ -n "$SECOND_LINE" ]; then
+    echo "ERROR: Commit message must have a blank line between subject and body." >&2
+    echo "" >&2
+    echo "Subject: $SUBJECT" >&2
+    echo "Second line: $SECOND_LINE" >&2
+    echo "" >&2
+    echo "Please add a blank line after the subject line." >&2
+    exit 1
+fi
+
+exit 0

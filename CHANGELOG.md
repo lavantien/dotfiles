@@ -7,6 +7,134 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.0] - 2026-01-10
+
+### Major Changes
+
+**Linux Platform Overhaul - Ubuntu 26.04 LTS Ready**
+- Complete rewrite of Linux platform installation in `bootstrap/platforms/linux.sh`
+- Homebrew-first package priority on Linux (uses brew before apt when available)
+- Automatic Homebrew installation on Linux without prompts
+- Git reinstallation via brew after uninstalling apt git
+- VSCode now installed via official Microsoft apt repository (not manual .deb)
+- dotnet-sdk 10.0 installed via Microsoft apt repository
+- WezTerm installation via official apt.fury.io wez repository
+- Enhanced package detection with `command -v` fallbacks
+- Removed gpt-researcher integration and references
+
+**Testing & Coverage Improvements**
+- Reintroduced bashcov for accurate bash coverage (47.51% bash, 25% combined)
+- bashcov properly tracks sourced files (unlike kcov)
+- Updated coverage strategy: bashcov (primary) with kcov fallback
+- Coverage reporting enhanced with detailed notes per platform
+
+**Git Hooks Enhancement**
+- Rewrote pre-commit hooks with expanded language support
+- Comprehensive conventional commits validation (type, scope, format)
+- Pre-commit auto-format: prettier, shfmt, gofmt, rustfmt, dotnet format
+- Pre-commit linting: eslint, golangci-lint, clippy, shellcheck, mypy
+- Separated git hooks from `hooks/` to `.config/git/hooks/` for proper git integration
+
+**Bootstrap Refactoring**
+- Added PATH fix functions for robustness
+- Enhanced error handling and recovery mechanisms
+- Improved platform-specific package installation ordering
+- Added WezTerm installation to bootstrap phases
+- Package priority: brew > official repos > apt
+
+### Added
+
+**New Documentation Files**
+- `ARCHITECTURE.md` - System architecture diagrams and design principles
+- `TOOLS.md` - Complete language tool matrix (LSPs, linters, formatters)
+- `TESTING.md` - Testing documentation and coverage procedures
+- `HISTORY.md` - Legacy museum with 3-year project history
+- `HOOKS.md` - Git hooks documentation (moved from hooks/README.md)
+
+**New Configuration Files**
+- `.config/opencode/opencode.linux.json` - Linux-specific OpenCode settings
+- `.config/opencode/opencode.macos.json` - macOS-specific OpenCode settings
+- `.config/opencode/opencode.windows.json` - Windows-specific OpenCode settings
+- `.config/git/hooks/pre-commit` - Bash pre-commit hook
+- `.config/git/hooks/commit-msg` - Bash commit-msg hook
+- `.config/nvim/init.lua` - Neovim config in proper XDG location
+
+**New Test Files**
+- `tests/bash/git-hooks_test.bats` - Git hooks validation tests
+- `tests/bash/bootstrap_new_tools_test.bats` - New tools installation tests
+- `tests/powershell/bootstrap_new_tools.Tests.ps1` - PowerShell new tools tests
+- `tests/powershell/windows-platform.Tests.ps1` - Windows platform tests
+
+**Quality & Hooks Scripts**
+- `.claude/hooks/` - Claude Code hooks directory
+- `.claude/quality-check.sh` - Bash quality check script
+- `.claude/quality-check.ps1` - PowerShell quality check script
+- `.claude/statusline.sh` - Claude Code statusline configuration
+- `.claude/CLAUDE.md` - Project-specific Claude instructions
+
+### Changed
+
+**Bootstrap Script**
+- `bootstrap/bootstrap.sh` - Enhanced with new platform detection and package priority
+- `bootstrap/lib/common.sh` - Added fix_path_issues and fix_package_states functions
+- `bootstrap/platforms/linux.sh` - Complete rewrite with 677 lines of improvements
+- `bootstrap/platforms/macos.sh` - Enhanced with 99 lines of additions
+
+**Deployment**
+- `deploy.sh` - Added 239 lines of enhancements for better deployment handling
+- Enhanced XDG_CONFIG_HOME support across all configs
+- Better platform-specific config file handling
+
+**Git Scripts**
+- `git-update-repos.sh` - Enhanced with 111 lines of improvements
+- Better error handling and progress reporting
+
+**Update Script**
+- `update-all.sh` - Enhanced package manager detection and updates
+
+**README Optimization**
+- Reduced from 1925 to ~800 lines (~60% reduction)
+- Removed content duplications
+- Consolidated sections for higher information density
+- Reduced mermaid diagrams from 6 to 1
+- Better organization with links to new documentation files
+
+**Hooks**
+- `hooks/claude/quality-check.ps1` - Enhanced with comprehensive quality checks
+- Git hooks moved to proper `.config/git/hooks/` location
+
+### Removed
+
+**Deprecated Files**
+- `.env.gpt-researcher` - gpt-researcher integration removed
+- `.config/opencode/opencode.json` - Split into platform-specific files
+- `wezterm.lua` - Moved to `.config/wezterm/wezterm.lua`
+
+### Fixed
+
+**Coverage Reporting**
+- Fixed bash coverage to use bashcov for accurate sourced file tracking
+- Fixed badge calculation to reflect real coverage numbers
+
+**Platform-Specific Issues**
+- Fixed package installation priority on Linux
+- Fixed git installation to use brew version instead of apt
+- Fixed VSCode installation to use official apt repo
+- Fixed dotnet-sdk installation with correct package name
+
+### Testing
+
+**Thoroughly tested on:**
+- Ubuntu 26.04 LTS - All bootstrap phases, package installations, git hooks
+- Windows 11 - PowerShell wrapper execution, Git Bash integration, platform-specific tools
+
+**Coverage Results:**
+- Bash: 47.51% (1529/3218 lines) via bashcov 3.2.0
+- PowerShell: 10.02% (228/2276 commands) via Pester 5.7.1
+- Combined: 25.0% (weighted: 60% PS + 40% Bash)
+
+---
+
 ## [4.4] - 2026-01-07
 
 ### Changed
@@ -162,7 +290,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Legacy Museum` section in README - Documents historical files with commit hashes
   - git-clone-all.sh: 2.5 years old (June 2023)
   - assets/: 1.5 years old (June 2023 - July 2024)
-  - typos.toml, update.sh, .aider*, .env.gpt-researcher: 2025 era
+  - typos.toml, update.sh, .aider*: 2025 era
 
 ### Changed
 
@@ -328,6 +456,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date | Major Changes |
 |---------|------|---------------|
+| 5.0 | 2026-01-10 | Linux platform overhaul, Ubuntu 26.04 LTS ready, Homebrew-first, git hooks enhancement, bashcov coverage |
 | 4.4 | 2026-01-07 | git-update-repos migrated to gh CLI for public+private repo support |
 | 4.3 | 2026-01-07 | Fixed goimports reinstall, removed Ruby/bashcov, kcov-only coverage |
 | 4.2 | 2026-01-03 | Bootstrap idempotency fixes, PATH detection improvements |
@@ -373,7 +502,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v4.4...HEAD
+[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.0...HEAD
+[5.0]: https://github.com/lavantien/dotfiles/compare/v4.4...v5.0
 [4.4]: https://github.com/lavantien/dotfiles/compare/v4.3...v4.4
 [4.3]: https://github.com/lavantien/dotfiles/compare/v4.2...v4.3
 [4.2]: https://github.com/lavantien/dotfiles/compare/v4.1...v4.2

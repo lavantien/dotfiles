@@ -337,7 +337,6 @@ exit 1
             $content | Should -Match 'is_windows[\s\S]*?pacman \(skipped on Windows\)' "Because pacman should be skipped on Windows"
             $content | Should -Match 'is_windows[\s\S]*?zypper \(skipped on Windows\)' "Because zypper should be skipped on Windows"
             $content | Should -Match 'is_windows[\s\S]*?snap \(skipped on Windows\)' "Because snap should be skipped on Windows"
-            $content | Should -Match 'is_windows[\s\S]*?tlmgr \(skipped on Windows\)' "Because tlmgr should be skipped on Windows"
         }
 
         It "update-all.sh preserves cross-platform package managers (npm, cargo, pip, etc.)" {

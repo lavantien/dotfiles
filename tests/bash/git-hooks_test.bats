@@ -17,7 +17,21 @@ setup() {
     # Copy pre-commit hook
     # tests/bash/ -> tests/ -> repo root
     export SCRIPT_DIR="$(cd "$(dirname "$BATS_TEST_DIRNAME")/.." && pwd)"
-    export HOOKS_DIR="$SCRIPT_DIR/hooks/git"
+    export HOOKS_DIR="$SCRIPT_DIR/.config/git/hooks"
+
+    # Create a dummy staged file so hook doesn't exit early
+    touch dummy.txt
+    git add dummy.txt
+
+    # Stub the git diff command to return our dummy file
+    git() {
+        if [[ "$1" == "diff" ]]; then
+            echo "dummy.txt"
+        else
+            command git "$@"
+        fi
+    }
+    export -f git
 
     # Source the pre-commit hook to access functions
     source "$HOOKS_DIR/pre-commit"

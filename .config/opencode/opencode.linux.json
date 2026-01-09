@@ -1,0 +1,33 @@
+{
+    "$schema": "https://opencode.ai/config.json",
+    "mcp": {
+        "context7": {
+            "type": "local",
+            "command": [
+                "npx",
+                "-y",
+                "@upstash/context7-mcp"
+            ],
+            "timeout": 30000
+        },
+        "playwright": {
+            "type": "local",
+            "command": [
+                "npx",
+                "-y",
+                "@playwright/mcp"
+            ],
+            "timeout": 30000
+        },
+        "repomix": {
+            "type": "local",
+            "command": [
+                "npx",
+                "-y",
+                "repomix",
+                "--mcp"
+            ],
+            "timeout": 30000
+        }
+    }
+}

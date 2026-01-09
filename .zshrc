@@ -42,7 +42,7 @@ ZSH_THEME="half-life"
 
 # Only load Oh My Zsh if installed
 if [ -d "$ZSH" ]; then
-    plugins=(zsh-interactive-cd zsh-autosuggestions copypath copyfile)
+    plugins=(zsh-interactive-cd zsh-autosuggestions zsh-syntax-highlighting copypath copyfile)
     source $ZSH/oh-my-zsh.sh
 fi
 
@@ -113,7 +113,7 @@ if command -v fzf >/dev/null 2>&1; then
     eval "$(fzf --zsh)"
 fi
 
-# zsh-syntax-highlighting
+# zsh-syntax-highlighting (fallback if not loaded by oh-my-zsh plugins)
 if [ -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
     source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
@@ -121,6 +121,16 @@ fi
 # macOS: check for Homebrew-installed zsh-syntax-highlighting
 if [ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
     source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
+
+# Linux Homebrew: check for zsh-syntax-highlighting
+if [ -f /home/linuxbrew/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+    source /home/linuxbrew/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
+
+# Custom oh-my-zsh plugins (linked from brew)
+if [ -f "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]; then
+    source "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 fi
 
 # ============================================================================

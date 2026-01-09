@@ -9,8 +9,8 @@ BOOTSTRAP_DIR="$SCRIPT_DIR/bootstrap"
 
 # Check if bootstrap directory exists
 if [ ! -d "$BOOTSTRAP_DIR" ]; then
-    echo "Error: Bootstrap directory not found at $BOOTSTRAP_DIR"
-    exit 1
+	echo "Error: Bootstrap directory not found at $BOOTSTRAP_DIR"
+	exit 1
 fi
 
 # Delegate to actual bootstrap script

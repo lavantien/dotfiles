@@ -30,7 +30,8 @@
                 "/c",
                 "npx",
                 "-y",
-                "@repomix-mcp/mcp"
+                "repomix",
+                "--mcp"
             ],
             "timeout": 30000
         }
