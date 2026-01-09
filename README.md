@@ -28,20 +28,33 @@ Production-grade dotfiles for Windows 11, Linux (Ubuntu/Fedora/Arch), and macOS.
 
 **Note**: bootstrap.sh installs kubectl, helm, and docker-compose automatically. Only install Docker Desktop manually if you need the full GUI and development experience.
 
-**Docker Desktop for Linux (Ubuntu 22.04/24.04)**
+**Docker Desktop for Linux (Ubuntu 22.04/24.04/25.04+)**
 
 Per [official Docker docs](https://docs.docker.com/desktop/setup/install/linux/ubuntu/):
 
 ```bash
-# Prerequisite: install gnome-terminal (required for Docker Desktop integrated terminal)
-# Skip if you're already using GNOME desktop
-sudo apt install gnome-terminal
+# Step 1: Prerequisites
+sudo apt update
+sudo apt install -y ca-certificates curl gnome-terminal
 
-# Download the latest Docker Desktop DEB package
+# Step 2: Add Docker's official GPG key
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+# Step 3: Add the repository to Apt sources
+# Uses UBUNTU_CODENAME -> VERSION_CODENAME -> noble fallback for future Ubuntu releases
+sudo tee /etc/apt/sources.list.d/docker.sources <<EOF
+Types: deb
+URIs: https://download.docker.com/linux/ubuntu
+Suites: $(. /etc/os-release && echo "${UBUNTU_CODENAME:-${VERSION_CODENAME:-noble}}")
+Components: stable
+Signed-By: /etc/apt/keyrings/docker.asc
+EOF
+
+# Step 4: Download and install Docker Desktop
+sudo apt update
 wget https://desktop.docker.com/linux/main/amd64/docker-desktop-amd64.deb
-
-# Install Docker Desktop
-sudo apt-get update
 sudo apt-get install ./docker-desktop-amd64.deb
 ```
 
@@ -55,6 +68,21 @@ To enable Docker Desktop to start automatically on sign-in:
 ```bash
 systemctl --user enable docker-desktop
 ```
+
+**Docker Hub Sign-in (Optional - for higher pull limits)**
+
+Docker Desktop for Linux uses `pass` to store credentials in GPG-encrypted files. Initialize before signing in:
+
+```bash
+# Generate a GPG key (enter name and email when prompted)
+gpg --generate-key
+
+# Copy your GPG ID from the output (e.g., "3ABCD1234EF56G78")
+# Initialize pass with your GPG ID
+pass init YOUR_GPG_ID_HERE
+```
+
+Now you can sign in to Docker Desktop with increased pull limits. For more details, see [official sign-in docs](https://docs.docker.com/desktop/setup/sign-in/).
 
 For other Linux distributions (Debian, Fedora, Arch, RHEL), see [official docs](https://docs.docker.com/desktop/setup/install/linux/).
 
