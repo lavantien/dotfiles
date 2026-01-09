@@ -172,6 +172,11 @@ install_foundation() {
 		install_wezterm_apt
 	fi
 
+	# Install Google Chrome (Linux via .deb, macOS via brew cask later)
+	if [[ "$OS" == "linux" ]] && [[ -f /etc/debian_version ]]; then
+		install_google_chrome
+	fi
+
 	# Install IosevkaTerm Nerd Font (needed for WezTerm config)
 	if [[ "$OS" == "linux" ]]; then
 		install_nerd_fonts "IosevkaTerm" "IosevkaTerm"

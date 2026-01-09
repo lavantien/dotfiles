@@ -866,6 +866,42 @@ install_wezterm_apt() {
 }
 
 # ============================================================================
+# GOOGLE CHROME (Official .deb from Google)
+# ============================================================================
+install_google_chrome() {
+	if cmd_exists google-chrome; then
+		track_skipped "google-chrome" "web browser"
+		return 0
+	fi
+
+	log_step "Installing Google Chrome..."
+
+	local deb_url="https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
+	local tmp_deb="/tmp/google-chrome-stable_current_amd64.deb"
+
+	# Download .deb file
+	if ! run_cmd "wget -q --show-progress -O '$tmp_deb' '$deb_url'"; then
+		log_error "Failed to download Google Chrome .deb"
+		track_failed "google-chrome" "web browser"
+		return 1
+	fi
+
+	# Install .deb file
+	if run_cmd "sudo apt-get install -y '$tmp_deb' >/dev/null 2>&1"; then
+		# Clean up downloaded .deb
+		rm -f "$tmp_deb" 2>/dev/null || true
+		track_installed "google-chrome" "web browser"
+		log_success "Google Chrome installed"
+		return 0
+	else
+		log_error "Failed to install Google Chrome"
+		rm -f "$tmp_deb" 2>/dev/null || true
+		track_failed "google-chrome" "web browser"
+		return 1
+	fi
+}
+
+# ============================================================================
 # FONTS (Nerd Fonts from GitHub releases)
 # ============================================================================
 install_nerd_fonts() {
