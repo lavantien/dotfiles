@@ -93,7 +93,7 @@ up  # or update - runs update-all
 | **deploy** | Deploy configuration files (Neovim, git hooks, shell aliases, Claude Code hooks) |
 | **update-all** | Update all package managers and system packages (20+ managers supported) |
 | **git-update-repos** | Clone/update ALL GitHub repos via gh CLI, optionally sync system instructions |
-| **sync-system-instructions** | Sync AI system instructions (CLAUDE.md, AGENTS.md, GEMINI.md) to all repos |
+| **sync-system-instructions** | Sync AI system instructions (CLAUDE.md, AGENTS.md, GEMINI.md, RULES.md) to all repos |
 | **healthcheck** | Check system health - verify tools installed, configs in place, git hooks working |
 | **backup** | Create timestamped backup before major changes |
 | **restore** | Restore from a previous backup (`--list-backups` to see available) |
@@ -442,14 +442,23 @@ Fetches ALL your GitHub repositories (public and private) and keeps them synchro
 
 **sync-system-instructions**
 
-Sync AI system instructions to all repos:
+Sync AI system instructions to all repos. Reads from dotfiles (source of truth) and copies to target repos:
 
 ```bash
 ./sync-system-instructions.sh
 
+# Specify custom base directory (default: ~/dev/github)
+./sync-system-instructions.sh -d ~/dev/git
+
 # Sync + commit + push (for headless Claude Code)
 ./sync-system-instructions.sh -c -p
 ```
+
+Files synced:
+- `.claude/CLAUDE.md` → `CLAUDE.md` (project-specific AI instructions)
+- `AGENTS.md` (agent definitions)
+- `GEMINI.md` (Gemini-specific instructions)
+- `RULES.md` (coding rules and standards)
 
 ---
 

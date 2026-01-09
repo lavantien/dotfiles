@@ -23,15 +23,17 @@ CYAN='\033[0;36m'
 NC='\033[0m'
 
 # Markdown files to sync to all repos
+# Format: "source_path:target_name" - source is relative to dotfiles root, target is the filename in destination repos
 MARKDOWN_FILES=(
-    "CLAUDE.md"
-    "AGENTS.md"
-    "GEMINI.md"
-    "RULES.md"
+    ".claude/CLAUDE.md:CLAUDE.md"
+    "AGENTS.md:AGENTS.md"
+    "GEMINI.md:GEMINI.md"
+    "RULES.md:RULES.md"
 )
 
-# Source directory for markdown files (dotfiles repo location)
-DOTFILES_DIR="$HOME/dev/github/dotfiles"
+# Auto-detect dotfiles directory from script location
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOTFILES_DIR="$SCRIPT_DIR"
 
 # Parse arguments
 while getopts "d:cp" opt; do
@@ -82,15 +84,18 @@ copy_markdown_files() {
     local copied_count=0
     local has_changes=false
 
-    for md_file in "${MARKDOWN_FILES[@]}"; do
-        local source_file="$DOTFILES_DIR/$md_file"
-        local target_file="$repo_path/$md_file"
+    for md_mapping in "${MARKDOWN_FILES[@]}"; do
+        # Parse "source_path:target_name" format
+        local source_path="${md_mapping%%:*}"
+        local target_name="${md_mapping##*:}"
+        local source_file="$DOTFILES_DIR/$source_path"
+        local target_file="$repo_path/$target_name"
 
         if [[ -f "$source_file" ]]; then
             # Check if file is different
             if [[ ! -f "$target_file" ]] || ! cmp -s "$source_file" "$target_file"; then
                 if cp -f "$source_file" "$target_file" 2>/dev/null; then
-                    echo -e "    ${GREEN}synced${NC} $md_file"
+                    echo -e "    ${GREEN}synced${NC} $target_name"
                     ((copied_count++))
                     has_changes=true
                 fi

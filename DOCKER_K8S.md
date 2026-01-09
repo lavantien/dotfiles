@@ -48,6 +48,7 @@ After installation, start Docker Desktop:
 **Via GUI**: Navigate to Docker Desktop in your GNOME/KDE application menu
 
 **Via terminal**:
+
 ```bash
 systemctl --user start docker-desktop
 ```
@@ -55,6 +56,7 @@ systemctl --user start docker-desktop
 Accept the Docker Subscription Service Agreement when prompted.
 
 To enable Docker Desktop to start automatically on sign-in:
+
 ```bash
 systemctl --user enable docker-desktop
 ```
