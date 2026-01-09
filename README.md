@@ -28,7 +28,7 @@ Production-grade dotfiles for Windows 11, Linux (Ubuntu/Fedora/Arch), and macOS.
 
 **Note**: bootstrap.sh installs kubectl, helm, and docker-compose automatically. Only install Docker Desktop manually if you need the full GUI and development experience.
 
-**Docker Desktop for Linux (Ubuntu 22.04/24.04/25.04+)**
+**Docker Desktop for Linux (Ubuntu 22.04/24.04/25.04/25.10+)**
 
 Per [official Docker docs](https://docs.docker.com/desktop/setup/install/linux/ubuntu/):
 
@@ -43,11 +43,11 @@ sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyring
 sudo chmod a+r /etc/apt/keyrings/docker.asc
 
 # Step 3: Add the repository to Apt sources
-# Uses UBUNTU_CODENAME -> VERSION_CODENAME -> noble fallback for future Ubuntu releases
+# Uses UBUNTU_CODENAME -> VERSION_CODENAME -> questing fallback for future Ubuntu releases
 sudo tee /etc/apt/sources.list.d/docker.sources <<EOF
 Types: deb
 URIs: https://download.docker.com/linux/ubuntu
-Suites: $(. /etc/os-release && echo "${UBUNTU_CODENAME:-${VERSION_CODENAME:-noble}}")
+Suites: $(. /etc/os-release && echo "${UBUNTU_CODENAME:-${VERSION_CODENAME:-questing}}")
 Components: stable
 Signed-By: /etc/apt/keyrings/docker.asc
 EOF
