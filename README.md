@@ -122,9 +122,15 @@ sudo apt update && sudo apt install -y git
 # Clone this repository
 git clone https://github.com/lavantien/dotfiles.git ~/dev/github/dotfiles
 
-# Change to the directory and run bootstrap
+# Change to the directory and make scripts executable
 cd ~/dev/github/dotfiles
-chmod +x bootstrap.sh
+chmod +x bootstrap.sh bootstrap/bootstrap.sh
+chmod +x deploy.sh update-all.sh healthcheck.sh backup.sh restore.sh uninstall.sh
+chmod +x git-update-repos.sh sync-system-instructions.sh
+chmod +x tests/coverage.sh tests/coverage-bash.sh
+chmod +x .claude/hooks/post-tool-use.sh .claude/quality-check.sh .claude/statusline.sh
+
+# Run bootstrap
 ./bootstrap.sh
 
 # Set zsh as default shell and restart
@@ -138,7 +144,9 @@ exec zsh  # or source ~/.zshrc
 ```bash
 git clone https://github.com/lavantien/dotfiles.git ~/dev/dotfiles
 cd ~/dev/dotfiles
-chmod +x bootstrap.sh
+chmod +x bootstrap.sh bootstrap/bootstrap.sh
+chmod +x deploy.sh update-all.sh healthcheck.sh backup.sh restore.sh uninstall.sh
+chmod +x git-update-repos.sh sync-system-instructions.sh
 ./bootstrap.sh
 chsh -s $(which zsh)  # Set zsh as default shell
 exec zsh  # or source ~/.zshrc
@@ -148,7 +156,9 @@ exec zsh  # or source ~/.zshrc
 ```bash
 git clone https://github.com/lavantien/dotfiles.git ~/dev/dotfiles
 cd ~/dev/dotfiles
-chmod +x bootstrap.sh
+chmod +x bootstrap.sh bootstrap/bootstrap.sh
+chmod +x deploy.sh update-all.sh healthcheck.sh backup.sh restore.sh uninstall.sh
+chmod +x git-update-repos.sh sync-system-instructions.sh
 ./bootstrap.sh
 exec zsh  # or source ~/.zshrc
 ```
