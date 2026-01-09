@@ -29,33 +29,34 @@ Production-grade dotfiles for Windows 11, Linux (Ubuntu/Fedora/Arch), and macOS.
 **Note**: bootstrap.sh installs kubectl, helm, and docker-compose automatically. Only install Docker Desktop manually if you need the full GUI and development experience.
 
 **Docker Desktop for Linux (Ubuntu 22.04/24.04)**
+
+Per [official Docker docs](https://docs.docker.com/desktop/setup/install/linux/ubuntu/):
+
 ```bash
-# Set up Docker's apt repository
-sudo apt-get update
-sudo apt-get install -y ca-certificates curl
-sudo install -m 0755 -d /etc/apt/keyrings
-sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-sudo chmod a+r /etc/apt/keyrings/docker.asc
+# Prerequisite: install gnome-terminal (required for Docker Desktop integrated terminal)
+# Skip if you're already using GNOME desktop
+sudo apt install gnome-terminal
 
-# Add the repository
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get update
-
-# Download and install Docker Desktop
+# Download the latest Docker Desktop DEB package
 wget https://desktop.docker.com/linux/main/amd64/docker-desktop-amd64.deb
+
+# Install Docker Desktop
+sudo apt-get update
 sudo apt-get install ./docker-desktop-amd64.deb
+```
 
-# Start Docker Desktop
-systemctl --user start docker-desktop
+After installation, start Docker Desktop:
+- Via GUI: Navigate to Docker Desktop in your GNOME/KDE application menu
+- Via terminal: `systemctl --user start docker-desktop`
 
-# Enable Docker Desktop to start on sign-in
+Accept the Docker Subscription Service Agreement when prompted.
+
+To enable Docker Desktop to start automatically on sign-in:
+```bash
 systemctl --user enable docker-desktop
 ```
 
-For other Linux distributions, see [official Docker Desktop docs](https://docs.docker.com/desktop/setup/install/linux/).
+For other Linux distributions (Debian, Fedora, Arch, RHEL), see [official docs](https://docs.docker.com/desktop/setup/install/linux/).
 
 **minikube (Local Kubernetes - Optional)**
 ```bash
