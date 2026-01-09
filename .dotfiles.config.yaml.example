@@ -5,7 +5,7 @@
 # User preferences
 editor: nvim                 # Preferred editor: vim, nvim, code
 terminal: wezterm            # Terminal emulator: wezterm, alacritty, kitty
-theme: gruvbox-light          # Default theme for editors/tools
+theme: rose-pine             # Default theme for editors/tools
 
 # Bootstrap preferences
 categories: full              # Installation category: minimal, sdk, full

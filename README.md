@@ -354,7 +354,7 @@ vim ~/.dotfiles.config.yaml
 |----------|---------|---------|-------------|
 | categories | minimal, sdk, full | full | Installation size |
 | editor | nvim, vim, code, nano | (none) | Preferred editor |
-| theme | gruvbox-light, etc. | (none) | Default theme |
+| theme | rose-pine, rose-pine-dawn, rose-pine-moon | (none) | Default theme |
 | github_username | your username | lavantien | Git repo management |
 | base_dir | path to repos | ~/dev/github | Repository location |
 | auto_commit_changes | true, false | false | Auto-commit synced files |

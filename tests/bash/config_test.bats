@@ -162,9 +162,9 @@ EOF
 }
 
 @test "get_config returns theme value" {
-    CONFIG_THEME="gruvbox-dark"
+    CONFIG_THEME="rose-pine"
     result=$(get_config "theme")
-    [ "$result" = "gruvbox-dark" ]
+    [ "$result" = "rose-pine" ]
 }
 
 @test "get_config returns categories value" {
@@ -352,7 +352,7 @@ EOF
     cat > /tmp/test-config-full.yaml <<EOF
 editor: nvim
 terminal: alacritty
-theme: gruvbox-dark
+theme: rose-pine
 categories: minimal
 auto_update_repos: true
 backup_before_deploy: false
@@ -374,7 +374,7 @@ EOF
 
     [ "$CONFIG_EDITOR" = "nvim" ]
     [ "$CONFIG_TERMINAL" = "alacritty" ]
-    [ "$CONFIG_THEME" = "gruvbox-dark" ]
+    [ "$CONFIG_THEME" = "rose-pine" ]
     [ "$CONFIG_CATEGORIES" = "minimal" ]
     [ "$CONFIG_AUTO_UPDATE_REPOS" = "true" ]
     [ "$CONFIG_BACKUP_BEFORE_DEPLOY" = "false" ]
@@ -543,13 +543,13 @@ EOF
     cat > /tmp/test-config-special.yaml <<EOF
 editor: nvim-qt
 base_dir: ~/dev/test_project
-theme: gruvbox-light
+theme: rose-pine
 EOF
     _parse_config_simple /tmp/test-config-special.yaml
 
     [ "$CONFIG_EDITOR" = "nvim-qt" ]
     [ "$CONFIG_BASE_DIR" = "~/dev/test_project" ]
-    [ "$CONFIG_THEME" = "gruvbox-light" ]
+    [ "$CONFIG_THEME" = "rose-pine" ]
 }
 
 @test "_parse_config_simple handles underscores in keys" {
@@ -688,13 +688,13 @@ EOF
 @test "_parse_config_simple handles UTF-8 characters" {
     cat > /tmp/test-config-utf8.yaml <<EOF
 editor: nvim
-theme: gruvbox-light
+theme: rose-pine
 github_username: müller
 EOF
     _parse_config_simple /tmp/test-config-utf8.yaml
 
     [ "$CONFIG_EDITOR" = "nvim" ]
-    [ "$CONFIG_THEME" = "gruvbox-light" ]
+    [ "$CONFIG_THEME" = "rose-pine" ]
     [ "$CONFIG_GITHUB_USERNAME" = "müller" ]
 }
 

@@ -83,7 +83,7 @@ vim ~/.dotfiles.config.yaml
 |---------|---------|---------|
 | `categories` | minimal, sdk, full | full |
 | `editor` | nvim, vim, code, nano | (none) |
-| `theme` | gruvbox-light, gruvbox-dark, etc. | (none) |
+| `theme` | rose-pine, rose-pine-dawn, rose-pine-moon | (none) |
 | `github_username` | your github username | (none) |
 | `base_dir` | path to git repos | ~/dev/github |
 | `auto_update_repos` | true, false | false |

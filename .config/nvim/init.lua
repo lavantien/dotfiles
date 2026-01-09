@@ -27,7 +27,7 @@ vim.g.loaded_netrwPlugin = 0
 vim.g.have_nerd_font = true
 
 vim.pack.add({
-	{ src = "https://github.com/ellisonleao/gruvbox.nvim" },
+	{ src = "https://github.com/rose-pine/neovim" },
 	{ src = "https://github.com/nvim-treesitter/nvim-treesitter" }, -- wrappers for built-in
 	{ src = "https://github.com/neovim/nvim-lspconfig" }, -- wrappers for built-in
 	{ src = "https://github.com/stevearc/oil.nvim" },
@@ -38,8 +38,8 @@ vim.pack.add({
 	{ src = "https://github.com/brianhuster/live-preview.nvim" }, -- markdown, html, csv live preview
 })
 
-vim.opt.background = "light"
-vim.cmd.colorscheme("gruvbox")
+vim.opt.background = "dark"
+vim.cmd.colorscheme("rose-pine")
 vim.cmd(":hi statusline guibg=NONE")
 
 require("fzf-lua").setup({
@@ -52,7 +52,7 @@ require("fzf-lua").setup({
 	previewers = {
 		bat = {
 			cmd = "bat",
-			args = "--theme=gruvbox-light --color=always --style=numbers,changes",
+			args = "--theme=rose-pine --color=always --style=numbers,changes",
 		},
 	},
 })
@@ -176,12 +176,14 @@ vim.api.nvim_create_autocmd({ "InsertLeavePre", "TextChanged", "TextChangedP" },
 	end,
 })
 
-require("nvim-treesitter.configs").setup({
-	auto_install = true,
-	highlight = {
-		enable = true,
-		additional_vim_regex_highlighting = false,
-	},
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "<filetype>" },
+	callback = function()
+		vim.treesitter.start()
+		vim.wo[0][0].foldexpr = "v:lua.vim.treesitter.foldexpr()"
+		vim.wo[0][0].foldmethod = "expr"
+		vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+	end,
 })
 
 require("oil").setup()

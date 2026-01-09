@@ -81,7 +81,7 @@ load_dotfiles_config "$CONFIG_FILE"
 
 # Get config values (with defaults)
 CONFIG_EDITOR=$(get_config "editor" "nvim")
-CONFIG_THEME=$(get_config "theme" "gruvbox-light")
+CONFIG_THEME=$(get_config "theme" "rose-pine")
 CONFIG_CATEGORIES=$(get_config "categories" "full")
 CONFIG_AUTO_UPDATE_REPOS=$(get_config "auto_update_repos" "false")
 CONFIG_BACKUP_BEFORE_DEPLOY=$(get_config "backup_before_deploy" "false")
@@ -155,6 +155,13 @@ deploy_common() {
 
 	# Copy Aider configs
 	cp "$SCRIPT_DIR/.aider.conf.yml.example" "$HOME/.aider.conf.yml" 2>/dev/null || true
+
+	# Copy WezTerm background assets
+	if [ -d "$SCRIPT_DIR/assets" ]; then
+		mkdir -p "$HOME/assets"
+		cp "$SCRIPT_DIR/assets"/* "$HOME/assets/" 2>/dev/null || true
+		echo -e "${GREEN}WezTerm background assets copied to: $HOME/assets/${NC}"
+	fi
 
 	echo -e "${GREEN}Common files deployed.${NC}"
 }

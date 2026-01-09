@@ -65,7 +65,7 @@ else
 	# Defaults if config library not available
 	CONFIG_EDITOR="nvim"
 	CONFIG_TERMINAL="wezterm"
-	CONFIG_THEME="gruvbox-light"
+	CONFIG_THEME="rose-pine"
 	CONFIG_CATEGORIES="full"
 	CONFIG_SKIP_PACKAGES=""
 fi

@@ -7,6 +7,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.1] - 2026-01-10
+
+### Changed
+
+**Theme Update - Rose Pine**
+- Switched default theme from gruvbox to rose-pine across all configs
+- Neovim: Using rose-pine colorscheme with dark background
+- WezTerm: Using rose-pine color scheme
+- Updated bat previewer theme to rose-pine
+
+**Neovim Improvements**
+- Fixed nvim-treesitter configuration using manual FileType autocmd
+- Replaced `nvim-treesitter.configs.setup()` with direct `vim.treesitter.start()` call
+- Properly configured foldexpr, foldmethod, and indentexpr for treesitter
+- Removed deprecated treesitter config pattern for Neovim 0.11+ compatibility
+- Standardized quote style from double to single quotes
+- Fixed indentation consistency (4 spaces)
+
+**Deploy Script Enhancement**
+- Added WezTerm background asset deployment to `~/assets/`
+- Copies all files from `assets/` directory during deployment
+- Ensures terminal backgrounds are available after running deploy.sh
+
+**Configuration Defaults**
+- Updated default theme in `deploy.sh`: gruvbox-light → rose-pine
+- Updated default theme in `update-all.sh`: gruvbox-light → rose-pine
+- Updated example config in `.dotfiles.config.yaml.example`
+
+**Documentation**
+- Updated README.md theme values to reflect rose-pine variants
+- Updated QUICKREF.md theme options
+- Updated BRIDGE.md example config
+
+**Test Fixes**
+- Updated all test fixtures to use rose-pine theme
+- Bash tests: `config_test.bats`, `config_e2e_test.bats`
+- PowerShell tests: `config.Tests.ps1`
+
+### Fixed
+
+- Neovim treesitter highlighting not working properly with built-in wrapper
+- WezTerm background images missing after deployment
+
+---
+
 ## [5.0] - 2026-01-10
 
 ### Major Changes

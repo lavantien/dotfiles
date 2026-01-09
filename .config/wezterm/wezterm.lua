@@ -5,7 +5,7 @@ config.color_scheme = "rose-pine"
 config.enable_tab_bar = false
 config.tab_bar_at_bottom = true
 config.scrollback_lines = 1000000
-config.font_size = 17
+config.font_size = 12
 config.font = wezterm.font_with_fallback({
 	"IosevkaTerm Nerd Font",
 })
@@ -30,8 +30,8 @@ config.background = {
 	{
 		source = {
 			-- File = bg_path .. "/fantasy-forest-wallpaper.jpg",
-			-- File = bg_path .. "/tokyo-sunset.jpeg",
-			File = bg_path .. "/Buddha-and-animals.png",
+			File = bg_path .. "/tokyo-sunset.jpeg",
+			-- File = bg_path .. "/Buddha-and-animals.png",
 		},
 		repeat_x = "NoRepeat",
 		width = "100%",

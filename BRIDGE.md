@@ -58,7 +58,7 @@ cp .dotfiles.config.yaml.example ~/.dotfiles.config.yaml
 # ~/.dotfiles.config.yaml
 categories: sdk
 editor: nvim
-theme: gruvbox-dark
+theme: rose-pine
 auto_update_repos: true
 github_username: yourname
 base_dir: ~/dev/github

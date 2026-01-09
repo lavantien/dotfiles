@@ -119,7 +119,7 @@ Describe "Bridge Configuration System" {
 # Test configuration
 editor: nvim
 terminal: wezterm
-theme: gruvbox-light
+theme: rose-pine
 categories: full
 "@ | Out-File $configFile
 
