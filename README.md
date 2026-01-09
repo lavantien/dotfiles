@@ -28,7 +28,7 @@ Production-grade dotfiles for Windows 11, Linux (Ubuntu/Fedora/Arch), and macOS.
 
 **Note**: bootstrap.sh installs kubectl, helm, and docker-compose automatically. Only install Docker Desktop manually if you need the full GUI and development experience.
 
-**Docker Desktop for Linux (Ubuntu 22.04/24.04/25.04/25.10+)**
+**Docker Desktop for Linux (Ubuntu 22.04/24.04/25.04/25.10/26.04+)**
 
 Per [official Docker docs](https://docs.docker.com/desktop/setup/install/linux/ubuntu/):
 
@@ -56,6 +56,9 @@ EOF
 sudo apt update
 wget https://desktop.docker.com/linux/main/amd64/docker-desktop-amd64.deb
 sudo apt-get install ./docker-desktop-amd64.deb
+
+# Step 5: Clean up downloaded DEB (optional, saves ~600MB)
+rm docker-desktop-amd64.deb
 ```
 
 After installation, start Docker Desktop:
@@ -87,17 +90,49 @@ Now you can sign in to Docker Desktop with increased pull limits. For more detai
 For other Linux distributions (Debian, Fedora, Arch, RHEL), see [official docs](https://docs.docker.com/desktop/setup/install/linux/).
 
 **minikube (Local Kubernetes - Optional)**
+
 ```bash
 # Download and install minikube
 curl -LO https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64
 sudo install minikube-linux-amd64 /usr/local/bin/minikube
 rm minikube-linux-amd64
 
-# Start minikube (requires Docker Desktop or a VM manager)
+# Start minikube (requires Docker Desktop with sufficient memory)
 minikube start
 ```
 
+**Fix minikube memory error on Ubuntu 26.04**
+
+If you see `RSRC_INSUFFICIENT_CONTAINER_MEMORY` error, Docker Desktop needs more memory allocated:
+
+1. Open Docker Desktop
+2. Go to **Settings** → **Resources** → **Advanced**
+3. Increase **Memory** to at least 4GB (default is often too low for Kubernetes)
+4. Click **Apply & Restart**
+5. Run `minikube delete && minikube start` to recreate the cluster
+
 ### Dotfiles Installation
+
+**Fresh Ubuntu Machine (includes git installation)**
+
+```bash
+# Install git first (if not already installed)
+sudo apt update && sudo apt install -y git
+
+# Clone this repository
+git clone https://github.com/lavantien/dotfiles.git ~/dev/github/dotfiles
+
+# Change to the directory and run bootstrap
+cd ~/dev/github/dotfiles
+chmod +x bootstrap.sh
+./bootstrap.sh
+
+# Set zsh as default shell and restart
+chsh -s $(which zsh)
+exec zsh  # or source ~/.zshrc
+```
+
+**Existing Setup (git already installed)**
 
 **Linux**
 ```bash
