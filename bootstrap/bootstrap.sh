@@ -820,6 +820,15 @@ install_cli_tools() {
 		fi
 	fi
 
+	# btop (system monitor - always latest)
+	if [[ "$CATEGORIES" == "full" ]]; then
+		if [[ "$OS" == "macos" ]]; then
+			install_brew_package btop "" btop
+		elif [[ "$OS" == "linux" ]]; then
+			install_linux_package btop "" btop
+		fi
+	fi
+
 	# bats (testing framework - always latest)
 	if cmd_exists npm; then
 		install_npm_global bats bats ""

@@ -126,7 +126,7 @@ Thoroughly tested on Ubuntu 26.04 LTS and Windows 11.
 | **SDKs** | Node.js, Python, Go, Rust (rustup), dotnet, OpenJDK |
 | **Language Servers** | 25 servers - see [TOOLS.md](TOOLS.md) |
 | **Linters/Formatters** | prettier, eslint, ruff, black, golangci-lint, clippy, shellcheck, yamllint, hadolint, etc. |
-| **CLI Tools** | fzf, zoxide, bat, eza, lazygit, gh, ripgrep, fd, tokei, repomix, docker-compose, helm, kubectl |
+| **CLI Tools** | fzf, zoxide, bat, eza, lazygit, gh, ripgrep, fd, tokei, btop, repomix, docker-compose, helm, kubectl |
 | **Shell** | zsh, oh-my-zsh (half-life theme, plugins: autosuggestions, syntax-highlighting, interactive-cd) |
 | **Terminal** | WezTerm (GPU-accelerated, IosevkaTerm Nerd Font) |
 | **Testing** | bats, busted, pytest, Pester, kcov |

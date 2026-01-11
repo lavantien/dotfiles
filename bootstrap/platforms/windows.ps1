@@ -137,6 +137,7 @@ function Get-PackageDescription {
         "fd" { return "file finder" }
         "tokei" { return "code stats" }
         "difft" { return "diff viewer" }
+        "btop-lhm" { return "system monitor" }
         "bats" { return "Bash testing" }
 
         # Development tools

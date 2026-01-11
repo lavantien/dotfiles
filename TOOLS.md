@@ -89,6 +89,7 @@ Complete breakdown of all tools installed by the bootstrap script, organized by 
 | ripgrep (rg) | Fast grep |
 | fd | Fast find |
 | tokei | Code stats |
+| btop | System monitor |
 | repomix | Pack repositories for AI exploration |
 | docker-compose | Docker Compose CLI |
 | helm | Kubernetes package manager |

@@ -600,6 +600,7 @@ function Install-CLITools {
     if ($Script:Categories -eq "full") {
         $scoopPackages += @{Package = "tokei"; MinVersion = ""; Cmd = "tokei"}
         $scoopPackages += @{Package = "difftastic"; MinVersion = ""; Cmd = "difft"}
+        $scoopPackages += @{Package = "btop-lhm"; MinVersion = ""; Cmd = "btop"}
     }
 
     # Install packages
