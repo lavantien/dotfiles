@@ -372,6 +372,9 @@ install_cargo_update() {
 		return 1
 	fi
 
+	# Ensure build dependencies are installed (required for OpenSSL-linked packages)
+	install_build_dependencies
+
 	log_step "Installing cargo-update..."
 	if run_cmd "cargo install cargo-update"; then
 		ensure_path "$HOME/.cargo/bin"
@@ -450,6 +453,35 @@ install_dotnet_tool() {
 }
 
 # ============================================================================
+# BUILD DEPENDENCIES
+# ============================================================================
+# Install build dependencies required for compiling Rust packages with native dependencies
+# (e.g., cargo-update, ripgrep with features, etc. require OpenSSL)
+install_build_dependencies() {
+	# Check if pkg-config already exists (our proxy for build deps being installed)
+	if cmd_exists pkg-config; then
+		track_skipped "build-deps" "build dependencies"
+		return 0
+	fi
+
+	# macOS requires Homebrew for build dependencies
+	if ! cmd_exists brew; then
+		log_warning "Homebrew not found, skipping build dependencies installation"
+		log_info "Run 'brew install openssl pkg-config' manually if needed"
+		return 1
+	fi
+
+	log_step "Installing build dependencies (pkg-config, OpenSSL)..."
+	if run_cmd "brew install pkg-config openssl"; then
+		track_installed "build-deps" "build dependencies"
+		return 0
+	else
+		track_failed "build-deps" "build dependencies"
+		return 1
+	fi
+}
+
+# ============================================================================
 # RUSTUP
 # ============================================================================
 install_rustup() {
@@ -457,6 +489,9 @@ install_rustup() {
 		track_skipped "rust" "$(get_package_description rust)"
 		return 0
 	fi
+
+	# Install build dependencies first (required for some cargo packages)
+	install_build_dependencies
 
 	log_step "Installing Rust via rustup..."
 	if run_cmd "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y"; then

@@ -728,6 +728,9 @@ install_cargo_update() {
 		return 1
 	fi
 
+	# Ensure build dependencies are installed (required for OpenSSL-linked packages)
+	install_build_dependencies
+
 	log_step "Installing cargo-update..."
 	if run_cmd "cargo install cargo-update"; then
 		ensure_path "$HOME/.cargo/bin"
@@ -820,6 +823,78 @@ install_dotnet_tool() {
 }
 
 # ============================================================================
+# BUILD DEPENDENCIES
+# ============================================================================
+# Install build dependencies required for compiling Rust packages with native dependencies
+# (e.g., cargo-update, ripgrep with features, etc. require OpenSSL)
+install_build_dependencies() {
+	local detected_pkg_manager=""
+
+	# Detect package manager
+	if cmd_exists apt; then
+		detected_pkg_manager="apt"
+	elif cmd_exists dnf; then
+		detected_pkg_manager="dnf"
+	elif cmd_exists pacman; then
+		detected_pkg_manager="pacman"
+	elif cmd_exists zypper; then
+		detected_pkg_manager="zypper"
+	else
+		log_warning "No supported package manager found for build dependencies"
+		return 1
+	fi
+
+	# Check if pkg-config already exists (our proxy for build deps being installed)
+	if cmd_exists pkg-config; then
+		track_skipped "build-deps" "build dependencies"
+		return 0
+	fi
+
+	log_step "Installing build dependencies (pkg-config, OpenSSL headers)..."
+
+	case "$detected_pkg_manager" in
+	apt)
+		if run_cmd "sudo apt install -y pkg-config libssl-dev"; then
+			track_installed "build-deps" "build dependencies"
+			return 0
+		else
+			track_failed "build-deps" "build dependencies"
+			return 1
+		fi
+		;;
+	dnf)
+		if run_cmd "sudo dnf install -y pkg-config openssl-devel"; then
+			track_installed "build-deps" "build dependencies"
+			return 0
+		else
+			track_failed "build-deps" "build dependencies"
+			return 1
+		fi
+		;;
+	pacman)
+		if run_cmd "sudo pacman -S --noconfirm pkg-config openssl"; then
+			track_installed "build-deps" "build dependencies"
+			return 0
+		else
+			track_failed "build-deps" "build dependencies"
+			return 1
+		fi
+		;;
+	zypper)
+		if run_cmd "sudo zypper install -y pkg-config libopenssl-devel"; then
+			track_installed "build-deps" "build dependencies"
+			return 0
+		else
+			track_failed "build-deps" "build dependencies"
+			return 1
+		fi
+		;;
+	esac
+
+	return 1
+}
+
+# ============================================================================
 # RUSTUP
 # ============================================================================
 install_rustup() {
@@ -827,6 +902,9 @@ install_rustup() {
 		track_skipped "rust" "$(get_package_description rust)"
 		return 0
 	fi
+
+	# Install build dependencies first (required for some cargo packages)
+	install_build_dependencies
 
 	log_step "Installing Rust via rustup..."
 	if run_cmd "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y"; then
