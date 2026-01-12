@@ -19,6 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Windows: `Install-PHP()` function via scoop or winget
 - Composer now runs at full speed without the slow fallback HTTP handler
 
+### Fixed
+
+**Bootstrap Scripts**
+
+- Auto-remove apt-installed PHP before installing brew version
+- Add php to brew package mapping and AUTO-CORRECTION section
+
 ---
 
 ## [5.2.4] - 2026-01-12

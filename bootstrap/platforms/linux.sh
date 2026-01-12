@@ -294,6 +294,13 @@ install_linux_package() {
 				run_cmd "pip3 uninstall -y 'lua-language-server' 2>/dev/null || true"
 			fi
 			;;
+		php)
+			# Remove apt PHP if present (will install from brew with curl included)
+			if dpkg -l | grep -q "php8.*-cli" 2>/dev/null; then
+				log_warning "Found PHP from apt (auto-removing for brew version with curl)..."
+				run_cmd "sudo apt remove -y 'php8.*' 2>/dev/null || true"
+			fi
+			;;
 		esac
 	fi
 
@@ -307,6 +314,7 @@ install_linux_package() {
 		case "$package" in
 		nodejs) brew_package="node" ;;
 		golang) brew_package="go" ;;
+		php) brew_package="php" ;;
 		lua-language-server) brew_package="lua-language-server" ;;
 		golangci-lint) brew_package="golangci-lint" ;;
 		shellcheck) brew_package="shellcheck" ;;
