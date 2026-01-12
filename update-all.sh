@@ -573,6 +573,24 @@ _main() {
 	fi
 
 	# ============================================================================
+	# RUSTUP (Rust toolchain)
+	# ============================================================================
+	if cmd_exists rustup; then
+		update_section "RUSTUP (Rust toolchain)"
+		update_and_report "rustup update" "rustup"
+	else
+		update_skip "rustup not found"
+	fi
+
+	# ============================================================================
+	# CARGO-UPDATE (install if missing)
+	# ============================================================================
+	if cmd_exists cargo && ! cmd_exists cargo-install-update; then
+		update_section "CARGO-UPDATE (installing)"
+		update_and_report "cargo install cargo-update" "cargo-update"
+	fi
+
+	# ============================================================================
 	# CARGO (Rust packages)
 	# ============================================================================
 	if cmd_exists cargo; then
@@ -584,16 +602,6 @@ _main() {
 		fi
 	else
 		update_skip "cargo not found"
-	fi
-
-	# ============================================================================
-	# RUSTUP
-	# ============================================================================
-	if cmd_exists rustup; then
-		update_section "RUSTUP (Rust toolchain)"
-		update_and_report "rustup update" "rustup"
-	else
-		update_skip "rustup not found"
 	fi
 
 	# ============================================================================

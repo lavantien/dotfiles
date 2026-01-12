@@ -121,12 +121,14 @@ For simple typo fixes, comment updates, or one-line non-logic changes:
 Choose the appropriate testing approach based on what you are validating.
 
 **Use Unit Tests for**:
+
 - Business logic with specific input/output pairs
 - Edge cases and boundary conditions
 - Error handling paths
 - Individual function behavior
 
 **Use Property-Based Testing for**:
+
 - Invariants that should hold for ANY valid input
 - Commutativity, associativity, idempotency properties
 - Round-trip serialization/deserialization
@@ -135,11 +137,13 @@ Choose the appropriate testing approach based on what you are validating.
 **Examples**:
 
 Property-based (QuickCheck/propcheck style):
+
 - "For any list, reversing twice returns the original"
 - "For any valid JSON string, parse → stringify → parse yields the same value"
 - "For any two numbers a, b: add(a, b) == add(b, a)"
 
 Unit test:
+
 - "Given empty list, return error"
 - "Given user ID 123, return User object with name='John'"
 - "Given negative input, throw ValueError"
