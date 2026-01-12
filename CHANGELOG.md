@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.2.4] - 2026-01-12
+
+### Fixed
+
+**Bootstrap Scripts**
+
+- build dependencies now install even when rustup is already present
+- Moved `install_build_dependencies()` call before early-return check in `install_rustup()`
+- This ensures pkg-config and OpenSSL headers are available for future cargo package compilation
+
+---
+
 ## [5.2.3] - 2026-01-12
 
 ### Added

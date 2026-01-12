@@ -485,13 +485,14 @@ install_build_dependencies() {
 # RUSTUP
 # ============================================================================
 install_rustup() {
+	# Ensure build dependencies first (required for some cargo packages)
+	# Do this even if rustup is already installed, in case deps were added later
+	install_build_dependencies
+
 	if cmd_exists rustup; then
 		track_skipped "rust" "$(get_package_description rust)"
 		return 0
 	fi
-
-	# Install build dependencies first (required for some cargo packages)
-	install_build_dependencies
 
 	log_step "Installing Rust via rustup..."
 	if run_cmd "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y"; then
