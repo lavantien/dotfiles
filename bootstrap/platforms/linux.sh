@@ -45,6 +45,7 @@ get_package_description() {
 	gup) echo "Go package updater" ;;
 	goimports) echo "Go import formatter" ;;
 	golangci-lint) echo "Go linter" ;;
+	cargo-update) echo "Cargo package updater" ;;
 	clang-format) echo "C/C++ formatter" ;;
 	shellcheck) echo "Shell script linter" ;;
 	shfmt) echo "Shell script formatter" ;;
@@ -445,9 +446,24 @@ install_linux_package() {
 
 	# Cargo packages - only if not in brew
 	case "$package" in
-	# rust-analyzer is available in brew, so no cargo packages listed here
+	cargo_update | cargo-update)
+		# cargo-update manages cargo-installed packages
+		if cmd_exists cargo; then
+			if install_cargo_update; then
+				return 0
+			fi
+		fi
+		;;
+	difftastic)
+		# difft is available in brew on macOS
+		if cmd_exists cargo; then
+			if install_cargo_package "difftastic" "difft" ""; then
+				return 0
+			fi
+		fi
+		;;
 	*)
-		# No cargo packages needed (all available via brew)
+		# No other cargo packages needed
 		:
 		;;
 	esac
@@ -696,6 +712,30 @@ install_cargo_package() {
 	else
 		track_skipped "$cmd_name" "$(get_package_description "$cmd_name")"
 		return 0
+	fi
+}
+
+# Install cargo-update (package manager for cargo-installed tools)
+install_cargo_update() {
+	if cmd_exists cargo-install-update; then
+		track_skipped "cargo-update" "$(get_package_description cargo-update)"
+		return 0
+	fi
+
+	if ! cmd_exists cargo; then
+		log_warning "cargo not found, skipping cargo-update"
+		track_failed "cargo-update" "$(get_package_description cargo-update)"
+		return 1
+	fi
+
+	log_step "Installing cargo-update..."
+	if run_cmd "cargo install cargo-update"; then
+		ensure_path "$HOME/.cargo/bin"
+		track_installed "cargo-update" "$(get_package_description cargo-update)"
+		return 0
+	else
+		track_failed "cargo-update" "$(get_package_description cargo-update)"
+		return 1
 	fi
 }
 

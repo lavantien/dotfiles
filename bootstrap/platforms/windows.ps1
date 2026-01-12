@@ -121,6 +121,7 @@ function Get-PackageDescription {
         "mypy" { return "Python type checker" }
         "goimports" { return "Go import organizer" }
         "golangci-lint" { return "Go linter" }
+        "cargo-update" { return "Cargo package updater" }
         "shellcheck" { return "Shell script analyzer" }
         "shfmt" { return "Shell script formatter" }
         "scalafmt" { return "Scala formatter" }
@@ -699,6 +700,39 @@ function Install-CargoPackage {
     else {
         Track-Skipped $CmdName (Get-PackageDescription $CmdName)
         return $true
+    }
+}
+
+# Install cargo-update (package manager for cargo-installed tools)
+function Install-CargoUpdate {
+    if (Get-Command cargo-install-update -ErrorAction SilentlyContinue) {
+        Track-Skipped "cargo-update" (Get-PackageDescription "cargo-update")
+        return $true
+    }
+
+    if (-not (Get-Command cargo -ErrorAction SilentlyContinue)) {
+        Write-Warning "cargo not found, skipping cargo-update"
+        Track-Failed "cargo-update" (Get-PackageDescription "cargo-update")
+        return $false
+    }
+
+    Write-Step "Installing cargo-update..."
+    if ($DryRun) {
+        Write-Info "[DRY-RUN] Would cargo install cargo-update"
+        Track-Installed "cargo-update" (Get-PackageDescription "cargo-update")
+        return $true
+    }
+
+    try {
+        cargo install cargo-update *> $null
+        Add-ToPath "$env:USERPROFILE\.cargo\bin"
+        Track-Installed "cargo-update" (Get-PackageDescription "cargo-update")
+        return $true
+    }
+    catch {
+        Write-Warning ("Failed to install cargo-update: {0}" -f $_.Exception.Message)
+        Track-Failed "cargo-update" (Get-PackageDescription "cargo-update")
+        return $false
     }
 }
 

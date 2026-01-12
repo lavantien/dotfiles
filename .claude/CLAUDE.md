@@ -37,6 +37,34 @@ If you cannot write acceptance criteria, pause and clarify.
 - GitHub CLI: Use `gh` for PR/Issue operations.
 - Offline Docs: Use `go doc` or `x --help` or `man x` or equivalences for accurate command references.
 
+### Research Before Implementation
+
+Before writing any code, always verify current best practices. Never rely on training data for API syntax, library versions, or installation commands.
+
+1. **Latest Documentation**: Use Context7 MCP to get up-to-date library docs
+   - First: Use `mcp__plugin_context7_context7__resolve-library-id` to find the library
+   - Then: Use `mcp__plugin_context7_context7__query-docs` to get specific info
+
+2. **Web Search**: Use `mcp__web-search-prime__webSearchPrime` for:
+   - Latest library versions and syntax
+   - Breaking changes in recent releases
+   - Current best practices (patterns change over time)
+
+3. **Web Reader**: Use `mcp__web_reader__webReader` for:
+   - Reading official documentation pages
+   - Checking GitHub repositories for examples
+   - Fetching specific documentation URLs
+
+4. **ZRead**: Use `mcp__zread__*` tools for:
+   - Searching GitHub repositories
+   - Reading repository documentation
+   - Exploring codebases
+
+5. **GitHub CLI**: Use `gh` for:
+   - Searching issues and PRs
+   - Reading repository files
+   - Checking latest releases
+
 ### Verification Minimum
 
 Detect the environment and run the **strict** verification chain. If a `Makefile`, `Justfile`, or `Taskfile` exists, prioritize the below first and then apply standard targets after (e.g., `make check`, `just test`).
@@ -85,6 +113,38 @@ For simple typo fixes, comment updates, or one-line non-logic changes:
 1. Skip the "Requirements Contract."
 2. Run the linter/formatter only.
 3. Commit immediately.
+
+## Testing Strategy
+
+### Property-Based Testing vs Unit Tests
+
+Choose the appropriate testing approach based on what you are validating.
+
+**Use Unit Tests for**:
+- Business logic with specific input/output pairs
+- Edge cases and boundary conditions
+- Error handling paths
+- Individual function behavior
+
+**Use Property-Based Testing for**:
+- Invariants that should hold for ANY valid input
+- Commutativity, associativity, idempotency properties
+- Round-trip serialization/deserialization
+- State transitions in state machines
+
+**Examples**:
+
+Property-based (QuickCheck/propcheck style):
+- "For any list, reversing twice returns the original"
+- "For any valid JSON string, parse → stringify → parse yields the same value"
+- "For any two numbers a, b: add(a, b) == add(b, a)"
+
+Unit test:
+- "Given empty list, return error"
+- "Given user ID 123, return User object with name='John'"
+- "Given negative input, throw ValueError"
+
+When implementing features with complex invariants, prefer property-based tests with hundreds of auto-generated cases over manually written unit tests.
 
 ## Beware Language Specific Pitfalls
 

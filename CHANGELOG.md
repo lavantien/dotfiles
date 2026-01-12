@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.2.1] - 2026-01-12
+
+### Added
+
+**Package Management**
+- Added cargo-update installation during bootstrap for all platforms (Linux/macOS/Windows)
+- Added Claude Code CLI update to update-all.sh script
+- cargo-update provides cargo-install-update command to manage all cargo-installed packages
+
+**Documentation**
+- Enhanced CLAUDE.md with "Research Before Implementation" section
+- Added guidance on using Context7, Web Search, Web Reader, ZRead, and GitHub CLI
+- Added "Testing Strategy" section comparing property-based testing vs unit tests
+
+### Changed
+
+**Bootstrap Scripts**
+- Linux: Added install_cargo_update() function and cargo-update package handling
+- macOS: Added install_cargo_update() function and cargo-update package handling
+- Windows: Added Install-CargoUpdate function and cargo-update package handling
+- packages.yaml: Added cargo_update to linters_formatters category
+
+**Update Script**
+- update-all.sh: Added CLAUDE CODE CLI section for updating Claude via official install script
+
+---
+
 ## [5.2] - 2026-01-10
 
 ### Added

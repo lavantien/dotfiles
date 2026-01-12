@@ -52,6 +52,7 @@ exec zsh  # or source ~/.zshrc
 **Existing Setup (git already installed)**
 
 **Linux**
+
 ```bash
 git clone https://github.com/lavantien/dotfiles.git ~/dev/dotfiles
 cd ~/dev/dotfiles
@@ -62,6 +63,7 @@ exec zsh  # or source ~/.zshrc
 ```
 
 **macOS**
+
 ```bash
 git clone https://github.com/lavantien/dotfiles.git ~/dev/dotfiles
 cd ~/dev/dotfiles
@@ -71,6 +73,7 @@ exec zsh  # or source ~/.zshrc
 ```
 
 **Windows (PowerShell 7+)**
+
 ```powershell
 git clone https://github.com/lavantien/dotfiles.git $HOME/dev/dotfiles
 cd $HOME/dev/dotfiles
@@ -79,6 +82,7 @@ cd $HOME/dev/dotfiles
 ```
 
 **Verify Installation**
+
 ```bash
 which n  # Should point to nvim
 which lg  # Should point to lazygit
@@ -87,17 +91,17 @@ up  # or update - runs update-all
 
 ### Entry Point Scripts
 
-| Script | Purpose |
-|--------|---------|
-| **bootstrap** | Initial setup - installs package managers, SDKs, LSPs, linters, tools, deploys configs |
-| **deploy** | Deploy configuration files (Neovim, git hooks, shell aliases, Claude Code hooks) |
-| **update-all** | Update all package managers and system packages (20+ managers supported) |
-| **git-update-repos** | Clone/update ALL GitHub repos via gh CLI, optionally sync system instructions |
-| **sync-system-instructions** | Sync AI system instructions (CLAUDE.md, AGENTS.md, GEMINI.md, RULES.md) to all repos |
-| **healthcheck** | Check system health - verify tools installed, configs in place, git hooks working |
-| **backup** | Create timestamped backup before major changes |
-| **restore** | Restore from a previous backup (`--list-backups` to see available) |
-| **uninstall** | Remove deployed configs (keeps installed packages) |
+| Script                       | Purpose                                                                                |
+| ---------------------------- | -------------------------------------------------------------------------------------- |
+| **bootstrap**                | Initial setup - installs package managers, SDKs, LSPs, linters, tools, deploys configs |
+| **deploy**                   | Deploy configuration files (Neovim, git hooks, shell aliases, Claude Code hooks)       |
+| **update-all**               | Update all package managers and system packages (20+ managers supported)               |
+| **git-update-repos**         | Clone/update ALL GitHub repos via gh CLI, optionally sync system instructions          |
+| **sync-system-instructions** | Sync AI system instructions (CLAUDE.md, AGENTS.md, GEMINI.md, RULES.md) to all repos   |
+| **healthcheck**              | Check system health - verify tools installed, configs in place, git hooks working      |
+| **backup**                   | Create timestamped backup before major changes                                         |
+| **restore**                  | Restore from a previous backup (`--list-backups` to see available)                     |
+| **uninstall**                | Remove deployed configs (keeps installed packages)                                     |
 
 Use `.ps1` on Windows, `.sh` on Linux/macOS.
 
@@ -106,6 +110,7 @@ Use `.ps1` on Windows, `.sh` on Linux/macOS.
 ## Features Overview
 
 **Cross-Platform Support**
+
 - Windows 11: Native PowerShell 7+
 - Linux: Ubuntu, Fedora, Arch, openSUSE
 - macOS: Intel and Apple Silicon
@@ -113,6 +118,7 @@ Use `.ps1` on Windows, `.sh` on Linux/macOS.
 Thoroughly tested on Ubuntu 26.04 LTS and Windows 11.
 
 **Intelligent Automation**
+
 - Auto-detection of platform, tools, and project types
 - Graceful fallbacks when tools are missing
 - OneDrive-aware on Windows
@@ -120,26 +126,27 @@ Thoroughly tested on Ubuntu 26.04 LTS and Windows 11.
 
 **What Gets Installed**
 
-| Category | Tools |
-|----------|-------|
-| **Package Managers** | Homebrew (Linux/macOS), Scoop (Windows), apt/dnf/pacman (Linux) |
-| **SDKs** | Node.js, Python, Go, Rust (rustup), dotnet, OpenJDK |
-| **Language Servers** | 25 servers - see [TOOLS.md](TOOLS.md) |
-| **Linters/Formatters** | prettier, eslint, ruff, black, golangci-lint, clippy, shellcheck, yamllint, hadolint, etc. |
-| **CLI Tools** | fzf, zoxide, bat, eza, lazygit, gh, ripgrep, fd, tokei, btop, repomix, docker-compose, helm, kubectl |
-| **Shell** | zsh, oh-my-zsh (half-life theme, plugins: autosuggestions, syntax-highlighting, interactive-cd) |
-| **Terminal** | WezTerm (GPU-accelerated, IosevkaTerm Nerd Font) |
-| **Testing** | bats, busted, pytest, Pester, kcov |
+| Category               | Tools                                                                                                |
+| ---------------------- | ---------------------------------------------------------------------------------------------------- |
+| **Package Managers**   | Homebrew (Linux/macOS), Scoop (Windows), apt/dnf/pacman (Linux)                                      |
+| **SDKs**               | Node.js, Python, Go, Rust (rustup), dotnet, OpenJDK                                                  |
+| **Language Servers**   | 25 servers - see [TOOLS.md](TOOLS.md)                                                                |
+| **Linters/Formatters** | prettier, eslint, ruff, black, golangci-lint, clippy, shellcheck, yamllint, hadolint, etc.           |
+| **CLI Tools**          | fzf, zoxide, bat, eza, lazygit, gh, ripgrep, fd, tokei, btop, repomix, docker-compose, helm, kubectl |
+| **Shell**              | zsh, oh-my-zsh (half-life theme, plugins: autosuggestions, syntax-highlighting, interactive-cd)      |
+| **Terminal**           | WezTerm (GPU-accelerated, IosevkaTerm Nerd Font)                                                     |
+| **Testing**            | bats, busted, pytest, Pester, kcov                                                                   |
 
 **Installation Categories**
 
-| Category | Description |
-|----------|-------------|
-| minimal | Package managers + git + CLI tools only |
-| sdk | Minimal + programming language SDKs |
-| full | SDK + all LSPs + linters/formatters (default) |
+| Category | Description                                   |
+| -------- | --------------------------------------------- |
+| minimal  | Package managers + git + CLI tools only       |
+| sdk      | Minimal + programming language SDKs           |
+| full     | SDK + all LSPs + linters/formatters (default) |
 
 **Quality Assurance**
+
 - Conventional commits enforcement via git commit-msg hook
 - Pre-commit hooks that auto-format and lint for 19+ languages
 - Claude Code quality hooks for real-time format/lint/type-check after file writes
@@ -208,6 +215,7 @@ For new shells, PATH has been updated automatically.
 ```
 
 Key idempotency features shown above:
+
 - `[INFO] git already from brew, skipping replacement` - detects correct source
 - `[WARN] Found texlive from apt (removing for brew version)...` - auto-corrects
 - `Installed: 0, Skipped: 95` - summary shows what was already present
@@ -218,28 +226,28 @@ Key idempotency features shown above:
 
 **Command-Line Options**
 
-| Option | Bash | PowerShell | Default |
-|--------|-------|-----------|---------|
-| Non-interactive | `-y`, `--yes` | `-Y` | Prompt for confirmation |
-| Dry-run | `--dry-run` | `-DryRun` | Install everything |
-| Categories | `--categories sdk` | `-Categories sdk` | full |
-| Skip update | `--skip-update` | `-SkipUpdate` | Update package managers |
-| Verbose | `--verbose` | `-VerboseMode` | Show detailed output |
-| Help | `-h`, `--help` | `-Help` | Show help |
+| Option          | Bash               | PowerShell        | Default                 |
+| --------------- | ------------------ | ----------------- | ----------------------- |
+| Non-interactive | `-y`, `--yes`      | `-Y`              | Prompt for confirmation |
+| Dry-run         | `--dry-run`        | `-DryRun`         | Install everything      |
+| Categories      | `--categories sdk` | `-Categories sdk` | full                    |
+| Skip update     | `--skip-update`    | `-SkipUpdate`     | Update package managers |
+| Verbose         | `--verbose`        | `-VerboseMode`    | Show detailed output    |
+| Help            | `-h`, `--help`     | `-Help`           | Show help               |
 
 **Bootstrap Phases**
 
-| Phase | Tools |
-|-------|-------|
-| 1: Foundation | Package managers, git, WezTerm (Linux), IosevkaTerm Nerd Font |
-| 2: Core SDKs | Node.js, Python, Go, Rust, dotnet, OpenJDK |
-| 3: Language Servers | 24 LSPs (clangd, gopls, rust-analyzer, pyright, ts_ls, helm_ls, docker-language-server, etc.) |
-| 4: Linters & Formatters | prettier, eslint, ruff, golangci-lint, shellcheck, yamllint, hadolint, etc. |
-| 5: CLI Tools | fzf, zoxide, bat, eza, lazygit, gh, ripgrep, fd, tokei, docker-compose, helm, kubectl |
-| 5.25: MCP Servers | context7-mcp, playwright-mcp (via npm) |
-| 5.5: Dev Tools | Neovim 0.12, VSCode, LaTeX, Claude Code CLI |
-| 6: Deploy | Runs deploy.sh to copy configs (git hooks, Claude Code hooks, Neovim, WezTerm) |
-| 7: Update | Runs update-all.sh to update packages and repos |
+| Phase                   | Tools                                                                                         |
+| ----------------------- | --------------------------------------------------------------------------------------------- |
+| 1: Foundation           | Package managers, git, WezTerm (Linux), IosevkaTerm Nerd Font                                 |
+| 2: Core SDKs            | Node.js, Python, Go, Rust, dotnet, OpenJDK                                                    |
+| 3: Language Servers     | 24 LSPs (clangd, gopls, rust-analyzer, pyright, ts_ls, helm_ls, docker-language-server, etc.) |
+| 4: Linters & Formatters | prettier, eslint, ruff, golangci-lint, shellcheck, yamllint, hadolint, etc.                   |
+| 5: CLI Tools            | fzf, zoxide, bat, eza, lazygit, gh, ripgrep, fd, tokei, docker-compose, helm, kubectl         |
+| 5.25: MCP Servers       | context7-mcp, playwright-mcp (via npm)                                                        |
+| 5.5: Dev Tools          | Neovim 0.12, VSCode, LaTeX, Claude Code CLI                                                   |
+| 6: Deploy               | Runs deploy.sh to copy configs (git hooks, Claude Code hooks, Neovim, WezTerm)                |
+| 7: Update               | Runs update-all.sh to update packages and repos                                               |
 
 ---
 
@@ -265,14 +273,14 @@ vim ~/.dotfiles.config.yaml
 
 **Common Config Options**
 
-| Setting | Values | Default | Description |
-|----------|---------|---------|-------------|
-| categories | minimal, sdk, full | full | Installation size |
-| editor | nvim, vim, code, nano | (none) | Preferred editor |
-| theme | rose-pine, rose-pine-dawn, rose-pine-moon | (none) | Default theme |
-| github_username | your username | lavantien | Git repo management |
-| base_dir | path to repos | ~/dev/github | Repository location |
-| auto_commit_changes | true, false | false | Auto-commit synced files |
+| Setting             | Values                                    | Default      | Description              |
+| ------------------- | ----------------------------------------- | ------------ | ------------------------ |
+| categories          | minimal, sdk, full                        | full         | Installation size        |
+| editor              | nvim, vim, code, nano                     | (none)       | Preferred editor         |
+| theme               | rose-pine, rose-pine-dawn, rose-pine-moon | (none)       | Default theme            |
+| github_username     | your username                             | lavantien    | Git repo management      |
+| base_dir            | path to repos                             | ~/dev/github | Repository location      |
+| auto_commit_changes | true, false                               | false        | Auto-commit synced files |
 
 ---
 
@@ -282,13 +290,13 @@ This repository installs comprehensive tooling for modern development. For compl
 
 **Quick Summary**
 
-| Category | Count | Examples |
-|----------|-------|----------|
-| Language Servers | 25 | pyright, gopls, rust-analyzer, clangd, ts_ls, helm_ls, docker-compose-language-server |
-| Linters | 16+ | eslint, ruff, golangci-lint, clippy, shellcheck, yamllint, hadolint |
-| Formatters | 13+ | prettier, ruff, black, rustfmt, gofmt |
-| Testers | 5+ | pytest, bats, busted, Pester, jest |
-| CLI Tools | 13+ | fzf, zoxide, bat, eza, lazygit, gh, docker-compose, helm, kubectl |
+| Category         | Count | Examples                                                                              |
+| ---------------- | ----- | ------------------------------------------------------------------------------------- |
+| Language Servers | 25    | pyright, gopls, rust-analyzer, clangd, ts_ls, helm_ls, docker-compose-language-server |
+| Linters          | 16+   | eslint, ruff, golangci-lint, clippy, shellcheck, yamllint, hadolint                   |
+| Formatters       | 13+   | prettier, ruff, black, rustfmt, gofmt                                                 |
+| Testers          | 5+    | pytest, bats, busted, Pester, jest                                                    |
+| CLI Tools        | 13+   | fzf, zoxide, bat, eza, lazygit, gh, docker-compose, helm, kubectl                     |
 
 **Supported Languages**
 
@@ -303,35 +311,37 @@ See [TOOLS.md](TOOLS.md) for the complete language tool matrix.
 **Git Hooks**
 
 Pre-commit (runs automatically before git commit):
+
 1. Runs formatter on staged files
 2. Runs linter
 3. Runs type checker (if applicable)
 4. Re-stages any auto-fixed files
 
 Commit-msg (validates commit messages):
+
 - Enforces Conventional Commits format
 - Validates types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert
 
 **Supported Languages**
 
-| Language | Format | Lint | Type Check |
-|----------|--------|------|------------|
-| Go | gofmt, goimports | golangci-lint | go vet |
-| Python | ruff, black | ruff | mypy |
-| JS/TS | Prettier | ESLint | tsc |
-| Rust | cargo fmt | clippy | cargo check |
-| C/C++ | clang-format | clang-tidy | compiler |
-| C# | dotnet format | Roslyn | dotnet build |
-| Java | checkstyle | checkstyle | javac |
-| PHP | Laravel Pint | PHPStan, Psalm | php, PHPUnit |
-| Bash | shfmt | shellcheck | - |
-| PowerShell | Invoke-Formatter | PSScriptAnalyzer | PSScriptAnalyzer |
-| Scala | scalafmt | scalafix | scalac |
-| Lua | stylua | selene | - |
-| HTML/CSS | prettier | stylelint | - |
-| Docker Compose/Helm/K8s | prettier | yamllint | - |
-| YAML/JSON | prettier | yamllint | - |
-| Dockerfile | - | hadolint | - |
+| Language                | Format           | Lint             | Type Check       |
+| ----------------------- | ---------------- | ---------------- | ---------------- |
+| Go                      | gofmt, goimports | golangci-lint    | go vet           |
+| Python                  | ruff, black      | ruff             | mypy             |
+| JS/TS                   | Prettier         | ESLint           | tsc              |
+| Rust                    | cargo fmt        | clippy           | cargo check      |
+| C/C++                   | clang-format     | clang-tidy       | compiler         |
+| C#                      | dotnet format    | Roslyn           | dotnet build     |
+| Java                    | checkstyle       | checkstyle       | javac            |
+| PHP                     | Laravel Pint     | PHPStan, Psalm   | php, PHPUnit     |
+| Bash                    | shfmt            | shellcheck       | -                |
+| PowerShell              | Invoke-Formatter | PSScriptAnalyzer | PSScriptAnalyzer |
+| Scala                   | scalafmt         | scalafix         | scalac           |
+| Lua                     | stylua           | selene           | -                |
+| HTML/CSS                | prettier         | stylelint        | -                |
+| Docker Compose/Helm/K8s | prettier         | yamllint         | -                |
+| YAML/JSON               | prettier         | yamllint         | -                |
+| Dockerfile              | -                | hadolint         | -                |
 
 **Valid Commit Messages**
 
@@ -358,6 +368,7 @@ First-class support for Claude Code with quality checks, TDD enforcement, and MC
 **Global CLAUDE.md**
 
 Deployed to `~/.claude/` for project-agnostic AI coding instructions:
+
 - TDD workflow enforcement
 - Tool usage guidelines (Repomix, Context7, Playwright)
 - Context hygiene and compaction rules
@@ -367,17 +378,18 @@ Deployed to `~/.claude/` for project-agnostic AI coding instructions:
 
 Auto-installed globally via npm during bootstrap:
 
-| MCP | Purpose |
-|-----|---------|
-| context7 | Up-to-date library documentation and code examples |
-| playwright | Browser automation and E2E testing |
-| repomix | Pack repositories for full-context AI exploration |
+| MCP        | Purpose                                            |
+| ---------- | -------------------------------------------------- |
+| context7   | Up-to-date library documentation and code examples |
+| playwright | Browser automation and E2E testing                 |
+| repomix    | Pack repositories for full-context AI exploration  |
 
 **Note:** After first use of playwright, run `npx playwright install` to install browser binaries.
 
 **Claude Code Plugins**
 
 Use `/plugins` in Claude Code to install plugins. Add marketplaces:
+
 - `anthropics/claude-plugins-official`
 - `yamadashy/repomix`
 
@@ -387,12 +399,12 @@ Key plugins: `repomix`, `feature-dev`, `frontend-design`, `code-review`, `commit
 
 The deploy script registers a PostToolUse hook in `~/.claude/settings.json` that runs formatters, linters, and unit tests after file edits.
 
-| Step | Description |
-|------|-------------|
-| 1. Format | Auto-format the edited file (gofmt, ruff, prettier, shfmt, etc.) |
-| 2. Lint | Run linters (golangci-lint, eslint, shellcheck, etc.) |
-| 3. Type Check | Run type checkers (tsc, mypy, go vet) |
-| 4. Unit Tests | Run project tests based on detected project type |
+| Step          | Description                                                      |
+| ------------- | ---------------------------------------------------------------- |
+| 1. Format     | Auto-format the edited file (gofmt, ruff, prettier, shfmt, etc.) |
+| 2. Lint       | Run linters (golangci-lint, eslint, shellcheck, etc.)            |
+| 3. Type Check | Run type checkers (tsc, mypy, go vet)                            |
+| 4. Unit Tests | Run project tests based on detected project type                 |
 
 **StatusLine (Auto-Registered)**
 
@@ -455,6 +467,7 @@ Sync AI system instructions to all repos. Reads from dotfiles (source of truth) 
 ```
 
 Files synced:
+
 - `.claude/CLAUDE.md` → `CLAUDE.md` (project-specific AI instructions)
 - `AGENTS.md` (agent definitions)
 - `GEMINI.md` (Gemini-specific instructions)
@@ -475,12 +488,12 @@ Files synced:
 
 **Quick Troubleshooting**
 
-| Issue | Solution |
-|--------|----------|
-| Git hooks not running | `git config --global core.hooksPath ~/.config/git/hooks` |
-| PowerShell execution policy | `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` |
-| Neovim plugins not installing | In Neovim run `:PackUpdate` |
-| zoxide not jumping | Use directories normally for a few days to let zoxide learn |
+| Issue                         | Solution                                                               |
+| ----------------------------- | ---------------------------------------------------------------------- |
+| Git hooks not running         | `git config --global core.hooksPath ~/.config/git/hooks`               |
+| PowerShell execution policy   | `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` |
+| Neovim plugins not installing | In Neovim run `:PackUpdate`                                            |
+| zoxide not jumping            | Use directories normally for a few days to let zoxide learn            |
 
 For detailed troubleshooting, see [QUICKREF.md](QUICKREF.md).
 
@@ -508,13 +521,13 @@ Includes IosevkaTerm Nerd Font for glyph support. Configuration deployed to `~/.
 
 **Key Aliases**
 
-| Alias | Command |
-|-------|---------|
-| up / update | Update all packages |
+| Alias         | Command                    |
+| ------------- | -------------------------- |
+| up / update   | Update all packages        |
 | z \<pattern\> | Jump to directory (zoxide) |
-| gs | git status |
-| gl | git log |
-| lg | lazygit |
+| gs            | git status                 |
+| gl            | git log                    |
+| lg            | lazygit                    |
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for system architecture details.
 
@@ -522,15 +535,15 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for system architecture details.
 
 ## Additional Documentation
 
-| Document | Purpose |
-|----------|---------|
-| [TOOLS.md](TOOLS.md) | Complete tool breakdown and language matrix |
-| [TESTING.md](TESTING.md) | Test suite and coverage details |
-| [ARCHITECTURE.md](ARCHITECTURE.md) | System architecture and diagrams |
-| [DOCKER_K8S.md](DOCKER_K8S.md) | Docker Desktop and minikube setup |
-| [HISTORY.md](HISTORY.md) | Legacy file museum |
-| [QUICKREF.md](QUICKREF.md) | Quick reference card and common tasks |
-| [BRIDGE.md](BRIDGE.md) | Bridge approach and configuration system |
+| Document                           | Purpose                                     |
+| ---------------------------------- | ------------------------------------------- |
+| [TOOLS.md](TOOLS.md)               | Complete tool breakdown and language matrix |
+| [TESTING.md](TESTING.md)           | Test suite and coverage details             |
+| [ARCHITECTURE.md](ARCHITECTURE.md) | System architecture and diagrams            |
+| [DOCKER_K8S.md](DOCKER_K8S.md)     | Docker Desktop and minikube setup           |
+| [HISTORY.md](HISTORY.md)           | Legacy file museum                          |
+| [QUICKREF.md](QUICKREF.md)         | Quick reference card and common tasks       |
+| [BRIDGE.md](BRIDGE.md)             | Bridge approach and configuration system    |
 
 ## Updating
 

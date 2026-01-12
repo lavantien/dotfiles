@@ -650,6 +650,16 @@ _main() {
 	fi
 
 	# ============================================================================
+	# CLAUDE CODE CLI
+	# ============================================================================
+	if cmd_exists claude; then
+		update_section "CLAUDE CODE CLI"
+		update_and_report "curl -fsSL https://claude.ai/install.sh | bash" "claude-code"
+	else
+		update_skip "claude-code not found"
+	fi
+
+	# ============================================================================
 	# SUMMARY
 	# ============================================================================
 	end_time=$(date +%s)

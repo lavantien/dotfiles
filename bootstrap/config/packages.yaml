@@ -37,7 +37,7 @@ system_package_managers:
     version_flag: --version
     min_version: "0.3.0"
     install:
-      windows: 'Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force; Invoke-RestObject -Uri https://get.scoop.sh | Invoke-Expression'
+      windows: "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force; Invoke-RestObject -Uri https://get.scoop.sh | Invoke-Expression"
 
 sdks:
   - name: node
@@ -235,6 +235,14 @@ linters_formatters:
     min_version: "0.12.0"
     install_method: go_install
     install_package: nao.vi/gup@latest
+
+  - name: cargo_update
+    display_name: Cargo Package Manager
+    platforms: [all]
+    check_cmd: cargo-install-update
+    version_flag: --version
+    install_method: cargo
+    install_package: cargo-update
 
   - name: ruff
     display_name: Ruff (Python)
