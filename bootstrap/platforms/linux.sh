@@ -243,11 +243,126 @@ install_linux_package() {
 	fi
 
 	# ============================================================================
+	# HELPER: Remove package from system package manager (distro-agnostic)
+	# ============================================================================
+	# Usage: remove_system_package <package_name> [alt_package_names...]
+	remove_system_package() {
+		local pkg="$1"
+		shift
+		local alts=("$@") # Alternative package names to try
+
+		# Try apt (Debian/Ubuntu)
+		if cmd_exists apt; then
+			if dpkg -l | grep -q "ii  $pkg" 2>/dev/null; then
+				run_cmd "sudo apt remove -y $pkg 2>/dev/null || true"
+				return 0
+			fi
+			# Try alternative names
+			for alt in "${alts[@]}"; do
+				if dpkg -l | grep -q "ii  $alt" 2>/dev/null; then
+					run_cmd "sudo apt remove -y $alt 2>/dev/null || true"
+					return 0
+				fi
+			done
+		fi
+
+		# Try dnf (Fedora/RHEL)
+		if cmd_exists dnf; then
+			if dnf list installed | grep -q "^$pkg\\."; then
+				run_cmd "sudo dnf remove -y $pkg 2>/dev/null || true"
+				return 0
+			fi
+			for alt in "${alts[@]}"; do
+				if dnf list installed | grep -q "^${alt}\\."; then
+					run_cmd "sudo dnf remove -y $alt 2>/dev/null || true"
+					return 0
+				fi
+			done
+		fi
+
+		# Try pacman (Arch)
+		if cmd_exists pacman; then
+			if pacman -Qi "$pkg" &>/dev/null; then
+				run_cmd "sudo pacman -R --noconfirm $pkg 2>/dev/null || true"
+				return 0
+			fi
+			for alt in "${alts[@]}"; do
+				if pacman -Qi "$alt" &>/dev/null; then
+					run_cmd "sudo pacman -R --noconfirm $alt 2>/dev/null || true"
+					return 0
+				fi
+			done
+		fi
+
+		# Try zypper (openSUSE)
+		if cmd_exists zypper; then
+			if zypper search -i "$pkg" 2>/dev/null | grep -q "$pkg"; then
+				run_cmd "sudo zypper remove -y $pkg 2>/dev/null || true"
+				return 0
+			fi
+			for alt in "${alts[@]}"; do
+				if zypper search -i "$alt" 2>/dev/null | grep -q "$alt"; then
+					run_cmd "sudo zypper remove -y $alt 2>/dev/null || true"
+					return 0
+				fi
+			done
+		fi
+
+		return 1
+	}
+
+	# ============================================================================
 	# AUTO-CORRECTION: Remove old installations before brew
-	# For packages that have been migrated to brew, remove old apt/npm/cargo/pip versions
+	# For packages that have been migrated to brew, remove old apt/npm/cargo/pip/go versions
 	# ============================================================================
 	if cmd_exists brew; then
 		case "$package" in
+		# ========================================================================
+		# DEVELOPMENT SDKs (apt → brew)
+		# ========================================================================
+		nodejs)
+			# Remove apt nodejs/npm
+			if dpkg -l | grep -q "ii  nodejs" 2>/dev/null; then
+				log_warning "Found nodejs from apt (auto-removing for brew version)..."
+				run_cmd "sudo apt remove -y nodejs npm 2>/dev/null || true"
+			fi
+			# Remove snap node if present
+			if snap list 2>/dev/null | grep -q "node"; then
+				log_warning "Found node from snap (auto-removing for brew version)..."
+				run_cmd "sudo snap remove node 2>/dev/null || true"
+			fi
+			;;
+		python | python3)
+			# Skip system Python - always keep apt python3 as fallback
+			# Only remove if python was installed via other means
+			if pip list --user 2>/dev/null | grep -q " setuptools"; then
+				: # User Python packages exist, keep apt python
+			fi
+			;;
+		golang | go)
+			# Remove apt golang-go
+			if dpkg -l | grep -q "ii  golang-go" 2>/dev/null; then
+				log_warning "Found golang from apt (auto-removing for brew version)..."
+				run_cmd "sudo apt remove -y golang-go 2>/dev/null || true"
+			fi
+			;;
+		php)
+			# Remove apt PHP if present (will install from brew with curl included)
+			if dpkg -l | grep -q "php8.*-cli" 2>/dev/null; then
+				log_warning "Found PHP from apt (auto-removing for brew version with curl)..."
+				run_cmd "sudo apt remove -y 'php8.*' 2>/dev/null || true"
+			fi
+			;;
+		dotnet)
+			# Remove apt dotnet if present (brew version preferred)
+			if dpkg -l | grep -q "dotnet-sdk" 2>/dev/null; then
+				log_warning "Found dotnet from apt (auto-removing for brew version)..."
+				run_cmd "sudo apt remove -y 'dotnet-*' 2>/dev/null || true"
+			fi
+			;;
+		# ========================================================================
+		# LANGUAGE SERVERS (apt/npm/pip/cargo → brew)
+		# ========================================================================
 		clangd)
 			# Remove apt clangd/clang-format if present
 			if [[ "$(command -v clangd 2>/dev/null)" == /usr/bin/clangd ]]; then
@@ -255,13 +370,36 @@ install_linux_package() {
 				run_cmd "sudo apt remove -y clangd clang-format 2>/dev/null || true"
 			fi
 			;;
-		texlive)
-			# Remove apt texlive if present
-			if dpkg -l | grep -q "texlive-base" 2>/dev/null; then
-				log_warning "Found texlive from apt (auto-removing for brew version)..."
-				sudo dpkg -r texlive-base texlive-binaries texlive-common texlive-extra-extra texlive-fonts-recommended texlive-latex-base texlive-latex-extra texlive-luatex texlive-xetex >/dev/null 2>&1 || true
+		lua-language-server)
+			# Remove apt lua-language-server
+			if dpkg -l | grep -q "lua-language-server" 2>/dev/null; then
+				log_warning "Found lua-language-server from apt (auto-removing for brew version)..."
+				run_cmd "sudo apt remove -y lua-language-server 2>/dev/null || true"
+			fi
+			# Remove npm/pip versions
+			if npm list -g "lua-language-server" &>/dev/null || pip3 show "lua-language-server" &>/dev/null; then
+				log_warning "Found lua-language-server from npm/pip (auto-removing for brew version)..."
+				run_cmd "npm uninstall -g 'lua-language-server' 2>/dev/null || true"
+				run_cmd "pip3 uninstall -y 'lua-language-server' 2>/dev/null || true"
 			fi
 			;;
+		jdtls | eclipse-jdtls)
+			# Remove apt eclipse-jdt if present
+			if dpkg -l | grep -q "eclipse-jdt" 2>/dev/null; then
+				log_warning "Found eclipse-jdt from apt (auto-removing for brew version)..."
+				run_cmd "sudo apt remove -y eclipse-jdt 2>/dev/null || true"
+			fi
+			;;
+		rust-analyzer)
+			# Remove cargo install version if present
+			if [[ -f "$HOME/.cargo/bin/rust-analyzer" ]]; then
+				log_warning "Found rust-analyzer from cargo (auto-removing for brew version)..."
+				run_cmd "cargo uninstall rust-analyzer 2>/dev/null || true"
+			fi
+			;;
+		# ========================================================================
+		# LINTERS & FORMATTERS (npm/pip/cargo/go → brew)
+		# ========================================================================
 		prettier | eslint | ruff | black | mypy | yamllint | shellcheck | shfmt | stylua | selene)
 			# Remove npm/pip versions if present
 			local npm_pkg="$package"
@@ -279,27 +417,141 @@ install_linux_package() {
 				run_cmd "rm -f '$HOME/go/bin/golangci-lint' 2>/dev/null || true"
 			fi
 			;;
-		rust-analyzer)
-			# Remove cargo install version if present
-			if [[ -f "$HOME/.cargo/bin/rust-analyzer" ]]; then
-				log_warning "Found rust-analyzer from cargo (auto-removing for brew version)..."
-				run_cmd "cargo uninstall rust-analyzer 2>/dev/null || true"
+		# ========================================================================
+		# CLI TOOLS (apt → brew)
+		# ========================================================================
+		fzf)
+			if dpkg -l | grep -q "ii  fzf" 2>/dev/null; then
+				log_warning "Found fzf from apt (auto-removing for brew version)..."
+				run_cmd "sudo apt remove -y fzf 2>/dev/null || true"
 			fi
 			;;
-		lua-language-server)
-			# Remove npm or pip version
-			if npm list -g "lua-language-server" &>/dev/null || pip3 show "lua-language-server" &>/dev/null; then
-				log_warning "Found lua-language-server from npm/pip (auto-removing for brew version)..."
-				run_cmd "npm uninstall -g 'lua-language-server' 2>/dev/null || true"
-				run_cmd "pip3 uninstall -y 'lua-language-server' 2>/dev/null || true"
+		zoxide)
+			if dpkg -l | grep -q "ii  zoxide" 2>/dev/null; then
+				log_warning "Found zoxide from apt (auto-removing for brew version)..."
+				run_cmd "sudo apt remove -y zoxide 2>/dev/null || true"
 			fi
 			;;
-		php)
-			# Remove apt PHP if present (will install from brew with curl included)
-			if dpkg -l | grep -q "php8.*-cli" 2>/dev/null; then
-				log_warning "Found PHP from apt (auto-removing for brew version with curl)..."
-				run_cmd "sudo apt remove -y 'php8.*' 2>/dev/null || true"
+		bat)
+			if dpkg -l | grep -q "ii  bat" 2>/dev/null; then
+				log_warning "Found bat from apt (auto-removing for brew version)..."
+				run_cmd "sudo apt remove -y bat 2>/dev/null || true"
 			fi
+			;;
+		eza)
+			if dpkg -l | grep -q "ii  eza" 2>/dev/null; then
+				log_warning "Found eza from apt (auto-removing for brew version)..."
+				run_cmd "sudo apt remove -y eza 2>/dev/null || true"
+			fi
+			# Also remove old exa package
+			if dpkg -l | grep -q "ii  exa" 2>/dev/null; then
+				log_warning "Found exa from apt (auto-removing for brew eza)..."
+				run_cmd "sudo apt remove -y exa 2>/dev/null || true"
+			fi
+			;;
+		lazygit)
+			if dpkg -l | grep -q "ii  lazygit" 2>/dev/null; then
+				log_warning "Found lazygit from apt (auto-removing for brew version)..."
+				run_cmd "sudo apt remove -y lazygit 2>/dev/null || true"
+			fi
+			;;
+		gh)
+			if dpkg -l | grep -q "ii  gh" 2>/dev/null; then
+				log_warning "Found gh from apt (auto-removing for brew version)..."
+				run_cmd "sudo apt remove -y gh 2>/dev/null || true"
+			fi
+			# Also remove github-cli on some distros
+			if dpkg -l | grep -q "ii  github-cli" 2>/dev/null; then
+				log_warning "Found github-cli from apt (auto-removing for brew version)..."
+				run_cmd "sudo apt remove -y github-cli 2>/dev/null || true"
+			fi
+			;;
+		tokei)
+			if dpkg -l | grep -q "ii  tokei" 2>/dev/null; then
+				log_warning "Found tokei from apt (auto-removing for brew version)..."
+				run_cmd "sudo apt remove -y tokei 2>/dev/null || true"
+			fi
+			;;
+		ripgrep)
+			if dpkg -l | grep -q "ii  ripgrep" 2>/dev/null; then
+				log_warning "Found ripgrep from apt (auto-removing for brew version)..."
+				run_cmd "sudo apt remove -y ripgrep 2>/dev/null || true"
+			fi
+			;;
+		fd | fd-find)
+			if dpkg -l | grep -q "ii  fd-find" 2>/dev/null; then
+				log_warning "Found fd-find from apt (auto-removing for brew version)..."
+				run_cmd "sudo apt remove -y fd-find 2>/dev/null || true"
+			fi
+			if dpkg -l | grep -q "ii  fd" 2>/dev/null; then
+				log_warning "Found fd from apt (auto-removing for brew version)..."
+				run_cmd "sudo apt remove -y fd 2>/dev/null || true"
+			fi
+			;;
+		bats)
+			if dpkg -l | grep -q "ii  bats" 2>/dev/null; then
+				log_warning "Found bats from apt (auto-removing for brew version)..."
+				run_cmd "sudo apt remove -y bats 2>/dev/null || true"
+			fi
+			# Remove npm version
+			if npm list -g "bats" &>/dev/null; then
+				log_warning "Found bats from npm (auto-removing for brew version)..."
+				run_cmd "npm uninstall -g 'bats' 2>/dev/null || true"
+			fi
+			;;
+		difftastic | difft)
+			# Remove cargo install version
+			if [[ -f "$HOME/.cargo/bin/difft" ]]; then
+				log_warning "Found difftastic from cargo (auto-removing for brew version)..."
+				run_cmd "cargo uninstall difftastic 2>/dev/null || true"
+			fi
+			;;
+		# ========================================================================
+		# DESKTOP APPLICATIONS (handled by texlive formatter)
+		# ========================================================================
+		texlive)
+			# Remove apt texlive if present
+			if dpkg -l | grep -q "texlive-base" 2>/dev/null; then
+				log_warning "Found texlive from apt (auto-removing for brew version)..."
+				sudo dpkg -r texlive-base texlive-binaries texlive-common texlive-extra-extra texlive-fonts-recommended texlive-latex-base texlive-latex-extra texlive-luatex texlive-xetex >/dev/null 2>&1 || true
+			fi
+			;;
+		# ========================================================================
+		# CATCH-ALL: Handle unknown sources gracefully
+		# For packages not explicitly handled above, try common sources
+		# ========================================================================
+		*)
+			# Try to detect and remove from various sources
+			local handled=false
+
+			# Check snap (common source on Ubuntu)
+			if cmd_exists snap && snap list 2>/dev/null | grep -q "^${package}$"; then
+				log_warning "Found $package from snap (auto-removing for brew version)..."
+				run_cmd "sudo snap remove $package 2>/dev/null || true"
+				handled=true
+			fi
+
+			# Check flatpak
+			if cmd_exists flatpak && flatpak list 2>/dev/null | grep -qi "$package"; then
+				log_warning "Found $package from flatpak (auto-removing for brew version)..."
+				run_cmd "sudo flatpak uninstall -y $package 2>/dev/null || true"
+				handled=true
+			fi
+
+			# Check for manually installed binaries in ~/.local/bin
+			if [[ -f "$HOME/.local/bin/$package" ]] || [[ -L "$HOME/.local/bin/$package" ]]; then
+				log_warning "Found $package in ~/.local/bin (may need manual cleanup)..."
+				handled=true
+			fi
+
+			# Check for AppImage in ~/Applications
+			if ls ~/Applications/${package}*.AppImage 2>/dev/null; then
+				log_warning "Found $package AppImage (may need manual cleanup)..."
+				handled=true
+			fi
+
+			# For unhandled packages, skip silently
+			# This prevents errors for packages that only have one installation method
 			;;
 		esac
 	fi

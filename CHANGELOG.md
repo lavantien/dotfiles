@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.2.6] - 2026-01-12
+
+### Added
+
+**Bootstrap Scripts**
+
+- Comprehensive AUTO-CORRECTION system for all packages
+- Distro-agnostic `remove_system_package()` helper (apt/dnf/pacman/zypper)
+- CLI tools auto-correction: fzf, zoxide, bat, eza, lazygit, gh, tokei, ripgrep, fd, bats
+- SDKs auto-correction: nodejs (including snap), golang, php, dotnet
+- Language servers: clangd, lua-language-server, jdtls, rust-analyzer
+- Linters/formatters: prettier, eslint, ruff, black, mypy, yamllint, shellcheck, shfmt, stylua, selene, golangci-lint
+- Cargo packages: difftastic
+- Catch-all handler for unknown sources (snap/flatpak/AppImage/manual installs)
+- Handles package name variations (fd/fd-find, gh/github-cli, eza/exa)
+
+### Changed
+
+**Bootstrap Scripts**
+
+- AUTO-CORRECTION now covers 30+ packages across multiple sources
+- Python kept as system fallback (not removed, always safe)
+- Unknown package sources logged for manual cleanup instead of failing
+
+---
+
 ## [5.2.5] - 2026-01-12
 
 ### Added
