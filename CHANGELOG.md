@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.2.2] - 2026-01-12
+
+### Fixed
+
+**Update Script**
+- Reordered RUSTUP before CARGO section (cargo comes from rustup)
+- Added CARGO-UPDATE section to auto-install cargo-update if missing
+- This ensures `cargo-install-update` is available before running cargo package updates
+
+---
+
 ## [5.2.1] - 2026-01-12
 
 ### Added
