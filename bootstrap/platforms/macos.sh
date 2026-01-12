@@ -386,6 +386,26 @@ install_cargo_update() {
 	fi
 }
 
+# Install PHP with curl extension (required by Composer)
+install_php() {
+	# Check if curl extension is already loaded
+	if cmd_exists php && php -m | grep -q curl 2>/dev/null; then
+		track_skipped "php" "PHP with curl extension"
+		return 0
+	fi
+
+	log_step "Installing PHP with curl extension via brew..."
+
+	# On macOS, brew PHP includes curl by default
+	if run_cmd "brew install php"; then
+		track_installed "php" "$(get_package_description php)"
+		return 0
+	else
+		track_failed "php" "$(get_package_description php)"
+		return 1
+	fi
+}
+
 # Install via pip
 install_pip_global() {
 	local package="$1"

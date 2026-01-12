@@ -405,6 +405,12 @@ install_linux_package() {
 			fi
 		fi
 		;;
+	php)
+		# PHP with curl extension (required by Composer)
+		if install_php; then
+			return 0
+		fi
+		;;
 	esac
 
 	# ============================================================================
@@ -740,6 +746,66 @@ install_cargo_update() {
 		track_failed "cargo-update" "$(get_package_description cargo-update)"
 		return 1
 	fi
+}
+
+# Install PHP with curl extension (required by Composer)
+install_php() {
+	# Check if curl extension is already loaded
+	if cmd_exists php && php -m | grep -q curl 2>/dev/null; then
+		track_skipped "php" "PHP with curl extension"
+		return 0
+	fi
+
+	log_step "Installing PHP with curl extension..."
+
+	# Prefer brew if available (includes curl by default, same versions as macOS)
+	if cmd_exists brew; then
+		if run_cmd "brew install php"; then
+			track_installed "php" "$(get_package_description php)"
+			return 0
+		fi
+	fi
+
+	# Fallback to system package managers
+	local php_version=""
+	local php_curl_package=""
+
+	# Detect PHP version if already installed
+	if cmd_exists php; then
+		php_version="$(php -r 'echo PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION;' 2>/dev/null)"
+	fi
+
+	if [[ -n "$php_version" ]]; then
+		log_step "Installing curl extension for PHP $php_version..."
+		php_curl_package="php${php_version}-curl"
+	else
+		php_curl_package="php-curl"
+	fi
+
+	if cmd_exists apt; then
+		if run_cmd "sudo apt install -y $php_curl_package"; then
+			track_installed "php" "$(get_package_description php)"
+			return 0
+		fi
+	elif cmd_exists dnf; then
+		if run_cmd "sudo dnf install -y php-curl"; then
+			track_installed "php" "$(get_package_description php)"
+			return 0
+		fi
+	elif cmd_exists pacman; then
+		if run_cmd "sudo pacman -S --noconfirm php-curl"; then
+			track_installed "php" "$(get_package_description php)"
+			return 0
+		fi
+	elif cmd_exists zypper; then
+		if run_cmd "sudo zypper install -y php-curl"; then
+			track_installed "php" "$(get_package_description php)"
+			return 0
+		fi
+	fi
+
+	track_failed "php" "$(get_package_description php)"
+	return 1
 }
 
 # Install via pip

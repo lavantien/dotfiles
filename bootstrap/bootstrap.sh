@@ -555,12 +555,12 @@ install_linters_formatters() {
 		fi
 	fi
 
-	# php (PHP runtime - prerequisite for composer)
+	# php (PHP runtime with curl extension - prerequisite for composer)
 	if [[ "$CATEGORIES" == "full" ]]; then
 		if [[ "$OS" == "macos" ]]; then
-			install_brew_package php "" php
+			install_php || true
 		elif [[ "$OS" == "linux" ]]; then
-			install_linux_package php "" php || true
+			install_php || true
 		fi
 	fi
 

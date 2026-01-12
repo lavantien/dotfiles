@@ -736,6 +736,65 @@ function Install-CargoUpdate {
     }
 }
 
+# Install PHP with curl extension (required by Composer)
+function Install-PHP {
+    # Check if PHP is already installed with curl extension
+    if (Get-Command php -ErrorAction SilentlyContinue) {
+        $phpModules = php -m 2>$null
+        if ($phpModules -match "curl") {
+            Track-Skipped "php" "PHP with curl extension"
+            return $true
+        }
+    }
+
+    Write-Step "Installing PHP with curl extension..."
+
+    # Try scoop first (preferred on Windows)
+    if (Get-Command scoop -ErrorAction SilentlyContinue) {
+        if ($DryRun) {
+            Write-Info "[DRY-RUN] Would scoop install php"
+            Track-Installed "php" (Get-PackageDescription "php")
+            return $true
+        }
+
+        try {
+            scoop install php *> $null
+            # Scoop PHP includes curl extension by default
+            Track-Installed "php" (Get-PackageDescription "php")
+            return $true
+        }
+        catch {
+            Write-Warning ("Failed to install PHP via scoop: {0}" -f $_.Exception.Message)
+            Track-Failed "php" (Get-PackageDescription "php")
+            return $false
+        }
+    }
+
+    # Fallback to winget
+    if (Get-Command winget -ErrorAction SilentlyContinue) {
+        if ($DryRun) {
+            Write-Info "[DRY-RUN] Would winget install PHP"
+            Track-Installed "php" (Get-PackageDescription "php")
+            return $true
+        }
+
+        try {
+            winget install --id PHP.PHP.8.4 --accept-source-agreements --accept-package-agreements *> $null
+            Track-Installed "php" (Get-PackageDescription "php")
+            return $true
+        }
+        catch {
+            Write-Warning ("Failed to install PHP via winget: {0}" -f $_.Exception.Message)
+            Track-Failed "php" (Get-PackageDescription "php")
+            return $false
+        }
+    }
+
+    Write-Warning "No package manager found (scoop/winget required for PHP)"
+    Track-Failed "php" (Get-PackageDescription "php")
+    return $false
+}
+
 # ============================================================================
 # COURSIER (Scala tool installer)
 # ============================================================================

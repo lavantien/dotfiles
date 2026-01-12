@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.2.5] - 2026-01-12
+
+### Added
+
+**Bootstrap Scripts**
+
+- PHP installation with curl extension (required by Composer)
+- Linux: `install_php()` function, prefers brew PHP (curl included), falls back to apt/dnf/pacman/zypper
+- macOS: `install_php()` function via brew (curl included by default)
+- Windows: `Install-PHP()` function via scoop or winget
+- Composer now runs at full speed without the slow fallback HTTP handler
+
+---
+
 ## [5.2.4] - 2026-01-12
 
 ### Fixed
