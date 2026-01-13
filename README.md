@@ -24,6 +24,8 @@ Production-grade dotfiles for Windows 11, Linux (Ubuntu/Fedora/Arch), and macOS.
 
 ## Quick Start
 
+> **Required Clone Location**: This repository **MUST** be cloned to `~/dev/github/dotfiles`. Several scripts (including `sync-system-instructions` and `git-update-repos`) depend on this exact path to function correctly.
+
 ### Dotfiles Installation
 
 **For Docker/Kubernetes setup**, see [DOCKER_K8S.md](DOCKER_K8S.md).
@@ -462,7 +464,9 @@ Fetches ALL your GitHub repositories (public and private) and keeps them synchro
 
 **sync-system-instructions**
 
-Sync AI system instructions to all repos. Reads from dotfiles (source of truth) and copies to target repos:
+Sync AI system instructions to all repos. Reads from dotfiles (source of truth) and copies to target repos.
+
+> **Note**: This script requires the dotfiles repository to be at `~/dev/github/dotfiles` (as per the Quick Start instructions) to locate the source instruction files.
 
 ```bash
 ./sync-system-instructions.sh
