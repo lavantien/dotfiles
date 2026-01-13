@@ -462,7 +462,7 @@ Sync AI system instructions to all repos. Reads from dotfiles (source of truth) 
 # Specify custom base directory (default: ~/dev/github)
 ./sync-system-instructions.sh -d ~/dev/git
 
-# Sync + commit + push (for headless Claude Code)
+# Sync + commit + push
 ./sync-system-instructions.sh -c -p
 ```
 

@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.2.7] - 2026-01-13
+
+### Fixed
+
+**sync-system-instructions.sh**
+
+- Fixed `set -e` arithmetic bug that caused script to exit after first repository
+- Added `|| true` to counter increments to handle zero values correctly
+- Script now processes all repositories in base directory
+
+### Removed
+
+**sync-system-instructions.sh**
+
+- Removed Claude CLI dependency for commit/push operations
+- Now uses pure git commands (deterministic, no AI agent needed)
+- Deleted `commit_with_claude()` function
+
+---
+
 ## [5.2.6] - 2026-01-12
 
 ### Added
