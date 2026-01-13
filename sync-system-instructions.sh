@@ -31,23 +31,9 @@ MARKDOWN_FILES=(
 	"RULES.md:RULES.md"
 )
 
-# Auto-detect dotfiles directory from script location
-# Resolve symlinks to get the real script path
-SOURCE="${BASH_SOURCE[0]}"
-while [ -h "$SOURCE" ]; do
-	# Resolve $SOURCE until the file is no longer a symlink
-	DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
-	SOURCE="$(readlink "$SOURCE")"
-	# If $SOURCE was a relative symlink, resolve it relative to the symlink path
-	[[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
-done
-SCRIPT_DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
-DOTFILES_DIR="$SCRIPT_DIR"
-
-# If not in dotfiles repo, use the standard location
-if [[ ! -f "$DOTFILES_DIR/.claude/CLAUDE.md" ]]; then
-	DOTFILES_DIR="$HOME/dev/github/dotfiles"
-fi
+# Dotfiles directory - source of truth for system instructions
+# As per README quick start, dotfiles should be cloned to ~/dev/github/dotfiles
+DOTFILES_DIR="$HOME/dev/github/dotfiles"
 
 # Parse arguments
 while getopts "d:cp" opt; do
