@@ -9,6 +9,7 @@ set -e
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
 NC='\033[0m'
 
 # Detect OS
@@ -26,6 +27,42 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Support XDG_CONFIG_HOME
 XDG_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}"
+
+# ============================================================================
+# GIT CONFIG MERGE - Preserves user identity
+# ============================================================================
+merge_gitconfig() {
+	local source="$1"
+	local target="$2"
+	local temp_file="$target.dotfiles-new"
+
+	# If target doesn't exist, just copy
+	if [[ ! -f "$target" ]]; then
+		cp "$source" "$target"
+		echo -e "${CYAN}Created ~/.gitconfig${NC}"
+		return 0
+	fi
+
+	# Preserve user identity from existing config
+	local user_name user_email
+	user_name=$(git config --file "$target" user.name 2>/dev/null)
+	user_email=$(git config --file "$target" user.email 2>/dev/null)
+
+	# Copy new config
+	cp "$source" "$temp_file"
+
+	# Restore user identity if it existed
+	if [[ -n "$user_name" ]]; then
+		git config --file "$temp_file" user.name "$user_name"
+	fi
+	if [[ -n "$user_email" ]]; then
+		git config --file "$temp_file" user.email "$user_email"
+	fi
+
+	# Atomically replace the target
+	mv "$temp_file" "$target"
+	echo -e "${CYAN}Updated ~/.gitconfig (preserved user identity)${NC}"
+}
 
 # ============================================================================
 # CONFIG MIGRATION (Self-correction for old config locations)
@@ -111,8 +148,8 @@ deploy_common() {
 	# Copy bash aliases (works on all platforms)
 	cp "$SCRIPT_DIR/.bash_aliases" "$HOME/"
 
-	# Copy git config
-	cp "$SCRIPT_DIR/.gitconfig" "$HOME/"
+	# Merge git config (preserves user.name and user.email)
+	merge_gitconfig "$SCRIPT_DIR/.gitconfig" "$HOME/.gitconfig"
 
 	# Copy Neovim config (from .config/nvim/ to match repo structure)
 	if [ -f "$SCRIPT_DIR/.config/nvim/init.lua" ]; then

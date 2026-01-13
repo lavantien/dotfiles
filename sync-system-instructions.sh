@@ -128,19 +128,36 @@ commit_changes() {
 		return 1
 	fi
 
-	# Add and commit (show commit errors)
-	if git add CLAUDE.md AGENTS.md GEMINI.md RULES.md 2>/dev/null; then
-		if git commit -m "chore: sync system instructions" >/dev/null 2>&1; then
-			echo -e "    ${GREEN}committed${NC} $repo_name"
-			cd - >/dev/null
-			return 0
-		else
-			echo -e "    ${RED}commit failed${NC} $repo_name"
-			cd - >/dev/null
-			return 1
-		fi
+	# Add files
+	if ! git add CLAUDE.md AGENTS.md GEMINI.md RULES.md 2>/dev/null; then
+		cd - >/dev/null
+		return 1
 	fi
 
+	# Get git config from dotfiles repo as fallback
+	local user_name user_email
+	user_name=$(git -C "$DOTFILES_DIR" config user.name 2>/dev/null)
+	user_email=$(git -C "$DOTFILES_DIR" config user.email 2>/dev/null)
+
+	# Try commit with config override if available
+	local commit_cmd
+	if [[ -n "$user_name" && -n "$user_email" ]]; then
+		commit_cmd="git -c user.name='$user_name' -c user.email='$user_email' commit -m 'chore: sync system instructions'"
+	else
+		commit_cmd="git commit -m 'chore: sync system instructions'"
+	fi
+
+	if eval "$commit_cmd" >/dev/null 2>&1; then
+		echo -e "    ${GREEN}committed${NC} $repo_name"
+		cd - >/dev/null
+		return 0
+	fi
+
+	# Commit failed - show helpful message
+	echo -e "    ${RED}commit failed${NC} $repo_name"
+	if [[ -z "$user_name" || -z "$user_email" ]]; then
+		echo -e "    ${YELLOW}→ Set global git config:${NC} git config --global user.name 'Your Name' && git config --global user.email 'you@example.com'"
+	fi
 	cd - >/dev/null
 	return 1
 }
