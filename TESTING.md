@@ -6,9 +6,9 @@ Comprehensive test suite ensuring reliability across all platforms and component
 
 | Suite | Tests | Description |
 |-------|-------|-------------|
-| PowerShell | 100+ | Wrapper validation, bootstrap, config, git hooks, E2E, regression, integration, hook integrity |
-| Bash | 50+ | Unit tests for deploy, backup, restore, healthcheck, uninstall, sync, git-update, hook integrity |
-| **Total** | **150+** | Cross-platform test coverage |
+| PowerShell | 1,200+ | Wrapper validation, bootstrap, config, git hooks, E2E, regression, integration, hook integrity |
+| Bash | 970+ | Unit tests for deploy, backup, restore, healthcheck, uninstall, sync, git-update, hook integrity |
+| **Total** | **2,200+** | Cross-platform test coverage |
 
 ## Test Areas
 

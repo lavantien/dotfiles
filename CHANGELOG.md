@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.2.9] - 2026-01-13
+
+### Fixed
+
+**Documentation**
+
+- Corrected LSP server count from 23/25 to 19 (verified against bootstrap/bootstrap.sh)
+- Updated tool counts: Linters 16+ → 20+, Formatters 13+ → 17+, Testers 5+ → 9+, CLI Tools 13+ → 15+
+- Corrected automated test count from 150+ to 2,200+ (verified against test files)
+- Standardized clone directory path to ~/dev/github/dotfiles across all documentation
+- Fixed config setting name inconsistency: auto_commit_changes/auto_update_repos → auto_commit_repos
+- Fixed rust-analyzer naming (hyphen vs underscore inconsistency)
+- Added bootstrap script structure documentation (wrapper vs implementation)
+- Added HOOKS.md to Additional Documentation table
+- Removed broken CONTRIBUTING.md link from tests/README.md
+- Enhanced AGENTS.md and GEMINI.md with explanatory comments
+
+**Files Changed**
+
+- README.md
+- TOOLS.md
+- TESTING.md
+- QUICKREF.md
+- BRIDGE.md
+- tests/README.md
+- AGENTS.md
+- GEMINI.md
+
+---
+
 ## [5.2.8] - 2026-01-13
 
 ### Fixed

@@ -21,8 +21,9 @@
 ### Windows (PowerShell)
 
 ```powershell
-# Bootstrap - works immediately
-.\bootstrap\bootstrap.ps1
+# Bootstrap - either path works:
+.\bootstrap.ps1              # Root-level wrapper (convenience)
+.\bootstrap\bootstrap.ps1    # Full implementation in bootstrap/ directory
 
 # With custom category
 .\bootstrap\bootstrap.ps1 -Categories sdk
@@ -43,8 +44,9 @@
 ### Linux / macOS (Bash)
 
 ```bash
-# Bootstrap - works immediately
-./bootstrap/bootstrap.sh
+# Bootstrap - either path works:
+./bootstrap.sh              # Root-level wrapper (convenience)
+./bootstrap/bootstrap.sh    # Full implementation in bootstrap/ directory
 
 # With custom category
 ./bootstrap/bootstrap.sh --categories sdk
@@ -74,7 +76,7 @@ cp .dotfiles.config.yaml.example ~/.dotfiles.config.yaml
 vim ~/.dotfiles.config.yaml
 
 # 3. Run bootstrap (auto-detects config)
-./bootstrap/bootstrap.sh
+./bootstrap.sh              # or ./bootstrap/bootstrap.sh - both work
 ```
 
 ### Common Config Options
@@ -86,7 +88,7 @@ vim ~/.dotfiles.config.yaml
 | `theme` | rose-pine, rose-pine-dawn, rose-pine-moon | (none) |
 | `github_username` | your github username | (none) |
 | `base_dir` | path to git repos | ~/dev/github |
-| `auto_update_repos` | true, false | false |
+| `auto_commit_repos` | true, false | false |
 
 ## Troubleshooting
 
@@ -142,9 +144,11 @@ vim ~/.dotfiles.config.yaml
 
 ```
 dotfiles/
+├── bootstrap.sh            # Root-level wrapper (convenience)
+├── bootstrap.ps1           # Root-level wrapper (convenience)
 ├── bootstrap/
-│   ├── bootstrap.sh          # Main bash bootstrap
-│   ├── bootstrap.ps1         # Main PowerShell bootstrap
+│   ├── bootstrap.sh          # Main bash bootstrap (implementation)
+│   ├── bootstrap.ps1         # Main PowerShell bootstrap (implementation)
 │   └── lib/                # Bootstrap-specific libraries
 ├── lib/
 │   ├── config.sh            # Shared config (bash)
@@ -183,10 +187,10 @@ A: No! They work with env vars or hardcoded defaults too.
 ## Summary
 
 **Your workflow is preserved:**
-1. ✅ Run `bootstrap/bootstrap.ps1` - works immediately
+1. ✅ Run `bootstrap.ps1` or `bootstrap/bootstrap.ps1` - both work immediately
 2. ✅ Default is "full" - set in script
 3. ✅ Everything setup correctly - no config needed
-4. ✅ Scripts in `~/dev` - git-update-repos.ps1
+4. ✅ Scripts in `~/dev/github` - git-update-repos.ps1
 5. ✅ Distribute instructions - sync-system-instructions.ps1 -Commit
 
 **Plus new capabilities:**

@@ -175,5 +175,3 @@ When adding new features, include:
 2. Integration tests for complete workflows
 3. Edge case testing
 4. Error path testing
-
-See [CONTRIBUTING.md](../CONTRIBUTING.md) for more details.

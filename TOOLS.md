@@ -2,7 +2,7 @@
 
 Complete breakdown of all tools installed by the bootstrap script, organized by language and category.
 
-## Language Servers (24 total)
+## Language Servers (19 total)
 
 | LSP | Language | Notes |
 |-----|----------|-------|
@@ -26,6 +26,10 @@ Complete breakdown of all tools installed by the bootstrap script, organized by 
 | tombi | TOML | - |
 | ts_ls | JavaScript/TypeScript | - |
 | yaml-language-server | YAML/K8s | Kubernetes schema support |
+
+**Optional LSPs** (not included in count above):
+| LSP | Language | Notes |
+|-----|----------|-------|
 | dartls | Dart | Optional (requires Dart SDK) |
 
 ## Complete Language Tool Matrix
@@ -35,7 +39,7 @@ Complete breakdown of all tools installed by the bootstrap script, organized by 
 | **Bash** | bashls | bats | shfmt | shellcheck | - |
 | **PowerShell** | powershell_es | Pester | Invoke-Formatter | PSScriptAnalyzer | PSScriptAnalyzer |
 | **Go** | gopls | go test | gofmt, goimports | golangci-lint | go vet |
-| **Rust** | rust_analyzer | cargo test | rustfmt | clippy | cargo check |
+| **Rust** | rust-analyzer | cargo test | rustfmt | clippy | cargo check |
 | **Python** | pyright | pytest | ruff, black | ruff | mypy |
 | **JavaScript/TypeScript** | ts_ls | jest | prettier | eslint | tsc |
 | **HTML** | html | - | prettier | - | - |

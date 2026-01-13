@@ -7,6 +7,14 @@ The bootstrap scripts now support **two modes of operation** that work together 
 1. **Backward Compatible Mode (Default)**: Works without any config file using hardcoded defaults
 2. **Forward Compatible Mode (Optional)**: Loads config from `~/.dotfiles.config.yaml` if present
 
+### Bootstrap Script Structure
+
+Bootstrap scripts exist at both locations for convenience:
+- **Root level** (`./bootstrap.sh`, `./bootstrap.ps1`) - Lightweight wrappers
+- **`bootstrap/` directory** (`bootstrap/bootstrap.sh`, `bootstrap/bootstrap.ps1`) - Full implementation
+
+Both paths work identically. This document uses the `bootstrap/` paths for clarity, but you can use either.
+
 ## How It Works
 
 ### Automatic Detection
@@ -197,6 +205,8 @@ Options:
 
 ```
 dotfiles/
+├── bootstrap.sh            # Root-level wrapper (convenience)
+├── bootstrap.ps1           # Root-level wrapper (convenience)
 ├── bootstrap/
 │   ├── bootstrap.sh          # Main bash bootstrap (supports both modes)
 │   ├── bootstrap.ps1         # Main PowerShell bootstrap (supports both modes)

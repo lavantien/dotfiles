@@ -3,7 +3,7 @@
 ![Coverage](coverage-badge.svg) [![Security](https://img.shields.io/badge/security-reviewed-brightgreen)](#security) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)](https://github.com/lavantien/dotfiles)
 
-Production-grade dotfiles for Windows 11, Linux (Ubuntu/Fedora/Arch), and macOS. Auto-detecting, gracefully degrading, fully vibecoding-enabled with **23 LSP servers**, **32 Treesitter parsers**, **40+ tools**, TDD enforcement, comprehensive Git hooks, and Claude Code integration.
+Production-grade dotfiles for Windows 11, Linux (Ubuntu/Fedora/Arch), and macOS. Auto-detecting, gracefully degrading, fully vibecoding-enabled with **19 LSP servers**, **32 Treesitter parsers**, **40+ tools**, TDD enforcement, comprehensive Git hooks, and Claude Code integration.
 
 ## Table of Contents
 
@@ -54,8 +54,8 @@ exec zsh  # or source ~/.zshrc
 **Linux**
 
 ```bash
-git clone https://github.com/lavantien/dotfiles.git ~/dev/dotfiles
-cd ~/dev/dotfiles
+git clone https://github.com/lavantien/dotfiles.git ~/dev/github/dotfiles
+cd ~/dev/github/dotfiles
 chmod +x allow.sh && ./allow.sh
 ./bootstrap.sh
 chsh -s $(which zsh)  # Set zsh as default shell
@@ -65,8 +65,8 @@ exec zsh  # or source ~/.zshrc
 **macOS**
 
 ```bash
-git clone https://github.com/lavantien/dotfiles.git ~/dev/dotfiles
-cd ~/dev/dotfiles
+git clone https://github.com/lavantien/dotfiles.git ~/dev/github/dotfiles
+cd ~/dev/github/dotfiles
 chmod +x allow.sh && ./allow.sh
 ./bootstrap.sh
 exec zsh  # or source ~/.zshrc
@@ -75,8 +75,8 @@ exec zsh  # or source ~/.zshrc
 **Windows (PowerShell 7+)**
 
 ```powershell
-git clone https://github.com/lavantien/dotfiles.git $HOME/dev/dotfiles
-cd $HOME/dev/dotfiles
+git clone https://github.com/lavantien/dotfiles.git $HOME/dev/github/dotfiles
+cd $HOME/dev/github/dotfiles
 .\bootstrap.ps1
 . $PROFILE
 ```
@@ -130,7 +130,7 @@ Thoroughly tested on Ubuntu 26.04 LTS and Windows 11.
 | ---------------------- | ---------------------------------------------------------------------------------------------------- |
 | **Package Managers**   | Homebrew (Linux/macOS), Scoop (Windows), apt/dnf/pacman (Linux)                                      |
 | **SDKs**               | Node.js, Python, Go, Rust (rustup), dotnet, OpenJDK                                                  |
-| **Language Servers**   | 25 servers - see [TOOLS.md](TOOLS.md)                                                                |
+| **Language Servers**   | 19 servers - see [TOOLS.md](TOOLS.md)                                                                |
 | **Linters/Formatters** | prettier, eslint, ruff, black, golangci-lint, clippy, shellcheck, yamllint, hadolint, etc.           |
 | **CLI Tools**          | fzf, zoxide, bat, eza, lazygit, gh, ripgrep, fd, tokei, btop, repomix, docker-compose, helm, kubectl |
 | **Shell**              | zsh, oh-my-zsh (half-life theme, plugins: autosuggestions, syntax-highlighting, interactive-cd)      |
@@ -150,7 +150,7 @@ Thoroughly tested on Ubuntu 26.04 LTS and Windows 11.
 - Conventional commits enforcement via git commit-msg hook
 - Pre-commit hooks that auto-format and lint for 19+ languages
 - Claude Code quality hooks for real-time format/lint/type-check after file writes
-- 150+ automated tests (PowerShell + Bash)
+- 2,200+ automated tests (PowerShell + Bash)
 - Hook integrity tests prevent regression
 
 **Idempotency & Safe Re-runs**
@@ -235,13 +235,21 @@ Key idempotency features shown above:
 | Verbose         | `--verbose`        | `-VerboseMode`    | Show detailed output    |
 | Help            | `-h`, `--help`     | `-Help`           | Show help               |
 
+**Bootstrap Script Structure**
+
+The repository contains bootstrap scripts at both locations:
+- **Root level** (`./bootstrap.sh`, `./bootstrap.ps1`) - Lightweight wrappers
+- **`bootstrap/` directory** (`bootstrap/bootstrap.sh`, `bootstrap/bootstrap.ps1`) - Full implementation
+
+Both work identically. The root-level scripts provide convenience, while the `bootstrap/` directory contains the actual implementation logic.
+
 **Bootstrap Phases**
 
 | Phase                   | Tools                                                                                         |
 | ----------------------- | --------------------------------------------------------------------------------------------- |
 | 1: Foundation           | Package managers, git, WezTerm (Linux), IosevkaTerm Nerd Font                                 |
 | 2: Core SDKs            | Node.js, Python, Go, Rust, dotnet, OpenJDK                                                    |
-| 3: Language Servers     | 24 LSPs (clangd, gopls, rust-analyzer, pyright, ts_ls, helm_ls, docker-language-server, etc.) |
+| 3: Language Servers     | 19 LSPs (clangd, gopls, rust-analyzer, pyright, ts_ls, helm_ls, docker-language-server, etc.) |
 | 4: Linters & Formatters | prettier, eslint, ruff, golangci-lint, shellcheck, yamllint, hadolint, etc.                   |
 | 5: CLI Tools            | fzf, zoxide, bat, eza, lazygit, gh, ripgrep, fd, tokei, docker-compose, helm, kubectl         |
 | 5.25: MCP Servers       | context7-mcp, playwright-mcp (via npm)                                                        |
@@ -280,7 +288,7 @@ vim ~/.dotfiles.config.yaml
 | theme               | rose-pine, rose-pine-dawn, rose-pine-moon | (none)       | Default theme            |
 | github_username     | your username                             | lavantien    | Git repo management      |
 | base_dir            | path to repos                             | ~/dev/github | Repository location      |
-| auto_commit_changes | true, false                               | false        | Auto-commit synced files |
+| auto_commit_repos    | true, false                               | false        | Auto-commit synced files |
 
 ---
 
@@ -292,11 +300,11 @@ This repository installs comprehensive tooling for modern development. For compl
 
 | Category         | Count | Examples                                                                              |
 | ---------------- | ----- | ------------------------------------------------------------------------------------- |
-| Language Servers | 25    | pyright, gopls, rust-analyzer, clangd, ts_ls, helm_ls, docker-compose-language-server |
-| Linters          | 16+   | eslint, ruff, golangci-lint, clippy, shellcheck, yamllint, hadolint                   |
-| Formatters       | 13+   | prettier, ruff, black, rustfmt, gofmt                                                 |
-| Testers          | 5+    | pytest, bats, busted, Pester, jest                                                    |
-| CLI Tools        | 13+   | fzf, zoxide, bat, eza, lazygit, gh, docker-compose, helm, kubectl                     |
+| Language Servers | 19    | pyright, gopls, rust-analyzer, clangd, ts_ls, helm_ls, docker-compose-language-server |
+| Linters          | 20+   | eslint, ruff, golangci-lint, clippy, shellcheck, yamllint, hadolint, mypy             |
+| Formatters       | 17+   | prettier, ruff, black, rustfmt, gofmt, shfmt, scalafmt                               |
+| Testers          | 9+    | pytest, bats, busted, Pester, jest, catch2, cargo test                               |
+| CLI Tools        | 15+   | fzf, zoxide, bat, eza, lazygit, gh, docker-compose, helm, kubectl, repomix            |
 
 **Supported Languages**
 
@@ -541,6 +549,7 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for system architecture details.
 | [TESTING.md](TESTING.md)           | Test suite and coverage details             |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | System architecture and diagrams            |
 | [DOCKER_K8S.md](DOCKER_K8S.md)     | Docker Desktop and minikube setup           |
+| [HOOKS.md](HOOKS.md)               | Git and Claude Code hooks configuration     |
 | [HISTORY.md](HISTORY.md)           | Legacy file museum                          |
 | [QUICKREF.md](QUICKREF.md)         | Quick reference card and common tasks       |
 | [BRIDGE.md](BRIDGE.md)             | Bridge approach and configuration system    |
@@ -548,7 +557,7 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for system architecture details.
 ## Updating
 
 ```bash
-cd ~/dev/dotfiles
+cd ~/dev/github/dotfiles
 git pull
 ./bootstrap.sh  # or .\bootstrap.ps1 on Windows
 source ~/.zshrc  # or . $PROFILE on Windows
