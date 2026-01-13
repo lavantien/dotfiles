@@ -85,7 +85,6 @@ copy_markdown_files() {
 	fi
 
 	local copied_count=0
-	local has_changes=false
 
 	for md_mapping in "${MARKDOWN_FILES[@]}"; do
 		# Parse "source_path:target_name" format
@@ -100,7 +99,6 @@ copy_markdown_files() {
 				if cp -f "$source_file" "$target_file" 2>/dev/null; then
 					echo -e "    ${GREEN}synced${NC} $target_name"
 					((copied_count++))
-					has_changes=true
 				fi
 			fi
 		fi
@@ -109,9 +107,9 @@ copy_markdown_files() {
 	if [[ $copied_count -gt 0 ]]; then
 		echo -e "    ${BLUE}system instructions updated ($copied_count files)${NC}"
 		return 0
-	elif [[ "$has_changes" == false ]]; then
+	else
 		echo -e "    ${YELLOW}already up to date${NC}"
-		return 1
+		return 0 # Return success so commit/push phase still runs
 	fi
 }
 
@@ -123,19 +121,24 @@ commit_changes() {
 
 	cd "$repo_path" 2>/dev/null || return 0
 
-	# Check if there are changes to commit
-	if git diff --quiet CLAUDE.md AGENTS.md GEMINI.md RULES.md 2>/dev/null; then
-		echo -e "    ${YELLOW}already up to date${NC} (no changes to commit)"
+	# Check if there are changes to commit (check both unstaged and staged)
+	if git diff --quiet CLAUDE.md AGENTS.md GEMINI.md RULES.md 2>/dev/null &&
+		git diff --cached --quiet CLAUDE.md AGENTS.md GEMINI.md RULES.md 2>/dev/null; then
 		cd - >/dev/null
 		return 1
 	fi
 
-	# Add and commit
-	git add CLAUDE.md AGENTS.md GEMINI.md RULES.md 2>/dev/null || true
-	if git commit -m "chore: sync system instructions" >/dev/null 2>&1; then
-		echo -e "    ${GREEN}committed${NC} $repo_name"
-		cd - >/dev/null
-		return 0
+	# Add and commit (show commit errors)
+	if git add CLAUDE.md AGENTS.md GEMINI.md RULES.md 2>/dev/null; then
+		if git commit -m "chore: sync system instructions" >/dev/null 2>&1; then
+			echo -e "    ${GREEN}committed${NC} $repo_name"
+			cd - >/dev/null
+			return 0
+		else
+			echo -e "    ${RED}commit failed${NC} $repo_name"
+			cd - >/dev/null
+			return 1
+		fi
 	fi
 
 	cd - >/dev/null
@@ -159,18 +162,18 @@ push_changes() {
 		local ahead_count
 		ahead_count=$(git rev-list --count "origin/$branch..HEAD" 2>/dev/null) || ahead_count=0
 		if [[ "$ahead_count" -eq 0 ]]; then
-			echo -e "    ${YELLOW}already up to date${NC} (nothing to push)"
 			cd - >/dev/null
 			return 1
 		fi
 	fi
 
-	if git push origin "$branch" >/dev/null 2>&1; then
+	# Show push errors
+	if git push origin "$branch" 2>&1; then
 		echo -e "    ${GREEN}pushed${NC} $repo_name"
 		cd - >/dev/null
 		return 0
 	else
-		echo -e "    ${YELLOW}push failed${NC} $repo_name"
+		echo -e "    ${RED}push failed${NC} $repo_name"
 		cd - >/dev/null
 		return 1
 	fi
