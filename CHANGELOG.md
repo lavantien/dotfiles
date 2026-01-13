@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.2.11] - 2026-01-13
+
+### Fixed
+
+**sync-system-instructions.sh**
+
+- Hardcoded DOTFILES_DIR to ~/dev/github/dotfiles as per README Quick Start
+- Removed complex symlink resolution logic in favor of explicit path
+- Script now works correctly whether run from dotfiles dir or ~/dev
+
+**Documentation**
+
+- Added prominent notice in Quick Start that repo MUST be cloned to ~/dev/github/dotfiles
+- Added note in Git Repository Management section about sync-system-instructions path requirement
+- Clarified that several scripts depend on this exact location to function correctly
+
+---
+
 ## [5.2.10] - 2026-01-13
 
 ### Added
