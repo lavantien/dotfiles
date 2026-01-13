@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.2.8] - 2026-01-13
+
+### Fixed
+
+**sync-system-instructions.sh**
+
+- commit_changes() now prints status message (already up to date vs committed)
+- push_changes() checks ahead count before attempting push, prints status
+- Added `|| true` to prevent set -e exits in commit/push loop
+- No more false "pushed" messages when nothing was pushed
+
+---
+
 ## [5.2.7] - 2026-01-13
 
 ### Fixed

@@ -125,17 +125,21 @@ commit_changes() {
 
 	# Check if there are changes to commit
 	if git diff --quiet CLAUDE.md AGENTS.md GEMINI.md RULES.md 2>/dev/null; then
+		echo -e "    ${YELLOW}already up to date${NC} (no changes to commit)"
 		cd - >/dev/null
-		return 0
+		return 1
 	fi
 
 	# Add and commit
 	git add CLAUDE.md AGENTS.md GEMINI.md RULES.md 2>/dev/null || true
 	if git commit -m "chore: sync system instructions" >/dev/null 2>&1; then
 		echo -e "    ${GREEN}committed${NC} $repo_name"
+		cd - >/dev/null
+		return 0
 	fi
 
 	cd - >/dev/null
+	return 1
 }
 
 # Push changes using git
@@ -146,13 +150,30 @@ push_changes() {
 
 	cd "$repo_path" 2>/dev/null || return 0
 
-	if git push origin >/dev/null 2>&1; then
-		echo -e "    ${GREEN}pushed${NC} $repo_name"
-	else
-		echo -e "    ${YELLOW}push failed${NC} $repo_name"
+	# Get the current branch name
+	local branch
+	branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null) || branch="main"
+
+	# Check if there are commits to push (compare with remote branch)
+	if git rev-parse --verify "origin/$branch" >/dev/null 2>&1; then
+		local ahead_count
+		ahead_count=$(git rev-list --count "origin/$branch..HEAD" 2>/dev/null) || ahead_count=0
+		if [[ "$ahead_count" -eq 0 ]]; then
+			echo -e "    ${YELLOW}already up to date${NC} (nothing to push)"
+			cd - >/dev/null
+			return 1
+		fi
 	fi
 
-	cd - >/dev/null
+	if git push origin "$branch" >/dev/null 2>&1; then
+		echo -e "    ${GREEN}pushed${NC} $repo_name"
+		cd - >/dev/null
+		return 0
+	else
+		echo -e "    ${YELLOW}push failed${NC} $repo_name"
+		cd - >/dev/null
+		return 1
+	fi
 }
 
 # Main processing
@@ -184,9 +205,9 @@ if [[ "$COMMIT" == true ]]; then
 
 	for dir in "$BASE_DIR"/*; do
 		if [[ -d "$dir" ]]; then
-			commit_changes "$dir"
+			commit_changes "$dir" || true
 			if [[ "$PUSH" == true ]]; then
-				push_changes "$dir"
+				push_changes "$dir" || true
 			fi
 		fi
 	done
