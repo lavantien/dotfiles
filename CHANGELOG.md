@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.2.10] - 2026-01-13
+
+### Added
+
+**Documentation**
+
+- RULES.md now redirects to CLAUDE.md for unified development guidelines
+- Centralizes all AI assistant instructions across AGENTS.md, GEMINI.md, and RULES.md
+
+### Fixed
+
+**deploy.sh**
+
+- Added merge_gitconfig() function to preserve user.name and user.email
+- Git config merge instead of overwrite when deploying ~/.gitconfig
+- Keeps user identity from existing config when updating dotfiles settings
+
+**sync-system-instructions.sh**
+
+- commit_changes() now uses config override from dotfiles repo as fallback
+- Shows helpful message when git identity is missing with setup instructions
+- Improved error visibility for commit/push failures
+
+---
+
 ## [5.2.9] - 2026-01-13
 
 ### Fixed
