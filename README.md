@@ -240,6 +240,7 @@ Key idempotency features shown above:
 **Bootstrap Script Structure**
 
 The repository contains bootstrap scripts at both locations:
+
 - **Root level** (`./bootstrap.sh`, `./bootstrap.ps1`) - Lightweight wrappers
 - **`bootstrap/` directory** (`bootstrap/bootstrap.sh`, `bootstrap/bootstrap.ps1`) - Full implementation
 
@@ -283,14 +284,14 @@ vim ~/.dotfiles.config.yaml
 
 **Common Config Options**
 
-| Setting             | Values                                    | Default      | Description              |
-| ------------------- | ----------------------------------------- | ------------ | ------------------------ |
-| categories          | minimal, sdk, full                        | full         | Installation size        |
-| editor              | nvim, vim, code, nano                     | (none)       | Preferred editor         |
-| theme               | rose-pine, rose-pine-dawn, rose-pine-moon | (none)       | Default theme            |
-| github_username     | your username                             | lavantien    | Git repo management      |
-| base_dir            | path to repos                             | ~/dev/github | Repository location      |
-| auto_commit_repos    | true, false                               | false        | Auto-commit synced files |
+| Setting           | Values                                    | Default      | Description              |
+| ----------------- | ----------------------------------------- | ------------ | ------------------------ |
+| categories        | minimal, sdk, full                        | full         | Installation size        |
+| editor            | nvim, vim, code, nano                     | (none)       | Preferred editor         |
+| theme             | rose-pine, rose-pine-dawn, rose-pine-moon | (none)       | Default theme            |
+| github_username   | your username                             | lavantien    | Git repo management      |
+| base_dir          | path to repos                             | ~/dev/github | Repository location      |
+| auto_commit_repos | true, false                               | false        | Auto-commit synced files |
 
 ---
 
@@ -304,8 +305,8 @@ This repository installs comprehensive tooling for modern development. For compl
 | ---------------- | ----- | ------------------------------------------------------------------------------------- |
 | Language Servers | 19    | pyright, gopls, rust-analyzer, clangd, ts_ls, helm_ls, docker-compose-language-server |
 | Linters          | 20+   | eslint, ruff, golangci-lint, clippy, shellcheck, yamllint, hadolint, mypy             |
-| Formatters       | 17+   | prettier, ruff, black, rustfmt, gofmt, shfmt, scalafmt                               |
-| Testers          | 9+    | pytest, bats, busted, Pester, jest, catch2, cargo test                               |
+| Formatters       | 17+   | prettier, ruff, black, rustfmt, gofmt, shfmt, scalafmt                                |
+| Testers          | 9+    | pytest, bats, busted, Pester, jest, catch2, cargo test                                |
 | CLI Tools        | 15+   | fzf, zoxide, bat, eza, lazygit, gh, docker-compose, helm, kubectl, repomix            |
 
 **Supported Languages**
