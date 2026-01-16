@@ -941,25 +941,59 @@ function Install-DevelopmentTools {
         Track-Skipped "latex" "document preparation"
     }
 
-    # Claude Code CLI (via npm)
-    if (Test-Command npm) {
-        if (-not (Test-Command claude)) {
-            Write-Step "Installing Claude Code CLI..."
-            if (-not $DryRun) {
-                if (Install-NpmGlobal "@anthropic-ai/claude-code" "claude" "") {
-                    Write-Success "Claude Code CLI installed"
+    # Claude Code CLI (via official PowerShell installer)
+    if (-not (Test-Command claude)) {
+        Write-Step "Installing Claude Code CLI..."
+        if (-not $DryRun) {
+            # First, uninstall npm version if it exists (to avoid conflicts)
+            if (Get-Command npm -ErrorAction SilentlyContinue) {
+                Write-Info "Removing old npm version..."
+                npm uninstall -g @anthropic-ai/claude-code *> $null
+                # npm uninstall may leave binary files behind, remove them manually
+                $npmBin = Join-Path $env:APPDATA "npm"
+                @("claude", "claude.cmd", "claude.ps1") | ForEach-Object {
+                    $filePath = Join-Path $npmBin $_
+                    if (Test-Path $filePath) {
+                        Remove-Item $filePath -Force -ErrorAction SilentlyContinue
+                    }
                 }
             }
+
+            # Prepare ~/.local/bin location and ensure it's in PATH
+            $localBin = Join-Path $env:USERPROFILE ".local\bin"
+            if (-not (Test-Path $localBin)) {
+                New-Item -ItemType Directory -Path $localBin -Force | Out-Null
+            }
+            Add-ToPath -Path $localBin -User
+
+            # Run official installer script
+            $scriptContent = Invoke-RestMethod -Uri "https://claude.ai/install.ps1" -UseBasicParsing
+            $scriptBlock = [ScriptBlock]::Create($scriptContent)
+            & $scriptBlock
+
+            # Refresh PATH to pick up the newly installed claude command
+            Refresh-Path
+
+            if (Test-Command claude) {
+                Write-Success "Claude Code CLI installed"
+                Track-Installed "claude-code" "AI CLI"
+            }
             else {
-                Write-Info "[DRY-RUN] Would install Claude Code CLI"
+                Write-Warning "Claude Code CLI installed but not in PATH yet"
+                Track-Installed "claude-code" "AI CLI - PATH update pending"
             }
         }
         else {
-            Write-VerboseInfo "Claude Code CLI already installed"
-            Track-Skipped "claude-code" "AI CLI"
+            Write-Info "[DRY-RUN] Would install Claude Code CLI"
         }
+    }
+    else {
+        Write-VerboseInfo "Claude Code CLI already installed"
+        Track-Skipped "claude-code" "AI CLI"
+    }
 
-        # OpenCode AI CLI (via npm)
+    # OpenCode AI CLI (via npm)
+    if (Test-Command npm) {
         if (-not (Test-Command opencode)) {
             Write-Step "Installing OpenCode AI CLI..."
             if (-not $DryRun) {

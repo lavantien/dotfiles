@@ -743,25 +743,6 @@ EOF
     [[ "$output" == *"brew install --cask basictex"* ]]
 }
 
-@test "bootstrap: install_development_tools installs Claude Code CLI" {
-    install_npm_global() { echo "npm install -g $1"; }
-    export -f install_npm_global
-
-    install_development_tools_test() {
-        if cmd_exists npm; then
-            if ! cmd_exists claude; then
-                install_npm_global "@anthropic-ai/claude-code" "claude"
-            fi
-        fi
-    }
-    export -f install_development_tools_test
-
-    mock_cmd_exists "npm" "true"
-    mock_cmd_exists "claude" "false"
-    run bash -c 'install_development_tools_test'
-    [[ "$output" == *"npm install -g @anthropic-ai/claude-code"* ]]
-}
-
 @test "bootstrap: install_development_tools skips Claude Code if installed" {
     install_development_tools_test() {
         if cmd_exists npm && cmd_exists claude; then

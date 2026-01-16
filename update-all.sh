@@ -662,7 +662,13 @@ _main() {
 	# ============================================================================
 	if cmd_exists claude; then
 		update_section "CLAUDE CODE CLI"
-		update_and_report "curl -fsSL https://claude.ai/install.sh | bash" "claude-code"
+		if is_windows; then
+			# Use PowerShell installer on Windows
+			update_and_report "powershell.exe -NoProfile -Command \"irm https://claude.ai/install.ps1 | iex\"" "claude-code"
+		else
+			# Use bash script on Unix-like systems
+			update_and_report "curl -fsSL https://claude.ai/install.sh | bash" "claude-code"
+		fi
 	else
 		update_skip "claude-code not found"
 	fi
