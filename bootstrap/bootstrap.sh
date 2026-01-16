@@ -1182,6 +1182,8 @@ install_development_tools() {
 			version_info=" ($current_version)"
 		fi
 		log_info "Claude Code CLI already at latest version${version_info}"
+		# Ensure PATH is set even when skipping install
+		ensure_path "$HOME/.local/bin"
 		track_skipped "claude-code" "AI CLI"
 	fi
 
@@ -1225,6 +1227,8 @@ install_development_tools() {
 			if [[ -n "$latest_version" ]]; then
 				if [[ "$current_version" == "$latest_version" ]]; then
 					log_info "OpenCode AI CLI already at latest version ($current_version)"
+					# Ensure PATH is set even when skipping install
+					ensure_path "$HOME/.opencode/bin"
 					track_skipped "opencode" "AI CLI"
 					needs_opencode_install=false
 				else

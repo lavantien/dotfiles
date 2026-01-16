@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.2.13] - 2026-01-17
+
+### Fixed
+
+**PATH Persistence for Already-Installed Tools**
+
+- Claude Code CLI: Now ensures ~/.local/bin is added to User PATH even when already at latest version
+- OpenCode AI CLI: Now ensures ~/.opencode/bin is added to User PATH even when already at latest version
+- Previously, if a tool was already installed at the correct version, PATH was never configured
+- This caused tools to not be found in new terminal sessions even though the binary existed
+
+### Changed
+
+- bootstrap.ps1: Added Add-ToPath call for Claude Code and OpenCode when skipping install
+- bootstrap.sh: Added ensure_path call for Claude Code and OpenCode when skipping install
+
+---
+
 ## [5.2.12] - 2026-01-17
 
 ### Changed

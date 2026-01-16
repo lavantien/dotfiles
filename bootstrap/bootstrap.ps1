@@ -861,6 +861,9 @@ function Install-DevelopmentTools {
     else {
         $versionInfo = if ($currentVersion) { " ($currentVersion)" } else { "" }
         Write-Info "Claude Code CLI already at latest version$versionInfo"
+        # Ensure PATH is set even when skipping install
+        $localBin = Join-Path $env:USERPROFILE ".local\bin"
+        Add-ToPath -Path $localBin -User
         Track-Skipped "claude-code" "AI CLI"
     }
 
@@ -916,6 +919,8 @@ function Install-DevelopmentTools {
         # Only install if versions differ or we couldn't determine versions
         if ($currentVersion -and $latestVersion -and $currentVersion -eq $latestVersion) {
             Write-Info "OpenCode AI CLI already at latest version ($currentVersion)"
+            # Ensure PATH is set even when skipping install
+            Add-ToPath -Path $opencodeBin -User
             Track-Skipped "opencode" "AI CLI"
             $needsInstall = $false
         }
