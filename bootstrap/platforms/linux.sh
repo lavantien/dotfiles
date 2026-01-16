@@ -856,41 +856,30 @@ install_npm_global() {
 		return 1
 	fi
 
-	# Check if package is already installed via npm list
-	local already_installed=false
-	if npm list -g "$package" >/dev/null 2>&1; then
-		already_installed=true
-	fi
+	# Check if package needs install or update using version check
+	if npm_package_needs_update "$package"; then
+		log_step "Installing $package via npm..."
+		local npm_output
+		npm_output="$(npm install -g "$package" 2>&1)"
+		local exit_code=$?
 
-	# Also check if binary exists (for packages that provide binaries)
-	if [[ "$already_installed" == "false" ]] && cmd_exists "$cmd_name"; then
-		# Binary exists but npm list doesn't show it - edge case, treat as installed
-		already_installed=true
-	fi
+		# Check for "up to date" messages even if exit code was 0
+		if echo "$npm_output" | grep -qiE "up to date|already installed|nothing to install"; then
+			track_skipped "$cmd_name" "$(get_package_description "$cmd_name")"
+			return 0
+		fi
 
-	if [[ "$already_installed" == "true" ]]; then
-		track_skipped "$cmd_name" "$(get_package_description "$cmd_name")"
-		return 0
-	fi
-
-	# Package not installed, proceed with installation
-	log_step "Installing $package via npm..."
-	local npm_output
-	npm_output="$(npm install -g "$package" 2>&1)"
-	local exit_code=$?
-
-	# Check for "up to date" messages even if exit code was 0
-	if echo "$npm_output" | grep -qiE "up to date|already installed|nothing to install"; then
-		track_skipped "$cmd_name" "$(get_package_description "$cmd_name")"
-		return 0
-	fi
-
-	if [ $exit_code -eq 0 ]; then
-		track_installed "$package" "$(get_package_description "$cmd_name")"
-		return 0
+		if [ $exit_code -eq 0 ]; then
+			track_installed "$package" "$(get_package_description "$cmd_name")"
+			return 0
+		else
+			track_failed "$package" "$(get_package_description "$cmd_name")"
+			return 1
+		fi
 	else
-		track_failed "$package" "$(get_package_description "$cmd_name")"
-		return 1
+		log_verbose_info "$package already at latest version"
+		track_skipped "$cmd_name" "$(get_package_description "$cmd_name")"
+		return 0
 	fi
 }
 

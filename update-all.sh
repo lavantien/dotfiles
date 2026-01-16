@@ -48,6 +48,48 @@ cmd_exists() {
 	command -v "$1" >/dev/null 2>&1
 }
 
+# Find PowerShell 7+ (pwsh.exe) on Windows, fall back to powershell.exe (5.1)
+get_pwsh() {
+	if ! is_windows; then
+		echo "pwsh"
+		return 0
+	fi
+
+	# Try pwsh.exe (PowerShell 7+) first
+	if command -v pwsh.exe >/dev/null 2>&1; then
+		echo "pwsh.exe"
+		return 0
+	fi
+
+	# Fallback to powershell.exe (PowerShell 5.1) - may not work for all scripts
+	echo "powershell.exe"
+	return 0
+}
+
+# Check if a script-installed tool needs update by comparing with npm registry version
+# Usage: script_tool_needs_update <npm_package_name> <installed_version>
+# Returns: 0 = needs update, 1 = up to date
+script_tool_needs_update() {
+	local npm_package="$1"
+	local current_version="$2"
+
+	# Get latest version from npm registry
+	local latest_version
+	latest_version=$(npm view "$npm_package" version 2>/dev/null)
+
+	if [[ -z "$latest_version" ]]; then
+		# Couldn't determine latest version, assume update needed
+		return 0
+	fi
+
+	# Compare versions (simple string comparison should work for semantic versioning)
+	if [[ "$current_version" == "$latest_version" ]]; then
+		return 1  # Up to date
+	fi
+
+	return 0  # Needs update
+}
+
 # ============================================================================
 # LOAD USER CONFIGURATION
 # ============================================================================
@@ -503,16 +545,68 @@ _main() {
 	if should_skip_package "npm"; then
 		update_skip "npm (in skip list)"
 	else
-		if cmd_exists npm; then
-			# Clean up invalid packages (names starting with dot from failed installs)
-			if npm list -g --depth=0 2>/dev/null | grep -q '\.opencode-ai-'; then
-				echo -e "${YELLOW}Cleaning up invalid npm packages...${NC}"
-				# Extract and uninstall invalid packages
-				npm list -g --depth=0 2>/dev/null | grep '\.opencode-ai-' | sed 's/^[+` ]*//' | while read -r pkg; do
-					npm uninstall -g "$pkg" >/dev/null 2>&1 || true
+	if cmd_exists npm; then
+			# Clean up invalid npm packages (names starting with dot from failed installs)
+			# These can't be removed via npm uninstall due to invalid names, must delete directly
+			if is_windows; then
+				# Multiple possible locations for npm global modules on Windows
+				local npm_locations=(
+					"$APPDATA/npm/node_modules"
+					"$HOME/scoop/persist/nodejs-lts/bin/node_modules"
+					"$HOME/scoop/apps/nodejs-lts/current/node_modules"
+				)
+				local total_invalid_count=0
+				for npm_global_modules in "${npm_locations[@]}"; do
+					if [[ -d "$npm_global_modules" ]]; then
+						local invalid_count=0
+						# Method 1: Use glob pattern (skip known valid dot dirs)
+						for pkg_dir in "$npm_global_modules"/.*; do
+							if [[ -d "$pkg_dir" ]]; then
+								local pkg_name
+								pkg_name=$(basename "$pkg_dir")
+								# Skip valid dot directories
+								[[ "$pkg_name" == "." || "$pkg_name" == ".." || "$pkg_name" == ".bin" || "$pkg_name" == ".github" || "$pkg_name" == ".modules.yaml" ]] && continue
+								echo -e "  ${YELLOW}Removing invalid package: $pkg_name${NC}"
+								rm -rf "$pkg_dir" 2>/dev/null || true
+								((invalid_count++)) || true
+							fi
+						done
+						# Method 2: Also try ls to catch any missed
+						while IFS= read -r pkg_dir; do
+							[[ -z "$pkg_dir" ]] && continue
+							local pkg_name
+							pkg_name=$(basename "$pkg_dir")
+							[[ "$pkg_name" == .* ]]
+							# Skip valid dot directories
+							[[ "$pkg_name" == "." || "$pkg_name" == ".." || "$pkg_name" == ".bin" || "$pkg_name" == ".github" || "$pkg_name" == ".modules.yaml" ]] && continue
+							echo -e "  ${YELLOW}Removing invalid package: $pkg_name${NC}"
+							rm -rf "$pkg_dir" 2>/dev/null || true
+							((invalid_count++)) || true
+						done < <(ls -d "$npm_global_modules"/.* 2>/dev/null)
+						((total_invalid_count += invalid_count)) || true
+					fi
 				done
+				if [[ $total_invalid_count -gt 0 ]]; then
+					echo -e "  ${GREEN}Removed $total_invalid_count invalid package(s)${NC}"
+				fi
+			else
+				# Unix: try npm uninstall first, then manual cleanup
+				local invalid_packages
+				invalid_packages=$(npm list -g --depth=0 2>/dev/null | grep -oE '\.[a-zA-Z0-9_-]+' || true)
+				if [[ -n "$invalid_packages" ]]; then
+					echo -e "  ${YELLOW}Cleaning up invalid npm packages...${NC}"
+					while IFS= read -r pkg; do
+						[[ -z "$pkg" ]] && continue
+						# Try npm uninstall first
+						npm uninstall -g "$pkg" >/dev/null 2>&1 || true
+						# If still exists, remove from filesystem
+						local npm_global="${NPM_CONFIG_PREFIX:-$HOME/.npm-global}/lib/node_modules"
+						if [[ -d "$npm_global/.$pkg" ]]; then
+							rm -rf "$npm_global/.$pkg" 2>/dev/null || true
+						fi
+					done <<< "$invalid_packages"
+				fi
 			fi
-
 			update_and_report "npm update -g" "npm"
 		else
 			update_skip "npm not found"
@@ -662,15 +756,54 @@ _main() {
 	# ============================================================================
 	if cmd_exists claude; then
 		update_section "CLAUDE CODE CLI"
+
+		# Get current version
+		local current_version
+		current_version=$(claude --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+
 		if is_windows; then
-			# Use PowerShell installer on Windows
-			update_and_report "powershell.exe -NoProfile -Command \"irm https://claude.ai/install.ps1 | iex\"" "claude-code"
+			# Use PowerShell installer on Windows (prefer pwsh/PowerShell 7+)
+			local pwsh
+			pwsh=$(get_pwsh)
+
+			# Check if update is needed by comparing with npm registry
+			if [[ -n "$current_version" ]] && script_tool_needs_update "@anthropic-ai/claude-code" "$current_version"; then
+				update_and_report "$pwsh -NoProfile -Command \"irm https://claude.ai/install.ps1 | iex\"" "claude-code"
+			else
+				update_skip "claude-code already at latest version ($current_version)"
+			fi
 		else
 			# Use bash script on Unix-like systems
-			update_and_report "curl -fsSL https://claude.ai/install.sh | bash" "claude-code"
+			if [[ -n "$current_version" ]] && script_tool_needs_update "@anthropic-ai/claude-code" "$current_version"; then
+				update_and_report "curl -fsSL https://claude.ai/install.sh | bash" "claude-code"
+			else
+				update_skip "claude-code already at latest version ($current_version)"
+			fi
 		fi
 	else
 		update_skip "claude-code not found"
+	fi
+
+	# ============================================================================
+	# OPENCODE AI CLI
+	# ============================================================================
+	update_section "OPENCODE AI CLI"
+
+	# Check binary directly (not via PATH) since it may not be in PATH yet
+	local opencode_exe="$HOME/.opencode/bin/opencode"
+	if [[ ! -f "$opencode_exe" ]]; then
+		update_skip "opencode binary not found at $opencode_exe"
+	else
+		# Get current version (run binary directly)
+		local current_version
+		current_version=$("$opencode_exe" --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+
+		# Check if update is needed by comparing with npm registry
+		if [[ -n "$current_version" ]] && script_tool_needs_update "opencode-ai" "$current_version"; then
+			update_and_report "curl -fsSL https://opencode.ai/install | bash" "opencode"
+		else
+			update_skip "opencode already at latest version ($current_version)"
+		fi
 	fi
 
 	# ============================================================================

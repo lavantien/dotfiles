@@ -260,7 +260,8 @@ install_npm_global() {
 		return 1
 	fi
 
-	if needs_install "$cmd_name" "$min_version"; then
+	# Check if package needs install or update using version check
+	if npm_package_needs_update "$package"; then
 		log_step "Installing $package via npm..."
 		if run_cmd "npm install -g $package"; then
 			track_installed "$package" "$(get_package_description "$cmd_name")"
@@ -270,6 +271,7 @@ install_npm_global() {
 			return 1
 		fi
 	else
+		log_verbose_info "$package already at latest version"
 		track_skipped "$cmd_name" "$(get_package_description "$cmd_name")"
 		return 0
 	fi

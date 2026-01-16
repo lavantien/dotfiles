@@ -24,13 +24,13 @@ for ($i = 0; $i -lt $args.Length; $i++) {
     switch ($args[$i]) {
         "-BaseDir" {
             if ($i + 1 -lt $args.Length) {
-                $mappedArgs += "--base-dir"
+                $mappedArgs += "-d"
                 $mappedArgs += $args[$i + 1]
                 $i++
             }
         }
-        "-Commit" { $mappedArgs += "--commit" }
-        "-Push" { $mappedArgs += "--push" }
+        "-Commit" { $mappedArgs += "-c" }
+        "-Push" { $mappedArgs += "-p" }
         default { $mappedArgs += $args[$i] }
     }
 }

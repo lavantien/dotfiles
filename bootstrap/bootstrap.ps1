@@ -67,20 +67,7 @@ function Show-Help {
     }
 }
 
-# Helper function to invoke composer safely (uses Scoop shim path directly)
-function Invoke-ComposerSafe {
-    param([string[]]$Arguments)
-    $scoopShims = Join-Path $env:USERPROFILE "scoop\shims"
-    # Scoop creates .cmd shims for most apps (not .exe)
-    $composerPath = Join-Path $scoopShims "composer.cmd"
-    if (Test-Path $composerPath) {
-        & $composerPath @Arguments
-        return $?
-    }
-    # Fallback to standard PATH lookup
-    composer @Arguments
-    return $?
-}
+# PHP and Composer are not supported on Windows - use Unix/Linux or WSL for PHP development
 
 # ============================================================================
 # PHASE 1: FOUNDATION
@@ -275,9 +262,9 @@ function Install-LanguageServers {
         Install-NpmGlobal "yaml-language-server" "yaml-language-server" ""
     }
 
-    # lua-language-server (via npm - always latest)
-    if ($Script:Categories -eq "full" -and (Test-Command npm)) {
-        Install-NpmGlobal "lua-language-server" "lua-language-server" ""
+    # lua-language-server (via scoop - npm version has issues)
+    if ($Script:Categories -eq "full") {
+        Install-ScoopPackage "lua-language-server" "" "lua-language-server"
     }
 
     # csharp-ls (via dotnet tool)
@@ -292,10 +279,7 @@ function Install-LanguageServers {
         Install-ScoopPackage "jdtls" "" "jdtls"
     }
 
-    # intelephense (PHP language server via npm)
-    if ($Script:Categories -eq "full" -and (Test-Command npm)) {
-        Install-NpmGlobal "intelephense" "intelephense" ""
-    }
+    # intelephense (PHP language server) - not supported on Windows, use Unix/Linux or WSL
 
     # Docker language servers (via npm - always latest)
     if (Test-Command npm) {
@@ -405,131 +389,8 @@ function Install-LintersFormatters {
         # Skip for now - users can install via vcpkg if needed
     }
 
-    # php-nts (PHP runtime - prerequisite for composer)
-    if ($Script:Categories -eq "full") {
-        Install-ScoopPackage "php-nts" "" "php"
-    }
-
-    # composer (PHP package manager - prerequisite for PHP tools)
-    if ($Script:Categories -eq "full") {
-        Install-ScoopPackage "composer" "" "composer"
-        # Ensure Scoop shims are in PATH for current session
-        # Scoop installs shims to ~/scoop/shims but they might not be in registry PATH yet
-        $scoopShims = Join-Path $env:USERPROFILE "scoop\shims"
-        if ((Test-Path $scoopShims) -and ($env:Path -notlike "*$scoopShims*")) {
-            $env:Path = "$scoopShims;$env:Path"
-        }
-    }
-
-    # Enable required PHP extensions (for composer to work)
-    if ($Script:Categories -eq "full" -and -not $DryRun) {
-        $phpIni = Join-Path $env:USERPROFILE "scoop\persist\php-nts\cli\php.ini"
-        if (Test-Path $phpIni) {
-            $extensions = @('openssl', 'curl', 'fileinfo', 'mbstring', 'zip')
-            $content = Get-Content $phpIni -Raw
-            $updated = $false
-            foreach ($ext in $extensions) {
-                if ($content -match ";extension=$ext") {
-                    $content = $content -replace ";extension=$ext", "extension=$ext"
-                    $updated = $true
-                }
-            }
-            if ($updated) {
-                Set-Content $phpIni -Value $content -NoNewline
-                Write-Info "PHP extensions enabled: $($extensions -join ', ')"
-            }
-        }
-    }
-
-    # Laravel Pint (PHP code style via composer global)
-    if ($Script:Categories -eq "full") {
-        $scoopShims = Join-Path $env:USERPROFILE "scoop\shims"
-        $composerShim = Join-Path $scoopShims "composer.cmd"
-        if (-not (Test-Path $composerShim)) {
-            Write-Warning "Composer not found at $composerShim, skipping Laravel Pint installation"
-            Track-Skipped "pint" "PHP code style"
-        }
-        elseif (-not (Invoke-ComposerSafe @("global", "show", "laravel/pint") 2>$null)) {
-            Write-Step "Installing Laravel Pint..."
-            if ($DryRun) {
-                Write-Info "[DRY-RUN] Would composer global require laravel/pint"
-            }
-            else {
-                Invoke-ComposerSafe @("global", "require", "laravel/pint") 2>$null | Out-Null
-                if ($?) {
-                    Write-Success "Laravel Pint installed"
-                    Track-Installed "pint" "PHP code style"
-                }
-                else {
-                    Track-Failed "pint" "PHP code style"
-                }
-            }
-        }
-        else {
-            Write-Info "Laravel Pint already installed"
-            Track-Skipped "pint" "PHP code style"
-        }
-    }
-
-    # PHPStan (PHP static analysis via composer global)
-    if ($Script:Categories -eq "full") {
-        $scoopShims = Join-Path $env:USERPROFILE "scoop\shims"
-        $composerShim = Join-Path $scoopShims "composer.cmd"
-        if (-not (Test-Path $composerShim)) {
-            Write-Warning "Composer not found at $composerShim, skipping PHPStan installation"
-            Track-Skipped "phpstan" "PHP static analysis"
-        }
-        elseif (-not (Invoke-ComposerSafe @("global", "show", "phpstan/phpstan") 2>$null)) {
-            Write-Step "Installing PHPStan..."
-            if ($DryRun) {
-                Write-Info "[DRY-RUN] Would composer global require phpstan/phpstan"
-            }
-            else {
-                Invoke-ComposerSafe @("global", "require", "phpstan/phpstan") 2>$null | Out-Null
-                if ($?) {
-                    Write-Success "PHPStan installed"
-                    Track-Installed "phpstan" "PHP static analysis"
-                }
-                else {
-                    Track-Failed "phpstan" "PHP static analysis"
-                }
-            }
-        }
-        else {
-            Write-Info "PHPStan already installed"
-            Track-Skipped "phpstan" "PHP static analysis"
-        }
-    }
-
-    # Psalm (PHP static analysis via composer global)
-    if ($Script:Categories -eq "full") {
-        $scoopShims = Join-Path $env:USERPROFILE "scoop\shims"
-        $composerShim = Join-Path $scoopShims "composer.cmd"
-        if (-not (Test-Path $composerShim)) {
-            Write-Warning "Composer not found at $composerShim, skipping Psalm installation"
-            Track-Skipped "psalm" "PHP static analysis"
-        }
-        elseif (-not (Invoke-ComposerSafe @("global", "show", "vimeo/psalm") 2>$null)) {
-            Write-Step "Installing Psalm..."
-            if ($DryRun) {
-                Write-Info "[DRY-RUN] Would composer global require vimeo/psalm"
-            }
-            else {
-                Invoke-ComposerSafe @("global", "require", "vimeo/psalm") 2>$null | Out-Null
-                if ($?) {
-                    Write-Success "Psalm installed"
-                    Track-Installed "psalm" "PHP static analysis"
-                }
-                else {
-                    Track-Failed "psalm" "PHP static analysis"
-                }
-            }
-        }
-        else {
-            Write-Info "Psalm already installed"
-            Track-Skipped "psalm" "PHP static analysis"
-        }
-    }
+    # PHP and Composer tooling (Laravel Pint, PHPStan, Psalm) are not supported on Windows
+    # Use Unix/Linux or WSL for PHP development
 
     # scalafmt (via Coursier - Scala tool, NOT available via cargo)
     if ($Script:Categories -eq "full") {
@@ -682,74 +543,49 @@ function Install-MCPServers {
         return $true
     }
 
-    # tree-sitter-cli - Required for nvim-treesitter auto_install to work optimally
-    $treeSitterCmd = Get-Command tree-sitter -ErrorAction SilentlyContinue
-    if (-not $treeSitterCmd) {
-        Write-Step "Installing tree-sitter-cli..."
-        if (-not $DryRun) {
-            if (npm install -g tree-sitter-cli *> $null) {
-                Write-Success "tree-sitter-cli installed"
-                Track-Installed "tree-sitter-cli" "Treesitter parser compiler"
+    # Helper function to install/update npm package with version check
+    function Install-NpmPackageWithCheck {
+        param(
+            [string]$Package,
+            [string]$DisplayName,
+            [string]$TrackName,
+            [string]$Description
+        )
+
+        $needsUpdate = Test-NpmPackageNeedsUpdate -Package $Package
+        if ($needsUpdate) {
+            Write-Step "Installing $DisplayName..."
+            if (-not $DryRun) {
+                $output = npm install -g $Package 2>&1
+                if ($LASTEXITCODE -eq 0) {
+                    Write-Success "$DisplayName installed"
+                    Track-Installed $TrackName $Description
+                }
+                else {
+                    Write-Warning "Failed to install $DisplayName"
+                    Write-Info "Error output: $output"
+                    Track-Failed $TrackName $Description
+                }
             }
             else {
-                Write-Warning "Failed to install tree-sitter-cli"
-                Track-Failed "tree-sitter-cli" "Treesitter parser compiler"
+                Write-Info "[DRY-RUN] Would npm install -g $Package"
+                Track-Installed $TrackName $Description
             }
         }
         else {
-            Write-Info "[DRY-RUN] Would npm install -g tree-sitter-cli"
-            Track-Installed "tree-sitter-cli" "Treesitter parser compiler"
+            Write-VerboseInfo "$DisplayName already at latest version"
+            Track-Skipped $TrackName $Description
         }
     }
-    else {
-        Track-Skipped "tree-sitter-cli" "Treesitter parser compiler"
-    }
+
+    # tree-sitter-cli - Required for nvim-treesitter auto_install to work optimally
+    Install-NpmPackageWithCheck -Package "tree-sitter-cli" -DisplayName "tree-sitter-cli" -TrackName "tree-sitter-cli" -Description "Treesitter parser compiler"
 
     # Context7 - Up-to-date library documentation and code examples
-    npm list -g @upstash/context7-mcp *> $null
-    if ($LASTEXITCODE -ne 0) {
-        Write-Step "Installing context7 MCP server..."
-        if (-not $DryRun) {
-            if (npm install -g @upstash/context7-mcp *> $null) {
-                Write-Success "context7 MCP server installed"
-                Track-Installed "context7-mcp" "documentation lookup"
-            }
-            else {
-                Write-Warning "Failed to install context7 MCP server"
-                Track-Failed "context7-mcp" "documentation lookup"
-            }
-        }
-        else {
-            Write-Info "[DRY-RUN] Would npm install -g @context7/mcp-server"
-            Track-Installed "context7-mcp" "documentation lookup"
-        }
-    }
-    else {
-        Track-Skipped "context7-mcp" "documentation lookup"
-    }
+    Install-NpmPackageWithCheck -Package "@upstash/context7-mcp" -DisplayName "context7 MCP server" -TrackName "context7-mcp" -Description "documentation lookup"
 
     # Playwright - Browser automation and E2E testing
-    npm list -g @playwright/mcp *> $null
-    if ($LASTEXITCODE -ne 0) {
-        Write-Step "Installing playwright MCP server..."
-        if (-not $DryRun) {
-            if (npm install -g @playwright/mcp *> $null) {
-                Write-Success "playwright MCP server installed"
-                Track-Installed "playwright-mcp" "browser automation"
-            }
-            else {
-                Write-Warning "Failed to install playwright MCP server"
-                Track-Failed "playwright-mcp" "browser automation"
-            }
-        }
-        else {
-            Write-Info "[DRY-RUN] Would npm install -g @executeautomation/playwright-mcp-server"
-            Track-Installed "playwright-mcp" "browser automation"
-        }
-    }
-    else {
-        Track-Skipped "playwright-mcp" "browser automation"
-    }
+    Install-NpmPackageWithCheck -Package "@playwright/mcp" -DisplayName "playwright MCP server" -TrackName "playwright-mcp" -Description "browser automation"
 
     # Repomix - Pack repositories for full-context AI exploration
     # Note: repomix MCP mode is invoked via npx -y repomix --mcp
@@ -942,23 +778,58 @@ function Install-DevelopmentTools {
     }
 
     # Claude Code CLI (via official PowerShell installer)
+    # First, clean up any old npm shims that might shadow the official binary
+    $npmBin = Join-Path $env:APPDATA "npm"
+    $oldShims = @("claude", "claude.cmd", "claude.ps1") | ForEach-Object {
+        $filePath = Join-Path $npmBin $_
+        if (Test-Path $filePath) { $filePath }
+    }
+
+    if ($oldShims) {
+        foreach ($shim in $oldShims) {
+            Write-Info "Removing old npm shim: $(Split-Path $shim -Leaf)"
+            Remove-Item $shim -Force -ErrorAction SilentlyContinue
+        }
+    }
+
+    # Get current version if claude is installed
+    $currentVersion = ""
+    if (Test-Command claude) {
+        try {
+            $versionOutput = claude --version 2>$null
+            if ($versionOutput -match '(\d+\.\d+\.\d+)') {
+                $currentVersion = $matches[1]
+            }
+        }
+        catch {
+            # Ignore errors
+        }
+    }
+
+    # Get latest version from npm registry
+    $latestVersion = ""
+    if (Get-Command npm -ErrorAction SilentlyContinue) {
+        try {
+            $latestVersion = npm view @anthropic-ai/claude-code version 2>$null
+        }
+        catch {
+            # Ignore errors
+        }
+    }
+
+    # Install if not found or version differs
+    $needsInstall = $false
     if (-not (Test-Command claude)) {
+        $needsInstall = $true
+    }
+    elseif ($currentVersion -and $latestVersion -and $currentVersion -ne $latestVersion) {
+        Write-Info "Claude Code CLI update available: $currentVersion -> $latestVersion"
+        $needsInstall = $true
+    }
+
+    if ($needsInstall) {
         Write-Step "Installing Claude Code CLI..."
         if (-not $DryRun) {
-            # First, uninstall npm version if it exists (to avoid conflicts)
-            if (Get-Command npm -ErrorAction SilentlyContinue) {
-                Write-Info "Removing old npm version..."
-                npm uninstall -g @anthropic-ai/claude-code *> $null
-                # npm uninstall may leave binary files behind, remove them manually
-                $npmBin = Join-Path $env:APPDATA "npm"
-                @("claude", "claude.cmd", "claude.ps1") | ForEach-Object {
-                    $filePath = Join-Path $npmBin $_
-                    if (Test-Path $filePath) {
-                        Remove-Item $filePath -Force -ErrorAction SilentlyContinue
-                    }
-                }
-            }
-
             # Prepare ~/.local/bin location and ensure it's in PATH
             $localBin = Join-Path $env:USERPROFILE ".local\bin"
             if (-not (Test-Path $localBin)) {
@@ -988,30 +859,116 @@ function Install-DevelopmentTools {
         }
     }
     else {
-        Write-VerboseInfo "Claude Code CLI already installed"
+        $versionInfo = if ($currentVersion) { " ($currentVersion)" } else { "" }
+        Write-Info "Claude Code CLI already at latest version$versionInfo"
         Track-Skipped "claude-code" "AI CLI"
     }
 
-    # OpenCode AI CLI (via npm)
-    if (Test-Command npm) {
-        if (-not (Test-Command opencode)) {
-            Write-Step "Installing OpenCode AI CLI..."
-            if (-not $DryRun) {
-                if (Install-NpmGlobal "opencode-ai" "opencode" "") {
-                    Write-Success "OpenCode AI CLI installed"
-                }
-            }
-            else {
-                Write-Info "[DRY-RUN] Would install OpenCode AI CLI"
+    # OpenCode AI CLI (via official installer)
+    $opencodeBin = Join-Path $env:USERPROFILE ".opencode\bin"
+    $opencodeExe = Join-Path $opencodeBin "opencode.exe"
+
+    # First, clean up any old npm shims that might shadow the official binary
+    # This prevents confusion where `opencode --version` returns old version
+    $npmBin = Join-Path $env:APPDATA "npm"
+    $oldShims = @("opencode", "opencode.cmd", "opencode.ps1") | ForEach-Object {
+        $filePath = Join-Path $npmBin $_
+        if (Test-Path $filePath) { $filePath }
+    }
+
+    if ($oldShims) {
+        foreach ($shim in $oldShims) {
+            Write-Info "Removing old npm shim: $(Split-Path $shim -Leaf)"
+            Remove-Item $shim -Force -ErrorAction SilentlyContinue
+        }
+    }
+
+    # Check if opencode needs install/update
+    $needsInstall = $false
+
+    # Check if binary exists
+    if (Test-Path $opencodeExe) {
+        # Get current version from official binary
+        $currentVersion = ""
+        try {
+            $versionOutput = & $opencodeExe --version 2>$null
+            if ($versionOutput -match '(\d+\.\d+\.\d+)') {
+                $currentVersion = $matches[1]
             }
         }
-        else {
-            Write-VerboseInfo "OpenCode AI CLI already installed"
+        catch {
+            # If we can't get version, treat as needs install
+            $needsInstall = $true
+        }
+
+        # Get latest version from npm registry
+        $latestVersion = ""
+        if (Get-Command npm -ErrorAction SilentlyContinue) {
+            try {
+                $latestVersion = npm view opencode-ai version 2>$null
+            }
+            catch {
+                # If npm check fails, assume we need to install
+                $needsInstall = $true
+            }
+        }
+
+        # Only install if versions differ or we couldn't determine versions
+        if ($currentVersion -and $latestVersion -and $currentVersion -eq $latestVersion) {
+            Write-Info "OpenCode AI CLI already at latest version ($currentVersion)"
             Track-Skipped "opencode" "AI CLI"
+            $needsInstall = $false
+        }
+        elseif ($currentVersion -and $latestVersion -and $currentVersion -ne $latestVersion) {
+            Write-Info "OpenCode AI CLI update available: $currentVersion -> $latestVersion"
+            $needsInstall = $true
+        }
+        else {
+            # Couldn't determine versions, install to be safe
+            $needsInstall = $true
         }
     }
     else {
-        Write-Warning "npm not found - skipping Claude Code and OpenCode AI CLI"
+        # Binary doesn't exist
+        $needsInstall = $true
+    }
+
+    if ($needsInstall) {
+        Write-Step "Installing OpenCode AI CLI..."
+        if (-not $DryRun) {
+            # Prepare ~/.opencode/bin location
+            if (-not (Test-Path $opencodeBin)) {
+                New-Item -ItemType Directory -Path $opencodeBin -Force | Out-Null
+            }
+            Add-ToPath -Path $opencodeBin -User
+
+            # Run official installer script via Git Bash
+            if (Get-Command bash -ErrorAction SilentlyContinue) {
+                bash.exe -c "curl -fsSL https://opencode.ai/install | bash"
+
+                # Refresh PATH
+                Refresh-Path
+
+                if (Test-Command opencode) {
+                    Write-Success "OpenCode AI CLI installed"
+                    Track-Installed "opencode" "AI CLI"
+                }
+                else {
+                    Write-Warning "OpenCode AI CLI installed but not in PATH yet"
+                    Track-Installed "opencode" "AI CLI - PATH update pending"
+                }
+            }
+            else {
+                Write-Warning "Git Bash not found - required for OpenCodeAI installation"
+                Track-Failed "opencode" "AI CLI"
+            }
+        }
+        else {
+            Write-Info "[DRY-RUN] Would install OpenCode AI CLI"
+        }
+    }
+    else {
+        # Already checked and skipped above
     }
 
     Write-Success "Development tools installation complete"
@@ -1050,6 +1007,7 @@ function Update-All {
 
     # Use the bash update-all script via PowerShell wrapper
     # The bash script has Windows detection and will skip Linux-only commands
+    # and provides detailed progress output for each package manager
     $updateScript = Join-Path $ScriptDir "..\update-all.ps1"
 
     if (-not (Test-Path $updateScript)) {
@@ -1062,9 +1020,16 @@ function Update-All {
         return $true
     }
 
-    Write-Step "Running update-all script..."
-    & $updateScript
-    Write-Success "Update complete"
+    Write-Info "Running update-all script (this may take several minutes)..."
+    # Invoke script and stream output directly to host
+    & $updateScript | Out-Host
+    $exitCode = $LASTEXITCODE
+    if ($exitCode -eq 0) {
+        Write-Success "Update complete"
+    }
+    else {
+        Write-Warning "Update completed with exit code: $exitCode"
+    }
     return $true
 }
 
@@ -1113,7 +1078,12 @@ function Main {
     }
     $null = Install-DevelopmentTools
     $null = Deploy-Configs
-    $null = Update-All
+    if (-not $SkipUpdate) {
+        $null = Update-All
+    }
+    else {
+        Write-Info "Skipping update phase (SkipUpdate specified)"
+    }
 
     Write-Summary
 

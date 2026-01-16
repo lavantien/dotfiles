@@ -278,21 +278,11 @@ if (Get-Command go -ErrorAction SilentlyContinue) {
     $env:PATH += ";$(go env GOPATH)\bin"
 }
 
-# Node.js (global packages via scoop)
-if (Test-Path "$env:USERPROFILE\scoop\apps\nodejs-lts\current") {
-    $env:PATH += ";$env:USERPROFILE\scoop\apps\nodejs-lts\current"
-}
+# Node.js, Python (scoop manages these via shims - no manual PATH needed)
 
-# Rust
+# Rust (not managed by scoop)
 if (Test-Path "$env:USERPROFILE\.cargo\bin") {
     $env:PATH += ";$env:USERPROFILE\.cargo\bin"
-}
-
-# Python (via scoop)
-$scoopPython = "$env:USERPROFILE\scoop\apps\python\current"
-if (Test-Path $scoopPython) {
-    $env:PATH += ";$scoopPython"
-    $env:PATH += ";$scoopPython\Scripts"
 }
 
 # ============================================================================

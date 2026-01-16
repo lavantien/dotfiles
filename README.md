@@ -164,49 +164,205 @@ The bootstrap script is fully idempotent - running it multiple times is safe and
 - **Fixes broken states** - repairs dpkg interrupts and broken dependencies
 - **Updates existing tools** - runs update-all.sh at the end
 
-Example output from a fully bootstrapped system (95 tools skipped, 0 new installs):
+Example output from a fully bootstrapped Windows system (72 tools skipped, 0 new installs):
 
 ```
-lavantien in ~/dev/github/dotfiles on main ● ● ● λ ./bootstrap.sh -y
+ lavantien@savaka-station ~\..\dotfiles  main   .\bootstrap.ps1 -y
+[INFO] Config loaded from C:\Users\lavantien\.dotfiles.config.yaml
 
-==== Bootstrap Linux Development Environment ====
+==== Bootstrap Windows Development Environment ====
 
 Options:
-  Interactive: false
-  Dry Run: false
+  Interactive: False
+  Dry Run: False
   Categories: full
-  Skip Update: false
+  Skip Update: False
 
+[STEP] Ensuring development directories are in PATH...
 
 ==== Phase 1: Foundation ====
 
-[STEP] Checking for broken package states...
-[INFO] Fixed dpkg interrupts
-Summary:
-  Upgrading: 0, Installing: 0, Removing: 0, Not Upgrading: 3
-[INFO] Fixed broken packages
-[STEP] Installing prerequisites via apt: curl, git, vim...
-[OK] GitHub CLI already authenticated
-[STEP] Ensuring key packages are from brew...
-[INFO] git already from brew, skipping replacement
-[INFO] node already from brew, skipping replacement
-[INFO] go already from brew, skipping replacement
-[INFO] lua-language-server already from brew, skipping replacement
-[INFO] golangci-lint already from brew, skipping replacement
-...
-[OK] Package self-correction complete
-...
+[INFO] Repo .gitattributes will enforce line endings
+[OK] Foundation complete
+
+==== Phase 2: Core SDKs ====
+
+[OK] SDKs installation complete
+
+==== Phase 3: Language Servers ====
+
+[OK] Language servers installation complete
+
+==== Phase 4: Linters & Formatters ====
+
+[OK] Linters & formatters installation complete
+
+==== Phase 5: CLI Tools ====
+
+[OK] CLI tools installation complete
+
+==== Phase 5.25: MCP Servers ====
+
+[OK] MCP server installation complete
+
+==== Phase 5.5: Development Tools ====
+
+[INFO] Claude Code CLI already at latest version (2.1.9)
+[INFO] OpenCode AI CLI already at latest version (1.1.23)
+[OK] Development tools installation complete
+
+==== Phase 6: Deploying Configurations ====
+
+[STEP] Running deploy script...
+[OK] Configurations deployed
+
+==== Phase 7: Updating All Repositories and Packages ====
+
+[INFO] Running update-all script (this may take several minutes)...
+
+Checking package managers...
+  Skipped: apt (skipped on Windows)
+  Skipped: dnf (skipped on Windows)
+  Skipped: pacman (skipped on Windows)
+  Skipped: zypper (skipped on Windows)
+  Skipped: brew not found
+  Skipped: snap (skipped on Windows)
+  Skipped: flatpak not found
+
+========================================
+   Universal Update All - windows
+========================================
+
+Checking prerequisites...
+  npm found
+  pip found
+  Go found
+  Cargo found
+  dotnet found
+
+[23:59:42] NPM (Node.js global packages)
+changed 950 packages in 1m
+  npm
+
+[00:00:47] YARN (global packages)
+  Up to date
+
+[00:00:48] GUP (Go global packages)
+  Up to date
+
+[00:00:49] RUSTUP (Rust toolchain)
+info: syncing channel updates for 'stable-x86_64-pc-windows-msvc'
+info: checking for self-update
+  stable-x86_64-pc-windows-msvc unchanged - rustc 1.92.0 (ded5c06cf 2025-12-08)
+  rustup
+
+[00:00:50] CARGO (Rust packages)
+Package       Installed  Latest   Needs update
+cargo-update  v18.0.0    v18.0.0  No
+codebook-lsp  v0.3.28    v0.3.28  No
+tokei         v14.0.0    v14.0.0  No
+No packages need updating.
+Overall updated 0 packages.
+  cargo
+
+[00:00:50] DOTNET TOOLS
+  Up to date
+
+[00:00:51] PIP (Python packages)
+  Up to date
+  Skipped: poetry not found
+  Skipped: composer not found
+  Skipped: spin not found
+
+[00:00:56] CLAUDE CODE CLI
+  Skipped: claude-code already at latest version (2.1.9)
+
+[00:01:01] OPENCODE AI CLI
+  Skipped: opencode already at latest version (1.1.23)
+
+========================================
+           Summary
+========================================
+ Completed: 7
+ Skipped: 14
+ Duration: 1m 21s
+========================================
+[OK] Update complete
+
 ==== Bootstrap Summary ====
 
 Installed: 0
 
-Skipped: 95
-  - wezterm (terminal emulator)
-  - IosevkaTerm (Nerd Font)
+Skipped: 72
   - git (version control)
-  - gcc
+  - scoop (package manager)
+  - git autocrlf already configured
+  - GitHub SSH key already in known_hosts
   - node (Node.js runtime)
-  ...
+  - python (Python runtime)
+  - go (Go runtime)
+  - rust (Rust toolchain)
+  - dotnet (.NET SDK)
+  - OpenJDK (Java development)
+  - clangd (C/C++ LSP)
+  - gopls (Go LSP)
+  - rust-analyzer (Rust LSP)
+  - pyright (Python LSP)
+  - typescript-language-server (TypeScript LSP)
+  - vscode-html-language-server (vscode-html-language-server)
+  - vscode-css-language-server (vscode-css-language-server)
+  - svelte-language-server (svelte-language-server)
+  - bash-language-server (bash-language-server)
+  - yaml-language-server (YAML LSP)
+  - lua-language-server (Lua LSP)
+  - csharp-ls (C# LSP)
+  - jdtls (Java LSP)
+  - docker-langserver (Docker LSP)
+  - tombi (TOML LSP)
+  - tinymist (Nim LSP)
+  - prettier (code formatter)
+  - eslint (JavaScript linter)
+  - stylelint (stylelint)
+  - svelte-check (svelte-check)
+  - repomix (repomix)
+  - ruff (Python linter)
+  - black (Python formatter)
+  - isort (Python import sorter)
+  - mypy (Python type checker)
+  - pytest (pytest)
+  - goimports (Go import organizer)
+  - golangci-lint (Go linter)
+  - shellcheck (Shell script analyzer)
+  - shfmt (Shell script formatter)
+  - cppcheck (cppcheck)
+  - coursier (JVM dependency manager)
+  - scalafmt (Scala formatter)
+  - coursier (JVM dependency manager)
+  - scalafix (scalafix)
+  - coursier (JVM dependency manager)
+  - metals (metals)
+  - stylua (stylua)
+  - selene (selene)
+  - fzf (fuzzy finder)
+  - zoxide (smart directory navigation)
+  - bat (enhanced cat)
+  - eza (enhanced ls)
+  - lazygit (Git TUI)
+  - gh (GitHub CLI)
+  - rg (text search)
+  - fd (file finder)
+  - tokei (code stats)
+  - difft (diff viewer)
+  - btop (btop)
+  - bats (Bash testing)
+  - Pester (PowerShell testing)
+  - tree-sitter-cli (Treesitter parser compiler)
+  - context7-mcp (documentation lookup)
+  - playwright-mcp (browser automation)
+  - repomix (repository packer (uses npx -y repomix --mcp))
+  - vscode (code editor)
+  - visual-studio (full IDE)
+  - llvm (C/C++ toolchain)
   - latex (document preparation)
   - claude-code (AI CLI)
   - opencode (AI CLI)
@@ -218,9 +374,10 @@ For new shells, PATH has been updated automatically.
 
 Key idempotency features shown above:
 
-- `[INFO] git already from brew, skipping replacement` - detects correct source
-- `[WARN] Found texlive from apt (removing for brew version)...` - auto-corrects
-- `Installed: 0, Skipped: 95` - summary shows what was already present
+- `[INFO] Claude Code CLI already at latest version (2.1.9)` - version-aware detection
+- `[INFO] OpenCode AI CLI already at latest version (1.1.23)` - version-aware detection
+- `Installed: 0, Skipped: 72` - summary shows all tools already present
+- Update phase skips packages that are current: `Skipped: claude-code already at latest version`
 
 ---
 

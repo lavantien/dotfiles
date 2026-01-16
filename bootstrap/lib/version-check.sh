@@ -259,3 +259,42 @@ get_missing_tools() {
 
     echo "${missing[@]}"
 }
+
+# ============================================================================
+# NPM PACKAGE VERSION CHECKING
+# ============================================================================
+
+# Check if an npm package needs install or update
+# Returns: 0 = needs install/update, 1 = already at latest
+npm_package_needs_update() {
+    local package="$1"
+
+    # Check if package is installed globally (top-level only)
+    local installed
+    installed=$(npm list -g --json --depth=0 "$package" 2>/dev/null)
+
+    # If package not in dependencies, it's not installed
+    if ! echo "$installed" | grep -q "\"$package\""; then
+        return 0  # Not installed, needs install
+    fi
+
+    # Get current installed version (top-level only)
+    local current_version
+    current_version=$(echo "$installed" | grep -oE "\"$package\":\"[0-9]+\.[0-9]+\.[0-9]+" | cut -d'"' -f2 | cut -d':' -f2)
+
+    # Get latest version from npm registry
+    local latest_version
+    latest_version=$(npm view "$package" version 2>/dev/null)
+
+    # If we can't determine versions, assume current is fine
+    if [[ -z "$current_version" ]] || [[ -z "$latest_version" ]]; then
+        return 1  # Can't determine, assume up to date
+    fi
+
+    # Compare versions
+    if [[ "$current_version" == "$latest_version" ]]; then
+        return 1  # Up to date
+    fi
+
+    return 0  # Needs update
+}

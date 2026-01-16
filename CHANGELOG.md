@@ -7,6 +7,57 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.2.12] - 2026-01-17
+
+### Changed
+
+**OpenCode AI CLI Installation**
+
+- Switched from npm-based installation to official installer (curl -fsSL https://opencode.ai/install | bash)
+- Official installer installs to ~/.opencode/bin on all platforms
+- Old npm version is automatically uninstalled during migration
+- Added version-aware checking to prevent unnecessary reinstalls
+
+**Version Detection**
+
+- Claude Code CLI now displays version in skip message: "already at latest version (2.1.9)"
+- OpenCode AI CLI displays version: "already at latest version (1.1.23)"
+- Both tools now check versions against npm registry before installing
+
+**Bootstrap Idempotency**
+
+- npm package version checking fixed to only check top-level packages (not transitive dependencies)
+- Prettier and other npm packages no longer show as outdated due to dependency version mismatches
+- Added PATH shadowing prevention: old npm shims are removed before version checks
+
+### Fixed
+
+**npm Package Version Checking**
+
+- Fixed false positives from `npm outdated -g` reporting transitive dependency versions
+- Changed to use `npm list -g --json --depth=0` for accurate top-level version detection
+- Affected both PowerShell (Test-NpmPackageNeedsUpdate) and Bash (npm_package_needs_update)
+
+**Invalid npm Package Cleanup**
+
+- cleanup-npm-trash.ps1 now checks scoop-persisted nodejs-lts location
+- update-all.sh now checks multiple npm locations on Windows
+- Fixes blocks from invalid packages like .intelephense-* that npm cannot uninstall itself
+
+### Added
+
+**Cleanup Scripts**
+
+- cleanup-npm-trash.ps1: Removes invalid npm packages (names starting with dot)
+- cleanup-scoop-path.ps1: Removes individual scoop app paths from User PATH
+
+**Documentation**
+
+- README idempotency section updated with full Windows bootstrap output
+- Shows version-aware detection for Claude Code and OpenCode AI CLI
+
+---
+
 ## [5.2.11] - 2026-01-13
 
 ### Fixed

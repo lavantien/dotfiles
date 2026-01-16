@@ -202,6 +202,7 @@ function Test-Command {
         $localBins = @(
             "$env:USERPROFILE\.cargo\bin",
             "$env:USERPROFILE\.local\bin",
+            "$env:USERPROFILE\.opencode\bin",
             "$env:USERPROFILE\.dotnet\tools",
             # Coursier (Scala/Clojure/JVM tool installer) - Windows uses LOCALAPPDATA
             "$env:LOCALAPPDATA\Coursier\data\bin"
@@ -478,20 +479,12 @@ function Initialize-UserPath {
         }
     }
 
-    # Scoop app bin directories (nodejs, go, etc.)
-    $scoopAppsDir = Join-Path $env:USERPROFILE "scoop\apps"
-    if (Test-Path $scoopAppsDir) {
-        # Add current bin directories for scoop apps
-        $scoopCurrentBins = Get-ChildItem $scoopAppsDir -Directory -ErrorAction SilentlyContinue |
-            Where-Object { Test-Path (Join-Path $_.FullName "current\bin") } |
-            ForEach-Object { Join-Path $_.FullName "current\bin" }
-        $userPaths += $scoopCurrentBins
-
-        # Also add the app directories themselves (some apps put binaries directly in current/)
-        $scoopCurrentDirs = Get-ChildItem $scoopAppsDir -Directory -ErrorAction SilentlyContinue |
-            Where-Object { Test-Path (Join-Path $_.FullName "current") } |
-            ForEach-Object { Join-Path $_.FullName "current" }
-        $userPaths += $scoopCurrentDirs
+    # Note: Scoop apps are accessed via shims directory (already in $userPaths above)
+    # Individual scoop app paths are NOT added - scoop's shim system handles this
+    # EXCEPTION: nodejs-lts needs direct PATH access for npm (shims don't fully proxy npm)
+    $nodejsPath = Join-Path $env:USERPROFILE "scoop\apps\nodejs-lts\current"
+    if (Test-Path $nodejsPath) {
+        $userPaths += $nodejsPath
     }
 
     $currentUserPath = [Environment]::GetEnvironmentVariable("Path", "User")
@@ -515,6 +508,65 @@ function Initialize-UserPath {
     else {
         Write-VerboseInfo "All development directories already in PATH"
     }
+}
+
+# ============================================================================
+# NPM PACKAGE VERSION CHECKING
+# ============================================================================
+
+# Check if an npm package needs install or update
+# Returns $true if package needs to be installed or updated
+function Test-NpmPackageNeedsUpdate {
+    param(
+        [string]$Package
+    )
+
+    # Check if package is installed (top-level only)
+    try {
+        $installed = npm list -g --json --depth=0 $Package 2>$null | ConvertFrom-Json
+        if (-not ($installed.dependencies.PSObject.Properties.Name -contains $Package)) {
+            return $true  # Not installed, needs install
+        }
+    }
+    catch {
+        return $true  # Error checking, assume needs install
+    }
+
+    # Get current installed version (top-level only)
+    $currentVersion = ""
+    try {
+        $installed = npm list -g --json --depth=0 $Package 2>$null | ConvertFrom-Json
+        if ($installed.dependencies.PSObject.Properties.Name -contains $Package) {
+            $currentVersion = $installed.dependencies.$Package.version
+        }
+    }
+    catch {
+        # If we can't get version, play it safe and don't reinstall
+        return $false
+    }
+
+    # If no version found, don't reinstall
+    if ([string]::IsNullOrEmpty($currentVersion)) {
+        return $false
+    }
+
+    # Get latest version from npm registry
+    $latestVersion = ""
+    try {
+        $latestVersion = npm view $Package version 2>$null
+    }
+    catch {
+        # If we can't check latest, assume current is fine
+        return $false
+    }
+
+    # Compare versions
+    if ($currentVersion -eq $latestVersion) {
+        return $false  # Up to date
+    }
+
+    # Current version is different from latest, need update
+    return $true
 }
 
 # ============================================================================

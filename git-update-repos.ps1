@@ -24,21 +24,21 @@ for ($i = 0; $i -lt $args.Length; $i++) {
     switch ($args[$i]) {
         "-Username" {
             if ($i + 1 -lt $args.Length) {
-                $mappedArgs += "--username"
+                $mappedArgs += "-u"
                 $mappedArgs += $args[$i + 1]
                 $i++
             }
         }
         "-BaseDir" {
             if ($i + 1 -lt $args.Length) {
-                $mappedArgs += "--base-dir"
+                $mappedArgs += "-d"
                 $mappedArgs += $args[$i + 1]
                 $i++
             }
         }
-        "-UseSSH" { $mappedArgs += "--use-ssh" }
+        "-UseSSH" { $mappedArgs += "-s" }
         "-NoSync" { $mappedArgs += "--no-sync" }
-        "-Commit" { $mappedArgs += "--commit" }
+        "-Commit" { $mappedArgs += "-c" }
         default { $mappedArgs += $args[$i] }
     }
 }

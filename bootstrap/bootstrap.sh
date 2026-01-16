@@ -1130,7 +1130,30 @@ install_development_tools() {
 	fi
 
 	# Claude Code CLI (native install via official script)
+	# Version-aware check: command existence + npm registry version comparison
+
+	# Get current version if claude is installed
+	current_version=""
+	if cmd_exists claude; then
+		current_version=$(claude --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+	fi
+
+	# Get latest version from npm registry
+	latest_version=""
+	if cmd_exists npm; then
+		latest_version=$(npm view @anthropic-ai/claude-code version 2>/dev/null)
+	fi
+
+	# Install if not found or version differs
+	needs_claude_install=false
 	if ! cmd_exists claude; then
+		needs_claude_install=true
+	elif [[ -n "$current_version" && -n "$latest_version" && "$current_version" != "$latest_version" ]]; then
+		log_info "Claude Code CLI update available: $current_version -> $latest_version"
+		needs_claude_install=true
+	fi
+
+	if [[ "$needs_claude_install" == "true" ]]; then
 		log_step "Installing Claude Code CLI - native..."
 		if [[ "$DRY_RUN" == "true" ]]; then
 			log_info "[DRY-RUN] Would install Claude Code CLI"
@@ -1154,27 +1177,91 @@ install_development_tools() {
 			fi
 		fi
 	else
-		log_info "Claude Code CLI already installed"
+		version_info=""
+		if [[ -n "$current_version" ]]; then
+			version_info=" ($current_version)"
+		fi
+		log_info "Claude Code CLI already at latest version${version_info}"
 		track_skipped "claude-code" "AI CLI"
 	fi
 
-	# OpenCode AI CLI (via npm)
-	if cmd_exists npm; then
-		if ! cmd_exists opencode; then
-			log_step "Installing OpenCode AI CLI..."
-			if [[ "$DRY_RUN" == "true" ]]; then
-				log_info "[DRY-RUN] Would install OpenCode AI CLI"
-			else
-				if install_npm_global "opencode-ai" "opencode"; then
-					log_success "OpenCode AI CLI installed"
+	# OpenCode AI CLI (via official installer)
+	# Version-aware check: binary existence + npm registry version comparison
+
+	# First, clean up any old npm shims that might shadow the official binary
+	# This prevents confusion where `opencode --version` returns old version
+	if [[ -d "$NPM_CONFIG_PREFIX" ]]; then
+		npm_bin="$NPM_CONFIG_PREFIX/bin"
+	else
+		npm_bin="$HOME/.npm-global/bin"
+	fi
+	# Also check standard npm location on Windows via Git Bash
+	if [[ -n "$APPDATA" ]]; then
+		npm_bin_alt="$APPDATA/npm"
+	fi
+
+	for shim_loc in "$npm_bin" "$npm_bin_alt"; do
+		[[ -d "$shim_loc" ]] || continue
+		for shim in "$shim_loc"/opencode "$shim_loc"/opencode.cmd; do
+			if [[ -f "$shim" ]]; then
+				log_info "Removing old npm shim: $(basename "$shim")"
+				rm -f "$shim" 2>/dev/null || true
+			fi
+		done
+	done
+
+	needs_opencode_install=false
+	opencode_bin="$HOME/.opencode/bin"
+	opencode_exe="$opencode_bin/opencode"
+
+	if [[ ! -f "$opencode_exe" ]]; then
+		# Binary doesn't exist
+		needs_opencode_install=true
+	else
+		# Binary exists, check version (run binary directly, not via PATH)
+		if current_version=$("$opencode_exe" --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1); then
+			# Get latest version from npm registry
+			latest_version=$(npm view opencode-ai version 2>/dev/null)
+			if [[ -n "$latest_version" ]]; then
+				if [[ "$current_version" == "$latest_version" ]]; then
+					log_info "OpenCode AI CLI already at latest version ($current_version)"
+					track_skipped "opencode" "AI CLI"
+					needs_opencode_install=false
+				else
+					log_info "OpenCode AI CLI update available: $current_version -> $latest_version"
+					needs_opencode_install=true
 				fi
+			else
+				# Couldn't get latest version, install to be safe
+				needs_opencode_install=true
 			fi
 		else
-			log_info "OpenCode AI CLI already installed"
-			track_skipped "opencode" "AI CLI"
+			# Couldn't get current version, install to be safe
+			needs_opencode_install=true
 		fi
-	else
-		log_warning "npm not found - skipping OpenCode AI CLI"
+	fi
+
+	if [[ "$needs_opencode_install" == "true" ]]; then
+		log_step "Installing OpenCode AI CLI..."
+		if [[ "$DRY_RUN" == "true" ]]; then
+			log_info "[DRY-RUN] Would install OpenCode AI CLI"
+		else
+			# Install via official script
+			if run_cmd "curl -fsSL https://opencode.ai/install | bash"; then
+				ensure_path "$HOME/.opencode/bin"
+				fix_path_issues
+				if cmd_exists opencode; then
+					log_success "OpenCode AI CLI installed"
+					track_installed "opencode" "AI CLI"
+				else
+					log_warning "OpenCode AI CLI installed but not in PATH yet"
+					track_installed "opencode" "AI CLI - PATH update pending"
+				fi
+			else
+				log_error "Failed to install OpenCode AI CLI"
+				track_failed "opencode" "AI CLI"
+			fi
+		fi
 	fi
 
 	log_success "Development tools installation complete"

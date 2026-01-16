@@ -556,7 +556,9 @@ function Install-NpmGlobal {
         return $false
     }
 
-    if (Test-NeedsInstall $CmdName $MinVersion) {
+    # Check if package needs install or update using version check
+    $needsUpdate = Test-NpmPackageNeedsUpdate -Package $Package
+    if ($needsUpdate) {
         Write-Step "Installing $Package via npm..."
         if ($DryRun) {
             Write-Info "[DRY-RUN] Would npm install -g $Package"
@@ -565,9 +567,16 @@ function Install-NpmGlobal {
         }
 
         try {
-            npm install -g $Package *> $null
-            Track-Installed $Package (Get-PackageDescription $Package)
-            return $true
+            $output = npm install -g $Package 2>&1
+            if ($LASTEXITCODE -eq 0) {
+                Track-Installed $Package (Get-PackageDescription $Package)
+                return $true
+            }
+            else {
+                Write-Warning ("Failed to install {0}: {1}" -f $Package, $output)
+                Track-Failed $Package (Get-PackageDescription $Package)
+                return $false
+            }
         }
         catch {
             Write-Warning ("Failed to install {0}: {1}" -f $Package, $_.Exception.Message)
@@ -576,6 +585,7 @@ function Install-NpmGlobal {
         }
     }
     else {
+        Write-VerboseInfo "$Package already at latest version"
         Track-Skipped $CmdName (Get-PackageDescription $CmdName)
         return $true
     }
