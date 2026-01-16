@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Universal Deploy Script - Works on Linux, macOS, and Windows (Git Bash/WSL)
+# Universal Deploy Script - Works on Linux and macOS
 # Auto-detects platform and deploys appropriate configurations
 # Handles various edge cases: XDG dirs, OneDrive sync, multiple shells
 
@@ -24,6 +24,14 @@ detect_os() {
 
 OS=$(detect_os)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# On Windows, direct users to the PowerShell deploy script
+if [[ "$OS" == "windows" ]]; then
+	echo -e "${YELLOW}Detected Windows environment${NC}"
+	echo -e "${CYAN}Please run: pwsh -File deploy.ps1${NC}"
+	echo -e "${CYAN}Or from PowerShell: .\deploy.ps1${NC}"
+	exit 0
+fi
 
 # Support XDG_CONFIG_HOME
 XDG_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}"
@@ -172,22 +180,17 @@ deploy_common() {
 		cp "$SCRIPT_DIR/.config/wezterm/wezterm.lua" "$XDG_CONFIG/wezterm/"
 	fi
 
-	# Copy git scripts (both .sh and .ps1 versions)
+	# Copy git scripts
 	cp "$SCRIPT_DIR/git-clone-all.sh" "$HOME/dev/" 2>/dev/null || true
-	cp "$SCRIPT_DIR/git-update-repos.sh" "$HOME/dev/" 2>/dev/null || true
-	cp "$SCRIPT_DIR/git-update-repos.ps1" "$HOME/dev/" 2>/dev/null || true
-	cp "$SCRIPT_DIR/sync-system-instructions.sh" "$HOME/dev/" 2>/dev/null || true
-	cp "$SCRIPT_DIR/sync-system-instructions.ps1" "$HOME/dev/" 2>/dev/null || true
+	cp "$SCRIPT_DIR/git-update-repos.sh" "$HOME/dev/"
+	cp "$SCRIPT_DIR/sync-system-instructions.sh" "$HOME/dev/"
 	chmod +x "$HOME/dev/git-update-repos.sh" 2>/dev/null || true
 	chmod +x "$HOME/dev/sync-system-instructions.sh" 2>/dev/null || true
 
-	# Copy update-all scripts (both .sh and .ps1 versions)
+	# Copy update-all script
 	if [ -f "$SCRIPT_DIR/update-all.sh" ]; then
 		cp "$SCRIPT_DIR/update-all.sh" "$HOME/dev/"
 		chmod +x "$HOME/dev/update-all.sh"
-	fi
-	if [ -f "$SCRIPT_DIR/update-all.ps1" ]; then
-		cp "$SCRIPT_DIR/update-all.ps1" "$HOME/dev/"
 	fi
 
 	# Copy Aider configs
@@ -218,10 +221,6 @@ deploy_git_hooks() {
 	chmod +x "$hooks_dir/pre-commit" 2>/dev/null || true
 	chmod +x "$hooks_dir/commit-msg" 2>/dev/null || true
 
-	# Copy PowerShell hooks too (for Windows/PowerShell git operations)
-	cp "$SCRIPT_DIR/.config/git/hooks/pre-commit.ps1" "$hooks_dir/" 2>/dev/null || true
-	cp "$SCRIPT_DIR/.config/git/hooks/commit-msg.ps1" "$hooks_dir/" 2>/dev/null || true
-
 	# Configure git to use the hooks
 	git config --global init.templatedir "$hooks_dir"
 	git config --global core.hooksPath "$hooks_dir"
@@ -246,39 +245,8 @@ update_git_config() {
 
 	# Detect platform and apply appropriate fixes
 	case "$OS" in
-	windows)
-		# On Windows (Git Bash/WSL): Remove Linuxbrew gh paths
-		# Match INI format: helper = !/home/linuxbrew/.linuxbrew/bin/gh auth git-credential
-		if grep -qE 'linuxbrew.*gh.*auth|/home/linuxbrew' "$gitconfig" 2>/dev/null; then
-			fixes+=("WSL/Linuxbrew gh credential helper")
-			# Use perl for better regex (works on Git Bash)
-			if command -v perl >/dev/null 2>&1; then
-				perl -i -ne 'print unless /^\s*helper\s*=\s*!.*?linuxbrew.*?gh.*?auth.*?git-credential/' "$gitconfig" 2>/dev/null || true
-				perl -i -ne 'print unless /^\s*helper\s*=\s*!.*?\/home\/linuxbrew\/.*?\.bin\/gh\s+auth\s+git-credential/' "$gitconfig" 2>/dev/null || true
-			else
-				# Fallback to sed
-				sed -i '/linuxbrew.*gh.*auth.*git-credential/d' "$gitconfig" 2>/dev/null ||
-					sed -i '' '/linuxbrew.*gh.*auth.*git-credential/d' "$gitconfig" 2>/dev/null || true
-			fi
-			modified=true
-		fi
-
-		# On Windows: Remove absolute Windows paths to gh.exe
-		# Match: helper = !"C:/Users/.../gh.exe" auth git-credential
-		if grep -qE 'gh\.exe' "$gitconfig" 2>/dev/null; then
-			fixes+=("absolute Windows path to gh.exe")
-			if command -v perl >/dev/null 2>&1; then
-				perl -i -ne 'print unless /^\s*helper\s*=\s*!".*?[A-Z]:\\/.*?gh\.exe"/' "$gitconfig" 2>/dev/null || true
-			else
-				sed -i '/gh\.exe.*auth/d' "$gitconfig" 2>/dev/null ||
-					sed -i '' '/gh\.exe.*auth/d' "$gitconfig" 2>/dev/null || true
-			fi
-			modified=true
-		fi
-		;;
-
 	linux | macos)
-		# On Linux/macOS: Remove absolute Windows paths to gh.exe
+		# Remove absolute Windows paths to gh.exe (may have been copied from Windows)
 		if grep -qE 'gh\.exe' "$gitconfig" 2>/dev/null; then
 			fixes+=("absolute Windows path to gh.exe")
 			if command -v perl >/dev/null 2>&1; then
@@ -331,10 +299,7 @@ deploy_claude_hooks() {
 		echo -e "${GREEN}CLAUDE.md deployed to: $HOME/.claude/${NC}"
 	fi
 
-	# Deploy quality check scripts (both PowerShell for Windows and bash for Linux/macOS)
-	if [ -f "$SCRIPT_DIR/.claude/quality-check.ps1" ]; then
-		cp "$SCRIPT_DIR/.claude/quality-check.ps1" "$HOME/.claude/"
-	fi
+	# Deploy quality check script
 	if [ -f "$SCRIPT_DIR/.claude/quality-check.sh" ]; then
 		cp "$SCRIPT_DIR/.claude/quality-check.sh" "$HOME/.claude/"
 		chmod +x "$HOME/.claude/quality-check.sh"
@@ -348,9 +313,6 @@ deploy_claude_hooks() {
 
 	# Deploy Claude Code hooks (PostToolUse for quality checks)
 	mkdir -p "$HOME/.claude/hooks"
-	if [ -f "$SCRIPT_DIR/.claude/hooks/post-tool-use.ps1" ]; then
-		cp "$SCRIPT_DIR/.claude/hooks/post-tool-use.ps1" "$HOME/.claude/hooks/"
-	fi
 	if [ -f "$SCRIPT_DIR/.claude/hooks/post-tool-use.sh" ]; then
 		cp "$SCRIPT_DIR/.claude/hooks/post-tool-use.sh" "$HOME/.claude/hooks/"
 		chmod +x "$HOME/.claude/hooks/post-tool-use.sh"
@@ -556,70 +518,6 @@ deploy_macos() {
 	deploy_git_hooks
 }
 
-deploy_windows() {
-	echo -e "${GREEN}Deploying Windows-specific configs...${NC}"
-
-	# Detect OneDrive Documents path
-	onedrive_docs="$HOME/OneDrive/Documents"
-	standard_docs="$HOME/Documents"
-
-	if [ -d "$onedrive_docs" ]; then
-		docs_path="$onedrive_docs"
-		echo -e "${YELLOW}Detected OneDrive Documents folder${NC}"
-	else
-		docs_path="$standard_docs"
-	fi
-
-	# Copy PowerShell profile
-	if [ -f "$SCRIPT_DIR/Microsoft.PowerShell_profile.ps1" ]; then
-		pwsh_dir="$docs_path/PowerShell"
-		legacy_dir="$docs_path/WindowsPowerShell"
-
-		if command -v pwsh >/dev/null 2>&1; then
-			mkdir -p "$pwsh_dir"
-			cp "$SCRIPT_DIR/Microsoft.PowerShell_profile.ps1" "$pwsh_dir/Microsoft.PowerShell_profile.ps1"
-			echo -e "${GREEN}PowerShell 7 profile deployed to: $pwsh_dir${NC}"
-		fi
-
-		if [ -d "$legacy_dir" ]; then
-			mkdir -p "$legacy_dir"
-			cp "$SCRIPT_DIR/Microsoft.PowerShell_profile.ps1" "$legacy_dir/Microsoft.PowerShell_profile.ps1"
-			echo -e "${GREEN}Windows PowerShell (legacy) profile deployed${NC}"
-		fi
-
-		# Also deploy to standard path if different from OneDrive
-		if [ "$docs_path" != "$standard_docs" ] && [ -d "$standard_docs/PowerShell" ]; then
-			mkdir -p "$standard_docs/PowerShell"
-			cp "$SCRIPT_DIR/Microsoft.PowerShell_profile.ps1" "$standard_docs/PowerShell/Microsoft.PowerShell_profile.ps1"
-			echo -e "${GREEN}Also deployed to: $standard_docs/PowerShell${NC}"
-		fi
-	fi
-
-	# Copy update-all.ps1 and git-update-repos.ps1
-	if [ -f "$SCRIPT_DIR/update-all.ps1" ]; then
-		cp "$SCRIPT_DIR/update-all.ps1" "$HOME/dev/"
-	fi
-	if [ -f "$SCRIPT_DIR/git-update-repos.ps1" ]; then
-		cp "$SCRIPT_DIR/git-update-repos.ps1" "$HOME/dev/"
-	fi
-	if [ -f "$SCRIPT_DIR/sync-system-instructions.ps1" ]; then
-		cp "$SCRIPT_DIR/sync-system-instructions.ps1" "$HOME/dev/"
-	fi
-
-	# Git hooks - use PowerShell versions
-	local hooks_dir="$XDG_CONFIG/git/hooks"
-	mkdir -p "$hooks_dir"
-
-	cp "$SCRIPT_DIR/.config/git/hooks/pre-commit.ps1" "$hooks_dir/"
-	cp "$SCRIPT_DIR/.config/git/hooks/commit-msg.ps1" "$hooks_dir/"
-
-	# Configure git
-	git config --global init.templatedir "$hooks_dir"
-	git config --global core.hooksPath "$hooks_dir"
-
-	echo -e "${GREEN}Git hooks deployed (PowerShell versions)${NC}"
-}
-
 # ============================================================================
 # MAIN
 # ============================================================================
@@ -640,9 +538,6 @@ main() {
 		;;
 	macos)
 		deploy_macos
-		;;
-	windows)
-		deploy_windows
 		;;
 	*)
 		echo -e "${YELLOW}Unknown OS, deploying common files only${NC}"

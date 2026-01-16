@@ -93,19 +93,19 @@ up  # or update - runs update-all
 
 ### Entry Point Scripts
 
-| Script                       | Purpose                                                                                |
-| ---------------------------- | -------------------------------------------------------------------------------------- |
-| **bootstrap**                | Initial setup - installs package managers, SDKs, LSPs, linters, tools, deploys configs |
-| **deploy**                   | Deploy configuration files (Neovim, git hooks, shell aliases, Claude Code hooks)       |
-| **update-all**               | Update all package managers and system packages (20+ managers supported)               |
-| **git-update-repos**         | Clone/update ALL GitHub repos via gh CLI, optionally sync system instructions          |
-| **sync-system-instructions** | Sync AI system instructions (CLAUDE.md, AGENTS.md, GEMINI.md, RULES.md) to all repos   |
-| **healthcheck**              | Check system health - verify tools installed, configs in place, git hooks working      |
-| **backup**                   | Create timestamped backup before major changes                                         |
-| **restore**                  | Restore from a previous backup (`--list-backups` to see available)                     |
-| **uninstall**                | Remove deployed configs (keeps installed packages)                                     |
+| Script                       | Platform | Purpose                                                                                |
+| ---------------------------- | -------- | -------------------------------------------------------------------------------------- |
+| **bootstrap**                | Both    | Initial setup - installs package managers, SDKs, LSPs, linters, tools, deploys configs |
+| **deploy**                   | Both    | Deploy configuration files (Neovim, git hooks, shell aliases, Claude Code hooks)       |
+| **update-all**               | Both    | Update all package managers and system packages (20+ managers supported)               |
+| **git-update-repos**         | Both    | Clone/update ALL GitHub repos via gh CLI, optionally sync system instructions          |
+| **sync-system-instructions** | Both    | Sync AI system instructions (CLAUDE.md, AGENTS.md, GEMINI.md, RULES.md) to all repos   |
+| **healthcheck**              | Both    | Check system health - verify tools installed, configs in place, git hooks working      |
+| **backup**                   | Both    | Create timestamped backup before major changes                                         |
+| **restore**                  | Both    | Restore from a previous backup (`--list-backups` to see available)                     |
+| **uninstall**                | Both    | Remove deployed configs (keeps installed packages)                                     |
 
-Use `.ps1` on Windows, `.sh` on Linux/macOS.
+Windows uses `.ps1` scripts (pure PowerShell 7), Linux/macOS uses `.sh` scripts (bash). Both platforms have functionally equivalent scripts with appropriate syntax for their shell.
 
 ---
 
@@ -606,19 +606,20 @@ Language: npm, yarn, pnpm, gup/go, cargo, rustup, pip/pip3, poetry, dotnet, comp
 
 Fetches ALL your GitHub repositories (public and private) and keeps them synchronized.
 
-```bash
-# Update all repos in default directory (~/dev/github)
-./git-update-repos.sh
+| Platform | Script | Usage |
+|----------| ------- | ----- |
+| Linux/macOS | `git-update-repos.sh` | `./git-update-repos.sh -d ~/dev/github --no-sync` |
+| Windows | `git-update-repos.ps1` | `.\git-update-repos.ps1 -BaseDir ~/dev/github -NoSync` |
 
-# Custom base directory
-./git-update-repos.sh -d ~/dev/github
+**Parameter differences:**
 
-# Skip syncing system instructions
-./git-update-repos.sh --no-sync
-
-# Use SSH URLs
-./git-update-repos.sh -s
-```
+| Bash | PowerShell | Description |
+| ---- | ----------- | ----------- |
+| `-d path` | `-BaseDir path` | Set base directory |
+| `-u user` | `-Username user` | GitHub username |
+| `-s` | `-UseSSH` | Use SSH URLs |
+| `--no-sync` | `-NoSync` | Skip syncing system instructions |
+| `-c` | `-Commit` | Auto-commit synced files |
 
 **sync-system-instructions**
 
@@ -626,15 +627,18 @@ Sync AI system instructions to all repos. Reads from dotfiles (source of truth) 
 
 > **Note**: This script requires the dotfiles repository to be at `~/dev/github/dotfiles` (as per the Quick Start instructions) to locate the source instruction files.
 
-```bash
-./sync-system-instructions.sh
+| Platform | Script | Usage |
+|----------| ------- | ----- |
+| Linux/macOS | `sync-system-instructions.sh` | `./sync-system-instructions.sh -d ~/dev/git -c -p` |
+| Windows | `sync-system-instructions.ps1` | `.\sync-system-instructions.ps1 -BaseDir ~/dev/git -Commit -Push` |
 
-# Specify custom base directory (default: ~/dev/github)
-./sync-system-instructions.sh -d ~/dev/git
+**Parameter differences:**
 
-# Sync + commit + push
-./sync-system-instructions.sh -c -p
-```
+| Bash | PowerShell | Description |
+| ---- | ----------- | ----------- |
+| `-d path` | `-BaseDir path` | Set base directory |
+| `-c` | `-Commit` | Commit changes |
+| `-p` | `-Push` | Push changes after committing |
 
 Files synced:
 
@@ -719,10 +723,17 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for system architecture details.
 ## Updating
 
 ```bash
+# Linux/macOS
 cd ~/dev/github/dotfiles
 git pull
-./bootstrap.sh  # or .\bootstrap.ps1 on Windows
-source ~/.zshrc  # or . $PROFILE on Windows
+./bootstrap.sh
+source ~/.zshrc
+
+# Windows
+cd ~/dev/github/dotfiles
+git pull
+.\bootstrap.ps1
+. $PROFILE
 ```
 
 ## License

@@ -125,11 +125,18 @@ for i in "${!REPO_NAMES[@]}"; do
 
         if cd "$REPO_PATH" 2>/dev/null; then
             if git rev-parse --git-dir >/dev/null 2>&1; then
-                if git fetch origin && git pull; then
+                # Check if local HEAD equals upstream (already at latest)
+                LOCAL=$(git rev-parse HEAD 2>/dev/null || echo "")
+                REMOTE=$(git rev-parse @{u} 2>/dev/null || echo "")
+
+                if [[ -n "$LOCAL" && -n "$REMOTE" && "$LOCAL" == "$REMOTE" ]]; then
+                    echo -e "${BLUE}Skipped (already up to date)${NC}"
+                    SKIPPED=$((SKIPPED + 1))
+                elif git fetch origin && git pull; then
                     echo -e "${YELLOW}Updated${NC}"
                     UPDATED=$((UPDATED + 1))
                 else
-                    echo -e "${YELLOW}Error updating${NC}"
+                    echo -e "${RED}Error updating${NC}"
                     FAILED=$((FAILED + 1))
                 fi
             else

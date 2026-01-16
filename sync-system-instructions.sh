@@ -98,7 +98,7 @@ copy_markdown_files() {
 			if [[ ! -f "$target_file" ]] || ! cmp -s "$source_file" "$target_file"; then
 				if cp -f "$source_file" "$target_file" 2>/dev/null; then
 					echo -e "    ${GREEN}synced${NC} $target_name"
-					((copied_count++))
+					copied_count=$((copied_count + 1)) || true
 				fi
 			fi
 		fi
@@ -124,6 +124,7 @@ commit_changes() {
 	# Check if there are changes to commit (check both unstaged and staged)
 	if git diff --quiet CLAUDE.md AGENTS.md GEMINI.md RULES.md 2>/dev/null &&
 		git diff --cached --quiet CLAUDE.md AGENTS.md GEMINI.md RULES.md 2>/dev/null; then
+		echo -e "    ${YELLOW}already up to date${NC} (no changes to commit)"
 		cd - >/dev/null
 		return 1
 	fi
@@ -179,6 +180,7 @@ push_changes() {
 		local ahead_count
 		ahead_count=$(git rev-list --count "origin/$branch..HEAD" 2>/dev/null) || ahead_count=0
 		if [[ "$ahead_count" -eq 0 ]]; then
+			echo -e "    ${YELLOW}already up to date${NC} (nothing to push)"
 			cd - >/dev/null
 			return 1
 		fi

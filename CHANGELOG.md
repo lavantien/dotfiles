@@ -7,6 +7,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.2.14] - 2026-01-17
+
+### Changed
+
+**Windows Sync Scripts - Pure PowerShell 7 Implementation**
+
+- Converted `sync-system-instructions.ps1` to pure PowerShell 7 (no longer a bash wrapper)
+- Converted `git-update-repos.ps1` to pure PowerShell 7 (no longer a bash wrapper)
+- Converted `deploy.ps1` to pure PowerShell 7 (no longer a bash wrapper)
+- Made `deploy.sh` Linux/macOS only (directs Windows users to deploy.ps1)
+- All Windows scripts now use PowerShell 7 idioms: `param()`, hashtables, proper error handling
+- Removed Windows-specific code paths from bash scripts for cleaner separation
+
+**Script Parity**
+
+- `git-update-repos`: Both bash and PowerShell now detect "already up to date" before pull
+- `sync-system-instructions`: Both bash and PowerShell show "already up to date" for commit/push phases
+- Platform-specific parameter syntax documented in README
+
+### Fixed
+
+**git-update-repos**
+
+- Bash version now compares LOCAL vs REMOTE HEAD before attempting pull
+- Shows "Skipped (already up to date)" instead of "Updated" when no changes
+- PowerShell version has equivalent "already up to date" detection
+- Prevents misleading "mass updated" output when repos are already current
+
+**sync-system-instructions**
+
+- Bash version shows "already up to date (no changes to commit)" in commit phase
+- Bash version shows "already up to date (nothing to push)" in push phase
+- PowerShell version has equivalent status messages
+- Fixed arithmetic expansion for Git Bash compatibility (`|| true`)
+
+**Documentation**
+
+- README Quick Start now correctly uses `.\bootstrap.ps1` on Windows (not `.\deploy.ps1`)
+- README Updating section uses `.\bootstrap.ps1` on Windows
+- Added platform-specific parameter comparison tables
+- Added Entry Point Scripts table with Platform column
+- Windows uses `.ps1` (pure PowerShell 7), Linux/macOS use `.sh` (bash)
+
+---
+
 ## [5.2.13] - 2026-01-17
 
 ### Fixed
@@ -893,6 +938,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date       | Major Changes                                                                                            |
 | ------- | ---------- | -------------------------------------------------------------------------------------------------------- |
+| 5.2.14  | 2026-01-17 | Pure PowerShell 7 scripts for Windows, script parity, "already up to date" detection                     |
 | 5.0     | 2026-01-10 | Linux platform overhaul, Ubuntu 26.04 LTS ready, Homebrew-first, git hooks enhancement, bashcov coverage |
 | 4.4     | 2026-01-07 | git-update-repos migrated to gh CLI for public+private repo support                                      |
 | 4.3     | 2026-01-07 | Fixed goimports reinstall, removed Ruby/bashcov, kcov-only coverage                                      |
@@ -941,7 +987,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.0...HEAD
+[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.2.14...HEAD
+[5.2.14]: https://github.com/lavantien/dotfiles/compare/v5.2.13...v5.2.14
+[5.2.13]: https://github.com/lavantien/dotfiles/compare/v5.2.12...v5.2.13
 [5.0]: https://github.com/lavantien/dotfiles/compare/v4.4...v5.0
 [4.4]: https://github.com/lavantien/dotfiles/compare/v4.3...v4.4
 [4.3]: https://github.com/lavantien/dotfiles/compare/v4.2...v4.3
