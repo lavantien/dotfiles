@@ -90,6 +90,68 @@ script_tool_needs_update() {
 	return 0  # Needs update
 }
 
+# Run installer and verify version actually changed
+# Usage: install_and_verify_version <install_command> <binary_name> <version_command> [npm_package_name]
+# If npm_package_name is provided, verifies against npm registry as external source of truth
+# This addresses installers that don't clearly indicate if an update occurred
+install_and_verify_version() {
+	local install_cmd="$1"
+	local binary_name="$2"
+	local version_cmd="$3"
+	local npm_package="${4:-}"  # Optional
+
+	# Get latest version from npm if package name provided (external source of truth)
+	local npm_version=""
+	if [[ -n "$npm_package" ]]; then
+		npm_version=$(npm view "$npm_package" version 2>/dev/null)
+	fi
+
+	# Get version before install
+	local version_before
+	version_before=$(eval "$version_cmd" 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+
+	# Skip if already at latest version (based on external npm check)
+	if [[ -n "$npm_version" ]] && [[ "$version_before" == "$npm_version" ]]; then
+		update_skip "$binary_name already at latest version ($version_before)"
+		return 0
+	fi
+
+	# Run the installer
+	local output
+	output=$(eval "$install_cmd" 2>&1)
+	local exit_code=$?
+
+	if [ $exit_code -ne 0 ]; then
+		update_fail "$binary_name" "$output"
+		return 1
+	fi
+
+	# Get version after install
+	local version_after
+	version_after=$(eval "$version_cmd" 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+
+	# Verify against npm version if available
+	if [[ -n "$npm_version" ]] && [[ -n "$version_after" ]] && [[ "$version_after" != "$npm_version" ]]; then
+		# Binary version doesn't match npm version - possible silent failure
+		echo -e "${YELLOW}⚠ Warning: Binary version ($version_after) differs from npm version ($npm_version)${NC}"
+		echo "$output" | grep -vE "^$|npm warn|\[?\[?" | head -20
+		update_success "$binary_name ($version_before -> $version_after, but npm says $npm_version)"
+		return 0
+	fi
+
+	# Compare versions
+	if [[ "$version_before" != "$version_after" ]] && [[ -n "$version_after" ]]; then
+		echo "$output" | grep -vE "^$|npm warn|\[?\[?" | head -20
+		update_success "$binary_name ($version_before -> $version_after)"
+	elif [[ -n "$version_before" ]]; then
+		update_skip "$binary_name already at latest version ($version_before)"
+	else
+		# Couldn't determine versions, show output and mark as updated
+		echo "$output" | grep -vE "^$|npm warn|\[?\[?" | head -20
+		update_success "$binary_name"
+	fi
+}
+
 # ============================================================================
 # LOAD USER CONFIGURATION
 # ============================================================================
@@ -757,28 +819,15 @@ _main() {
 	if cmd_exists claude; then
 		update_section "CLAUDE CODE CLI"
 
-		# Get current version
-		local current_version
-		current_version=$(claude --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
-
 		if is_windows; then
 			# Use PowerShell installer on Windows (prefer pwsh/PowerShell 7+)
 			local pwsh
 			pwsh=$(get_pwsh)
-
-			# Check if update is needed by comparing with npm registry
-			if [[ -n "$current_version" ]] && script_tool_needs_update "@anthropic-ai/claude-code" "$current_version"; then
-				update_and_report "$pwsh -NoProfile -Command \"irm https://claude.ai/install.ps1 | iex\"" "claude-code"
-			else
-				update_skip "claude-code already at latest version ($current_version)"
-			fi
+			local install_cmd="$pwsh -NoProfile -Command \"irm https://claude.ai/install.ps1 | iex\""
+			install_and_verify_version "$install_cmd" "claude-code" "claude --version" "@anthropic-ai/claude-code"
 		else
 			# Use bash script on Unix-like systems
-			if [[ -n "$current_version" ]] && script_tool_needs_update "@anthropic-ai/claude-code" "$current_version"; then
-				update_and_report "curl -fsSL https://claude.ai/install.sh | bash" "claude-code"
-			else
-				update_skip "claude-code already at latest version ($current_version)"
-			fi
+			install_and_verify_version "curl -fsSL https://claude.ai/install.sh | bash" "claude-code" "claude --version" "@anthropic-ai/claude-code"
 		fi
 	else
 		update_skip "claude-code not found"
@@ -794,16 +843,7 @@ _main() {
 	if [[ ! -f "$opencode_exe" ]]; then
 		update_skip "opencode binary not found at $opencode_exe"
 	else
-		# Get current version (run binary directly)
-		local current_version
-		current_version=$("$opencode_exe" --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
-
-		# Check if update is needed by comparing with npm registry
-		if [[ -n "$current_version" ]] && script_tool_needs_update "opencode-ai" "$current_version"; then
-			update_and_report "curl -fsSL https://opencode.ai/install | bash" "opencode"
-		else
-			update_skip "opencode already at latest version ($current_version)"
-		fi
+		install_and_verify_version "curl -fsSL https://opencode.ai/install | bash" "opencode" "\"$opencode_exe\" --version" "opencode-ai"
 	fi
 
 	# ============================================================================

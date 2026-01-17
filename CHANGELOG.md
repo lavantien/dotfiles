@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.2.16] - 2026-01-17
+
+### Fixed
+
+**update-all.sh - AI CLI Update Detection**
+
+- Fixed false positive update detection for Claude Code and OpenCode AI CLIs
+- Added `install_and_verify_version` helper function that compares versions before and after install
+- Installer now verified against npm registry as external source of truth
+- Reports warning if installed version differs from npm version (possible silent failure)
+- Prevents misleading "updated" messages when installer re-installs same version
+
+---
+
 ## [5.2.15] - 2026-01-17
 
 ### Changed
