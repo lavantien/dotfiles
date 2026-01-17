@@ -231,6 +231,7 @@ Deploying configs...
   PowerShell profile
   Neovim config
   WezTerm config
+  WezTerm background assets
   Configs deployed
 
 ========================================
