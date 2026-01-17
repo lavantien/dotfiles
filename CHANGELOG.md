@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.2.19] - 2026-01-17
+
+### Changed
+
+**OpenCode Config - Context7 MCP Remote Endpoint**
+
+- Migrated Context7 MCP from local npx command to remote HTTP endpoint
+- Updated all platform configs (Linux, macOS, Windows) to use `https://mcp.context7.com/mcp`
+- Requires `CONTEXT7_API_KEY` environment variable to be set
+- Enables remote execution without local Node.js dependency
+
+**deploy.ps1 - OpenCode Config Merge Behavior**
+
+- Changed from overwrite to merge for OpenCode config deployment
+- Preserves existing user settings while adding/updating MCP servers from dotfiles
+- Added deep comparison to detect actual changes before updating
+- New output messages: `(created)`, `(merged N server(s))`, `(up to date)`
+
+**deploy.ps1 - Claude Config Deployment**
+
+- Changed from selective file copy to full directory recursion
+- Now deploys entire `.claude/` directory including hooks, tdd-guard, and all scripts
+- Simplified maintenance - new files are automatically included
+
+**README - Deployment Documentation**
+
+- Updated deployment example output to reflect current deploy.ps1 behavior
+- Added "Claude configs" and "OpenCode config" to deployment output
+- Added "Deploy Script Behavior" section documenting merge vs. overwrite behavior
+- Documented OpenCode merge behavior and output messages
+
+---
+
 ## [5.2.18] - 2026-01-17
 
 ### Changed

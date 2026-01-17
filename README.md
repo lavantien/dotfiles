@@ -232,6 +232,8 @@ Deploying configs...
   Neovim config
   WezTerm config
   WezTerm background assets
+  Claude configs
+  OpenCode config (up to date)
   Configs deployed
 
 ========================================
@@ -625,6 +627,27 @@ The deploy script registers a PostToolUse hook in `~/.claude/settings.json` that
 Custom statusline displaying: `user@hostname directory [branch] [context%] [style] [vim-mode] model`
 
 Colors: Green (user@host), Blue (directory), Yellow (branch), Cyan (context%), Magenta (style), Red (vim-mode), White (model).
+
+**Deploy Script Behavior**
+
+The deploy script (`deploy.ps1` / `deploy.sh`) handles configurations as follows:
+
+| Config | Behavior |
+| ------ | -------- |
+| PowerShell, Neovim, WezTerm | Overwrites existing config |
+| Claude Code (`.claude/`) | Overwrites existing config |
+| OpenCode (`~/.config/opencode/opencode.json`) | **Merges** MCP servers from dotfiles into existing config |
+
+OpenCode merge behavior:
+- If `opencode.json` doesn't exist, creates it from dotfiles
+- If exists, adds missing MCP servers from dotfiles
+- Updates existing MCP servers if dotfiles config differs
+- Preserves any existing settings not managed by dotfiles
+
+Output messages indicate the action taken:
+- `OpenCode config (created)` - New config created
+- `OpenCode config (merged N server(s))` - Servers added/updated
+- `OpenCode config (up to date)` - No changes needed
 
 ---
 

@@ -143,14 +143,95 @@ if (-not $SkipConfig) {
         if (!(Test-Path $ClaudeDir)) {
             New-Item -ItemType Directory -Path $ClaudeDir -Force | Out-Null
         }
-        Copy-File "$DotfilesDir/.claude/CLAUDE.md" "$ClaudeDir/CLAUDE.md"
-        Copy-File "$DotfilesDir/.claude/quality-check.ps1" "$ClaudeDir/quality-check.ps1"
-        if (Test-Path "$DotfilesDir/.claude/hooks") {
-            $ClaudeHooksDir = "$ClaudeDir/hooks"
-            if (!(Test-Path $ClaudeHooksDir)) {
-                New-Item -ItemType Directory -Path $ClaudeHooksDir -Force | Out-Null
+        Copy-Item -Path "$DotfilesDir/.claude/*" -Destination $ClaudeDir -Recurse -Force
+        Write-Host "  Claude configs" -ForegroundColor Green
+    }
+
+    # OpenCode config (merge MCP servers)
+    $OpencodeConfigDir = "$ConfigDir/opencode"
+    if (!(Test-Path $OpencodeConfigDir)) {
+        New-Item -ItemType Directory -Path $OpencodeConfigDir -Force | Out-Null
+    }
+    $OpencodeConfigFile = "$OpencodeConfigDir/opencode.json"
+    $DotfilesOpencodeConfig = "$DotfilesDir/.config/opencode/opencode.windows.json"
+
+    if (!(Test-Path $OpencodeConfigFile)) {
+        # No existing config, copy from dotfiles
+        Copy-Item $DotfilesOpencodeConfig $OpencodeConfigFile -Force
+        Write-Host "  OpenCode config (created)" -ForegroundColor Green
+    } else {
+        # Existing config found, merge MCP servers
+        $ExistingConfig = Get-Content $OpencodeConfigFile -Raw | ConvertFrom-Json
+        $DotfilesConfig = Get-Content $DotfilesOpencodeConfig -Raw | ConvertFrom-Json
+
+        # Ensure mcp section exists in existing config
+        if ($null -eq $ExistingConfig.mcp) {
+            $ExistingConfig | Add-Member -NotePropertyName "mcp" -NotePropertyValue @{}
+        }
+
+        # Helper function to compare objects
+        function Compare-Property {
+            param($Existing, $Dotfiles, $PropertyName)
+
+            $ExistingValue = $Existing.$PropertyName
+            $DotfilesValue = $Dotfiles.$PropertyName
+
+            # Handle nested objects
+            if ($DotfilesValue -is [PSCustomObject]) {
+                if ($null -eq $ExistingValue) { return $false }
+                foreach ($Prop in $DotfilesValue.PSObject.Properties) {
+                    if (!(Compare-Property -Existing $ExistingValue -Dotfiles $DotfilesValue -PropertyName $Prop.Name)) {
+                        return $false
+                    }
+                }
+                return $true
             }
-            Copy-File "$DotfilesDir/.claude/hooks/post-tool-use.ps1" "$ClaudeHooksDir/post-tool-use.ps1"
+
+            # Handle arrays
+            if ($DotfilesValue -is [Array]) {
+                if ($null -eq $ExistingValue) { return $false }
+                $ExistingJson = $ExistingValue | ConvertTo-Json -Compress
+                $DotfilesJson = $DotfilesValue | ConvertTo-Json -Compress
+                return $ExistingJson -eq $DotfilesJson
+            }
+
+            # Handle simple values
+            return "$ExistingValue" -eq "$DotfilesValue"
+        }
+
+        # Merge each MCP server from dotfiles
+        $MergedCount = 0
+        foreach ($Server in $DotfilesConfig.mcp.PSObject.Properties) {
+            $ServerName = $Server.Name
+            $ServerConfig = $Server.Value
+
+            if ($null -eq $ExistingConfig.mcp.$ServerName) {
+                # Server doesn't exist, add it
+                $ExistingConfig.mcp | Add-Member -NotePropertyName $ServerName -NotePropertyValue $ServerConfig -Force
+                $MergedCount++
+            } else {
+                # Server exists, check if update needed
+                $NeedsUpdate = $false
+
+                foreach ($Prop in $ServerConfig.PSObject.Properties) {
+                    $PropName = $Prop.Name
+                    if (!(Compare-Property -Existing $ExistingConfig.mcp.$ServerName -Dotfiles $ServerConfig -PropertyName $PropName)) {
+                        $ExistingConfig.mcp.$ServerName.$PropName = $ServerConfig.$PropName
+                        $NeedsUpdate = $true
+                    }
+                }
+
+                if ($NeedsUpdate) {
+                    $MergedCount++
+                }
+            }
+        }
+
+        if ($MergedCount -gt 0) {
+            $ExistingConfig | ConvertTo-Json -Depth 10 | Set-Content $OpencodeConfigFile
+            Write-Host "  OpenCode config (merged $MergedCount server(s))" -ForegroundColor Green
+        } else {
+            Write-Host "  OpenCode config (up to date)" -ForegroundColor Cyan
         }
     }
 
