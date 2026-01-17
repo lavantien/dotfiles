@@ -1,6 +1,11 @@
 local wezterm = require("wezterm")
 local config = wezterm.config_builder()
 
+-- Set default shell based on platform
+if wezterm.target_triple:find("windows") then
+	config.default_prog = { "pwsh.exe" }
+end
+
 config.color_scheme = "rose-pine"
 config.enable_tab_bar = false
 config.tab_bar_at_bottom = true

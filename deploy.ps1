@@ -127,6 +127,16 @@ if (-not $SkipConfig) {
         Write-Host "  WezTerm config" -ForegroundColor Green
     }
 
+    # WezTerm background assets
+    if (Test-Path "$DotfilesDir/assets") {
+        $assetsDest = Join-Path $env:USERPROFILE "assets"
+        if (!(Test-Path $assetsDest)) {
+            New-Item -ItemType Directory -Path $assetsDest -Force | Out-Null
+        }
+        Copy-Item "$DotfilesDir/assets/*" -Destination $assetsDest -Recurse -Force
+        Write-Host "  WezTerm background assets" -ForegroundColor Green
+    }
+
     # Claude configs
     if (Test-Path "$DotfilesDir/.claude") {
         $ClaudeDir = "$HOME/.claude"

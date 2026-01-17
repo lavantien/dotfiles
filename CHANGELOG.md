@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.2.18] - 2026-01-17
+
+### Changed
+
+**wezterm.lua - PowerShell 7 as Default Shell on Windows**
+
+- Added platform detection to set `pwsh.exe` as default shell on Windows
+- WezTerm now launches PowerShell 7 instead of cmd.exe on Windows
+- Linux behavior unchanged (continues to auto-detect zsh)
+
+**deploy.ps1 - WezTerm Background Assets**
+
+- Added assets directory deployment for WezTerm background images
+- Copies `assets/*` to `$HOME/assets/` on Windows
+- Enables WezTerm background image (tokyo-sunset.jpeg) to load correctly
+- Aligns Windows deployment with Linux/macOS behavior
+
+---
+
 ## [5.2.17] - 2026-01-17
 
 ### Added
