@@ -309,6 +309,11 @@ install_sdks() {
 		fi
 	fi
 
+	# Bun (JavaScript runtime and package manager)
+	if [[ "$CATEGORIES" == "full" ]]; then
+		install_bun
+	fi
+
 	# OpenJDK
 	if [[ "$CATEGORIES" == "full" ]]; then
 		if [[ "$OS" == "macos" ]]; then

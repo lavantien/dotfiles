@@ -335,8 +335,7 @@ update_and_report() {
 		echo "$output" | grep -vE "^$|npm warn" | head -20
 		update_success "$name"
 	else
-		echo -e "${GREEN}✓ Up to date${NC}"
-		((updated++))
+		update_success "$name (up to date)"
 	fi
 
 	return 0
@@ -371,8 +370,7 @@ update_pip() {
 		echo "$output" | grep -vE "^$|Requirement already" | head -20
 		update_success "$name"
 	else
-		echo -e "${GREEN}✓ Up to date${NC}"
-		((updated++))
+		update_success "$name (up to date)"
 	fi
 }
 
@@ -398,8 +396,7 @@ update_dotnet_tools() {
 		echo "$output" | grep -vE "^$|already up to date" | head -20
 		update_success "dotnet"
 	else
-		echo -e "${GREEN}✓ Up to date${NC}"
-		((updated++))
+		update_success "dotnet (up to date)"
 	fi
 }
 
@@ -706,6 +703,52 @@ _main() {
 			update_and_report "pnpm update -g" "pnpm"
 		else
 			update_skip "pnpm not found"
+			((skipped++))
+		fi
+	fi
+
+	# ============================================================================
+	# BUN (JavaScript runtime and package manager)
+	# ============================================================================
+	update_section "BUN"
+
+	if should_skip_package "bun"; then
+		update_skip "bun (in skip list)"
+		((skipped++))
+	else
+		if cmd_exists bun; then
+			# First upgrade bun itself
+			bun_upgrade_output=$(bun upgrade 2>&1)
+			bun_exit_code=$?
+
+			# Check if there are global packages to update
+			global_packages=$(bun pm ls -g 2>/dev/null | grep -cE "^\w" || true)
+
+			if [[ $global_packages -gt 0 ]]; then
+				# Only run bun update -g if there are global packages
+				bun_update_output=$(bun update -g 2>&1)
+				bun_update_exit_code=$?
+
+				if [[ $bun_update_exit_code -eq 0 ]]; then
+					update_success "bun"
+				else
+					# bun update -g can fail if no packages need updating
+					if echo "$bun_update_output" | grep -qiE "No package.json|nothing to update|up to date"; then
+						update_success "bun (up to date)"
+					else
+						update_fail "bun" "$bun_update_output"
+					fi
+				fi
+			else
+				# No global packages, just report bun upgrade status
+				if [[ $bun_exit_code -eq 0 ]]; then
+					update_success "bun"
+				else
+					update_fail "bun" "$bun_upgrade_output"
+				fi
+			fi
+		else
+			update_skip "bun not found"
 			((skipped++))
 		fi
 	fi

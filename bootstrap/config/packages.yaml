@@ -121,6 +121,16 @@ sdks:
       linux_opensuse: sudo zypper install -y dotnet-sdk-7.0
       windows: scoop install dotnet-sdk
 
+  - name: bun
+    display_name: Bun
+    platforms: [all]
+    check_cmd: bun
+    version_flag: --version
+    min_version: "1.0.0"
+    install:
+      all: 'curl -fsSL https://bun.sh/install | bash'
+      windows: 'pwsh -c "irm bun.sh/install.ps1|iex"'
+
 language_servers:
   - name: lua_ls
     display_name: Lua Language Server

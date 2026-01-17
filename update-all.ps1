@@ -67,7 +67,7 @@ function Invoke-Update {
             $script:updated++
         }
         else {
-            Write-Success "Up to date"
+            Write-Success "$Name (up to date)"
             $script:updated++
         }
         return $true
@@ -127,16 +127,13 @@ function Main {
     Write-Step "SCOOP"
     if (Test-Command scoop) {
         try {
-            # First update scoop and buckets
-            $output = scoop update 2>&1
-            # Show bucket update status (filter git warnings)
-            $output | Where-Object { $_ -notmatch '^\s*$' -and $_ -notmatch 'error:.*Another git process' -and $_ -notmatch 'error:.*Unable to create' -and $_ -notmatch 'remove the file manually' } | Select-Object -First 5 | ForEach-Object { Write-Info $_ }
-
-            # Now update all installed apps
-            Invoke-Update "scoop update *" "Scoop Apps"
+            # Update scoop buckets and all apps in one command (same as manual `scoop update -a`)
+            scoop update -a
+            Write-Success "scoop"
+            $script:updated++
         }
         catch {
-            Write-Fail "Scoop"
+            Write-Fail "scoop"
             $script:failed++
         }
     }
@@ -168,7 +165,7 @@ function Main {
             else {
                 $noUpdates = $output | Select-String -Pattern 'No updated package|is up to date|No available upgrade' -CaseSensitive:$false
                 if ($noUpdates) {
-                    Write-Success "Up to date"
+                    Write-Success "winget (up to date)"
                     $script:updated++
                 }
                 else {
@@ -208,7 +205,7 @@ function Main {
             else {
                 $noUpdates = $output | Select-String -Pattern 'already installed|up to date|nothing to upgrade' -CaseSensitive:$false
                 if ($noUpdates) {
-                    Write-Success "Up to date"
+                    Write-Success "choco (up to date)"
                     $script:updated++
                 }
                 else {
@@ -247,7 +244,7 @@ function Main {
                 $script:updated++
             }
             else {
-                Write-Success "Up to date"
+                Write-Success "npm (up to date)"
                 $script:updated++
             }
         }
@@ -276,6 +273,63 @@ function Main {
     }
     else {
         Write-Skip "pnpm not found"
+        $script:skipped++
+    }
+
+    # ============================================================================
+    # BUN (JavaScript runtime and package manager)
+    # ============================================================================
+    Write-Step "BUN"
+    if (Test-Command bun) {
+        try {
+            # First upgrade bun itself
+            $upgradeOutput = & bun upgrade 2>&1
+            $exitCode = $LASTEXITCODE
+
+            # Check if there are global packages to update
+            $globalPackages = & bun pm ls -g 2>$null | Select-String -Pattern "^\w" | Measure-Object
+            $hasGlobalPackages = $globalPackages.Count -gt 0
+
+            if ($hasGlobalPackages) {
+                # Only run bun update -g if there are global packages
+                $updateOutput = & bun update -g 2>&1
+                $updateExitCode = $LASTEXITCODE
+
+                if ($updateExitCode -eq 0) {
+                    Write-Success "bun"
+                    $script:updated++
+                }
+                else {
+                    # bun update -g can fail if no packages need updating
+                    if ($updateOutput -match "No package.json|nothing to update|up to date") {
+                        Write-Success "bun (up to date)"
+                        $script:updated++
+                    }
+                    else {
+                        Write-Fail "bun" $updateOutput
+                        $script:failed++
+                    }
+                }
+            }
+            else {
+                # No global packages, just report bun upgrade success
+                if ($exitCode -eq 0) {
+                    Write-Success "bun"
+                    $script:updated++
+                }
+                else {
+                    Write-Fail "bun" $upgradeOutput
+                    $script:failed++
+                }
+            }
+        }
+        catch {
+            Write-Fail "bun"
+            $script:failed++
+        }
+    }
+    else {
+        Write-Skip "bun not found"
         $script:skipped++
     }
 
@@ -405,7 +459,7 @@ function Main {
                     $script:updated++
                 }
                 else {
-                    Write-Success "Up to date"
+                    Write-Success "dotnet (up to date)"
                     $script:updated++
                 }
             }
@@ -457,7 +511,7 @@ function Main {
                     $script:updated++
                 }
                 else {
-                    Write-Success "Up to date"
+                    Write-Success "pip (up to date)"
                     $script:updated++
                 }
             }

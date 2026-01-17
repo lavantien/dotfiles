@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.2.21] - 2026-01-17
+
+### Added
+
+**Bootstrap - Enhanced Progress Notifications**
+
+- Added "Checking..." messages to all bootstrap phases for real-time visibility
+- Shows "(up to date)" status for tools already installed
+- Affects: Core SDKs, Language Servers, Linters & Formatters, CLI Tools, MCP Servers, Development Tools
+- Changed hidden verbose output to visible status messages
+
+**Phase-by-Phase Notifications:**
+
+- Phase 2 (Core SDKs): Go, Rust, dotnet, Bun, OpenJDK now show "Checking..." messages
+- Phase 3 (Language Servers): All 16 language servers show individual "Checking..." messages
+- Phase 4 (Linters & Formatters): All 26 linters/formatters show individual "Checking..." messages
+- Phase 5 (CLI Tools): All 11 CLI tools show individual "Checking..." messages
+- Phase 5.25 (MCP Servers): tree-sitter-cli, context7-mcp, playwright-mcp, repomix show "Checking..." messages
+- Phase 5.5 (Development Tools): VS Code, Visual Studio, LLVM, LaTeX show "Checking..." messages
+
+### Changed
+
+- `Install-Bun` function now shows "Checking Bun..." instead of "Upgrading Bun..."
+- README SDKs table now includes Bun alongside Node.js, Python, Go, Rust, dotnet, OpenJDK
+- README idempotency example output updated with new "Checking..." pattern
+
+### Fixed
+
+- Fixed typo in `Install-Rustup`: `GetPackageDescription` → `Get-PackageDescription`
+
+---
+
 ## [5.2.20] - 2026-01-17
 
 ### Added

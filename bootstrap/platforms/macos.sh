@@ -19,6 +19,7 @@ get_package_description() {
 	go | golang) echo "Go runtime" ;;
 	rust) echo "Rust toolchain" ;;
 	rust-analyzer) echo "Rust LSP" ;;
+	bun) echo "JavaScript runtime" ;;
 	dotnet-sdk) echo ".NET SDK" ;;
 	openjdk | default-jdk) echo "Java development" ;;
 	lua-language-server) echo "Lua LSP" ;;
@@ -548,6 +549,38 @@ install_rust_analyzer_component() {
 	else
 		track_skipped "rust-analyzer" "$(get_package_description rust-analyzer)"
 		return 0
+	fi
+}
+
+# ============================================================================
+# BUN
+# ============================================================================
+install_bun() {
+	if cmd_exists bun; then
+		log_step "Upgrading Bun..."
+		if run_cmd "bun upgrade"; then
+			# Source bun environment
+			# shellcheck disable=SC1091
+			[[ -f "$HOME/.bun/bin/bun" ]] && ensure_path "$HOME/.bun/bin"
+			track_skipped "bun" "$(get_package_description bun)"
+			return 0
+		else
+			log_warning "Bun upgrade failed, keeping existing version"
+			track_skipped "bun" "$(get_package_description bun)"
+			return 0
+		fi
+	fi
+
+	log_step "Installing Bun..."
+	if run_cmd "curl -fsSL https://bun.sh/install | bash"; then
+		# Source bun environment
+		# shellcheck disable=SC1091
+		[[ -f "$HOME/.bun/bin/bun" ]] && ensure_path "$HOME/.bun/bin"
+		track_installed "bun" "$(get_package_description bun)"
+		return 0
+	else
+		track_failed "bun" "$(get_package_description bun)"
+		return 1
 	fi
 }
 

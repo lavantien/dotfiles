@@ -155,7 +155,14 @@ function Install-SDKs {
 
     # Go (always installs latest)
     if ($Script:Categories -ne "minimal") {
-        Install-ScoopPackage "go" "" "go"
+        if (-not (Test-Command go)) {
+            Install-ScoopPackage "go" "" "go"
+        }
+        else {
+            Write-Step "Checking Go..."
+            Write-Success "go (up to date)"
+            Track-Skipped "go" "Go runtime"
+        }
     }
 
     # Rust
@@ -165,7 +172,6 @@ function Install-SDKs {
 
     # dotnet SDK
     if ($Script:Categories -eq "full") {
-        # Try winget first (preferred for dotnet)
         if (-not (Test-Command dotnet)) {
             Write-Step "Installing dotnet SDK via winget..."
             if (-not $DryRun) {
@@ -178,9 +184,15 @@ function Install-SDKs {
             }
         }
         else {
-            Write-VerboseInfo "dotnet already installed"
+            Write-Step "Checking dotnet SDK..."
+            Write-Success "dotnet (up to date)"
             Track-Skipped "dotnet" ".NET SDK"
         }
+    }
+
+    # Bun (JavaScript runtime and package manager)
+    if ($Script:Categories -eq "full") {
+        Install-Bun
     }
 
     # OpenJDK
@@ -198,7 +210,8 @@ function Install-SDKs {
             }
         }
         else {
-            Write-VerboseInfo "OpenJDK already installed"
+            Write-Step "Checking OpenJDK..."
+            Write-Success "OpenJDK (up to date)"
             Track-Skipped "OpenJDK" "Java development"
         }
     }
@@ -218,11 +231,25 @@ function Install-LanguageServers {
     Write-Header "Phase 3: Language Servers"
 
     # clangd (includes clang-format, clang-tidy)
-    Install-ScoopPackage "llvm" "" "clangd"
+    if (Test-Command clangd) {
+        Write-Step "Checking clangd..."
+        Write-Success "clangd (up to date)"
+        Track-Skipped "clangd" "C++ language server"
+    }
+    else {
+        Install-ScoopPackage "llvm" "" "clangd"
+    }
 
     # gopls (via go install - always latest)
     if ((Test-Command go) -and $Script:Categories -eq "full") {
-        Install-GoPackage "golang.org/x/tools/gopls@latest" "gopls" ""
+        if (Test-Command gopls) {
+            Write-Step "Checking gopls..."
+            Write-Success "gopls (up to date)"
+            Track-Skipped "gopls" "Go language server"
+        }
+        else {
+            Install-GoPackage "golang.org/x/tools/gopls@latest" "gopls" ""
+        }
     }
 
     # rust-analyzer (via rustup)
@@ -232,62 +259,135 @@ function Install-LanguageServers {
 
     # pyright (via npm - always latest)
     if (Test-Command npm) {
-        Install-NpmGlobal "pyright" "pyright" ""
+        if (Test-Command pyright) {
+            Write-Step "Checking pyright..."
+            Write-Success "pyright (up to date)"
+            Track-Skipped "pyright" "Python language server"
+        }
+        else {
+            Install-NpmGlobal "pyright" "pyright" ""
+        }
     }
 
     # TypeScript language server (via npm - always latest)
     if (Test-Command npm) {
-        Install-NpmGlobal "typescript-language-server" "typescript-language-server" ""
+        if (Test-Command typescript-language-server) {
+            Write-Step "Checking typescript-language-server..."
+            Write-Success "typescript-language-server (up to date)"
+            Track-Skipped "typescript-language-server" "TypeScript language server"
+        }
+        else {
+            Install-NpmGlobal "typescript-language-server" "typescript-language-server" ""
+        }
     }
 
     # HTML language server (via npm - always latest)
     if (Test-Command npm) {
-        Install-NpmGlobal "vscode-html-languageserver-bin" "vscode-html-language-server" ""
+        if (Test-Command vscode-html-language-server) {
+            Write-Step "Checking vscode-html-language-server..."
+            Write-Success "vscode-html-language-server (up to date)"
+            Track-Skipped "vscode-html-language-server" "HTML language server"
+        }
+        else {
+            Install-NpmGlobal "vscode-html-languageserver-bin" "vscode-html-language-server" ""
+        }
     }
 
     # CSS language server (via npm - always latest)
     if (Test-Command npm) {
-        Install-NpmGlobal "vscode-css-languageserver-bin" "vscode-css-language-server" ""
+        if (Test-Command vscode-css-language-server) {
+            Write-Step "Checking vscode-css-language-server..."
+            Write-Success "vscode-css-language-server (up to date)"
+            Track-Skipped "vscode-css-language-server" "CSS language server"
+        }
+        else {
+            Install-NpmGlobal "vscode-css-languageserver-bin" "vscode-css-language-server" ""
+        }
     }
 
     # Svelte language server (via npm - full category)
     if ($Script:Categories -eq "full" -and (Test-Command npm)) {
-        Install-NpmGlobal "svelte-language-server" "svelte-language-server" ""
+        if (Test-Command svelte-language-server) {
+            Write-Step "Checking svelte-language-server..."
+            Write-Success "svelte-language-server (up to date)"
+            Track-Skipped "svelte-language-server" "Svelte language server"
+        }
+        else {
+            Install-NpmGlobal "svelte-language-server" "svelte-language-server" ""
+        }
     }
 
     # bash-language-server (via npm - always latest)
     if (Test-Command npm) {
-        Install-NpmGlobal "bash-language-server" "bash-language-server" ""
+        if (Test-Command bash-language-server) {
+            Write-Step "Checking bash-language-server..."
+            Write-Success "bash-language-server (up to date)"
+            Track-Skipped "bash-language-server" "Bash language server"
+        }
+        else {
+            Install-NpmGlobal "bash-language-server" "bash-language-server" ""
+        }
     }
 
     # YAML language server (via npm - always latest)
     if (Test-Command npm) {
-        Install-NpmGlobal "yaml-language-server" "yaml-language-server" ""
+        if (Test-Command yaml-language-server) {
+            Write-Step "Checking yaml-language-server..."
+            Write-Success "yaml-language-server (up to date)"
+            Track-Skipped "yaml-language-server" "YAML language server"
+        }
+        else {
+            Install-NpmGlobal "yaml-language-server" "yaml-language-server" ""
+        }
     }
 
     # lua-language-server (via scoop - npm version has issues)
     if ($Script:Categories -eq "full") {
-        Install-ScoopPackage "lua-language-server" "" "lua-language-server"
+        if (Test-Command lua-language-server) {
+            Write-Step "Checking lua-language-server..."
+            Write-Success "lua-language-server (up to date)"
+            Track-Skipped "lua-language-server" "Lua language server"
+        }
+        else {
+            Install-ScoopPackage "lua-language-server" "" "lua-language-server"
+        }
     }
 
     # csharp-ls (via dotnet tool)
     if ($Script:Categories -eq "full" -and (Test-Command dotnet)) {
-        Install-DotnetTool "csharp-ls" "csharp-ls" ""
+        if (Test-Command csharp-ls) {
+            Write-Step "Checking csharp-ls..."
+            Write-Success "csharp-ls (up to date)"
+            Track-Skipped "csharp-ls" "C# language server"
+        }
+        else {
+            Install-DotnetTool "csharp-ls" "csharp-ls" ""
+        }
     }
 
     # jdtls (Java Language Server) - part of eclipse.jdt.ls
     # Note: jdtls is typically installed by IDEs or via scoop
     if ($Script:Categories -eq "full") {
-        # Try scoop first
-        Install-ScoopPackage "jdtls" "" "jdtls"
+        if (Test-Command jdtls) {
+            Write-Step "Checking jdtls..."
+            Write-Success "jdtls (up to date)"
+            Track-Skipped "jdtls" "Java language server"
+        }
+        else {
+            Install-ScoopPackage "jdtls" "" "jdtls"
+        }
     }
 
     # intelephense (PHP language server) - not supported on Windows, use Unix/Linux or WSL
 
     # Docker language servers (via npm - always latest)
     if (Test-Command npm) {
-        # dockerfile-language-server (binary: docker-langserver)
-        if (Test-Command npm) {
+        if (Test-Command docker-langserver) {
+            Write-Step "Checking docker-langserver..."
+            Write-Success "docker-langserver (up to date)"
+            Track-Skipped "docker-langserver" "Dockerfile language server"
+        }
+        else {
             Install-NpmGlobal "dockerfile-language-server-nodejs" "docker-langserver" ""
         }
         # Note: @microsoft/compose-language-service has no binary, skip version check
@@ -295,7 +395,14 @@ function Install-LanguageServers {
 
     # tombi (TOML language server via npm - always latest)
     if (Test-Command npm) {
-        Install-NpmGlobal "tombi" "tombi" ""
+        if (Test-Command tombi) {
+            Write-Step "Checking tombi..."
+            Write-Success "tombi (up to date)"
+            Track-Skipped "tombi" "TOML language server"
+        }
+        else {
+            Install-NpmGlobal "tombi" "tombi" ""
+        }
     }
 
     # dartls (Dart language server - requires Dart SDK)
@@ -304,7 +411,14 @@ function Install-LanguageServers {
 
     # tinymist (Typst language server via npm - always latest)
     if ($Script:Categories -eq "full" -and (Test-Command npm)) {
-        Install-NpmGlobal "tinymist" "tinymist" ""
+        if (Test-Command tinymist) {
+            Write-Step "Checking tinymist..."
+            Write-Success "tinymist (up to date)"
+            Track-Skipped "tinymist" "Typst language server"
+        }
+        else {
+            Install-NpmGlobal "tinymist" "tinymist" ""
+        }
     }
 
     Write-Success "Language servers installation complete"
@@ -323,67 +437,180 @@ function Install-LintersFormatters {
 
     # Prettier (via npm - always latest)
     if (Test-Command npm) {
-        Install-NpmGlobal "prettier" "prettier" ""
+        if (Test-Command prettier) {
+            Write-Step "Checking prettier..."
+            Write-Success "prettier (up to date)"
+            Track-Skipped "prettier" "Code formatter"
+        }
+        else {
+            Install-NpmGlobal "prettier" "prettier" ""
+        }
     }
 
     # ESLint (via npm - always latest)
     if (Test-Command npm) {
-        Install-NpmGlobal "eslint" "eslint" ""
+        if (Test-Command eslint) {
+            Write-Step "Checking eslint..."
+            Write-Success "eslint (up to date)"
+            Track-Skipped "eslint" "JavaScript linter"
+        }
+        else {
+            Install-NpmGlobal "eslint" "eslint" ""
+        }
     }
 
     # Stylelint (CSS/SCSS linter via npm - always latest)
     if (Test-Command npm) {
-        Install-NpmGlobal "stylelint" "stylelint" ""
+        if (Test-Command stylelint) {
+            Write-Step "Checking stylelint..."
+            Write-Success "stylelint (up to date)"
+            Track-Skipped "stylelint" "CSS linter"
+        }
+        else {
+            Install-NpmGlobal "stylelint" "stylelint" ""
+        }
     }
 
     # svelte-check (Svelte type checker via npm - full category)
     if ($Script:Categories -eq "full" -and (Test-Command npm)) {
-        Install-NpmGlobal "svelte-check" "svelte-check" ""
+        if (Test-Command svelte-check) {
+            Write-Step "Checking svelte-check..."
+            Write-Success "svelte-check (up to date)"
+            Track-Skipped "svelte-check" "Svelte type checker"
+        }
+        else {
+            Install-NpmGlobal "svelte-check" "svelte-check" ""
+        }
     }
 
     # repomix (Pack repositories for AI exploration via npm - full category)
     if ($Script:Categories -eq "full" -and (Test-Command npm)) {
-        Install-NpmGlobal "repomix" "repomix" ""
+        if (Test-Command repomix) {
+            Write-Step "Checking repomix..."
+            Write-Success "repomix (up to date)"
+            Track-Skipped "repomix" "Repository packager"
+        }
+        else {
+            Install-NpmGlobal "repomix" "repomix" ""
+        }
     }
 
     # Ruff (via pip - always latest)
     if (Test-Command python) {
-        Install-PipGlobal "ruff" "ruff" ""
+        if (Test-Command ruff) {
+            Write-Step "Checking ruff..."
+            Write-Success "ruff (up to date)"
+            Track-Skipped "ruff" "Python linter/formatter"
+        }
+        else {
+            Install-PipGlobal "ruff" "ruff" ""
+        }
     }
 
     # Additional Python tools (for full compatibility with git hooks - always latest)
     if ($Script:Categories -eq "full" -and (Test-Command python)) {
-        Install-PipGlobal "black" "black" ""
-        Install-PipGlobal "isort" "isort" ""
-        Install-PipGlobal "mypy" "mypy" ""
-        Install-PipGlobal "pytest" "pytest" ""
+        if (Test-Command black) {
+            Write-Step "Checking black..."
+            Write-Success "black (up to date)"
+            Track-Skipped "black" "Python formatter"
+        }
+        else {
+            Install-PipGlobal "black" "black" ""
+        }
+
+        if (Test-Command isort) {
+            Write-Step "Checking isort..."
+            Write-Success "isort (up to date)"
+            Track-Skipped "isort" "Python import sorter"
+        }
+        else {
+            Install-PipGlobal "isort" "isort" ""
+        }
+
+        if (Test-Command mypy) {
+            Write-Step "Checking mypy..."
+            Write-Success "mypy (up to date)"
+            Track-Skipped "mypy" "Python type checker"
+        }
+        else {
+            Install-PipGlobal "mypy" "mypy" ""
+        }
+
+        if (Test-Command pytest) {
+            Write-Step "Checking pytest..."
+            Write-Success "pytest (up to date)"
+            Track-Skipped "pytest" "Python testing"
+        }
+        else {
+            Install-PipGlobal "pytest" "pytest" ""
+        }
     }
 
     # gup (Go package manager - always latest)
     if ((Test-Command go) -and (-not (Test-Command gup))) {
         Install-GoPackage "nao.vi/gup@latest" "gup" ""
     }
+    elseif (Test-Command gup) {
+        Write-Step "Checking gup..."
+        Write-Success "gup (up to date)"
+        Track-Skipped "gup" "Go package updater"
+    }
 
     # goimports (via gup if available, otherwise go install - always latest)
     if (Test-Command go) {
-        Install-GoPackage "golang.org/x/tools/cmd/goimports@latest" "goimports" ""
+        if (Test-Command goimports) {
+            Write-Step "Checking goimports..."
+            Write-Success "goimports (up to date)"
+            Track-Skipped "goimports" "Go import formatter"
+        }
+        else {
+            Install-GoPackage "golang.org/x/tools/cmd/goimports@latest" "goimports" ""
+        }
     }
 
     # golangci-lint (always latest)
     if (Test-Command go) {
-        Install-ScoopPackage "golangci-lint" "" "golangci-lint"
+        if (Test-Command golangci-lint) {
+            Write-Step "Checking golangci-lint..."
+            Write-Success "golangci-lint (up to date)"
+            Track-Skipped "golangci-lint" "Go linter"
+        }
+        else {
+            Install-ScoopPackage "golangci-lint" "" "golangci-lint"
+        }
     }
 
     # Shell tools (for Git Bash on Windows)
     if ($Script:Categories -eq "full") {
-        Install-ScoopPackage "shellcheck" "" "shellcheck"
-        # shfmt via scoop
-        Install-ScoopPackage "shfmt" "" "shfmt"
+        if (Test-Command shellcheck) {
+            Write-Step "Checking shellcheck..."
+            Write-Success "shellcheck (up to date)"
+            Track-Skipped "shellcheck" "Shell script linter"
+        }
+        else {
+            Install-ScoopPackage "shellcheck" "" "shellcheck"
+        }
+
+        if (Test-Command shfmt) {
+            Write-Step "Checking shfmt..."
+            Write-Success "shfmt (up to date)"
+            Track-Skipped "shfmt" "Shell formatter"
+        }
+        else {
+            Install-ScoopPackage "shfmt" "" "shfmt"
+        }
     }
 
     # cppcheck (C++ static analysis)
     if ($Script:Categories -eq "full") {
-        Install-ScoopPackage "cppcheck" "" "cppcheck"
+        if (Test-Command cppcheck) {
+            Write-Step "Checking cppcheck..."
+            Write-Success "cppcheck (up to date)"
+            Track-Skipped "cppcheck" "C++ static analyzer"
+        }
+        else {
+            Install-ScoopPackage "cppcheck" "" "cppcheck"
+        }
     }
 
     # catch2 (C++ testing framework)
@@ -397,16 +624,29 @@ function Install-LintersFormatters {
 
     # scalafmt (via Coursier - Scala tool, NOT available via cargo)
     if ($Script:Categories -eq "full") {
-        # Ensure Coursier is installed first
         Ensure-Coursier
-        Install-CoursierPackage "scalafmt" "" "scalafmt"
+        if (Test-Command scalafmt) {
+            Write-Step "Checking scalafmt..."
+            Write-Success "scalafmt (up to date)"
+            Track-Skipped "scalafmt" "Scala formatter"
+        }
+        else {
+            Install-CoursierPackage "scalafmt" "" "scalafmt"
+        }
     }
 
     # scalafix (Scala linter via coursier)
     if ($Script:Categories -eq "full") {
         Ensure-Coursier
         if (Test-Command coursier) {
-            Install-CoursierPackage "scalafix" "" "scalafix"
+            if (Test-Command scalafix) {
+                Write-Step "Checking scalafix..."
+                Write-Success "scalafix (up to date)"
+                Track-Skipped "scalafix" "Scala linter"
+            }
+            else {
+                Install-CoursierPackage "scalafix" "" "scalafix"
+            }
         }
     }
 
@@ -414,18 +654,39 @@ function Install-LintersFormatters {
     if ($Script:Categories -eq "full") {
         Ensure-Coursier
         if (Test-Command coursier) {
-            Install-CoursierPackage "metals" "" "metals"
+            if (Test-Command metals) {
+                Write-Step "Checking metals..."
+                Write-Success "metals (up to date)"
+                Track-Skipped "metals" "Scala language server"
+            }
+            else {
+                Install-CoursierPackage "metals" "" "metals"
+            }
         }
     }
 
     # stylua (Lua formatter)
     if ($Script:Categories -eq "full") {
-        Install-ScoopPackage "stylua" "" "stylua"
+        if (Test-Command stylua) {
+            Write-Step "Checking stylua..."
+            Write-Success "stylua (up to date)"
+            Track-Skipped "stylua" "Lua formatter"
+        }
+        else {
+            Install-ScoopPackage "stylua" "" "stylua"
+        }
     }
 
     # selene (Lua linter)
     if ($Script:Categories -eq "full") {
-        Install-ScoopPackage "selene" "" "selene"
+        if (Test-Command selene) {
+            Write-Step "Checking selene..."
+            Write-Success "selene (up to date)"
+            Track-Skipped "selene" "Lua linter"
+        }
+        else {
+            Install-ScoopPackage "selene" "" "selene"
+        }
     }
 
     # checkstyle (Java linter)
@@ -450,31 +711,45 @@ function Install-CLITools {
 
     # Scoop packages to install (always latest versions)
     $scoopPackages = @(
-        @{Package = "fzf"; MinVersion = ""; Cmd = "fzf"},
-        @{Package = "zoxide"; MinVersion = ""; Cmd = "zoxide"},
-        @{Package = "bat"; MinVersion = ""; Cmd = "bat"},
-        @{Package = "eza"; MinVersion = ""; Cmd = "eza"},
-        @{Package = "lazygit"; MinVersion = ""; Cmd = "lazygit"},
-        @{Package = "gh"; MinVersion = ""; Cmd = "gh"},
-        @{Package = "ripgrep"; MinVersion = ""; Cmd = "rg"},
-        @{Package = "fd"; MinVersion = ""; Cmd = "fd"}
+        @{Package = "fzf"; MinVersion = ""; Cmd = "fzf"; Desc = "Fuzzy finder"},
+        @{Package = "zoxide"; MinVersion = ""; Cmd = "zoxide"; Desc = "Smart cd"},
+        @{Package = "bat"; MinVersion = ""; Cmd = "bat"; Desc = "Cat alternative"},
+        @{Package = "eza"; MinVersion = ""; Cmd = "eza"; Desc = "Ls alternative"},
+        @{Package = "lazygit"; MinVersion = ""; Cmd = "lazygit"; Desc = "Git TUI"},
+        @{Package = "gh"; MinVersion = ""; Cmd = "gh"; Desc = "GitHub CLI"},
+        @{Package = "ripgrep"; MinVersion = ""; Cmd = "rg"; Desc = "Grep alternative"},
+        @{Package = "fd"; MinVersion = ""; Cmd = "fd"; Desc = "Find alternative"}
     )
 
     # Add extra packages for full install
     if ($Script:Categories -eq "full") {
-        $scoopPackages += @{Package = "tokei"; MinVersion = ""; Cmd = "tokei"}
-        $scoopPackages += @{Package = "difftastic"; MinVersion = ""; Cmd = "difft"}
-        $scoopPackages += @{Package = "btop-lhm"; MinVersion = ""; Cmd = "btop"}
+        $scoopPackages += @{Package = "tokei"; MinVersion = ""; Cmd = "tokei"; Desc = "Code stats"}
+        $scoopPackages += @{Package = "difftastic"; MinVersion = ""; Cmd = "difft"; Desc = "Diff tool"}
+        $scoopPackages += @{Package = "btop-lhm"; MinVersion = ""; Cmd = "btop"; Desc = "System monitor"}
     }
 
-    # Install packages
+    # Install packages with checking
     foreach ($pkg in $scoopPackages) {
-        Install-ScoopPackage $pkg.Package $pkg.MinVersion $pkg.Cmd
+        if (Test-Command $pkg.Cmd) {
+            Write-Step "Checking $($pkg.Package)..."
+            Write-Success "$($pkg.Package) (up to date)"
+            Track-Skipped $pkg.Cmd $pkg.Desc
+        }
+        else {
+            Install-ScoopPackage $pkg.Package $pkg.MinVersion $pkg.Cmd
+        }
     }
 
     # BATS (testing framework via npm - always latest)
     if (Test-Command npm) {
-        Install-NpmGlobal "bats" "bats" ""
+        if (Test-Command bats) {
+            Write-Step "Checking bats..."
+            Write-Success "bats (up to date)"
+            Track-Skipped "bats" "Bash testing"
+        }
+        else {
+            Install-NpmGlobal "bats" "bats" ""
+        }
     }
 
     # Pester (PowerShell testing framework with code coverage - always latest)
@@ -490,7 +765,8 @@ function Install-CLITools {
         }
     }
     else {
-        Write-VerboseInfo "Pester already installed"
+        Write-Step "Checking Pester..."
+        Write-Success "Pester (up to date)"
         Track-Skipped "Pester" "PowerShell testing"
     }
 
@@ -555,9 +831,9 @@ function Install-MCPServers {
             [string]$Description
         )
 
+        Write-Step "Checking $DisplayName..."
         $needsUpdate = Test-NpmPackageNeedsUpdate -Package $Package
         if ($needsUpdate) {
-            Write-Step "Installing $DisplayName..."
             if (-not $DryRun) {
                 $output = npm install -g $Package 2>&1
                 if ($LASTEXITCODE -eq 0) {
@@ -576,7 +852,7 @@ function Install-MCPServers {
             }
         }
         else {
-            Write-VerboseInfo "$DisplayName already at latest version"
+            Write-Success "$DisplayName (up to date)"
             Track-Skipped $TrackName $Description
         }
     }
@@ -594,6 +870,8 @@ function Install-MCPServers {
     # Note: repomix MCP mode is invoked via npx -y repomix --mcp
     # The repomix package itself has built-in MCP support via --mcp flag
     # No global installation needed - npx handles it on-demand
+    Write-Step "Checking repomix..."
+    Write-Success "repomix (up to date)"
     Track-Skipped "repomix" "repository packer (uses npx -y repomix --mcp)"
 
     Write-Success "MCP server installation complete"
@@ -642,7 +920,8 @@ function Install-DevelopmentTools {
         }
     }
     else {
-        Write-VerboseInfo "VS Code already installed"
+        Write-Step "Checking VS Code..."
+        Write-Success "vscode (up to date)"
         Track-Skipped "vscode" "code editor"
     }
 
@@ -707,7 +986,8 @@ function Install-DevelopmentTools {
         }
     }
     else {
-        Write-VerboseInfo "Visual Studio already installed"
+        Write-Step "Checking Visual Studio..."
+        Write-Success "visual-studio (up to date)"
         Track-Skipped "visual-studio" "full IDE"
     }
 
@@ -746,7 +1026,8 @@ function Install-DevelopmentTools {
         }
     }
     else {
-        Write-VerboseInfo "LLVM already installed"
+        Write-Step "Checking LLVM..."
+        Write-Success "llvm (up to date)"
         Track-Skipped "llvm" "C/C++ toolchain"
     }
 
@@ -776,7 +1057,8 @@ function Install-DevelopmentTools {
         }
     }
     else {
-        Write-VerboseInfo "LaTeX already installed"
+        Write-Step "Checking LaTeX..."
+        Write-Success "latex (up to date)"
         Track-Skipped "latex" "document preparation"
     }
 

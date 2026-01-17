@@ -96,6 +96,7 @@ function Get-PackageDescription {
         "rust" { return "Rust toolchain" }
         "wezterm" { return "terminal emulator" }
         "dotnet" { return ".NET SDK" }
+        "bun" { return "JavaScript runtime" }
         "OpenJDK" { return "Java development" }
 
         # Language servers
@@ -1079,8 +1080,42 @@ function Install-DotnetTool {
 # ============================================================================
 function Install-Rustup {
     if (Get-Command rustup -ErrorAction SilentlyContinue) {
-        Track-Skipped "rust" (Get-PackageDescription "rust")
-        return $true
+        Write-Step "Checking Rust..."
+        if ($DryRun) {
+            Write-Info "[DRY-RUN] Would check Rust version"
+            Track-Skipped "rust" (Get-PackageDescription "rust")
+            return $true
+        }
+
+        try {
+            # Check for rustup update
+            $output = rustup update 2>&1
+            $exitCode = $LASTEXITCODE
+
+            if ($exitCode -eq 0) {
+                # Show relevant output
+                $output | Where-Object { $_ -notmatch '^\s*$' -and $_ -notmatch '^Updating|Downloading|Installing|Installed' } | Select-Object -First 10 | ForEach-Object { Write-Info $_ }
+                Write-Success "rust (updated)"
+                $script:updated++
+            }
+            else {
+                # Already up to date or error
+                if ($output -match 'is up to date|already installed') {
+                    Write-Success "rust (up to date)"
+                    $script:updated++
+                }
+                else {
+                    Write-Success "rust"
+                    $script:updated++
+                }
+            }
+            return $true
+        }
+        catch {
+            Write-Success "rust"
+            $script:updated++
+            return $true
+        }
     }
 
     Write-Step "Installing Rust via rustup..."
@@ -1141,6 +1176,67 @@ function Install-RustAnalyzerComponent {
     else {
         Track-Skipped "rust-analyzer" (Get-PackageDescription "rust-analyzer")
         return $true
+    }
+}
+
+# ============================================================================
+# BUN
+# ============================================================================
+function Install-Bun {
+    if (Get-Command bun -ErrorAction SilentlyContinue) {
+        Write-Step "Checking Bun..."
+        if ($DryRun) {
+            Write-Success "bun (up to date)"
+            Track-Skipped "bun" (Get-PackageDescription "bun")
+            return $true
+        }
+
+        try {
+            # Check for bun upgrade
+            $output = bun upgrade 2>&1
+            $exitCode = $LASTEXITCODE
+
+            if ($output -match "already on the latest version|up to date") {
+                Write-Success "bun (up to date)"
+                Track-Skipped "bun" (Get-PackageDescription "bun")
+            }
+            else {
+                # Show relevant output
+                $output | Where-Object { $_ -notmatch '^\s*$' } | Select-Object -First 5 | ForEach-Object { Write-Info $_ }
+                Write-Success "bun (updated)"
+                # Refresh PATH after upgrade
+                Add-ToPath "$env:USERPROFILE\.bun\bin"
+                Refresh-Path
+                Track-Skipped "bun" (Get-PackageDescription "bun")
+            }
+            return $true
+        }
+        catch {
+            Write-Success "bun (up to date)"
+            Track-Skipped "bun" (Get-PackageDescription "bun")
+            return $true
+        }
+    }
+
+    Write-Step "Installing Bun..."
+    if ($DryRun) {
+        Write-Info "[DRY-RUN] Would install Bun via official script"
+        Track-Installed "bun" (Get-PackageDescription "bun")
+        return $true
+    }
+
+    try {
+        pwsh -c "irm bun.sh/install.ps1|iex"
+        # Bun installs to %USERPROFILE%\.bun\bin
+        Add-ToPath "$env:USERPROFILE\.bun\bin"
+        Refresh-Path
+        Track-Installed "bun" (Get-PackageDescription "bun")
+        return $true
+    }
+    catch {
+        Write-Warning ("Failed to install Bun: {0}" -f $_.Exception.Message)
+        Track-Failed "bun" (Get-PackageDescription "bun")
+        return $false
     }
 }
 

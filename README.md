@@ -131,7 +131,7 @@ Thoroughly tested on Ubuntu 26.04 LTS and Windows 11.
 | Category               | Tools                                                                                                |
 | ---------------------- | ---------------------------------------------------------------------------------------------------- |
 | **Package Managers**   | Homebrew (Linux/macOS), Scoop (Windows), apt/dnf/pacman (Linux)                                      |
-| **SDKs**               | Node.js, Python, Go, Rust (rustup), dotnet, OpenJDK                                                  |
+| **SDKs**               | Node.js, Python, Go, Rust (rustup), Bun, dotnet, OpenJDK                                                  |
 | **Language Servers**   | 19 servers - see [TOOLS.md](TOOLS.md)                                                                |
 | **Linters/Formatters** | prettier, eslint, ruff, black, golangci-lint, clippy, shellcheck, yamllint, hadolint, etc.           |
 | **CLI Tools**          | fzf, zoxide, bat, eza, lazygit, gh, ripgrep, fd, tokei, btop, repomix, docker-compose, helm, kubectl |
@@ -170,6 +170,7 @@ Example output from a fully bootstrapped Windows system (71 tools skipped, 1 new
 <summary>Click to expand full bootstrap output</summary>
 
 ```
+ lavantien@savaka-station ~\....\dotfiles  main  .\bootstrap.ps1 -y
 [INFO] Config loaded from C:\Users\lavantien\.dotfiles.config.yaml
 
 ==== Bootstrap Windows Development Environment ====
@@ -189,31 +190,156 @@ Options:
 
 ==== Phase 2: Core SDKs ====
 
+[STEP] Checking Go...
+[OK] go (up to date)
+[STEP] Checking Rust...
+[INFO] info: syncing channel updates for 'stable-x86_64-pc-windows-msvc'
+[INFO] info: checking for self-update
+[INFO]   stable-x86_64-pc-windows-msvc unchanged - rustc 1.92.0 (ded5c06cf 2025-12-08)
+[INFO] info: cleaning up downloads & tmp directories
+[OK] rust (updated)
+[STEP] Checking dotnet SDK...
+[OK] dotnet (up to date)
+[STEP] Checking Bun...
+[OK] bun (up to date)
+[STEP] Checking OpenJDK...
+[OK] OpenJDK (up to date)
 [OK] SDKs installation complete
 
 ==== Phase 3: Language Servers ====
 
+[STEP] Checking clangd...
+[OK] clangd (up to date)
+[STEP] Checking gopls...
+[OK] gopls (up to date)
+[STEP] Checking pyright...
+[OK] pyright (up to date)
+[STEP] Checking typescript-language-server...
+[OK] typescript-language-server (up to date)
+[STEP] Checking vscode-html-language-server...
+[OK] vscode-html-language-server (up to date)
+[STEP] Checking vscode-css-language-server...
+[OK] vscode-css-language-server (up to date)
+[STEP] Checking svelte-language-server...
+[OK] svelte-language-server (up to date)
+[STEP] Checking bash-language-server...
+[OK] bash-language-server (up to date)
+[STEP] Checking yaml-language-server...
+[OK] yaml-language-server (up to date)
+[STEP] Checking lua-language-server...
+[OK] lua-language-server (up to date)
+[STEP] Checking csharp-ls...
+[OK] csharp-ls (up to date)
+[STEP] Checking jdtls...
+[OK] jdtls (up to date)
+[STEP] Checking docker-langserver...
+[OK] docker-langserver (up to date)
+[STEP] Checking tombi...
+[OK] tombi (up to date)
+[STEP] Checking tinymist...
+[OK] tinymist (up to date)
 [OK] Language servers installation complete
 
 ==== Phase 4: Linters & Formatters ====
 
+[STEP] Checking prettier...
+[OK] prettier (up to date)
+[STEP] Checking eslint...
+[OK] eslint (up to date)
+[STEP] Checking stylelint...
+[OK] stylelint (up to date)
+[STEP] Checking svelte-check...
+[OK] svelte-check (up to date)
+[STEP] Checking repomix...
+[OK] repomix (up to date)
+[STEP] Checking ruff...
+[OK] ruff (up to date)
+[STEP] Checking black...
+[OK] black (up to date)
+[STEP] Checking isort...
+[OK] isort (up to date)
+[STEP] Checking mypy...
+[OK] mypy (up to date)
+[STEP] Checking pytest...
+[OK] pytest (up to date)
+[STEP] Checking gup...
+[OK] gup (up to date)
+[STEP] Checking goimports...
+[OK] goimports (up to date)
+[STEP] Checking golangci-lint...
+[OK] golangci-lint (up to date)
+[STEP] Checking shellcheck...
+[OK] shellcheck (up to date)
+[STEP] Checking shfmt...
+[OK] shfmt (up to date)
+[STEP] Checking cppcheck...
+[OK] cppcheck (up to date)
+[STEP] Checking scalafmt...
+[OK] scalafmt (up to date)
+[STEP] Checking scalafix...
+[OK] scalafix (up to date)
+[STEP] Checking metals...
+[OK] metals (up to date)
+[STEP] Checking stylua...
+[OK] stylua (up to date)
+[STEP] Checking selene...
+[OK] selene (up to date)
 [OK] Linters & formatters installation complete
 
 ==== Phase 5: CLI Tools ====
 
+[STEP] Checking fzf...
+[OK] fzf (up to date)
+[STEP] Checking zoxide...
+[OK] zoxide (up to date)
+[STEP] Checking bat...
+[OK] bat (up to date)
+[STEP] Checking eza...
+[OK] eza (up to date)
+[STEP] Checking lazygit...
+[OK] lazygit (up to date)
+[STEP] Checking gh...
+[OK] gh (up to date)
+[STEP] Checking ripgrep...
+[OK] ripgrep (up to date)
+[STEP] Checking fd...
+[OK] fd (up to date)
+[STEP] Checking tokei...
+[OK] tokei (up to date)
+[STEP] Checking difftastic...
+[OK] difftastic (up to date)
+[STEP] Checking btop-lhm...
+[OK] btop-lhm (up to date)
+[STEP] Checking bats...
+[OK] bats (up to date)
+[STEP] Checking Pester...
+[OK] Pester (up to date)
 [OK] CLI tools installation complete
 
 ==== Phase 5.25: MCP Servers ====
 
+[STEP] Checking tree-sitter-cli...
+[OK] tree-sitter-cli (up to date)
+[STEP] Checking context7 MCP server...
+[OK] context7 MCP server (up to date)
+[STEP] Checking playwright MCP server...
+[OK] playwright MCP server (up to date)
+[STEP] Checking repomix...
+[OK] repomix (up to date)
 [OK] MCP server installation complete
 
 ==== Phase 5.5: Development Tools ====
 
+[STEP] Checking VS Code...
+[OK] vscode (up to date)
+[STEP] Checking Visual Studio...
+[OK] visual-studio (up to date)
+[STEP] Checking LLVM...
+[OK] llvm (up to date)
+[STEP] Checking LaTeX...
+[OK] latex (up to date)
 [INFO] Claude Code CLI already at latest version (2.1.11)
-[INFO] OpenCode AI CLI update available: 1.1.23 -> 1.1.25
-[STEP] Installing OpenCode AI CLI...
-########################################################################################################################################## 100.0%
-[OK] OpenCode AI CLI installed
+[INFO] OpenCode AI CLI already at latest version (1.1.25)
 [OK] Development tools installation complete
 
 ==== Phase 6: Deploying Configurations ====
@@ -255,25 +381,16 @@ Run from ~/dev:
    Native Windows Update All
 ========================================
 
-[10:54:57] Checking package managers...
+[20:05:27] Checking package managers...
   Scoop
   winget
   Skipped: Chocolatey not found
 
-[10:54:57] SCOOP
-Updating Scoop...
-Updating Buckets...
-Scoop was updated successfully!
-  error: cannot pull with rebase: You have unstaged changes.
-  error: Please commit or stash them.
-  System.Management.Automation.RemoteException
-  Another git process seems to be running in this repository, e.g.
-  an editor opened by 'git commit'. Please make sure all processes
+[20:05:28] SCOOP
 Latest versions for all apps are installed! For more information try 'scoop status'
-  Up to date
-True
+  scoop
 
-[12:00:33] WINGET
+[20:05:28] WINGET
   Updating all winget packages...
   Installing dependencies:
   Successfully installed. Restart the application to complete the upgrade.
@@ -281,29 +398,32 @@ True
   Successfully installed
   winget
 
-[12:02:25] CHOCOLATEY
+[20:06:15] CHOCOLATEY
   Skipped: Chocolatey not found
 
-[12:02:25] NPM (Node.js global packages)
+[20:06:15] NPM (Node.js global packages)
   Updating npm itself...
-  changed 950 packages in 46s
+  changed 1053 packages in 34s
   npm
 
-[12:03:14] PNPM
+[20:06:52] PNPM
   Skipped: pnpm not found
 
-[12:03:14] YARN
-  Up to date
+[20:06:52] BUN
+  bun
+
+[20:06:53] YARN
+  yarn (up to date)
 True
 
-[12:03:16] GUP (Go global packages)
-  Up to date
+[20:06:55] GUP (Go global packages)
+  gup (up to date)
 True
 
-[12:03:16] GO (update all)
+[20:06:55] GO (update all)
   Skipped: go (using gup instead)
 
-[12:03:16] CARGO (Rust packages)
+[20:06:55] CARGO (Rust packages)
       Polling registry 'https://index.crates.io/'...
   Package       Installed  Latest   Needs update
   cargo-update  v18.0.0    v18.0.0  No
@@ -314,95 +434,96 @@ True
   cargo
 True
 
-[12:03:17] RUSTUP
+[20:06:55] RUSTUP
     stable-x86_64-pc-windows-msvc unchanged - rustc 1.92.0 (ded5c06cf 2025-12-08)
   rustup
 True
 
-[12:03:18] DOTNET TOOLS
+[20:06:56] DOTNET TOOLS
   Skipped: No dotnet tools installed
 
-[12:03:18] PIP (Python packages)
-  Up to date
+[20:06:56] PIP (Python packages)
+  pip (up to date)
 
-[12:03:23] POETRY
+[20:07:01] POETRY
   Skipped: poetry not found
 
 ========================================
            Summary
 ========================================
- Completed:   8
+ Completed:   9
  Skipped:     Skipped: 5
- Duration:    174s
+ Duration:    94s
 ========================================
 [OK] Update complete
 
 ==== Bootstrap Summary ====
 
-Installed: 1
-  - opencode (AI CLI)
+Installed: 0
 
-Skipped: 71
+Skipped: 74
   - git (version control)
   - scoop (package manager)
   - git autocrlf already configured
   - GitHub SSH key already in known_hosts
+  - wezterm (terminal emulator)
   - node (Node.js runtime)
   - python (Python runtime)
   - go (Go runtime)
-  - rust (Rust toolchain)
   - dotnet (.NET SDK)
+  - bun (JavaScript runtime)
   - OpenJDK (Java development)
-  - clangd (C/C++ LSP)
-  - gopls (Go LSP)
+  - clangd (C++ language server)
+  - gopls (Go language server)
   - rust-analyzer (Rust LSP)
-  - pyright (Python LSP)
-  - typescript-language-server (TypeScript LSP)
-  - vscode-html-language-server (vscode-html-language-server)
-  - vscode-css-language-server (vscode-css-language-server)
-  - svelte-language-server (svelte-language-server)
-  - bash-language-server (bash-language-server)
-  - yaml-language-server (YAML LSP)
-  - lua-language-server (Lua LSP)
-  - csharp-ls (C# LSP)
-  - jdtls (Java LSP)
-  - docker-langserver (Docker LSP)
-  - tombi (TOML LSP)
-  - tinymist (Nim LSP)
-  - prettier (code formatter)
+  - pyright (Python language server)
+  - typescript-language-server (TypeScript language server)
+  - vscode-html-language-server (HTML language server)
+  - vscode-css-language-server (CSS language server)
+  - svelte-language-server (Svelte language server)
+  - bash-language-server (Bash language server)
+  - yaml-language-server (YAML language server)
+  - lua-language-server (Lua language server)
+  - csharp-ls (C# language server)
+  - jdtls (Java language server)
+  - docker-langserver (Dockerfile language server)
+  - tombi (TOML language server)
+  - tinymist (Typst language server)
+  - prettier (Code formatter)
   - eslint (JavaScript linter)
-  - stylelint (stylelint)
-  - svelte-check (svelte-check)
-  - repomix (repomix)
-  - ruff (Python linter)
+  - stylelint (CSS linter)
+  - svelte-check (Svelte type checker)
+  - repomix (Repository packager)
+  - ruff (Python linter/formatter)
   - black (Python formatter)
   - isort (Python import sorter)
   - mypy (Python type checker)
-  - pytest (pytest)
-  - goimports (Go import organizer)
+  - pytest (Python testing)
+  - gup (Go package updater)
+  - goimports (Go import formatter)
   - golangci-lint (Go linter)
-  - shellcheck (Shell script analyzer)
-  - shfmt (Shell script formatter)
-  - cppcheck (cppcheck)
+  - shellcheck (Shell script linter)
+  - shfmt (Shell formatter)
+  - cppcheck (C++ static analyzer)
   - coursier (JVM dependency manager)
   - scalafmt (Scala formatter)
   - coursier (JVM dependency manager)
-  - scalafix (scalafix)
+  - scalafix (Scala linter)
   - coursier (JVM dependency manager)
-  - metals (metals)
-  - stylua (stylua)
-  - selene (selene)
-  - fzf (fuzzy finder)
-  - zoxide (smart directory navigation)
-  - bat (enhanced cat)
-  - eza (enhanced ls)
+  - metals (Scala language server)
+  - stylua (Lua formatter)
+  - selene (Lua linter)
+  - fzf (Fuzzy finder)
+  - zoxide (Smart cd)
+  - bat (Cat alternative)
+  - eza (Ls alternative)
   - lazygit (Git TUI)
   - gh (GitHub CLI)
-  - rg (text search)
-  - fd (file finder)
-  - tokei (code stats)
-  - difft (diff viewer)
-  - btop (btop)
+  - rg (Grep alternative)
+  - fd (Find alternative)
+  - tokei (Code stats)
+  - difft (Diff tool)
+  - btop (System monitor)
   - bats (Bash testing)
   - Pester (PowerShell testing)
   - tree-sitter-cli (Treesitter parser compiler)
@@ -414,6 +535,7 @@ Skipped: 71
   - llvm (C/C++ toolchain)
   - latex (document preparation)
   - claude-code (AI CLI)
+  - opencode (AI CLI)
 
 === Bootstrap Complete ===
 All tools are available in the current session.
