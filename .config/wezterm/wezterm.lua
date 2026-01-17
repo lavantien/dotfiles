@@ -10,7 +10,7 @@ config.color_scheme = "rose-pine"
 config.enable_tab_bar = false
 config.tab_bar_at_bottom = true
 config.scrollback_lines = 1000000
-config.font_size = 12
+config.font_size = 16
 config.font = wezterm.font_with_fallback({
 	"IosevkaTerm Nerd Font",
 })
