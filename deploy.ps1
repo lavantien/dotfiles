@@ -11,6 +11,11 @@ $ErrorActionPreference = "Stop"
 $DevDir = "$HOME/dev"
 $ConfigDir = if ($env:XDG_CONFIG_HOME) { $env:XDG_CONFIG_HOME } else { "$HOME/.config" }
 
+# Ensure config directory exists
+if (!(Test-Path $ConfigDir)) {
+    New-Item -ItemType Directory -Path $ConfigDir -Force | Out-Null
+}
+
 function Copy-File {
     param([string]$Src, [string]$Dst)
     if (Test-Path $Src) {
@@ -89,6 +94,38 @@ if (-not $SkipConfig) {
         ".config/git/hooks/pre-commit.ps1"
         ".config/git/hooks/commit-msg.ps1"
     ) $HooksDir
+
+    # Neovim config
+    # Windows uses %LOCALAPPDATA%\nvim (stdpath('config'))
+    $NvimConfigDir = Join-Path $env:LOCALAPPDATA "nvim"
+
+    if (Test-Path "$DotfilesDir/.config/nvim/init.lua") {
+        if (!(Test-Path $NvimConfigDir)) {
+            New-Item -ItemType Directory -Path $NvimConfigDir -Force | Out-Null
+        }
+        Copy-File "$DotfilesDir/.config/nvim/init.lua" "$NvimConfigDir/init.lua"
+        Write-Host "  Neovim config" -ForegroundColor Green
+    }
+
+    # Copy lua directory if exists (for modular nvim config)
+    if (Test-Path "$DotfilesDir/.config/nvim/lua") {
+        $luaDest = Join-Path $NvimConfigDir "lua"
+        if (!(Test-Path $luaDest)) {
+            New-Item -ItemType Directory -Path $luaDest -Force | Out-Null
+        }
+        Copy-Item -Path "$DotfilesDir/.config/nvim/lua/*" -Destination $luaDest -Recurse -Force
+    }
+
+    # WezTerm config
+    # WezTerm uses $HOME/.config/wezterm/wezterm.lua on all platforms including Windows
+    if (Test-Path "$DotfilesDir/.config/wezterm/wezterm.lua") {
+        $WeztermConfigDir = "$ConfigDir/wezterm"
+        if (!(Test-Path $WeztermConfigDir)) {
+            New-Item -ItemType Directory -Path $WeztermConfigDir -Force | Out-Null
+        }
+        Copy-File "$DotfilesDir/.config/wezterm/wezterm.lua" "$WeztermConfigDir/wezterm.lua"
+        Write-Host "  WezTerm config" -ForegroundColor Green
+    }
 
     # Claude configs
     if (Test-Path "$DotfilesDir/.claude") {

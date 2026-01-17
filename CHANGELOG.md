@@ -11,6 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+**deploy.ps1 - Neovim and WezTerm Config Deployment**
+
+- Fixed missing Neovim config deployment on Windows (was only deployed on Linux/macOS)
+- Neovim config now copied to `%LOCALAPPDATA%\nvim\` (Windows stdpath('config'))
+- `lua/` directory recursively copied for modular Neovim configs
+- Fixed WezTerm config path to use correct XDG location: `$HOME/.config/wezterm/wezterm.lua`
+- Previous incorrect path `%LOCALAPPDATA%\wezterm` has been corrected
+- Both configs now properly deployed and verified in bootstrap output
+
 **update-all.sh - AI CLI Update Detection**
 
 - Fixed false positive update detection for Claude Code and OpenCode AI CLIs
@@ -985,6 +994,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date       | Major Changes                                                                                            |
 | ------- | ---------- | -------------------------------------------------------------------------------------------------------- |
+| 5.2.16  | 2026-01-17 | Fixed Neovim/WezTerm config deployment on Windows, AI CLI update detection fix                           |
 | 5.2.15  | 2026-01-17 | Native PowerShell 7 update-all.ps1, fixed winget/scoop detection, Git Bash pwsh.exe alias               |
 | 5.2.14  | 2026-01-17 | Pure PowerShell 7 scripts for Windows, script parity, "already up to date" detection                     |
 | 5.0     | 2026-01-10 | Linux platform overhaul, Ubuntu 26.04 LTS ready, Homebrew-first, git hooks enhancement, bashcov coverage |
@@ -1035,7 +1045,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.2.15...HEAD
+[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.2.16...HEAD
+[5.2.16]: https://github.com/lavantien/dotfiles/compare/v5.2.15...v5.2.16
 [5.2.15]: https://github.com/lavantien/dotfiles/compare/v5.2.14...v5.2.15
 [5.2.14]: https://github.com/lavantien/dotfiles/compare/v5.2.13...v5.2.14
 [5.2.13]: https://github.com/lavantien/dotfiles/compare/v5.2.12...v5.2.13

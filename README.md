@@ -164,10 +164,12 @@ The bootstrap script is fully idempotent - running it multiple times is safe and
 - **Fixes broken states** - repairs dpkg interrupts and broken dependencies
 - **Updates existing tools** - runs update-all.sh at the end
 
-Example output from a fully bootstrapped Windows system (72 tools skipped, 0 new installs):
+Example output from a fully bootstrapped Windows system (71 tools skipped, 1 new install):
+
+<details>
+<summary>Click to expand full bootstrap output</summary>
 
 ```
- lavantien@savaka-station ~\..\dotfiles  main   .\bootstrap.ps1 -y
 [INFO] Config loaded from C:\Users\lavantien\.dotfiles.config.yaml
 
 ==== Bootstrap Windows Development Environment ====
@@ -207,13 +209,38 @@ Options:
 
 ==== Phase 5.5: Development Tools ====
 
-[INFO] Claude Code CLI already at latest version (2.1.9)
-[INFO] OpenCode AI CLI already at latest version (1.1.23)
+[INFO] Claude Code CLI already at latest version (2.1.11)
+[INFO] OpenCode AI CLI update available: 1.1.23 -> 1.1.25
+[STEP] Installing OpenCode AI CLI...
+########################################################################################################################################## 100.0%
+[OK] OpenCode AI CLI installed
 [OK] Development tools installation complete
 
 ==== Phase 6: Deploying Configurations ====
 
 [STEP] Running deploy script...
+========================================
+   Windows Dotfiles Deployment
+========================================
+Dotfiles: C:\Users\lavantien/dev/github/dotfiles
+
+Deploying scripts to ~/dev...
+  Scripts deployed
+
+Deploying configs...
+  PowerShell profile
+  Neovim config
+  WezTerm config
+  Configs deployed
+
+========================================
+           Complete!
+========================================
+
+Run from ~/dev:
+  .\sync-system-instructions.ps1
+  .\git-update-repos.ps1
+
 [OK] Configurations deployed
 
 ==== Phase 7: Updating All Repositories and Packages ====
@@ -242,43 +269,37 @@ Latest versions for all apps are installed! For more information try 'scoop stat
   Up to date
 True
 
-[10:54:59] WINGET
+[12:00:33] WINGET
   Updating all winget packages...
   Installing dependencies:
-  Downloading https://dl.pstmn.io/download/version/11.80.4/windows_64
+  Successfully installed. Restart the application to complete the upgrade.
+  Downloading https://aka.ms/windowsappsdk/1.8/1.8.251106002/windowsappruntimeinstall-x64.exe
   Successfully installed
-  Downloading https://curl.se/windows/dl-8.18.0_1/curl-8.18.0_1-win64-mingw.zip
-  Successfully installed
-  Downloading https://download.kde.org/stable/kdenlive/25.12/windows/kdenlive-25.12.1.exe
-  Successfully installed
-  Downloading https://td.telegram.org/tx64/tsetup-x64.6.4.2.exe
-  Successfully installed
-  Downloading https://vscode.download.prss.microsoft.com/dbazure/download/stable/94e8ae2b28cb5cc932b86e1070569c4463565c37/VSCodeUserSetup-x64-1.108.0.exe
   winget
 
-[10:58:10] CHOCOLATEY
+[12:02:25] CHOCOLATEY
   Skipped: Chocolatey not found
 
-[10:58:10] NPM (Node.js global packages)
+[12:02:25] NPM (Node.js global packages)
   Updating npm itself...
-  changed 950 packages in 47s
+  changed 950 packages in 46s
   npm
 
-[10:59:09] PNPM
+[12:03:14] PNPM
   Skipped: pnpm not found
 
-[10:59:09] YARN
+[12:03:14] YARN
   Up to date
 True
 
-[10:59:10] GUP (Go global packages)
+[12:03:16] GUP (Go global packages)
   Up to date
 True
 
-[10:59:10] GO (update all)
+[12:03:16] GO (update all)
   Skipped: go (using gup instead)
 
-[10:59:10] CARGO (Rust packages)
+[12:03:16] CARGO (Rust packages)
       Polling registry 'https://index.crates.io/'...
   Package       Installed  Latest   Needs update
   cargo-update  v18.0.0    v18.0.0  No
@@ -289,18 +310,18 @@ True
   cargo
 True
 
-[10:59:11] RUSTUP
+[12:03:17] RUSTUP
     stable-x86_64-pc-windows-msvc unchanged - rustc 1.92.0 (ded5c06cf 2025-12-08)
   rustup
 True
 
-[10:59:12] DOTNET TOOLS
+[12:03:18] DOTNET TOOLS
   Skipped: No dotnet tools installed
 
-[10:59:12] PIP (Python packages)
+[12:03:18] PIP (Python packages)
   Up to date
 
-[10:59:17] POETRY
+[12:03:23] POETRY
   Skipped: poetry not found
 
 ========================================
@@ -308,15 +329,16 @@ True
 ========================================
  Completed:   8
  Skipped:     Skipped: 5
- Duration:    260s
+ Duration:    174s
 ========================================
 [OK] Update complete
 
 ==== Bootstrap Summary ====
 
-Installed: 0
+Installed: 1
+  - opencode (AI CLI)
 
-Skipped: 72
+Skipped: 71
   - git (version control)
   - scoop (package manager)
   - git autocrlf already configured
@@ -388,19 +410,19 @@ Skipped: 72
   - llvm (C/C++ toolchain)
   - latex (document preparation)
   - claude-code (AI CLI)
-  - opencode (AI CLI)
 
 === Bootstrap Complete ===
 All tools are available in the current session.
 For new shells, PATH has been updated automatically.
 ```
+</details>
 
 Key idempotency features shown above:
 
-- `[INFO] Claude Code CLI already at latest version (2.1.9)` - version-aware detection
-- `[INFO] OpenCode AI CLI already at latest version (1.1.23)` - version-aware detection
-- `Installed: 0, Skipped: 72` - summary shows all tools already present
-- Update phase skips packages that are current: `Skipped: claude-code already at latest version`
+- `[INFO] Claude Code CLI already at latest version (2.1.11)` - version-aware detection skips up-to-date tools
+- `[INFO] OpenCode AI CLI update available: 1.1.23 -> 1.1.25` - detects and installs only outdated tools
+- `Installed: 1, Skipped: 71` - summary shows exactly what changed
+- Deploy phase shows `Neovim config` and `WezTerm config` being deployed to their correct locations
 
 ---
 
