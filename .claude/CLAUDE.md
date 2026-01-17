@@ -156,3 +156,7 @@ E.g. Go
 
 - CGO_ENABLED=1: Always prefix Go commands with this (SQLite and Race Detection require CGO).
 - Gen Directories: Never edit `gen/`. Run `go generate`, `protoc`, or `sqlc` to regenerate.
+
+### Windows-Specific Notes
+
+- **PowerShell**: Windows should use `pwsh.exe` for PowerShell 7+, NOT `powershell.exe` (Windows PowerShell 5.1) or PowerShell from Git Bash because these are severely outdated and lack modern features.

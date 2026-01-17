@@ -94,6 +94,7 @@ function Get-PackageDescription {
         "python" { return "Python runtime" }
         "go" { return "Go runtime" }
         "rust" { return "Rust toolchain" }
+        "wezterm" { return "terminal emulator" }
         "dotnet" { return ".NET SDK" }
         "OpenJDK" { return "Java development" }
 
@@ -463,6 +464,42 @@ function Install-WingetPackage {
     else {
         Track-Skipped $CheckCmd (Get-PackageDescription $CheckCmd)
         return $true
+    }
+}
+
+# ============================================================================
+# WEZTERM
+# ============================================================================
+function Install-WezTerm {
+    if (Test-Command wezterm) {
+        Track-Skipped "wezterm" "terminal emulator"
+        return $true
+    }
+
+    Write-Step "Installing WezTerm via winget..."
+    if ($DryRun) {
+        Write-Info "[DRY-RUN] Would install WezTerm"
+        Track-Installed "wezterm" "terminal emulator"
+        return $true
+    }
+
+    try {
+        $output = winget install --id wez.wezterm --accept-source-agreements --accept-package-agreements 2>&1
+        if ($LASTEXITCODE -eq 0 -or $output -match "already installed") {
+            Track-Installed "wezterm" "terminal emulator"
+            Write-Success "WezTerm installed"
+            return $true
+        }
+        else {
+            Write-Warning "winget output: $output"
+            Track-Failed "wezterm" "terminal emulator"
+            return $false
+        }
+    }
+    catch {
+        Write-Warning "Failed to install WezTerm: $_"
+        Track-Failed "wezterm" "terminal emulator"
+        return $false
     }
 }
 

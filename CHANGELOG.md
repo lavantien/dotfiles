@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.2.17] - 2026-01-17
+
+### Added
+
+**bootstrap.ps1 - WezTerm Installation on Windows**
+
+- Added WezTerm terminal emulator installation to Windows Phase 1 (Foundation)
+- Installs via winget using `wez.wezterm` package ID
+- Respects `-DryRun` parameter for testing
+- Idempotent: skips if already installed
+- Aligns Windows bootstrap with Linux/macOS (already install WezTerm)
+- README already documented winget installation; bootstrap now implements it
+
+**CLAUDE.md - Windows-Specific Notes**
+
+- Documented PowerShell 7+ requirement for Windows (`pwsh.exe`)
+- Clarified to avoid outdated `powershell.exe` (Windows PowerShell 5.1)
+
+---
+
 ## [5.2.16] - 2026-01-17
 
 ### Fixed
@@ -994,6 +1014,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date       | Major Changes                                                                                            |
 | ------- | ---------- | -------------------------------------------------------------------------------------------------------- |
+| 5.2.17  | 2026-01-17 | Added WezTerm installation to Windows bootstrap, documented PowerShell 7+ requirement                   |
 | 5.2.16  | 2026-01-17 | Fixed Neovim/WezTerm config deployment on Windows, AI CLI update detection fix                           |
 | 5.2.15  | 2026-01-17 | Native PowerShell 7 update-all.ps1, fixed winget/scoop detection, Git Bash pwsh.exe alias               |
 | 5.2.14  | 2026-01-17 | Pure PowerShell 7 scripts for Windows, script parity, "already up to date" detection                     |

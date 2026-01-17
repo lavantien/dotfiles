@@ -130,6 +130,9 @@ function Install-Foundation {
     # Configure git and add GitHub to known_hosts
     Configure-GitSettings
 
+    # Install WezTerm terminal emulator
+    Install-WezTerm
+
     Write-Success "Foundation complete"
     return $true
 }
