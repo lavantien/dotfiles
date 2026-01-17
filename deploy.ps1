@@ -147,6 +147,21 @@ if (-not $SkipConfig) {
         Write-Host "  Claude configs" -ForegroundColor Green
     }
 
+    # Register statusline in Claude Code settings.json
+    $SettingsFile = "$HOME/.claude/settings.json"
+    if (!(Test-Path $SettingsFile)) {
+        "{}" | Set-Content $SettingsFile
+    }
+
+    $Settings = Get-Content $SettingsFile -Raw | ConvertFrom-Json
+    $StatusLinePath = Join-Path $HOME ".claude\statusline.ps1"
+    $Settings | Add-Member -NotePropertyName "statusLine" -NotePropertyValue @{
+        type = "command"
+        command = "pwsh -NoProfile -ExecutionPolicy Bypass -File $StatusLinePath"
+    } -Force
+    $Settings | ConvertTo-Json -Depth 10 | Set-Content $SettingsFile
+    Write-Host "  Statusline registered" -ForegroundColor Green
+
     # OpenCode config (merge MCP servers)
     $OpencodeConfigDir = "$ConfigDir/opencode"
     if (!(Test-Path $OpencodeConfigDir)) {

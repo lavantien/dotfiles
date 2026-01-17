@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.2.20] - 2026-01-17
+
+### Added
+
+**Claude Code StatusLine Configuration**
+
+- Added comprehensive statusline script for PowerShell 7+ (statusline.ps1) with Windows-compatible stdin reading
+- Added context window tracking with real-time token usage display
+- Added git status indicators showing staged (S#), modified (M#), and untracked (U#) file counts
+- Added automatic statusline registration in settings.json during deployment
+- Supports Claude Code 2.1.6+ context_window percentage fields with fallback to current_usage calculation
+
+**StatusLine Features:**
+- Displays: directory, git branch, git status, model name, tokens/max (percentage remaining), session cost
+- Color-coded context warnings: green (>50%), yellow (20-50%), red (<20% remaining)
+- Compatible with both Windows (PowerShell 7+) and Linux/macOS (bash)
+
+### Changed
+
+- Updated bash statusline script with enhanced git status and context window calculation
+- Updated deploy.ps1 to automatically register statusline in Claude Code settings.json
+- Updated README.md deployment documentation to reflect statusline registration
+
+---
+
 ## [5.2.19] - 2026-01-17
 
 ### Changed

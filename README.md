@@ -233,6 +233,7 @@ Deploying configs...
   WezTerm config
   WezTerm background assets
   Claude configs
+  Statusline registered
   OpenCode config (up to date)
   Configs deployed
 
