@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.2.15] - 2026-01-17
+
+### Changed
+
+**update-all.ps1 - Native PowerShell 7 Implementation**
+
+- Replaced wrapper script with native PowerShell 7 implementation (no bash dependency)
+- `update-all.ps1` is now a pure PowerShell 7 script that directly updates Windows package managers
+- Removed `update-all-windows.ps1` (consolidated into single `update-all.ps1`)
+- Supports: Scoop, winget, Chocolatey, npm, pnpm, yarn, gup, go, cargo, rustup, dotnet, pip, poetry
+
+**.bash_aliases - Git Bash Compatibility**
+
+- Fixed `up` alias on Windows Git Bash to use `pwsh.exe` instead of `powershell.exe`
+- Added platform detection for MINGW/MSYS environments to call correct update script
+- Git Bash on Windows now invokes `update-all.ps1` via pwsh7
+
+### Fixed
+
+**Package Manager Detection**
+
+- Fixed winget detection using full path to WindowsApps wrapper executable
+- Fixed `$ErrorActionPreference` causing false failures from native command stderr
+- Set `$PSNativeCommandUseErrorActionPreference = $false` for proper exit code handling
+- Scoop update now handles git bucket warnings gracefully (filters git lock errors)
+
+**Test Coverage**
+
+- Renamed `update-all-windows.Tests.ps1` to `update-all.Tests.ps1`
+- Updated all coverage report scripts to reference consolidated `update-all.ps1`
+
+---
+
 ## [5.2.14] - 2026-01-17
 
 ### Changed
@@ -938,6 +971,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date       | Major Changes                                                                                            |
 | ------- | ---------- | -------------------------------------------------------------------------------------------------------- |
+| 5.2.15  | 2026-01-17 | Native PowerShell 7 update-all.ps1, fixed winget/scoop detection, Git Bash pwsh.exe alias               |
 | 5.2.14  | 2026-01-17 | Pure PowerShell 7 scripts for Windows, script parity, "already up to date" detection                     |
 | 5.0     | 2026-01-10 | Linux platform overhaul, Ubuntu 26.04 LTS ready, Homebrew-first, git hooks enhancement, bashcov coverage |
 | 4.4     | 2026-01-07 | git-update-repos migrated to gh CLI for public+private repo support                                      |
@@ -987,7 +1021,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.2.14...HEAD
+[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.2.15...HEAD
+[5.2.15]: https://github.com/lavantien/dotfiles/compare/v5.2.14...v5.2.15
 [5.2.14]: https://github.com/lavantien/dotfiles/compare/v5.2.13...v5.2.14
 [5.2.13]: https://github.com/lavantien/dotfiles/compare/v5.2.12...v5.2.13
 [5.0]: https://github.com/lavantien/dotfiles/compare/v4.4...v5.0

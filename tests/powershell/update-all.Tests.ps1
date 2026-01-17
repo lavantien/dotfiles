@@ -1,9 +1,9 @@
-# Unit tests for update-all-windows.ps1
+# Unit tests for update-all.ps1
 # Tests the native Windows package manager update script
 
 BeforeAll {
     $Script:RepoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
-    $Script:ScriptPath = Join-Path $RepoRoot "update-all-windows.ps1"
+    $Script:ScriptPath = Join-Path $RepoRoot "update-all.ps1"
 
     # Source the script to get the functions
     . $Script:ScriptPath

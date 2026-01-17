@@ -140,7 +140,6 @@ $config.CodeCoverage.Path = @(
     "uninstall.ps1",
     "git-update-repos.ps1",
     "sync-system-instructions.ps1",
-    "update-all-windows.ps1",
     # Bootstrap internal scripts
     "bootstrap\bootstrap.ps1",
     "bootstrap\lib\common.ps1",

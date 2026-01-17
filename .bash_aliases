@@ -105,6 +105,13 @@ if command -v docker >/dev/null 2>&1; then
     alias de="docker exec -it"
 fi
 
-# Update all packages alias
-alias up="~/dev/update-all.sh"
-alias update="~/dev/update-all.sh"
+# Update all packages alias (platform-specific)
+if [[ "$(uname -s)" == *MINGW* || "$(uname -s)" == *MSYS* ]]; then
+    # Windows Git Bash: use native pwsh7 script
+    alias up="pwsh.exe -NoProfile -ExecutionPolicy Bypass -File ~/dev/update-all.ps1"
+    alias update="pwsh.exe -NoProfile -ExecutionPolicy Bypass -File ~/dev/update-all.ps1"
+else
+    # Unix/Linux/macOS: use bash script
+    alias up="~/dev/update-all.sh"
+    alias update="~/dev/update-all.sh"
+fi

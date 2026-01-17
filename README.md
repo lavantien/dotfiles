@@ -220,72 +220,95 @@ Options:
 
 [INFO] Running update-all script (this may take several minutes)...
 
-Checking package managers...
-  Skipped: apt (skipped on Windows)
-  Skipped: dnf (skipped on Windows)
-  Skipped: pacman (skipped on Windows)
-  Skipped: zypper (skipped on Windows)
-  Skipped: brew not found
-  Skipped: snap (skipped on Windows)
-  Skipped: flatpak not found
-
 ========================================
-   Universal Update All - windows
+   Native Windows Update All
 ========================================
 
-Checking prerequisites...
-  npm found
-  pip found
-  Go found
-  Cargo found
-  dotnet found
+[10:54:57] Checking package managers...
+  Scoop
+  winget
+  Skipped: Chocolatey not found
 
-[23:59:42] NPM (Node.js global packages)
-changed 950 packages in 1m
+[10:54:57] SCOOP
+Updating Scoop...
+Updating Buckets...
+Scoop was updated successfully!
+  error: cannot pull with rebase: You have unstaged changes.
+  error: Please commit or stash them.
+  System.Management.Automation.RemoteException
+  Another git process seems to be running in this repository, e.g.
+  an editor opened by 'git commit'. Please make sure all processes
+Latest versions for all apps are installed! For more information try 'scoop status'
+  Up to date
+True
+
+[10:54:59] WINGET
+  Updating all winget packages...
+  Installing dependencies:
+  Downloading https://dl.pstmn.io/download/version/11.80.4/windows_64
+  Successfully installed
+  Downloading https://curl.se/windows/dl-8.18.0_1/curl-8.18.0_1-win64-mingw.zip
+  Successfully installed
+  Downloading https://download.kde.org/stable/kdenlive/25.12/windows/kdenlive-25.12.1.exe
+  Successfully installed
+  Downloading https://td.telegram.org/tx64/tsetup-x64.6.4.2.exe
+  Successfully installed
+  Downloading https://vscode.download.prss.microsoft.com/dbazure/download/stable/94e8ae2b28cb5cc932b86e1070569c4463565c37/VSCodeUserSetup-x64-1.108.0.exe
+  winget
+
+[10:58:10] CHOCOLATEY
+  Skipped: Chocolatey not found
+
+[10:58:10] NPM (Node.js global packages)
+  Updating npm itself...
+  changed 950 packages in 47s
   npm
 
-[00:00:47] YARN (global packages)
+[10:59:09] PNPM
+  Skipped: pnpm not found
+
+[10:59:09] YARN
   Up to date
+True
 
-[00:00:48] GUP (Go global packages)
+[10:59:10] GUP (Go global packages)
   Up to date
+True
 
-[00:00:49] RUSTUP (Rust toolchain)
-info: syncing channel updates for 'stable-x86_64-pc-windows-msvc'
-info: checking for self-update
-  stable-x86_64-pc-windows-msvc unchanged - rustc 1.92.0 (ded5c06cf 2025-12-08)
-  rustup
+[10:59:10] GO (update all)
+  Skipped: go (using gup instead)
 
-[00:00:50] CARGO (Rust packages)
-Package       Installed  Latest   Needs update
-cargo-update  v18.0.0    v18.0.0  No
-codebook-lsp  v0.3.28    v0.3.28  No
-tokei         v14.0.0    v14.0.0  No
-No packages need updating.
-Overall updated 0 packages.
+[10:59:10] CARGO (Rust packages)
+      Polling registry 'https://index.crates.io/'...
+  Package       Installed  Latest   Needs update
+  cargo-update  v18.0.0    v18.0.0  No
+  codebook-lsp  v0.3.28    v0.3.28  No
+  tokei         v14.0.0    v14.0.0  No
+  No packages need updating.
+  Overall updated 0 packages.
   cargo
+True
 
-[00:00:50] DOTNET TOOLS
+[10:59:11] RUSTUP
+    stable-x86_64-pc-windows-msvc unchanged - rustc 1.92.0 (ded5c06cf 2025-12-08)
+  rustup
+True
+
+[10:59:12] DOTNET TOOLS
+  Skipped: No dotnet tools installed
+
+[10:59:12] PIP (Python packages)
   Up to date
 
-[00:00:51] PIP (Python packages)
-  Up to date
+[10:59:17] POETRY
   Skipped: poetry not found
-  Skipped: composer not found
-  Skipped: spin not found
-
-[00:00:56] CLAUDE CODE CLI
-  Skipped: claude-code already at latest version (2.1.9)
-
-[00:01:01] OPENCODE AI CLI
-  Skipped: opencode already at latest version (1.1.23)
 
 ========================================
            Summary
 ========================================
- Completed: 7
- Skipped: 14
- Duration: 1m 21s
+ Completed:   8
+ Skipped:     Skipped: 5
+ Duration:    260s
 ========================================
 [OK] Update complete
 
