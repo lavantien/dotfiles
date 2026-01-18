@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.2.22] - 2026-01-18
+
+### Changed
+
+**update-all.ps1 - Enhanced Package Management**
+
+- Simplified PIP update to use `pip freeze` one-liner for updating all globally installed Python packages
+- Previously only updated `--user` packages, now updates all packages in the environment
+- Added CLAUDE CODE CLI update section with version verification against npm registry
+- Added OPENCODE AI CLI update section with version verification against npm registry
+- Both CLI sections skip updates if already at latest version, showing current version
+
+**Package Update Behavior:**
+
+- PIP: Now runs `pip freeze | %{$_.Split('==')[0]} | % { pip install --upgrade $_ }` to update all packages
+- Claude Code CLI: Checks `@anthropic-ai/claude-code` on npm, runs official installer if outdated
+- OpenCode CLI: Checks `opencode-ai` on npm, runs official installer via bash if outdated
+
+### Fixed
+
+- PowerShell update-all script now matches bash script functionality for AI CLI tool updates
+- All three sections (PIP, Claude Code, OpenCode) now properly increment counters
+
+---
+
 ## [5.2.21] - 2026-01-17
 
 ### Added

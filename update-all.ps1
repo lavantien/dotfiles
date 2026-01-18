@@ -483,42 +483,16 @@ function Main {
     # ============================================================================
     Write-Step "PIP (Python packages)"
 
-    $pythonCmd = $null
-    if (Test-Command python) { $pythonCmd = "python" }
-    elseif (Test-Command python3) { $pythonCmd = "python3" }
-    elseif (Test-Command py) { $pythonCmd = "py" }
-
-    if ($pythonCmd) {
+    if (Test-Command pip) {
         try {
             # Upgrade pip first
-            & $pythonCmd -m pip install --upgrade pip *> $null
+            pip install --upgrade pip *> $null
 
-            # Get list of user packages
-            $packages = & $pythonCmd -m pip list --user --format=freeze 2>&1 | Where-Object { $_ -notmatch '^(pip|setuptools|wheel)==' }
+            # Update all packages using the simple one-liner
+            $output = pip freeze 2>&1 | ForEach-Object { $_.Split('==')[0] } | ForEach-Object { pip install --upgrade $_ } 2>&1
 
-            if ($packages) {
-                $changes = 0
-                foreach ($pkg in $packages) {
-                    $pkgName = ($pkg -split '=')[0]
-                    $output = & $pythonCmd -m pip install --upgrade --user $pkgName 2>&1
-                    if ($output -match 'installed|upgraded' -and $output -notmatch 'already|Requirement already|up-to-date') {
-                        $changes++
-                    }
-                }
-
-                if ($changes -gt 0) {
-                    Write-Success "pip (updated $changes packages)"
-                    $script:updated++
-                }
-                else {
-                    Write-Success "pip (up to date)"
-                    $script:updated++
-                }
-            }
-            else {
-                Write-Skip "No pip packages found"
-                $script:skipped++
-            }
+            Write-Success "pip"
+            $script:updated++
         }
         catch {
             Write-Fail "pip"
@@ -526,7 +500,7 @@ function Main {
         }
     }
     else {
-        Write-Skip "Python not found"
+        Write-Skip "pip not found"
         $script:skipped++
     }
 
@@ -545,6 +519,108 @@ function Main {
     }
     else {
         Write-Skip "poetry not found"
+        $script:skipped++
+    }
+
+    # ============================================================================
+    # CLAUDE CODE CLI
+    # ============================================================================
+    Write-Step "CLAUDE CODE CLI"
+    if (Test-Command claude) {
+        try {
+            # Get version before update
+            $versionBefore = claude --version 2>&1 | Select-String -Pattern '\d+\.\d+\.\d+' | Select-Object -First 1
+            if ($versionBefore) {
+                $versionBefore = $versionBefore.Matches.Value
+            }
+
+            # Get latest version from npm registry
+            $latestVersion = npm view @anthropic-ai/claude-code version 2>&1
+
+            # Skip if already at latest
+            if ($versionBefore -eq $latestVersion) {
+                Write-Skip "claude-code already at latest version ($versionBefore)"
+                $script:skipped++
+            }
+            else {
+                # Run the official installer
+                $output = Invoke-Expression "irm https://claude.ai/install.ps1 | iex" 2>&1
+
+                # Get version after update
+                $versionAfter = claude --version 2>&1 | Select-String -Pattern '\d+\.\d+\.\d+' | Select-Object -First 1
+                if ($versionAfter) {
+                    $versionAfter = $versionAfter.Matches.Value
+                }
+
+                if ($versionBefore -ne $versionAfter -and $versionAfter) {
+                    Write-Success "claude-code ($versionBefore -> $versionAfter)"
+                    $script:updated++
+                }
+                else {
+                    Write-Skip "claude-code already up to date"
+                    $script:updated++
+                }
+            }
+        }
+        catch {
+            Write-Fail "claude-code"
+            $script:failed++
+        }
+    }
+    else {
+        Write-Skip "claude-code not found"
+        $script:skipped++
+    }
+
+    # ============================================================================
+    # OPENCODE AI CLI
+    # ============================================================================
+    Write-Step "OPENCODE AI CLI"
+    # Check binary directly (not via PATH) since it may not be in PATH yet
+    $opencodeExe = Join-Path $env:USERPROFILE ".opencode\bin\opencode.exe"
+    if ((Test-Path $opencodeExe) -or (Get-Command opencode -ErrorAction SilentlyContinue)) {
+        try {
+            # Get version before update
+            $versionBefore = & $opencodeExe --version 2>&1 | Select-String -Pattern '\d+\.\d+\.\d+' | Select-Object -First 1
+            if ($versionBefore) {
+                $versionBefore = $versionBefore.Matches.Value
+            }
+
+            # Get latest version from npm registry
+            $latestVersion = npm view opencode-ai version 2>&1
+
+            # Skip if already at latest
+            if ($versionBefore -eq $latestVersion) {
+                Write-Skip "opencode already at latest version ($versionBefore)"
+                $script:skipped++
+            }
+            else {
+                # Run the official installer via bash (curl method)
+                $output = bash -c "curl -fsSL https://opencode.ai/install | bash" 2>&1
+
+                # Get version after update
+                $versionAfter = & $opencodeExe --version 2>&1 | Select-String -Pattern '\d+\.\d+\.\d+' | Select-Object -First 1
+                if ($versionAfter) {
+                    $versionAfter = $versionAfter.Matches.Value
+                }
+
+                if ($versionBefore -ne $versionAfter -and $versionAfter) {
+                    Write-Success "opencode ($versionBefore -> $versionAfter)"
+                    $script:updated++
+                }
+                else {
+                    Write-Skip "opencode already up to date"
+                    $script:updated++
+                }
+            }
+        }
+        catch {
+            Write-Fail "opencode"
+            $script:failed++
+        }
+    }
+    else {
+        Write-Skip "opencode not found"
         $script:skipped++
     }
 
