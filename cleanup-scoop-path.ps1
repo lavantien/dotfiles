@@ -1,6 +1,6 @@
 # Cleanup Script: Remove individual Scoop app paths from User PATH
 # Scoop uses shims directory only - individual app paths are redundant
-# EXCEPTION: nodejs-lts is kept for npm compatibility
+# EXCEPTION: nodejs is kept for npm compatibility
 
 $ErrorActionPreference = 'Stop'
 
@@ -8,8 +8,8 @@ $ErrorActionPreference = 'Stop'
 $currentUserPath = [Environment]::GetEnvironmentVariable("Path", "User")
 $pathEntries = $currentUserPath -split ';'
 
-# Find and remove scoop app paths (keep only shims and nodejs-lts)
-$scoopPattern = "\\scoop\\apps\\(?!nodejs-lts\\)[^\\]+\\current"
+# Find and remove scoop app paths (keep only shims and nodejs)
+$scoopPattern = "\\scoop\\apps\\(?!nodejs\\)[^\\]+\\current"
 $cleanedPaths = $pathEntries | Where-Object {
     $_ -notmatch $scoopPattern
 } | Where-Object {

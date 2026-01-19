@@ -20,10 +20,6 @@ chmod +x uninstall.sh
 chmod +x git-update-repos.sh
 chmod +x sync-system-instructions.sh
 
-# Tests
-chmod +x tests/coverage.sh
-chmod +x tests/coverage-bash.sh
-
 # Claude hooks
 chmod +x .claude/hooks/post-tool-use.sh
 chmod +x .claude/quality-check.sh

@@ -141,10 +141,8 @@ function Get-PackageDescription {
         "tokei" { return "code stats" }
         "difft" { return "diff viewer" }
         "btop-lhm" { return "system monitor" }
-        "bats" { return "Bash testing" }
 
         # Development tools
-        "Pester" { return "PowerShell testing" }
         "vscode" { return "code editor" }
         "visual-studio" { return "full IDE" }
         "latex" { return "document preparation" }
@@ -195,7 +193,7 @@ function Install-ScoopPackage {
     $scoopScript = "$env:USERPROFILE\scoop\apps\scoop\current\bin\scoop.ps1"
     $scoopInstalled = Test-Path $scoopScript
 
-    # Check if scoop command is available (may be mocked in tests)
+    # Check if scoop command is available
     $scoopCommandAvailable = Get-Command scoop -ErrorAction SilentlyContinue
 
     # Helper to invoke Scoop directly, bypassing the broken shim
@@ -207,7 +205,7 @@ function Install-ScoopPackage {
             & $scoopScript @Arguments 2>&1
         }
         elseif ($scoopCommandAvailable) {
-            # Fall back to scoop command for tests/mock scenarios
+            # Fall back to scoop command
             scoop @Arguments 2>&1
         }
     }
@@ -283,7 +281,7 @@ function Install-ScoopPackages {
     $scoopScript = "$env:USERPROFILE\scoop\apps\scoop\current\bin\scoop.ps1"
     $scoopInstalled = Test-Path $scoopScript
 
-    # Check if scoop command is available (may be mocked in tests)
+    # Check if scoop command is available
     $scoopCommandAvailable = Get-Command scoop -ErrorAction SilentlyContinue
 
     # Helper to invoke Scoop directly, bypassing the broken shim
@@ -293,7 +291,7 @@ function Install-ScoopPackages {
             & $scoopScript @Arguments 2>&1
         }
         elseif ($scoopCommandAvailable) {
-            # Fall back to scoop command for tests/mock scenarios
+            # Fall back to scoop command
             scoop @Arguments 2>&1
         }
     }

@@ -60,7 +60,6 @@ get_package_description() {
 	fd-find | fd) echo "find alternative" ;;
 	difft) echo "diff viewer" ;;
 	bats) echo "bash testing" ;;
-	kcov) echo "code coverage" ;;
 	vscode) echo "code editor" ;;
 	latex) echo "document preparation" ;;
 	claude-code) echo "AI CLI" ;;

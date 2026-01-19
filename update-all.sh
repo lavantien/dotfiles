@@ -611,8 +611,8 @@ _main() {
 				# Multiple possible locations for npm global modules on Windows
 				local npm_locations=(
 					"$APPDATA/npm/node_modules"
-					"$HOME/scoop/persist/nodejs-lts/bin/node_modules"
-					"$HOME/scoop/apps/nodejs-lts/current/node_modules"
+					"$HOME/scoop/persist/nodejs/bin/node_modules"
+					"$HOME/scoop/apps/nodejs/current/node_modules"
 				)
 				local total_invalid_count=0
 				for npm_global_modules in "${npm_locations[@]}"; do

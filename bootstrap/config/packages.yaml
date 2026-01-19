@@ -52,7 +52,7 @@ sdks:
       linux_fedora: sudo dnf install -y nodejs npm
       linux_arch: sudo pacman -S --noconfirm nodejs npm
       linux_opensuse: sudo zypper install -y nodejs npm
-      windows: scoop install nodejs-lts
+      windows: scoop install nodejs
 
   - name: python
     display_name: Python

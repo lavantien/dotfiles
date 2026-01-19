@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.2.23] - 2026-01-19
+
+### Changed
+
+**Node.js Package Name Standardization**
+
+- Changed Scoop package from `nodejs-lts` to `nodejs` across all Windows scripts
+- Updated `bootstrap/bootstrap.ps1` to use `nodejs` package
+- Updated `bootstrap/lib/common.ps1` path handling for `nodejs` directory
+- Updated `cleanup-scoop-path.ps1` regex pattern to exclude `nodejs` from cleanup
+- Updated `cleanup-npm-trash.ps1` npm module paths for `nodejs`
+- Updated `update-all.sh` npm global module paths for `nodejs`
+- Updated `bootstrap/config/packages.yaml` to use `nodejs` package
+
+### Removed
+
+**Test Infrastructure**
+
+- Removed all test files and test infrastructure (`tests/` directory)
+- Removed `coverage.json` and test artifacts
+- Removed all PowerShell test files (`.Tests.ps1`)
+- Removed all BATS test files (`.bats`)
+- Removed test helper scripts and coverage tools
+
+**Rationale:**
+Tests were polluting User PATH registry with temporary test directories. Environment-specific testing adds minimal value for a personal dotfiles repository.
+
+---
+
 ## [5.2.22] - 2026-01-18
 
 ### Changed

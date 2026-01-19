@@ -5,8 +5,5 @@ lua/.luarc.json
 lazy-lock.json
 .claude/tdd-guard/data
 nul
-coverage/
 .claude/settings.local.json
 .claude/*.local.md
-coverage-*.json
-coverage-*.xml

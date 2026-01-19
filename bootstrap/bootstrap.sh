@@ -843,13 +843,6 @@ install_cli_tools() {
 		install_linux_package bats "" bats
 	fi
 
-	# kcov (code coverage for bash - Linux/macOS only)
-	if [[ "$OS" == "macos" ]]; then
-		install_brew_package kcov "" kcov
-	elif [[ "$OS" == "linux" ]]; then
-		install_linux_package kcov "" kcov
-	fi
-
 	# Infrastructure tools (Docker Compose, Helm, kubectl)
 	if [[ "$CATEGORIES" == "full" ]]; then
 		# Priority: brew → official script → apt (last resort)

@@ -62,7 +62,6 @@ get_package_description() {
 	fd-find | fd) echo "find alternative" ;;
 	difft) echo "diff viewer" ;;
 	bats) echo "bash testing" ;;
-	kcov) echo "code coverage" ;;
 	docker-compose) echo "Docker Compose CLI" ;;
 	helm) echo "Kubernetes package manager" ;;
 	kubectl) echo "Kubernetes CLI" ;;

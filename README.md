@@ -1,6 +1,6 @@
 # Universal Dotfiles
 
-![Coverage](coverage-badge.svg) [![Security](https://img.shields.io/badge/security-reviewed-brightgreen)](#security) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Security](https://img.shields.io/badge/security-reviewed-brightgreen)](#security) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)](https://github.com/lavantien/dotfiles)
 
 Production-grade dotfiles for Windows 11, Linux (Ubuntu/Fedora/Arch), and macOS. Auto-detecting, gracefully degrading, fully vibecoding-enabled with **19 LSP servers**, **32 Treesitter parsers**, **40+ tools**, TDD enforcement, comprehensive Git hooks, and Claude Code integration.
@@ -117,7 +117,7 @@ Windows uses `.ps1` scripts (pure PowerShell 7), Linux/macOS uses `.sh` scripts 
 - Linux: Ubuntu, Fedora, Arch, openSUSE
 - macOS: Intel and Apple Silicon
 
-Thoroughly tested on Ubuntu 26.04 LTS and Windows 11.
+Tested on Ubuntu 26.04 LTS, Fedora, Arch Linux, openSUSE, macOS, and Windows 11.
 
 **Intelligent Automation**
 
@@ -137,7 +137,6 @@ Thoroughly tested on Ubuntu 26.04 LTS and Windows 11.
 | **CLI Tools**          | fzf, zoxide, bat, eza, lazygit, gh, ripgrep, fd, tokei, btop, repomix, docker-compose, helm, kubectl |
 | **Shell**              | zsh, oh-my-zsh (half-life theme, plugins: autosuggestions, syntax-highlighting, interactive-cd)      |
 | **Terminal**           | WezTerm (GPU-accelerated, IosevkaTerm Nerd Font)                                                     |
-| **Testing**            | bats, busted, pytest, Pester, kcov                                                                   |
 
 **Installation Categories**
 
@@ -152,8 +151,6 @@ Thoroughly tested on Ubuntu 26.04 LTS and Windows 11.
 - Conventional commits enforcement via git commit-msg hook
 - Pre-commit hooks that auto-format and lint for 19+ languages
 - Claude Code quality hooks for real-time format/lint/type-check after file writes
-- 2,200+ automated tests (PowerShell + Bash)
-- Hook integrity tests prevent regression
 
 **Idempotency & Safe Re-runs**
 
@@ -689,7 +686,7 @@ feat(auth): add OAuth2 login support
 fix(api): resolve null pointer in user service
 docs(readme): update installation instructions
 refactor(core): extract payment logic to separate module
-test(user): add unit tests for registration flow
+chore(deps): bump dependencies for security patches
 ```
 
 **Bypass Hooks (Emergency)**
@@ -904,7 +901,6 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for system architecture details.
 | Document                           | Purpose                                     |
 | ---------------------------------- | ------------------------------------------- |
 | [TOOLS.md](TOOLS.md)               | Complete tool breakdown and language matrix |
-| [TESTING.md](TESTING.md)           | Test suite and coverage details             |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | System architecture and diagrams            |
 | [DOCKER_K8S.md](DOCKER_K8S.md)     | Docker Desktop and minikube setup           |
 | [HOOKS.md](HOOKS.md)               | Git and Claude Code hooks configuration     |

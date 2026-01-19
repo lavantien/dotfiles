@@ -99,20 +99,10 @@ Complete breakdown of all tools installed by the bootstrap script, organized by 
 | helm | Kubernetes package manager |
 | kubectl | Kubernetes CLI |
 
-## Testing & Coverage
-
-| Tool | Language | Purpose |
-|------|----------|---------|
-| bats | Bash | Testing |
-| busted | Lua | Testing |
-| pytest | Python | Testing |
-| Pester | PowerShell | Testing with coverage |
-| kcov | Bash | Coverage reports (universal) |
-
 ## MCP Servers (Claude Code)
 
 | MCP | Purpose |
 |-----|---------|
 | context7 | Up-to-date library documentation and code examples |
-| playwright | Browser automation and E2E testing |
+| playwright | Browser automation and testing |
 | repomix | Pack repositories for full-context AI exploration |

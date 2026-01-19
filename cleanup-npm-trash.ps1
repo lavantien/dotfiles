@@ -6,8 +6,8 @@ $ErrorActionPreference = 'Stop'
 # Multiple possible locations for npm global modules
 $modulePaths = @(
     (Join-Path $env:APPDATA "npm\node_modules"),
-    (Join-Path $env:USERPROFILE "scoop\persist\nodejs-lts\bin\node_modules"),
-    (Join-Path $env:USERPROFILE "scoop\apps\nodejs-lts\current\node_modules")
+    (Join-Path $env:USERPROFILE "scoop\persist\nodejs\bin\node_modules"),
+    (Join-Path $env:USERPROFILE "scoop\apps\nodejs\current\node_modules")
 )
 
 Write-Host "Scanning for invalid npm packages..." -ForegroundColor Cyan

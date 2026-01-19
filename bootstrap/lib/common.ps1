@@ -154,7 +154,6 @@ function Test-Command {
     }
 
     # Try Get-Command first (PowerShell native)
-    # Use try-catch to handle errors during code coverage instrumentation
     $cmd = $null
     try {
         $cmd = Get-Command -Name $Command -ErrorAction Stop
@@ -481,8 +480,8 @@ function Initialize-UserPath {
 
     # Note: Scoop apps are accessed via shims directory (already in $userPaths above)
     # Individual scoop app paths are NOT added - scoop's shim system handles this
-    # EXCEPTION: nodejs-lts needs direct PATH access for npm (shims don't fully proxy npm)
-    $nodejsPath = Join-Path $env:USERPROFILE "scoop\apps\nodejs-lts\current"
+    # EXCEPTION: nodejs needs direct PATH access for npm (shims don't fully proxy npm)
+    $nodejsPath = Join-Path $env:USERPROFILE "scoop\apps\nodejs\current"
     if (Test-Path $nodejsPath) {
         $userPaths += $nodejsPath
     }

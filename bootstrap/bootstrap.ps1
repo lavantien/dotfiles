@@ -148,7 +148,7 @@ function Install-SDKs {
     Write-Header "Phase 2: Core SDKs"
 
     # Node.js (always installs latest LTS)
-    Install-ScoopPackage "nodejs-lts" "" "node"
+    Install-ScoopPackage "nodejs" "" "node"
 
     # Python (always installs latest)
     Install-ScoopPackage "python" "" "python"
@@ -749,60 +749,6 @@ function Install-CLITools {
         }
         else {
             Install-NpmGlobal "bats" "bats" ""
-        }
-    }
-
-    # Pester (PowerShell testing framework with code coverage - always latest)
-    if (-not (Get-Module -ListAvailable -Name Pester)) {
-        Write-Step "Installing Pester for PowerShell testing..."
-        if (-not $DryRun) {
-            Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Scope CurrentUser | Out-Null
-            Install-Module -Name Pester -Force -Scope CurrentUser -SkipPublisherCheck
-            Write-Success "Pester installed"
-        }
-        else {
-            Write-Info "[DRY-RUN] Would install Pester"
-        }
-    }
-    else {
-        Write-Step "Checking Pester..."
-        Write-Success "Pester (up to date)"
-        Track-Skipped "Pester" "PowerShell testing"
-    }
-
-    # Docker (optional - needed for kcov coverage on Windows; kcov is native on Linux/macOS)
-    if (-not (Test-Command docker)) {
-        Write-Info "Docker not found - kcov via Docker is used for bash coverage on Windows"
-        if ($Script:Interactive) {
-            $installDocker = Read-Confirmation "Install Docker Desktop (optional, for kcov coverage)?" "n"
-            if ($installDocker) {
-                Write-Step "Installing Docker Desktop via winget..."
-                if (-not $DryRun) {
-                    winget install --id Docker.DockerDesktop --accept-package-agreements --accept-source-agreements
-                    Write-Success "Docker Desktop installed - please restart your shell and start Docker Desktop"
-                }
-                else {
-                    Write-Info "[DRY-RUN] Would install Docker Desktop via winget"
-                }
-            }
-            else {
-                Write-Info "Install Docker Desktop from: https://www.docker.com/products/docker-desktop"
-            }
-        }
-        else {
-            Write-Info "Install Docker Desktop from: https://www.docker.com/products/docker-desktop"
-        }
-    }
-    else {
-        # Verify Docker is running
-        $dockerRunning = $false
-        try {
-            $null = docker info 2>&1
-            $dockerRunning = $true
-            Write-VerboseInfo "Docker is available for bash coverage"
-        }
-        catch {
-            Write-Warning "Docker is installed but not running - bash coverage will be unavailable"
         }
     }
 
