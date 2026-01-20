@@ -20,6 +20,14 @@ $BOLD = "$ESC[1m"
 $DIM = "$ESC[2m"
 $RESET = "$ESC[0m"
 
+# Debug logging - writes to temp file for diagnostics
+$debugLog = "$env:TEMP\claude-statusline-debug.log"
+function Write-DebugLog {
+    param([string]$message)
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss.fff"
+    "$timestamp - $message" | Add-Content -Path $debugLog -ErrorAction SilentlyContinue
+}
+
 # Read JSON input from stdin using StreamReader (Windows-compatible method)
 $jsonInput = ""
 try {
@@ -31,6 +39,10 @@ catch {
     # Fallback for empty input
     $jsonInput = '{"model":{"display_name":"Claude"},"workspace":{"current_dir":"."}}'
 }
+
+Write-DebugLog "=== Raw JSON Input ==="
+Write-DebugLog $jsonInput
+Write-DebugLog "====================="
 
 try {
     # Parse JSON
@@ -81,6 +93,13 @@ try {
         $remainingPct = if ($data.context_window.remaining_percentage) { [double]$data.context_window.remaining_percentage } else { 0 }
         $usedPct = if ($data.context_window.used_percentage) { [double]$data.context_window.used_percentage } else { 0 }
 
+        # Debug log context window values
+        Write-DebugLog "Context Window Data:"
+        Write-DebugLog "  context_window_size: $contextSize"
+        Write-DebugLog "  remaining_percentage: $remainingPct"
+        Write-DebugLog "  used_percentage: $usedPct"
+        Write-DebugLog "  current_usage: $($data.context_window.current_usage | ConvertTo-Json -Compress -Depth 3)"
+
         # If percentages not available, calculate from current_usage
         if ($remainingPct -eq 0 -and $usedPct -eq 0 -and $data.context_window.current_usage) {
             $currentUsage = $data.context_window.current_usage
@@ -102,6 +121,9 @@ try {
 
         $maxK = [math]::Round($contextSize / 1000, 0)
 
+        # Debug log calculated values
+        Write-DebugLog "  Calculated usedK: $usedK, maxK: $maxK"
+
         # Determine color based on remaining percentage
         $pctColor = if ($remainingPct -le 20) { $RED } elseif ($remainingPct -le 50) { $YELLOW } else { $GREEN }
 
@@ -112,7 +134,8 @@ try {
             $pctStr = [math]::Round($usedPct, 0)
             $contextInfo = " ${pctColor}${usedK}K/${maxK}K${RESET} ${DIM}(${pctStr}% used)${RESET}"
         } else {
-            $contextInfo = " ${pctColor}${usedK}K/${maxK}K${RESET}"
+            # Debug: show raw percentage values when both are 0
+            $contextInfo = " ${pctColor}${usedK}K/${maxK}K${RESET} ${DIM}[r:${remainingPct}% u:${usedPct}%]${RESET}"
         }
     }
 
@@ -173,6 +196,10 @@ try {
     if ($vimMode) {
         $output += " ${RED}[${vimMode}]${RESET}"
     }
+
+    # Debug log final output
+    Write-DebugLog "Final Output: $output"
+    Write-DebugLog ""
 
     # Write to stdout and flush
     [System.Console]::Write($output)

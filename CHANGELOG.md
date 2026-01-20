@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.2.24] - 2026-01-20
+
+### Changed
+
+**Claude Code StatusLine - Enhanced Diagnostics**
+
+- Added debug logging to statusline.ps1 for context window troubleshooting
+- Logs raw JSON input, context window data, and calculated values to `%TEMP%\claude-statusline-debug.log`
+- Added visible debug indicator `[r:X% u:Y%]` when context percentages are both zero
+- Debug output helps diagnose `used_percentage`/`remaining_percentage` issues reported in Claude Code 2.1.12
+
+**update-all.ps1 - Sourced Script Compatibility**
+
+- Changed `exit 1` and `exit 0` to `return` in Main function
+- Prevents terminal from closing when script is sourced (dot-sourced) instead of executed directly
+- Improves compatibility when calling update-all from other scripts or interactive sessions
+
+---
+
 ## [5.2.23] - 2026-01-19
 
 ### Changed

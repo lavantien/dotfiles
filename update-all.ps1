@@ -118,7 +118,7 @@ function Main {
     if (-not $hasManager) {
         Write-Host "`nError: No package managers found!" -ForegroundColor Red
         Write-Host "Please install Scoop, winget, or Chocolatey" -ForegroundColor Yellow
-        exit 1
+        return
     }
 
     # ============================================================================
@@ -641,7 +641,7 @@ function Main {
     Write-Host " Duration:  " -NoNewline; Write-Info "$($duration.TotalSeconds.ToString('F0'))s"
     Write-Host "========================================" -ForegroundColor Blue
 
-    exit 0
+    return
 }
 
 # Run main
