@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.2.26] - 2026-01-22
+
+### Changed
+
+**CLAUDE.md - Plain Text Format**
+
+- Converted all markdown headers to XML tag format (e.g., ## Non-Negotiables → <non-negotiables>)
+- Removed all bold (**text**) and italic (*text*) markdown formatting
+- Headers now use descriptive tag names for better AI parsing
+- Content remains plain unordered and numbered lists
+
+### Added
+
+**CLAUDE.md - File Handling Section**
+
+- Added new <file-handling> section after <tool-usage>
+- Documents how to work with diverse file types (documents, slideshows, spreadsheets, PDFs)
+- Includes guidance on transpilation, pandoc, python-docx, python-pptx, CSV handling
+
+**Rationale:**
+
+Plain text formatting with XML-style headers improves Claude Code's parsing of system instructions while maintaining readability for humans.
+
+---
+
 ## [5.2.25] - 2026-01-21
 
 ### Changed
@@ -1292,7 +1317,9 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 ---
 
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.2.16...HEAD
+[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.2.26...HEAD
+[5.2.26]: https://github.com/lavantien/dotfiles/compare/v5.2.25...v5.2.26
+[5.2.25]: https://github.com/lavantien/dotfiles/compare/v5.2.24...v5.2.25
 [5.2.16]: https://github.com/lavantien/dotfiles/compare/v5.2.15...v5.2.16
 [5.2.15]: https://github.com/lavantien/dotfiles/compare/v5.2.14...v5.2.15
 [5.2.14]: https://github.com/lavantien/dotfiles/compare/v5.2.13...v5.2.14
