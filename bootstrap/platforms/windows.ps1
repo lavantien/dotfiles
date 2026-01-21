@@ -108,7 +108,6 @@ function Get-PackageDescription {
         "yaml-language-server" { return "YAML LSP" }
         "lua-language-server" { return "Lua LSP" }
         "csharp-ls" { return "C# LSP" }
-        "jdtls" { return "Java LSP" }
         "intelephense" { return "PHP LSP" }
         "docker-langserver" { return "Docker LSP" }
         "tombi" { return "TOML LSP" }

@@ -15,7 +15,7 @@ Complete breakdown of all tools installed by the bootstrap script, organized by 
 | html | HTML | - |
 | cssls | CSS/SCSS/SASS | - |
 | intelephense | PHP | - |
-| jdtls | Java | Eclipse JDT.LS (not JDK) |
+| jdtls | Java | Eclipse JDT.LS (not JDK) - Linux/macOS only, unusable on Windows |
 | lua-language-server | Lua | - |
 | metals | Scala | - |
 | powershell_es | PowerShell | - |
@@ -47,7 +47,7 @@ Complete breakdown of all tools installed by the bootstrap script, organized by 
 | **Svelte** | svelte | - | prettier | - | svelte-check |
 | **C/C++** | clangd | Catch2 | clang-format | clang-tidy, cppcheck | compiler |
 | **C#** | csharp_ls | dotnet test | dotnet format | Roslyn analyzers | dotnet build |
-| **Java** | jdtls | JUnit | checkstyle | checkstyle | javac |
+| **Java** | jdtls (Linux/macOS only) | JUnit | checkstyle | checkstyle | javac |
 | **PHP** | intelephense | php, PHPUnit | pint | PHPStan, Psalm | - |
 | **Scala** | metals | ScalaTest | scalafmt | scalafix | scalac |
 | **Lua** | lua_ls | busted | stylua | selene | - |

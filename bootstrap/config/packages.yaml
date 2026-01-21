@@ -199,7 +199,7 @@ language_servers:
 
   - name: jdtls
     display_name: Java Language Server
-    platforms: [all]
+    platforms: [linux, macos]
     check_cmd: jdtls
     version_flag: --version
     min_version: "1.9.0"
@@ -207,7 +207,8 @@ language_servers:
       macos: brew install eclipse-jdtls
       linux_debian: sudo apt install -y eclipse-jdtls
       linux_fedora: sudo dnf install -y eclipse-jdtls
-      windows: scoop install eclipse-jdtls
+      linux_arch: sudo pacman -S --noconfirm eclipse-jdtls
+      linux_opensuse: sudo zypper install -y eclipse-jdtls
 
   - name: csharp_ls
     display_name: C# Language Server

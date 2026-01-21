@@ -1,6 +1,9 @@
 # Native Windows Update All Script
 # Updates all package managers and tools on Windows (no WSL, no sudo)
 # VERSION POLICY: Always updates to LATEST available versions
+#
+# NOTE: Verbose mode is the default - all package manager output is shown.
+# No quiet/silent flags are used.
 
 # Don't treat native command stderr as errors with Stop preference
 $PSNativeCommandUseErrorActionPreference = $false
@@ -38,15 +41,15 @@ function Test-Command {
     return $?
 }
 
-# Run command and capture output
-function Invoke-Update {
+# Run command directly, showing all output
+function Invoke-Command {
     param(
         [string]$Command,
         [string]$Name
     )
 
     try {
-        $output = Invoke-Expression $Command 2>&1
+        Invoke-Expression $Command
         $exitCode = $LASTEXITCODE
 
         if ($exitCode -ne 0) {
@@ -55,21 +58,8 @@ function Invoke-Update {
             return $false
         }
 
-        # Check for actual changes (filter out "already up to date" messages)
-        $changes = $output | Select-String -Pattern 'changed|removed|added|upgraded|installing|updating' -CaseSensitive:$false | Where-Object {
-            $_.Line -notmatch 'already|up to date|nothing|no outdated'
-        }
-
-        if ($changes) {
-            # Show relevant output
-            $output | Where-Object { $_ -notmatch '^\s*$' } | Select-Object -First 20 | ForEach-Object { Write-Info $_ }
-            Write-Success $Name
-            $script:updated++
-        }
-        else {
-            Write-Success "$Name (up to date)"
-            $script:updated++
-        }
+        Write-Success $Name
+        $script:updated++
         return $true
     }
     catch {
@@ -152,27 +142,9 @@ function Main {
             # Use --accept-source-agreements --accept-package-agreements to auto-accept
             # Use full path since winget is in WindowsApps which may not be in PATH
             $wingetExe = Join-Path $env:LOCALAPPDATA "Microsoft\WindowsApps\winget.exe"
-            Write-Info "Updating all winget packages..."
-            $output = & $wingetExe upgrade --all --accept-source-agreements --accept-package-agreements 2>&1
-
-            # Check if anything was updated
-            $hasUpdates = $output | Select-String -Pattern 'Installing|Downloading|Successfully installed' -CaseSensitive:$false
-            if ($hasUpdates) {
-                $output | Where-Object { $_ -match 'Installing|Downloading|Successfully installed' } | Select-Object -First 10 | ForEach-Object { Write-Info $_ }
-                Write-Success "winget"
-                $script:updated++
-            }
-            else {
-                $noUpdates = $output | Select-String -Pattern 'No updated package|is up to date|No available upgrade' -CaseSensitive:$false
-                if ($noUpdates) {
-                    Write-Success "winget (up to date)"
-                    $script:updated++
-                }
-                else {
-                    Write-Success "winget"
-                    $script:updated++
-                }
-            }
+            & $wingetExe upgrade --all --accept-source-agreements --accept-package-agreements
+            Write-Success "winget"
+            $script:updated++
         }
         catch {
             Write-Fail "winget"
@@ -190,29 +162,9 @@ function Main {
     Write-Step "CHOCOLATEY"
     if (Test-Command choco) {
         try {
-            Write-Info "Updating all Chocolatey packages..."
-            $output = choco upgrade all -y 2>&1
-
-            $hasUpdates = $output | Select-String -Pattern 'upgraded|installed|installing' -CaseSensitive:$false | Where-Object {
-                $_.Line -notmatch 'can upgrade|packages you can upgrade'
-            }
-
-            if ($hasUpdates) {
-                $output | Where-Object { $_ -match 'upgraded|installed|installing' } | Select-Object -First 10 | ForEach-Object { Write-Info $_ }
-                Write-Success "Chocolatey"
-                $script:updated++
-            }
-            else {
-                $noUpdates = $output | Select-String -Pattern 'already installed|up to date|nothing to upgrade' -CaseSensitive:$false
-                if ($noUpdates) {
-                    Write-Success "choco (up to date)"
-                    $script:updated++
-                }
-                else {
-                    Write-Success "Chocolatey"
-                    $script:updated++
-                }
-            }
+            choco upgrade all -y
+            Write-Success "Chocolatey"
+            $script:updated++
         }
         catch {
             Write-Fail "Chocolatey"
@@ -231,22 +183,11 @@ function Main {
     if (Test-Command npm) {
         try {
             Write-Info "Updating npm itself..."
-            npm install -g npm@latest *> $null
+            npm install -g npm@latest
 
-            $output = npm update -g 2>&1
-            $hasUpdates = $output | Select-String -Pattern 'added|removed|changed|updated' -CaseSensitive:$false | Where-Object {
-                $_.Line -notmatch 'already|audited|checked'
-            }
-
-            if ($hasUpdates) {
-                $output | Where-Object { $_ -match 'added|removed|changed|updated' } | ForEach-Object { Write-Info $_ }
-                Write-Success "npm"
-                $script:updated++
-            }
-            else {
-                Write-Success "npm (up to date)"
-                $script:updated++
-            }
+            npm update -g
+            Write-Success "npm"
+            $script:updated++
         }
         catch {
             Write-Fail "npm"
@@ -264,7 +205,9 @@ function Main {
     Write-Step "PNPM"
     if (Test-Command pnpm) {
         try {
-            Invoke-Update "pnpm update -g" "pnpm"
+            pnpm update -g
+            Write-Success "pnpm"
+            $script:updated++
         }
         catch {
             Write-Fail "pnpm"
@@ -283,45 +226,19 @@ function Main {
     if (Test-Command bun) {
         try {
             # First upgrade bun itself
-            $upgradeOutput = & bun upgrade 2>&1
-            $exitCode = $LASTEXITCODE
+            bun upgrade
 
             # Check if there are global packages to update
-            $globalPackages = & bun pm ls -g 2>$null | Select-String -Pattern "^\w" | Measure-Object
+            $globalPackages = bun pm ls -g 2>&1 | Select-String -Pattern "^\w" | Measure-Object
             $hasGlobalPackages = $globalPackages.Count -gt 0
 
             if ($hasGlobalPackages) {
                 # Only run bun update -g if there are global packages
-                $updateOutput = & bun update -g 2>&1
-                $updateExitCode = $LASTEXITCODE
+                bun update -g
+            }
 
-                if ($updateExitCode -eq 0) {
-                    Write-Success "bun"
-                    $script:updated++
-                }
-                else {
-                    # bun update -g can fail if no packages need updating
-                    if ($updateOutput -match "No package.json|nothing to update|up to date") {
-                        Write-Success "bun (up to date)"
-                        $script:updated++
-                    }
-                    else {
-                        Write-Fail "bun" $updateOutput
-                        $script:failed++
-                    }
-                }
-            }
-            else {
-                # No global packages, just report bun upgrade success
-                if ($exitCode -eq 0) {
-                    Write-Success "bun"
-                    $script:updated++
-                }
-                else {
-                    Write-Fail "bun" $upgradeOutput
-                    $script:failed++
-                }
-            }
+            Write-Success "bun"
+            $script:updated++
         }
         catch {
             Write-Fail "bun"
@@ -339,7 +256,9 @@ function Main {
     Write-Step "YARN"
     if (Test-Command yarn) {
         try {
-            Invoke-Update "yarn global upgrade" "yarn"
+            yarn global upgrade
+            Write-Success "yarn"
+            $script:updated++
         }
         catch {
             Write-Fail "yarn"
@@ -357,7 +276,9 @@ function Main {
     Write-Step "GUP (Go global packages)"
     if (Test-Command gup) {
         try {
-            Invoke-Update "gup update -a" "gup"
+            gup update -a
+            Write-Success "gup"
+            $script:updated++
         }
         catch {
             Write-Fail "gup"
@@ -376,7 +297,9 @@ function Main {
     if (Test-Command go) {
         if (-not (Test-Command gup)) {
             try {
-                Invoke-Update "go install all@latest" "go"
+                go install all@latest
+                Write-Success "go"
+                $script:updated++
             }
             catch {
                 Write-Fail "go"
@@ -400,7 +323,9 @@ function Main {
     if (Test-Command cargo) {
         if (Test-Command cargo-install-update) {
             try {
-                Invoke-Update "cargo install-update -a" "cargo"
+                cargo install-update -a
+                Write-Success "cargo"
+                $script:updated++
             }
             catch {
                 Write-Fail "cargo"
@@ -423,7 +348,9 @@ function Main {
     Write-Step "RUSTUP"
     if (Test-Command rustup) {
         try {
-            Invoke-Update "rustup update" "rustup"
+            rustup update
+            Write-Success "rustup"
+            $script:updated++
         }
         catch {
             Write-Fail "rustup"
@@ -443,25 +370,13 @@ function Main {
         try {
             $tools = dotnet tool list 2>&1 | Select-Object -Skip 2 | Where-Object { $_ -match '^\S+' }
             if ($tools) {
-                $changes = 0
                 foreach ($tool in $tools) {
                     $toolName = ($tool -split '\s+')[0]
                     if ($toolName -eq 'Package') { continue }
-
-                    $output = dotnet tool update $toolName 2>&1
-                    if ($output -match 'successfully|updated|installed') {
-                        $changes++
-                    }
+                    dotnet tool update $toolName
                 }
-
-                if ($changes -gt 0) {
-                    Write-Success "dotnet (updated $changes tools)"
-                    $script:updated++
-                }
-                else {
-                    Write-Success "dotnet (up to date)"
-                    $script:updated++
-                }
+                Write-Success "dotnet"
+                $script:updated++
             }
             else {
                 Write-Skip "No dotnet tools installed"
@@ -486,10 +401,10 @@ function Main {
     if (Test-Command pip) {
         try {
             # Upgrade pip first
-            pip install --upgrade pip *> $null
+            pip install --upgrade pip
 
             # Update all packages using the simple one-liner
-            $output = pip freeze 2>&1 | ForEach-Object { $_.Split('==')[0] } | ForEach-Object { pip install --upgrade $_ } 2>&1
+            pip freeze 2>&1 | ForEach-Object { $_.Split('==')[0] } | ForEach-Object { pip install --upgrade $_ }
 
             Write-Success "pip"
             $script:updated++
@@ -510,7 +425,9 @@ function Main {
     Write-Step "POETRY"
     if (Test-Command poetry) {
         try {
-            Invoke-Update "poetry self update" "poetry"
+            poetry self update
+            Write-Success "poetry"
+            $script:updated++
         }
         catch {
             Write-Fail "poetry"

@@ -7,6 +7,50 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.2.25] - 2026-01-21
+
+### Changed
+
+**update-all Scripts - Verbose Mode as Default**
+
+- Changed output behavior to show all package manager output by default
+- Removed output capture and filtering from update-all.ps1 and update-all.sh
+- Removed `Invoke-Update` function in favor of direct command execution
+- Removed `head -20` output limits from bash script
+- All package manager output now streams directly to console
+
+**Package Manager Updates - Full Output Visibility:**
+
+- Scoop: Shows full bucket and app update output
+- Winget: Shows installation/download progress without filtering
+- Chocolatey: Shows package upgrade details
+- NPM/PNPM/BUN/YARN: Shows all package update output
+- Go/GUP/Cargo/Rustup: Shows full tool update output
+- DOTNET: Shows individual tool update results
+- PIP: Shows all package upgrade operations
+- Poetry: Shows self update output
+
+### Removed
+
+**jdtls Windows Support**
+
+- Removed jdtls installation from Windows bootstrap (bootstrap.ps1)
+- Removed jdtls from Windows platform display name mapping
+- Removed Windows from jdtls platform support in packages.yaml
+- Neovim config excludes jdtls from LSP list on Windows platforms
+- jdtls remains available on Linux and macOS via Homebrew
+
+**Rationale:**
+
+jdtls (Eclipse JDT.LS) is unusable on Windows due to path handling issues and lack of proper Scoop integration. Users requiring Java development on Windows should use WSL or a full IDE.
+
+### Fixed
+
+- README example output now correctly reflects jdtls exclusion on Windows
+- TOOLS.md documents jdtls as Linux/macOS only with Windows limitation note
+
+---
+
 ## [5.2.24] - 2026-01-20
 
 ### Changed

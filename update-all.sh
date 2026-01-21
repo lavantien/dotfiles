@@ -2,6 +2,9 @@
 # Universal Update All Script - Linux/macOS/Windows (Git Bash)
 # Updates all package managers and tools
 # On Windows (Git Bash), skips Linux-only package managers that require sudo
+#
+# NOTE: Verbose mode is the default - all package manager output is shown.
+# No quiet/silent flags are used (--quiet, -q, etc.).
 
 # Note: set -e is intentionally NOT used because this script has its own
 # error handling via update_fail() and the failed counter. With set -e,
@@ -306,12 +309,10 @@ run_with_timeout() {
 	return $exit_code
 }
 
-# Update helper: captures output, detects changes, reports appropriately
+# Update helper: runs command directly, showing all output
 update_and_report() {
 	local cmd="$1"
 	local name="$2"
-	local output
-	local changes
 
 	# Safety: On Windows, strip sudo from commands to prevent accidental elevation prompts
 	# This is a defensive measure in case any Linux-only commands slip through guards
@@ -319,25 +320,15 @@ update_and_report() {
 		cmd="${cmd//sudo /}"
 	fi
 
-	output=$(eval "$cmd" 2>&1)
+	eval "$cmd"
 	local exit_code=$?
 
 	if [ $exit_code -ne 0 ]; then
-		update_fail "$name" "$output"
+		update_fail "$name" ""
 		return 1
 	fi
 
-	# Detect actual changes by looking for indicators and filtering out "already up to date" messages
-	changes=$(echo "$output" | grep -iE "changed|removed|added|upgraded|updating|installed" | grep -viE "already|up to date|nothing|no outdated|not in" || true)
-
-	if [ -n "$changes" ]; then
-		# Show relevant output lines (filter out noisy parts)
-		echo "$output" | grep -vE "^$|npm warn" | head -20
-		update_success "$name"
-	else
-		update_success "$name (up to date)"
-	fi
-
+	update_success "$name"
 	return 0
 }
 
@@ -345,59 +336,29 @@ update_and_report() {
 update_pip() {
 	local pip_cmd="$1"
 	local name="$2"
-	local output=""
-	local changes=0
 
 	# Upgrade pip first
-	output+=$($pip_cmd install --upgrade pip 2>&1)
-	output+=$'\n'
+	$pip_cmd install --upgrade pip
 
 	# Update user packages only
 	while IFS='=' read -r pkg _; do
 		if [[ -n "$pkg" ]] && [[ ! "$pkg" =~ ^(pip|setuptools|wheel)$ ]]; then
-			pkg_output=$($pip_cmd install --upgrade --user "$pkg" 2>&1)
-			output+="$pkg_output"$'\n'
-			# Check if package was actually upgraded
-			if echo "$pkg_output" | grep -qiE "installed|upgraded"; then
-				if ! echo "$pkg_output" | grep -qiE "already|up to date|not installed|not a satisfied|Requirement already"; then
-					((changes++))
-				fi
-			fi
+			$pip_cmd install --upgrade --user "$pkg"
 		fi
 	done < <($pip_cmd list --user --format=freeze 2>/dev/null | grep -v '^(pip|setuptools|wheel)==')
 
-	if [ $changes -gt 0 ]; then
-		echo "$output" | grep -vE "^$|Requirement already" | head -20
-		update_success "$name"
-	else
-		update_success "$name (up to date)"
-	fi
+	update_success "$name"
 }
 
 # Update helper for dotnet tools (handles list and update loop)
 update_dotnet_tools() {
-	local output=""
-	local changes=0
-
 	while read -r tool; do
 		if [ -n "$tool" ] && [ "$tool" != "Package" ]; then
-			tool_output=$(dotnet tool update "$tool" 2>&1)
-			output+="$tool_output"$'\n'
-			# Check if tool was actually upgraded
-			if echo "$tool_output" | grep -qiE "successfully|updated|installed"; then
-				if ! echo "$tool_output" | grep -qiE "already|up to date"; then
-					((changes++))
-				fi
-			fi
+			dotnet tool update "$tool"
 		fi
 	done < <(dotnet tool list 2>/dev/null | tail -n +3 | awk '{print $1}')
 
-	if [ $changes -gt 0 ]; then
-		echo "$output" | grep -vE "^$|already up to date" | head -20
-		update_success "dotnet"
-	else
-		update_success "dotnet (up to date)"
-	fi
+	update_success "dotnet"
 }
 
 # ============================================================================

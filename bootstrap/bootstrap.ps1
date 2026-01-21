@@ -365,20 +365,9 @@ function Install-LanguageServers {
         }
     }
 
-    # jdtls (Java Language Server) - part of eclipse.jdt.ls
-    # Note: jdtls is typically installed by IDEs or via scoop
-    if ($Script:Categories -eq "full") {
-        if (Test-Command jdtls) {
-            Write-Step "Checking jdtls..."
-            Write-Success "jdtls (up to date)"
-            Track-Skipped "jdtls" "Java language server"
-        }
-        else {
-            Install-ScoopPackage "jdtls" "" "jdtls"
-        }
-    }
-
     # intelephense (PHP language server) - not supported on Windows, use Unix/Linux or WSL
+
+    # jdtls (Java Language Server) - not supported on Windows, use Unix/Linux or WSL
 
     # Docker language servers (via npm - always latest)
     if (Test-Command npm) {

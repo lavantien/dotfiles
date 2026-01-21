@@ -227,8 +227,6 @@ Options:
 [OK] lua-language-server (up to date)
 [STEP] Checking csharp-ls...
 [OK] csharp-ls (up to date)
-[STEP] Checking jdtls...
-[OK] jdtls (up to date)
 [STEP] Checking docker-langserver...
 [OK] docker-langserver (up to date)
 [STEP] Checking tombi...
@@ -482,7 +480,6 @@ Skipped: 74
   - yaml-language-server (YAML language server)
   - lua-language-server (Lua language server)
   - csharp-ls (C# language server)
-  - jdtls (Java language server)
   - docker-langserver (Dockerfile language server)
   - tombi (TOML language server)
   - tinymist (Typst language server)

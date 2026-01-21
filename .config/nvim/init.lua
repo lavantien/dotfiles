@@ -57,7 +57,8 @@ require("fzf-lua").setup({
 	},
 })
 
-vim.lsp.enable({
+-- Build LSP server list, excluding jdtls on Windows (it doesn't work)
+local lsp_servers = {
 	"lua_ls",
 	"clangd",
 	"gopls",
@@ -69,7 +70,6 @@ vim.lsp.enable({
 	"svelte",
 	"bashls",
 	"metals",
-	"jdtls",
 	"csharp_ls",
 	"dartls",
 	"tinymist",
@@ -79,7 +79,12 @@ vim.lsp.enable({
 	"tombi",
 	"intelephense",
 	"codebook",
-})
+}
+-- jdtls is not supported on Windows
+if not vim.fn.has('win32') and not vim.fn.has('win64') then
+	table.insert(lsp_servers, "jdtls")
+end
+vim.lsp.enable(lsp_servers)
 
 vim.lsp.config("lua_ls", {
 	settings = {
