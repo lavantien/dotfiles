@@ -1,6 +1,6 @@
 # Universal Dotfiles
 
-[![Security](https://img.shields.io/badge/security-reviewed-brightgreen)](#security) [![Platform](https://img.shields.io/badge/Linux%20%7C%20Windows)](https://github.com/lavantien/dotfiles) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Security](https://img.shields.io/badge/security-reviewed-brightgreen)](#security) [![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)](https://github.com/lavantien/dotfiles) [![Windows](https://img.shields.io/badge/Windows-0078D6?logo=windows&logoColor=white)](https://github.com/lavantien/dotfiles) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 
 Production-grade portable one-click dotfiles for Linux and Windows 11 software engineering environment.
@@ -24,7 +24,7 @@ Development Tools
 AI-Native Agentic Development
 - Full support for Claude Code and OpenCode
 - 4 MCP servers: context7, playwright, repomix, serena
-- Auto-detect & trigger format/lint/type-check: Git pre-commit/commit-msg + Claude Code PostToolUse and Stop hooks
+- Auto-detect & trigger format/lint/check: Git pre-commit/commit-msg + Claude Code PostToolUse and Stop hooks
 - System instruction sync across all repos (CLAUDE.md, AGENTS.md, GEMINI.md, RULES.md)
 
 Automation & Safety
