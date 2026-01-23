@@ -96,35 +96,35 @@ For working with diverse files like documents, slideshows, spreadsheets, or PDFs
 Before writing any code, always verify current best practices. Never rely on training data for API syntax, library versions, or installation commands.
 
 1. Latest Documentation: Use Context7 MCP to get up-to-date library docs
-   - First: Use mcp__plugin_context7_context7__resolve-library-id to find the library
-   - Then: Use mcp__plugin_context7_context7__query-docs to get specific info
+   - First: find the library
+   - Then: get specific info
 
-2. Web Search: Use mcp__web-search-prime__webSearchPrime for:
+2. Web Search: for:
    - Latest library versions and syntax
    - Breaking changes in recent releases
    - Current best practices (patterns change over time)
 
-3. Web Reader: Use mcp__web_reader__webReader for:
+3. Web Reader: for:
    - Reading official documentation pages
    - Checking GitHub repositories for examples
    - Fetching specific documentation URLs
 
-4. ZRead: Use mcp__zread__* tools for:
+4. ZRead: for:
    - Searching GitHub repositories
    - Reading repository documentation
    - Exploring codebases
 
-5. GitHub CLI: Use gh for:
+5. GitHub CLI: gh for:
    - Searching issues and PRs
    - Reading repository files
    - Checking latest releases
 
-6. Repomix: Use mcp__plugin_repomix-mcp_repomix__* tools for:
+6. Repomix: for:
    - Packing local codebases for analysis
    - Searching packed outputs with grep
    - Creating project skills from code
 
-7. LSP/TreeSitter: Use built-in LSP tools for:
+7. LSP-TreeSitter or Serena: Use built-in LSP tools for:
    - Finding symbol definitions and references
    - Getting hover information and document symbols
    - Understanding code relationships before making changes
