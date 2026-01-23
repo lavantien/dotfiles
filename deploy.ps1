@@ -179,8 +179,11 @@ if (-not $SkipConfig) {
         $ExistingConfig = Get-Content $OpencodeConfigFile -Raw | ConvertFrom-Json
         $DotfilesConfig = Get-Content $DotfilesOpencodeConfig -Raw | ConvertFrom-Json
 
-        # Ensure mcp section exists in existing config
+        # Ensure mcp section exists and is an object (not scalar from previous bad merge)
         if ($null -eq $ExistingConfig.mcp) {
+            $ExistingConfig | Add-Member -NotePropertyName "mcp" -NotePropertyValue @{}
+        } elseif ($ExistingConfig.mcp -isnot [PSCustomObject] -and $ExistingConfig.mcp -isnot [hashtable]) {
+            $ExistingConfig.PSObject.Properties.Remove("mcp")
             $ExistingConfig | Add-Member -NotePropertyName "mcp" -NotePropertyValue @{}
         }
 
@@ -188,12 +191,18 @@ if (-not $SkipConfig) {
         function Compare-Property {
             param($Existing, $Dotfiles, $PropertyName)
 
+            # Guard: if Existing is not an object (e.g., string, int), treat as unequal
+            if ($Existing -isnot [PSCustomObject] -and $Existing -isnot [hashtable]) {
+                return $false
+            }
+
             $ExistingValue = $Existing.$PropertyName
             $DotfilesValue = $Dotfiles.$PropertyName
 
             # Handle nested objects
             if ($DotfilesValue -is [PSCustomObject]) {
                 if ($null -eq $ExistingValue) { return $false }
+                if ($ExistingValue -isnot [PSCustomObject]) { return $false }
                 foreach ($Prop in $DotfilesValue.PSObject.Properties) {
                     if (!(Compare-Property -Existing $ExistingValue -Dotfiles $DotfilesValue -PropertyName $Prop.Name)) {
                         return $false
@@ -222,6 +231,11 @@ if (-not $SkipConfig) {
 
             if ($null -eq $ExistingConfig.mcp.$ServerName) {
                 # Server doesn't exist, add it
+                $ExistingConfig.mcp | Add-Member -NotePropertyName $ServerName -NotePropertyValue $ServerConfig -Force
+                $MergedCount++
+            } elseif ($ExistingConfig.mcp.$ServerName -isnot [PSCustomObject] -and $ExistingConfig.mcp.$ServerName -isnot [hashtable]) {
+                # Existing entry is a scalar (malformed), replace it entirely using Add-Member
+                $ExistingConfig.mcp.PSObject.Properties.Remove($ServerName)
                 $ExistingConfig.mcp | Add-Member -NotePropertyName $ServerName -NotePropertyValue $ServerConfig -Force
                 $MergedCount++
             } else {
