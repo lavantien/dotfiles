@@ -69,9 +69,64 @@ up  # or update - runs update-all
 
 Windows uses `.ps1` scripts, Linux/macOS uses `.sh` scripts.
 
+### Bootstrap Options
+
+| Option | Bash | PowerShell | Default |
+|--------|------|------------|---------|
+| Non-interactive | `-y`, `--yes` | `-Y` | Prompt for confirmation |
+| Dry-run | `--dry-run` | `-DryRun` | Install everything |
+| Categories | `--categories sdk` | `-Categories sdk` | full |
+| Skip update | `--skip-update` | `-SkipUpdate` | Update package managers |
+| Verbose | `--verbose` | `-VerboseMode` | Show detailed output |
+
+### Installation Categories
+
+| Category | Description |
+|----------|-------------|
+| minimal | Package managers + git + CLI tools only |
+| sdk | Minimal + programming language SDKs |
+| full | SDK + all LSPs + linters/formatters (default) |
+
+### Configuration (Optional)
+
+All scripts use hardcoded defaults by default (`categories: full`, interactive prompts).
+
+```bash
+cp .dotfiles.config.yaml.example ~/.dotfiles.config.yaml
+vim ~/.dotfiles.config.yaml
+./bootstrap.sh  # Auto-detects config
+```
+
+**Configuration Priority**: Command-line flags > Config file > Hardcoded defaults
+
+| Setting | Values | Default |
+|---------|--------|---------|
+| categories | minimal, sdk, full | full |
+| editor | nvim, vim, code, nano | (none) |
+| theme | rose-pine, rose-pine-dawn, rose-pine-moon | (none) |
+| github_username | your github username | lavantien |
+| base_dir | path to git repos | ~/dev/github |
+| auto_commit_repos | true, false | false |
+
+### Health & Troubleshooting
+
+```bash
+./healthcheck.sh
+
+# JSON output (for CI/CD)
+./healthcheck.sh --format json
+```
+
+| Issue | Solution |
+|-------|----------|
+| Git hooks not running | `git config --global core.hooksPath ~/.config/git/hooks` |
+| PowerShell execution policy | `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` |
+| Neovim plugins not installing | In Neovim run `:PackUpdate` |
+| zoxide not jumping | Use directories normally for a few days to let zoxide learn |
+
 ---
 
-## Core Features & Selling Points
+## Core Features
 
 - Cross-platform: Windows 11, Linux (Ubuntu/Fedora/Arch), macOS
 - 19 LSP servers, 32+ Treesitter parsers
@@ -112,7 +167,7 @@ Windows uses `.ps1` scripts, Linux/macOS uses `.sh` scripts.
 
 fzf, yazi, zoxide, bat, eza, lazygit, gh, ripgrep, fd, tokei, btop, repomix, docker-compose, helm, kubectl
 
-### MCP Servers (Claude Code)
+### MCP Servers (Claude Code & OpenCode)
 
 context7, playwright, repomix, serena
 
@@ -142,6 +197,21 @@ Platform-specific: `.sh` for Linux/macOS, `.ps1` for Windows
 ### Claude Code Windows LSP Patching
 
 npm-installed LSPs (typescript-language-server, pyright-langserver, intelephense) need `cmd.exe /c` wrapper. Auto-patches marketplace.json to fix `spawn EINVAL` errors.
+
+### MCP Server Manual Patching (Windows)
+
+On Windows, MCP servers that use `npx` (like `zai-mcp-server`) also need the `cmd.exe /c` wrapper in `~/.claude.json`:
+
+```json
+"mcpServers": {
+  "zai-mcp-server": {
+    "command": "cmd.exe",
+    "args": ["/c", "npx", "-y", "@z_ai/mcp-server"]
+  }
+}
+```
+
+This fixes the "Windows requires 'cmd /c' wrapper to execute npx" warning in MCP diagnostics.
 
 ---
 
@@ -193,85 +263,6 @@ Leader key is Space.
 | `<leader>o` | LSP type definitions |
 | `<leader>j` | LSP definitions |
 | `<leader>v` | LSP declarations |
-
----
-
-## Bootstrap Options
-
-| Option | Bash | PowerShell | Default |
-|--------|------|------------|---------|
-| Non-interactive | `-y`, `--yes` | `-Y` | Prompt for confirmation |
-| Dry-run | `--dry-run` | `-DryRun` | Install everything |
-| Categories | `--categories sdk` | `-Categories sdk` | full |
-| Skip update | `--skip-update` | `-SkipUpdate` | Update package managers |
-| Verbose | `--verbose` | `-VerboseMode` | Show detailed output |
-
-### Installation Categories
-
-| Category | Description |
-|----------|-------------|
-| minimal | Package managers + git + CLI tools only |
-| sdk | Minimal + programming language SDKs |
-| full | SDK + all LSPs + linters/formatters (default) |
-
----
-
-## Configuration (Optional)
-
-All scripts use hardcoded defaults by default (`categories: full`, interactive prompts).
-
-```bash
-cp .dotfiles.config.yaml.example ~/.dotfiles.config.yaml
-vim ~/.dotfiles.config.yaml
-./bootstrap.sh  # Auto-detects config
-```
-
-**Configuration Priority**: Command-line flags > Config file > Hardcoded defaults
-
-| Setting | Values | Default |
-|---------|--------|---------|
-| categories | minimal, sdk, full | full |
-| editor | nvim, vim, code, nano | (none) |
-| theme | rose-pine, rose-pine-dawn, rose-pine-moon | (none) |
-| github_username | your github username | lavantien |
-| base_dir | path to git repos | ~/dev/github |
-| auto_commit_repos | true, false | false |
-
----
-
-## Updating
-
-```bash
-# Linux/macOS
-cd ~/dev/github/dotfiles
-git pull
-./bootstrap.sh
-source ~/.zshrc
-
-# Windows
-cd ~/dev/github/dotfiles
-git pull
-.\bootstrap.ps1
-. $PROFILE
-```
-
----
-
-## Health & Troubleshooting
-
-```bash
-./healthcheck.sh
-
-# JSON output (for CI/CD)
-./healthcheck.sh --format json
-```
-
-| Issue | Solution |
-|-------|----------|
-| Git hooks not running | `git config --global core.hooksPath ~/.config/git/hooks` |
-| PowerShell execution policy | `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` |
-| Neovim plugins not installing | In Neovim run `:PackUpdate` |
-| zoxide not jumping | Use directories normally for a few days to let zoxide learn |
 
 ---
 
