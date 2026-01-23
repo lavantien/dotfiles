@@ -1,41 +1,35 @@
 # Universal Dotfiles
 
 [![Security](https://img.shields.io/badge/security-reviewed-brightgreen)](#security) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)](https://github.com/lavantien/dotfiles)
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-blue)](https://github.com/lavantien/dotfiles)
 
-Production-grade dotfiles for Windows 11, Linux (Ubuntu/Fedora/Arch), and macOS. Auto-detecting, gracefully degrading, fully vibecoding-enabled.
+Production-grade dotfiles for Windows 11 and Linux. Auto-detecting, gracefully degrading, fully vibecoding-enabled.
 
 ---
 
 ## Core Features
 
-**Cross-Platform Support**
-
+Tested Platforms
 - Windows 11 (PowerShell 7+)
 - Linux (Ubuntu 26.04 LTS, Fedora, Arch, openSUSE)
-- macOS (Intel and Apple Silicon)
 
-**Development Tools**
-
-- 19 LSP servers for complete language intelligence
+Development Tools
+- 20 LSP servers for complete language intelligence
 - 30 Treesitter parsers for advanced syntax highlighting
 - 40+ CLI tools for modern development workflows
 
-**Editor & Terminal**
-
-- Neovim 0.12 with lazy.nvim plugin manager
+Editor & Terminal
+- Neovim 0.12+ with built-in package manager, LSP/Treesitter config, and native completion
 - WezTerm GPU-accelerated terminal (IosevkaTerm Nerd Font)
 - Rose Pine theme across all configs
 
-**AI-Native Development**
-
+AI-Native Development
 - Full support for Claude Code and OpenCode
 - 4 MCP servers: context7, playwright, repomix, serena
-- Quality hooks: Git pre-commit/commit-msg + Claude Code PostToolUse
+- Quality hooks: Git pre-commit/commit-msg + Claude Code PostToolUse and Stop hooks
 - System instruction sync across all repos (CLAUDE.md, AGENTS.md, GEMINI.md, RULES.md)
 
-**Automation & Safety**
-
+Automation & Safety
 - Idempotent bootstrap (safe to run multiple times)
 - Auto-detection with graceful degradation
 - OneDrive-aware on Windows
@@ -211,7 +205,7 @@ Platform-specific: `.sh` for Linux/macOS, `.ps1` for Windows
 
 ### Claude Code Hooks
 
-**PostToolUse** hook runs format/lint/type-check after Write/Edit/MultiEdit operations. Auto-registered in `~/.claude/settings.json`.
+**PostToolUse** and **Stop** hooks run format/lint/type-check after file edits and at session end. Auto-registered in `~/.claude/settings.json`.
 
 ### OpenCode Config Merging
 
