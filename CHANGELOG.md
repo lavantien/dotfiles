@@ -7,6 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.3.2] - 2026-01-24
+
+### Added
+
+**Windows LSP Marketplace Auto-Patching**
+
+- Added `Patch-ClaudeLspMarketplace` function to deploy.ps1 for automatic Windows LSP fix
+- Added LSP marketplace patching to bootstrap.ps1 Phase 6 (Deploy)
+- Automatically wraps npm-installed LSP servers with cmd.exe on Windows:
+  - typescript-language-server
+  - pyright-langserver
+  - intelephense
+- Patching is idempotent: checks if already patched before modifying
+- Survives marketplace updates when scripts are re-run
+- Uses regex-based string replacement to handle PowerShell JSON parsing limitations
+
+### Changed
+
+**README Documentation**
+
+- Updated LSP Fix for Windows section to reflect automatic patching
+- Removed manual patching instructions
+- Added note about idempotent patching behavior
+
+### Fixed
+
+- PowerShell's ConvertFrom-Json cannot handle case-sensitive duplicate keys (`.c` vs `.C` in marketplace.json)
+- Bypassed by using direct string replacement instead of JSON parsing
+
+**Rationale:**
+
+The Windows LSP spawn EINVAL issue was previously documented as a manual fix. This automation eliminates the manual step while being safe to run multiple times. The regex approach avoids PowerShell's JSON parsing limitations with case-sensitive keys.
+
+---
+
 ## [5.3.1] - 2026-01-23
 
 ### Fixed
@@ -1347,6 +1382,8 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 | Version | Date       | Major Changes                                                                                            |
 | ------- | ---------- | -------------------------------------------------------------------------------------------------------- |
+| 5.3.2   | 2026-01-24 | Windows LSP marketplace auto-patching, automated cmd.exe wrapper for npm-installed LSPs           |
+| 5.3.1   | 2026-01-23 | git-update-repos.ps1 scope shadowing fix                                                          |
 | 5.3.0   | 2026-01-23 | Serena MCP integration via uvx, uv package manager, scalar handling fix, CLAUDE.md XML tags              |
 | 5.2.17  | 2026-01-17 | Added WezTerm installation to Windows bootstrap, documented PowerShell 7+ requirement                   |
 | 5.2.16  | 2026-01-17 | Fixed Neovim/WezTerm config deployment on Windows, AI CLI update detection fix                           |
@@ -1400,7 +1437,8 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 ---
 
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.3.1...HEAD
+[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.3.2...HEAD
+[5.3.2]: https://github.com/lavantien/dotfiles/compare/v5.3.1...v5.3.2
 [5.3.1]: https://github.com/lavantien/dotfiles/compare/v5.3.0...v5.3.1
 [5.3.0]: https://github.com/lavantien/dotfiles/compare/v5.2.27...v5.3.0
 [5.2.27]: https://github.com/lavantien/dotfiles/compare/v5.2.26...v5.2.27

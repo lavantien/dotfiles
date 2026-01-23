@@ -741,6 +741,20 @@ The deploy script registers a PostToolUse hook in `~/.claude/settings.json` that
 | 3. Type Check | Run type checkers (tsc, mypy, go vet)                            |
 | 4. Unit Tests | Run project tests based on detected project type                 |
 
+**LSP Fix for Windows**
+
+On Windows, npm installs language servers as `.cmd` batch files which cannot be spawned directly by Node.js. The deploy and bootstrap scripts automatically patch `~/.claude/plugins/marketplaces/claude-plugins-official/.claude-plugin/marketplace.json` to wrap npm-installed servers with `cmd.exe /c`:
+
+- `typescript-language-server` (TypeScript/JavaScript)
+- `pyright-langserver` (Python)
+- `intelephense` (PHP)
+
+The patching is idempotent and survives marketplace updates when deploy.ps1 or bootstrap.ps1 is re-run.
+
+Note: `lua-language-server` (installed via Scoop) uses an executable shim and doesn't need the wrapper.
+
+This fixes the `spawn EINVAL` errors that occur when Claude Code tries to start these LSP servers.
+
 **StatusLine (Auto-Registered)**
 
 Custom statusline displaying: `user@hostname directory [branch] [context%] [style] [vim-mode] model`

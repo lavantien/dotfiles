@@ -35,6 +35,57 @@ function Copy-Files {
     }
 }
 
+function Patch-ClaudeLspMarketplace {
+    $MarketplaceJson = "$HOME/.claude/plugins/marketplaces/claude-plugins-official/.claude-plugin/marketplace.json"
+
+    if (!(Test-Path $MarketplaceJson)) {
+        Write-Host "  Claude LSP marketplace (not installed, skipping)" -ForegroundColor Cyan
+        return
+    }
+
+    $Json = Get-Content $MarketplaceJson -Raw
+    $Patched = $false
+
+    # LSP servers that need cmd.exe wrapper (installed via npm)
+    # We look for the command field and replace it along with the args field
+    $NpmLsps = @(
+        @{Name = "typescript"; CmdFile = "typescript-language-server.cmd"}
+        @{Name = "pyright"; CmdFile = "pyright-langserver.cmd"}
+        @{Name = "intelephense"; CmdFile = "intelephense.cmd"}
+    )
+
+    foreach ($Lsp in $NpmLsps) {
+        # Find the LSP entry: "typescript": { ... "command": "..." ... "args": [...] ... }
+        $Pattern = '"' + $Lsp.Name + '"\s*:\s*\{[^}]*?"command"\s*:\s*"[^"]*"[^}]*?"args"\s*:\s*\[([^\]]*(?:\[[^\]]*\][^\]]*)*)*\]'
+
+        if ($Json -match $Pattern) {
+            $LspSection = $Matches[0]
+
+            # Check if already patched
+            $CmdPattern = '"command"\s*:\s*"cmd\.exe"'
+            $ArgsPattern = '"args"\s*:\s*\["/c"\s*,\s*"' + [regex]::Escape($Lsp.CmdFile) + '"'
+            if ($LspSection -match $CmdPattern -and $LspSection -match $ArgsPattern) {
+                continue
+            }
+
+            # Patch: replace command and args
+            $PatchedCommand = '"command": "cmd.exe"'
+            $PatchedArgs = '"args": ["/c", "' + $Lsp.CmdFile + '", "--stdio"]'
+            $NewSection = $LspSection -replace '"command"\s*:\s*"[^"]*"', $PatchedCommand
+            $NewSection = $NewSection -replace '"args"\s*:\s*\[.+\]', $PatchedArgs
+            $Json = $Json.Replace($LspSection, $NewSection)
+            $Patched = $true
+        }
+    }
+
+    if ($Patched) {
+        Set-Content $MarketplaceJson $Json -NoNewline
+        Write-Host "  Claude LSP marketplace (patched)" -ForegroundColor Green
+    } else {
+        Write-Host "  Claude LSP marketplace (up to date)" -ForegroundColor Cyan
+    }
+}
+
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "   Windows Dotfiles Deployment" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
@@ -266,6 +317,9 @@ if (-not $SkipConfig) {
 
     Write-Host "  Configs deployed" -ForegroundColor Green
     Write-Host ""
+
+    # Patch Claude LSP marketplace for Windows npm-installed servers
+    Patch-ClaudeLspMarketplace
 }
 
 Write-Host "========================================" -ForegroundColor Cyan

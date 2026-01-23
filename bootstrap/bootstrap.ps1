@@ -1262,6 +1262,56 @@ function Deploy-Configs {
     Write-Step "Running deploy script..."
     & $deployScript
     Write-Success "Configurations deployed"
+
+    # Patch Claude LSP marketplace for Windows npm-installed servers
+    # (in case deploy.ps1 was run with -SkipConfig or marketplace was updated later)
+    $MarketplaceJson = "$HOME/.claude/plugins/marketplaces/claude-plugins-official/.claude-plugin/marketplace.json"
+
+    if (Test-Path $MarketplaceJson) {
+        Write-Step "Checking Claude LSP marketplace..."
+
+        $Json = Get-Content $MarketplaceJson -Raw
+        $Patched = $false
+
+        # LSP servers that need cmd.exe wrapper (installed via npm)
+        $NpmLsps = @(
+            @{Name = "typescript"; CmdFile = "typescript-language-server.cmd"}
+            @{Name = "pyright"; CmdFile = "pyright-langserver.cmd"}
+            @{Name = "intelephense"; CmdFile = "intelephense.cmd"}
+        )
+
+        foreach ($Lsp in $NpmLsps) {
+            # Find the LSP entry
+            $Pattern = '"' + $Lsp.Name + '"\s*:\s*\{[^}]*?"command"\s*:\s*"[^"]*"[^}]*?"args"\s*:\s*\[([^\]]*(?:\[[^\]]*\][^\]]*)*)*\]'
+
+            if ($Json -match $Pattern) {
+                $LspSection = $Matches[0]
+
+                # Check if already patched
+                $CmdPattern = '"command"\s*:\s*"cmd\.exe"'
+                $ArgsPattern = '"args"\s*:\s*\["/c"\s*,\s*"' + [regex]::Escape($Lsp.CmdFile) + '"'
+                if ($LspSection -match $CmdPattern -and $LspSection -match $ArgsPattern) {
+                    continue
+                }
+
+                # Patch: replace command and args
+                $PatchedCommand = '"command": "cmd.exe"'
+                $PatchedArgs = '"args": ["/c", "' + $Lsp.CmdFile + '", "--stdio"]'
+                $NewSection = $LspSection -replace '"command"\s*:\s*"[^"]*"', $PatchedCommand
+                $NewSection = $NewSection -replace '"args"\s*:\s*\[.+\]', $PatchedArgs
+                $Json = $Json.Replace($LspSection, $NewSection)
+                $Patched = $true
+            }
+        }
+
+        if ($Patched) {
+            Set-Content $MarketplaceJson $Json -NoNewline
+            Write-Success "Claude LSP marketplace patched"
+        } else {
+            Write-Info "Claude LSP marketplace (up to date)"
+        }
+    }
+
     return $true
 }
 
