@@ -24,7 +24,7 @@ Development Tools
 AI-Native Agentic Development
 - Full support for Claude Code and OpenCode
 - 4 MCP servers: context7, playwright, repomix, serena
-- Auto-detect & trigger format/lint/check: Git pre-commit/commit-msg + Claude Code PostToolUse and Stop hooks
+- Auto-detect & trigger format/lint/check: Git pre-commit/commit-msg + Claude Code PostToolUse & Stop hooks
 - System instruction sync across all repos (CLAUDE.md, AGENTS.md, GEMINI.md, RULES.md)
 
 Automation & Safety
