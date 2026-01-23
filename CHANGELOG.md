@@ -7,6 +7,57 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.3.4] - 2026-01-24
+
+### Changed
+
+**Documentation - README Optimization**
+
+- Condensed README.md from 950 lines to 286 lines (~70% reduction)
+- Consolidated multi-file documentation into single focused README
+- Added Quick Start links to DOCKER_K8S.md and CHANGELOG.md
+- Migrated all essential content from deleted docs into README
+- Improved readability with clearer section organization
+
+**README Structure**
+
+- Header with badges
+- Quick Start (Linux/macOS/Windows) with external references
+- Available Commands table
+- Core Features & Selling Points
+- Complete Tools/Packages Matrix (from TOOLS.md)
+- Hooks & Config Merging (from HOOKS.md)
+- Neovim Keybindings table (40+ keybindings from init.lua)
+- Bootstrap Options
+- Configuration (Optional)
+- Updating instructions
+- Health & Troubleshooting
+- Changelog reference
+
+### Removed
+
+**Deprecated Documentation Files**
+
+- TOOLS.md - content migrated to README Tools/Packages Matrix section
+- HOOKS.md - content migrated to README Hooks & Config Merging section
+- ARCHITECTURE.md - system architecture details no longer needed
+- BRIDGE.md - bridge approach documentation consolidated
+- QUICKREF.md - quick reference content integrated into README
+- HISTORY.md - legacy file museum no longer required
+- COMPLETION_SUMMARY.md - temporary summary file
+- FIX_SUMMARY.md - temporary fix tracking file
+
+### Fixed
+
+- Restored AGENTS.md, GEMINI.md, RULES.md for deployment via sync-system-instructions
+- All system instruction files redirect to CLAUDE.md for unified AI guidance
+
+**Rationale:**
+
+The documentation was scattered across 10+ markdown files, making maintenance difficult and causing information duplication. Consolidating essential information into a single, focused README reduces maintenance burden while preserving all important content. External references (DOCKER_K8S.md, CHANGELOG.md) remain for specialized content.
+
+---
+
 ## [5.3.3] - 2026-01-24
 
 ### Added
@@ -1424,6 +1475,7 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 | Version | Date       | Major Changes                                                                                            |
 | ------- | ---------- | -------------------------------------------------------------------------------------------------------- |
+| 5.3.4   | 2026-01-24 | Documentation consolidation, README 70% reduction, single-file focus                                    |
 | 5.3.3   | 2026-01-24 | Yazi terminal file manager with cd-on-exit, MCP fix documentation                                      |
 | 5.3.2   | 2026-01-24 | Windows LSP marketplace auto-patching, automated cmd.exe wrapper for npm-installed LSPs           |
 | 5.3.1   | 2026-01-23 | git-update-repos.ps1 scope shadowing fix                                                          |
@@ -1480,7 +1532,8 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 ---
 
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.3.3...HEAD
+[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.3.4...HEAD
+[5.3.4]: https://github.com/lavantien/dotfiles/compare/v5.3.3...v5.3.4
 [5.3.3]: https://github.com/lavantien/dotfiles/compare/v5.3.2...v5.3.3
 [5.3.2]: https://github.com/lavantien/dotfiles/compare/v5.3.1...v5.3.2
 [5.3.1]: https://github.com/lavantien/dotfiles/compare/v5.3.0...v5.3.1

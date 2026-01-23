@@ -64,6 +64,7 @@ If you cannot write acceptance criteria, pause and continuously clarify.
 
 Always consider and optimally utilize all built-in tools and available plugins before resorting to more expensive operations.
 
+- Available tools from plugins like superpowers or feature-dev
 - Repomix: Use to explore and pack the repository for full-structure views.
 - Context7: Use to acquire up-to-date, version-specific documentation for any library/API.
 - Vision MCP: Use for image understanding.
@@ -124,10 +125,15 @@ Before writing any code, always verify current best practices. Never rely on tra
    - Searching packed outputs with grep
    - Creating project skills from code
 
-7. LSP-TreeSitter or Serena: Use built-in LSP tools for:
+7. Built-in LSP-TreeSitter or Serena: for:
    - Finding symbol definitions and references
    - Getting hover information and document symbols
    - Understanding code relationships before making changes
+
+8. Available tools from plugins like superpowers:* or feature-dev:*
+   - Brainstorming
+   - Plan-making
+   - Deep diagnostic
 
 </research-before-implementation>
 
