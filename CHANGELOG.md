@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.2.27] - 2026-01-23
+
+### Fixed
+
+**CLAUDE.md - XML Tags and Spelling**
+
+- Fixed all missing closing XML tags (17 sections were unclosed)
+- Fixed spelling errors: persspective→perspective, offical→official, oudated→outdated
+- Fixed triple-S typo: ADDRESSS→ADDRESS
+- Fixed grammar: "implement any thing"→"implementing anything"
+- Fixed word choice: "bolting"→"bolding"
+- Fixed pluralization: "documentations"→"documentation"
+- Fixed capitalization: "pdfs"→"PDFs"
+- Fixed terminology: "equivalences"→"equivalents"
+- Removed standalone period that created awkward formatting
+- Cleaned up migration example phrasing
+
+---
+
 ## [5.2.26] - 2026-01-22
 
 ### Changed
@@ -1317,7 +1336,8 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 ---
 
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.2.26...HEAD
+[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.2.27...HEAD
+[5.2.27]: https://github.com/lavantien/dotfiles/compare/v5.2.26...v5.2.27
 [5.2.26]: https://github.com/lavantien/dotfiles/compare/v5.2.25...v5.2.26
 [5.2.25]: https://github.com/lavantien/dotfiles/compare/v5.2.24...v5.2.25
 [5.2.16]: https://github.com/lavantien/dotfiles/compare/v5.2.15...v5.2.16
