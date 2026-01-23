@@ -1301,6 +1301,12 @@ function Main {
         Initialize-UserPath
     }
 
+    # Initialize tracking variables used by windows.ps1 functions
+    # (Install-Rustup and others use these to track update statistics)
+    $script:updated = 0
+    $script:skipped = 0
+    $script:failed = 0
+
     # Run phases
     if (-not (Install-Foundation)) {
         Write-Error-Msg "Foundation installation failed"
