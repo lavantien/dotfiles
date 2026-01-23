@@ -131,7 +131,7 @@ Tested on Ubuntu 26.04 LTS, Fedora, Arch Linux, openSUSE, macOS, and Windows 11.
 | Category               | Tools                                                                                                |
 | ---------------------- | ---------------------------------------------------------------------------------------------------- |
 | **Package Managers**   | Homebrew (Linux/macOS), Scoop (Windows), apt/dnf/pacman (Linux)                                      |
-| **SDKs**               | Node.js, Python, Go, Rust (rustup), Bun, dotnet, OpenJDK                                                  |
+| **SDKs**               | Node.js, Python, uv, Go, Rust (rustup), Bun, dotnet, OpenJDK                                             |
 | **Language Servers**   | 19 servers - see [TOOLS.md](TOOLS.md)                                                                |
 | **Linters/Formatters** | prettier, eslint, ruff, black, golangci-lint, clippy, shellcheck, yamllint, hadolint, etc.           |
 | **CLI Tools**          | fzf, zoxide, bat, eza, lazygit, gh, ripgrep, fd, tokei, btop, repomix, docker-compose, helm, kubectl |
@@ -524,6 +524,7 @@ Skipped: 74
   - context7-mcp (documentation lookup)
   - playwright-mcp (browser automation)
   - repomix (repository packer (uses npx -y repomix --mcp))
+  - serena-mcp (semantic code navigation and editing)
   - vscode (code editor)
   - visual-studio (full IDE)
   - llvm (C/C++ toolchain)
@@ -573,11 +574,11 @@ Both work identically. The root-level scripts provide convenience, while the `bo
 | Phase                   | Tools                                                                                         |
 | ----------------------- | --------------------------------------------------------------------------------------------- |
 | 1: Foundation           | Package managers, git, WezTerm (Linux), IosevkaTerm Nerd Font                                 |
-| 2: Core SDKs            | Node.js, Python, Go, Rust, dotnet, OpenJDK                                                    |
+| 2: Core SDKs            | Node.js, Python, uv, Go, Rust, dotnet, OpenJDK                                                |
 | 3: Language Servers     | 19 LSPs (clangd, gopls, rust-analyzer, pyright, ts_ls, helm_ls, docker-language-server, etc.) |
 | 4: Linters & Formatters | prettier, eslint, ruff, golangci-lint, shellcheck, yamllint, hadolint, etc.                   |
 | 5: CLI Tools            | fzf, zoxide, bat, eza, lazygit, gh, ripgrep, fd, tokei, docker-compose, helm, kubectl         |
-| 5.25: MCP Servers       | context7-mcp, playwright-mcp (via npm)                                                        |
+| 5.25: MCP Servers       | context7-mcp, playwright-mcp, serena (via npm/uvx)                                           |
 | 5.5: Dev Tools          | Neovim 0.12, VSCode, LaTeX, Claude Code CLI                                                   |
 | 6: Deploy               | Runs deploy.sh to copy configs (git hooks, Claude Code hooks, Neovim, WezTerm)                |
 | 7: Update               | Runs update-all.sh to update packages and repos                                               |
@@ -716,6 +717,7 @@ Auto-installed globally via npm during bootstrap:
 | context7   | Up-to-date library documentation and code examples |
 | playwright | Browser automation and E2E testing                 |
 | repomix    | Pack repositories for full-context AI exploration  |
+| serena     | Semantic code navigation and symbol-level editing   |
 
 **Note:** After first use of playwright, run `npx playwright install` to install browser binaries.
 

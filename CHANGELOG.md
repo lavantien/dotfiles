@@ -7,6 +7,63 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.3.0] - 2026-01-23
+
+### Added
+
+**Serena MCP Integration**
+
+- Added Serena MCP server to OpenCode configurations across all platforms (Windows, Linux, macOS)
+- Serena provides semantic code navigation, symbol-level editing, and LSP-powered code analysis
+- Configured to run via uvx from GitHub (git+https://github.com/oraios/serena)
+- Eliminates local Python package management for Serena - always runs latest version
+
+**uv Python Package Manager**
+
+- Added uv installation to bootstrap scripts (both PowerShell and bash)
+- uv is now installed in Phase 2 (Core SDKs) alongside Python and Node.js
+- Required for running Serena via uvx and recommended for modern Python projects
+- Windows: installed via official PowerShell script (astral.sh/uv/install.ps1)
+- Linux/macOS: installed via official bash script (astral.sh/uv/install.sh)
+
+**uv Self-Update**
+
+- Added uv self-update to update-all.ps1 and update-all.sh scripts
+- uv updates automatically when running update-all alongside other package managers
+
+**CLAUDE.md Documentation**
+
+- Restructured CLAUDE.md with XML-style tags for better AI parsing
+- Added Serena MCP to tool usage documentation
+- Enhanced requirements contract with task planning step
+
+### Changed
+
+**OpenCode Configuration**
+
+- deploy.ps1: Enhanced OpenCode config merge with robust scalar handling
+- deploy.sh: Added serena to universal MCPs list
+- MCP config now merges across all platforms with conflict detection
+
+**Bootstrap Phases**
+
+- Phase 2 (Core SDKs) now includes uv installation
+- Phase 5.25 (MCP Servers) includes serena configuration
+
+### Fixed
+
+**deploy.ps1 - Scalar MCP Section Handling**
+
+- Fixed issue where bad merges could leave mcp section as a scalar instead of object
+- Added type checking to detect and repair malformed mcp sections
+- Prevents deploy failures from previous manual config edits
+
+**Rationale:**
+
+Using uvx to run Serena directly from GitHub is the recommended approach for MCP servers. This eliminates local package management complexity, ensures the latest version is always used, and simplifies updates. The uv package manager itself is a modern Python tooling replacement that significantly speeds up package operations.
+
+---
+
 ## [5.2.27] - 2026-01-23
 
 ### Fixed
@@ -1284,6 +1341,7 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 | Version | Date       | Major Changes                                                                                            |
 | ------- | ---------- | -------------------------------------------------------------------------------------------------------- |
+| 5.3.0   | 2026-01-23 | Serena MCP integration via uvx, uv package manager, scalar handling fix, CLAUDE.md XML tags              |
 | 5.2.17  | 2026-01-17 | Added WezTerm installation to Windows bootstrap, documented PowerShell 7+ requirement                   |
 | 5.2.16  | 2026-01-17 | Fixed Neovim/WezTerm config deployment on Windows, AI CLI update detection fix                           |
 | 5.2.15  | 2026-01-17 | Native PowerShell 7 update-all.ps1, fixed winget/scoop detection, Git Bash pwsh.exe alias               |
@@ -1336,7 +1394,8 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 ---
 
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.2.27...HEAD
+[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.3.0...HEAD
+[5.3.0]: https://github.com/lavantien/dotfiles/compare/v5.2.27...v5.3.0
 [5.2.27]: https://github.com/lavantien/dotfiles/compare/v5.2.26...v5.2.27
 [5.2.26]: https://github.com/lavantien/dotfiles/compare/v5.2.25...v5.2.26
 [5.2.25]: https://github.com/lavantien/dotfiles/compare/v5.2.24...v5.2.25

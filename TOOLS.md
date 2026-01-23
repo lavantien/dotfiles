@@ -106,3 +106,4 @@ Complete breakdown of all tools installed by the bootstrap script, organized by 
 | context7 | Up-to-date library documentation and code examples |
 | playwright | Browser automation and testing |
 | repomix | Pack repositories for full-context AI exploration |
+| serena | Semantic code navigation and symbol-level editing |
