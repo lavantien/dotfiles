@@ -444,7 +444,7 @@ deploy_mcp_configs() {
 			# Config exists - perform smart merge to add missing universal MCPs
 			if command -v jq >/dev/null 2>&1; then
 				# Check if any universal MCP is missing and add it from platform template
-				local universal_mcps=("context7" "playwright" "repomix")
+				local universal_mcps=("context7" "playwright" "repomix" "serena")
 				local merged=false
 
 				for mcp in "${universal_mcps[@]}"; do
