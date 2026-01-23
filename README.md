@@ -1,7 +1,7 @@
 # Universal Dotfiles
 
 [![Security](https://img.shields.io/badge/security-reviewed-brightgreen)](#security) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Platform](https://img.shields.io/badge/platform-Linux-blue%20%7C%20Windows)](https://github.com/lavantien/dotfiles)
+[![Platform](https://img.shields.io/badge/Linux-blue%20%7C%20platform-Windows)](https://github.com/lavantien/dotfiles)
 
 Production-grade portable one-click dotfiles for Linux and Windows 11 software engineering environment.
 
