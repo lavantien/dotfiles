@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.3.6] - 2026-01-24
+
+### Changed
+
+**README - Core Features Enhancement**
+
+- Moved Core Features section to top of README
+- Corrected counts: 19 LSP servers, 30 Treesitter parsers (verified from code)
+- Added Neovim 0.12 with lazy.nvim plugin manager
+- Added WezTerm GPU-accelerated terminal with IosevkaTerm Nerd Font
+- Added tested platforms: Ubuntu 26.04 LTS, Windows 11 with PowerShell 7+
+- Added full vibecoding support with Claude Code and OpenCode
+- Added quality hooks: Git pre-commit/commit-msg + Claude Code PostToolUse
+- Added system instruction sync across repos
+- Added Rose Pine theme mention
+- Added MCP servers count (4)
+
+**Rationale:**
+
+The Core Features section now appears first and contains accurate, verified information from the actual codebase. Users can immediately see what platforms are tested, what tools are included, and what AI capabilities are supported.
+
+---
+
 ## [5.3.5] - 2026-01-24
 
 ### Changed
@@ -1496,6 +1519,7 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 | Version | Date       | Major Changes                                                                                            |
 | ------- | ---------- | -------------------------------------------------------------------------------------------------------- |
+| 5.3.6   | 2026-01-24 | Core Features enhancement, corrected counts, added Neovim/WezTerm details                                 |
 | 5.3.5   | 2026-01-24 | README refinements, merged sections, added zai MCP patching                                             |
 | 5.3.4   | 2026-01-24 | Documentation consolidation, README 70% reduction, single-file focus                                    |
 | 5.3.3   | 2026-01-24 | Yazi terminal file manager with cd-on-exit, MCP fix documentation                                      |
@@ -1554,7 +1578,8 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 ---
 
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.3.5...HEAD
+[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.3.6...HEAD
+[5.3.6]: https://github.com/lavantien/dotfiles/compare/v5.3.5...v5.3.6
 [5.3.5]: https://github.com/lavantien/dotfiles/compare/v5.3.4...v5.3.5
 [5.3.4]: https://github.com/lavantien/dotfiles/compare/v5.3.3...v5.3.4
 [5.3.3]: https://github.com/lavantien/dotfiles/compare/v5.3.2...v5.3.3
