@@ -1,39 +1,41 @@
 # Universal Dotfiles
 
 [![Security](https://img.shields.io/badge/security-reviewed-brightgreen)](#security) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-blue)](https://github.com/lavantien/dotfiles)
+[![Platform](https://img.shields.io/badge/platform-Linux-blue%20%7C%20Windows)](https://github.com/lavantien/dotfiles)
 
-Production-grade dotfiles for Windows 11 and Linux. Auto-detecting, gracefully degrading, fully vibecoding-enabled.
+Production-grade portable one-click dotfiles for Linux and Windows 11 software engineering environment.
+
+Auto-detecting, auto-bootstraping, idempotent, gracefully degrading, full terminal tooling, fully vibecoding-enabled.
 
 ---
 
 ## Core Features
-
-Tested Platforms
-- Windows 11 (PowerShell 7+)
-- Linux (Ubuntu 26.04 LTS, Fedora, Arch, openSUSE)
-
-Development Tools
-- 20 LSP servers for complete language intelligence
-- 30 Treesitter parsers for advanced syntax highlighting
-- 40+ CLI tools for modern development workflows
 
 Editor & Terminal
 - Neovim 0.12+ with built-in package manager, LSP/Treesitter config, and native completion
 - WezTerm GPU-accelerated terminal (IosevkaTerm Nerd Font)
 - Rose Pine theme across all configs
 
-AI-Native Development
+Development Tools
+- 20 LSP servers for complete language intelligence
+- 30 Treesitter parsers for advanced syntax highlighting
+- 40+ CLI tools for modern development workflows (fzf, yazi, zoxide, bat, eza, lazygit, gh, ripgrep, fd, tokei, btop, repomix, docker-compose, helm, kubectl)
+
+AI-Native Agentic Development
 - Full support for Claude Code and OpenCode
 - 4 MCP servers: context7, playwright, repomix, serena
-- Quality hooks: Git pre-commit/commit-msg + Claude Code PostToolUse and Stop hooks
+- Auto-detect & trigger format/lint/type-check: Git pre-commit/commit-msg + Claude Code PostToolUse and Stop hooks
 - System instruction sync across all repos (CLAUDE.md, AGENTS.md, GEMINI.md, RULES.md)
 
 Automation & Safety
-- Idempotent bootstrap (safe to run multiple times)
+- Idempotent bootstrap and update-all (safe to run multiple times)
 - Auto-detection with graceful degradation
 - OneDrive-aware on Windows
 - Timestamped backup/restore before major changes
+
+Tested Platforms
+- Linux (Ubuntu 26.04+)
+- Windows 11 (PowerShell 7+)
 
 ---
 
