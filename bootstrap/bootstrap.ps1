@@ -153,6 +153,33 @@ function Install-SDKs {
     # Python (always installs latest)
     Install-ScoopPackage "python" "" "python"
 
+    # uv (Python package manager - required for Serena MCP)
+    if (-not (Get-Command uv -ErrorAction SilentlyContinue)) {
+        Write-Step "Installing uv (Python package manager)..."
+        if ($DryRun) {
+            Write-Info "[DRY-RUN] Would install uv via official installer"
+            Track-Installed "uv" "Python package manager"
+        }
+        else {
+            # Windows: use PowerShell installation script
+            $output = irm https://astral.sh/uv/install.ps1 | iex 2>&1
+            if (Test-Command uv) {
+                Write-Success "uv installed via official installer"
+                Track-Installed "uv" "Python package manager"
+                # Refresh PATH for current session
+                $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
+            }
+            else {
+                Write-Warning "uv installation failed"
+                Track-Failed "uv" "Python package manager"
+            }
+        }
+    }
+    else {
+        Write-VerboseInfo "uv already installed"
+        Track-Skipped "uv" "Python package manager"
+    }
+
     # Go (always installs latest)
     if ($Script:Categories -ne "minimal") {
         if (-not (Test-Command go)) {
@@ -800,6 +827,7 @@ function Install-MCPServers {
 
     # Playwright - Browser automation and E2E testing
     Install-NpmPackageWithCheck -Package "@playwright/mcp" -DisplayName "playwright MCP server" -TrackName "playwright-mcp" -Description "browser automation"
+
 
     # Repomix - Pack repositories for full-context AI exploration
     # Note: repomix MCP mode is invoked via npx -y repomix --mcp

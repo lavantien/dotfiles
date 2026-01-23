@@ -285,6 +285,30 @@ install_sdks() {
 		install_linux_package python3 "" python3
 	fi
 
+	# uv (Python package manager - required for Serena MCP)
+	if ! cmd_exists uv; then
+		log_step "Installing uv (Python package manager)..."
+		if [[ "$DRY_RUN" == "true" ]]; then
+			log_info "[DRY-RUN] Would install uv via official installer"
+			track_installed "uv" "Python package manager"
+		else
+			# Unix: use bash installation script
+			if run_cmd "curl -LsSf https://astral.sh/uv/install.sh | sh"; then
+				log_success "uv installed via official installer"
+				track_installed "uv" "Python package manager"
+				# Add uv to PATH for current session
+				ensure_path "$HOME/.local/bin"
+				fix_path_issues
+			else
+				log_warning "uv installation failed"
+				track_failed "uv" "Python package manager"
+			fi
+		fi
+	else
+		log_info "uv already installed"
+		track_skipped "uv" "Python package manager"
+	fi
+
 	# Go (always latest)
 	if [[ "$CATEGORIES" != "minimal" ]]; then
 		if [[ "$OS" == "macos" ]]; then
@@ -969,6 +993,7 @@ install_mcp_servers() {
 	else
 		track_skipped "playwright-mcp" "browser automation"
 	fi
+
 
 	# Repomix - Pack repositories for full-context AI exploration
 	# Note: repomix MCP mode is invoked via npx -y repomix --mcp
