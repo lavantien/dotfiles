@@ -138,9 +138,9 @@ if (-not $NoSync) {
 
     $SyncScript = Join-Path $PSScriptRoot "sync-system-instructions.ps1"
     if (Test-Path $SyncScript) {
-        $Args = @("-BaseDir", $BaseDir)
-        if ($Commit) { $Args += "-Commit" }
-        & $SyncScript @Args
+        $SyncArgs = @("-BaseDir", $BaseDir)
+        if ($Commit) { $SyncArgs += "-Commit" }
+        & $SyncScript @SyncArgs
     } else {
         Wc $C.Y "Warning: Sync script not found: $SyncScript"
     }
