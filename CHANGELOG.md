@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.3.5] - 2026-01-24
+
+### Changed
+
+**README Structure and Content**
+
+- Renamed "Core Features & Selling Points" to "Core Features"
+- Clarified MCP servers work for both Claude Code and OpenCode
+- Merged bootstrap options, configuration, and health/troubleshooting into "Available Commands"
+- Removed redundant "Updating" section
+
+### Added
+
+- Manual zai-mcp-server patching instructions for Windows
+
+**Rationale:**
+
+The README structure is now more cohesive with all command-related information grouped together. The updating section was redundant since running bootstrap again accomplishes the same thing.
+
+---
+
 ## [5.3.4] - 2026-01-24
 
 ### Changed
@@ -1475,6 +1496,7 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 | Version | Date       | Major Changes                                                                                            |
 | ------- | ---------- | -------------------------------------------------------------------------------------------------------- |
+| 5.3.5   | 2026-01-24 | README refinements, merged sections, added zai MCP patching                                             |
 | 5.3.4   | 2026-01-24 | Documentation consolidation, README 70% reduction, single-file focus                                    |
 | 5.3.3   | 2026-01-24 | Yazi terminal file manager with cd-on-exit, MCP fix documentation                                      |
 | 5.3.2   | 2026-01-24 | Windows LSP marketplace auto-patching, automated cmd.exe wrapper for npm-installed LSPs           |
@@ -1532,7 +1554,8 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 ---
 
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.3.4...HEAD
+[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.3.5...HEAD
+[5.3.5]: https://github.com/lavantien/dotfiles/compare/v5.3.4...v5.3.5
 [5.3.4]: https://github.com/lavantien/dotfiles/compare/v5.3.3...v5.3.4
 [5.3.3]: https://github.com/lavantien/dotfiles/compare/v5.3.2...v5.3.3
 [5.3.2]: https://github.com/lavantien/dotfiles/compare/v5.3.1...v5.3.2
