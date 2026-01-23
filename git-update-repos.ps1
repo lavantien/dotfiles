@@ -20,7 +20,7 @@ $C = @{
     N  = "`e[0m"
 }
 
-function Wc { param($c, $t); Write-Host "$($c)$t$($C.N)" }
+function Wc { param($c, $t); Write-Host "$($c)$t$($script:C.N)" }
 
 # Check for GitHub CLI
 $ghCmd = Get-Command gh -ErrorAction SilentlyContinue
