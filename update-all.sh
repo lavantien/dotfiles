@@ -798,6 +798,16 @@ _main() {
 	fi
 
 	# ============================================================================
+	# UV (Python package manager)
+	# ============================================================================
+	if cmd_exists uv; then
+		update_section "UV (Python package manager)"
+		update_and_report "uv self update" "uv"
+	else
+		update_skip "uv not found"
+	fi
+
+	# ============================================================================
 	# COMPOSER (PHP packages)
 	# ============================================================================
 	if cmd_exists composer; then

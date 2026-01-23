@@ -440,6 +440,26 @@ function Main {
     }
 
     # ============================================================================
+    # UV (Python package manager)
+    # ============================================================================
+    Write-Step "UV"
+    if (Test-Command uv) {
+        try {
+            uv self update
+            Write-Success "uv"
+            $script:updated++
+        }
+        catch {
+            Write-Fail "uv"
+            $script:failed++
+        }
+    }
+    else {
+        Write-Skip "uv not found"
+        $script:skipped++
+    }
+
+    # ============================================================================
     # CLAUDE CODE CLI
     # ============================================================================
     Write-Step "CLAUDE CODE CLI"
