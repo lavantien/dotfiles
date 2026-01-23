@@ -997,17 +997,20 @@ function Install-DevelopmentTools {
         Track-Skipped "latex" "document preparation"
     }
 
-    # Claude Code CLI (via official PowerShell installer)
-    # First, clean up any old npm shims that might shadow the official binary
+    # Claude Code CLI (via bun on Windows - npm is deprecated, native installer has bugs)
+    # First, clean up any old npm or native installer shims
     $npmBin = Join-Path $env:APPDATA "npm"
+    $localBin = Join-Path $env:USERPROFILE ".local\bin"
     $oldShims = @("claude", "claude.cmd", "claude.ps1") | ForEach-Object {
         $filePath = Join-Path $npmBin $_
         if (Test-Path $filePath) { $filePath }
+        $filePath2 = Join-Path $localBin $_
+        if (Test-Path $filePath2) { $filePath2 }
     }
 
     if ($oldShims) {
         foreach ($shim in $oldShims) {
-            Write-Info "Removing old npm shim: $(Split-Path $shim -Leaf)"
+            Write-Info "Removing old shim: $(Split-Path $shim -Leaf)"
             Remove-Item $shim -Force -ErrorAction SilentlyContinue
         }
     }
@@ -1050,40 +1053,50 @@ function Install-DevelopmentTools {
     if ($needsInstall) {
         Write-Step "Installing Claude Code CLI..."
         if (-not $DryRun) {
-            # Prepare ~/.local/bin location and ensure it's in PATH
-            $localBin = Join-Path $env:USERPROFILE ".local\bin"
-            if (-not (Test-Path $localBin)) {
-                New-Item -ItemType Directory -Path $localBin -Force | Out-Null
-            }
-            Add-ToPath -Path $localBin -User
+            # Use bun on Windows (npm is deprecated, native installer has self-deletion bug)
+            if (Test-Command bun) {
+                # Remove old npm package if present
+                bun pm rm -g @anthropic-ai/claude-code 2>$null
 
-            # Run official installer script
-            $scriptContent = Invoke-RestMethod -Uri "https://claude.ai/install.ps1" -UseBasicParsing
-            $scriptBlock = [ScriptBlock]::Create($scriptContent)
-            & $scriptBlock
+                # Install via bun
+                bun add -g @anthropic-ai/claude-code
 
-            # Refresh PATH to pick up the newly installed claude command
-            Refresh-Path
+                # Add bun global bin to PATH
+                $bunBin = bun pm bin -g 2>$null
+                if ($bunBin) {
+                    Add-ToPath -Path $bunBin -User
+                    Refresh-Path
+                }
 
-            if (Test-Command claude) {
-                Write-Success "Claude Code CLI installed"
-                Track-Installed "claude-code" "AI CLI"
+                if (Test-Command claude) {
+                    Write-Success "Claude Code CLI installed via bun"
+                    Track-Installed "claude-code" "AI CLI"
+                }
+                else {
+                    Write-Warning "Claude Code CLI installed but not in PATH yet"
+                    Track-Installed "claude-code" "AI CLI - PATH update pending"
+                }
             }
             else {
-                Write-Warning "Claude Code CLI installed but not in PATH yet"
-                Track-Installed "claude-code" "AI CLI - PATH update pending"
+                Write-Warning "bun not found, required for Claude Code installation on Windows"
+                Write-Info "Install bun first: scoop install bun"
+                Track-Failed "claude-code" "AI CLI - bun required"
             }
         }
         else {
-            Write-Info "[DRY-RUN] Would install Claude Code CLI"
+            Write-Info "[DRY-RUN] Would install Claude Code CLI via bun"
         }
     }
     else {
         $versionInfo = if ($currentVersion) { " ($currentVersion)" } else { "" }
         Write-Info "Claude Code CLI already at latest version$versionInfo"
-        # Ensure PATH is set even when skipping install
-        $localBin = Join-Path $env:USERPROFILE ".local\bin"
-        Add-ToPath -Path $localBin -User
+        # Ensure bun global bin is in PATH even when skipping install
+        if (Test-Command bun) {
+            $bunBin = bun pm bin -g 2>$null
+            if ($bunBin) {
+                Add-ToPath -Path $bunBin -User
+            }
+        }
         Track-Skipped "claude-code" "AI CLI"
     }
 

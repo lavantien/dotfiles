@@ -276,7 +276,7 @@ function Main {
     Write-Step "GUP (Go global packages)"
     if (Test-Command gup) {
         try {
-            gup update -a
+            gup update
             Write-Success "gup"
             $script:updated++
         }
@@ -460,22 +460,38 @@ function Main {
                 $script:skipped++
             }
             else {
-                # Run the official installer
-                $output = Invoke-Expression "irm https://claude.ai/install.ps1 | iex" 2>&1
+                # On Windows, use bun (npm is deprecated, native installer has bugs)
+                if (Test-Command bun) {
+                    # Remove old npm package if present
+                    bun pm rm -g @anthropic-ai/claude-code 2>$null
 
-                # Get version after update
-                $versionAfter = claude --version 2>&1 | Select-String -Pattern '\d+\.\d+\.\d+' | Select-Object -First 1
-                if ($versionAfter) {
-                    $versionAfter = $versionAfter.Matches.Value
-                }
+                    # Install via bun
+                    bun add -g @anthropic-ai/claude-code
 
-                if ($versionBefore -ne $versionAfter -and $versionAfter) {
-                    Write-Success "claude-code ($versionBefore -> $versionAfter)"
-                    $script:updated++
+                    # Add bun global bin to PATH
+                    $bunBin = bun pm bin -g 2>$null
+                    if ($bunBin) {
+                        Add-ToPath -Path $bunBin -User
+                    }
+
+                    # Get version after update
+                    $versionAfter = claude --version 2>&1 | Select-String -Pattern '\d+\.\d+\.\d+' | Select-Object -First 1
+                    if ($versionAfter) {
+                        $versionAfter = $versionAfter.Matches.Value
+                    }
+
+                    if ($versionBefore -ne $versionAfter -and $versionAfter) {
+                        Write-Success "claude-code ($versionBefore -> $versionAfter)"
+                        $script:updated++
+                    }
+                    else {
+                        Write-Skip "claude-code already up to date"
+                        $script:updated++
+                    }
                 }
                 else {
-                    Write-Skip "claude-code already up to date"
-                    $script:updated++
+                    Write-Skip "bun not found, required for Claude Code updates on Windows"
+                    $script:skipped++
                 }
             }
         }
@@ -514,20 +530,38 @@ function Main {
             else {
                 # Run the official installer via bash (curl method)
                 $output = bash -c "curl -fsSL https://opencode.ai/install | bash" 2>&1
+                $installerExitCode = $LASTEXITCODE
 
-                # Get version after update
-                $versionAfter = & $opencodeExe --version 2>&1 | Select-String -Pattern '\d+\.\d+\.\d+' | Select-Object -First 1
-                if ($versionAfter) {
-                    $versionAfter = $versionAfter.Matches.Value
-                }
+                # If installer succeeded, try to get version after update
+                # Note: After update, the binary might be replaced, so we need to re-find it
+                if ($installerExitCode -eq 0) {
+                    $versionAfter = & $opencodeExe --version 2>&1 | Select-String -Pattern '\d+\.\d+\.\d+' | Select-Object -First 1
+                    if ($versionAfter) {
+                        $versionAfter = $versionAfter.Matches.Value
+                    }
 
-                if ($versionBefore -ne $versionAfter -and $versionAfter) {
-                    Write-Success "opencode ($versionBefore -> $versionAfter)"
-                    $script:updated++
+                    if ($versionBefore -ne $versionAfter -and $versionAfter) {
+                        Write-Success "opencode ($versionBefore -> $versionAfter)"
+                        $script:updated++
+                    }
+                    elseif ($versionAfter) {
+                        Write-Skip "opencode already up to date ($versionAfter)"
+                        $script:updated++
+                    }
+                    else {
+                        # Installer succeeded but version detection failed
+                        # This is likely OK - the binary was probably updated
+                        if ($versionBefore) {
+                            Write-Success "opencode (updated from $versionBefore, version detection unclear)"
+                        } else {
+                            Write-Success "opencode (installer completed successfully)"
+                        }
+                        $script:updated++
+                    }
                 }
                 else {
-                    Write-Skip "opencode already up to date"
-                    $script:updated++
+                    Write-Fail "opencode (installer failed with exit code $installerExitCode)"
+                    $script:failed++
                 }
             }
         }

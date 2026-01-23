@@ -719,7 +719,7 @@ _main() {
 	# ============================================================================
 	if cmd_exists gup; then
 		update_section "GUP (Go global packages)"
-		update_and_report "gup update -a" "gup"
+		update_and_report "gup update" "gup"
 	else
 		update_skip "gup not found"
 	fi
@@ -824,11 +824,15 @@ _main() {
 		update_section "CLAUDE CODE CLI"
 
 		if is_windows; then
-			# Use PowerShell installer on Windows (prefer pwsh/PowerShell 7+)
-			local pwsh
-			pwsh=$(get_pwsh)
-			local install_cmd="$pwsh -NoProfile -Command \"irm https://claude.ai/install.ps1 | iex\""
-			install_and_verify_version "$install_cmd" "claude-code" "claude --version" "@anthropic-ai/claude-code"
+			# Use bun on Windows (npm is deprecated, native installer has bugs)
+			if cmd_exists bun; then
+				# Remove old npm package if present, then install/update via bun
+				bun pm rm -g @anthropic-ai/claude-code 2>/dev/null || true
+				bun add -g @anthropic-ai/claude-code
+				update_success "claude-code (updated via bun)"
+			else
+				update_skip "bun not found, required for Claude Code updates on Windows"
+			fi
 		else
 			# Use bash script on Unix-like systems
 			install_and_verify_version "curl -fsSL https://claude.ai/install.sh | bash" "claude-code" "claude --version" "@anthropic-ai/claude-code"
