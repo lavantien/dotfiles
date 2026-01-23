@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.3.1] - 2026-01-23
+
+### Fixed
+
+- git-update-repos.ps1: Fixed scope shadowing bug in Wc function where parameter $c shadowed script-scoped $C hashtable, now uses $script:C.N for explicit script scope access
+
 ## [5.3.0] - 2026-01-23
 
 ### Added
@@ -1394,7 +1400,8 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 ---
 
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.3.0...HEAD
+[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.3.1...HEAD
+[5.3.1]: https://github.com/lavantien/dotfiles/compare/v5.3.0...v5.3.1
 [5.3.0]: https://github.com/lavantien/dotfiles/compare/v5.2.27...v5.3.0
 [5.2.27]: https://github.com/lavantien/dotfiles/compare/v5.2.26...v5.2.27
 [5.2.26]: https://github.com/lavantien/dotfiles/compare/v5.2.25...v5.2.26
