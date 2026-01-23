@@ -85,6 +85,7 @@ Complete breakdown of all tools installed by the bootstrap script, organized by 
 | Tool | Purpose |
 |------|---------|
 | fzf | Fuzzy finder |
+| yazi | Terminal file manager |
 | zoxide | Smart cd navigation |
 | bat | Better cat |
 | eza | Better ls |

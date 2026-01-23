@@ -755,6 +755,21 @@ Note: `lua-language-server` (installed via Scoop) uses an executable shim and do
 
 This fixes the `spawn EINVAL` errors that occur when Claude Code tries to start these LSP servers.
 
+**MCP Server Fix for Windows (Manual)**
+
+On Windows, MCP servers that use `npx` (like `zai-mcp-server`) also need the `cmd.exe /c` wrapper in `~/.claude.json`:
+
+```json
+"mcpServers": {
+  "zai-mcp-server": {
+    "command": "cmd.exe",
+    "args": ["/c", "npx", "-y", "@z_ai/mcp-server"]
+  }
+}
+```
+
+This fixes the "Windows requires 'cmd /c' wrapper to execute npx" warning in MCP diagnostics.
+
 **StatusLine (Auto-Registered)**
 
 Custom statusline displaying: `user@hostname directory [branch] [context%] [style] [vim-mode] model`

@@ -389,6 +389,20 @@ cli_tools:
       linux_opensuse: sudo zypper install -y lazygit
       windows: scoop install lazygit
 
+  - name: yazi
+    display_name: Yazi
+    platforms: [all]
+    check_cmd: yazi
+    version_flag: --version
+    min_version: "0.3.0"
+    install:
+      macos: brew install yazi
+      linux_debian: cargo install yazi-cli
+      linux_fedora: cargo install yazi-cli
+      linux_arch: sudo pacman -S --noconfirm yazi
+      linux_opensuse: cargo install yazi-cli
+      windows: scoop install yazi
+
   - name: gh
     display_name: GitHub CLI
     platforms: [all]
@@ -472,3 +486,69 @@ cli_tools:
       linux_arch: sudo pacman -S --noconfirm bats
       linux_opensuse: sudo zypper install -y bats
       windows: npm install -g bats
+
+  - name: ffmpeg
+    display_name: FFmpeg
+    platforms: [all]
+    check_cmd: ffmpeg
+    version_flag: -version
+    install:
+      macos: brew install ffmpeg
+      linux_debian: sudo apt install -y ffmpeg
+      linux_fedora: sudo dnf install -y ffmpeg
+      linux_arch: sudo pacman -S --noconfirm ffmpeg
+      linux_opensuse: sudo zypper install -y ffmpeg
+      windows: scoop install ffmpeg
+
+  - name: jq
+    display_name: jq JSON processor
+    platforms: [all]
+    check_cmd: jq
+    version_flag: --version
+    install:
+      macos: brew install jq
+      linux_debian: sudo apt install -y jq
+      linux_fedora: sudo dnf install -y jq
+      linux_arch: sudo pacman -S --noconfirm jq
+      linux_opensuse: sudo zypper install -y jq
+      windows: scoop install jq
+
+  - name: poppler
+    display_name: Poppler (PDF utils)
+    platforms: [all]
+    check_cmd: pdftotext
+    version_flag: -v
+    install:
+      macos: brew install poppler
+      linux_debian: sudo apt install -y poppler-utils
+      linux_fedora: sudo dnf install -y poppler-utils
+      linux_arch: sudo pacman -S --noconfirm poppler
+      linux_opensuse: sudo zypper install -y poppler-tools
+      windows: scoop install poppler
+
+  - name: imagemagick
+    display_name: ImageMagick
+    platforms: [all]
+    check_cmd: magick
+    version_flag: -version
+    alt_check_cmd: convert
+    install:
+      macos: brew install imagemagick
+      linux_debian: sudo apt install -y imagemagick
+      linux_fedora: sudo dnf install -y imagemagick
+      linux_arch: sudo pacman -S --noconfirm imagemagick
+      linux_opensuse: sudo zypper install -y imagemagick
+      windows: scoop install imagemagick
+
+  - name: sevenzip
+    display_name: 7-Zip
+    platforms: [all]
+    check_cmd: 7z
+    version_flag: -h
+    install:
+      macos: brew install p7zip
+      linux_debian: sudo apt install -y p7zip-full
+      linux_fedora: sudo dnf install -y p7zip
+      linux_arch: sudo pacman -S --noconfirm p7zip
+      linux_opensuse: sudo zypper install -y 7zip
+      windows: scoop install 7zip

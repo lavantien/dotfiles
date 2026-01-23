@@ -115,3 +115,14 @@ else
     alias up="~/dev/update-all.sh"
     alias update="~/dev/update-all.sh"
 fi
+
+# yazi - terminal file manager with cd on exit
+if command -v yazi >/dev/null 2>&1; then
+    y() {
+        local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+        command yazi "$@" --cwd-file="$tmp"
+        IFS= read -r -d '' cwd < "$tmp"
+        [ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd"
+        rm -f -- "$tmp"
+    }
+fi

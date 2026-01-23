@@ -285,9 +285,31 @@ if (Test-Path "$env:USERPROFILE\.cargo\bin") {
     $env:PATH += ";$env:USERPROFILE\.cargo\bin"
 }
 
+# Yazi terminal file manager - needs Git's file command for preview
+$gitFile = Join-Path $env:ProgramFiles "Git\usr\bin\file.exe"
+if (Test-Path $gitFile) {
+    $env:YAZI_FILE_ONE = $gitFile
+}
+# Fallback for Scoop-installed Git
+$scoopGitFile = Join-Path $env:USERPROFILE "scoop\apps\git\current\usr\bin\file.exe"
+if (Test-Path $scoopGitFile) {
+    $env:YAZI_FILE_ONE = $scoopGitFile
+}
+
 # ============================================================================
 # HELPER FUNCTIONS
 # ============================================================================
+
+# yazi - terminal file manager with cd on exit
+function y {
+    $tmp = (New-TemporaryFile).FullName
+    yazi.exe $args --cwd-file="$tmp"
+    $cwd = Get-Content -Path $tmp -Encoding UTF8
+    if ($cwd -ne $PWD.Path -and (Test-Path -LiteralPath $cwd -PathType Container)) {
+        Set-Location -LiteralPath (Resolve-Path -LiteralPath $cwd).Path
+    }
+    Remove-Item -Path $tmp
+}
 
 # Edit profile
 function Edit-Profile {

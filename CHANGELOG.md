@@ -7,6 +7,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.3.3] - 2026-01-24
+
+### Added
+
+**Yazi Terminal File Manager**
+
+- Added yazi package installation to bootstrap/config/packages.yaml for all platforms
+- Linux Debian/Ubuntu: installs via cargo (yazi-cli)
+- Linux Arch: installs via pacman
+- macOS: installs via Homebrew
+- Windows: installs via Scoop
+- Minimum version requirement: 0.3.0
+
+**Shell Integration**
+
+- Added `y()` wrapper function to .bash_aliases for bash/Git Bash
+- Added `y()` wrapper function to .zshrc for zsh
+- Added `y()` function to Microsoft.PowerShell_profile.ps1 for PowerShell 7+
+- All wrappers implement cd-on-exit pattern: changes to the last directory visited in yazi
+- Uses temp file to capture yazi's exit directory for seamless navigation
+
+**PowerShell Yazi Configuration**
+
+- Added YAZI_FILE_ONE environment variable setup for file previews
+- Detects Git's file.exe from both Program Files and Scoop installations
+- Enables proper file type detection in yazi previews on Windows
+
+### Changed
+
+**Documentation**
+
+- Added MCP Server Fix for Windows (Manual) section to README.md
+- Documents cmd.exe /c wrapper pattern for npx-based MCP servers
+- Example configuration for zai-mcp-server
+- Updated TOOLS.md to include yazi in CLI tools list
+
+**Rationale:**
+
+Yazi is a modern, blazing-fast terminal file manager written in Rust. It offers asynchronous file operations, thumbnail rendering, and extensive customization. The cd-on-exit wrapper makes it a drop-in replacement for `ranger` with better performance.
+
+---
+
 ## [5.3.2] - 2026-01-24
 
 ### Added
@@ -1382,6 +1424,7 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 | Version | Date       | Major Changes                                                                                            |
 | ------- | ---------- | -------------------------------------------------------------------------------------------------------- |
+| 5.3.3   | 2026-01-24 | Yazi terminal file manager with cd-on-exit, MCP fix documentation                                      |
 | 5.3.2   | 2026-01-24 | Windows LSP marketplace auto-patching, automated cmd.exe wrapper for npm-installed LSPs           |
 | 5.3.1   | 2026-01-23 | git-update-repos.ps1 scope shadowing fix                                                          |
 | 5.3.0   | 2026-01-23 | Serena MCP integration via uvx, uv package manager, scalar handling fix, CLAUDE.md XML tags              |
@@ -1437,7 +1480,8 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 ---
 
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.3.2...HEAD
+[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.3.3...HEAD
+[5.3.3]: https://github.com/lavantien/dotfiles/compare/v5.3.2...v5.3.3
 [5.3.2]: https://github.com/lavantien/dotfiles/compare/v5.3.1...v5.3.2
 [5.3.1]: https://github.com/lavantien/dotfiles/compare/v5.3.0...v5.3.1
 [5.3.0]: https://github.com/lavantien/dotfiles/compare/v5.2.27...v5.3.0
