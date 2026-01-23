@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.3.7] - 2026-01-24
+
+### Changed
+
+**README - Core Features Corrections**
+
+- Corrected LSP count from 19 to 20
+- Changed "Cross-Platform Support" to "Tested Platforms"
+- Removed macOS from tested platforms list
+- Updated Claude Code hooks to mention PostToolUse and Stop hooks
+- Updated Neovim description to 0.12+ with native built-in features
+- Changed Core Features to use plain lists without bold headers
+- Updated platform badge to Windows/Linux only
+
+**Rationale:**
+
+The README now accurately reflects the actual implementation. Neovim 0.12+ uses built-in package manager and LSP/Treesitter configuration, not lazy.nvim. macOS support exists in the codebase but is not part of the actively tested platforms.
+
+---
+
 ## [5.3.6] - 2026-01-24
 
 ### Changed
@@ -1519,6 +1539,7 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 | Version | Date       | Major Changes                                                                                            |
 | ------- | ---------- | -------------------------------------------------------------------------------------------------------- |
+| 5.3.7   | 2026-01-24 | README corrections: LSP count 20, tested platforms, Neovim 0.12+ native, Stop hooks                    |
 | 5.3.6   | 2026-01-24 | Core Features enhancement, corrected counts, added Neovim/WezTerm details                                 |
 | 5.3.5   | 2026-01-24 | README refinements, merged sections, added zai MCP patching                                             |
 | 5.3.4   | 2026-01-24 | Documentation consolidation, README 70% reduction, single-file focus                                    |
@@ -1578,7 +1599,8 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 ---
 
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.3.6...HEAD
+[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.3.7...HEAD
+[5.3.7]: https://github.com/lavantien/dotfiles/compare/v5.3.6...v5.3.7
 [5.3.6]: https://github.com/lavantien/dotfiles/compare/v5.3.5...v5.3.6
 [5.3.5]: https://github.com/lavantien/dotfiles/compare/v5.3.4...v5.3.5
 [5.3.4]: https://github.com/lavantien/dotfiles/compare/v5.3.3...v5.3.4
