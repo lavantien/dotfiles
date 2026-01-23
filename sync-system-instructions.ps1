@@ -18,7 +18,7 @@ $C = @{
     N  = "`e[0m"      # No Color
 }
 
-function Wc { param($c, $t); Write-Host "$($c)$t$($C.N)" }
+function Wc { param($c, $t); Write-Host "$($c)$t$($script:C.N)" }
 
 # Markdown files to sync
 $MdFiles = @(
