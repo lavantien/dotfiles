@@ -3,7 +3,43 @@
 [![Security](https://img.shields.io/badge/security-reviewed-brightgreen)](#security) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)](https://github.com/lavantien/dotfiles)
 
-Production-grade dotfiles for Windows 11, Linux (Ubuntu/Fedora/Arch), and macOS. Auto-detecting, gracefully degrading, fully vibecoding-enabled with 19 LSP servers, 32 Treesitter parsers, 40+ tools, TDD enforcement, comprehensive Git hooks, and Claude Code integration.
+Production-grade dotfiles for Windows 11, Linux (Ubuntu/Fedora/Arch), and macOS. Auto-detecting, gracefully degrading, fully vibecoding-enabled.
+
+---
+
+## Core Features
+
+**Cross-Platform Support**
+
+- Windows 11 (PowerShell 7+)
+- Linux (Ubuntu 26.04 LTS, Fedora, Arch, openSUSE)
+- macOS (Intel and Apple Silicon)
+
+**Development Tools**
+
+- 19 LSP servers for complete language intelligence
+- 30 Treesitter parsers for advanced syntax highlighting
+- 40+ CLI tools for modern development workflows
+
+**Editor & Terminal**
+
+- Neovim 0.12 with lazy.nvim plugin manager
+- WezTerm GPU-accelerated terminal (IosevkaTerm Nerd Font)
+- Rose Pine theme across all configs
+
+**AI-Native Development**
+
+- Full support for Claude Code and OpenCode
+- 4 MCP servers: context7, playwright, repomix, serena
+- Quality hooks: Git pre-commit/commit-msg + Claude Code PostToolUse
+- System instruction sync across all repos (CLAUDE.md, AGENTS.md, GEMINI.md, RULES.md)
+
+**Automation & Safety**
+
+- Idempotent bootstrap (safe to run multiple times)
+- Auto-detection with graceful degradation
+- OneDrive-aware on Windows
+- Timestamped backup/restore before major changes
 
 ---
 
@@ -126,16 +162,6 @@ vim ~/.dotfiles.config.yaml
 
 ---
 
-## Core Features
-
-- Cross-platform: Windows 11, Linux (Ubuntu/Fedora/Arch), macOS
-- 19 LSP servers, 32+ Treesitter parsers
-- Auto-detection, graceful degradation, idempotent
-- OneDrive-aware on Windows
-- Quality assurance: Git hooks + Claude Code hooks
-
----
-
 ## Complete Tools/Packages Matrix
 
 | Language | LSP | Tester | Formatter | Linter | Type Check |
@@ -157,7 +183,7 @@ vim ~/.dotfiles.config.yaml
 | Lua | lua_ls | busted | stylua | selene | - |
 | Typst | tinymist | built-in | tinymist | tinymist | - |
 | Dockerfile | docker_ls | - | - | hadolint | - |
-| Docker Compose | docker-compose-language-server | - | prettier | - | - |
+| Docker Compose | docker_ls | - | prettier | - | - |
 | Helm | helm_ls | - | prettier | - | - |
 | Kubernetes YAML | yamlls | kubectl | prettier | yamllint | - |
 | YAML | yamlls | - | prettier | yamllint | - |
