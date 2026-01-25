@@ -877,7 +877,7 @@ install_npm_global() {
 			return 1
 		fi
 	else
-		log_verbose_info "$package already at latest version"
+		log_info "$package already at latest version"
 		track_skipped "$cmd_name" "$(get_package_description "$cmd_name")"
 		return 0
 	fi
