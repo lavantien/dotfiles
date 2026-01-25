@@ -7,3 +7,5 @@ lazy-lock.json
 nul
 .claude/settings.local.json
 .claude/*.local.md
+coverage
+coverage-bash.json
