@@ -7,6 +7,7 @@
 #   - language_servers: LSP servers for editors
 #   - linters_formatters: Code quality tools
 #   - cli_tools: Command-line utilities
+#   - gui_apps: GUI applications (platform-specific)
 #
 # Each tool defines:
 #   - name: Internal identifier
@@ -552,3 +553,19 @@ cli_tools:
       linux_arch: sudo pacman -S --noconfirm p7zip
       linux_opensuse: sudo zypper install -y 7zip
       windows: scoop install 7zip
+
+  - name: mermaid_cli
+    display_name: Mermaid CLI
+    platforms: [all]
+    check_cmd: mmdc
+    version_flag: --version
+    install_method: npm_global
+    install_package: -g @mermaid-js/mermaid-cli
+
+gui_apps:
+  - name: comfyui
+    display_name: ComfyUI Desktop
+    platforms: [windows]
+    check_cmd: ComfyUI
+    install:
+      windows: winget install --id Comfy.ComfyUI-Desktop --accept-source-agreements --accept-package-agreements

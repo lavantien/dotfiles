@@ -511,6 +511,18 @@ function Install-LintersFormatters {
         }
     }
 
+    # mermaid-cli (diagram generation via npm - always available)
+    if (Test-Command npm) {
+        if (Test-Command mmdc) {
+            Write-Step "Checking mermaid-cli..."
+            Write-Success "mmdc (up to date)"
+            Track-Skipped "mmdc" "Mermaid diagram generator"
+        }
+        else {
+            Install-NpmGlobal "@mermaid-js/mermaid-cli" "mmdc" ""
+        }
+    }
+
     # Ruff (via pip - always latest)
     if (Test-Command python) {
         if (Test-Command ruff) {
@@ -1235,6 +1247,32 @@ function Install-DevelopmentTools {
     }
     else {
         # Already checked and skipped above
+    }
+
+    # ComfyUI Desktop (AI image generation via winget - Windows only)
+    if ($Script:Categories -eq "full") {
+        if (Get-Command winget -ErrorAction SilentlyContinue) {
+            $wingetList = winget list --id Comfy.ComfyUI-Desktop 2>&1
+            if ($LASTEXITCODE -eq 0 -and $wingetList -match "ComfyUI") {
+                Write-Step "Checking ComfyUI Desktop..."
+                Write-Success "ComfyUI (up to date)"
+                Track-Skipped "ComfyUI" "AI image generation"
+            }
+            else {
+                Write-Step "Installing ComfyUI Desktop via winget..."
+                if (-not $DryRun) {
+                    winget install --id Comfy.ComfyUI-Desktop --accept-source-agreements --accept-package-agreements *> $null
+                    Track-Installed "ComfyUI" "AI image generation"
+                }
+                else {
+                    Write-Info "[DRY-RUN] Would install ComfyUI Desktop via winget"
+                    Track-Installed "ComfyUI" "AI image generation"
+                }
+            }
+        }
+        else {
+            Write-VerboseInfo "winget not available, skipping ComfyUI Desktop"
+        }
     }
 
     Write-Success "Development tools installation complete"

@@ -522,6 +522,11 @@ install_linters_formatters() {
 		install_npm_global "repomix" "repomix" ""
 	fi
 
+	# mermaid-cli (diagram generation via npm - always available)
+	if cmd_exists npm; then
+		install_npm_global "@mermaid-js/mermaid-cli" "mmdc" ""
+	fi
+
 	# Ruff (via pip - always latest)
 	if cmd_exists python3 || cmd_exists python; then
 		install_pip_global "ruff" ruff ""
@@ -1212,6 +1217,13 @@ install_development_tools() {
 
 	# OpenCode AI CLI (via official installer)
 	# Version-aware check: binary existence + npm registry version comparison
+
+	# ComfyUI on Linux requires manual installation
+	# See: https://docs.comfy.org/getting_started/installing_comfyui/linux
+	if [[ "$OS" == "linux" ]] && [[ "$CATEGORIES" == "full" ]]; then
+		log_info "ComfyUI Desktop on Linux requires manual installation"
+		log_info "See: https://docs.comfy.org/getting_started/installing_comfyui/linux"
+	fi
 
 	# First, clean up any old npm shims that might shadow the official binary
 	# This prevents confusion where `opencode --version` returns old version

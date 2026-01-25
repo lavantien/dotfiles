@@ -147,6 +147,8 @@ function Get-PackageDescription {
         "latex" { return "document preparation" }
         "claude-code" { return "AI CLI" }
         "opencode" { return "AI CLI" }
+        "ComfyUI" { return "AI image generation" }
+        "mmdc" { return "Mermaid diagram generator" }
 
         default { return $Package }
     }
