@@ -193,6 +193,14 @@ fzf, yazi, zoxide, bat, eza, lazygit, gh, ripgrep, fd, tokei, btop, repomix, doc
 
 context7, playwright, repomix, serena
 
+### Diagram Generation
+
+mermaid-cli (mmdc) - Generate Mermaid diagrams from command line
+
+### AI Applications (Windows)
+
+ComfyUI Desktop - AI image generation (requires `comfy install` after bootstrap)
+
 ---
 
 ## Hooks & Config Merging
@@ -234,6 +242,16 @@ On Windows, MCP servers that use `npx` (like `zai-mcp-server`) also need the `cm
 ```
 
 This fixes the "Windows requires 'cmd /c' wrapper to execute npx" warning in MCP diagnostics.
+
+### GUI Applications Post-Installation
+
+**ComfyUI Desktop (Windows)**: After bootstrap via winget, run `comfy install` to complete setup:
+
+```powershell
+comfy install
+```
+
+This installs required models and dependencies for AI image generation.
 
 ---
 

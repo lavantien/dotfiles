@@ -7,6 +7,63 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.3.8] - 2026-01-25
+
+### Added
+
+**mermaid-cli - Diagram Generation Tool**
+
+- Added mermaid-cli installation to all platforms (Windows, Linux, macOS)
+- Package: `@mermaid-js/mermaid-cli` installed via npm global
+- Command: `mmdc` for generating Mermaid diagrams from CLI
+- Cross-platform support: works on all tested platforms
+- Installation in Phase 4 (Linters & Formatters) of bootstrap
+
+**ComfyUI Desktop - AI Image Generation (Windows)**
+
+- Added ComfyUI Desktop installation via winget for Windows 11
+- Package ID: `Comfy.ComfyUI-Desktop` installed via winget
+- Installation in Phase 5.5 (Development Tools) of bootstrap
+- New `gui_apps` category in packages.yaml for GUI applications
+- Requires `comfy install` post-installation to complete setup
+
+**Documentation**
+
+- Added mermaid-cli to README CLI tools section
+- Added ComfyUI Desktop to README AI Applications section
+- Added GUI Applications Post-Installation subsection with comfy install instructions
+- Updated packages.yaml header to document gui_apps category
+- Updated CLI tools count with mermaid-cli
+
+### Changed
+
+**packages.yaml**
+
+- Added `gui_apps` category for platform-specific GUI applications
+- Added mermaid_cli entry to cli_tools section
+- Documentation header updated to reflect new category
+
+**bootstrap.ps1 (Windows)**
+
+- Added mermaid-cli installation in Phase 4 (Linters & Formatters)
+- Added ComfyUI Desktop installation in Phase 5.5 (Development Tools)
+- Both tools respect -DryRun parameter
+
+**bootstrap.sh (Linux/macOS)**
+
+- Added mermaid-cli installation for Unix-like systems
+- Added documentation note about ComfyUI requiring manual installation on Linux
+
+**windows.ps1**
+
+- Added package descriptions for `mmdc` and `ComfyUI`
+
+**Rationale:**
+
+mermaid-cli is a cross-platform CLI tool for generating Mermaid diagrams (flowcharts, sequence diagrams, etc.). ComfyUI Desktop is a Windows-only GUI application for AI image generation. The bootstrap script handles the initial installation, but ComfyUI requires running `comfy install` afterward to download models and complete setup.
+
+---
+
 ## [5.3.7] - 2026-01-24
 
 ### Changed
@@ -1539,6 +1596,7 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 | Version | Date       | Major Changes                                                                                            |
 | ------- | ---------- | -------------------------------------------------------------------------------------------------------- |
+| 5.3.8   | 2026-01-25 | mermaid-cli diagram generation, ComfyUI Desktop AI image gen, gui_apps category, comfy install note          |
 | 5.3.7   | 2026-01-24 | README corrections: LSP count 20, tested platforms, Neovim 0.12+ native, Stop hooks                    |
 | 5.3.6   | 2026-01-24 | Core Features enhancement, corrected counts, added Neovim/WezTerm details                                 |
 | 5.3.5   | 2026-01-24 | README refinements, merged sections, added zai MCP patching                                             |
@@ -1599,7 +1657,8 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 ---
 
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.3.7...HEAD
+[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.3.8...HEAD
+[5.3.8]: https://github.com/lavantien/dotfiles/compare/v5.3.7...v5.3.8
 [5.3.7]: https://github.com/lavantien/dotfiles/compare/v5.3.6...v5.3.7
 [5.3.6]: https://github.com/lavantien/dotfiles/compare/v5.3.5...v5.3.6
 [5.3.5]: https://github.com/lavantien/dotfiles/compare/v5.3.4...v5.3.5
