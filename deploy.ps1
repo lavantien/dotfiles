@@ -107,14 +107,17 @@ Copy-Files @(
     "update-all.ps1"
 ) $DevDir
 
-# Make shell scripts executable
+# Make shell scripts executable (only if running in WSL/Git Bash context)
 $shFiles = @(
     "$DevDir/git-update-repos.sh",
     "$DevDir/sync-system-instructions.sh"
 )
-foreach ($f in $shFiles) {
-    if (Test-Path $f) {
-        chmod +x $f
+$chmodCmd = Get-Command chmod -ErrorAction SilentlyContinue
+if ($chmodCmd -and $chmodCmd.Source -notmatch "scoop") {
+    foreach ($f in $shFiles) {
+        if (Test-Path $f) {
+            chmod +x $f 2>$null
+        }
     }
 }
 
