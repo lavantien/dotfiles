@@ -118,6 +118,8 @@ Before writing any code, always verify current best practices. Never rely on tra
 
 <tool-usage>
 
+Prefer native built-in tools first (Read, Write, Edit, Glob, Grep, Bash, LSP, Task, etc.) before invoking plugin-provided tools. Only use plugin tools when native tools lack the required capability.
+
 Always consider and optimally utilize all built-in tools and available plugins before resorting to more expensive operations.
 
 - Repomix: Explore and pack repository for full-structure views

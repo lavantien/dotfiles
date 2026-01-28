@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.3.10] - 2026-01-29
+
+### Changed
+
+**CLAUDE.md - Tool Usage Guidance**
+
+- Added guidance to prefer native built-in tools before plugin-provided tools
+- Native tools (Read, Write, Edit, Glob, Grep, Bash, LSP, Task) are faster and more reliable
+- Plugin tools should only be used when native tools lack the required capability
+
+---
+
 ## [5.3.9] - 2026-01-28
 
 ### Fixed
@@ -1620,6 +1632,8 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 | Version | Date       | Major Changes                                                                                            |
 | ------- | ---------- | -------------------------------------------------------------------------------------------------------- |
+| 5.3.10  | 2026-01-29 | CLAUDE.md tool usage guidance: prefer native built-in tools before plugin tools                           |
+| 5.3.9   | 2026-01-28 | Cygwin chmod fix, PowerShell update alias removal                                                         |
 | 5.3.8   | 2026-01-25 | mermaid-cli diagram generation, ComfyUI Desktop AI image gen, gui_apps category, comfy install note          |
 | 5.3.7   | 2026-01-24 | README corrections: LSP count 20, tested platforms, Neovim 0.12+ native, Stop hooks                    |
 | 5.3.6   | 2026-01-24 | Core Features enhancement, corrected counts, added Neovim/WezTerm details                                 |
@@ -1681,7 +1695,9 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 ---
 
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.3.8...HEAD
+[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.3.10...HEAD
+[5.3.10]: https://github.com/lavantien/dotfiles/compare/v5.3.9...v5.3.10
+[5.3.9]: https://github.com/lavantien/dotfiles/compare/v5.3.8...v5.3.9
 [5.3.8]: https://github.com/lavantien/dotfiles/compare/v5.3.7...v5.3.8
 [5.3.7]: https://github.com/lavantien/dotfiles/compare/v5.3.6...v5.3.7
 [5.3.6]: https://github.com/lavantien/dotfiles/compare/v5.3.5...v5.3.6
