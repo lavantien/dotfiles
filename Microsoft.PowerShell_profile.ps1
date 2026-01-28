@@ -59,9 +59,15 @@ if (Get-Command zoxide -ErrorAction SilentlyContinue) {
 # ============================================================================
 # PSREADLINE CONFIGURATION
 # ============================================================================
-Set-PSReadLineOption -PredictionSource History
-Set-PSReadLineOption -PredictionViewStyle ListView
 Set-PSReadLineOption -EditMode Emacs
+
+# Only enable predictions if console supports virtual terminal
+try {
+    Set-PSReadLineOption -PredictionSource History -ErrorAction Stop
+    Set-PSReadLineOption -PredictionViewStyle ListView -ErrorAction Stop
+} catch {
+    # Console doesn't support virtual terminal (e.g., redirected output)
+}
 
 Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward
 Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward
