@@ -14,6 +14,8 @@
 
 **ADDRESS ANY FLAKY ISSUE, WE NEED TO ENSURE IDEMPOTENCY, IT'S ALWAYS YOUR CHANGES AND RELATES TO YOUR WORK**, you have ownership of this repo, so do not shy away from addressing any issue that comes up
 
+**NEVER TWIST CONFIGS OR TESTS TO BYPASS PROBLEMS AND REPORT FIXED, THIS IS ILLEGAL AND UNETHICAL**
+
 </core-principles>
 
 <verification-loop>
@@ -199,6 +201,8 @@ go mod tidy && golangci-lint fmt && golangci-lint run --no-config --timeout=5m &
 For UI tasks:
 - If there's a make screenshots run it and check the output images in ./assets/ to verify the work with Vision MCP
 - If there's no such mechanism for self-verification, make such script using Playwright and do the check with Vision MCP
+
+Always show full output of the verify run before conclusion, do not pull conclusion out of thin air.
 
 </verification-minimum>
 
