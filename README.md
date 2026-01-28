@@ -80,7 +80,7 @@ cd $HOME/dev/github/dotfiles
 ```bash
 which n  # Should point to nvim
 which lg  # Should point to lazygit
-up  # or update - runs update-all
+up  # Runs update-all
 ```
 
 ---
