@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.3.9] - 2026-01-28
+
+### Fixed
+
+**deploy.ps1 - Cygwin chmod Conflict**
+
+- Fixed "Couldn't reserve space for cygwin's heap, Win32 error 0" error on Windows
+- The chmod.exe from Scoop's coreutils fails with Win32 error 487
+- Now skips chmod call if the command is from Scoop (Cygwin binary)
+- Executable bit is not needed on Windows anyway
+
+### Changed
+
+**PowerShell Profile - Alias Conflict**
+
+- Removed `update` alias to avoid conflict with Scoop's internal update function
+- Use `up` alias instead to run update-all script
+
+**Documentation - CLAUDE.md**
+
+- Refactored system instructions for clarity
+
+---
+
 ## [5.3.8] - 2026-01-25
 
 ### Added
