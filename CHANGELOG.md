@@ -7,6 +7,60 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.3.11] - 2026-02-01
+
+### Changed
+
+**CLAUDE.md - Simplified Development Protocol**
+
+- Restructured from XML-tag format to plain markdown "Development Protocol"
+- Removed verbose XML tags like `<non-negotiables>`, `<core-principles>`, `<verification-loop>`
+- Consolidated to clear sections: Prime Directives, Tool Hierarchy, Code Standards, Testing Strategy, Workflow
+- More concise and readable while maintaining all essential guidance
+- Improved AI parsing with cleaner structure
+
+**Claude Code Hooks - PostToolUse Deprecation**
+
+- Deprecated PostToolUse hooks in favor of Hookify rules
+- PostToolUse hooks replaced by per-language Hookify quality check reminders
+- Statusline hook remains active and auto-registered
+- Legacy hooks preserved as `.disabled` files for reference
+
+**Deploy Scripts**
+
+- deploy.sh: Removed PostToolUse hook deployment and registration
+- deploy.sh: Added hookify rules deployment with count display
+- deploy.ps1: Added hookify rules count display in deployment output
+- Both scripts now only register statusline in Claude Code settings.json
+
+**allow.sh**
+
+- Removed chmod for PostToolUse hooks
+- Added hookify rules detection and count display
+- Updated comments to reflect PostToolUse deprecation
+
+### Added
+
+**Hookify Rules Documentation**
+
+- README: Added comprehensive Hookify rules section with 16 language-specific rules
+- Documents rule names, enabled/disabled management, creation workflow
+- Lists all 16 supported languages: Go, Rust, Python, TypeScript, C#, PHP, Shell, Lua, C/C++, Markdown, YAML, JSON, Svelte, Typst, TOML
+
+### Removed
+
+**PostToolUse Hooks**
+
+- Deleted `.claude/hooks/post-tool-use.sh`
+- Deleted `.claude/hooks/post-tool-use.ps1`
+- Kept as `.disabled` files for reference
+
+**Rationale:**
+
+Hookify rules provide a better developer experience than PostToolUse hooks. They are rule-based, don't require script execution, work immediately after deployment without restart, and provide per-language quality check reminders that trigger automatically when editing files. The CLAUDE.md simplification makes the development protocol more approachable while maintaining all essential guidance.
+
+---
+
 ## [5.3.10] - 2026-01-29
 
 ### Changed
@@ -1632,6 +1686,7 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 | Version | Date       | Major Changes                                                                                            |
 | ------- | ---------- | -------------------------------------------------------------------------------------------------------- |
+| 5.3.11  | 2026-02-01 | CLAUDE.md simplified, PostToolUse hooks deprecated, Hookify rules integration                             |
 | 5.3.10  | 2026-01-29 | CLAUDE.md tool usage guidance: prefer native built-in tools before plugin tools                           |
 | 5.3.9   | 2026-01-28 | Cygwin chmod fix, PowerShell update alias removal                                                         |
 | 5.3.8   | 2026-01-25 | mermaid-cli diagram generation, ComfyUI Desktop AI image gen, gui_apps category, comfy install note          |
@@ -1695,7 +1750,8 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 ---
 
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.3.10...HEAD
+[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.3.11...HEAD
+[5.3.11]: https://github.com/lavantien/dotfiles/compare/v5.3.10...v5.3.11
 [5.3.10]: https://github.com/lavantien/dotfiles/compare/v5.3.9...v5.3.10
 [5.3.9]: https://github.com/lavantien/dotfiles/compare/v5.3.8...v5.3.9
 [5.3.8]: https://github.com/lavantien/dotfiles/compare/v5.3.7...v5.3.8
