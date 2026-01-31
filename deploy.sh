@@ -311,21 +311,24 @@ deploy_claude_hooks() {
 		chmod +x "$HOME/.claude/statusline.sh"
 	fi
 
-	# Deploy Claude Code hooks (PostToolUse for quality checks)
-	mkdir -p "$HOME/.claude/hooks"
-	if [ -f "$SCRIPT_DIR/.claude/hooks/post-tool-use.sh" ]; then
-		cp "$SCRIPT_DIR/.claude/hooks/post-tool-use.sh" "$HOME/.claude/hooks/"
-		chmod +x "$HOME/.claude/hooks/post-tool-use.sh"
+	# Deploy hookify rules (per-language quality check reminders)
+	if [ -d "$SCRIPT_DIR/.claude" ]; then
+		# Copy all hookify.*.local.md files
+		local hookify_count=$(find "$SCRIPT_DIR/.claude" -maxdepth 1 -name "hookify.*.local.md" | wc -l)
+		if [ "$hookify_count" -gt 0 ]; then
+			find "$SCRIPT_DIR/.claude" -maxdepth 1 -name "hookify.*.local.md" -exec cp {} "$HOME/.claude/" \;
+			echo -e "${GREEN}Hookify rules deployed ($hookify_count rules)${NC}"
+		fi
 	fi
 
-	# Auto-register PostToolUse hook and statusline in Claude Code settings.json
+	# Auto-register statusline in Claude Code settings.json
 	register_claude_code_hooks
 
-	echo -e "${GREEN}Claude Code hooks deployed to: $HOME/.claude/hooks/${NC}"
-	echo -e "${GREEN}PostToolUse hook and statusline auto-registered in settings.json${NC}"
+	echo -e "${GREEN}Claude Code config deployed${NC}"
+	echo -e "${GREEN}Statusline auto-registered in settings.json${NC}"
 }
 
-# Register Claude Code hooks and statusline in settings.json without overwriting existing config
+# Register Claude Code statusline in settings.json without overwriting existing config
 register_claude_code_hooks() {
 	local settings_file="$HOME/.claude/settings.json"
 
@@ -334,63 +337,25 @@ register_claude_code_hooks() {
 		echo "{}" >"$settings_file"
 	fi
 
-	# Detect OS to use appropriate hook command
-	local hook_command
-	if [[ "$OSTYPE" == "linux-gnu"* ]] || [[ "$OSTYPE" == "darwin"* ]]; then
-		hook_command="bash ~/.claude/hooks/post-tool-use.sh"
-	else
-		hook_command="pwsh -File ~/.claude/hooks/post-tool-use.ps1"
-	fi
-
-	# Use jq to add hooks if available, otherwise skip
+	# Use jq to register statusline if available, otherwise skip
 	if ! command -v jq &>/dev/null; then
-		echo -e "${YELLOW}jq not found, skipping auto-registration of hooks and statusline${NC}"
-		echo -e "${YELLOW}Install jq to enable automatic hook registration${NC}"
+		echo -e "${YELLOW}jq not found, skipping auto-registration of statusline${NC}"
+		echo -e "${YELLOW}Install jq to enable automatic statusline registration${NC}"
 		return 0
 	fi
 
-	# Check if PostToolUse hook already exists
-	local existing_hooks
-	existing_hooks=$(jq -r '.hooks.PostToolUse // empty' "$settings_file" 2>/dev/null)
-
-	# Check if our hook is already registered
-	if echo "$existing_hooks" | jq -e '.[] | select(.hooks[]?.command == "'"$hook_command"'")' &>/dev/null; then
-		echo -e "${BLUE}PostToolUse hook already registered${NC}"
-	else
-		# Add the PostToolUse hook using jq
-		local tmp_file="${settings_file}.tmp"
-
-		# Build the jq command to add hooks
-		jq --arg cmd "$hook_command" '
-            if .hooks == null then
-                .hooks = {}
-            end |
-            if .hooks.PostToolUse == null then
-                .hooks.PostToolUse = []
-            end |
-            .hooks.PostToolUse += [
-                {
-                    "matcher": "Write|Edit|MultiEdit",
-                    "hooks": [{"type": "command", "command": $cmd}]
-                }
-            ]
-        ' "$settings_file" >"$tmp_file"
-
-		if [ $? -eq 0 ]; then
-			mv "$tmp_file" "$settings_file"
-			echo -e "${GREEN}Registered PostToolUse hook in settings.json${NC}"
-		else
-			rm -f "$tmp_file"
-			echo -e "${YELLOW}Failed to register hook in settings.json${NC}"
-		fi
+	# Detect OS to use appropriate statusline command
+	local statusline_command="bash ~/.claude/statusline.sh"
+	if [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]]; then
+		statusline_command="pwsh -NoProfile -ExecutionPolicy Bypass -File ~/.claude/statusline.ps1"
 	fi
 
 	# Register statusline (always ensure it's set)
 	local tmp_file="${settings_file}.tmp"
-	jq '
+	jq --arg cmd "$statusline_command" '
         .statusLine = {
             "type": "command",
-            "command": "bash ~/.claude/statusline.sh"
+            "command": $cmd
         }
     ' "$settings_file" >"$tmp_file"
 
