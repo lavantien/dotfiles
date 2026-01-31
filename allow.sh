@@ -20,9 +20,10 @@ chmod +x uninstall.sh
 chmod +x git-update-repos.sh
 chmod +x sync-system-instructions.sh
 
-# Claude hooks
-chmod +x .claude/hooks/post-tool-use.sh
-chmod +x .claude/quality-check.sh
+# Claude hooks (statusline only - PostToolUse deprecated, use hookify)
 chmod +x .claude/statusline.sh
+
+# Hookify rules (no execute needed)
+ls .claude/hookify.*.local.md >/dev/null 2>&1 && echo "Hookify rules found ($(ls .claude/hookify.*.local.md 2>/dev/null | wc -l) rules)" || true
 
 echo "Done! You can now run ./bootstrap.sh"
