@@ -89,6 +89,7 @@ function Get-PackageDescription {
         # Core runtimes
         "git" { return "version control" }
         "llvm" { return "C/C++ toolchain" }
+        "gcc" { return "C/C++ toolchain" }
         "node" { return "Node.js runtime" }
         "nodejs" { return "Node.js runtime" }
         "python" { return "Python runtime" }
