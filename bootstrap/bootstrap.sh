@@ -848,6 +848,13 @@ install_cli_tools() {
 		fi
 	fi
 
+	# sqlite (SQL database CLI - always latest)
+	if [[ "$OS" == "macos" ]]; then
+		install_brew_package sqlite "" sqlite3
+	elif [[ "$OS" == "linux" ]]; then
+		install_brew_package sqlite "" sqlite3
+	fi
+
 	# btop (system monitor - always latest)
 	if [[ "$CATEGORIES" == "full" ]]; then
 		if [[ "$OS" == "macos" ]]; then
