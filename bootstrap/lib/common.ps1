@@ -165,16 +165,9 @@ function Test-Command {
         return $true
     }
 
-    # Fallback: try using where.exe for Windows executables
+    # Additional check: directories that may not be in PATH yet
     if ($IsWindows -or $true) {  # Always true on Windows PowerShell
-        $ErrorActionPreference = 'SilentlyContinue'
-        $result = where.exe $Command 2>&1
-        $ErrorActionPreference = 'Continue'
-        if ($result) {
-            return $true
-        }
-
-        # Additional check: Python Scripts directory (common for pip-installed tools)
+        # Python Scripts directory (common for pip-installed tools)
         # Check both generic and version-specific paths (e.g., Python\Python313\Scripts)
         $pythonBaseDir = Join-Path $env:APPDATA "Python"
         if (Test-Path $pythonBaseDir) {
