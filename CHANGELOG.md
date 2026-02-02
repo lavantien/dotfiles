@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.3.12] - 2026-02-03
+
+### Added
+
+**Bootstrap - GCC C/C++ Toolchain (Windows)**
+
+- Added gcc installation via Scoop to Windows bootstrap (bootstrap.ps1)
+- Installed in Phase 3 (Language Servers) alongside llvm/clangd
+- Provides native GCC toolchain for C/C++ development on Windows
+- Added package description to Get-PackageDescription function
+
+**update-all - Winget Unknown Package Support**
+
+- Added `--include-unknown` flag to winget upgrade command
+- Enables updating packages even when winget doesn't recognize the source
+- Improves coverage for manually installed applications
+
+### Removed
+
+**Bootstrap - Skip Update Parameter**
+
+- Removed `-SkipUpdate` / `--skip-update` parameter from bootstrap scripts
+- Removed Phase 7 (Update All) function from both bootstrap.ps1 and bootstrap.sh
+- Bootstrap now focuses solely on installation, not updates
+- Users can run `up` (update-all) separately after bootstrap
+
+**Documentation Cleanup**
+
+- Removed "Skip update" row from Bootstrap Options table in README
+
+**Rationale:**
+
+Bootstrap should focus on installation, not running updates. The update-all step added significant time to bootstrap and wasn't always necessary. Users can now run `up` explicitly when they want to update all packages. GCC was added to provide an alternative C/C++ toolchain on Windows for developers who prefer GCC over Clang/LLVM.
+
+---
+
 ## [5.3.11] - 2026-02-01
 
 ### Changed
@@ -1686,6 +1722,7 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 | Version | Date       | Major Changes                                                                                            |
 | ------- | ---------- | -------------------------------------------------------------------------------------------------------- |
+| 5.3.12  | 2026-02-03 | GCC added to Windows bootstrap, winget --include-unknown, removed update-all from bootstrap               |
 | 5.3.11  | 2026-02-01 | CLAUDE.md simplified, PostToolUse hooks deprecated, Hookify rules integration                             |
 | 5.3.10  | 2026-01-29 | CLAUDE.md tool usage guidance: prefer native built-in tools before plugin tools                           |
 | 5.3.9   | 2026-01-28 | Cygwin chmod fix, PowerShell update alias removal                                                         |
@@ -1750,7 +1787,8 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 ---
 
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.3.11...HEAD
+[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.3.12...HEAD
+[5.3.12]: https://github.com/lavantien/dotfiles/compare/v5.3.11...v5.3.12
 [5.3.11]: https://github.com/lavantien/dotfiles/compare/v5.3.10...v5.3.11
 [5.3.10]: https://github.com/lavantien/dotfiles/compare/v5.3.9...v5.3.10
 [5.3.9]: https://github.com/lavantien/dotfiles/compare/v5.3.8...v5.3.9
