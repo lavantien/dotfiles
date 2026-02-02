@@ -19,7 +19,7 @@ Editor & Terminal
 Development Tools
 - 20 LSP servers for complete language intelligence
 - 30 Treesitter parsers for advanced syntax highlighting
-- 40+ CLI tools for modern development workflows (fzf, yazi, zoxide, bat, eza, lazygit, gh, ripgrep, fd, tokei, btop, repomix, docker-compose, helm, kubectl)
+- 40+ CLI tools for modern development workflows (fzf, yazi, zoxide, bat, eza, lazygit, gh, ripgrep, fd, sqlite, tokei, btop, repomix, docker-compose, helm, kubectl)
 
 AI-Native Agentic Development
 - Full support for Claude Code and OpenCode
@@ -187,7 +187,7 @@ vim ~/.dotfiles.config.yaml
 
 ### CLI Tools
 
-fzf, yazi, zoxide, bat, eza, lazygit, gh, ripgrep, fd, tokei, btop, repomix, docker-compose, helm, kubectl
+fzf, yazi, zoxide, bat, eza, lazygit, gh, ripgrep, fd, sqlite, tokei, btop, repomix, docker-compose, helm, kubectl
 
 ### MCP Servers (Claude Code & OpenCode)
 

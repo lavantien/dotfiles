@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.3.13] - 2026-02-03
+
+### Added
+
+**Bootstrap - SQLite CLI (All Platforms)**
+
+- Added sqlite installation to bootstrap scripts for all platforms
+- Windows: installs via Scoop (`sqlite` package)
+- Linux/macOS: installs via Homebrew (`sqlite` package)
+- Installed in Phase 5 (CLI Tools) alongside fzf, zoxide, bat, eza, lazygit, gh, ripgrep, fd
+- Command: `sqlite3` for SQL database operations
+- Added package descriptions to platform-specific files
+
+**Documentation**
+
+- Updated README Core Features to include sqlite in CLI tools list
+- Updated CLI Tools section with sqlite entry
+
+### Changed
+
+**Bootstrap Options Table (README)**
+
+- Removed `-SkipUpdate` / `--skip-update` parameter row (deprecated in v5.3.12)
+
+**Rationale:**
+
+SQLite is a ubiquitous SQL database engine useful for development, testing, and local data processing. Having sqlite3 available by default enables quick database operations without additional setup.
+
+---
+
 ## [5.3.12] - 2026-02-03
 
 ### Added
@@ -1722,6 +1752,7 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 | Version | Date       | Major Changes                                                                                            |
 | ------- | ---------- | -------------------------------------------------------------------------------------------------------- |
+| 5.3.13  | 2026-02-03 | SQLite CLI added to all platforms, removed -SkipUpdate from README table                                  |
 | 5.3.12  | 2026-02-03 | GCC added to Windows bootstrap, winget --include-unknown, removed update-all from bootstrap               |
 | 5.3.11  | 2026-02-01 | CLAUDE.md simplified, PostToolUse hooks deprecated, Hookify rules integration                             |
 | 5.3.10  | 2026-01-29 | CLAUDE.md tool usage guidance: prefer native built-in tools before plugin tools                           |
@@ -1787,7 +1818,8 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 ---
 
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.3.12...HEAD
+[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.3.13...HEAD
+[5.3.13]: https://github.com/lavantien/dotfiles/compare/v5.3.12...v5.3.13
 [5.3.12]: https://github.com/lavantien/dotfiles/compare/v5.3.11...v5.3.12
 [5.3.11]: https://github.com/lavantien/dotfiles/compare/v5.3.10...v5.3.11
 [5.3.10]: https://github.com/lavantien/dotfiles/compare/v5.3.9...v5.3.10
