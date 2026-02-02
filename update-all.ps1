@@ -142,7 +142,7 @@ function Main {
             # Use --accept-source-agreements --accept-package-agreements to auto-accept
             # Use full path since winget is in WindowsApps which may not be in PATH
             $wingetExe = Join-Path $env:LOCALAPPDATA "Microsoft\WindowsApps\winget.exe"
-            & $wingetExe upgrade --all --accept-source-agreements --accept-package-agreements
+            & $wingetExe upgrade --all --include-unknown --accept-source-agreements --accept-package-agreements
             Write-Success "winget"
             $script:updated++
         }
