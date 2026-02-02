@@ -20,7 +20,6 @@
 #   -y, --yes        Non-interactive mode (accept all prompts)
 #   --dry-run        Show what would be installed without installing
 #   --categories     minimal|sdk|full (default: full)
-#   --skip-update    Skip updating package managers first
 #   -h, --help       Show this help
 
 set -e
@@ -61,7 +60,6 @@ fi
 INTERACTIVE=true
 DRY_RUN=false
 CATEGORIES="full"
-SKIP_UPDATE=false
 AUTO_UPDATE_REPOS="false"
 BACKUP_BEFORE_DEPLOY="false"
 
@@ -111,10 +109,6 @@ while [[ $# -gt 0 ]]; do
 	--categories)
 		CATEGORIES="$2"
 		shift 2
-		;;
-	--skip-update)
-		SKIP_UPDATE=true
-		shift
 		;;
 	-h | --help)
 		show_help
@@ -1331,30 +1325,6 @@ deploy_configs() {
 }
 
 # ============================================================================
-# PHASE 7: UPDATE ALL
-# ============================================================================
-update_all_repos() {
-	print_header "Phase 7: Updating All Repositories and Packages"
-
-	local update_script="$SCRIPT_DIR/../update-all.sh"
-
-	if [[ ! -f "$update_script" ]]; then
-		log_warning "update-all.sh not found at $update_script"
-		return 0
-	fi
-
-	if [[ "$DRY_RUN" == "true" ]]; then
-		log_info "[DRY-RUN] Would run: $update_script"
-		return 0
-	fi
-
-	log_step "Running update-all script..."
-	bash "$update_script"
-	echo ""
-	log_success "Update complete"
-}
-
-# ============================================================================
 # MAIN
 # ============================================================================
 main() {
@@ -1364,7 +1334,6 @@ main() {
 	echo -e "  Interactive: ${INTERACTIVE}"
 	echo -e "  Dry Run: ${DRY_RUN}"
 	echo -e "  Categories: ${CATEGORIES}"
-	echo -e "  Skip Update: ${SKIP_UPDATE}"
 	echo ""
 
 	# Confirm if interactive
@@ -1412,7 +1381,6 @@ main() {
 	}
 
 	deploy_configs
-	update_all_repos
 
 	print_summary
 

@@ -19,7 +19,6 @@
 #   -Y                Non-interactive mode (accept all prompts)
 #   -DryRun           Show what would be installed without installing
 #   -Categories       minimal|sdk|full (default: full)
-#   -SkipUpdate       Skip updating package managers first
 #   -VerboseMode      Show detailed output including skipped items
 #   -Help             Show this help
 
@@ -28,7 +27,6 @@ param(
     [switch]$Y = $false,
     [switch]$DryRun = $false,
     [string]$Categories = "full",
-    [switch]$SkipUpdate = $false,
     [switch]$VerboseMode = $false
 )
 
@@ -265,6 +263,16 @@ function Install-LanguageServers {
     }
     else {
         Install-ScoopPackage "llvm" "" "clangd"
+    }
+
+    # gcc (C/C++ toolchain)
+    if (Test-Command gcc) {
+        Write-Step "Checking gcc..."
+        Write-Success "gcc (up to date)"
+        Track-Skipped "gcc" "C/C++ toolchain"
+    }
+    else {
+        Install-ScoopPackage "gcc" "" "gcc"
     }
 
     # gopls (via go install - always latest)
@@ -1354,40 +1362,6 @@ function Deploy-Configs {
 }
 
 # ============================================================================
-# PHASE 7: UPDATE ALL
-# ============================================================================
-function Update-All {
-    Write-Header "Phase 7: Updating All Repositories and Packages"
-
-    # Use the bash update-all script via PowerShell wrapper
-    # The bash script has Windows detection and will skip Linux-only commands
-    # and provides detailed progress output for each package manager
-    $updateScript = Join-Path $ScriptDir "..\update-all.ps1"
-
-    if (-not (Test-Path $updateScript)) {
-        Write-Warning "update-all.ps1 not found at $updateScript"
-        return $true
-    }
-
-    if ($DryRun) {
-        Write-Info "[DRY-RUN] Would run: $updateScript"
-        return $true
-    }
-
-    Write-Info "Running update-all script (this may take several minutes)..."
-    # Invoke script and stream output directly to host
-    & $updateScript | Out-Host
-    $exitCode = $LASTEXITCODE
-    if ($exitCode -eq 0) {
-        Write-Success "Update complete"
-    }
-    else {
-        Write-Warning "Update completed with exit code: $exitCode"
-    }
-    return $true
-}
-
-# ============================================================================
 # MAIN
 # ============================================================================
 function Main {
@@ -1397,7 +1371,6 @@ function Main {
     Write-Host "  Interactive: $(-not $Y)"
     Write-Host "  Dry Run: $DryRun"
     Write-Host "  Categories: $Script:Categories"
-    Write-Host "  Skip Update: $SkipUpdate"
     Write-Host ""
 
     # Confirm if interactive
@@ -1438,12 +1411,6 @@ function Main {
     }
     $null = Install-DevelopmentTools
     $null = Deploy-Configs
-    if (-not $SkipUpdate) {
-        $null = Update-All
-    }
-    else {
-        Write-Info "Skipping update phase (SkipUpdate specified)"
-    }
 
     Write-Summary
 
