@@ -754,7 +754,8 @@ function Install-CLITools {
         @{Package = "lazygit"; MinVersion = ""; Cmd = "lazygit"; Desc = "Git TUI"},
         @{Package = "gh"; MinVersion = ""; Cmd = "gh"; Desc = "GitHub CLI"},
         @{Package = "ripgrep"; MinVersion = ""; Cmd = "rg"; Desc = "Grep alternative"},
-        @{Package = "fd"; MinVersion = ""; Cmd = "fd"; Desc = "Find alternative"}
+        @{Package = "fd"; MinVersion = ""; Cmd = "fd"; Desc = "Find alternative"},
+        @{Package = "sqlite"; MinVersion = ""; Cmd = "sqlite3"; Desc = "SQL database CLI"}
     )
 
     # Add extra packages for full install
