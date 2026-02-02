@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.3.14] - 2026-02-03
+
+### Fixed
+
+**Bootstrap - Test-Command False Positive (Windows)**
+
+- Fixed bug in `bootstrap/lib/common.ps1` where `Test-Command` returned true for non-existent commands
+- Removed `where.exe` fallback that was causing false positives
+- `where.exe` returns error output (treated as truthy) when command not found
+- `Get-Command` alone is sufficient and handles PATH resolution correctly
+- This fixes SQLite installation on Windows (and any other tools that may have been skipped)
+
+**Rationale:**
+
+The `where.exe` fallback was intended as redundancy but introduced a bug: PowerShell treats any non-empty output (including error messages) as truthy. This caused the bootstrap to incorrectly detect tools as "already installed" when they weren't, skipping their installation.
+
+---
+
 ## [5.3.13] - 2026-02-03
 
 ### Added
