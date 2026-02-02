@@ -141,6 +141,8 @@ function Get-PackageDescription {
         "tokei" { return "code stats" }
         "difft" { return "diff viewer" }
         "btop-lhm" { return "system monitor" }
+        "sqlite" { return "SQL database CLI" }
+        "sqlite3" { return "SQL database CLI" }
 
         # Development tools
         "vscode" { return "code editor" }

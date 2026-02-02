@@ -65,6 +65,7 @@ get_package_description() {
 	docker-compose) echo "Docker Compose CLI" ;;
 	helm) echo "Kubernetes package manager" ;;
 	kubectl) echo "Kubernetes CLI" ;;
+	sqlite | sqlite3) echo "SQL database CLI" ;;
 	vscode) echo "code editor" ;;
 	latex | texlive) echo "document preparation" ;;
 	claude-code) echo "AI CLI" ;;
