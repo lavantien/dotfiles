@@ -109,7 +109,6 @@ Windows uses `.ps1` scripts, Linux/macOS uses `.sh` scripts.
 | Non-interactive | `-y`, `--yes` | `-Y` | Prompt for confirmation |
 | Dry-run | `--dry-run` | `-DryRun` | Install everything |
 | Categories | `--categories sdk` | `-Categories sdk` | full |
-| Skip update | `--skip-update` | `-SkipUpdate` | Update package managers |
 | Verbose | `--verbose` | `-VerboseMode` | Show detailed output |
 
 ### Installation Categories
