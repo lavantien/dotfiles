@@ -199,12 +199,6 @@ if (-not $SkipConfig) {
         }
         Copy-Item -Path "$DotfilesDir/.claude/*" -Destination $ClaudeDir -Recurse -Force
         Write-Host "  Claude configs" -ForegroundColor Green
-
-        # Count hookify rules
-        $hookifyCount = (Get-ChildItem -Path "$ClaudeDir/hookify.*.local.md" -ErrorAction SilentlyContinue | Measure-Object).Count
-        if ($hookifyCount -gt 0) {
-            Write-Host "    - $hookifyCount hookify rules deployed" -ForegroundColor Cyan
-        }
     }
 
     # Register statusline in Claude Code settings.json

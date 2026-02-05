@@ -311,16 +311,6 @@ deploy_claude_hooks() {
 		chmod +x "$HOME/.claude/statusline.sh"
 	fi
 
-	# Deploy hookify rules (per-language quality check reminders)
-	if [ -d "$SCRIPT_DIR/.claude" ]; then
-		# Copy all hookify.*.local.md files
-		local hookify_count=$(find "$SCRIPT_DIR/.claude" -maxdepth 1 -name "hookify.*.local.md" | wc -l)
-		if [ "$hookify_count" -gt 0 ]; then
-			find "$SCRIPT_DIR/.claude" -maxdepth 1 -name "hookify.*.local.md" -exec cp {} "$HOME/.claude/" \;
-			echo -e "${GREEN}Hookify rules deployed ($hookify_count rules)${NC}"
-		fi
-	fi
-
 	# Auto-register statusline in Claude Code settings.json
 	register_claude_code_hooks
 

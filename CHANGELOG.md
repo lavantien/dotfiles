@@ -7,7 +7,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.4.0] - 2026-02-05
+
+### Removed
+
+**Hookify Plugin Integration**
+
+- Removed all hookify quality check rules from dotfiles (15 rule files deleted)
+- Removed hookify deployment logic from `deploy.sh` and `deploy.ps1`
+- Removed hookify references from `README.md` and `allow.sh`
+- Hookify was causing PreToolUse hooks to fire on every tool call (including read-only tools like `find_symbol`)
+- Quality checks now handled by individual project configurations instead
+
+**Rationale:**
+
+Hookify's PreToolUse hook was registered without tool matchers, causing it to run on every single tool invocation. This included read-only tools like `find_symbol`, `Read`, and even the `Bash` tool. The plugin's event filtering logic had a bug where unmapped tools (event=None) would skip event filtering entirely, potentially loading all rules regardless of their event type. This caused significant performance degradation and unnecessary test runs.
+
+### Changed
+
+**Documentation Updates**
+
+- Updated README.md AI-Native Agentic Development section to remove hookify references
+- Updated Claude Code Hooks section to reflect current hook architecture
+- Clarified that quality checks are now project-specific configurations
+
+---
+
 ## [5.3.14] - 2026-02-03
+
+### Fixed
+
+**Bootstrap - Test-Command False Positive (Windows)**
+
+- Removed all hookify quality check rules from dotfiles
+- Removed hookify deployment logic from `deploy.sh` and `deploy.ps1`
+- Removed hookify references from `README.md` and `allow.sh`
+- Hookify was causing PreToolUse hooks to fire on every tool call (including read-only tools like `find_symbol`)
+- Quality checks now handled by individual project configurations instead
 
 ### Fixed
 

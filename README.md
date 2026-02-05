@@ -24,8 +24,8 @@ Development Tools
 AI-Native Agentic Development
 - Full support for Claude Code and OpenCode
 - 4 MCP servers: context7, playwright, repomix, serena
-- Hookify rules: Per-language quality check reminders (16 languages/formats)
-- Auto-detect & trigger format/lint/check: Git pre-commit/commit-msg + Claude Code PostToolUse & Stop hooks
+- Auto-detect & trigger format/lint/check: Git pre-commit/commit-msg hooks
+- Statusline hook for Claude Code (auto-registered in settings.json)
 - System instruction sync across all repos (CLAUDE.md, AGENTS.md, GEMINI.md, RULES.md)
 
 Automation & Safety
@@ -215,35 +215,9 @@ Platform-specific: `.sh` for Linux/macOS, `.ps1` for Windows
 
 ### Claude Code Hooks
 
-**PostToolUse** hooks are deprecated - replaced by Hookify rules for quality checks.
+**Statusline** hook is auto-registered in `~/.claude/settings.json` for custom command output display.
 
-**Statusline** hook is still active and auto-registered in `~/.claude/settings.json`.
-
-### Hookify Rules
-
-Hookify provides per-language quality check reminders that trigger automatically when editing files. Rules are stored in `.claude/hookify.*.local.md` and work immediately after deployment - no restart needed.
-
-**Available Rules:**
-- `hookify.quality-go.local.md` - Go (gofmt, goimports, golangci-lint, go vet, go test)
-- `hookify.quality-rust.local.md` - Rust (rustfmt, cargo check, clippy, test)
-- `hookify.quality-python.local.md` - Python (ruff, mypy, pytest)
-- `hookify.quality-typescript.local.md` - TS/JS (prettier, eslint, tsc, npm test)
-- `hookify.quality-csharp.local.md` - C# (dotnet format, build, test)
-- `hookify.quality-php.local.md` - PHP (pint, phpstan, psalm, phpunit)
-- `hookify.quality-shell.local.md` - Shell (shfmt, shellcheck)
-- `hookify.quality-lua.local.md` - Lua (stylua, selene)
-- `hookify.quality-c-cpp.local.md` - C/C++ (clang-format, clang-tidy, cppcheck)
-- `hookify.quality-markdown.local.md` - Markdown (prettier, markdownlint)
-- `hookify.quality-yaml.local.md` - YAML (prettier, yamllint)
-- `hookify.quality-json.local.md` - JSON (prettier, jq)
-- `hookify.quality-svelte.local.md` - Svelte (prettier, svelte-check)
-- `hookify.quality-typst.local.md` - Typst (typst check)
-- `hookify.quality-toml.local.md` - TOML (taplo)
-
-**Managing Rules:**
-- Enable/Disable: Set `enabled: true/false` in the rule frontmatter
-- Create new: Add `.claude/hookify.{name}.local.md` files to your dotfiles
-- View active: Use `/hookify:list` command in Claude Code
+Quality checks can be configured per-project using project-specific hooks or MCP servers.
 
 ### OpenCode Config Merging
 
