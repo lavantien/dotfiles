@@ -7,6 +7,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.5.0] - 2026-02-07
+
+### Added
+
+**update-all - Skip Pip Flag**
+
+- Added `--skip-pip` flag to bash update-all.sh script
+- Added `-SkipPip` parameter to PowerShell update-all.ps1 script
+- Allows skipping pip package updates to speed up update cycles
+- Useful when pip packages are stable and you want faster updates
+
+**Documentation**
+
+- Updated README Bootstrap Options table with new Update-All Options section
+- Documents `--skip-pip` / `-SkipPip` flag usage
+
+### Fixed
+
+**update-all - pip Update Method (Windows)**
+
+- Changed from `pip install --upgrade pip` to `python -m pip install --upgrade pip`
+- Using `python -m pip` is the recommended method on Windows
+- Avoids issues with pip launcher and multiple Python installations
+- Applies to both pip self-upgrade and package updates
+
+**update-all - OpenCode CLI Update**
+
+- Fixed version comparison to use npm registry as source of truth
+- Fixed opencode update to remove npm/bun-installed versions before running bash installer
+- Fixed version detection after update - now uses installed binary path directly
+- This prevents issues where npm/bun versions in PATH shadow the bash-installed binary
+- Corrected GitHub repo reference from `opencode-ai/opencode` to `anomalyco/opencode`
+- The opencode project migrated: `sst/opencode` -> `anomalyco/opencode`
+
+**Rationale:**
+
+OpenCode can be installed via npm (`opencode-ai` package) or via the official bash installer. Having both installed causes conflicts - the npm version in PATH would shadow the bash-installed binary. The fix removes npm/bun versions first, then runs the official installer which installs to `~/.opencode/bin/opencode`. Version checking now consistently uses npm registry to compare against the bash-installed version.
+
+---
+
 ## [5.4.0] - 2026-02-05
 
 ### Removed

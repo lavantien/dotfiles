@@ -111,6 +111,12 @@ Windows uses `.ps1` scripts, Linux/macOS uses `.sh` scripts.
 | Categories | `--categories sdk` | `-Categories sdk` | full |
 | Verbose | `--verbose` | `-VerboseMode` | Show detailed output |
 
+### Update-All Options
+
+| Option | Bash | PowerShell | Purpose |
+|--------|------|------------|---------|
+| Skip pip updates | `--skip-pip` | `-SkipPip` | Skip pip package updates (speeds up update) |
+
 ### Installation Categories
 
 | Category | Description |
