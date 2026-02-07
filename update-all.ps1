@@ -4,6 +4,9 @@
 #
 # NOTE: Verbose mode is the default - all package manager output is shown.
 # No quiet/silent flags are used.
+#
+# Usage: .\update-all.ps1 [-SkipPip]
+param([switch]$SkipPip)
 
 # Don't treat native command stderr as errors with Stop preference
 $PSNativeCommandUseErrorActionPreference = $false
@@ -396,26 +399,32 @@ function Main {
     # ============================================================================
     # PIP (Python packages)
     # ============================================================================
-    Write-Step "PIP (Python packages)"
+    if (-not $SkipPip) {
+        Write-Step "PIP (Python packages)"
 
-    if (Test-Command pip) {
-        try {
-            # Upgrade pip first
-            pip install --upgrade pip
+        if (Test-Command pip) {
+            try {
+                # Upgrade pip first using python -m pip (recommended on Windows)
+                python -m pip install --upgrade pip
 
-            # Update all packages using the simple one-liner
-            pip freeze 2>&1 | ForEach-Object { $_.Split('==')[0] } | ForEach-Object { pip install --upgrade $_ }
+                # Update all packages using the simple one-liner
+                pip freeze 2>&1 | ForEach-Object { $_.Split('==')[0] } | ForEach-Object { python -m pip install --upgrade $_ }
 
-            Write-Success "pip"
-            $script:updated++
+                Write-Success "pip"
+                $script:updated++
+            }
+            catch {
+                Write-Fail "pip"
+                $script:failed++
+            }
         }
-        catch {
-            Write-Fail "pip"
-            $script:failed++
+        else {
+            Write-Skip "pip not found"
+            $script:skipped++
         }
     }
     else {
-        Write-Skip "pip not found"
+        Write-Skip "pip (skipped by -SkipPip flag)"
         $script:skipped++
     }
 
@@ -529,58 +538,66 @@ function Main {
     # OPENCODE AI CLI
     # ============================================================================
     Write-Step "OPENCODE AI CLI"
-    # Check binary directly (not via PATH) since it may not be in PATH yet
-    $opencodeExe = Join-Path $env:USERPROFILE ".opencode\bin\opencode.exe"
-    if ((Test-Path $opencodeExe) -or (Get-Command opencode -ErrorAction SilentlyContinue)) {
+
+    # The bash installer installs to $HOME/.opencode/bin/opencode
+    $opencodeInstalledPath = Join-Path $env:USERPROFILE ".opencode\bin\opencode.exe"
+
+    # Check if opencode exists (either at installed path or in PATH via npm/bun)
+    $opencodeExists = Test-Path $opencodeInstalledPath
+    if (-not $opencodeExists) {
+        $opencodeExists = Get-Command opencode -ErrorAction SilentlyContinue
+    }
+
+    if ($opencodeExists) {
         try {
-            # Get version before update
-            $versionBefore = & $opencodeExe --version 2>&1 | Select-String -Pattern '\d+\.\d+\.\d+' | Select-Object -First 1
-            if ($versionBefore) {
-                $versionBefore = $versionBefore.Matches.Value
+            # The bash installer installs to $HOME/.opencode/bin/opencode
+            $opencodeInstalledPath = Join-Path $env:USERPROFILE ".opencode\bin\opencode.exe"
+
+            # Get current version - use installed path if exists, otherwise use PATH
+            if (Test-Path $opencodeInstalledPath) {
+                $currentVersion = (& $opencodeInstalledPath --version 2>&1 | Select-String -Pattern '\d+\.\d+\.\d+').Matches.Value
+            } else {
+                $currentVersion = (opencode --version 2>&1 | Select-String -Pattern '\d+\.\d+\.\d+').Matches.Value
             }
 
             # Get latest version from npm registry
-            $latestVersion = npm view opencode-ai version 2>&1
+            $latestVersion = (npm view opencode-ai version 2>&1).Trim()
 
             # Skip if already at latest
-            if ($versionBefore -eq $latestVersion) {
-                Write-Skip "opencode already at latest version ($versionBefore)"
+            if ($currentVersion -eq $latestVersion) {
+                Write-Skip "opencode already at latest version ($currentVersion)"
                 $script:skipped++
             }
             else {
-                # Run the official installer via bash (curl method)
-                $output = bash -c "curl -fsSL https://opencode.ai/install | bash" 2>&1
-                $installerExitCode = $LASTEXITCODE
+                # Remove npm/bun-installed opencode first
+                if (Test-Command npm) {
+                    npm uninstall -g opencode-ai 2>$null | Out-Null
+                }
+                if (Test-Command bun) {
+                    bun pm rm -g opencode-ai 2>$null | Out-Null
+                }
 
-                # If installer succeeded, try to get version after update
-                # Note: After update, the binary might be replaced, so we need to re-find it
-                if ($installerExitCode -eq 0) {
-                    $versionAfter = & $opencodeExe --version 2>&1 | Select-String -Pattern '\d+\.\d+\.\d+' | Select-Object -First 1
-                    if ($versionAfter) {
-                        $versionAfter = $versionAfter.Matches.Value
-                    }
+                # Run the official installer via bash
+                bash -c "curl -fsSL https://opencode.ai/install | bash" 2>&1 | Out-Null
 
-                    if ($versionBefore -ne $versionAfter -and $versionAfter) {
-                        Write-Success "opencode ($versionBefore -> $versionAfter)"
-                        $script:updated++
-                    }
-                    elseif ($versionAfter) {
-                        Write-Skip "opencode already up to date ($versionAfter)"
-                        $script:updated++
-                    }
-                    else {
-                        # Installer succeeded but version detection failed
-                        # This is likely OK - the binary was probably updated
-                        if ($versionBefore) {
-                            Write-Success "opencode (updated from $versionBefore, version detection unclear)"
-                        } else {
-                            Write-Success "opencode (installer completed successfully)"
-                        }
-                        $script:updated++
+                # Force refresh PowerShell command cache
+                Get-ChildItem Function:\ | Where-Object { $_.Name -like "*opencode*" } | Remove-Item -ErrorAction SilentlyContinue
+
+                # Get version after update from the installed binary (use full path to avoid cache)
+                if (Test-Path $opencodeInstalledPath) {
+                    $newVersion = (& $opencodeInstalledPath --version 2>&1 | Select-String -Pattern '\d+\.\d+\.\d+').Matches.Value
+                    Write-Success "opencode ($currentVersion -> $newVersion)"
+                    $script:updated++
+
+                    # Add to PATH if not already there
+                    $opencodeBinDir = Split-Path $opencodeInstalledPath -Parent
+                    $envPath = [Environment]::GetEnvironmentVariable("Path", "User")
+                    if ($envPath -notlike "*$opencodeBinDir*") {
+                        [Environment]::SetEnvironmentVariable("Path", "$envPath;$opencodeBinDir", "User")
                     }
                 }
                 else {
-                    Write-Fail "opencode (installer failed with exit code $installerExitCode)"
+                    Write-Fail "opencode (binary not found after install)"
                     $script:failed++
                 }
             }

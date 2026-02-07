@@ -5,6 +5,8 @@
 #
 # NOTE: Verbose mode is the default - all package manager output is shown.
 # No quiet/silent flags are used (--quiet, -q, etc.).
+#
+# Usage: ./update-all.sh [--skip-pip]
 
 # Note: set -e is intentionally NOT used because this script has its own
 # error handling via update_fail() and the failed counter. With set -e,
@@ -154,6 +156,16 @@ install_and_verify_version() {
 		update_success "$binary_name"
 	fi
 }
+
+# ============================================================================
+# PARSE ARGUMENTS
+# ============================================================================
+SKIP_PIP=false
+for arg in "$@"; do
+	case "$arg" in
+		--skip-pip) SKIP_PIP=true ;;
+	esac
+done
 
 # ============================================================================
 # LOAD USER CONFIGURATION
@@ -777,14 +789,18 @@ _main() {
 	# ============================================================================
 	# PIP (Python packages)
 	# ============================================================================
-	if cmd_exists pip; then
-		update_section "PIP (Python packages)"
-		update_pip "pip" "pip"
-	elif cmd_exists pip3; then
-		update_section "PIP3 (Python packages)"
-		update_pip "pip3" "pip3"
+	if [[ "$SKIP_PIP" != "true" ]]; then
+		if cmd_exists pip; then
+			update_section "PIP (Python packages)"
+			update_pip "pip" "pip"
+		elif cmd_exists pip3; then
+			update_section "PIP3 (Python packages)"
+			update_pip "pip3" "pip3"
+		else
+			update_skip "pip/pip3 not found"
+		fi
 	else
-		update_skip "pip/pip3 not found"
+		update_skip "pip (skipped by --skip-pip flag)"
 	fi
 
 	# ============================================================================
@@ -856,12 +872,61 @@ _main() {
 	# ============================================================================
 	update_section "OPENCODE AI CLI"
 
-	# Check binary directly (not via PATH) since it may not be in PATH yet
+	# The bash installer installs to $HOME/.opencode/bin/opencode
 	local opencode_exe="$HOME/.opencode/bin/opencode"
-	if [[ ! -f "$opencode_exe" ]]; then
-		update_skip "opencode binary not found at $opencode_exe"
+
+	# Check if opencode exists (either at installed path or in PATH via npm/bun)
+	local opencode_exists=false
+	if [[ -f "$opencode_exe" ]]; then
+		opencode_exists=true
+	elif cmd_exists opencode; then
+		opencode_exists=true
+	fi
+
+	if [[ "$opencode_exists" == "true" ]]; then
+		# Get current version from local binary
+		local version_before
+		version_before=$(opencode --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+
+		# Get latest version from npm registry
+		local latest_version
+		latest_version=$(npm view opencode-ai version 2>/dev/null)
+
+		# Skip if already at latest
+		if [[ -n "$latest_version" ]] && [[ "$version_before" == "$latest_version" ]]; then
+			update_skip "opencode already at latest version ($version_before)"
+		else
+			# Remove npm/bun-installed opencode first
+			if cmd_exists npm; then
+				npm uninstall -g opencode-ai 2>/dev/null || true
+			fi
+			if cmd_exists bun; then
+				bun pm rm -g opencode-ai 2>/dev/null || true
+			fi
+
+			# Run the official installer via bash
+			local output
+			output=$(curl -fsSL https://opencode.ai/install | bash 2>&1)
+			local exit_code=$?
+
+			if [[ $exit_code -eq 0 ]] && [[ -f "$opencode_exe" ]]; then
+				# Get version after update from the newly installed binary
+				local version_after
+				version_after=$("$opencode_exe" --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+
+				if [[ -n "$version_after" ]] && [[ "$version_before" != "$version_after" ]]; then
+					update_success "opencode ($version_before -> $version_after)"
+				elif [[ -n "$version_after" ]]; then
+					update_success "opencode (up to date at $version_after)"
+				else
+					update_success "opencode (installer completed)"
+				fi
+			else
+				update_fail "opencode" "$output"
+			fi
+		fi
 	else
-		install_and_verify_version "curl -fsSL https://opencode.ai/install | bash" "opencode" "\"$opencode_exe\" --version" "opencode-ai"
+		update_skip "opencode not found"
 	fi
 
 	# ============================================================================
