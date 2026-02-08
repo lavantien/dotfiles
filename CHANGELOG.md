@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.6.0] - 2026-02-08
+
+### Fixed
+
+**Bootstrap - GCC Installation Verification (Windows)**
+
+- Fixed gcc installation check to verify the command actually works via `gcc --version`
+- Added command execution verification before skipping installation as "up to date"
+- Added `--version` verification in `Install-ScoopPackage` function
+- Fixes issue where gcc was skipped as "up to date" even though shim was broken
+- Now properly reinstalls gcc when command exists but doesn't execute correctly
+
+**Rationale:**
+
+The bootstrap was trusting Scoop's package state and file existence checks without verifying the command actually works. This caused broken shims to be detected as "installed", skipping the reinstallation. The fix adds actual execution verification (`gcc --version`) to ensure the tool is functional before considering it "up to date".
+
+---
+
 ## [5.5.0] - 2026-02-07
 
 ### Added

@@ -268,8 +268,25 @@ function Install-LanguageServers {
     # gcc (C/C++ toolchain)
     if (Test-Command gcc) {
         Write-Step "Checking gcc..."
-        Write-Success "gcc (up to date)"
-        Track-Skipped "gcc" "C/C++ toolchain"
+        # Verify gcc actually works (binary exists and executes)
+        $gccWorks = $false
+        try {
+            $null = & gcc --version 2>&1 | Out-Null
+            if ($LASTEXITCODE -eq 0) {
+                $gccWorks = $true
+            }
+        } catch {
+            # gcc not functional
+        }
+
+        if ($gccWorks) {
+            Write-Success "gcc (up to date)"
+            Track-Skipped "gcc" "C/C++ toolchain"
+        }
+        else {
+            # gcc found but broken - reinstall
+            Install-ScoopPackage "gcc" "" "gcc"
+        }
     }
     else {
         Install-ScoopPackage "gcc" "" "gcc"

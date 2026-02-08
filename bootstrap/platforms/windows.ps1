@@ -228,17 +228,29 @@ function Install-ScoopPackage {
     }
 
     # Check if scoop already has this package installed (for idempotency)
-    # This handles the case where the command isn't in PATH yet but Scoop has it
+    # Verify the command actually works by running it, don't just check if it exists
+    # This catches cases where the package is "installed" but shim is broken
     if (-not $DryRun -and ($scoopInstalled -or $scoopCommandAvailable)) {
         $scoopList = Invoke-Scoop -Arguments "list"
-        # Scoop list returns objects with Name property - check directly
         $scoopHasPackage = $scoopList | Where-Object { $_.Name -eq $Package }
 
-        if ($scoopHasPackage) {
-            # Package installed by scoop - trust scoop's state and skip
-            # Some packages (like TeX Live) don't create traditional shims
-            Track-Skipped $Package (Get-PackageDescription $Package)
-            return $true
+        if ($scoopHasPackage -and (Test-Command $CheckCmd)) {
+            # Verify by actually running the command (most support --version)
+            $cmdWorks = $false
+            try {
+                $null = & $CheckCmd --version 2>&1 | Out-Null
+                if ($LASTEXITCODE -eq 0) {
+                    $cmdWorks = $true
+                }
+            } catch {
+                # Command doesn't support --version or failed to run
+            }
+
+            if ($cmdWorks) {
+                Track-Skipped $Package (Get-PackageDescription $Package)
+                return $true
+            }
+            # Command exists but doesn't work - continue to reinstall
         }
     }
 
