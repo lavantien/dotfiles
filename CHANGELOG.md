@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.7.0] - 2026-02-11
+
+### Fixed
+
+**Bootstrap - GCC Installation Verification (Windows)**
+
+- Fixed gcc installation check to verify the command actually works via `gcc --version`
+- Added command execution verification before skipping installation as "up to date"
+- Added `--version` verification in `Install-ScoopPackage` function
+- Fixes issue where gcc was skipped as "up to date" even though shim was broken
+- Now properly reinstalls gcc when command exists but doesn't execute correctly
+
+**update-all - Claude Code and OpenCode Update Verification (Windows)**
+
+- Fixed Claude Code CLI update to verify command actually works before attempting update
+- Fixed OpenCode AI CLI update to verify binary exists AND works before updating
+- Added robust version parsing using regex match instead of fragile `.Matches.Value`
+- Added execution verification after updates to confirm tools work
+- Added shim cleanup for old npm/bun installations that could shadow official binaries
+- Added handling for inconclusive version checks with fallback update attempts
+- Ensures PATH is properly set during skips, not just installs
+
+**Rationale:**
+
+The update-all script was trusting file existence checks and version string parsing without verifying tools actually work. This was the same class of issue as the gcc fix in bootstrap.ps1 - tools could be detected as "installed" but have broken shims or fail to execute. The fix adds actual execution verification (`--version` checks with exit code validation) to ensure tools are functional before and after updates. Version parsing now uses PowerShell regex match groups instead of `.Matches.Value` which can fail on unexpected output formats.
+
+---
+
 ## [5.6.0] - 2026-02-08
 
 ### Fixed
@@ -1864,6 +1892,9 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 | Version | Date       | Major Changes                                                                                            |
 | ------- | ---------- | -------------------------------------------------------------------------------------------------------- |
+| 5.7.0   | 2026-02-11 | Bootstrap GCC verification, update-all AI CLI verification (claude-code, opencode)                        |
+| 5.6.0   | 2026-02-08 | GCC installation verification via --version, Install-ScoopPackage execution check                       |
+| 5.5.0   | 2026-02-07 | Skip pip flag, pip update method fix, OpenCode CLI update fix                                            |
 | 5.3.13  | 2026-02-03 | SQLite CLI added to all platforms, removed -SkipUpdate from README table                                  |
 | 5.3.12  | 2026-02-03 | GCC added to Windows bootstrap, winget --include-unknown, removed update-all from bootstrap               |
 | 5.3.11  | 2026-02-01 | CLAUDE.md simplified, PostToolUse hooks deprecated, Hookify rules integration                             |
@@ -1930,7 +1961,11 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 ---
 
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.3.13...HEAD
+[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.7.0...HEAD
+[5.7.0]: https://github.com/lavantien/dotfiles/compare/v5.6.0...v5.7.0
+[5.6.0]: https://github.com/lavantien/dotfiles/compare/v5.5.0...v5.6.0
+[5.5.0]: https://github.com/lavantien/dotfiles/compare/v5.3.14...v5.5.0
+[5.3.14]: https://github.com/lavantien/dotfiles/compare/v5.3.13...v5.3.15
 [5.3.13]: https://github.com/lavantien/dotfiles/compare/v5.3.12...v5.3.13
 [5.3.12]: https://github.com/lavantien/dotfiles/compare/v5.3.11...v5.3.12
 [5.3.11]: https://github.com/lavantien/dotfiles/compare/v5.3.10...v5.3.11
