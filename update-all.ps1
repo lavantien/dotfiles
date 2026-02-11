@@ -473,22 +473,51 @@ function Main {
     # ============================================================================
     Write-Step "CLAUDE CODE CLI"
     if (Test-Command claude) {
+        # Verify claude actually works before trying to update
+        $claudeWorks = $false
         try {
-            # Get version before update
-            $versionBefore = claude --version 2>&1 | Select-String -Pattern '\d+\.\d+\.\d+' | Select-Object -First 1
-            if ($versionBefore) {
-                $versionBefore = $versionBefore.Matches.Value
+            $null = & claude --version 2>&1 | Out-Null
+            if ($LASTEXITCODE -eq 0) {
+                $claudeWorks = $true
+            }
+        } catch {
+            # claude command doesn't work
+        }
+
+        if ($claudeWorks) {
+            # Get version before update with proper error handling
+            $versionBefore = ""
+            try {
+                $versionOutput = claude --version 2>$null
+                if ($versionOutput -match '(\d+\.\d+\.\d+)') {
+                    $versionBefore = $matches[1]
+                }
+            }
+            catch {
+                # If version extraction fails, continue anyway
             }
 
             # Get latest version from npm registry
-            $latestVersion = npm view @anthropic-ai/claude-code version 2>&1
+            $latestVersion = ""
+            if (Test-Command npm) {
+                try {
+                    $latestVersion = npm view @anthropic-ai/claude-code version 2>$null
+                }
+                catch {
+                    Write-Fail "claude-code (failed to fetch latest version)"
+                    $script:failed++
+                    return
+                }
+            }
 
             # Skip if already at latest
-            if ($versionBefore -eq $latestVersion) {
+            if ($versionBefore -and $latestVersion -and $versionBefore -eq $latestVersion) {
                 Write-Skip "claude-code already at latest version ($versionBefore)"
                 $script:skipped++
             }
-            else {
+            elseif ($versionBefore -and $latestVersion -and $versionBefore -ne $latestVersion) {
+                Write-Info "claude-code update available: $versionBefore -> $latestVersion"
+
                 # On Windows, use bun (npm is deprecated, native installer has bugs)
                 if (Test-Command bun) {
                     # Remove old npm package if present
@@ -500,32 +529,64 @@ function Main {
                     # Add bun global bin to PATH
                     $bunBin = bun pm bin -g 2>$null
                     if ($bunBin) {
-                        Add-ToPath -Path $bunBin -User
+                        $envPath = [Environment]::GetEnvironmentVariable("Path", "User")
+                        if ($envPath -notlike "*$bunBin*") {
+                            [Environment]::SetEnvironmentVariable("Path", "$envPath;$bunBin", "User")
+                        }
                     }
 
-                    # Get version after update
-                    $versionAfter = claude --version 2>&1 | Select-String -Pattern '\d+\.\d+\.\d+' | Select-Object -First 1
-                    if ($versionAfter) {
-                        $versionAfter = $versionAfter.Matches.Value
+                    # Verify the update worked
+                    $versionAfter = ""
+                    $updateWorks = $false
+                    try {
+                        $null = & claude --version 2>&1 | Out-Null
+                        if ($LASTEXITCODE -eq 0) {
+                            $updateWorks = $true
+                            $versionOutput = claude --version 2>$null
+                            if ($versionOutput -match '(\d+\.\d+\.\d+)') {
+                                $versionAfter = $matches[1]
+                            }
+                        }
+                    }
+                    catch {
+                        # Verification failed
                     }
 
-                    if ($versionBefore -ne $versionAfter -and $versionAfter) {
+                    if ($updateWorks -and $versionAfter -and $versionAfter -ne $versionBefore) {
                         Write-Success "claude-code ($versionBefore -> $versionAfter)"
                         $script:updated++
                     }
-                    else {
+                    elseif ($updateWorks) {
                         Write-Skip "claude-code already up to date"
                         $script:updated++
                     }
+                    else {
+                        Write-Fail "claude-code (update verification failed)"
+                        $script:failed++
+                    }
                 }
                 else {
-                    Write-Skip "bun not found, required for Claude Code updates on Windows"
-                    $script:skipped++
+                    Write-Fail "bun not found, required for Claude Code updates on Windows"
+                    $script:failed++
+                }
+            }
+            else {
+                # Couldn't determine versions, try update anyway
+                Write-Info "claude-code version check inconclusive, attempting update..."
+
+                if (Test-Command bun) {
+                    bun add -g @anthropic-ai/claude-code
+                    Write-Success "claude-code (update attempted)"
+                    $script:updated++
+                }
+                else {
+                    Write-Fail "bun not found"
+                    $script:failed++
                 }
             }
         }
-        catch {
-            Write-Fail "claude-code"
+        else {
+            Write-Fail "claude-code found but not functional"
             $script:failed++
         }
     }
@@ -539,76 +600,159 @@ function Main {
     # ============================================================================
     Write-Step "OPENCODE AI CLI"
 
-    # The bash installer installs to $HOME/.opencode/bin/opencode
-    $opencodeInstalledPath = Join-Path $env:USERPROFILE ".opencode\bin\opencode.exe"
+    # The bash installer installs to $HOME/.opencode/bin/opencode.exe
+    $opencodeBin = Join-Path $env:USERPROFILE ".opencode\bin"
+    $opencodeExe = Join-Path $opencodeBin "opencode.exe"
 
-    # Check if opencode exists (either at installed path or in PATH via npm/bun)
-    $opencodeExists = Test-Path $opencodeInstalledPath
-    if (-not $opencodeExists) {
-        $opencodeExists = Get-Command opencode -ErrorAction SilentlyContinue
+    # Clean up any old npm/bun shims that might shadow the official binary
+    $npmBin = Join-Path $env:APPDATA "npm"
+    $oldShims = @("opencode", "opencode.cmd", "opencode.ps1") | ForEach-Object {
+        $filePath = Join-Path $npmBin $_
+        if (Test-Path $filePath) { $filePath }
     }
 
+    if ($oldShims) {
+        foreach ($shim in $oldShims) {
+            Write-Info "Removing old npm shim: $(Split-Path $shim -Leaf)"
+            Remove-Item $shim -Force -ErrorAction SilentlyContinue
+        }
+    }
+
+    # Check if opencode exists and works
+    $opencodeExists = Test-Path $opencodeExe
+    $opencodeWorks = $false
+
     if ($opencodeExists) {
+        # Verify opencode actually works by running it
         try {
-            # The bash installer installs to $HOME/.opencode/bin/opencode
-            $opencodeInstalledPath = Join-Path $env:USERPROFILE ".opencode\bin\opencode.exe"
+            $null = & $opencodeExe --version 2>&1 | Out-Null
+            if ($LASTEXITCODE -eq 0) {
+                $opencodeWorks = $true
+            }
+        } catch {
+            # opencode binary exists but doesn't work
+        }
+    }
 
-            # Get current version - use installed path if exists, otherwise use PATH
-            if (Test-Path $opencodeInstalledPath) {
-                $currentVersion = (& $opencodeInstalledPath --version 2>&1 | Select-String -Pattern '\d+\.\d+\.\d+').Matches.Value
-            } else {
-                $currentVersion = (opencode --version 2>&1 | Select-String -Pattern '\d+\.\d+\.\d+').Matches.Value
+    if ($opencodeExists -and $opencodeWorks) {
+        # Get current version with proper error handling
+        $currentVersion = ""
+        try {
+            $versionOutput = & $opencodeExe --version 2>$null
+            if ($versionOutput -match '(\d+\.\d+\.\d+)') {
+                $currentVersion = $matches[1]
+            }
+        }
+        catch {
+            # If version extraction fails, we'll still try to update
+        }
+
+        # Get latest version from npm registry
+        $latestVersion = ""
+        if (Test-Command npm) {
+            try {
+                $latestVersion = npm view opencode-ai version 2>$null
+            }
+            catch {
+                Write-Fail "opencode (failed to fetch latest version)"
+                $script:failed++
+                return
+            }
+        }
+
+        # Skip if already at latest
+        if ($currentVersion -and $latestVersion -and $currentVersion -eq $latestVersion) {
+            Write-Skip "opencode already at latest version ($currentVersion)"
+            $script:skipped++
+
+            # Ensure PATH is set
+            $envPath = [Environment]::GetEnvironmentVariable("Path", "User")
+            if ($envPath -notlike "*$opencodeBin*") {
+                [Environment]::SetEnvironmentVariable("Path", "$envPath;$opencodeBin", "User")
+            }
+        }
+        elseif ($currentVersion -and $latestVersion -and $currentVersion -ne $latestVersion) {
+            Write-Info "opencode update available: $currentVersion -> $latestVersion"
+
+            # Remove npm/bun-installed opencode first
+            if (Test-Command npm) {
+                npm uninstall -g opencode-ai 2>$null | Out-Null
+            }
+            if (Test-Command bun) {
+                bun pm rm -g opencode-ai 2>$null | Out-Null
             }
 
-            # Get latest version from npm registry
-            $latestVersion = (npm view opencode-ai version 2>&1).Trim()
-
-            # Skip if already at latest
-            if ($currentVersion -eq $latestVersion) {
-                Write-Skip "opencode already at latest version ($currentVersion)"
-                $script:skipped++
-            }
-            else {
-                # Remove npm/bun-installed opencode first
-                if (Test-Command npm) {
-                    npm uninstall -g opencode-ai 2>$null | Out-Null
-                }
-                if (Test-Command bun) {
-                    bun pm rm -g opencode-ai 2>$null | Out-Null
-                }
-
-                # Run the official installer via bash
+            # Run the official installer via bash
+            if (Test-Command bash) {
                 bash -c "curl -fsSL https://opencode.ai/install | bash" 2>&1 | Out-Null
 
                 # Force refresh PowerShell command cache
                 Get-ChildItem Function:\ | Where-Object { $_.Name -like "*opencode*" } | Remove-Item -ErrorAction SilentlyContinue
 
-                # Get version after update from the installed binary (use full path to avoid cache)
-                if (Test-Path $opencodeInstalledPath) {
-                    $newVersion = (& $opencodeInstalledPath --version 2>&1 | Select-String -Pattern '\d+\.\d+\.\d+').Matches.Value
-                    Write-Success "opencode ($currentVersion -> $newVersion)"
-                    $script:updated++
-
-                    # Add to PATH if not already there
-                    $opencodeBinDir = Split-Path $opencodeInstalledPath -Parent
-                    $envPath = [Environment]::GetEnvironmentVariable("Path", "User")
-                    if ($envPath -notlike "*$opencodeBinDir*") {
-                        [Environment]::SetEnvironmentVariable("Path", "$envPath;$opencodeBinDir", "User")
+                # Verify the update worked by running the binary
+                $newVersion = ""
+                if (Test-Path $opencodeExe) {
+                    try {
+                        $versionOutput = & $opencodeExe --version 2>$null
+                        if ($versionOutput -match '(\d+\.\d+\.\d+)') {
+                            $newVersion = $matches[1]
+                        }
+                    }
+                    catch {
+                        # Version extraction failed
                     }
                 }
+
+                # Verify the binary actually executes
+                $binaryWorks = $false
+                if (Test-Path $opencodeExe) {
+                    try {
+                        $null = & $opencodeExe --version 2>&1 | Out-Null
+                        if ($LASTEXITCODE -eq 0) {
+                            $binaryWorks = $true
+                        }
+                    } catch {
+                        # Binary doesn't work
+                    }
+                }
+
+                if ($binaryWorks -and $newVersion) {
+                    Write-Success "opencode ($currentVersion -> $newVersion)"
+                    $script:updated++
+                }
                 else {
-                    Write-Fail "opencode (binary not found after install)"
+                    Write-Fail "opencode (update verification failed)"
                     $script:failed++
                 }
+
+                # Ensure PATH is set
+                $envPath = [Environment]::GetEnvironmentVariable("Path", "User")
+                if ($envPath -notlike "*$opencodeBin*") {
+                    [Environment]::SetEnvironmentVariable("Path", "$envPath;$opencodeBin", "User")
+                }
+            }
+            else {
+                Write-Fail "opencode (bash not found - required for installer)"
+                $script:failed++
             }
         }
-        catch {
-            Write-Fail "opencode"
-            $script:failed++
+        else {
+            # Couldn't determine versions - try to update anyway
+            Write-Info "opencode version check inconclusive, attempting update..."
+
+            if (Test-Command bash) {
+                bash -c "curl -fsSL https://opencode.ai/install | bash" 2>&1 | Out-Null
+                Write-Success "opencode (update attempted)"
+                $script:updated++
+            }
+            else {
+                Write-Fail "opencode (bash not found)"
+                $script:failed++
+            }
         }
     }
     else {
-        Write-Skip "opencode not found"
+        Write-Skip "opencode not found or not functional"
         $script:skipped++
     }
 
