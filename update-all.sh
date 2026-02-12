@@ -875,18 +875,42 @@ _main() {
 	# The bash installer installs to $HOME/.opencode/bin/opencode
 	local opencode_exe="$HOME/.opencode/bin/opencode"
 
-	# Check if opencode exists (either at installed path or in PATH via npm/bun)
-	local opencode_exists=false
-	if [[ -f "$opencode_exe" ]]; then
-		opencode_exists=true
-	elif cmd_exists opencode; then
-		opencode_exists=true
+	# First, clean up any old npm shims that might shadow the official binary
+	# This prevents confusion where `opencode --version` returns old version
+	local npm_bin npm_bin_alt
+	if [[ -d "$NPM_CONFIG_PREFIX" ]]; then
+		npm_bin="$NPM_CONFIG_PREFIX/bin"
+	else
+		npm_bin="$HOME/.npm-global/bin"
+	fi
+	# Also check standard npm location on Windows via Git Bash
+	if [[ -n "$APPDATA" ]]; then
+		npm_bin_alt="$APPDATA/npm"
 	fi
 
-	if [[ "$opencode_exists" == "true" ]]; then
-		# Get current version from local binary
+	for shim_loc in "$npm_bin" "$npm_bin_alt"; do
+		[[ -d "$shim_loc" ]] || continue
+		for shim in "$shim_loc"/opencode "$shim_loc"/opencode.cmd; do
+			if [[ -f "$shim" ]]; then
+				log_info "Removing old npm shim: $(basename "$shim")"
+				rm -f "$shim" 2>/dev/null || true
+			fi
+		done
+	done
+
+	# Also remove npm/bun-installed opencode packages
+	if cmd_exists npm; then
+		npm uninstall -g opencode-ai 2>/dev/null || true
+	fi
+	if cmd_exists bun; then
+		bun pm rm -g opencode-ai 2>/dev/null || true
+	fi
+
+	# Check if opencode binary exists at the official installer location
+	if [[ -f "$opencode_exe" ]]; then
+		# Get current version by running the binary directly (not via PATH)
 		local version_before
-		version_before=$(opencode --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+		version_before=$("$opencode_exe" --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
 
 		# Get latest version from npm registry
 		local latest_version
@@ -896,12 +920,15 @@ _main() {
 		if [[ -n "$latest_version" ]] && [[ "$version_before" == "$latest_version" ]]; then
 			update_skip "opencode already at latest version ($version_before)"
 		else
-			# Remove npm/bun-installed opencode first
-			if cmd_exists npm; then
-				npm uninstall -g opencode-ai 2>/dev/null || true
-			fi
-			if cmd_exists bun; then
-				bun pm rm -g opencode-ai 2>/dev/null || true
+			# Stop any running opencode processes (Windows can't replace running executables)
+			if [[ "$OS" == "windows" ]] || [[ -n "$APPDATA" ]]; then
+				if cmd_exists taskkill; then
+					taskkill //F //IM opencode.exe 2>/dev/null || true
+					sleep 0.5
+				fi
+			elif cmd_exists pkill; then
+				pkill -x opencode 2>/dev/null || true
+				sleep 0.5
 			fi
 
 			# Run the official installer via bash
@@ -926,7 +953,7 @@ _main() {
 			fi
 		fi
 	else
-		update_skip "opencode not found"
+		update_skip "opencode not found at $opencode_exe"
 	fi
 
 	# ============================================================================
