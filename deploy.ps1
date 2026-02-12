@@ -17,21 +17,33 @@ if (!(Test-Path $ConfigDir)) {
 }
 
 function Copy-File {
-    param([string]$Src, [string]$Dst)
+    param([string]$Src, [string]$Dst, [switch]$Verbose)
     if (Test-Path $Src) {
+        if ($Verbose) {
+            $srcTime = (Get-Item $Src).LastWriteTime.ToString("yyyy-MM-dd HH:mm:ss")
+            $dstExisted = Test-Path $Dst
+            $dstTime = if ($dstExisted) { (Get-Item $Dst).LastWriteTime.ToString("yyyy-MM-dd HH:mm:ss") } else { "N/A" }
+            Write-Host "    Copying: $(Split-Path $Src -Leaf)" -ForegroundColor DarkGray
+            Write-Host "      src: $srcTime" -ForegroundColor DarkGray
+            Write-Host "      dst: $dstTime" -ForegroundColor DarkGray
+        }
         Copy-Item $Src $Dst -Force
+        if ($Verbose) {
+            $newDstTime = (Get-Item $Dst).LastWriteTime.ToString("yyyy-MM-dd HH:mm:ss")
+            Write-Host "      -> $newDstTime" -ForegroundColor DarkGray
+        }
     }
 }
 
 function Copy-Files {
-    param([string[]]$Files, [string]$DestDir)
+    param([string[]]$Files, [string]$DestDir, [switch]$Verbose)
     if (!(Test-Path $DestDir)) {
         New-Item -ItemType Directory -Path $DestDir -Force | Out-Null
     }
     foreach ($f in $Files) {
         $Src = Join-Path $DotfilesDir $f
         $Dst = Join-Path $DestDir (Split-Path $f -Leaf)
-        Copy-File $Src $Dst
+        Copy-File $Src $Dst -Verbose:$Verbose
     }
 }
 
@@ -105,7 +117,7 @@ Copy-Files @(
     "sync-system-instructions.sh"
     "sync-system-instructions.ps1"
     "update-all.ps1"
-) $DevDir
+) $DevDir -Verbose
 
 # Make shell scripts executable (only if running in WSL/Git Bash context)
 $shFiles = @(
