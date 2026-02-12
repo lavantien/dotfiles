@@ -7,6 +7,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.8.0] - 2026-02-12
+
+### Fixed
+
+**update-all - OpenCode AI CLI Update Reliability (Windows)**
+
+- Added process termination before opencode update (Windows can't replace running executables)
+- Stops any running `opencode.exe` processes before running the official installer
+- Prevents silent update failures when opencode is running during update
+
+**update-all - OpenCode Version Detection (Bash)**
+
+- Aligned bash script with bootstrap: now cleans up npm shims BEFORE version checks
+- Uses full binary path `$HOME/.opencode/bin/opencode` for version checks instead of PATH
+- Removes old npm shims from `$NPM_CONFIG_PREFIX/bin` and `$APPDATA/npm` (Windows Git Bash)
+- Prevents false version detection from npm shim shadowing official binary
+
+**deploy.ps1 - Verbose Script Deployment Logging**
+
+- Added detailed logging showing source and destination timestamps for script files
+- Shows src time, dst time (before), and dst time (after) for each copied script
+- Helps diagnose deployment issues by making it clear which files were updated
+- Verbose output enabled by default for script deployments
+
+### Changed
+
+**update-all.sh - OpenCode Update Section Refactored**
+
+- Clean up npm/bun shims first, then check if binary exists at official installer location
+- Only proceed with update if binary exists at `$HOME/.opencode/bin/opencode`
+- Consistent with bootstrap script's approach to opencode installation management
+
+**Rationale:**
+
+The opencode update was failing silently in some cases due to:
+1. Old npm shims shadowing the official binary in PATH, causing version checks to return stale versions
+2. Running opencode processes preventing the installer from replacing the executable on Windows
+
+The fix aligns update-all.sh with bootstrap's proven approach: clean up shims first, use full binary paths for version checks, and terminate running processes before updating. The deploy script now provides verbose logging to help diagnose any future deployment issues.
+
+---
+
 ## [5.7.0] - 2026-02-11
 
 ### Fixed
@@ -1892,6 +1934,7 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 | Version | Date       | Major Changes                                                                                            |
 | ------- | ---------- | -------------------------------------------------------------------------------------------------------- |
+| 5.8.0   | 2026-02-12 | OpenCode update reliability fix, deploy verbose logging, shim cleanup alignment                          |
 | 5.7.0   | 2026-02-11 | Bootstrap GCC verification, update-all AI CLI verification (claude-code, opencode)                        |
 | 5.6.0   | 2026-02-08 | GCC installation verification via --version, Install-ScoopPackage execution check                       |
 | 5.5.0   | 2026-02-07 | Skip pip flag, pip update method fix, OpenCode CLI update fix                                            |
@@ -1961,7 +2004,8 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 ---
 
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.7.0...HEAD
+[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.8.0...HEAD
+[5.8.0]: https://github.com/lavantien/dotfiles/compare/v5.7.0...v5.8.0
 [5.7.0]: https://github.com/lavantien/dotfiles/compare/v5.6.0...v5.7.0
 [5.6.0]: https://github.com/lavantien/dotfiles/compare/v5.5.0...v5.6.0
 [5.5.0]: https://github.com/lavantien/dotfiles/compare/v5.3.14...v5.5.0
