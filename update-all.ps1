@@ -674,6 +674,14 @@ function Main {
         elseif ($currentVersion -and $latestVersion -and $currentVersion -ne $latestVersion) {
             Write-Info "opencode update available: $currentVersion -> $latestVersion"
 
+            # Stop any running opencode processes (Windows can't replace running executables)
+            $opencodeProcesses = Get-Process -Name "opencode" -ErrorAction SilentlyContinue
+            if ($opencodeProcesses) {
+                Write-Info "Stopping running opencode processes..."
+                $opencodeProcesses | Stop-Process -Force -ErrorAction SilentlyContinue
+                Start-Sleep -Milliseconds 500
+            }
+
             # Remove npm/bun-installed opencode first
             if (Test-Command npm) {
                 npm uninstall -g opencode-ai 2>$null | Out-Null
