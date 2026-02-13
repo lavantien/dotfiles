@@ -337,6 +337,6 @@ function Get-CommandPath {
 Set-Alias -Name which -Value Get-CommandPath
 
 # Update all packages alias
-function Update-AllPackages { & "$env:USERPROFILE/dev/update-all.ps1" }
+function Update-AllPackages { & "$env:USERPROFILE/dev/update-all.ps1" @args }
 Set-Alias -Name up -Value Update-AllPackages
 # Note: 'update' alias removed to avoid conflict with Scoop's internal update function
