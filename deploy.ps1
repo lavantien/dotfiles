@@ -337,6 +337,22 @@ if (-not $SkipConfig) {
     Patch-ClaudeLspMarketplace
 }
 
+# Reload key functions into Global scope so changes take effect immediately
+# PowerShell's scope model prevents child scripts from modifying parent scope,
+# so we explicitly redefine critical functions with Global: scope
+$profilePath = $PROFILE.CurrentUserCurrentHost
+if (Test-Path $profilePath) {
+    # Define the Update-AllPackages function in Global scope with @args support
+    Set-Item -Path Function:\Global:Update-AllPackages -Value {
+        & "$env:USERPROFILE/dev/update-all.ps1" @args
+    } -Force
+
+    # Recreate the 'up' alias in Global scope
+    Set-Alias -Name up -Value Update-AllPackages -Scope Global -Force
+
+    Write-Host "Profile functions reloaded into Global scope" -ForegroundColor Green
+}
+
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "           Complete!" -ForegroundColor Green
 Write-Host "========================================" -ForegroundColor Cyan
