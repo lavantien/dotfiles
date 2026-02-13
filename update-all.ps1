@@ -108,6 +108,10 @@ function Main {
         Write-Skip "Chocolatey not found"
     }
 
+    if ($SkipPip) {
+        Write-Skip "PIP (skipped by -SkipPip flag)"
+    }
+
     if (-not $hasManager) {
         Write-Host "`nError: No package managers found!" -ForegroundColor Red
         Write-Host "Please install Scoop, winget, or Chocolatey" -ForegroundColor Yellow
@@ -600,167 +604,47 @@ function Main {
     # ============================================================================
     Write-Step "OPENCODE AI CLI"
 
-    # The bash installer installs to $HOME/.opencode/bin/opencode.exe
-    $opencodeBin = Join-Path $env:USERPROFILE ".opencode\bin"
-    $opencodeExe = Join-Path $opencodeBin "opencode.exe"
-
-    # Clean up any old npm/bun shims that might shadow the official binary
-    $npmBin = Join-Path $env:APPDATA "npm"
-    $oldShims = @("opencode", "opencode.cmd", "opencode.ps1") | ForEach-Object {
-        $filePath = Join-Path $npmBin $_
-        if (Test-Path $filePath) { $filePath }
-    }
-
-    if ($oldShims) {
-        foreach ($shim in $oldShims) {
-            Write-Info "Removing old npm shim: $(Split-Path $shim -Leaf)"
-            Remove-Item $shim -Force -ErrorAction SilentlyContinue
-        }
-    }
-
-    # Check if opencode exists and works
-    $opencodeExists = Test-Path $opencodeExe
-    $opencodeWorks = $false
-
-    if ($opencodeExists) {
-        # Verify opencode actually works by running it
-        try {
-            $null = & $opencodeExe --version 2>&1 | Out-Null
-            if ($LASTEXITCODE -eq 0) {
-                $opencodeWorks = $true
-            }
-        } catch {
-            # opencode binary exists but doesn't work
-        }
-    }
-
-    if ($opencodeExists -and $opencodeWorks) {
-        # Get current version with proper error handling
+    if (Test-Command bun) {
+        # Get current version if installed
         $currentVersion = ""
-        try {
-            $versionOutput = & $opencodeExe --version 2>$null
-            if ($versionOutput -match '(\d+\.\d+\.\d+)') {
-                $currentVersion = $matches[1]
-            }
-        }
-        catch {
-            # If version extraction fails, we'll still try to update
+        if (Test-Command opencode) {
+            try {
+                $versionOutput = opencode --version 2>$null
+                if ($versionOutput -match '(\d+\.\d+\.\d+)') {
+                    $currentVersion = $matches[1]
+                }
+            } catch {}
         }
 
         # Get latest version from npm registry
         $latestVersion = ""
-        if (Test-Command npm) {
-            try {
-                $latestVersion = npm view opencode-ai version 2>$null
-            }
-            catch {
-                Write-Fail "opencode (failed to fetch latest version)"
-                $script:failed++
-                return
-            }
-        }
+        try {
+            $latestVersion = npm view opencode-ai version 2>$null
+        } catch {}
 
-        # Skip if already at latest
         if ($currentVersion -and $latestVersion -and $currentVersion -eq $latestVersion) {
             Write-Skip "opencode already at latest version ($currentVersion)"
             $script:skipped++
-
-            # Ensure PATH is set
-            $envPath = [Environment]::GetEnvironmentVariable("Path", "User")
-            if ($envPath -notlike "*$opencodeBin*") {
-                [Environment]::SetEnvironmentVariable("Path", "$envPath;$opencodeBin", "User")
-            }
-        }
-        elseif ($currentVersion -and $latestVersion -and $currentVersion -ne $latestVersion) {
-            Write-Info "opencode update available: $currentVersion -> $latestVersion"
-
-            # Stop any running opencode processes (Windows can't replace running executables)
-            $opencodeProcesses = Get-Process -Name "opencode" -ErrorAction SilentlyContinue
-            if ($opencodeProcesses) {
-                Write-Info "Stopping running opencode processes..."
-                $opencodeProcesses | Stop-Process -Force -ErrorAction SilentlyContinue
-                Start-Sleep -Milliseconds 500
-            }
-
-            # Remove npm/bun-installed opencode first
-            if (Test-Command npm) {
-                npm uninstall -g opencode-ai 2>$null | Out-Null
-            }
-            if (Test-Command bun) {
-                bun pm rm -g opencode-ai 2>$null | Out-Null
-            }
-
-            # Run the official installer via bash
-            if (Test-Command bash) {
-                bash -c "curl -fsSL https://opencode.ai/install | bash" 2>&1 | Out-Null
-
-                # Force refresh PowerShell command cache
-                Get-ChildItem Function:\ | Where-Object { $_.Name -like "*opencode*" } | Remove-Item -ErrorAction SilentlyContinue
-
-                # Verify the update worked by running the binary
-                $newVersion = ""
-                if (Test-Path $opencodeExe) {
-                    try {
-                        $versionOutput = & $opencodeExe --version 2>$null
-                        if ($versionOutput -match '(\d+\.\d+\.\d+)') {
-                            $newVersion = $matches[1]
-                        }
-                    }
-                    catch {
-                        # Version extraction failed
-                    }
-                }
-
-                # Verify the binary actually executes
-                $binaryWorks = $false
-                if (Test-Path $opencodeExe) {
-                    try {
-                        $null = & $opencodeExe --version 2>&1 | Out-Null
-                        if ($LASTEXITCODE -eq 0) {
-                            $binaryWorks = $true
-                        }
-                    } catch {
-                        # Binary doesn't work
-                    }
-                }
-
-                if ($binaryWorks -and $newVersion) {
-                    Write-Success "opencode ($currentVersion -> $newVersion)"
-                    $script:updated++
-                }
-                else {
-                    Write-Fail "opencode (update verification failed)"
-                    $script:failed++
-                }
-
-                # Ensure PATH is set
-                $envPath = [Environment]::GetEnvironmentVariable("Path", "User")
-                if ($envPath -notlike "*$opencodeBin*") {
-                    [Environment]::SetEnvironmentVariable("Path", "$envPath;$opencodeBin", "User")
-                }
-            }
-            else {
-                Write-Fail "opencode (bash not found - required for installer)"
-                $script:failed++
-            }
         }
         else {
-            # Couldn't determine versions - try to update anyway
-            Write-Info "opencode version check inconclusive, attempting update..."
+            if ($currentVersion -and $latestVersion) {
+                Write-Info "opencode update available: $currentVersion -> $latestVersion"
+            }
 
-            if (Test-Command bash) {
-                bash -c "curl -fsSL https://opencode.ai/install | bash" 2>&1 | Out-Null
-                Write-Success "opencode (update attempted)"
+            # Install/update via bun
+            $result = bun install -g opencode-ai 2>&1
+            if ($LASTEXITCODE -eq 0) {
+                Write-Success "opencode ($currentVersion -> $latestVersion)"
                 $script:updated++
             }
             else {
-                Write-Fail "opencode (bash not found)"
+                Write-Fail "opencode (bun install failed)"
                 $script:failed++
             }
         }
     }
     else {
-        Write-Skip "opencode not found or not functional"
+        Write-Skip "opencode (bun not found)"
         $script:skipped++
     }
 

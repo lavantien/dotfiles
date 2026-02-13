@@ -1226,6 +1226,7 @@ install_development_tools() {
 		log_info "See: https://docs.comfy.org/getting_started/installing_comfyui/linux"
 	fi
 
+	# OpenCode AI CLI (via official installer)
 	# First, clean up any old npm shims that might shadow the official binary
 	# This prevents confusion where `opencode --version` returns old version
 	if [[ -d "$NPM_CONFIG_PREFIX" ]]; then

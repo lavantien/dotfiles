@@ -1166,113 +1166,76 @@ function Install-DevelopmentTools {
         Track-Skipped "claude-code" "AI CLI"
     }
 
-    # OpenCode AI CLI (via official installer)
-    $opencodeBin = Join-Path $env:USERPROFILE ".opencode\bin"
-    $opencodeExe = Join-Path $opencodeBin "opencode.exe"
-
-    # First, clean up any old npm shims that might shadow the official binary
-    # This prevents confusion where `opencode --version` returns old version
-    $npmBin = Join-Path $env:APPDATA "npm"
-    $oldShims = @("opencode", "opencode.cmd", "opencode.ps1") | ForEach-Object {
-        $filePath = Join-Path $npmBin $_
-        if (Test-Path $filePath) { $filePath }
-    }
-
-    if ($oldShims) {
-        foreach ($shim in $oldShims) {
-            Write-Info "Removing old npm shim: $(Split-Path $shim -Leaf)"
-            Remove-Item $shim -Force -ErrorAction SilentlyContinue
-        }
-    }
-
-    # Check if opencode needs install/update
-    $needsInstall = $false
-
-    # Check if binary exists
-    if (Test-Path $opencodeExe) {
-        # Get current version from official binary
+    # OpenCode AI CLI (via bun)
+    if (Test-Command bun) {
+        $needsInstall = $false
         $currentVersion = ""
-        try {
-            $versionOutput = & $opencodeExe --version 2>$null
-            if ($versionOutput -match '(\d+\.\d+\.\d+)') {
-                $currentVersion = $matches[1]
-            }
-        }
-        catch {
-            # If we can't get version, treat as needs install
-            $needsInstall = $true
+
+        # Check if opencode is installed and get version
+        if (Test-Command opencode) {
+            try {
+                $versionOutput = opencode --version 2>$null
+                if ($versionOutput -match '(\d+\.\d+\.\d+)') {
+                    $currentVersion = $matches[1]
+                }
+            } catch {}
         }
 
         # Get latest version from npm registry
         $latestVersion = ""
-        if (Get-Command npm -ErrorAction SilentlyContinue) {
-            try {
-                $latestVersion = npm view opencode-ai version 2>$null
-            }
-            catch {
-                # If npm check fails, assume we need to install
-                $needsInstall = $true
-            }
-        }
+        try {
+            $latestVersion = npm view opencode-ai version 2>$null
+        } catch {}
 
-        # Only install if versions differ or we couldn't determine versions
-        if ($currentVersion -and $latestVersion -and $currentVersion -eq $latestVersion) {
-            Write-Info "OpenCode AI CLI already at latest version ($currentVersion)"
-            # Ensure PATH is set even when skipping install
-            Add-ToPath -Path $opencodeBin -User
-            Track-Skipped "opencode" "AI CLI"
-            $needsInstall = $false
+        # Determine if install/update needed
+        if (-not (Test-Command opencode)) {
+            $needsInstall = $true
         }
         elseif ($currentVersion -and $latestVersion -and $currentVersion -ne $latestVersion) {
             Write-Info "OpenCode AI CLI update available: $currentVersion -> $latestVersion"
             $needsInstall = $true
         }
-        else {
-            # Couldn't determine versions, install to be safe
-            $needsInstall = $true
+
+        if ($currentVersion -and $latestVersion -and $currentVersion -eq $latestVersion) {
+            Write-Info "OpenCode AI CLI already at latest version ($currentVersion)"
+            Track-Skipped "opencode" "AI CLI"
         }
-    }
-    else {
-        # Binary doesn't exist
-        $needsInstall = $true
-    }
-
-    if ($needsInstall) {
-        Write-Step "Installing OpenCode AI CLI..."
-        if (-not $DryRun) {
-            # Prepare ~/.opencode/bin location
-            if (-not (Test-Path $opencodeBin)) {
-                New-Item -ItemType Directory -Path $opencodeBin -Force | Out-Null
-            }
-            Add-ToPath -Path $opencodeBin -User
-
-            # Run official installer script via Git Bash
-            if (Get-Command bash -ErrorAction SilentlyContinue) {
-                bash.exe -c "curl -fsSL https://opencode.ai/install | bash"
-
-                # Refresh PATH
-                Refresh-Path
-
-                if (Test-Command opencode) {
+        elseif ($needsInstall) {
+            Write-Step "Installing OpenCode AI CLI..."
+            if (-not $DryRun) {
+                $result = bun install -g opencode-ai 2>&1
+                if ($LASTEXITCODE -eq 0) {
                     Write-Success "OpenCode AI CLI installed"
                     Track-Installed "opencode" "AI CLI"
                 }
                 else {
-                    Write-Warning "OpenCode AI CLI installed but not in PATH yet"
-                    Track-Installed "opencode" "AI CLI - PATH update pending"
+                    Write-Warning "OpenCode AI CLI installation failed"
+                    Track-Failed "opencode" "AI CLI"
                 }
             }
             else {
-                Write-Warning "Git Bash not found - required for OpenCodeAI installation"
-                Track-Failed "opencode" "AI CLI"
+                Write-Info "[DRY-RUN] Would install OpenCode AI CLI"
             }
         }
         else {
-            Write-Info "[DRY-RUN] Would install OpenCode AI CLI"
+            # Couldn't determine versions, install to be safe
+            Write-Step "Installing OpenCode AI CLI..."
+            if (-not $DryRun) {
+                $result = bun install -g opencode-ai 2>&1
+                if ($LASTEXITCODE -eq 0) {
+                    Write-Success "OpenCode AI CLI installed"
+                    Track-Installed "opencode" "AI CLI"
+                }
+                else {
+                    Write-Warning "OpenCode AI CLI installation failed"
+                    Track-Failed "opencode" "AI CLI"
+                }
+            }
         }
     }
     else {
-        # Already checked and skipped above
+        Write-Warning "Bun not found - required for OpenCode AI CLI installation"
+        Track-Skipped "opencode" "AI CLI"
     }
 
     # ComfyUI Desktop (AI image generation via winget - Windows only)
