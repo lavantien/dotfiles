@@ -441,6 +441,10 @@ _main() {
 		echo -e "${YELLOW}⊘ npm not found${NC}"
 	fi
 
+	if [[ "$SKIP_PIP" == "true" ]]; then
+		echo -e "${YELLOW}⊘ PIP (skipped by --skip-pip flag)${NC}"
+	fi
+
 	if [[ "$has_manager" == "false" ]]; then
 		echo -e "\n${RED}Error: No package managers found!${NC}"
 		echo -e "${YELLOW}Please install a package manager (apt, brew, npm, etc.)${NC}"
