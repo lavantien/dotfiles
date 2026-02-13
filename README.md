@@ -117,6 +117,8 @@ Windows uses `.ps1` scripts, Linux/macOS uses `.sh` scripts.
 |--------|------|------------|---------|
 | Skip pip updates | `--skip-pip` | `-SkipPip` | Skip pip package updates (speeds up update) |
 
+Usage with alias: `up --skip-pip` (bash) or `up -SkipPip` (PowerShell)
+
 ### Installation Categories
 
 | Category | Description |
