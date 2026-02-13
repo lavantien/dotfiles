@@ -7,6 +7,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.9.0] - 2026-02-13
+
+### Changed
+
+**OpenCode AI CLI Installation - Bun on Windows**
+
+- Switched Windows opencode installation from official bash installer to bun
+- `update-all.ps1`: Uses `bun install -g opencode-ai` instead of curl|bash
+- `bootstrap.ps1`: Uses `bun install -g opencode-ai` instead of curl|bash
+- Linux/macOS continue using the official bash installer (curl|bash)
+- Simplified code: removed complex HOME environment variable handling
+- Bun handles cross-platform path issues automatically
+
+### Added
+
+**PowerShell Profile - Argument Pass-through**
+
+- Added `@args` to Update-AllPackages function in profile
+- Allows passing flags like `-SkipPip` through the `up` alias
+- Example: `up -SkipPip` now correctly passes the skip flag
+
+**deploy.ps1 - Profile Functions Reload**
+
+- Added automatic reload of profile functions into Global scope after deploy
+- PowerShell's scope model prevents child scripts from modifying parent scope
+- Redefines `Update-AllPackages` function and `up` alias in Global scope
+- Changes to update-all.ps1 take effect immediately without restarting shell
+
+**update-all.sh - Skip PIP Summary**
+
+- Added `--skip-pip` status to summary output when flag is used
+- Shows "PIP (skipped by --skip-pip flag)" in completion summary
+
+### Rationale
+
+The official opencode bash installer has Windows path handling issues when called from PowerShell (HOME variable confusion). Bun provides a cleaner cross-platform installation method that avoids these issues entirely. The Windows scripts now use bun while Linux/macOS continue using the proven official installer.
+
+---
+
 ## [5.8.0] - 2026-02-12
 
 ### Fixed
@@ -1934,6 +1973,7 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 | Version | Date       | Major Changes                                                                                            |
 | ------- | ---------- | -------------------------------------------------------------------------------------------------------- |
+| 5.9.0   | 2026-02-13 | OpenCode via bun on Windows, PowerShell profile @args pass-through, deploy profile reload               |
 | 5.8.0   | 2026-02-12 | OpenCode update reliability fix, deploy verbose logging, shim cleanup alignment                          |
 | 5.7.0   | 2026-02-11 | Bootstrap GCC verification, update-all AI CLI verification (claude-code, opencode)                        |
 | 5.6.0   | 2026-02-08 | GCC installation verification via --version, Install-ScoopPackage execution check                       |
@@ -2004,7 +2044,8 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 ---
 
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.8.0...HEAD
+[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.9.0...HEAD
+[5.9.0]: https://github.com/lavantien/dotfiles/compare/v5.8.0...v5.9.0
 [5.8.0]: https://github.com/lavantien/dotfiles/compare/v5.7.0...v5.8.0
 [5.7.0]: https://github.com/lavantien/dotfiles/compare/v5.6.0...v5.7.0
 [5.6.0]: https://github.com/lavantien/dotfiles/compare/v5.5.0...v5.6.0
