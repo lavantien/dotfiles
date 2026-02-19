@@ -11,21 +11,10 @@
 
 ## Tool Hierarchy
 
-**For coding tasks (default):** Use Serena MCP for precise searches, edits, refactors, symbol lookups, and large/ongoing work.
-
-**For repository overview:** Use Repomix when full-structure context is needed, then switch to Serena for implementation.
-
-**For specialized operations:**
-- Context7 MCP: Version-specific library documentation
-- Web Search/Reader: Breaking changes, latest syntax
-- ZRead/GitHub CLI: Remote repo exploration
-- Vision MCP: Image verification and UI debugging
-- Playwright: E2E testing and interaction
-- Task tool: Parallel sub-agents for independent work
-
-**Plugin Skills:** Use feature-dev plugins (brainstorming, planning, diagnostics) and project-specific skills when available instead of reinventing analysis.
-
-**Last resort:** Only use generic bash scripting or brittle regex when the above tools lack the capability.
+- Default Behavior: Always use built-in tools and actions, including sub-agents and agent team when appropriate, only looking for external tools when the built-in aren't capable of efficiently achieve your goal.
+- Plugin Skills: Use plugins (feature-dev, frontend-design, planning, diagnostics, etc.) and skills when available instead of reinventing analysis.
+- MCPs: WebSearch, WebFetch, Vision, ZRead, Context7, Repomix, Playwright, Serena.
+- Last resort: Only use generic bash scripting or brittle regex when the above tools lack the capability.
 
 ## Code Standards
 
@@ -37,16 +26,15 @@
 
 ## Testing Strategy
 
-Unit Tests for: Specific input/output pairs, edge cases, error paths.
-
-Property-Based Tests for: Invariants, commutativity, idempotency, round-trip serialization.
+- Unit Tests for: Specific input/output pairs, edge cases, error paths.
+- Property-Based Tests for: Invariants, commutativity, idempotency, round-trip serialization.
 
 ## Workflow
 
 ### Before Coding
 1. Check current date/year for temporal context.
-2. Serena: Explore codebase structure and patterns.
-3. Context7/Web Search: Verify current syntax and versions (do not rely on training data).
+2. Explore codebase structure and patterns.
+3. Verify current syntax and versions (do not rely on training data).
 4. Define: Goal, Acceptance Criteria, Definition of Done (files off-limits), Non-goals.
 
 ### Trivial Edits Exception
@@ -61,24 +49,6 @@ Run in order, committing at each green step:
 5. Full unit test suite
 6. Full E2E suite
 7. Visual regression (if applicable)
-
-## When Stuck
-
-After 3 failed attempts:
-1. Git reset to last green state.
-2. Re-read requirements.
-3. Serena: Trace symbols and references to understand dependencies.
-4. Create minimal reproduction in ./playground.
-5. Decompose to atomic TDD cycles (target &lt;10 lines each).
-6. Spawn 2-8 parallel diagnostic tasks via Task tool.
-7. Escalate to human with findings.
-
-## Context Hygiene
-
-At 32 turns:
-1. Write checkpoint.md: Current Goal, Recent Changes, Next Step, Open Questions.
-2. Commit it.
-3. Reset context and resume from checkpoint.
 
 ## Language Pitfalls
 
