@@ -25,7 +25,7 @@ AI-Native Agentic Development
 - Full support for Claude Code and OpenCode
 - 4 MCP servers: context7, playwright, repomix, serena
 - Auto-detect & trigger format/lint/check: Git pre-commit/commit-msg hooks
-- Statusline hook for Claude Code (auto-registered in settings.json)
+- Statusline hook for Claude Code (unified bash script, auto-registered in settings.json)
 - System instruction sync across all repos (CLAUDE.md, AGENTS.md, GEMINI.md, RULES.md)
 
 Automation & Safety
@@ -223,7 +223,7 @@ Platform-specific: `.sh` for Linux/macOS, `.ps1` for Windows
 
 ### Claude Code Hooks
 
-**Statusline** hook is auto-registered in `~/.claude/settings.json` for custom command output display.
+**Statusline** hook is auto-registered in `~/.claude/settings.json`. Uses a unified bash script (`statusline.sh`) on both Linux and Windows (via Git Bash).
 
 Quality checks can be configured per-project using project-specific hooks or MCP servers.
 

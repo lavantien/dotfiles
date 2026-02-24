@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.10.0] - 2026-02-24
+
+### Changed
+
+**Unified Statusline - Bash for All Platforms**
+
+- Removed `statusline.ps1` - Windows now uses `statusline.sh` via Git Bash/MSYS2
+- `deploy.sh`: Simplified statusline registration - single command for all platforms
+- `deploy.ps1`: Changed from `pwsh ... statusline.ps1` to `bash ~/.claude/statusline.sh`
+- Single source of truth for statusline logic across Linux, macOS, and Windows
+
+### Rationale
+
+Using a unified bash script simplifies maintenance and ensures consistent behavior across all platforms. Windows environments typically have Git Bash or MSYS2 available (required for many development tools), making bash a viable cross-platform option.
+
+---
+
 ## [5.9.0] - 2026-02-13
 
 ### Changed

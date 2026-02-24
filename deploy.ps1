@@ -213,17 +213,16 @@ if (-not $SkipConfig) {
         Write-Host "  Claude configs" -ForegroundColor Green
     }
 
-    # Register statusline in Claude Code settings.json
+    # Register statusline in Claude Code settings.json (using bash for all platforms)
     $SettingsFile = "$HOME/.claude/settings.json"
     if (!(Test-Path $SettingsFile)) {
         "{}" | Set-Content $SettingsFile
     }
 
     $Settings = Get-Content $SettingsFile -Raw | ConvertFrom-Json
-    $StatusLinePath = Join-Path $HOME ".claude\statusline.ps1"
     $Settings | Add-Member -NotePropertyName "statusLine" -NotePropertyValue @{
         type = "command"
-        command = "pwsh -NoProfile -ExecutionPolicy Bypass -File $StatusLinePath"
+        command = "bash ~/.claude/statusline.sh"
     } -Force
     $Settings | ConvertTo-Json -Depth 10 | Set-Content $SettingsFile
     Write-Host "  Statusline registered" -ForegroundColor Green

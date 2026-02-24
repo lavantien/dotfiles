@@ -334,11 +334,8 @@ register_claude_code_hooks() {
 		return 0
 	fi
 
-	# Detect OS to use appropriate statusline command
+	# Use bash statusline.sh for all platforms (Windows via Git Bash/MSYS2)
 	local statusline_command="bash ~/.claude/statusline.sh"
-	if [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]]; then
-		statusline_command="pwsh -NoProfile -ExecutionPolicy Bypass -File ~/.claude/statusline.ps1"
-	fi
 
 	# Register statusline (always ensure it's set)
 	local tmp_file="${settings_file}.tmp"
