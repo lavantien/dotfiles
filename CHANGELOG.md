@@ -7,9 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [5.10.0] - 2026-02-24
+## [5.10.0] - 2026-02-28
 
 ### Changed
+
+**CLAUDE.md Protocol Enhancements**
+
+- Added Prime Directive #3: Never manually copy. Everything must be programmatically coherent.
+- Added Prime Directive #8: Simplest approach. Never overcomplicate or add unnecessary comments.
+- Added Testing Strategy: Baseline First - run all unit tests before implementing, fix existing failures.
+- Added Testing Strategy: No Skipped Tests - detect and re-enable skipped tests, investigate root causes.
+- Added Workflow section: When Stuck - write one-off programs in `./playground` to isolate and test intent/hypothesis.
 
 **Unified Statusline - Bash for All Platforms**
 

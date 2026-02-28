@@ -4,10 +4,12 @@
 
 1. Verify everything. Check official docs before coding. Query current date first.
 2. Never hardcode. Generalize all solutions, even for "quick tests".
-3. Never modify tests to pass. Fix root causes only.
-4. Never run migrations manually. Use docker compose up -d exclusively.
-5. Own your changes. Fix flaky tests and regressions you cause.
-6. No bypassing. Never twist configs or tests to fake success.
+3. Never manually copy. Everything must be programmatically coherent.
+4. Never modify tests to pass. Fix root causes only.
+5. Never run migrations manually. Use docker compose up -d exclusively.
+6. Own your changes. Fix flaky tests and regressions you cause.
+7. No bypassing. Never twist configs or tests to fake success.
+8. Simplest approach. Never overcomplicate or add unnecessary comments.
 
 ## Tool Hierarchy
 
@@ -26,8 +28,10 @@
 
 ## Testing Strategy
 
+- Baseline First: Run all unit tests before implementing. Fix any existing failures.
 - Unit Tests for: Specific input/output pairs, edge cases, error paths.
 - Property-Based Tests for: Invariants, commutativity, idempotency, round-trip serialization.
+- No Skipped Tests: Detect and re-enable skipped tests. Investigate root causes.
 
 ## Workflow
 
@@ -49,6 +53,9 @@ Run in order, committing at each green step:
 5. Full unit test suite
 6. Full E2E suite
 7. Visual regression (if applicable)
+
+### When Stuck
+Write one-off programs in `./playground` to isolate and test intent/hypothesis.
 
 ## Language Pitfalls
 
