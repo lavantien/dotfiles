@@ -422,26 +422,6 @@ deploy_mcp_configs() {
 		echo -e "${YELLOW}OpenCode template not found at $platform_template${NC}"
 	fi
 
-	# -------------------------------------------------------------------------
-	# Claude Code Configuration
-	# Note: MCP servers are managed via plugins, not this config
-	# -------------------------------------------------------------------------
-	local claude_config="$HOME/.claude.json"
-	local claude_template="$SCRIPT_DIR/.claude.json.template"
-
-	if [[ -f "$claude_template" ]]; then
-		if [[ ! -f "$claude_config" ]]; then
-			# Config doesn't exist, create from template
-			cp "$claude_template" "$claude_config"
-			echo -e "${GREEN}Claude Code config created: $claude_config${NC}"
-		else
-			echo -e "${BLUE}Claude Code config exists, preserving user configuration${NC}"
-			echo -e "${BLUE}MCP servers are managed via plugins${NC}"
-		fi
-	else
-		echo -e "${YELLOW}Claude Code template not found at $claude_template${NC}"
-	fi
-
 	echo -e "${GREEN}MCP configs deployment complete${NC}"
 }
 
