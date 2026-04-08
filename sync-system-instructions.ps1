@@ -21,8 +21,8 @@ $C = @{
 function Wc { param($c, $t); Write-Host "$($c)$t$($script:C.N)" }
 
 # Markdown files to sync
+# Note: CLAUDE.md is NOT synced — it lives globally at ~/.claude/CLAUDE.md (deployed by deploy.ps1)
 $MdFiles = @(
-    @{ Src = ".claude/CLAUDE.md"; Dst = "CLAUDE.md" }
     @{ Src = "AGENTS.md"; Dst = "AGENTS.md" }
     @{ Src = "GEMINI.md"; Dst = "GEMINI.md" }
     @{ Src = "RULES.md"; Dst = "RULES.md" }
@@ -105,15 +105,24 @@ function Commit-Repo {
     if (!$?) { return @{ N=$RepoName; Ok=$false; Out="" } }
 
     try {
+        # Remove stale CLAUDE.md from repo (now centralized at ~/.claude/CLAUDE.md)
+        $ClaudeMd = Join-Path $RepoPath "CLAUDE.md"
+        $RemovedClaude = $false
+        if (Test-Path $ClaudeMd) {
+            $null = git rm -f CLAUDE.md 2>$null
+            if ($LASTEXITCODE -ne 0) { Remove-Item $ClaudeMd -Force }
+            $RemovedClaude = $true
+        }
+
         # Check for changes
-        $Status = git status --porcelain CLAUDE.md AGENTS.md GEMINI.md RULES.md 2>$null
+        $Status = git status --porcelain AGENTS.md GEMINI.md RULES.md CLAUDE.md 2>$null
         if ([string]::IsNullOrWhiteSpace($Status)) {
             Pop-Location
             return @{ N=$RepoName; Ok=$false; Out="    already up to date (no changes to commit)" }
         }
 
         # Stage files
-        $null = git add CLAUDE.md AGENTS.md GEMINI.md RULES.md 2>$null
+        $null = git add AGENTS.md GEMINI.md RULES.md 2>$null
 
         # Get git config from dotfiles
         $UserName = git -C $DotDir config user.name 2>$null
@@ -127,7 +136,7 @@ function Commit-Repo {
             $env:GIT_COMMITTER_EMAIL = $UserEmail
         }
 
-        $null = git commit -m "chore: sync system instructions" 2>$null
+        $null = git commit -m "chore: sync system instructions (remove CLAUDE.md)" 2>$null
 
         if ($UserName -and $UserEmail) {
             $env:GIT_AUTHOR_NAME = $null

@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.13.0] - 2026-04-08
+
+### Changed
+
+- `sync-system-instructions.sh/ps1`: removed CLAUDE.md from sync file list — it is no longer copied to individual repos
+- `AGENTS.md`, `GEMINI.md`, `RULES.md`: simplified to minimal `See [CLAUDE.md](~/.claude/CLAUDE.md)` redirect, pointing to the global `~/.claude/CLAUDE.md` instead of a per-repo copy
+- Both sync scripts now remove stale `CLAUDE.md` from repos during the commit phase (`git rm`)
+
+### Rationale
+
+CLAUDE.md is deployed globally to `~/.claude/CLAUDE.md` by `deploy.sh/ps1`. Duplicating it per-repo was redundant and created drift. Centralizing it means one source of truth — update once in dotfiles, deploy once, all repos reference the same file.
+
+---
+
 ## [5.12.0] - 2026-04-08
 
 ### Changed

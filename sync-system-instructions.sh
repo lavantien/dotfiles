@@ -24,8 +24,8 @@ NC='\033[0m'
 
 # Markdown files to sync to all repos
 # Format: "source_path:target_name" - source is relative to dotfiles root, target is the filename in destination repos
+# Note: CLAUDE.md is NOT synced — it lives globally at ~/.claude/CLAUDE.md (deployed by deploy.sh)
 MARKDOWN_FILES=(
-	".claude/CLAUDE.md:CLAUDE.md"
 	"AGENTS.md:AGENTS.md"
 	"GEMINI.md:GEMINI.md"
 	"RULES.md:RULES.md"
@@ -121,16 +121,22 @@ commit_changes() {
 
 	cd "$repo_path" 2>/dev/null || return 0
 
+	# Remove stale CLAUDE.md from repo (now centralized at ~/.claude/CLAUDE.md)
+	if [[ -f "CLAUDE.md" ]]; then
+		git rm -f CLAUDE.md 2>/dev/null || rm -f CLAUDE.md
+		echo -e "    ${GREEN}removed${NC} CLAUDE.md (now using ~/.claude/CLAUDE.md)"
+	fi
+
 	# Check if there are changes to commit (check both unstaged and staged)
-	if git diff --quiet CLAUDE.md AGENTS.md GEMINI.md RULES.md 2>/dev/null &&
-		git diff --cached --quiet CLAUDE.md AGENTS.md GEMINI.md RULES.md 2>/dev/null; then
+	if git diff --quiet AGENTS.md GEMINI.md RULES.md 2>/dev/null &&
+		git diff --cached --quiet AGENTS.md GEMINI.md RULES.md CLAUDE.md 2>/dev/null; then
 		echo -e "    ${YELLOW}already up to date${NC} (no changes to commit)"
 		cd - >/dev/null
 		return 1
 	fi
 
 	# Add files
-	if ! git add CLAUDE.md AGENTS.md GEMINI.md RULES.md 2>/dev/null; then
+	if ! git add AGENTS.md GEMINI.md RULES.md 2>/dev/null; then
 		cd - >/dev/null
 		return 1
 	fi
@@ -143,9 +149,9 @@ commit_changes() {
 	# Try commit with config override if available
 	local commit_cmd
 	if [[ -n "$user_name" && -n "$user_email" ]]; then
-		commit_cmd="git -c user.name='$user_name' -c user.email='$user_email' commit -m 'chore: sync system instructions'"
+		commit_cmd="git -c user.name='$user_name' -c user.email='$user_email' commit -m 'chore: sync system instructions (remove CLAUDE.md)'"
 	else
-		commit_cmd="git commit -m 'chore: sync system instructions'"
+		commit_cmd="git commit -m 'chore: sync system instructions (remove CLAUDE.md)'"
 	fi
 
 	if eval "$commit_cmd" >/dev/null 2>&1; then

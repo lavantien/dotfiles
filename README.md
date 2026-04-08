@@ -26,7 +26,7 @@ AI-Native Agentic Development
 - 4 MCP servers: context7, playwright, repomix, serena
 - Auto-detect & trigger format/lint/check: Git pre-commit/commit-msg hooks
 - Statusline hook for Claude Code (unified bash script, auto-registered in settings.json)
-- System instruction sync across all repos (CLAUDE.md, AGENTS.md, GEMINI.md, RULES.md)
+- System instruction sync across all repos (AGENTS.md, GEMINI.md, RULES.md → global ~/.claude/CLAUDE.md)
 
 Automation & Safety
 - Idempotent bootstrap and update-all (safe to run multiple times)
@@ -94,7 +94,7 @@ up  # Runs update-all
 | **deploy** | Deploy configuration files (Neovim, git hooks, shell, Claude Code) |
 | **update-all (up)** | Update all package managers and system packages (20+ managers) |
 | **git-update-repos** | Clone/update ALL GitHub repos via gh CLI, optionally sync system instructions |
-| **sync-system-instructions** | Sync AI system instructions (CLAUDE.md, AGENTS.md, etc.) to all repos |
+| **sync-system-instructions** | Sync AI system instructions (AGENTS.md, GEMINI.md, RULES.md) to all repos, remove stale CLAUDE.md |
 | **healthcheck** | Check system health - verify tools, configs, git hooks |
 | **backup** | Create timestamped backup before major changes |
 | **restore** | Restore from a previous backup |
