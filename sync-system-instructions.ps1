@@ -62,6 +62,14 @@ function Copy-MdFiles {
     $Copied = 0
     $Output = @()
 
+    # Remove stale CLAUDE.md from repo (now centralized at ~/.claude/CLAUDE.md)
+    $ClaudeMd = Join-Path $RepoPath "CLAUDE.md"
+    if (Test-Path $ClaudeMd) {
+        Remove-Item $ClaudeMd -Force
+        $Output += "    removed CLAUDE.md (now using ~/.claude/CLAUDE.md)"
+        $Copied++
+    }
+
     foreach ($f in $MdFiles) {
         $Src = Join-Path $DotDir $f.Src
         $Dst = Join-Path $RepoPath $f.Dst

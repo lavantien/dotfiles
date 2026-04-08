@@ -86,6 +86,14 @@ copy_markdown_files() {
 
 	local copied_count=0
 
+	# Remove stale CLAUDE.md from repo (now centralized at ~/.claude/CLAUDE.md)
+	local claude_md="$repo_path/CLAUDE.md"
+	if [[ -f "$claude_md" ]]; then
+		rm -f "$claude_md"
+		echo -e "    ${GREEN}removed${NC} CLAUDE.md (now using ~/.claude/CLAUDE.md)"
+		copied_count=$((copied_count + 1)) || true
+	fi
+
 	for md_mapping in "${MARKDOWN_FILES[@]}"; do
 		# Parse "source_path:target_name" format
 		local source_path="${md_mapping%%:*}"
