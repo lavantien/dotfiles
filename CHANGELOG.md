@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.12.0] - 2026-04-08
+
+### Changed
+
+- Removed `.claude.json` template deployment from `deploy.sh` — Claude Code MCP servers are managed via plugins, not this config file. The template only wrote an empty `{ "mcpServers": {} }` and introduced unnecessary risk of overwriting user config.
+
+### Removed
+
+- `.claude.json.template` — orphaned file, no longer referenced by any script
+
+---
+
 ## [5.11.0] - 2026-04-08
 
 ### Changed
