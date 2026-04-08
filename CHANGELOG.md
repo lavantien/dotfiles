@@ -11,18 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-**CLAUDE.md Protocol Consolidation**
-
-- Restructured 6 sections into 4 (Rules, Tool Hierarchy, Testing, Workflow) by eliminating redundancy
-- Merged overlapping Prime Directives into 6 non-repeating rules
+- Restructured CLAUDE.md: 6 sections into 4 (Rules, Tool Hierarchy, Testing, Workflow) by eliminating redundancy
+- Merged overlapping Prime Directives from 8 to 6 non-repeating rules
 - Consolidated Code Standards into Rules and Testing sections
 - Moved Verification Chain under Testing (where it logically belongs)
 - Removed duplicate instructions: testing rules appeared in 3 places, verify-everything in 2, no-bypassing restated no-test-modification
 
-**Redirect File Fixes**
+### Reverted
 
-- AGENTS.md, GEMINI.md, RULES.md: fixed broken `./CLAUDE.md` links to `.claude/CLAUDE.md`
-- Trimmed redirect files to single-line purpose + link
+- AGENTS.md, GEMINI.md, RULES.md: restored `./CLAUDE.md` links (correct for deployed repos where CLAUDE.md is synced to root)
 
 ---
 
