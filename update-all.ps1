@@ -489,7 +489,7 @@ function Main {
         }
 
         if ($claudeWorks) {
-            # Get version before update with proper error handling
+            # Get version before update
             $versionBefore = ""
             try {
                 $versionOutput = claude --version 2>$null
@@ -501,92 +501,55 @@ function Main {
                 # If version extraction fails, continue anyway
             }
 
-            # Get latest version from npm registry
-            $latestVersion = ""
+            # Remove old bun/npm global packages
+            if (Test-Command bun) {
+                bun pm rm -g @anthropic-ai/claude-code 2>$null
+            }
             if (Test-Command npm) {
-                try {
-                    $latestVersion = npm view @anthropic-ai/claude-code version 2>$null
-                }
-                catch {
-                    Write-Fail "claude-code (failed to fetch latest version)"
-                    $script:failed++
-                    return
+                npm rm -g @anthropic-ai/claude-code 2>$null
+            }
+
+            # Update via native installer (idempotent)
+            Write-Info "claude-code updating via native installer..."
+            irm https://claude.ai/install.ps1 | iex
+
+            # Ensure native installer bin dir is in PATH
+            $claudeBin = Join-Path $env:USERPROFILE ".claude\local\bin"
+            if (Test-Path $claudeBin) {
+                $envPath = [Environment]::GetEnvironmentVariable("Path", "User")
+                if ($envPath -notlike "*$claudeBin*") {
+                    [Environment]::SetEnvironmentVariable("Path", "$envPath;$claudeBin", "User")
                 }
             }
 
-            # Skip if already at latest
-            if ($versionBefore -and $latestVersion -and $versionBefore -eq $latestVersion) {
-                Write-Skip "claude-code already at latest version ($versionBefore)"
-                $script:skipped++
+            # Verify the update worked
+            $versionAfter = ""
+            $updateWorks = $false
+            try {
+                $null = & claude --version 2>&1 | Out-Null
+                if ($LASTEXITCODE -eq 0) {
+                    $updateWorks = $true
+                    $versionOutput = claude --version 2>$null
+                    if ($versionOutput -match '(\d+\.\d+\.\d+)') {
+                        $versionAfter = $matches[1]
+                    }
+                }
             }
-            elseif ($versionBefore -and $latestVersion -and $versionBefore -ne $latestVersion) {
-                Write-Info "claude-code update available: $versionBefore -> $latestVersion"
+            catch {
+                # Verification failed
+            }
 
-                # On Windows, use bun (npm is deprecated, native installer has bugs)
-                if (Test-Command bun) {
-                    # Remove old npm package if present
-                    bun pm rm -g @anthropic-ai/claude-code 2>$null
-
-                    # Install via bun
-                    bun add -g @anthropic-ai/claude-code
-
-                    # Add bun global bin to PATH
-                    $bunBin = bun pm bin -g 2>$null
-                    if ($bunBin) {
-                        $envPath = [Environment]::GetEnvironmentVariable("Path", "User")
-                        if ($envPath -notlike "*$bunBin*") {
-                            [Environment]::SetEnvironmentVariable("Path", "$envPath;$bunBin", "User")
-                        }
-                    }
-
-                    # Verify the update worked
-                    $versionAfter = ""
-                    $updateWorks = $false
-                    try {
-                        $null = & claude --version 2>&1 | Out-Null
-                        if ($LASTEXITCODE -eq 0) {
-                            $updateWorks = $true
-                            $versionOutput = claude --version 2>$null
-                            if ($versionOutput -match '(\d+\.\d+\.\d+)') {
-                                $versionAfter = $matches[1]
-                            }
-                        }
-                    }
-                    catch {
-                        # Verification failed
-                    }
-
-                    if ($updateWorks -and $versionAfter -and $versionAfter -ne $versionBefore) {
-                        Write-Success "claude-code ($versionBefore -> $versionAfter)"
-                        $script:updated++
-                    }
-                    elseif ($updateWorks) {
-                        Write-Skip "claude-code already up to date"
-                        $script:updated++
-                    }
-                    else {
-                        Write-Fail "claude-code (update verification failed)"
-                        $script:failed++
-                    }
-                }
-                else {
-                    Write-Fail "bun not found, required for Claude Code updates on Windows"
-                    $script:failed++
-                }
+            if ($updateWorks -and $versionAfter -and $versionAfter -ne $versionBefore) {
+                Write-Success "claude-code ($versionBefore -> $versionAfter)"
+                $script:updated++
+            }
+            elseif ($updateWorks) {
+                Write-Skip "claude-code already up to date"
+                $script:updated++
             }
             else {
-                # Couldn't determine versions, try update anyway
-                Write-Info "claude-code version check inconclusive, attempting update..."
-
-                if (Test-Command bun) {
-                    bun add -g @anthropic-ai/claude-code
-                    Write-Success "claude-code (update attempted)"
-                    $script:updated++
-                }
-                else {
-                    Write-Fail "bun not found"
-                    $script:failed++
-                }
+                Write-Fail "claude-code (update verification failed)"
+                $script:failed++
             }
         }
         else {

@@ -854,15 +854,16 @@ _main() {
 		update_section "CLAUDE CODE CLI"
 
 		if is_windows; then
-			# Use bun on Windows (npm is deprecated, native installer has bugs)
+			# Use native installer on Windows
+			# Remove old bun/npm global packages
 			if cmd_exists bun; then
-				# Remove old npm package if present, then install/update via bun
 				bun pm rm -g @anthropic-ai/claude-code 2>/dev/null || true
-				bun add -g @anthropic-ai/claude-code
-				update_success "claude-code (updated via bun)"
-			else
-				update_skip "bun not found, required for Claude Code updates on Windows"
 			fi
+			if cmd_exists npm; then
+				npm rm -g @anthropic-ai/claude-code 2>/dev/null || true
+			fi
+			pwsh.exe -Command "irm https://claude.ai/install.ps1 | iex"
+			update_success "claude-code (updated via native installer)"
 		else
 			# Use bash script on Unix-like systems
 			install_and_verify_version "curl -fsSL https://claude.ai/install.sh | bash" "claude-code" "claude --version" "@anthropic-ai/claude-code"

@@ -1063,8 +1063,8 @@ function Install-DevelopmentTools {
         Track-Skipped "latex" "document preparation"
     }
 
-    # Claude Code CLI (via bun on Windows - npm is deprecated, native installer has bugs)
-    # First, clean up any old npm or native installer shims
+    # Claude Code CLI (native installer - irm https://claude.ai/install.ps1 | iex)
+    # Clean up old npm shims and bun/npm global packages
     $npmBin = Join-Path $env:APPDATA "npm"
     $localBin = Join-Path $env:USERPROFILE ".local\bin"
     $oldShims = @("claude", "claude.cmd", "claude.ps1") | ForEach-Object {
@@ -1073,12 +1073,18 @@ function Install-DevelopmentTools {
         $filePath2 = Join-Path $localBin $_
         if (Test-Path $filePath2) { $filePath2 }
     }
-
     if ($oldShims) {
         foreach ($shim in $oldShims) {
             Write-Info "Removing old shim: $(Split-Path $shim -Leaf)"
             Remove-Item $shim -Force -ErrorAction SilentlyContinue
         }
+    }
+    # Remove old bun/npm global packages
+    if (Test-Command bun) {
+        bun pm rm -g @anthropic-ai/claude-code 2>$null
+    }
+    if (Get-Command npm -ErrorAction SilentlyContinue) {
+        npm rm -g @anthropic-ai/claude-code 2>$null
     }
 
     # Get current version if claude is installed
@@ -1095,74 +1101,37 @@ function Install-DevelopmentTools {
         }
     }
 
-    # Get latest version from npm registry
-    $latestVersion = ""
-    if (Get-Command npm -ErrorAction SilentlyContinue) {
-        try {
-            $latestVersion = npm view @anthropic-ai/claude-code version 2>$null
-        }
-        catch {
-            # Ignore errors
-        }
-    }
-
-    # Install if not found or version differs
-    $needsInstall = $false
-    if (-not (Test-Command claude)) {
-        $needsInstall = $true
-    }
-    elseif ($currentVersion -and $latestVersion -and $currentVersion -ne $latestVersion) {
-        Write-Info "Claude Code CLI update available: $currentVersion -> $latestVersion"
-        $needsInstall = $true
-    }
+    # Install if not found (native installer is idempotent, no registry lookup needed)
+    $needsInstall = -not (Test-Command claude)
 
     if ($needsInstall) {
         Write-Step "Installing Claude Code CLI..."
         if (-not $DryRun) {
-            # Use bun on Windows (npm is deprecated, native installer has self-deletion bug)
-            if (Test-Command bun) {
-                # Remove old npm package if present
-                bun pm rm -g @anthropic-ai/claude-code 2>$null
+            irm https://claude.ai/install.ps1 | iex
 
-                # Install via bun
-                bun add -g @anthropic-ai/claude-code
+            # Ensure native installer bin dir is in PATH
+            $claudeBin = Join-Path $env:USERPROFILE ".claude\local\bin"
+            if (Test-Path $claudeBin) {
+                Add-ToPath -Path $claudeBin -User
+                Refresh-Path
+            }
 
-                # Add bun global bin to PATH
-                $bunBin = bun pm bin -g 2>$null
-                if ($bunBin) {
-                    Add-ToPath -Path $bunBin -User
-                    Refresh-Path
-                }
-
-                if (Test-Command claude) {
-                    Write-Success "Claude Code CLI installed via bun"
-                    Track-Installed "claude-code" "AI CLI"
-                }
-                else {
-                    Write-Warning "Claude Code CLI installed but not in PATH yet"
-                    Track-Installed "claude-code" "AI CLI - PATH update pending"
-                }
+            if (Test-Command claude) {
+                Write-Success "Claude Code CLI installed via native installer"
+                Track-Installed "claude-code" "AI CLI"
             }
             else {
-                Write-Warning "bun not found, required for Claude Code installation on Windows"
-                Write-Info "Install bun first: scoop install bun"
-                Track-Failed "claude-code" "AI CLI - bun required"
+                Write-Warning "Claude Code CLI installed but not in PATH yet"
+                Track-Installed "claude-code" "AI CLI - PATH update pending"
             }
         }
         else {
-            Write-Info "[DRY-RUN] Would install Claude Code CLI via bun"
+            Write-Info "[DRY-RUN] Would run: irm https://claude.ai/install.ps1 | iex"
         }
     }
     else {
         $versionInfo = if ($currentVersion) { " ($currentVersion)" } else { "" }
-        Write-Info "Claude Code CLI already at latest version$versionInfo"
-        # Ensure bun global bin is in PATH even when skipping install
-        if (Test-Command bun) {
-            $bunBin = bun pm bin -g 2>$null
-            if ($bunBin) {
-                Add-ToPath -Path $bunBin -User
-            }
-        }
+        Write-Info "Claude Code CLI already installed$versionInfo"
         Track-Skipped "claude-code" "AI CLI"
     }
 
