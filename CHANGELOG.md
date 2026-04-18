@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.14.0] - 2026-04-18
+
+### Changed
+
+- `bootstrap.ps1`: Claude Code CLI now installed via native `irm https://claude.ai/install.ps1 | iex` instead of bun, removing the bun dependency for Claude Code on Windows
+- `update-all.ps1`: Claude Code CLI updates now use native installer instead of bun
+- `update-all.sh`: Windows branch of Claude Code update now calls `pwsh.exe -Command "irm https://claude.ai/install.ps1 | iex"` instead of bun
+
+### Removed
+
+- Dropped npm registry version lookup for Claude Code on Windows — native installer is idempotent and self-versioning
+- Removed bun-specific PATH manipulation for Claude Code (bun global bin, npm shims)
+
+---
+
 ## [5.13.0] - 2026-04-08
 
 ### Changed
@@ -2040,6 +2055,11 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 | Version | Date       | Major Changes                                                                                            |
 | ------- | ---------- | -------------------------------------------------------------------------------------------------------- |
+| 5.14.0  | 2026-04-18 | Claude Code native irm installer on Windows, removed bun/npm dependency                                  |
+| 5.13.0  | 2026-04-08 | Centralized CLAUDE.md, removed per-repo sync, stale CLAUDE.md cleanup                                    |
+| 5.12.0  | 2026-04-08 | Removed .claude.json template deployment, MCP servers via plugins only                                    |
+| 5.11.0  | 2026-04-08 | CLAUDE.md restructured from 6 to 4 sections, eliminated redundancy                                       |
+| 5.10.0  | 2026-02-28 | CLAUDE.md protocol enhancements, unified bash statusline for all platforms                                |
 | 5.9.0   | 2026-02-13 | OpenCode via bun on Windows, PowerShell profile @args pass-through, deploy profile reload               |
 | 5.8.0   | 2026-02-12 | OpenCode update reliability fix, deploy verbose logging, shim cleanup alignment                          |
 | 5.7.0   | 2026-02-11 | Bootstrap GCC verification, update-all AI CLI verification (claude-code, opencode)                        |

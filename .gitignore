@@ -10,3 +10,4 @@ nul
 coverage
 coverage-bash.json
 .serena/project.yml
+.remember/
