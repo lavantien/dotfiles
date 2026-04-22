@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.15.0] - 2026-04-22
+
+### Fixed
+
+- Replaced invalid `bun pm rm -g` with `bun remove -g` across `update-all.ps1`, `update-all.sh`, `bootstrap.ps1` — `bun pm` has no `rm` subcommand, causing the command to print usage help instead of removing the package
+- Replaced `uv self update` with the standalone installer (`irm https://astral.sh/uv/install.ps1 | iex` on Windows, `curl -LsSf https://astral.sh/uv/install.sh | sh` on Unix) — `uv self update` only works when uv was installed via the standalone installer, failing for pip-installed uv with a clear error
+
+---
+
 ## [5.14.0] - 2026-04-18
 
 ### Changed

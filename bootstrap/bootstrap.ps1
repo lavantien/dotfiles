@@ -1081,7 +1081,7 @@ function Install-DevelopmentTools {
     }
     # Remove old bun/npm global packages
     if (Test-Command bun) {
-        bun pm rm -g @anthropic-ai/claude-code 2>$null
+        bun remove -g @anthropic-ai/claude-code 2>$null
     }
     if (Get-Command npm -ErrorAction SilentlyContinue) {
         npm rm -g @anthropic-ai/claude-code 2>$null

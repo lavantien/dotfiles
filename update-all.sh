@@ -822,7 +822,12 @@ _main() {
 	# ============================================================================
 	if cmd_exists uv; then
 		update_section "UV (Python package manager)"
-		update_and_report "uv self update" "uv"
+		curl -LsSf https://astral.sh/uv/install.sh | sh
+		if [ $? -eq 0 ]; then
+			update_success "uv"
+		else
+			update_fail "uv" ""
+		fi
 	else
 		update_skip "uv not found"
 	fi
@@ -857,7 +862,7 @@ _main() {
 			# Use native installer on Windows
 			# Remove old bun/npm global packages
 			if cmd_exists bun; then
-				bun pm rm -g @anthropic-ai/claude-code 2>/dev/null || true
+				bun remove -g @anthropic-ai/claude-code 2>/dev/null || true
 			fi
 			if cmd_exists npm; then
 				npm rm -g @anthropic-ai/claude-code 2>/dev/null || true
@@ -908,7 +913,7 @@ _main() {
 		npm uninstall -g opencode-ai 2>/dev/null || true
 	fi
 	if cmd_exists bun; then
-		bun pm rm -g opencode-ai 2>/dev/null || true
+		bun remove -g opencode-ai 2>/dev/null || true
 	fi
 
 	# Check if opencode binary exists at the official installer location

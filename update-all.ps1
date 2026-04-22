@@ -458,7 +458,7 @@ function Main {
     Write-Step "UV"
     if (Test-Command uv) {
         try {
-            uv self update
+            irm https://astral.sh/uv/install.ps1 | iex
             Write-Success "uv"
             $script:updated++
         }
@@ -503,7 +503,7 @@ function Main {
 
             # Remove old bun/npm global packages
             if (Test-Command bun) {
-                bun pm rm -g @anthropic-ai/claude-code 2>$null
+                bun remove -g @anthropic-ai/claude-code 2>$null
             }
             if (Test-Command npm) {
                 npm rm -g @anthropic-ai/claude-code 2>$null
