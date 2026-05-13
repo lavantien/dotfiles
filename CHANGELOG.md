@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.16.0] - 2026-05-13
+
+### Changed
+
+- `CLAUDE.md`: added rule prohibiting manual bash commands for file editing (use built-in Edit/Write tools) to prevent corruption and side effects
+- `CLAUDE.md`: expanded baseline-first testing rule to require running all tests, coverage, and benchmarks before TDD implementation to establish a regression baseline
+
+---
+
 ## [5.15.0] - 2026-04-22
 
 ### Fixed

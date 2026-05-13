@@ -6,8 +6,9 @@
 2. Generalize. Never hardcode or manually copy. Every solution must be programmatically coherent, even "quick tests".
 3. Fix root causes only. Never modify tests to pass, twist configs to fake success, or dismiss failures as pre-existing. Own every error.
 4. Keep it plain. No overcomplicating, decorative comments, emojis, bold, editorializing, or Co-Authored-By watermarks.
-5. No manual migrations. Use `docker compose up -d` exclusively.
-6. Max 400 SLOC per file. Conventional Commits: feat, fix, docs, refactor, test, chore.
+5. Never use manual bash commands for editing files to avoid corruption and side effects.
+6. No manual migrations. Use `docker compose up -d` exclusively.
+7. Max 400 SLOC per file. Conventional Commits: feat, fix, docs, refactor, test, chore.
 
 ## Tool Hierarchy
 
@@ -20,7 +21,7 @@
 ## Testing
 
 - TDD: Write failing test first, minimal code to pass, refactor.
-- Baseline first: Run all unit tests before implementing. Fix any existing failures.
+- Baseline first: Before implementing with TDD, run all the tests and coverage and benchmark first to establish the baseline, so that regression become apparent. Fix any existing failures.
 - Unit tests for: input/output pairs, edge cases, error paths.
 - Property-based tests for: invariants, commutativity, idempotency, round-trip serialization.
 - No skipped tests. Detect and re-enable. Investigate root causes.
