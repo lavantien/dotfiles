@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.17.0] - 2026-06-20
+
+### Changed
+
+- `CLAUDE.md`: strengthened the "Keep it plain" rule to require the simplest solution, code, and architecture for the task, and to comment only where non-obvious (avoid AI-style over-commenting)
+
+---
+
 ## [5.16.0] - 2026-05-13
 
 ### Changed
@@ -37,6 +45,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Dropped npm registry version lookup for Claude Code on Windows — native installer is idempotent and self-versioning
 - Removed bun-specific PATH manipulation for Claude Code (bun global bin, npm shims)
+
+---
+
+## [5.13.1] - 2026-04-08
+
+### Fixed
+
+- `sync-system-instructions.sh/ps1`: stale per-repo `CLAUDE.md` is now removed during the copy phase, not only the commit phase, so repositories do not retain a stale copy between sync and commit
 
 ---
 
@@ -2073,7 +2089,11 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 | Version | Date       | Major Changes                                                                                            |
 | ------- | ---------- | -------------------------------------------------------------------------------------------------------- |
+| 5.17.0  | 2026-06-20 | CLAUDE.md: simplest-solution and minimal-comment rules strengthened                                      |
+| 5.16.0  | 2026-05-13 | CLAUDE.md: bash-editing and baseline-testing rules                                                       |
+| 5.15.0  | 2026-04-22 | Fixed bun global remove and uv self-update methods                                                       |
 | 5.14.0  | 2026-04-18 | Claude Code native irm installer on Windows, removed bun/npm dependency                                  |
+| 5.13.1  | 2026-04-08 | sync-system-instructions removes stale CLAUDE.md during copy phase                                       |
 | 5.13.0  | 2026-04-08 | Centralized CLAUDE.md, removed per-repo sync, stale CLAUDE.md cleanup                                    |
 | 5.12.0  | 2026-04-08 | Removed .claude.json template deployment, MCP servers via plugins only                                    |
 | 5.11.0  | 2026-04-08 | CLAUDE.md restructured from 6 to 4 sections, eliminated redundancy                                       |
@@ -2149,7 +2169,16 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 ---
 
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.9.0...HEAD
+[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.17.0...HEAD
+[5.17.0]: https://github.com/lavantien/dotfiles/compare/v5.16.0...v5.17.0
+[5.16.0]: https://github.com/lavantien/dotfiles/compare/v5.15.0...v5.16.0
+[5.15.0]: https://github.com/lavantien/dotfiles/compare/v5.14.0...v5.15.0
+[5.14.0]: https://github.com/lavantien/dotfiles/compare/v5.13.1...v5.14.0
+[5.13.1]: https://github.com/lavantien/dotfiles/compare/v5.13.0...v5.13.1
+[5.13.0]: https://github.com/lavantien/dotfiles/compare/v5.12.0...v5.13.0
+[5.12.0]: https://github.com/lavantien/dotfiles/compare/v5.11.0...v5.12.0
+[5.11.0]: https://github.com/lavantien/dotfiles/compare/v5.10.0...v5.11.0
+[5.10.0]: https://github.com/lavantien/dotfiles/compare/v5.9.0...v5.10.0
 [5.9.0]: https://github.com/lavantien/dotfiles/compare/v5.8.0...v5.9.0
 [5.8.0]: https://github.com/lavantien/dotfiles/compare/v5.7.0...v5.8.0
 [5.7.0]: https://github.com/lavantien/dotfiles/compare/v5.6.0...v5.7.0
