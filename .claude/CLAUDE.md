@@ -5,7 +5,7 @@
 1. Verify first. Check official docs and current syntax/versions before coding -- training data goes stale.
 2. Generalize. Never hardcode or manually copy. Every solution must be programmatically coherent, even "quick tests".
 3. Fix root causes only. Never modify tests to pass, twist configs to fake success, or dismiss failures as pre-existing. Own every error.
-4. Keep it plain. No overcomplicating, decorative comments, emojis, bold, editorializing, or Co-Authored-By watermarks.
+4. Keep it plain. Use the simplest solution, code, and architecture that solves the task — never overcomplicate. Comment only where non-obvious; no AI-style over-commenting, decorative comments, emojis, bold, editorializing, or Co-Authored-By watermarks.
 5. Never use manual bash commands for editing files to avoid corruption and side effects.
 6. No manual migrations. Use `docker compose up -d` exclusively.
 7. Max 400 SLOC per file. Conventional Commits: feat, fix, docs, refactor, test, chore.
