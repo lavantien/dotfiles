@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.18.0] - 2026-07-07
+
+### Changed
+
+- `CLAUDE.md`: "Keep it plain" now forbids em dashes, writing tropes, and cliches, and requires minimal formatting
+- `CLAUDE.md`: removed the existing em dash in rule 4 and the dash substitute in rule 1 so the file follows the new rule
+
+---
+
 ## [5.17.0] - 2026-06-20
 
 ### Changed
@@ -2170,6 +2179,7 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 ---
 
 [Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.17.0...HEAD
+[5.18.0]: https://github.com/lavantien/dotfiles/compare/v5.17.0...v5.18.0
 [5.17.0]: https://github.com/lavantien/dotfiles/compare/v5.16.0...v5.17.0
 [5.16.0]: https://github.com/lavantien/dotfiles/compare/v5.15.0...v5.16.0
 [5.15.0]: https://github.com/lavantien/dotfiles/compare/v5.14.0...v5.15.0
