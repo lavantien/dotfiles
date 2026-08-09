@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.19.0] - 2026-08-09
+
+### Changed
+
+- `CLAUDE.md`: added a Voice & Format section covering prose tone, banned words, punctuation whitelist, and formatting rules
+- `CLAUDE.md`: trimmed rule 4 to code-simplicity only, moving prose and format rules into the new section
+
+---
+
 ## [5.18.0] - 2026-07-07
 
 ### Changed
