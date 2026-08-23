@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.20.0] - 2026-08-23
+
+### Changed
+
+- `CLAUDE.md`: restructured Voice & Format into 5 numbered rules covering directness, punctuation and typography, sentence mechanics, banned words and phrases, and delivery consistency
+- `CLAUDE.md`: expanded the banned words list with conversational filler, framing tropes, promotional jargon, and attribution markers
+
+---
+
 ## [5.19.0] - 2026-08-09
 
 ### Changed
@@ -2187,7 +2196,9 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 ---
 
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.17.0...HEAD
+[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.20.0...HEAD
+[5.20.0]: https://github.com/lavantien/dotfiles/compare/v5.19.0...v5.20.0
+[5.19.0]: https://github.com/lavantien/dotfiles/compare/v5.18.0...v5.19.0
 [5.18.0]: https://github.com/lavantien/dotfiles/compare/v5.17.0...v5.18.0
 [5.17.0]: https://github.com/lavantien/dotfiles/compare/v5.16.0...v5.17.0
 [5.16.0]: https://github.com/lavantien/dotfiles/compare/v5.15.0...v5.16.0
