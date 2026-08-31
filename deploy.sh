@@ -363,31 +363,8 @@ deploy_mcp_configs() {
 			cp "$platform_template" "$opencode_config"
 			echo -e "${GREEN}OpenCode config created: $opencode_config (using $OS template)${NC}"
 		else
-			# Config exists - perform smart merge to add missing universal MCPs
-			if command -v jq >/dev/null 2>&1; then
-				# Check if any universal MCP is missing and add it from platform template
-				local universal_mcps=("context7" "playwright" "repomix" "serena")
-				local merged=false
-
-				for mcp in "${universal_mcps[@]}"; do
-					if ! jq -e ".mcp.\"$mcp\"" "$opencode_config" >/dev/null 2>&1; then
-						# MCP is missing, add it from platform-specific template
-						local mcp_config
-						mcp_config=$(jq ".mcp.\"$mcp\"" "$platform_template")
-						jq --arg mcp "$mcp" --argjson config "$mcp_config" '.mcp[$mcp] = $config' "$opencode_config" >"${opencode_config}.tmp"
-						mv "${opencode_config}.tmp" "$opencode_config"
-						merged=true
-						echo -e "${GREEN}Added missing MCP to OpenCode config: $mcp${NC}"
-					fi
-				done
-
-				if [[ "$merged" == "false" ]]; then
-					echo -e "${BLUE}OpenCode config exists with all universal MCPs, preserving user configuration${NC}"
-				fi
-			else
-				echo -e "${YELLOW}jq not found, skipping smart merge of OpenCode MCPs${NC}"
-				echo -e "${BLUE}OpenCode config exists, preserving user configuration${NC}"
-			fi
+			# Config exists - deep merge template MCPs into it
+			merge_opencode_config "$opencode_config" "$platform_template"
 		fi
 	else
 		echo -e "${YELLOW}OpenCode template not found at $platform_template${NC}"

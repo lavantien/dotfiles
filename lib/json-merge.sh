@@ -64,3 +64,52 @@ PY
 	echo -e "${YELLOW}$settings is not valid JSON, skipping settings merge${NC}"
 	return 0
 }
+
+# Deep-merge MCP servers from the platform template into an existing
+# opencode.json. Template values win for template-defined properties,
+# user-added servers and user-added keys are preserved. Mirrors the
+# Compare-Property merge in deploy.ps1.
+merge_opencode_config() {
+	local target="$1"
+	local template="$2"
+
+	command -v jq >/dev/null 2>&1 || {
+		echo -e "${YELLOW}jq not found, skipping smart merge of OpenCode MCPs${NC}"
+		return 0
+	}
+
+	# Repair a missing or scalar (malformed) mcp section before indexing into it
+	if ! jq -e '(.mcp | type) == "object"' "$target" >/dev/null 2>&1; then
+		local repaired="${target}.tmp"
+		if jq '.mcp = {}' "$target" >"$repaired" 2>/dev/null; then
+			mv "$repaired" "$target"
+			echo -e "${YELLOW}Repaired malformed mcp section in opencode.json${NC}"
+		else
+			rm -f "$repaired"
+			echo -e "${YELLOW}opencode.json is not valid JSON, skipping smart merge${NC}"
+			return 0
+		fi
+	fi
+
+	local merged=0
+	local mcp tmpl_val live_val new_val
+	local tmp="${target}.tmp"
+	while IFS= read -r mcp; do
+		tmpl_val=$(jq ".mcp[\"$mcp\"]" "$template")
+		live_val=$(jq "if (.mcp[\"$mcp\"] | type) == \"object\" then .mcp[\"$mcp\"] else {} end" "$target")
+		# live * template: template wins shared keys recursively,
+		# user-only keys inside the server entry survive
+		new_val=$(jq -n --argjson a "$live_val" --argjson b "$tmpl_val" '$a * $b')
+		if [[ "$new_val" != "$live_val" ]]; then
+			jq --arg mcp "$mcp" --argjson config "$new_val" '.mcp[$mcp] = $config' "$target" >"$tmp" &&
+				mv "$tmp" "$target"
+			((merged++)) || true
+		fi
+	done < <(jq -r '.mcp | keys[]' "$template")
+
+	if ((merged > 0)); then
+		echo -e "${GREEN}OpenCode config merged $merged MCP server(s) from template${NC}"
+	else
+		echo -e "${BLUE}OpenCode config up to date with template MCPs${NC}"
+	fi
+}
