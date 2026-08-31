@@ -687,16 +687,20 @@ install_linters_formatters() {
 		fi
 	fi
 
-	# scalafmt (via brew on macOS - Scala tool, NOT available via cargo)
+	# scalafmt (Scala formatter: brew on macOS, coursier on Linux)
 	if [[ "$CATEGORIES" == "full" ]]; then
 		if [[ "$OS" == "macos" ]]; then
 			install_brew_package scalafmt "" scalafmt
+		elif [[ "$OS" == "linux" ]]; then
+			install_coursier_package scalafmt "Scala formatter"
 		fi
 	fi
 
 	# scalafix (Scala linter via coursier)
 	if [[ "$CATEGORIES" == "full" ]]; then
-		if cmd_exists coursier; then
+		if [[ "$OS" == "linux" ]]; then
+			install_coursier_package scalafix "Scala linter"
+		elif [[ "$OS" == "macos" ]] && cmd_exists coursier; then
 			if ! cmd_exists scalafix; then
 				if coursier install scalafix >/dev/null 2>&1; then
 					track_installed "scalafix" "Scala linter"
@@ -712,7 +716,9 @@ install_linters_formatters() {
 
 	# Metals (Scala language server via coursier)
 	if [[ "$CATEGORIES" == "full" ]]; then
-		if cmd_exists coursier; then
+		if [[ "$OS" == "linux" ]]; then
+			install_coursier_package metals "Scala language server"
+		elif [[ "$OS" == "macos" ]] && cmd_exists coursier; then
 			if ! cmd_exists metals; then
 				if coursier install metals >/dev/null 2>&1; then
 					track_installed "metals" "Scala language server"
@@ -1081,6 +1087,7 @@ install_development_tools() {
 				# macOS: use brew cask (installs in /Applications)
 				if install_brew_cask "visual-studio-code" "code"; then
 					log_success "VS Code installed"
+					verify_installed code vscode "code editor"
 				fi
 			elif [[ "$OS" == "linux" ]] && [[ -f /etc/debian_version ]]; then
 				# Debian/Ubuntu: Use official Microsoft apt repository
@@ -1094,6 +1101,7 @@ install_development_tools() {
 						if run_cmd "sudo apt update >/dev/null 2>&1 && sudo apt install -y code >/dev/null 2>&1"; then
 							log_success "VS Code installed via apt repository"
 							track_installed "vscode" "code editor"
+							verify_installed code vscode "code editor"
 						else
 							log_error "Failed to install VS Code"
 							track_failed "vscode" "code editor"
@@ -1114,6 +1122,7 @@ install_development_tools() {
 						if run_cmd "sudo dnf install -y code >/dev/null 2>&1 || sudo yum install -y code >/dev/null 2>&1"; then
 							log_success "VS Code installed via yum repository"
 							track_installed "vscode" "code editor"
+							verify_installed code vscode "code editor"
 						else
 							log_error "Failed to install VS Code"
 							track_failed "vscode" "code editor"
@@ -1126,6 +1135,7 @@ install_development_tools() {
 					if run_cmd "yay -S --noconfirm visual-studio-code-bin >/dev/null 2>&1"; then
 						log_success "VS Code installed via yay"
 						track_installed "vscode" "code editor"
+						verify_installed code vscode "code editor"
 					else
 						log_error "Failed to install VS Code via yay"
 						track_failed "vscode" "code editor"

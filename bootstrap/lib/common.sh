@@ -81,6 +81,22 @@ track_failed() {
 	fi
 }
 
+# Post-install verification: warn and track failure when a just-installed
+# command still cannot be found. Mirrors the winget/vswhere checks in
+# bootstrap.ps1.
+verify_installed() {
+	local cmd="$1"
+	local name="$2"
+	local desc="${3:-}"
+	if cmd_exists "$cmd"; then
+		log_verbose "$name verified: $($cmd --version 2>/dev/null | head -1)"
+		return 0
+	fi
+	log_warning "$name not found after install"
+	track_failed "$name" "$desc"
+	return 1
+}
+
 print_summary() {
 	print_header "Bootstrap Summary"
 

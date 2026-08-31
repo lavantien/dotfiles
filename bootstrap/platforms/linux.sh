@@ -761,6 +761,94 @@ install_snap_app() {
 }
 
 # ============================================================================
+# COURSIER (Scala tool launcher)
+# ============================================================================
+
+# Install the coursier launcher to ~/.local/bin/cs. No `cs setup`: it prompts
+# and installs its own JVM; the default-jdk from the SDK phase covers Java.
+# Mirrors Ensure-Coursier in platforms/windows.ps1.
+ensure_coursier() {
+	if cmd_exists cs || cmd_exists coursier; then
+		track_skipped "coursier" "JVM dependency manager"
+		return 0
+	fi
+
+	if ! cmd_exists java; then
+		log_warning "Java not found, skipping coursier install"
+		track_failed "coursier" "JVM dependency manager"
+		return 1
+	fi
+
+	log_step "Installing coursier..."
+
+	if [[ "$DRY_RUN" == "true" ]]; then
+		log_info "[DRY-RUN] Would install coursier to ~/.local/bin/cs"
+		track_installed "coursier" "JVM dependency manager"
+		return 0
+	fi
+
+	local arch="x86_64-pc-linux"
+	if [[ "$(uname -m)" == "aarch64" || "$(uname -m)" == "arm64" ]]; then
+		arch="aarch64-pc-linux"
+	fi
+
+	mkdir -p "$HOME/.local/bin"
+	if curl -fsSL "https://github.com/coursier/coursier/releases/latest/download/cs-${arch}.gz" |
+		gunzip >"$HOME/.local/bin/cs" && chmod +x "$HOME/.local/bin/cs"; then
+		ensure_path "$HOME/.local/bin"
+		track_installed "coursier" "JVM dependency manager"
+		verify_installed cs coursier "JVM dependency manager"
+		return 0
+	fi
+
+	track_failed "coursier" "JVM dependency manager"
+	return 1
+}
+
+# Install a Scala tool through coursier, ensuring coursier exists first.
+# `cs install` places launchers in ~/.local/share/coursier/bin.
+install_coursier_package() {
+	local pkg="$1"
+	local desc="${2:-$pkg}"
+	local cs_bin_dir="$HOME/.local/share/coursier/bin"
+
+	ensure_coursier || return 1
+
+	local cs_cmd
+	cs_cmd="$(command -v cs || command -v coursier)" || {
+		log_warning "coursier unavailable, skipping $pkg"
+		return 1
+	}
+
+	if needs_install "$pkg"; then
+		log_step "Installing $pkg via coursier..."
+
+		if [[ "$DRY_RUN" == "true" ]]; then
+			log_info "[DRY-RUN] Would coursier install $pkg"
+			track_installed "$pkg" "$desc"
+			return 0
+		fi
+
+		if "$cs_cmd" install "$pkg" >/dev/null 2>&1; then
+			ensure_path "$cs_bin_dir"
+			track_installed "$pkg" "$desc"
+			verify_installed "$pkg" "$pkg" "$desc"
+		else
+			log_warning "Failed to install $pkg via coursier"
+			track_failed "$pkg" "$desc"
+			return 1
+		fi
+	else
+		# Launcher exists but its dir may not be on PATH yet (fresh machine)
+		[[ -x "$cs_bin_dir/$pkg" ]] && ensure_path "$cs_bin_dir"
+		log_verbose "$pkg already installed"
+		track_skipped "$pkg" "$desc"
+	fi
+
+	return 0
+}
+
+# ============================================================================
 # Language Package Managers
 # ============================================================================
 
