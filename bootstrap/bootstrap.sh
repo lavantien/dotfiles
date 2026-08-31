@@ -20,6 +20,7 @@
 #   -y, --yes        Non-interactive mode (accept all prompts)
 #   --dry-run        Show what would be installed without installing
 #   --categories     minimal|sdk|full (default: full)
+#   --verbose        Show detailed progress output
 #   -h, --help       Show this help
 
 set -e
@@ -33,11 +34,11 @@ PLATFORMS_DIR="$SCRIPT_DIR/platforms"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Source library functions
-# shellcheck source=lib/common.sh
+# shellcheck source=lib/common.sh disable=SC1091
 source "$LIB_DIR/common.sh"
-# shellcheck source=lib/version-check.sh
+# shellcheck source=lib/version-check.sh disable=SC1091
 source "$LIB_DIR/version-check.sh"
-# shellcheck source=lib/config.sh
+# shellcheck source=lib/config.sh disable=SC1091
 # Config library is at root level, not in bootstrap/lib/
 if [[ -f "$ROOT_DIR/lib/config.sh" ]]; then
 	source "$ROOT_DIR/lib/config.sh"
@@ -47,10 +48,10 @@ fi
 OS="$(detect_os)"
 
 if [[ "$OS" == "linux" ]]; then
-	# shellcheck source=platforms/linux.sh
+	# shellcheck source=platforms/linux.sh disable=SC1091
 	source "$PLATFORMS_DIR/linux.sh"
 elif [[ "$OS" == "macos" ]]; then
-	# shellcheck source=platforms/macos.sh
+	# shellcheck source=platforms/macos.sh disable=SC1091
 	source "$PLATFORMS_DIR/macos.sh"
 fi
 
@@ -60,6 +61,7 @@ fi
 INTERACTIVE=true
 DRY_RUN=false
 CATEGORIES="full"
+VERBOSE=false
 AUTO_UPDATE_REPOS="false"
 BACKUP_BEFORE_DEPLOY="false"
 
@@ -109,6 +111,10 @@ while [[ $# -gt 0 ]]; do
 	--categories)
 		CATEGORIES="$2"
 		shift 2
+		;;
+	--verbose)
+		VERBOSE=true
+		shift
 		;;
 	-h | --help)
 		show_help
@@ -620,9 +626,11 @@ install_linters_formatters() {
 			if [[ "$DRY_RUN" == "true" ]]; then
 				log_info "[DRY-RUN] Would composer global require laravel/pint"
 			else
-				composer global require laravel/pint >/dev/null 2>&1 &&
-					track_installed "pint" "PHP code style" ||
+				if composer global require laravel/pint >/dev/null 2>&1; then
+					track_installed "pint" "PHP code style"
+				else
 					track_failed "pint" "PHP code style"
+				fi
 			fi
 		else
 			log_info "Laravel Pint already installed"
@@ -637,9 +645,11 @@ install_linters_formatters() {
 			if [[ "$DRY_RUN" == "true" ]]; then
 				log_info "[DRY-RUN] Would composer global require phpstan/phpstan"
 			else
-				composer global require phpstan/phpstan >/dev/null 2>&1 &&
-					track_installed "phpstan" "PHP static analysis" ||
+				if composer global require phpstan/phpstan >/dev/null 2>&1; then
+					track_installed "phpstan" "PHP static analysis"
+				else
 					track_failed "phpstan" "PHP static analysis"
+				fi
 			fi
 		else
 			log_info "PHPStan already installed"
@@ -654,9 +664,11 @@ install_linters_formatters() {
 			if [[ "$DRY_RUN" == "true" ]]; then
 				log_info "[DRY-RUN] Would composer global require vimeo/psalm"
 			else
-				composer global require vimeo/psalm >/dev/null 2>&1 &&
-					track_installed "psalm" "PHP static analysis" ||
+				if composer global require vimeo/psalm >/dev/null 2>&1; then
+					track_installed "psalm" "PHP static analysis"
+				else
 					track_failed "psalm" "PHP static analysis"
+				fi
 			fi
 		else
 			log_info "Psalm already installed"
@@ -686,9 +698,11 @@ install_linters_formatters() {
 	if [[ "$CATEGORIES" == "full" ]]; then
 		if cmd_exists coursier; then
 			if ! cmd_exists scalafix; then
-				coursier install scalafix >/dev/null 2>&1 &&
-					track_installed "scalafix" "Scala linter" ||
+				if coursier install scalafix >/dev/null 2>&1; then
+					track_installed "scalafix" "Scala linter"
+				else
 					track_failed "scalafix" "Scala linter"
+				fi
 			else
 				log_info "scalafix already installed"
 				track_skipped "scalafix" "Scala linter"
@@ -700,9 +714,11 @@ install_linters_formatters() {
 	if [[ "$CATEGORIES" == "full" ]]; then
 		if cmd_exists coursier; then
 			if ! cmd_exists metals; then
-				coursier install metals >/dev/null 2>&1 &&
-					track_installed "metals" "Scala language server" ||
+				if coursier install metals >/dev/null 2>&1; then
+					track_installed "metals" "Scala language server"
+				else
 					track_failed "metals" "Scala language server"
+				fi
 			else
 				log_info "metals already installed"
 				track_skipped "metals" "Scala language server"
@@ -726,9 +742,11 @@ install_linters_formatters() {
 		elif [[ "$OS" == "linux" ]]; then
 			if ! cmd_exists stylua; then
 				if cmd_exists cargo; then
-					cargo install stylua >/dev/null 2>&1 &&
-						track_installed "stylua" "Lua formatter" ||
+					if cargo install stylua >/dev/null 2>&1; then
+						track_installed "stylua" "Lua formatter"
+					else
 						track_failed "stylua" "Lua formatter"
+					fi
 				fi
 			else
 				log_info "stylua already installed"
@@ -744,9 +762,11 @@ install_linters_formatters() {
 		elif [[ "$OS" == "linux" ]]; then
 			if ! cmd_exists selene; then
 				if cmd_exists cargo; then
-					cargo install selene >/dev/null 2>&1 &&
-						track_installed "selene" "Lua linter" ||
+					if cargo install selene >/dev/null 2>&1; then
+						track_installed "selene" "Lua linter"
+					else
 						track_failed "selene" "Lua linter"
+					fi
 				fi
 			else
 				log_info "selene already installed"
@@ -999,7 +1019,6 @@ install_mcp_servers() {
 	else
 		track_skipped "playwright-mcp" "browser automation"
 	fi
-
 
 	# Repomix - Pack repositories for full-context AI exploration
 	# Note: repomix MCP mode is invoked via npx -y repomix --mcp
@@ -1328,6 +1347,7 @@ deploy_configs() {
 	fi
 
 	log_step "Running deploy script..."
+	log_verbose "$deploy_script"
 	bash "$deploy_script"
 	log_success "Configurations deployed"
 }
@@ -1341,6 +1361,7 @@ main() {
 	echo -e "Options:"
 	echo -e "  Interactive: ${INTERACTIVE}"
 	echo -e "  Dry Run: ${DRY_RUN}"
+	echo -e "  Verbose: ${VERBOSE}"
 	echo -e "  Categories: ${CATEGORIES}"
 	echo ""
 

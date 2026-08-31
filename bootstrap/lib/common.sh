@@ -31,6 +31,10 @@ log_success() { echo -e "${GREEN}[OK]${NC} $1"; }
 log_warning() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 log_step() { echo -e "${CYAN}[STEP]${NC} $1"; }
+log_verbose() {
+	[[ "${VERBOSE:-false}" == "true" ]] || return 0
+	echo -e "${BLUE}[VERBOSE]${NC} $1"
+}
 
 print_header() {
 	echo -e "\n${BOLD}${BLUE}==== $1 ====${NC}\n"
@@ -111,7 +115,6 @@ cmd_exists() {
 	# Check common user bin directories that might not be in PATH yet
 	if [[ -n "$MSYSTEM" ]] || [[ "$(uname -s)" =~ (MINGW|MSYS|CYGWIN) ]]; then
 		local cmd="$1"
-		local home_bin="$HOME"
 		local local_bins=(
 			"$HOME/.cargo/bin"
 			"$HOME/.local/bin"
@@ -174,6 +177,7 @@ detect_distro() {
 		return
 	fi
 
+	# shellcheck disable=SC1091
 	. /etc/os-release
 	echo "$ID"
 }
@@ -222,7 +226,7 @@ confirm() {
 	fi
 
 	while true; do
-		read -p "$(echo -e ${YELLOW}?${NC} $prompt [$options]) " -n 1 -r reply
+		read -p "$(echo -e "${YELLOW}?${NC} ${prompt} [${options}]") " -n 1 -r reply
 		echo
 		reply=${reply:-$default}
 
@@ -376,7 +380,7 @@ get_installed_state() {
 # HELPERS
 # ============================================================================
 capitalize() {
-	echo "$1" | sed 's/./\U&/'
+	echo "${1^}"
 }
 
 join_by() {

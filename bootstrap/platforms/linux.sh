@@ -244,75 +244,6 @@ install_linux_package() {
 	fi
 
 	# ============================================================================
-	# HELPER: Remove package from system package manager (distro-agnostic)
-	# ============================================================================
-	# Usage: remove_system_package <package_name> [alt_package_names...]
-	remove_system_package() {
-		local pkg="$1"
-		shift
-		local alts=("$@") # Alternative package names to try
-
-		# Try apt (Debian/Ubuntu)
-		if cmd_exists apt; then
-			if dpkg -l | grep -q "ii  $pkg" 2>/dev/null; then
-				run_cmd "sudo apt remove -y $pkg 2>/dev/null || true"
-				return 0
-			fi
-			# Try alternative names
-			for alt in "${alts[@]}"; do
-				if dpkg -l | grep -q "ii  $alt" 2>/dev/null; then
-					run_cmd "sudo apt remove -y $alt 2>/dev/null || true"
-					return 0
-				fi
-			done
-		fi
-
-		# Try dnf (Fedora/RHEL)
-		if cmd_exists dnf; then
-			if dnf list installed | grep -q "^$pkg\\."; then
-				run_cmd "sudo dnf remove -y $pkg 2>/dev/null || true"
-				return 0
-			fi
-			for alt in "${alts[@]}"; do
-				if dnf list installed | grep -q "^${alt}\\."; then
-					run_cmd "sudo dnf remove -y $alt 2>/dev/null || true"
-					return 0
-				fi
-			done
-		fi
-
-		# Try pacman (Arch)
-		if cmd_exists pacman; then
-			if pacman -Qi "$pkg" &>/dev/null; then
-				run_cmd "sudo pacman -R --noconfirm $pkg 2>/dev/null || true"
-				return 0
-			fi
-			for alt in "${alts[@]}"; do
-				if pacman -Qi "$alt" &>/dev/null; then
-					run_cmd "sudo pacman -R --noconfirm $alt 2>/dev/null || true"
-					return 0
-				fi
-			done
-		fi
-
-		# Try zypper (openSUSE)
-		if cmd_exists zypper; then
-			if zypper search -i "$pkg" 2>/dev/null | grep -q "$pkg"; then
-				run_cmd "sudo zypper remove -y $pkg 2>/dev/null || true"
-				return 0
-			fi
-			for alt in "${alts[@]}"; do
-				if zypper search -i "$alt" 2>/dev/null | grep -q "$alt"; then
-					run_cmd "sudo zypper remove -y $alt 2>/dev/null || true"
-					return 0
-				fi
-			done
-		fi
-
-		return 1
-	}
-
-	# ============================================================================
 	# AUTO-CORRECTION: Remove old installations before brew
 	# For packages that have been migrated to brew, remove old apt/npm/cargo/pip/go versions
 	# ============================================================================
@@ -523,36 +454,30 @@ install_linux_package() {
 		# ========================================================================
 		*)
 			# Try to detect and remove from various sources
-			local handled=false
-
 			# Check snap (common source on Ubuntu)
 			if cmd_exists snap && snap list 2>/dev/null | grep -q "^${package}$"; then
 				log_warning "Found $package from snap (auto-removing for brew version)..."
 				run_cmd "sudo snap remove $package 2>/dev/null || true"
-				handled=true
 			fi
 
 			# Check flatpak
 			if cmd_exists flatpak && flatpak list 2>/dev/null | grep -qi "$package"; then
 				log_warning "Found $package from flatpak (auto-removing for brew version)..."
 				run_cmd "sudo flatpak uninstall -y $package 2>/dev/null || true"
-				handled=true
 			fi
 
 			# Check for manually installed binaries in ~/.local/bin
 			if [[ -f "$HOME/.local/bin/$package" ]] || [[ -L "$HOME/.local/bin/$package" ]]; then
 				log_warning "Found $package in ~/.local/bin (may need manual cleanup)..."
-				handled=true
 			fi
 
 			# Check for AppImage in ~/Applications
-			if ls ~/Applications/${package}*.AppImage 2>/dev/null; then
+			if ls ~/Applications/"${package}"*.AppImage 2>/dev/null; then
 				log_warning "Found $package AppImage (may need manual cleanup)..."
-				handled=true
 			fi
 
-			# For unhandled packages, skip silently
-			# This prevents errors for packages that only have one installation method
+			# Packages from other sources are skipped silently; a package with a
+			# single installation method would otherwise produce spurious errors
 			;;
 		esac
 	fi
@@ -1482,6 +1407,7 @@ install_oh_my_zsh() {
 	log_step "Installing oh-my-zsh..."
 
 	# Install via official installer (non-interactive)
+	# shellcheck disable=SC2016  # $(curl) expands inside sh -c, not here
 	if run_cmd 'sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended'; then
 		track_installed "oh-my-zsh" "zsh framework"
 		log_success "oh-my-zsh installed"
@@ -1554,6 +1480,7 @@ ensure_homebrew() {
 	fi
 
 	log_step "Installing Homebrew for Linux..."
+	# shellcheck disable=SC2016  # $(curl) expands inside bash -c, not here
 	if run_cmd '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'; then
 		# Add Homebrew to PATH for Linux
 		if [[ -d "/home/linuxbrew/.linuxbrew/bin" ]]; then
