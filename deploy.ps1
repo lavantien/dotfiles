@@ -47,6 +47,48 @@ function Copy-Files {
     }
 }
 
+function Fill-Missing([PSCustomObject]$Template, [PSCustomObject]$Live) {
+    foreach ($Prop in $Template.PSObject.Properties) {
+        $Existing = $Live.PSObject.Properties[$Prop.Name]
+        if ($null -eq $Existing) {
+            $Live | Add-Member -NotePropertyName $Prop.Name -NotePropertyValue $Prop.Value
+        }
+        elseif ($Prop.Value -is [PSCustomObject] -and $Existing.Value -is [PSCustomObject]) {
+            Fill-Missing $Prop.Value $Existing.Value
+        }
+        # else: live value wins, do nothing
+    }
+    return $Live
+}
+
+function Merge-ClaudeSettings {
+    param([string]$TemplatePath, [string]$TargetPath)
+
+    if (!(Test-Path $TemplatePath)) {
+        Write-Host "  Settings template not found, skipping" -ForegroundColor Yellow
+        return
+    }
+    if (!(Test-Path $TargetPath)) {
+        Copy-Item $TemplatePath $TargetPath -Force
+        Write-Host "  Claude settings (created from template)" -ForegroundColor Green
+        return
+    }
+
+    try {
+        $Template = Get-Content $TemplatePath -Raw | ConvertFrom-Json
+        $Live = Get-Content $TargetPath -Raw | ConvertFrom-Json
+    }
+    catch {
+        Write-Host "  Claude settings not valid JSON, skipping merge" -ForegroundColor Yellow
+        return
+    }
+
+    $Merged = Fill-Missing $Template $Live
+    # Depth 100: ConvertTo-Json defaults to 2 and would truncate nested objects
+    $Merged | ConvertTo-Json -Depth 100 | Set-Content $TargetPath
+    Write-Host "  Claude settings (missing fields filled, existing values preserved)" -ForegroundColor Green
+}
+
 function Patch-ClaudeLspMarketplace {
     $MarketplaceJson = "$HOME/.claude/plugins/marketplaces/claude-plugins-official/.claude-plugin/marketplace.json"
 
@@ -203,29 +245,23 @@ if (-not $SkipConfig) {
         Write-Host "  WezTerm background assets" -ForegroundColor Green
     }
 
-    # Claude configs
-    if (Test-Path "$DotfilesDir/.claude") {
-        $ClaudeDir = "$HOME/.claude"
-        if (!(Test-Path $ClaudeDir)) {
-            New-Item -ItemType Directory -Path $ClaudeDir -Force | Out-Null
-        }
-        Copy-Item -Path "$DotfilesDir/.claude/*" -Destination $ClaudeDir -Recurse -Force
-        Write-Host "  Claude configs" -ForegroundColor Green
+    # Claude configs (explicit list; settings.template.json is injector input,
+    # never copied, and hooks/*.disabled + tdd-guard are intentionally excluded)
+    $ClaudeDir = "$HOME/.claude"
+    if (!(Test-Path $ClaudeDir)) {
+        New-Item -ItemType Directory -Path $ClaudeDir -Force | Out-Null
     }
+    Copy-Files @(
+        ".claude/CLAUDE.md"
+        ".claude/quality-check.sh"
+        ".claude/quality-check.ps1"
+        ".claude/statusline.sh"
+    ) $ClaudeDir
+    Write-Host "  Claude configs" -ForegroundColor Green
 
-    # Register statusline in Claude Code settings.json (using bash for all platforms)
-    $SettingsFile = "$HOME/.claude/settings.json"
-    if (!(Test-Path $SettingsFile)) {
-        "{}" | Set-Content $SettingsFile
-    }
-
-    $Settings = Get-Content $SettingsFile -Raw | ConvertFrom-Json
-    $Settings | Add-Member -NotePropertyName "statusLine" -NotePropertyValue @{
-        type = "command"
-        command = "bash ~/.claude/statusline.sh"
-    } -Force
-    $Settings | ConvertTo-Json -Depth 10 | Set-Content $SettingsFile
-    Write-Host "  Statusline registered" -ForegroundColor Green
+    # Merge settings template into settings.json (fills missing fields only,
+    # preserves existing values including ANTHROPIC_AUTH_TOKEN)
+    Merge-ClaudeSettings -TemplatePath "$DotfilesDir/.claude/settings.template.json" -TargetPath "$HOME/.claude/settings.json"
 
     # OpenCode config (merge MCP servers)
     $OpencodeConfigDir = "$ConfigDir/opencode"

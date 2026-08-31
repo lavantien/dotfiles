@@ -116,8 +116,15 @@ migrate_configs_to_xdg() {
 # LOAD USER CONFIGURATION
 # ============================================================================
 # Source config library if available
+# shellcheck source=/dev/null
 if [[ -f "$SCRIPT_DIR/lib/config.sh" ]]; then
 	source "$SCRIPT_DIR/lib/config.sh"
+fi
+
+# Source JSON merge helpers (Claude settings injection, OpenCode MCP merge)
+# shellcheck source=/dev/null
+if [[ -f "$SCRIPT_DIR/lib/json-merge.sh" ]]; then
+	source "$SCRIPT_DIR/lib/json-merge.sh"
 fi
 
 # Load user config
@@ -126,10 +133,6 @@ load_dotfiles_config "$CONFIG_FILE"
 
 # Get config values (with defaults)
 CONFIG_EDITOR=$(get_config "editor" "nvim")
-CONFIG_THEME=$(get_config "theme" "rose-pine")
-CONFIG_CATEGORIES=$(get_config "categories" "full")
-CONFIG_AUTO_UPDATE_REPOS=$(get_config "auto_update_repos" "false")
-CONFIG_BACKUP_BEFORE_DEPLOY=$(get_config "backup_before_deploy" "false")
 
 # Show config status
 if [[ -f "$CONFIG_FILE" ]]; then
@@ -141,7 +144,6 @@ fi
 echo -e "${BLUE}Deploying dotfiles for: $OS${NC}"
 echo -e "${BLUE}Script directory: $SCRIPT_DIR${NC}"
 echo -e "${BLUE}Config directory: $XDG_CONFIG${NC}"
-echo -e "${BLUE}Categories: $CONFIG_CATEGORIES${NC}"
 
 # ============================================================================
 # COMMON DEPLOYMENT
@@ -311,48 +313,16 @@ deploy_claude_hooks() {
 		chmod +x "$HOME/.claude/statusline.sh"
 	fi
 
-	# Auto-register statusline in Claude Code settings.json
-	register_claude_code_hooks
+	# Deploy PowerShell quality check (cross-platform payload, used from Windows)
+	if [ -f "$SCRIPT_DIR/.claude/quality-check.ps1" ]; then
+		cp "$SCRIPT_DIR/.claude/quality-check.ps1" "$HOME/.claude/"
+	fi
+
+	# Merge settings template into ~/.claude/settings.json (fills missing
+	# fields only, preserves existing values including ANTHROPIC_AUTH_TOKEN)
+	inject_claude_settings
 
 	echo -e "${GREEN}Claude Code config deployed${NC}"
-	echo -e "${GREEN}Statusline auto-registered in settings.json${NC}"
-}
-
-# Register Claude Code statusline in settings.json without overwriting existing config
-register_claude_code_hooks() {
-	local settings_file="$HOME/.claude/settings.json"
-
-	# Create settings.json if it doesn't exist
-	if [ ! -f "$settings_file" ]; then
-		echo "{}" >"$settings_file"
-	fi
-
-	# Use jq to register statusline if available, otherwise skip
-	if ! command -v jq &>/dev/null; then
-		echo -e "${YELLOW}jq not found, skipping auto-registration of statusline${NC}"
-		echo -e "${YELLOW}Install jq to enable automatic statusline registration${NC}"
-		return 0
-	fi
-
-	# Use bash statusline.sh for all platforms (Windows via Git Bash/MSYS2)
-	local statusline_command="bash ~/.claude/statusline.sh"
-
-	# Register statusline (always ensure it's set)
-	local tmp_file="${settings_file}.tmp"
-	jq --arg cmd "$statusline_command" '
-        .statusLine = {
-            "type": "command",
-            "command": $cmd
-        }
-    ' "$settings_file" >"$tmp_file"
-
-	if [ $? -eq 0 ]; then
-		mv "$tmp_file" "$settings_file"
-		echo -e "${GREEN}Registered statusline in settings.json${NC}"
-	else
-		rm -f "$tmp_file"
-		echo -e "${YELLOW}Failed to register statusline in settings.json${NC}"
-	fi
 }
 
 # ============================================================================
@@ -402,7 +372,8 @@ deploy_mcp_configs() {
 				for mcp in "${universal_mcps[@]}"; do
 					if ! jq -e ".mcp.\"$mcp\"" "$opencode_config" >/dev/null 2>&1; then
 						# MCP is missing, add it from platform-specific template
-						local mcp_config=$(jq ".mcp.\"$mcp\"" "$platform_template")
+						local mcp_config
+						mcp_config=$(jq ".mcp.\"$mcp\"" "$platform_template")
 						jq --arg mcp "$mcp" --argjson config "$mcp_config" '.mcp[$mcp] = $config' "$opencode_config" >"${opencode_config}.tmp"
 						mv "${opencode_config}.tmp" "$opencode_config"
 						merged=true
