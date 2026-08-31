@@ -91,7 +91,7 @@ up  # Runs update-all
 | Script | Purpose |
 |--------|---------|
 | **bootstrap** | Initial setup - installs package managers, SDKs, LSPs, tools, deploys configs |
-| **deploy** | Deploy configuration files (Neovim, git hooks, shell, Claude Code) |
+| **deploy** | Deploy configs and scripts (Neovim, git hooks, shell, Claude Code settings, OpenCode MCPs, ~/dev scripts), see deploy options below |
 | **update-all (up)** | Update all package managers and system packages (20+ managers) |
 | **git-update-repos** | Clone/update ALL GitHub repos via gh CLI, optionally sync system instructions |
 | **sync-system-instructions** | Sync AI system instructions (AGENTS.md, GEMINI.md, RULES.md) to all repos, remove stale CLAUDE.md |
@@ -118,6 +118,17 @@ Windows uses `.ps1` scripts, Linux/macOS uses `.sh` scripts.
 | Skip pip updates | `--skip-pip` | `-SkipPip` | Skip pip package updates (speeds up update) |
 
 Usage with alias: `up --skip-pip` (bash) or `up -SkipPip` (PowerShell)
+
+### Deploy options
+
+| Option | Bash | PowerShell | Purpose |
+|--------|------|------------|---------|
+| Skip config deployment | `--skip-config` | `-SkipConfig` | Deploy ~/dev scripts only, skip all config deployment |
+| Verbose file logging | `--verbose` | (always on) | Log each copied file |
+| Pre-deploy backup | `--backup` | `-Backup` | Force backup before deploy (also via `backup_before_deploy` config) |
+| Help | `--help` | (Get-Help) | Show usage |
+
+Both deploys write a `~/.dotfiles-installed` marker (timestamp, version, OS) read by uninstall. `-DotfilesDir` and `POWERSHELL_PROFILE_CONFIG` are Windows-only parameters; bash derives the repo location from the script path and honors `XDG_CONFIG_HOME`.
 
 ### Installation Categories
 
@@ -146,7 +157,9 @@ vim ~/.dotfiles.config.yaml
 | theme | rose-pine, rose-pine-dawn, rose-pine-moon | (none) |
 | github_username | your github username | lavantien |
 | base_dir | path to git repos | ~/dev/github |
-| auto_commit_repos | true, false | false |
+| auto_commit_changes | true, false | false |
+| auto_update_repos | true, false | false |
+| backup_before_deploy | true, false | false |
 
 ### Health & Troubleshooting
 
@@ -223,20 +236,65 @@ Platform-specific: `.sh` for Linux/macOS, `.ps1` for Windows
 
 ### Claude Code Hooks
 
-**Statusline** hook is auto-registered in `~/.claude/settings.json`. Uses a unified bash script (`statusline.sh`) on both Linux and Windows (via Git Bash).
+**Statusline** uses a unified bash script (`statusline.sh`) on both Linux and Windows (via Git Bash), registered in `~/.claude/settings.json` by the settings injection below.
 
 Quality checks can be configured per-project using project-specific hooks or MCP servers.
 
+### Claude Code settings injection
+
+Deploy merges the committed `.claude/settings.template.json` into `~/.claude/settings.json` on every run, on both platforms:
+
+- Missing fields are added recursively at every level
+- Existing values are never overwritten, local tweaks win
+- `env.ANTHROPIC_AUTH_TOKEN` is deliberately absent from the template and always preserved
+- When `settings.json` does not exist it is created from the template
+- Linux/macOS uses jq with a python3 fallback, Windows uses native PowerShell JSON
+- Fill-missing never removes keys, so prune the template manually when a setting is retired
+
+Injected top-level fields:
+
+| Field | Template value | Purpose |
+|-------|----------------|---------|
+| `env` | 12 variables (table below) | API endpoint, models, limits, feature flags |
+| `model` | `glm-5.3[1m]` | Default model |
+| `statusLine` | `bash ~/.claude/statusline.sh` | Statusline command |
+| `enabledPlugins` | 31 plugins, all enabled | Plugin enablement |
+| `alwaysThinkingEnabled` | `true` | Extended thinking by default |
+| `autoUpdatesChannel` | `latest` | Update channel |
+| `tui` | `fullscreen` | Terminal UI mode |
+| `skipDangerousModePermissionPrompt` | `true` | Skip dangerous-mode prompt |
+| `teammateMode` | `auto` | Agent teams mode |
+
+Injected `env` variables:
+
+| Variable | Value | Purpose |
+|----------|-------|---------|
+| `ANTHROPIC_BASE_URL` | `https://api.z.ai/api/anthropic` | API endpoint |
+| `API_TIMEOUT_MS` | `3000000` | Request timeout |
+| `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` | `1` | Disable telemetry traffic |
+| `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` | `1` | Enable agent teams |
+| `CLAUDE_CODE_ENABLE_AUTO_MODE` | `1` | Enable auto mode |
+| `CLAUDE_CODE_MAX_OUTPUT_TOKEN` | `131072` | Max output tokens |
+| `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE` | `93.75` | Autocompact trigger percentage |
+| `CLAUDE_CODE_AUTO_COMPACT_WINDOW` | `1000000` | Autocompact context window |
+| `ANTHROPIC_DEFAULT_HAIKU_MODEL` | `glm-5.3[1m]` | Haiku-class model override |
+| `ANTHROPIC_DEFAULT_SONNET_MODEL` | `glm-5.3[1m]` | Sonnet-class model override |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL` | `glm-5.3[1m]` | Opus-class model override |
+| `CLAUDE_CODE_EFFORT_LEVEL` | `max` | Reasoning effort |
+
+`enabledPlugins` entries: glm-plan-usage@zai-coding-plugins, repomix-commands@repomix, repomix-explorer@repomix, repomix-mcp@repomix, and @claude-plugins-official for frontend-design, context7, feature-dev, code-review, commit-commands, typescript-lsp, playwright, agent-sdk-dev, pr-review-toolkit, pyright-lsp, gopls-lsp, rust-analyzer-lsp, csharp-lsp, php-lsp, jdtls-lsp, clangd-lsp, lua-lsp, code-simplifier, superpowers, claude-code-setup, chrome-devtools-mcp, plugin-dev, remember, microsoft-docs, postman, claude-security, math-olympiad.
+
 ### OpenCode Config Merging
 
-`~/.config/opencode/opencode.json` is merged (not overwritten):
-- Adds missing MCP servers
-- Updates existing ones
-- Preserves any existing settings not managed by dotfiles
+`~/.config/opencode/opencode.json` is deep-merged (not overwritten) on both platforms:
+- Adds missing MCP servers from the platform template
+- Updates template-managed values that changed (stale URLs, commands)
+- Repairs a malformed scalar `mcp` section
+- Preserves user-added servers and user-added keys
 
 ### Claude Code Windows LSP Patching
 
-npm-installed LSPs (typescript-language-server, pyright-langserver, intelephense) need `cmd.exe /c` wrapper. Auto-patches marketplace.json to fix `spawn EINVAL` errors.
+npm-installed LSPs (typescript-language-server, pyright-langserver, intelephense) need `cmd.exe /c` wrapper. Auto-patches marketplace.json to fix `spawn EINVAL` errors. On Linux/macOS, deploy strips the same `cmd.exe` wrappers if a marketplace.json was carried over from a Windows machine.
 
 ### MCP Server Manual Patching (Windows)
 

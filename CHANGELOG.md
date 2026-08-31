@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.21.0] - 2026-08-31
+
+### Added
+
+- `deploy`: injects `.claude/settings.template.json` into `~/.claude/settings.json` with fill-missing-only merge on both platforms; existing values and `env.ANTHROPIC_AUTH_TOKEN` are always preserved, missing keys are added recursively, and the file is created from the template when absent (jq with python3 fallback on Linux/macOS, native JSON on Windows)
+- `deploy.sh`: flags `--skip-config` (~/dev scripts only), `--verbose` (per-file copy log), `--backup`, `--help`; `deploy.ps1`: `-Backup` switch
+- `deploy`: honors `backup_before_deploy` by running `backup.sh`/`backup.ps1` as a subprocess before any mutation (previously read but never acted on)
+- `deploy`: writes `~/.dotfiles-installed` marker with UTC timestamp, CHANGELOG version, and OS; `uninstall.sh` already expected it
+- `deploy.sh`: deep OpenCode MCP merge matching `deploy.ps1` semantics: template values win shared keys, user servers and user keys survive, malformed scalar `mcp` section repaired
+- `deploy.sh`: strips `cmd.exe` wrappers from a Windows-carried Claude LSP `marketplace.json` on Linux/macOS, mirroring the `gh.exe` gitconfig cleanup
+- `deploy.sh`: copies `.claude/quality-check.ps1` alongside the bash variant
+- `bootstrap.sh`: `--verbose` flag (previously documented in README but not implemented), matching `-VerboseMode` on Windows
+- `bootstrap`: installs coursier on Linux and installs scalafmt, scalafix, metals through it instead of silently skipping
+- `bootstrap`: `verify_installed` post-install checks for VS Code, coursier, and npm MCP packages
+
+### Changed
+
+- `deploy.ps1`: copies an explicit `.claude` file list instead of the whole tree, matching `deploy.sh`; `hooks/*.disabled` and `tdd-guard/` no longer deploy
+- statusline registration no longer force-overwrites a customized `statusLine`; it is filled by the template only when missing
+- `bootstrap.sh`: `install_mcp_servers` reuses `npm_package_needs_update`, so outdated npm MCP packages update instead of being skipped forever
+- `common.sh`: `ensure_path` writes the PATH export to shell profiles only once and persists even when the directory is already in the session PATH
+
+### Removed
+
+- `bootstrap.ps1`: dead `-SkipUpdate`/`--skip-update` mapping (bootstrap installs missing packages only, and both forwarded paths were broken)
+- `deploy.sh`: unused `theme`, `categories`, `auto_update_repos` config reads
+- `linux.sh`: dead `remove_system_package` helper (defined, never invoked)
+
+### Fixed
+
+- `deploy.ps1`: recursive `Fill-Missing` emitted its return value into the caller's pipeline, writing `settings.json` as a top-level JSON array when nested objects were merged; recursion output is now discarded (verified in pwsh 7.6.5)
+- `bootstrap`: cleared pre-existing shellcheck warnings across `bootstrap.sh`, `common.sh`, and `linux.sh` so the repo's own pre-commit hook passes: 7 `A && B || C` install/track patterns converted to if/else, unquoted expansions, write-only `handled` variable
+- `README.md`: corrected config table (`auto_commit_changes`, `auto_update_repos`, `backup_before_deploy`), documented deploy flags and Claude Code settings injection with the full parameter list
+
+---
+
 ## [5.20.0] - 2026-08-23
 
 ### Changed
@@ -2196,7 +2232,8 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 ---
 
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.20.0...HEAD
+[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.21.0...HEAD
+[5.21.0]: https://github.com/lavantien/dotfiles/compare/v5.20.0...v5.21.0
 [5.20.0]: https://github.com/lavantien/dotfiles/compare/v5.19.0...v5.20.0
 [5.19.0]: https://github.com/lavantien/dotfiles/compare/v5.18.0...v5.19.0
 [5.18.0]: https://github.com/lavantien/dotfiles/compare/v5.17.0...v5.18.0
