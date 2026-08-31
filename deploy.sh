@@ -133,6 +133,7 @@ load_dotfiles_config "$CONFIG_FILE"
 
 # Get config values (with defaults)
 CONFIG_EDITOR=$(get_config "editor" "nvim")
+CONFIG_BACKUP_BEFORE_DEPLOY=$(get_config "backup_before_deploy" "false")
 
 # Show config status
 if [[ -f "$CONFIG_FILE" ]]; then
@@ -146,17 +147,100 @@ echo -e "${BLUE}Script directory: $SCRIPT_DIR${NC}"
 echo -e "${BLUE}Config directory: $XDG_CONFIG${NC}"
 
 # ============================================================================
+# CLI FLAGS
+# ============================================================================
+SKIP_CONFIG=false
+VERBOSE_MODE=false
+FORCE_BACKUP=false
+
+usage() {
+	echo "Usage: deploy.sh [--skip-config] [--verbose] [--backup] [-h|--help]"
+	echo "  --skip-config  Deploy scripts to ~/dev only, skip all config deployment"
+	echo "  --verbose      Log every copied file (src -> dst)"
+	echo "  --backup       Run backup.sh before deploying (overrides config)"
+	echo "  -h, --help     Show this help"
+}
+
+while [[ $# -gt 0 ]]; do
+	case $1 in
+	--skip-config) SKIP_CONFIG=true && shift ;;
+	--verbose) VERBOSE_MODE=true && shift ;;
+	--backup) FORCE_BACKUP=true && shift ;;
+	-h | --help) usage && exit 0 ;;
+	*)
+		echo "Unknown option: $1"
+		usage
+		exit 1
+		;;
+	esac
+done
+
+# Copy with optional verbose logging (mirrors Copy-File -Verbose in deploy.ps1)
+copy_file() {
+	local src="$1"
+	local dst="$2"
+	if [[ "$VERBOSE_MODE" == "true" ]]; then
+		echo -e "${CYAN}  $(basename "$src") -> $dst${NC}"
+	fi
+	cp "$src" "$dst"
+}
+
+# Pre-deploy backup when --backup is passed or backup_before_deploy is configured
+run_pre_deploy_backup() {
+	if [[ "$FORCE_BACKUP" != "true" && "$CONFIG_BACKUP_BEFORE_DEPLOY" != "true" ]]; then
+		return 0
+	fi
+	local backup_script="$SCRIPT_DIR/backup.sh"
+	if [[ ! -f "$backup_script" ]]; then
+		echo -e "${YELLOW}backup.sh not found, skipping pre-deploy backup${NC}"
+		return 0
+	fi
+	echo -e "${GREEN}Running pre-deploy backup (backup_before_deploy)${NC}"
+	bash "$backup_script" || echo -e "${YELLOW}Backup reported failure, continuing${NC}"
+}
+
+# Marker read by uninstall.sh; version comes from the CHANGELOG top entry
+write_deploy_marker() {
+	local version
+	version=$(awk -F'[][]' '/^## \[/{print $2; exit}' "$SCRIPT_DIR/CHANGELOG.md" 2>/dev/null)
+	{
+		echo "deployed_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+		echo "version=${version:-unknown}"
+		echo "os=$OS"
+	} >"$HOME/.dotfiles-installed"
+}
+
+# ============================================================================
 # COMMON DEPLOYMENT
 # ============================================================================
-deploy_common() {
+# Scripts to ~/dev: always deployed, even with --skip-config
+deploy_scripts() {
+	echo -e "${GREEN}Deploying scripts to ~/dev...${NC}"
+
+	mkdir -p "$HOME/dev"
+
+	copy_file "$SCRIPT_DIR/git-clone-all.sh" "$HOME/dev/" 2>/dev/null || true
+	copy_file "$SCRIPT_DIR/git-update-repos.sh" "$HOME/dev/"
+	copy_file "$SCRIPT_DIR/sync-system-instructions.sh" "$HOME/dev/"
+	chmod +x "$HOME/dev/git-update-repos.sh" 2>/dev/null || true
+	chmod +x "$HOME/dev/sync-system-instructions.sh" 2>/dev/null || true
+
+	if [ -f "$SCRIPT_DIR/update-all.sh" ]; then
+		copy_file "$SCRIPT_DIR/update-all.sh" "$HOME/dev/"
+		chmod +x "$HOME/dev/update-all.sh"
+	fi
+
+	echo -e "${GREEN}Scripts deployed.${NC}"
+}
+
+deploy_configs() {
 	echo -e "${GREEN}Deploying common files...${NC}"
 
 	# Create directories
 	mkdir -p "$XDG_CONFIG"
-	mkdir -p "$HOME/dev"
 
 	# Copy bash aliases (works on all platforms)
-	cp "$SCRIPT_DIR/.bash_aliases" "$HOME/"
+	copy_file "$SCRIPT_DIR/.bash_aliases" "$HOME/"
 
 	# Merge git config (preserves user.name and user.email)
 	merge_gitconfig "$SCRIPT_DIR/.gitconfig" "$HOME/.gitconfig"
@@ -164,10 +248,10 @@ deploy_common() {
 	# Copy Neovim config (from .config/nvim/ to match repo structure)
 	if [ -f "$SCRIPT_DIR/.config/nvim/init.lua" ]; then
 		# Copy to root (user preference)
-		cp "$SCRIPT_DIR/.config/nvim/init.lua" "$HOME/"
+		copy_file "$SCRIPT_DIR/.config/nvim/init.lua" "$HOME/"
 		# Also copy to XDG config location
 		mkdir -p "$XDG_CONFIG/nvim"
-		cp "$SCRIPT_DIR/.config/nvim/init.lua" "$XDG_CONFIG/nvim/"
+		copy_file "$SCRIPT_DIR/.config/nvim/init.lua" "$XDG_CONFIG/nvim/"
 	fi
 
 	# Copy Neovim lua directory if exists
@@ -179,20 +263,7 @@ deploy_common() {
 	# Copy Wezterm config (from .config/wezterm/ to match repo structure)
 	if [ -f "$SCRIPT_DIR/.config/wezterm/wezterm.lua" ]; then
 		mkdir -p "$XDG_CONFIG/wezterm"
-		cp "$SCRIPT_DIR/.config/wezterm/wezterm.lua" "$XDG_CONFIG/wezterm/"
-	fi
-
-	# Copy git scripts
-	cp "$SCRIPT_DIR/git-clone-all.sh" "$HOME/dev/" 2>/dev/null || true
-	cp "$SCRIPT_DIR/git-update-repos.sh" "$HOME/dev/"
-	cp "$SCRIPT_DIR/sync-system-instructions.sh" "$HOME/dev/"
-	chmod +x "$HOME/dev/git-update-repos.sh" 2>/dev/null || true
-	chmod +x "$HOME/dev/sync-system-instructions.sh" 2>/dev/null || true
-
-	# Copy update-all script
-	if [ -f "$SCRIPT_DIR/update-all.sh" ]; then
-		cp "$SCRIPT_DIR/update-all.sh" "$HOME/dev/"
-		chmod +x "$HOME/dev/update-all.sh"
+		copy_file "$SCRIPT_DIR/.config/wezterm/wezterm.lua" "$XDG_CONFIG/wezterm/"
 	fi
 
 	# Copy Aider configs
@@ -297,25 +368,25 @@ deploy_claude_hooks() {
 	# Copy CLAUDE.md to global .claude folder for project-agnostic instructions
 	# Repo structure: .claude/CLAUDE.md (matches deployment location)
 	if [ -f "$SCRIPT_DIR/.claude/CLAUDE.md" ]; then
-		cp "$SCRIPT_DIR/.claude/CLAUDE.md" "$HOME/.claude/"
+		copy_file "$SCRIPT_DIR/.claude/CLAUDE.md" "$HOME/.claude/"
 		echo -e "${GREEN}CLAUDE.md deployed to: $HOME/.claude/${NC}"
 	fi
 
 	# Deploy quality check script
 	if [ -f "$SCRIPT_DIR/.claude/quality-check.sh" ]; then
-		cp "$SCRIPT_DIR/.claude/quality-check.sh" "$HOME/.claude/"
+		copy_file "$SCRIPT_DIR/.claude/quality-check.sh" "$HOME/.claude/"
 		chmod +x "$HOME/.claude/quality-check.sh"
 	fi
 
 	# Deploy Claude Code statusline script
 	if [ -f "$SCRIPT_DIR/.claude/statusline.sh" ]; then
-		cp "$SCRIPT_DIR/.claude/statusline.sh" "$HOME/.claude/"
+		copy_file "$SCRIPT_DIR/.claude/statusline.sh" "$HOME/.claude/"
 		chmod +x "$HOME/.claude/statusline.sh"
 	fi
 
 	# Deploy PowerShell quality check (cross-platform payload, used from Windows)
 	if [ -f "$SCRIPT_DIR/.claude/quality-check.ps1" ]; then
-		cp "$SCRIPT_DIR/.claude/quality-check.ps1" "$HOME/.claude/"
+		copy_file "$SCRIPT_DIR/.claude/quality-check.ps1" "$HOME/.claude/"
 	fi
 
 	# Merge settings template into ~/.claude/settings.json (fills missing
@@ -402,34 +473,45 @@ deploy_macos() {
 # MAIN
 # ============================================================================
 main() {
+	# Backup before any mutation when requested
+	run_pre_deploy_backup
+
 	# Ensure .config directory exists before deploying anything
 	mkdir -p "$XDG_CONFIG"
 
-	# Migrate configs from old locations to XDG structure
-	migrate_configs_to_xdg
+	deploy_scripts
 
-	deploy_common
-	deploy_claude_hooks
-	deploy_mcp_configs
+	if [[ "$SKIP_CONFIG" == "true" ]]; then
+		echo -e "${YELLOW}Skipping config deployment (--skip-config)${NC}"
+	else
+		# Migrate configs from old locations to XDG structure
+		migrate_configs_to_xdg
 
-	case $OS in
-	linux)
-		deploy_linux
-		;;
-	macos)
-		deploy_macos
-		;;
-	*)
-		echo -e "${YELLOW}Unknown OS, deploying common files only${NC}"
-		deploy_linux
-		;;
-	esac
+		deploy_configs
+		deploy_claude_hooks
+		deploy_mcp_configs
 
-	# Apply platform-specific .gitconfig fixes
-	update_git_config
+		case $OS in
+		linux)
+			deploy_linux
+			;;
+		macos)
+			deploy_macos
+			;;
+		*)
+			echo -e "${YELLOW}Unknown OS, deploying common files only${NC}"
+			deploy_linux
+			;;
+		esac
+
+		# Apply platform-specific .gitconfig fixes
+		update_git_config
+	fi
+
+	write_deploy_marker
 
 	echo -e "${GREEN}=== Deployment Complete ===${NC}"
-	echo -e "${YELLOW}Reload your shell to apply changes${NC}"
+	echo -e "${YELLOW}Run 'source ~/.zshrc' (or restart your shell) to apply changes${NC}"
 }
 
 main

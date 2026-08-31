@@ -3,10 +3,31 @@
 
 param(
     [string]$DotfilesDir = "$HOME/dev/github/dotfiles",
-    [switch]$SkipConfig
+    [switch]$SkipConfig,
+    [switch]$Backup
 )
 
 $ErrorActionPreference = "Stop"
+
+# Load user config for backup_before_deploy
+$ConfigLib = Join-Path $DotfilesDir "lib/config.ps1"
+if (Test-Path $ConfigLib) {
+    . $ConfigLib
+    Load-DotfilesConfig
+}
+$BackupBeforeDeploy = ($CONFIG_BACKUP_BEFORE_DEPLOY -eq "true")
+
+# Pre-deploy backup before any mutation (-Backup flag or backup_before_deploy config)
+if ($Backup -or $BackupBeforeDeploy) {
+    Write-Host "Running pre-deploy backup..." -ForegroundColor Cyan
+    $BackupScript = Join-Path $DotfilesDir "backup.ps1"
+    if (Get-Command bash -ErrorAction SilentlyContinue) {
+        & $BackupScript
+    }
+    else {
+        Write-Host "  Git Bash not found, cannot run backup.sh, skipping" -ForegroundColor Yellow
+    }
+}
 
 $DevDir = "$HOME/dev"
 $ConfigDir = if ($env:XDG_CONFIG_HOME) { $env:XDG_CONFIG_HOME } else { "$HOME/.config" }
@@ -387,6 +408,19 @@ if (Test-Path $profilePath) {
 
     Write-Host "Profile functions reloaded into Global scope" -ForegroundColor Green
 }
+
+# Marker read by uninstall.sh; version comes from the CHANGELOG top entry
+$Changelog = Join-Path $DotfilesDir "CHANGELOG.md"
+$Version = "unknown"
+if (Test-Path $Changelog) {
+    $Match = Select-String -Path $Changelog -Pattern '^## \[(.+?)\]' | Select-Object -First 1
+    if ($Match) { $Version = $Match.Matches[0].Groups[1].Value }
+}
+@"
+deployed_at=$(Get-Date -AsUTC -Format "yyyy-MM-ddTHH:mm:ssZ")
+version=$Version
+os=windows
+"@ | Set-Content "$HOME/.dotfiles-installed"
 
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "           Complete!" -ForegroundColor Green
