@@ -30,10 +30,6 @@ if (Test-Path $windowsBootstrap) {
                     $i++
                 }
             }
-            { $_ -in "-SkipUpdate", "--skip-update" } {
-                $params["SkipUpdate"] = $true
-                $i++
-            }
             { $_ -in "-h", "-?", "--help" } {
                 # Show help using PowerShell's built-in mechanism
                 Get-Help -Full $windowsBootstrap
@@ -80,10 +76,6 @@ while ($i -lt $args.Length) {
             } else {
                 $i++
             }
-        }
-        { $_ -in "-SkipUpdate", "--skip-update" } {
-            $mappedArgs += "--skip-update"
-            $i++
         }
         { $_ -in "-h", "--help" } {
             $mappedArgs += "--help"
