@@ -75,7 +75,9 @@ function Fill-Missing([PSCustomObject]$Template, [PSCustomObject]$Live) {
             $Live | Add-Member -NotePropertyName $Prop.Name -NotePropertyValue $Prop.Value
         }
         elseif ($Prop.Value -is [PSCustomObject] -and $Existing.Value -is [PSCustomObject]) {
-            Fill-Missing $Prop.Value $Existing.Value
+            # Recursion mutates in place; discard its return value or it
+            # pollutes the pipeline and the result becomes an array
+            $null = Fill-Missing $Prop.Value $Existing.Value
         }
         # else: live value wins, do nothing
     }
