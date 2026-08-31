@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### Changed
+
+- settings template: `ANTHROPIC_DEFAULT_HAIKU_MODEL` is now `glm-5.3-flash[1m]`, so haiku-class calls use the flash model while sonnet/opus stay on `glm-5.3[1m]`
+
+---
+
 ## [5.21.0] - 2026-08-31
 
 ### Added

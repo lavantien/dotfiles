@@ -277,7 +277,7 @@ Injected `env` variables:
 | `CLAUDE_CODE_MAX_OUTPUT_TOKEN` | `131072` | Max output tokens |
 | `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE` | `93.75` | Autocompact trigger percentage |
 | `CLAUDE_CODE_AUTO_COMPACT_WINDOW` | `1000000` | Autocompact context window |
-| `ANTHROPIC_DEFAULT_HAIKU_MODEL` | `glm-5.3[1m]` | Haiku-class model override |
+| `ANTHROPIC_DEFAULT_HAIKU_MODEL` | `glm-5.3-flash[1m]` | Haiku-class model override |
 | `ANTHROPIC_DEFAULT_SONNET_MODEL` | `glm-5.3[1m]` | Sonnet-class model override |
 | `ANTHROPIC_DEFAULT_OPUS_MODEL` | `glm-5.3[1m]` | Opus-class model override |
 | `CLAUDE_CODE_EFFORT_LEVEL` | `max` | Reasoning effort |
