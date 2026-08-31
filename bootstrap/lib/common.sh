@@ -292,21 +292,24 @@ safe_install() {
 ensure_path() {
 	local new_path="$1"
 
+	[[ -z "$new_path" ]] && return 0
+
 	if [[ ":$PATH:" != *":$new_path:"* ]]; then
 		export PATH="$new_path:$PATH"
+	fi
 
-		# Add to shell profile for persistence
-		local profile=""
-		if [[ -n "$SHELL" ]]; then
-			case "$SHELL" in
-			*zsh*) profile="$HOME/.zshrc" ;;
-			*bash*) profile="$HOME/.bashrc" ;;
-			esac
-		fi
+	# Persist to shell profile, appending the canonical line only once
+	local profile=""
+	if [[ -n "$SHELL" ]]; then
+		case "$SHELL" in
+		*zsh*) profile="$HOME/.zshrc" ;;
+		*bash*) profile="$HOME/.bashrc" ;;
+		esac
+	fi
 
-		if [[ -n "$profile" && -w "$profile" ]]; then
-			echo "export PATH=\"$new_path:\$PATH\"" >>"$profile"
-		fi
+	if [[ -n "$profile" && -w "$profile" ]]; then
+		local marker="export PATH=\"$new_path:\$PATH\""
+		grep -qF "$marker" "$profile" 2>/dev/null || echo "$marker" >>"$profile"
 	fi
 }
 
