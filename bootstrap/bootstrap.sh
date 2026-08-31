@@ -960,6 +960,36 @@ install_cli_tools() {
 # ============================================================================
 # PHASE 5.25: MCP SERVERS (Model Context Protocol servers for Claude Code)
 # ============================================================================
+
+# Install or update a global npm package using the shared version check,
+# mirroring Install-NpmPackageWithCheck in bootstrap.ps1
+install_npm_package_checked() {
+	local pkg="$1"
+	local display="$2"
+	local track_name="$3"
+	local desc="$4"
+
+	if npm_package_needs_update "$pkg"; then
+		log_step "Installing $display..."
+		if [[ "$DRY_RUN" == "true" ]]; then
+			log_info "[DRY-RUN] Would npm install -g $pkg"
+			track_installed "$track_name" "$desc"
+			return 0
+		fi
+
+		if npm install -g "$pkg" >/dev/null 2>&1; then
+			log_success "$display installed"
+			track_installed "$track_name" "$desc"
+		else
+			log_warning "Failed to install $display"
+			track_failed "$track_name" "$desc"
+		fi
+	else
+		log_verbose "$display (up to date)"
+		track_skipped "$track_name" "$desc"
+	fi
+}
+
 install_mcp_servers() {
 	print_header "Phase 5.25: MCP Servers"
 
@@ -970,61 +1000,13 @@ install_mcp_servers() {
 	fi
 
 	# tree-sitter-cli - Required for nvim-treesitter auto_install to work optimally
-	if ! cmd_exists tree-sitter; then
-		log_step "Installing tree-sitter-cli..."
-		if [[ "$DRY_RUN" == "true" ]]; then
-			log_info "[DRY-RUN] Would npm install -g tree-sitter-cli"
-			track_installed "tree-sitter-cli" "Treesitter parser compiler"
-		else
-			if npm install -g tree-sitter-cli >/dev/null 2>&1; then
-				log_success "tree-sitter-cli installed"
-				track_installed "tree-sitter-cli" "Treesitter parser compiler"
-			else
-				log_warning "Failed to install tree-sitter-cli"
-				track_failed "tree-sitter-cli" "Treesitter parser compiler"
-			fi
-		fi
-	else
-		track_skipped "tree-sitter-cli" "Treesitter parser compiler"
-	fi
+	install_npm_package_checked "tree-sitter-cli" "tree-sitter-cli" "tree-sitter-cli" "Treesitter parser compiler"
 
 	# Context7 - Up-to-date library documentation and code examples
-	if ! npm list -g @upstash/context7-mcp >/dev/null 2>&1; then
-		log_step "Installing context7 MCP server..."
-		if [[ "$DRY_RUN" == "true" ]]; then
-			log_info "[DRY-RUN] Would npm install -g @upstash/context7-mcp"
-			track_installed "context7-mcp" "documentation lookup"
-		else
-			if npm install -g @upstash/context7-mcp >/dev/null 2>&1; then
-				log_success "context7 MCP server installed"
-				track_installed "context7-mcp" "documentation lookup"
-			else
-				log_warning "Failed to install context7 MCP server"
-				track_failed "context7-mcp" "documentation lookup"
-			fi
-		fi
-	else
-		track_skipped "context7-mcp" "documentation lookup"
-	fi
+	install_npm_package_checked "@upstash/context7-mcp" "context7 MCP server" "context7-mcp" "documentation lookup"
 
 	# Playwright - Browser automation and E2E testing
-	if ! npm list -g @playwright/mcp >/dev/null 2>&1; then
-		log_step "Installing playwright MCP server..."
-		if [[ "$DRY_RUN" == "true" ]]; then
-			log_info "[DRY-RUN] Would npm install -g @playwright/mcp"
-			track_installed "playwright-mcp" "browser automation"
-		else
-			if npm install -g @playwright/mcp >/dev/null 2>&1; then
-				log_success "playwright MCP server installed"
-				track_installed "playwright-mcp" "browser automation"
-			else
-				log_warning "Failed to install playwright MCP server"
-				track_failed "playwright-mcp" "browser automation"
-			fi
-		fi
-	else
-		track_skipped "playwright-mcp" "browser automation"
-	fi
+	install_npm_package_checked "@playwright/mcp" "playwright MCP server" "playwright-mcp" "browser automation"
 
 	# Repomix - Pack repositories for full-context AI exploration
 	# Note: repomix MCP mode is invoked via npx -y repomix --mcp
