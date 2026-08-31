@@ -113,3 +113,54 @@ merge_opencode_config() {
 		echo -e "${BLUE}OpenCode config up to date with template MCPs${NC}"
 	fi
 }
+
+# On Linux/macOS, remove cmd.exe wrappers that a marketplace.json carried
+# over from a Windows machine may contain for npm-installed LSP servers.
+# Mirrors the gh.exe cleanup in update_git_config. Idempotent: silent when
+# nothing changes.
+strip_windows_lsp_wrappers() {
+	case "$OS" in
+	linux | macos) ;;
+	*) return 0 ;;
+	esac
+
+	local marketplace="$HOME/.claude/plugins/marketplaces/claude-plugins-official/.claude-plugin/marketplace.json"
+	[[ -f "$marketplace" ]] || return 0
+	command -v jq >/dev/null 2>&1 || return 0
+
+	local tmp="${marketplace}.tmp"
+	if ! jq '
+		def bins: {
+			"typescript": "typescript-language-server",
+			"pyright": "pyright-langserver",
+			"intelephense": "intelephense"
+		};
+		.plugins //= [] |
+		.plugins |= map(
+			if has("lspServers") and (.lspServers | type) == "object"
+			then .lspServers |= with_entries(
+				(bins[.key]) as $bin |
+				if $bin != null and (.value.command? == "cmd.exe")
+				then .value.command = $bin | .value.args = ["--stdio"]
+				else .
+				end
+			)
+			else .
+			end
+		)' "$marketplace" >"$tmp" 2>/dev/null; then
+		rm -f "$tmp"
+		return 0
+	fi
+
+	if cmp -s "$tmp" "$marketplace"; then
+		rm -f "$tmp"
+		return 0
+	fi
+
+	if jq -e . "$tmp" >/dev/null 2>&1; then
+		mv "$tmp" "$marketplace"
+		echo -e "${GREEN}Stripped cmd.exe wrappers from Claude LSP marketplace${NC}"
+	else
+		rm -f "$tmp"
+	fi
+}

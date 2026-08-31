@@ -506,6 +506,9 @@ main() {
 
 		# Apply platform-specific .gitconfig fixes
 		update_git_config
+
+		# Remove cmd.exe LSP wrappers carried over from a Windows machine
+		strip_windows_lsp_wrappers
 	fi
 
 	write_deploy_marker
