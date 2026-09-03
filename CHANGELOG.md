@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.22.1] - 2026-09-03
+
+### Changed
+
+- `CLAUDE.md`: style rule to use direct words with literal meaning instead of abused synonyms or metaphors, banned buzzwords `inventory` and `seams`
+
+---
+
 ## [5.22.0] - 2026-09-03
 
 ### Changed
