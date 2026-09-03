@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.22.0] - 2026-09-03
+
+### Changed
+
+- `git`: `v4.0` tag history rewritten to drop the AI co-author trailer and footer from the 2 commits it referenced; trees, authors, and dates are unchanged and the GitHub release stays attached
+
+---
+
 ## [5.21.2] - 2026-09-03
 
 ### Changed
