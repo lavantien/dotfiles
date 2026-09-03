@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.21.2] - 2026-09-03
+
+### Changed
+
+- `CLAUDE.md`: expanded the banned buzzwords list with `heavy lifting`, `load-bearing`, `footgun`, `provenance`, `spine`, and `ground truth`
+
+---
+
 ## [5.21.1] - 2026-09-01
 
 ### Changed
