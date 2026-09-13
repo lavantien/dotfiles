@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.22.2] - 2026-09-14
+
+### Changed
+
+- `CLAUDE.md`: rule 1 rewritten as "never assume, always double check and verify": confirm latest versions online for the current year, against canonical sources, and against the physical codebase before coding
+
+---
+
 ## [5.22.1] - 2026-09-03
 
 ### Changed
