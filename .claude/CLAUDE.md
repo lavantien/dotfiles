@@ -2,7 +2,7 @@
 
 ## Rules
 
-1. Verify first. Check official docs and current syntax/versions before coding, because training data goes stale.
+1. Never assume, always double check and verify. Confirm latest versions online for the current year, against canonical sources, and against the physical codebase before coding, because training data goes stale.
 2. Generalize. Never hardcode or manually copy. Every solution must be programmatically coherent, even "quick tests".
 3. Fix root causes only. Never modify tests to pass, twist configs to fake success, or dismiss failures as pre-existing. Own every error.
 4. Keep it plain. Use the simplest solution, code, and architecture that solves the task. Never overcomplicate. Comment only where non-obvious, no AI-style over-commenting, decorative comments, or Co-Authored-By watermarks.
