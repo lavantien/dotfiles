@@ -5,13 +5,8 @@
 COMMIT_MSG_FILE=$1
 COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
 
-# Skip validation for merge commits
-if echo "$COMMIT_MSG" | grep -qE "^Merge branch|^Merge remote-tracking"; then
-    exit 0
-fi
-
-# Skip validation for revert commits (they follow their own convention)
-if echo "$COMMIT_MSG" | grep -qE "^Revert "; then
+# Skip validation for merge and revert commits (they follow their own convention)
+if echo "$COMMIT_MSG" | grep -qE "^(Merge|Revert)"; then
     exit 0
 fi
 
@@ -31,20 +26,20 @@ SUBJECT=$(echo "$COMMIT_MSG" | head -n 1)
 if [ -z "$SUBJECT" ]; then
     echo "ERROR: Commit message cannot be empty." >&2
     echo "Expected format: type(scope): description" >&2
-    echo "Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert" >&2
+    echo "Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert, break, bump" >&2
     exit 1
 fi
 
 # Conventional Commits pattern: type(scope): description
 # Type is required, scope is optional
-CONVENTIONAL_PATTERN="^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\(.+\))?: .{1,72}"
+CONVENTIONAL_PATTERN="^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert|break|bump)(\(.+\))?: .{1,72}"
 
 if ! echo "$SUBJECT" | grep -qE "$CONVENTIONAL_PATTERN"; then
     echo "ERROR: Commit message does not follow Conventional Commits format." >&2
     echo "" >&2
     echo "Expected format: type(scope): description" >&2
     echo "" >&2
-    echo "Type (required): feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert" >&2
+    echo "Type (required): feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert, break, bump" >&2
     echo "Scope (optional): component or module in parentheses" >&2
     echo "Description: brief description (max 72 characters)" >&2
     echo "" >&2

@@ -10,13 +10,8 @@ $ErrorActionPreference = "Stop"
 
 $commitMsg = Get-Content $CommitMsgFile -Raw
 
-# Skip validation for merge commits
-if ($commitMsg -match "^Merge branch|^Merge remote-tracking") {
-    exit 0
-}
-
-# Skip validation for revert commits (they follow their own convention)
-if ($commitMsg -match "^Revert ") {
+# Skip validation for merge and revert commits (they follow their own convention)
+if ($commitMsg -match "^(Merge|Revert)") {
     exit 0
 }
 
@@ -40,20 +35,20 @@ $subject = $lines[0].Trim()
 if ([string]::IsNullOrWhiteSpace($subject)) {
     Write-Error "ERROR: Commit message cannot be empty."
     Write-Host "Expected format: type(scope): description"
-    Write-Host "Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert"
+    Write-Host "Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert, break, bump"
     exit 1
 }
 
 # Conventional Commits pattern: type(scope): description
 # Type is required, scope is optional
-$conventionalPattern = "^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\(.+\))?: .{1,72}`$"
+$conventionalPattern = "^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert|break|bump)(\(.+\))?: .{1,72}`$"
 
 if ($subject -notmatch $conventionalPattern) {
     Write-Error "ERROR: Commit message does not follow Conventional Commits format."
     Write-Host ""
     Write-Host "Expected format: type(scope): description"
     Write-Host ""
-    Write-Host "Type (required): feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert"
+    Write-Host "Type (required): feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert, break, bump"
     Write-Host "Scope (optional): component or module in parentheses"
     Write-Host "Description: brief description (max 72 characters)"
     Write-Host ""
