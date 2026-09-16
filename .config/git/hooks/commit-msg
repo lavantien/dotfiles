@@ -15,6 +15,15 @@ if echo "$COMMIT_MSG" | grep -qE "^Revert "; then
     exit 0
 fi
 
+# Strip AI attribution trailers injected by AI coding harnesses
+ATTRIBUTION_PATTERN='^(Co-Authored-By:.+(Claude|Anthropic|Copilot|Cursor|Gemini|Codeium|Windsurf|Cline|Aider)|Generated with .*(Claude|Copilot|Cursor))'
+
+if echo "$COMMIT_MSG" | grep -qE "$ATTRIBUTION_PATTERN"; then
+    COMMIT_MSG=$(echo "$COMMIT_MSG" | grep -vE "$ATTRIBUTION_PATTERN")
+    printf '%s\n' "$COMMIT_MSG" > "$COMMIT_MSG_FILE"
+    echo "Stripped AI attribution trailer from commit message."
+fi
+
 # Get the first line (subject)
 SUBJECT=$(echo "$COMMIT_MSG" | head -n 1)
 

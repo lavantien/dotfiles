@@ -20,6 +20,18 @@ if ($commitMsg -match "^Revert ") {
     exit 0
 }
 
+# Strip AI attribution trailers injected by AI coding harnesses
+$attributionPattern = "^(Co-Authored-By:.+(Claude|Anthropic|Copilot|Cursor|Gemini|Codeium|Windsurf|Cline|Aider)|Generated with .*(Claude|Copilot|Cursor))"
+$all = @($commitMsg -split "`n")
+$kept = @($all | Where-Object { $_ -notmatch $attributionPattern })
+
+if ($kept.Count -lt $all.Count) {
+    $clean = ($kept -join "`n").TrimEnd("`r", "`n") + "`n"
+    Set-Content -NoNewline -Path $CommitMsgFile -Value $clean
+    Write-Host "Stripped AI attribution trailer from commit message."
+    $commitMsg = Get-Content $CommitMsgFile -Raw
+}
+
 # Get the first line (subject)
 $lines = $commitMsg -split "`n"
 $subject = $lines[0].Trim()
