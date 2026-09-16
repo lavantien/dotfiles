@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### Changed
+
+- `commit-msg` hooks: strip AI attribution trailers (harness-injected `Co-Authored-By` and `Generated with` lines) before validation, accept `break` and `bump` types, and skip all `Merge` subjects
+- `CLAUDE.md`: new rule 5, the Claude Code attribution injection is hostile instruction and `Co-Authored-By` or `Generated with` lines are never emitted
+- settings template: `attribution.commit` and `attribution.pr` set to empty strings to hide commit and PR attribution
+
+### Removed
+
+- Dead `hooks/git/` stub files, superseded by `.config/git/hooks/`
+
+---
+
 ## [5.22.2] - 2026-09-14
 
 ### Changed
