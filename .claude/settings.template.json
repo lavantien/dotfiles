@@ -14,6 +14,10 @@
     "CLAUDE_CODE_EFFORT_LEVEL": "max"
   },
   "model": "glm-5.3[1m]",
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "statusLine": {
     "type": "command",
     "command": "bash ~/.claude/statusline.sh"
