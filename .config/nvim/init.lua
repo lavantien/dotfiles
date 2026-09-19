@@ -154,7 +154,6 @@ vim.lsp.config("*", {
 			},
 		},
 	},
-	root_markers = { ".git" },
 })
 
 vim.api.nvim_create_autocmd("LspAttach", {
