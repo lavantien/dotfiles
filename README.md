@@ -327,6 +327,8 @@ This installs required models and dependencies for AI image generation.
 
 Leader key is Space.
 
+Unmapped native keys stay live: `Q` toggles a multicursor (`[count]Q` places one per search match, `q=` follow mode, `gQ` restore, CTRL-L clears), `gc` and `gcc` comment, `v_an` and `v_in` grow or shrink the treesitter selection, `v_]N` and `v_[N` jump to sibling nodes, `v_al` and `v_il` select the buffer or line, and the LSP defaults `K`, `grn`, `gra`, `grr`, `gri`, `gO`, `grt`, `grx`, `[d`, `]d`, and `<C-W>d` work without any plugin.
+
 | Keybinding | Action |
 |------------|--------|
 | `-` | Open parent directory (builtin) |
