@@ -31,7 +31,6 @@ vim.pack.add({
 	{ src = "https://github.com/neovim/nvim-lspconfig" }, -- wrappers for built-in
 	{ src = "https://github.com/nvim-tree/nvim-web-devicons" }, -- fzf-lua dep
 	{ src = "https://github.com/ibhagwan/fzf-lua" },
-	{ src = "https://github.com/j-hui/fidget.nvim" },
 	{ src = "https://github.com/chomosuke/typst-preview.nvim" }, -- typst live preview
 	{ src = "https://github.com/brianhuster/live-preview.nvim" }, -- markdown, html, csv live preview
 })
@@ -188,7 +187,6 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 require("nvim-web-devicons").setup()
-require("fidget").setup({})
 require("typst-preview").setup()
 require("livepreview").setup()
 
