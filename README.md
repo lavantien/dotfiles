@@ -12,13 +12,13 @@ Auto-detecting, auto-bootstraping, idempotent, gracefully degrading, full termin
 ## Core Features
 
 Editor & Terminal
-- Neovim 0.12+ with built-in package manager, LSP/Treesitter config, and native completion
+- Neovim 0.13+ (beta) with vim.pack manager + lockfile, LSP/Treesitter config, native completion, and the builtin dir browser
 - WezTerm GPU-accelerated terminal (IosevkaTerm Nerd Font)
 - Rose Pine theme across all configs
 
 Development Tools
-- 20 LSP servers for complete language intelligence
-- 30 Treesitter parsers for advanced syntax highlighting
+- 21 LSP servers for complete language intelligence (jdtls excluded on Windows)
+- 28 Treesitter parsers for advanced syntax highlighting
 - 40+ CLI tools for modern development workflows (fzf, yazi, zoxide, bat, eza, lazygit, gh, ripgrep, fd, sqlite, tokei, btop, repomix, docker-compose, helm, kubectl)
 
 AI-Native Agentic Development
@@ -174,7 +174,7 @@ vim ~/.dotfiles.config.yaml
 |-------|----------|
 | Git hooks not running | `git config --global core.hooksPath ~/.config/git/hooks` |
 | PowerShell execution policy | `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` |
-| Neovim plugins not installing | In Neovim run `:PackUpdate` |
+| Neovim plugins not installing | In Neovim run `:packupdate` or press `<leader>u` |
 | zoxide not jumping | Use directories normally for a few days to let zoxide learn |
 
 ---
