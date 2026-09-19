@@ -2,7 +2,9 @@
 # Health Check Script - Verifies dotfiles setup
 # Usage: ./healthcheck.sh [--verbose] [--format table|json]
 
-set -e
+# No set -e: checks intentionally return nonzero for missing tools and the
+# summary's FAILED_CHECKS count decides the exit code instead.
+set -u
 
 # ============================================================================
 # SETUP
