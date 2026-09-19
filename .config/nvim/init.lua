@@ -21,6 +21,8 @@ vim.opt.shiftwidth = 4
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
 vim.opt.completeopt = { "menu", "menuone", "noinsert", "noselect", "fuzzy", "popup" }
+vim.opt.autoread = true
+vim.opt.updatetime = 1000
 
 vim.g.mapleader = " "
 vim.g.have_nerd_font = true
@@ -37,7 +39,7 @@ vim.pack.add({
 
 vim.opt.background = "dark"
 vim.cmd.colorscheme("rose-pine")
-vim.cmd(":hi statusline guibg=NONE")
+vim.cmd.hi("statusline guibg=NONE")
 
 require("fzf-lua").setup({
 	"fzf-native",
@@ -78,7 +80,7 @@ local lsp_servers = {
 	"codebook",
 }
 -- jdtls is not supported on Windows
-if not vim.fn.has('win32') and not vim.fn.has('win64') then
+if vim.fn.has("win32") == 0 then
 	table.insert(lsp_servers, "jdtls")
 end
 vim.lsp.enable(lsp_servers)
