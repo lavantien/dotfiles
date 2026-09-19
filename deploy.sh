@@ -88,14 +88,6 @@ migrate_configs_to_xdg() {
 		((moved++)) || true
 	fi
 
-	# Migrate old nvim config location
-	if [[ -f "$HOME/init.lua" ]] && [[ -d "$XDG_CONFIG/nvim" ]] && [[ ! -f "$XDG_CONFIG/nvim/init.lua" ]]; then
-		mkdir -p "$XDG_CONFIG/nvim"
-		cp "$HOME/init.lua" "$XDG_CONFIG/nvim/init.lua"
-		echo -e "${CYAN}Copied ~/init.lua to ~/.config/nvim/${NC}"
-		((moved++)) || true
-	fi
-
 	# Migrate git config from old location if XDG was set
 	if [[ -n "$XDG_CONFIG_HOME" ]] && [[ -f "$HOME/.gitconfig" ]]; then
 		# Keep the .gitconfig but also set up includes for XDG structure
@@ -247,9 +239,6 @@ deploy_configs() {
 
 	# Copy Neovim config (from .config/nvim/ to match repo structure)
 	if [ -f "$SCRIPT_DIR/.config/nvim/init.lua" ]; then
-		# Copy to root (user preference)
-		copy_file "$SCRIPT_DIR/.config/nvim/init.lua" "$HOME/"
-		# Also copy to XDG config location
 		mkdir -p "$XDG_CONFIG/nvim"
 		copy_file "$SCRIPT_DIR/.config/nvim/init.lua" "$XDG_CONFIG/nvim/"
 	fi
@@ -257,12 +246,6 @@ deploy_configs() {
 	# Copy Neovim plugin lockfile so vim.pack resolves pinned revisions
 	if [ -f "$SCRIPT_DIR/.config/nvim/nvim-pack-lock.json" ]; then
 		copy_file "$SCRIPT_DIR/.config/nvim/nvim-pack-lock.json" "$XDG_CONFIG/nvim/"
-	fi
-
-	# Copy Neovim lua directory if exists
-	if [ -d "$SCRIPT_DIR/.config/nvim/lua" ]; then
-		mkdir -p "$XDG_CONFIG/nvim/lua"
-		cp -r "$SCRIPT_DIR/.config/nvim/lua/"* "$XDG_CONFIG/nvim/lua/" 2>/dev/null || true
 	fi
 
 	# Copy Wezterm config (from .config/wezterm/ to match repo structure)

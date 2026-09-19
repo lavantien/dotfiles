@@ -245,7 +245,6 @@ echo -e "${YELLOW}=== Restoring Git Configs ===${NC}"
 echo -e "${YELLOW}=== Restoring Neovim Configs ===${NC}"
 [[ -d "$RESTORE_PATH/nvim-config" ]] && restore_file "$RESTORE_PATH/nvim-config" "$HOME/.config/nvim" && ((restored_count++)) || true
 [[ -f "$RESTORE_PATH/init.lua" ]] && restore_file "$RESTORE_PATH/init.lua" "$HOME/.config/nvim/init.lua" && ((restored_count++)) || true
-[[ -f "$RESTORE_PATH/init.lua-root" ]] && restore_file "$RESTORE_PATH/init.lua-root" "$HOME/init.lua" && ((restored_count++)) || true
 
 # Restore other editor configs
 echo -e "${YELLOW}=== Restoring Editor Configs ===${NC}"

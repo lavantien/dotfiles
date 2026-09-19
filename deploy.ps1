@@ -239,15 +239,6 @@ if (-not $SkipConfig) {
         Write-Host "  Neovim config" -ForegroundColor Green
     }
 
-    # Copy lua directory if exists (for modular nvim config)
-    if (Test-Path "$DotfilesDir/.config/nvim/lua") {
-        $luaDest = Join-Path $NvimConfigDir "lua"
-        if (!(Test-Path $luaDest)) {
-            New-Item -ItemType Directory -Path $luaDest -Force | Out-Null
-        }
-        Copy-Item -Path "$DotfilesDir/.config/nvim/lua/*" -Destination $luaDest -Recurse -Force
-    }
-
     # WezTerm config
     # WezTerm uses $HOME/.config/wezterm/wezterm.lua on all platforms including Windows
     if (Test-Path "$DotfilesDir/.config/wezterm/wezterm.lua") {

@@ -329,7 +329,7 @@ Leader key is Space.
 
 | Keybinding | Action |
 |------------|--------|
-| `-` | Oil (file browser) |
+| `-` | Open parent directory (builtin) |
 | `<leader>q` | Quit |
 | `<leader>x` | Write and source |
 | `<leader>'` | Alternate file |

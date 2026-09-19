@@ -198,7 +198,6 @@ backup_file "$HOME/.gitattributes" "$CURRENT_BACKUP/gitattributes" && ((backuped
 echo -e "${YELLOW}=== Neovim Configs ===${NC}"
 backup_file "$HOME/.config/nvim" "$CURRENT_BACKUP/nvim-config" && ((backuped_count++)) || true
 backup_file "$HOME/.config/nvim/init.lua" "$CURRENT_BACKUP/init.lua" && ((backuped_count++)) || true
-backup_file "$HOME/init.lua" "$CURRENT_BACKUP/init.lua-root" && ((backuped_count++)) || true
 
 # Backup other editor configs
 echo -e "${YELLOW}=== Editor Configs ===${NC}"
