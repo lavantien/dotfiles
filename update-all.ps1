@@ -473,6 +473,38 @@ function Main {
     }
 
     # ============================================================================
+    # NEOVIM (plugins and treesitter parsers)
+    # ============================================================================
+    # Both calls block until their work finishes: vim.pack.update() with force
+    # waits internally, and the nvim-treesitter Task:wait() pumps the loop.
+    Write-Step "NEOVIM (plugins and parsers)"
+    if (Test-Command nvim) {
+        & nvim --headless "+lua vim.pack.update(nil, { force = true })" "+qa"
+        if ($LASTEXITCODE -eq 0) {
+            Write-Success "nvim plugins"
+            $script:updated++
+        }
+        else {
+            Write-Fail "nvim plugins"
+            $script:failed++
+        }
+
+        & nvim --headless "+lua require('nvim-treesitter.install').update():wait()" "+qa"
+        if ($LASTEXITCODE -eq 0) {
+            Write-Success "nvim treesitter parsers"
+            $script:updated++
+        }
+        else {
+            Write-Fail "nvim treesitter parsers"
+            $script:failed++
+        }
+    }
+    else {
+        Write-Skip "nvim not found"
+        $script:skipped++
+    }
+
+    # ============================================================================
     # CLAUDE CODE CLI
     # ============================================================================
     Write-Step "CLAUDE CODE CLI"

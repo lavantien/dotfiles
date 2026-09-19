@@ -853,6 +853,23 @@ _main() {
 	fi
 
 	# ============================================================================
+	# NEOVIM (plugins and treesitter parsers)
+	# ============================================================================
+	# Both calls block until their work finishes: vim.pack.update() with force
+	# waits internally, and the nvim-treesitter Task:wait() pumps the loop.
+	if cmd_exists nvim; then
+		update_section "NEOVIM (plugins and parsers)"
+		update_and_report \
+			"nvim --headless \"+lua vim.pack.update(nil, { force = true })\" '+qa'" \
+			"nvim plugins"
+		update_and_report \
+			"nvim --headless \"+lua require('nvim-treesitter.install').update():wait()\" '+qa'" \
+			"nvim treesitter parsers"
+	else
+		update_skip "nvim not found"
+	fi
+
+	# ============================================================================
 	# CLAUDE CODE CLI
 	# ============================================================================
 	if cmd_exists claude; then
