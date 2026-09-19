@@ -999,7 +999,7 @@ install_mcp_servers() {
 		return 0
 	fi
 
-	# tree-sitter-cli - Required for nvim-treesitter auto_install to work optimally
+	# tree-sitter-cli - Compiles parsers for nvim-treesitter install/update
 	install_npm_package_checked "tree-sitter-cli" "tree-sitter-cli" "tree-sitter-cli" "Treesitter parser compiler"
 
 	# Context7 - Up-to-date library documentation and code examples
