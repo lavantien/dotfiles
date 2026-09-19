@@ -1,0 +1,7 @@
+# Selene standard library for Neovim config files
+base: lua51
+globals:
+  vim:
+    any: true
+  FzfLua:
+    any: true
