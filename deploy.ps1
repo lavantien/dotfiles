@@ -235,6 +235,7 @@ if (-not $SkipConfig) {
             New-Item -ItemType Directory -Path $NvimConfigDir -Force | Out-Null
         }
         Copy-File "$DotfilesDir/.config/nvim/init.lua" "$NvimConfigDir/init.lua"
+        Copy-File "$DotfilesDir/.config/nvim/nvim-pack-lock.json" "$NvimConfigDir/nvim-pack-lock.json"
         Write-Host "  Neovim config" -ForegroundColor Green
     }
 

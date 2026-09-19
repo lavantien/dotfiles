@@ -254,6 +254,11 @@ deploy_configs() {
 		copy_file "$SCRIPT_DIR/.config/nvim/init.lua" "$XDG_CONFIG/nvim/"
 	fi
 
+	# Copy Neovim plugin lockfile so vim.pack resolves pinned revisions
+	if [ -f "$SCRIPT_DIR/.config/nvim/nvim-pack-lock.json" ]; then
+		copy_file "$SCRIPT_DIR/.config/nvim/nvim-pack-lock.json" "$XDG_CONFIG/nvim/"
+	fi
+
 	# Copy Neovim lua directory if exists
 	if [ -d "$SCRIPT_DIR/.config/nvim/lua" ]; then
 		mkdir -p "$XDG_CONFIG/nvim/lua"
