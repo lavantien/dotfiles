@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### Changed
+
+- README: foldable day-to-day Neovim usage guide added to the Neovim section (renamed from "Neovim Keybindings"), changelog link refs completed for 5.22.0 through 5.24.0
+
+---
+
 ## [5.24.0] - 2026-09-19
 
 ### Changed
@@ -2318,7 +2326,12 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 ---
 
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.21.1...HEAD
+[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.24.0...HEAD
+[5.24.0]: https://github.com/lavantien/dotfiles/compare/v5.23.0...v5.24.0
+[5.23.0]: https://github.com/lavantien/dotfiles/compare/v5.22.2...v5.23.0
+[5.22.2]: https://github.com/lavantien/dotfiles/compare/v5.22.1...v5.22.2
+[5.22.1]: https://github.com/lavantien/dotfiles/compare/v5.22.0...v5.22.1
+[5.22.0]: https://github.com/lavantien/dotfiles/compare/v5.21.2...v5.22.0
 [5.21.1]: https://github.com/lavantien/dotfiles/compare/v5.21.0...v5.21.1
 [5.21.0]: https://github.com/lavantien/dotfiles/compare/v5.20.0...v5.21.0
 [5.20.0]: https://github.com/lavantien/dotfiles/compare/v5.19.0...v5.20.0
