@@ -1,8 +1,4 @@
-plugin/packer_compiled.lua
-lua/.luarc.json
-.config/nvim/lazy-lock.json
 .aider*
-lazy-lock.json
 .claude/tdd-guard/data
 nul
 .claude/settings.local.json
