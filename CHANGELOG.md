@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### Changed
+
+- `init.lua`: pin `nvim-treesitter` to the `main` branch rewrite (the unpinned clone tracked legacy `master`, where the v2 modules do not exist and the parser install block was silently dead), and adopt 0.13 behaviors: `autoread` with fs-watch reload, `updatetime` 1000 so `virtual_lines` current-line diagnostics render on `CursorHold`
+- `init.lua`: the treesitter `FileType` autocmd now matches all filetypes and guards `vim.treesitter.start()` before setting fold and indent expressions
+- `init.lua`: shrink the treesitter block to a single scheduled `install()` call, and simplify the jdtls gate to `vim.fn.has("win32") == 0`
+- `deploy.sh` / `deploy.ps1`: deploy the committed `nvim-pack-lock.json` next to `init.lua`
+- `update-all.sh` / `update-all.ps1`: update nvim plugins (`vim.pack.update` with `force`) and treesitter parsers headlessly, both calls block until done
+- bootstrap scripts: refresh the stale tree-sitter-cli comment (v2 has no `auto_install`)
+
+### Fixed
+
+- `init.lua`: the treesitter `FileType` pattern was the literal placeholder `<filetype>` and never matched
+- `init.lua`: `completeopt` was re-set without `noselect` on every `LspAttach`, silently undoing the startup setting
+- `init.lua`: the global `root_markers = { ".git" }` LSP override stopped tinymist, tombi, and codebook from attaching outside git repositories
+
+### Removed
+
+- oil.nvim (replaced by the builtin 0.13 dir plugin, `-` opens the parent natively) and fidget.nvim (native statusline progress)
+- Dead `loaded_netrw` gates, the legacy `$HOME`-root `init.lua` deploy/migrate/backup/restore paths, the dead `lua/` deploy guards, the tracked 0-byte root `init.lua` stub, and legacy packer/lazy-lock ignore entries
+
+### Added
+
+- `.config/nvim/nvim-pack-lock.json` committed to the repo, pinning the 7 active plugins
+- `healthcheck.sh`: nvim headless startup smoke test
+
+---
+
 ## [5.23.0] - 2026-09-16
 
 ### Changed
