@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `deploy.sh` / `deploy.ps1`: deploy the committed `nvim-pack-lock.json` next to `init.lua`
 - `update-all.sh` / `update-all.ps1`: update nvim plugins (`vim.pack.update` with `force`) and treesitter parsers headlessly, both calls block until done
 - bootstrap scripts: refresh the stale tree-sitter-cli comment (v2 has no `auto_install`)
+- Docs synced with the implementation: Neovim references say 0.13+ (beta), the keybindings table matches the 40 leader maps plus the builtin dir `-`, and the MCP lists drop serena (3 servers remain: context7, playwright, repomix)
 
 ### Fixed
 
@@ -29,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - oil.nvim (replaced by the builtin 0.13 dir plugin, `-` opens the parent natively) and fidget.nvim (native statusline progress)
 - Dead `loaded_netrw` gates, the legacy `$HOME`-root `init.lua` deploy/migrate/backup/restore paths, the dead `lua/` deploy guards, the tracked 0-byte root `init.lua` stub, and legacy packer/lazy-lock ignore entries
+- Serena MCP everywhere: the server entries in all three OpenCode configs, the uv installer blocks in both bootstrap scripts (uv existed only to run Serena), the `.claude/CLAUDE.md` and README mentions, and the `.serena/` ignore entry
 
 ### Added
 

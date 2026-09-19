@@ -31,18 +31,6 @@
                 "--mcp"
             ],
             "timeout": 30000
-        },
-        "serena": {
-            "type": "local",
-            "command": [
-                "cmd",
-                "/c",
-                "uvx",
-                "--from",
-                "git+https://github.com/oraios/serena",
-                "serena-mcp-server.exe"
-            ],
-            "timeout": 60000
         }
     }
 }

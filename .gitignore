@@ -5,5 +5,4 @@ nul
 .claude/*.local.md
 coverage
 coverage-bash.json
-.serena/project.yml
 .remember/
