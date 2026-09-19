@@ -329,6 +329,47 @@ Leader key is Space.
 
 Unmapped native keys stay live: `Q` toggles a multicursor (`[count]Q` places one per search match, `q=` follow mode, `gQ` restore, CTRL-L clears), `gc` and `gcc` comment, `v_an` and `v_in` grow or shrink the treesitter selection, `v_]N` and `v_[N` jump to sibling nodes, `v_al` and `v_il` select the buffer or line, and the LSP defaults `K`, `grn`, `gra`, `grr`, `gri`, `gO`, `grt`, `grx`, `[d`, `]d`, and `<C-W>d` work without any plugin.
 
+<details>
+<summary>Day-to-day usage guide</summary>
+
+### Big picture
+
+The config is builtin-first. Neovim 0.13 itself does editing, completion, LSP, diagnostics, folding, commenting, multicursor, and file browsing. The 7 plugins only fill gaps: fzf-lua for pickers, treesitter for parser installs, lspconfig for server definitions, rose-pine for color, the two preview plugins for documents, devicons for icons.
+
+Two options change the daily rhythm more than any keybinding. Autosave is always on (`autowriteall` plus a `TextChanged` autocmd), files write themselves while you type, so you almost never run `:w` and `:q` is safe. Autoread with the 0.13 fs watcher reloads files changed underneath you by formatters, code generators, or another pane. Between the two, buffer state and disk state stay glued together with zero keystrokes.
+
+### Getting around
+
+`<leader>f` finds files, `<leader>z` live-greps the project as you type, `<leader>/` greps the current buffer. `<leader>e` and `<leader>n` are the kitchen-sink pickers when you do not remember which specific one you need. Previews render through bat in the rose-pine theme. `-` opens the parent directory in the builtin dir browser, Enter edits, `-` again goes up. For heavier file management drop to yazi with `y` in the shell, which cd's on exit. `<leader>'` flips to the alternate file for the edit/test or header/impl ping-pong, `<leader>h` searches help tags, `<leader>k` lists every keymap.
+
+### The edit loop
+
+Completion is native and autotriggered: on an attached LSP buffer the menu pops as you type, nothing is preselected, typing fuzzy-filters in place. Walk entries with `C-n`/`C-p` and accept with `Enter`.
+
+Renaming many spots is the 0.13 multicursor: `Q` adds a cursor on the word under the cursor, `Q` in visual mode cursors the selection, `[count]Q` drops a cursor on the next count matches, `CTRL-L` clears, `gQ` restores the last set. Edits on any cursor replicate everywhere. For a semantic rename prefer `grn`, which goes through LSP and catches references the parser understands.
+
+Structural selection uses the treesitter text objects: `v_an` grows the selection to the next node up, `v_in` shrinks it, `v_]N`/`v_[N` jump between sibling nodes. `gc` comments lines or selections, `za`/`zR`/`zM` work folds since every filetype with a parser folds by syntax tree. `inccommand=split` gives live preview: type `:%s/old/new` and the split shows each match rewritten before you press Enter.
+
+### The LSP loop
+
+Enabled servers attach by filetype automatically, no `:LspStart`. Native keys handle the quick moves: `K` hover, `grn` rename, `gra` code action, `grr` references, `gri` implementations, `gO` symbol outline, `[d` and `]d` jump diagnostics, `<C-W>d` pops the diagnostic under the cursor. Leader pickers handle the rest with fzf previews: `<leader>j` definitions, `<leader>v` declarations, `<leader>r` references, `<leader>i` implementations, `<leader>s` document symbols, `<leader>w` live workspace symbols, `<leader>\` the all-in-one finder on the symbol under the cursor, `<leader>,` and `<leader>.` call hierarchy, `<leader>a` code actions, `<leader>b` format the buffer.
+
+Diagnostics stay quiet: pause on a line for one second and its message expands underneath as virtual text, then collapses when you move. That is `updatetime` 1000 plus `virtual_lines.current_line`. For the backlog, `<leader>dd` lists document diagnostics, `<leader>dw` the workspace. YAML gets schema-aware completion and validation for kubernetes manifests, docker-compose files, and GitHub workflows.
+
+### The git loop
+
+Read-only inspection lives in nvim: `<leader>gs` status, `<leader>gd` diff, `<leader>gl` blame, `<leader>gc` commits, `<leader>gh` hunks. Anything that mutates belongs to lazygit (`lg` in the shell). The split keeps nvim buffers from fighting the index state.
+
+### Writing and documents
+
+Typst: `<leader>pt` toggles the live preview, which re-renders in a browser pane on each keystroke. Markdown, HTML, and CSV use live-preview.nvim: `<leader>ps` starts, `<leader>pc` closes, `<leader>;` picks which preview to attach. Autosave writes, the preview re-renders, you never save manually.
+
+### Upkeep
+
+`<leader>u` updates all 7 plugins and rewrites the deployed lockfile. After an intentional bump, copy the deployed `nvim-pack-lock.json` from nvim's config dir back to `.config/nvim/` in the repo and commit, the lockfile is the pin mechanism, there are no version pins in `init.lua`. `up` in the shell covers everything else including nvim itself and treesitter parsers. `<leader>x` after any config tweak re-sources in place.
+
+</details>
+
 | Keybinding | Action |
 |------------|--------|
 | `-` | Open parent directory (builtin) |
@@ -373,47 +414,6 @@ Unmapped native keys stay live: `Q` toggles a multicursor (`[count]Q` places one
 | `<leader>o` | LSP type definitions |
 | `<leader>j` | LSP definitions |
 | `<leader>v` | LSP declarations |
-
-<details>
-<summary>Day-to-day usage guide</summary>
-
-### Big picture
-
-The config is builtin-first. Neovim 0.13 itself does editing, completion, LSP, diagnostics, folding, commenting, multicursor, and file browsing. The 7 plugins only fill gaps: fzf-lua for pickers, treesitter for parser installs, lspconfig for server definitions, rose-pine for color, the two preview plugins for documents, devicons for icons.
-
-Two options change the daily rhythm more than any keybinding. Autosave is always on (`autowriteall` plus a `TextChanged` autocmd), files write themselves while you type, so you almost never run `:w` and `:q` is safe. Autoread with the 0.13 fs watcher reloads files changed underneath you by formatters, code generators, or another pane. Between the two, buffer state and disk state stay glued together with zero keystrokes.
-
-### Getting around
-
-`<leader>f` finds files, `<leader>z` live-greps the project as you type, `<leader>/` greps the current buffer. `<leader>e` and `<leader>n` are the kitchen-sink pickers when you do not remember which specific one you need. Previews render through bat in the rose-pine theme. `-` opens the parent directory in the builtin dir browser, Enter edits, `-` again goes up. For heavier file management drop to yazi with `y` in the shell, which cd's on exit. `<leader>'` flips to the alternate file for the edit/test or header/impl ping-pong, `<leader>h` searches help tags, `<leader>k` lists every keymap.
-
-### The edit loop
-
-Completion is native and autotriggered: on an attached LSP buffer the menu pops as you type, nothing is preselected, typing fuzzy-filters in place. Walk entries with `C-n`/`C-p` and accept with `Enter`.
-
-Renaming many spots is the 0.13 multicursor: `Q` adds a cursor on the word under the cursor, `Q` in visual mode cursors the selection, `[count]Q` drops a cursor on the next count matches, `CTRL-L` clears, `gQ` restores the last set. Edits on any cursor replicate everywhere. For a semantic rename prefer `grn`, which goes through LSP and catches references the parser understands.
-
-Structural selection uses the treesitter text objects: `v_an` grows the selection to the next node up, `v_in` shrinks it, `v_]N`/`v_[N` jump between sibling nodes. `gc` comments lines or selections, `za`/`zR`/`zM` work folds since every filetype with a parser folds by syntax tree. `inccommand=split` gives live preview: type `:%s/old/new` and the split shows each match rewritten before you press Enter.
-
-### The LSP loop
-
-Enabled servers attach by filetype automatically, no `:LspStart`. Native keys handle the quick moves: `K` hover, `grn` rename, `gra` code action, `grr` references, `gri` implementations, `gO` symbol outline, `[d` and `]d` jump diagnostics, `<C-W>d` pops the diagnostic under the cursor. Leader pickers handle the rest with fzf previews: `<leader>j` definitions, `<leader>v` declarations, `<leader>r` references, `<leader>i` implementations, `<leader>s` document symbols, `<leader>w` live workspace symbols, `<leader>\` the all-in-one finder on the symbol under the cursor, `<leader>,` and `<leader>.` call hierarchy, `<leader>a` code actions, `<leader>b` format the buffer.
-
-Diagnostics stay quiet: pause on a line for one second and its message expands underneath as virtual text, then collapses when you move. That is `updatetime` 1000 plus `virtual_lines.current_line`. For the backlog, `<leader>dd` lists document diagnostics, `<leader>dw` the workspace. YAML gets schema-aware completion and validation for kubernetes manifests, docker-compose files, and GitHub workflows.
-
-### The git loop
-
-Read-only inspection lives in nvim: `<leader>gs` status, `<leader>gd` diff, `<leader>gl` blame, `<leader>gc` commits, `<leader>gh` hunks. Anything that mutates belongs to lazygit (`lg` in the shell). The split keeps nvim buffers from fighting the index state.
-
-### Writing and documents
-
-Typst: `<leader>pt` toggles the live preview, which re-renders in a browser pane on each keystroke. Markdown, HTML, and CSV use live-preview.nvim: `<leader>ps` starts, `<leader>pc` closes, `<leader>;` picks which preview to attach. Autosave writes, the preview re-renders, you never save manually.
-
-### Upkeep
-
-`<leader>u` updates all 7 plugins and rewrites the deployed lockfile. After an intentional bump, copy the deployed `nvim-pack-lock.json` from nvim's config dir back to `.config/nvim/` in the repo and commit, the lockfile is the pin mechanism, there are no version pins in `init.lua`. `up` in the shell covers everything else including nvim itself and treesitter parsers. `<leader>x` after any config tweak re-sources in place.
-
-</details>
 
 ---
 
