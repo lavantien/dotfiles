@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `healthcheck.sh`: `set -e` aborted the run at the first recorded check (counters and missing-tool checks return nonzero by design); the summary's `FAILED_CHECKS` count already decides the exit code
 - `init.lua`: the treesitter `FileType` pattern was the literal placeholder `<filetype>` and never matched
 - `init.lua`: `completeopt` was re-set without `noselect` on every `LspAttach`, silently undoing the startup setting
 - `init.lua`: the global `root_markers = { ".git" }` LSP override stopped tinymist, tombi, and codebook from attaching outside git repositories
