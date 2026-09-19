@@ -29,7 +29,7 @@ vim.g.have_nerd_font = true
 
 vim.pack.add({
 	{ src = "https://github.com/rose-pine/neovim" },
-	{ src = "https://github.com/nvim-treesitter/nvim-treesitter" }, -- wrappers for built-in
+	{ src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" }, -- v2 rewrite
 	{ src = "https://github.com/neovim/nvim-lspconfig" }, -- wrappers for built-in
 	{ src = "https://github.com/nvim-tree/nvim-web-devicons" }, -- fzf-lua dep
 	{ src = "https://github.com/ibhagwan/fzf-lua" },
