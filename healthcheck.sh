@@ -210,6 +210,21 @@ check_file "Git config" "$HOME/.gitconfig" "true"
 check_file "Neovim config" "$HOME/.config/nvim/init.lua" "false"
 check_file "Wezterm config" "$HOME/.config/wezterm/wezterm.lua" "false"
 
+# Smoke-test the Neovim config headless (init.lua errors surface as E messages)
+if command -v nvim >/dev/null 2>&1; then
+	log_check "Neovim headless startup"
+	nvim_out=""
+	nvim_rc=0
+	nvim_out=$(nvim --headless "+qa" 2>&1) || nvim_rc=$?
+	if [[ $nvim_rc -eq 0 ]] && ! grep -q "Error detected while processing" <<<"$nvim_out"; then
+		log_pass "init.lua loads cleanly"
+		record_result "Neovim headless startup" "pass" "init.lua loads cleanly"
+	else
+		log_fail "init.lua reported errors"
+		record_result "Neovim headless startup" "fail" "$nvim_out"
+	fi
+fi
+
 # Check git configuration
 echo -e "${YELLOW}=== Git Configuration ===${NC}"
 check_git_config "Git user.name" "user.name"
