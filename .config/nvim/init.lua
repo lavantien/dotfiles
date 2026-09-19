@@ -23,15 +23,12 @@ vim.opt.softtabstop = 4
 vim.opt.completeopt = { "menu", "menuone", "noinsert", "noselect", "fuzzy", "popup" }
 
 vim.g.mapleader = " "
-vim.g.loaded_netrw = 0
-vim.g.loaded_netrwPlugin = 0
 vim.g.have_nerd_font = true
 
 vim.pack.add({
 	{ src = "https://github.com/rose-pine/neovim" },
 	{ src = "https://github.com/nvim-treesitter/nvim-treesitter" }, -- wrappers for built-in
 	{ src = "https://github.com/neovim/nvim-lspconfig" }, -- wrappers for built-in
-	{ src = "https://github.com/stevearc/oil.nvim" },
 	{ src = "https://github.com/nvim-tree/nvim-web-devicons" }, -- fzf-lua dep
 	{ src = "https://github.com/ibhagwan/fzf-lua" },
 	{ src = "https://github.com/j-hui/fidget.nvim" },
@@ -190,7 +187,6 @@ vim.api.nvim_create_autocmd("FileType", {
 	end,
 })
 
-require("oil").setup()
 require("nvim-web-devicons").setup()
 require("fidget").setup({})
 require("typst-preview").setup()
@@ -241,7 +237,6 @@ vim.schedule(function()
 	require("nvim-treesitter.install").install(ts_parsers, { summary = true })
 end)
 
-vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
 vim.keymap.set("n", "<leader>q", ":quit<CR>")
 vim.keymap.set("n", "<leader>x", ":w<CR>:so<CR>")
 vim.keymap.set("n", "<leader>'", ":sf #<CR>")
