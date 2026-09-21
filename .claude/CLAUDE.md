@@ -56,7 +56,7 @@ Express ideas in simple, everyday language without obscure jargon. Keep explanat
 - Property-based tests for: invariants, commutativity, idempotency, round-trip serialization.
 - No skipped tests. Detect and re-enable. Investigate root causes.
 - Atomic commits. Include tests and implementation in same commit.
-- Adversarial verification: before declaring work done, dispatch an independent agent to attack the change. It must hunt counterexamples, break edge cases, and challenge assumptions. Fix every confirmed finding, then re-run the chain.
+- Adversarial verification: before declaring work done, dispatch 2 independent agents to attack the change, neither seeing the other's work. Each must hunt counterexamples, break edge cases, and challenge assumptions. Fix every confirmed finding, then re-run the chain.
 
 ### Verification Chain
 
@@ -68,7 +68,7 @@ Run in order, committing at each green step:
 5. Full unit test suite
 6. Full E2E suite
 7. Visual regression (if applicable)
-8. Adversarial review: independent agent attacks the change, fix confirmed findings, re-run affected steps
+8. Adversarial review: 2 independent agents attack the change, fix confirmed findings, re-run affected steps
 
 ## Workflow
 
