@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.24.2] - 2026-09-22
+
+### Changed
+
+- `CLAUDE.md`: testing protocol now requires adversarial verification before declaring work done, dispatched as 2 independent agents that attack the change without seeing each other's work, with every confirmed finding fixed and the verification chain re-run; the verification chain gained step 8 for it
+
+---
+
 ## [5.24.1] - 2026-09-19
 
 ### Changed
@@ -2327,6 +2335,7 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 ---
 
 [Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.24.1...HEAD
+[5.24.2]: https://github.com/lavantien/dotfiles/compare/v5.24.1...v5.24.2
 [5.24.1]: https://github.com/lavantien/dotfiles/compare/v5.24.0...v5.24.1
 [5.24.0]: https://github.com/lavantien/dotfiles/compare/v5.23.0...v5.24.0
 [5.23.0]: https://github.com/lavantien/dotfiles/compare/v5.22.2...v5.23.0
