@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.25.0] - 2026-09-23
+
+### Added
+
+- `pre-commit` / `pre-commit.ps1`: typos spell check gate over all staged files in every repository (runs before project-type detection, so dotfiles-only repos are covered too), honoring `typos.toml` allowlists and excludes
+- Bootstrap installs typos on every platform: scoop `typos` on Windows, brew `typos-cli` on macOS, cargo `typos-cli` on Linux, all in the linters phase; the existing update scripts already refresh it through `scoop update -a`, `brew upgrade --greedy`, and `cargo install-update -a`
+
+### Changed
+
+- `CLAUDE.md`: Makefile-first rule (every development and testing activity goes through a `make` target, never ad hoc bash one-liners, missing targets get added first) with the verification chain running through `make` targets; agents disposed as soon as they finish or fail; sub-agents keep a reading log (`read <path> <lines or grep> - <why>`) appended to their report and never full-read generated files
+- `pre-commit`: adopted the deployed universal rewrite (OS and project-type detection, per-language checks) back into the repo, closing the drift where the deployed hook had evolved past the repo source
+
+### Fixed
+
+- `pre-commit`: staged paths with spaces or glob characters no longer word-split into bogus typos arguments and false-block clean commits (null-delimited `git diff -z` staging list); typos exit codes are reported accurately (2 typos found, 64 unreadable file, 1 usage/config error) and every nonzero code still fails closed
+- `pre-commit.ps1`: the typos block now runs after the `Test-Command` definition (it previously sat above it and never executed, letting every typo commit cleanly through the PowerShell hook), and every `Start-Process -ArgumentList` array concatenation is parenthesized (the bare `+` was a parameter binding error that left `$process` null and marked clean commits dirty, latent in the golangci-lint, go vet, ruff, eslint, stylelint, and phpstan blocks too)
+
+---
+
 ## [5.24.3] - 2026-09-23
 
 ### Changed

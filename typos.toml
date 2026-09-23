@@ -4,3 +4,13 @@ nd = "nd"
 
 [default.extend-identifiers]
 noice = "noice"
+
+# Historical changelog entries quote the typos they fixed
+[type.changelog]
+extend-glob = ["CHANGELOG.md"]
+
+[type.changelog.extend-words]
+persspective = "persspective"
+offical = "offical"
+oudated = "oudated"
+ADDRESSS = "ADDRESSS"
