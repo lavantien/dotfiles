@@ -18,6 +18,16 @@ if ($null -eq $stagedFiles -or $stagedFiles.Count -eq 0) {
 
 Write-Host "Running pre-commit checks..." -ForegroundColor Green
 
+# Spell check staged files (all project types, reads typos.toml when present)
+if (Test-Command "typos") {
+    Write-Host "  Running typos..." -ForegroundColor Yellow
+    $process = Start-Process -FilePath "typos" -ArgumentList @("--force-exclude") + $stagedFiles -NoNewWindow -Wait -PassThru
+    if ($process.ExitCode -ne 0) {
+        Write-Host "  typos found spelling issues" -ForegroundColor Red
+        $issuesFound = $true
+    }
+}
+
 # Function to check if command exists
 function Test-Command {
     param([string]$Command)

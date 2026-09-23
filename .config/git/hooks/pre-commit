@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Universal git pre-commit hook - Auto-dectects OS and project type
+# Universal git pre-commit hook - Auto-detects OS and project type
 # Supports: Windows (Git Bash, WSL) and Linux/macOS
 # Languages: Go, Rust, C/C++, JavaScript/TypeScript, Python, C#, Java, Scala, PHP
 
@@ -386,8 +386,23 @@ _pre_commit_main() {
     PROJECT_ROOT=$(git rev-parse --show-toplevel)
     cd "$PROJECT_ROOT"
 
+    # Spell check staged files (all project types, reads typos.toml when present)
+    if command_exists typos; then
+        echo -e "\n${YELLOW}=== Spell check ===${NC}"
+        STAGED_ALL=$(git diff --cached --name-only --diff-filter=ACM || true)
+        if [ -n "$STAGED_ALL" ]; then
+            if ! SPELL_OUT=$(typos --force-exclude $STAGED_ALL 2>&1); then
+                echo "$SPELL_OUT" | head -30
+                echo -e "${RED}Spelling errors found in staged files.${NC}"
+                FAILED=1
+            fi
+        fi
+    fi
+
     PROJECTS=($(detect_projects))
-    [ ${#PROJECTS[@]} -eq 0 ] && echo -e "${YELLOW}No recognized project type found.${NC}" && exit 0
+    if [ ${#PROJECTS[@]} -eq 0 ]; then
+        echo -e "${YELLOW}No recognized project type found.${NC}"
+    fi
 
     for project in "${PROJECTS[@]}"; do
         case $project in
