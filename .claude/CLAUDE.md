@@ -84,6 +84,7 @@ Run in order through `make` targets, committing at each green step:
 2. Fan out sub-agents over the list, max 4 running at a time. Recycle slots continuously: launch the next queued task in each freed slot until the list is empty.
 3. Dispose of agents as soon as they finish or fail, or defer cleanup explicitly. Never leave finished, failed, or idle agents holding context.
 4. Each agent records progress durably (task notes or commit messages) and commits small atomic units often, so an outage loses at most the last unit.
+5. Every sub-agent keeps a reading log while working and appends it to its final report: one short line per file access in the form `read <path> <lines or grep> - <why>`. Never full-read generated files, only component logic.
 
 ### Trivial Edits
 For typos or one-line non-logic changes: skip requirements, run linter, commit.
