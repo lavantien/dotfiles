@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.26.2] - 2026-09-24
+
+### Changed
+
+- `CLAUDE.md`: rule 2 now centralizes every config, constant, and tunable into a single config hub with no scoped globals and no stray constants. Inline test tables stay the only exception, and any value that keeps reappearing across them must be centralized too
+
+---
+
 ## [5.26.0] - 2026-09-23
 
 ### Added
