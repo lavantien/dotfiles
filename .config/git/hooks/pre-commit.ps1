@@ -18,16 +18,6 @@ if ($null -eq $stagedFiles -or $stagedFiles.Count -eq 0) {
 
 Write-Host "Running pre-commit checks..." -ForegroundColor Green
 
-# Spell check staged files (all project types, reads typos.toml when present)
-if (Test-Command "typos") {
-    Write-Host "  Running typos..." -ForegroundColor Yellow
-    $process = Start-Process -FilePath "typos" -ArgumentList @("--force-exclude") + $stagedFiles -NoNewWindow -Wait -PassThru
-    if ($process.ExitCode -ne 0) {
-        Write-Host "  typos found spelling issues" -ForegroundColor Red
-        $issuesFound = $true
-    }
-}
-
 # Function to check if command exists
 function Test-Command {
     param([string]$Command)
@@ -65,6 +55,19 @@ function Invoke-Formatter {
     }
 }
 
+# Spell check staged files (all project types, reads typos.toml when present)
+if (Test-Command "typos") {
+    Write-Host "  Running typos..." -ForegroundColor Yellow
+    $process = Start-Process -FilePath "typos" -ArgumentList (@("--force-exclude") + $stagedFiles) -NoNewWindow -Wait -PassThru
+    if ($process.ExitCode -eq 2) {
+        Write-Host "  typos found spelling issues" -ForegroundColor Red
+        $issuesFound = $true
+    } elseif ($process.ExitCode -ne 0) {
+        Write-Host "  typos exited with code $($process.ExitCode) (64 = unreadable file, 1 = usage/config error)" -ForegroundColor Red
+        $issuesFound = $true
+    }
+}
+
 # Group files by extension
 $goFiles = $stagedFiles | Where-Object { $_ -match '\.go$' }
 $rsFiles = $stagedFiles | Where-Object { $_ -match '\.rs$' }
@@ -91,7 +94,7 @@ if ($goFiles) {
     }
     if (Test-Command "golangci-lint") {
         Write-Host "  Running golangci-lint..." -ForegroundColor Yellow
-        $process = Start-Process -FilePath "golangci-lint" -ArgumentList @("run") + $goFiles -NoNewWindow -Wait -PassThru
+        $process = Start-Process -FilePath "golangci-lint" -ArgumentList (@("run") + $goFiles) -NoNewWindow -Wait -PassThru
         if ($process.ExitCode -ne 0) {
             Write-Host "  golangci-lint found issues" -ForegroundColor Red
             $issuesFound = $true
@@ -99,7 +102,7 @@ if ($goFiles) {
     }
     if (Test-Command "go") {
         Write-Host "  Running go vet..." -ForegroundColor Yellow
-        $process = Start-Process -FilePath "go" -ArgumentList @("vet") + $goFiles -NoNewWindow -Wait -PassThru
+        $process = Start-Process -FilePath "go" -ArgumentList (@("vet") + $goFiles) -NoNewWindow -Wait -PassThru
         if ($process.ExitCode -ne 0) {
             Write-Host "  go vet found issues" -ForegroundColor Red
             $issuesFound = $true
@@ -133,7 +136,7 @@ if ($pyFiles) {
     if (Test-Command "ruff") {
         Invoke-Formatter $pyFiles "ruff format" "ruff format"
         Write-Host "  Running ruff check..." -ForegroundColor Yellow
-        $process = Start-Process -FilePath "ruff" -ArgumentList @("check", "--fix") + $pyFiles -NoNewWindow -Wait -PassThru
+        $process = Start-Process -FilePath "ruff" -ArgumentList (@("check", "--fix") + $pyFiles) -NoNewWindow -Wait -PassThru
         if ($process.ExitCode -ne 0) {
             Write-Host "  ruff check found issues" -ForegroundColor Red
             $issuesFound = $true
@@ -155,7 +158,7 @@ if ($jsFiles) {
     }
     if (Test-Command "eslint") {
         Write-Host "  Running eslint..." -ForegroundColor Yellow
-        $process = Start-Process -FilePath "eslint" -ArgumentList @("--fix") + $jsFiles -NoNewWindow -Wait -PassThru
+        $process = Start-Process -FilePath "eslint" -ArgumentList (@("--fix") + $jsFiles) -NoNewWindow -Wait -PassThru
         if ($process.ExitCode -ne 0) {
             Write-Host "  eslint found issues" -ForegroundColor Red
             $issuesFound = $true
@@ -184,7 +187,7 @@ if ($cssFiles) {
     }
     if (Test-Command "stylelint") {
         Write-Host "  Running stylelint..." -ForegroundColor Yellow
-        $process = Start-Process -FilePath "stylelint" -ArgumentList @("--fix") + $cssFiles -NoNewWindow -Wait -PassThru
+        $process = Start-Process -FilePath "stylelint" -ArgumentList (@("--fix") + $cssFiles) -NoNewWindow -Wait -PassThru
         if ($process.ExitCode -ne 0) {
             Write-Host "  stylelint found issues" -ForegroundColor Red
             $issuesFound = $true
@@ -242,7 +245,7 @@ if ($phpFiles) {
     }
     if (Test-Command "phpstan") {
         Write-Host "  Running phpstan..." -ForegroundColor Yellow
-        $process = Start-Process -FilePath "phpstan" -ArgumentList @("analyse") + $phpFiles -NoNewWindow -Wait -PassThru
+        $process = Start-Process -FilePath "phpstan" -ArgumentList (@("analyse") + $phpFiles) -NoNewWindow -Wait -PassThru
         if ($process.ExitCode -ne 0) {
             Write-Host "  phpstan found issues (non-blocking)" -ForegroundColor Yellow
         }
