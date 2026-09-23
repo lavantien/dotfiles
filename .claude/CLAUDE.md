@@ -10,6 +10,7 @@
 6. Never use manual bash commands for editing files to avoid corruption and side effects.
 7. No manual migrations. Use `docker compose up -d` exclusively.
 8. Max 400 SLOC per file. Conventional Commits: feat, fix, docs, refactor, test, chore.
+9. Makefile-first. Run every development and testing activity (build, test, lint, typecheck, run, migrate, deploy) through a `make` target for consistency and documentability. Never invent ad hoc bash one-liners or equivalents on the spot. If no target exists, add it to the Makefile first, then use it.
 
 ## Voice & Format
 
@@ -60,7 +61,7 @@ Express ideas in simple, everyday language without obscure jargon. Keep explanat
 
 ### Verification Chain
 
-Run in order, committing at each green step:
+Run in order through `make` targets, committing at each green step:
 1. Feature-specific tests
 2. Formatters
 3. Linters
@@ -81,7 +82,7 @@ Run in order, committing at each green step:
 
 1. Before implementing, derive a comprehensive conflict-free task list from the plan: partition work so concurrent tasks never touch the same files or shared state, and keep dependent tasks sequenced.
 2. Fan out sub-agents over the list, max 4 running at a time. Recycle slots continuously: launch the next queued task in each freed slot until the list is empty.
-3. Dispose of agents as soon as they finish, or defer cleanup explicitly. Never leave finished agents idle holding context.
+3. Dispose of agents as soon as they finish or fail, or defer cleanup explicitly. Never leave finished, failed, or idle agents holding context.
 4. Each agent records progress durably (task notes or commit messages) and commits small atomic units often, so an outage loses at most the last unit.
 
 ### Trivial Edits
