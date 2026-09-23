@@ -715,6 +715,18 @@ function Install-LintersFormatters {
         }
     }
 
+    # typos (spell checker used by the pre-commit hook)
+    if ($Script:Categories -eq "full") {
+        if (Test-Command typos) {
+            Write-Step "Checking typos..."
+            Write-Success "typos (up to date)"
+            Track-Skipped "typos" "Spell checker"
+        }
+        else {
+            Install-ScoopPackage "typos" "" "typos"
+        }
+    }
+
     # checkstyle (Java linter)
     if ($Script:Categories -eq "full") {
         # checkstyle not typically installed globally on Windows

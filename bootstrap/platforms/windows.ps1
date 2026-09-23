@@ -127,6 +127,7 @@ function Get-PackageDescription {
         "shellcheck" { return "Shell script analyzer" }
         "shfmt" { return "Shell script formatter" }
         "scalafmt" { return "Scala formatter" }
+        "typos" { return "Spell checker" }
 
         # CLI tools
         "fzf" { return "fuzzy finder" }

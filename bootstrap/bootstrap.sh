@@ -757,6 +757,26 @@ install_linters_formatters() {
 		fi
 	fi
 
+	# typos (spell checker used by the pre-commit hook)
+	if [[ "$CATEGORIES" == "full" ]]; then
+		if [[ "$OS" == "macos" ]]; then
+			install_brew_package typos-cli "" typos
+		elif [[ "$OS" == "linux" ]]; then
+			if ! cmd_exists typos; then
+				if cmd_exists cargo; then
+					if cargo install typos-cli >/dev/null 2>&1; then
+						track_installed "typos" "Spell checker"
+					else
+						track_failed "typos" "Spell checker"
+					fi
+				fi
+			else
+				log_info "typos already installed"
+				track_skipped "typos" "Spell checker"
+			fi
+		fi
+	fi
+
 	# busted (Lua testing framework)
 	if [[ "$CATEGORIES" == "full" ]]; then
 		if [[ "$OS" == "macos" ]]; then
