@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.24.3] - 2026-09-23
+
+### Changed
+
+- `CLAUDE.md`: new plan execution workflow: derive a comprehensive conflict-free task list from any plan (no 2 concurrent tasks touch the same files or shared state, dependent tasks stay sequenced), fan out sub-agents max 4 at a time with freed slots recycled until the list is empty, dispose finished agents or defer cleanup so none linger holding context, and require each agent to record progress and commit small atomic units often so an outage loses at most the last unit
+
+---
+
 ## [5.24.2] - 2026-09-22
 
 ### Changed
@@ -2334,7 +2342,8 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 ---
 
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.24.1...HEAD
+[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.24.3...HEAD
+[5.24.3]: https://github.com/lavantien/dotfiles/compare/v5.24.2...v5.24.3
 [5.24.2]: https://github.com/lavantien/dotfiles/compare/v5.24.1...v5.24.2
 [5.24.1]: https://github.com/lavantien/dotfiles/compare/v5.24.0...v5.24.1
 [5.24.0]: https://github.com/lavantien/dotfiles/compare/v5.23.0...v5.24.0
