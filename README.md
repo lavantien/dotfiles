@@ -5,7 +5,7 @@
 
 Production-grade portable one-click dotfiles for Linux and Windows 11 software engineering environment.
 
-Auto-detecting, auto-bootstraping, idempotent, gracefully degrading, full terminal tooling, fully vibecoding-enabled.
+Auto-detecting, auto-bootstrapping, idempotent, gracefully degrading, full terminal tooling, fully vibecoding-enabled.
 
 ---
 
@@ -255,7 +255,7 @@ Injected top-level fields:
 
 | Field | Template value | Purpose |
 |-------|----------------|---------|
-| `env` | 12 variables (table below) | API endpoint, models, limits, feature flags |
+| `env` | 13 variables (table below) | API endpoint, models, limits, feature flags |
 | `model` | `glm-5.3[1m]` | Default model |
 | `statusLine` | `bash ~/.claude/statusline.sh` | Statusline command |
 | `enabledPlugins` | 31 plugins, all enabled | Plugin enablement |
@@ -281,6 +281,7 @@ Injected `env` variables:
 | `ANTHROPIC_DEFAULT_SONNET_MODEL` | `glm-5.3[1m]` | Sonnet-class model override |
 | `ANTHROPIC_DEFAULT_OPUS_MODEL` | `glm-5.3[1m]` | Opus-class model override |
 | `CLAUDE_CODE_EFFORT_LEVEL` | `max` | Reasoning effort |
+| `CLAUDE_CODE_SUBAGENT_MODEL` | `glm-5.3[1m]` | Sub-agent model override |
 
 `enabledPlugins` entries: glm-plan-usage@zai-coding-plugins, repomix-commands@repomix, repomix-explorer@repomix, repomix-mcp@repomix, and @claude-plugins-official for frontend-design, context7, feature-dev, code-review, commit-commands, typescript-lsp, playwright, agent-sdk-dev, pr-review-toolkit, pyright-lsp, gopls-lsp, rust-analyzer-lsp, csharp-lsp, php-lsp, jdtls-lsp, clangd-lsp, lua-lsp, code-simplifier, superpowers, claude-code-setup, chrome-devtools-mcp, plugin-dev, remember, microsoft-docs, postman, claude-security, math-olympiad.
 

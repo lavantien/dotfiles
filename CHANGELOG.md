@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.26.0] - 2026-09-23
+
+### Added
+
+- `settings.template.json`: `CLAUDE_CODE_SUBAGENT_MODEL=glm-5.3[1m]` pins sub-agents to the same model as the main session instead of falling back to the harness default; injected fill-missing-only on the next deploy
+
+---
+
 ## [5.25.0] - 2026-09-23
 
 ### Added
