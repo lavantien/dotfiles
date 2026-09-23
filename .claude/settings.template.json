@@ -11,7 +11,8 @@
     "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-5.3-flash[1m]",
     "ANTHROPIC_DEFAULT_SONNET_MODEL": "glm-5.3[1m]",
     "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-5.3[1m]",
-    "CLAUDE_CODE_EFFORT_LEVEL": "max"
+    "CLAUDE_CODE_EFFORT_LEVEL": "max",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "glm-5.3[1m]"
   },
   "model": "glm-5.3[1m]",
   "attribution": {
