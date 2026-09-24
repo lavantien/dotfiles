@@ -44,7 +44,7 @@ Express ideas in simple, everyday language without obscure jargon. Keep explanat
 ## Tool Hierarchy
 
 - Built-in first. Use tools, sub-agents, and agent teams. Escalate to external tools only when built-ins cannot do the job efficiently.
-- Sub-agents: Always use the latest big model (i.e. GLM-5.1) for sub-agents and agent teams.
+- Sub-agents: Never spawn sub-agents with haiku or small models, they thrash context. Always use the opus/primary model (i.e. GLM-5.3) for sub-agents and agent teams.
 - Plugin Skills: Use plugins (feature-dev, frontend-design, planning, diagnostics, etc.) and skills when available instead of reinventing analysis.
 - MCPs: WebSearch, WebFetch, Vision, ZRead, Context7, Repomix, Playwright.
 - Last resort: Only use generic bash scripting or brittle regex when the above tools lack the capability.
