@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.27.1] - 2026-09-24
+
+### Changed
+
+- `CLAUDE.md`: rule 8 max file size per file relaxed from 400 to 500 SLOC
+
+---
+
 ## [5.27.0] - 2026-09-24
 
 ### Changed
