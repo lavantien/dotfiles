@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.27.0] - 2026-09-24
+
+### Changed
+
+- `CLAUDE.md`: sub-agents never spawn on haiku or small models (they thrash context), always the opus/primary model (i.e. GLM-5.3) for sub-agents and agent teams, closing the gap where `CLAUDE_CODE_SUBAGENT_MODEL` only pins the default and an explicit haiku-class spawn still landed on `glm-5.3-flash[1m]`; the stale GLM-5.1 example is corrected
+
+---
+
 ## [5.26.2] - 2026-09-24
 
 ### Changed
