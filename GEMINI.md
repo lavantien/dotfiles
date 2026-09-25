@@ -1,1 +1,1 @@
-See [CLAUDE.md](~/.claude/CLAUDE.md)
+See [CLAUDE.md](.claude/CLAUDE.md)
