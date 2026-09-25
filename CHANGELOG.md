@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.27.2] - 2026-09-25
+
+### Fixed
+
+- `AGENTS.md`, `GEMINI.md`, `RULES.md`: CLAUDE.md redirect links now target the repo-relative `.claude/CLAUDE.md` instead of the broken `~/.claude/CLAUDE.md`, `README.md` sync description updated to match
+
+---
+
 ## [5.27.1] - 2026-09-24
 
 ### Changed
