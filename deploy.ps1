@@ -106,9 +106,11 @@ function Merge-ClaudeSettings {
         return
     }
 
-    # Fill-Missing indexes into the live object, so an empty, null, or array
-    # settings file would abort the whole script under ErrorActionPreference Stop
-    if ($null -eq $Live -or $Live -isnot [PSCustomObject]) {
+    # Fill-Missing indexes into the live object, so a non-object settings file
+    # (empty, null, array, scalar) would abort the whole script under
+    # ErrorActionPreference Stop. Null passes every -is check and scalars pass
+    # -is [PSCustomObject] in pwsh, so compare the concrete type name.
+    if ($null -eq $Live -or $Live.GetType().Name -ne 'PSCustomObject') {
         Write-Host "  Claude settings not a JSON object, skipping merge" -ForegroundColor Yellow
         return
     }
