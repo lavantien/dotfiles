@@ -24,6 +24,12 @@ $script:updated = 0
 $script:skipped = 0
 $script:failed = 0
 
+# winget packages whose manifest requires an install location (InstallLocationRequired);
+# pinned out of `winget upgrade --all` and upgraded explicitly with these paths
+$WingetLocationUpgrades = @{
+    "Blizzard.BattleNet" = "C:\Program Files (x86)\Battle.net"
+}
+
 # Command exists checker
 function Test-Command {
     param([string]$Name)
@@ -144,11 +150,38 @@ function Main {
     # ============================================================================
     Write-Step "WINGET"
     if (Test-Command winget) {
+        # Use full path since winget is in WindowsApps which may not be in PATH
+        $wingetExe = Join-Path $env:LOCALAPPDATA "Microsoft\WindowsApps\winget.exe"
+
+        # InstallLocationRequired packages first: a non-blocking pin keeps them
+        # out of upgrade --all (which prompts interactively for an install root),
+        # while upgrade <id> still works; --location is passed to the installer
+        # verbatim, unlike installBehavior.defaultInstallRoot which gets the
+        # package ID appended
+        foreach ($pkg in $WingetLocationUpgrades.GetEnumerator()) {
+            $installed = & $wingetExe list --id $pkg.Key --exact --accept-source-agreements 2>$null |
+                Select-String -SimpleMatch $pkg.Key
+            if (-not $installed) { continue }
+
+            & $wingetExe pin add --id $pkg.Key --exact --accept-source-agreements 2>$null
+            $output = & $wingetExe upgrade --id $pkg.Key --exact --include-unknown --location $pkg.Value --accept-source-agreements --accept-package-agreements 2>&1
+            if ($output -match "No available upgrade") {
+                Write-Skip "$($pkg.Key) (up to date)"
+                $script:skipped++
+            }
+            elseif ($LASTEXITCODE -eq 0) {
+                Write-Success $pkg.Key
+                $script:updated++
+            }
+            else {
+                Write-Fail $pkg.Key
+                $script:failed++
+            }
+        }
+
         try {
             # winget upgrade --all runs interactively with prompts
             # Use --accept-source-agreements --accept-package-agreements to auto-accept
-            # Use full path since winget is in WindowsApps which may not be in PATH
-            $wingetExe = Join-Path $env:LOCALAPPDATA "Microsoft\WindowsApps\winget.exe"
             & $wingetExe upgrade --all --include-unknown --accept-source-agreements --accept-package-agreements
             Write-Success "winget"
             $script:updated++

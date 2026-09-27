@@ -293,6 +293,15 @@ Injected `env` variables:
 - Repairs a malformed scalar `mcp` section
 - Preserves user-added servers and user-added keys
 
+### Winget Location-Pinned Upgrades (Windows)
+
+Packages whose winget manifest requires an install location (`InstallLocationRequired`, currently `Blizzard.BattleNet`) are upgraded by `update-all.ps1` before `winget upgrade --all`:
+
+- Each entry in the `$WingetLocationUpgrades` table (top of `update-all.ps1`) is upgraded with `--location`, which winget passes to the installer verbatim, `C:\Program Files (x86)\Battle.net` for Battle.net
+- The package is also given a non-blocking pin, keeping it out of `winget upgrade --all`, which would otherwise prompt interactively for an install root
+- `installBehavior.defaultInstallRoot` is deliberately not used: winget appends the package ID to that root (`C:\...\Battle.net\Blizzard.BattleNet`), so no value can produce the real product folder
+- Entries that are not installed are skipped
+
 ### Claude Code Windows LSP Patching
 
 npm-installed LSPs (typescript-language-server, pyright-langserver, intelephense) need `cmd.exe /c` wrapper. Auto-patches marketplace.json to fix `spawn EINVAL` errors. On Linux/macOS, deploy strips the same `cmd.exe` wrappers if a marketplace.json was carried over from a Windows machine.
