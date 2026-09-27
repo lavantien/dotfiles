@@ -106,6 +106,13 @@ function Merge-ClaudeSettings {
         return
     }
 
+    # Fill-Missing indexes into the live object, so an empty, null, or array
+    # settings file would abort the whole script under ErrorActionPreference Stop
+    if ($null -eq $Live -or $Live -isnot [PSCustomObject]) {
+        Write-Host "  Claude settings not a JSON object, skipping merge" -ForegroundColor Yellow
+        return
+    }
+
     $Merged = Fill-Missing $Template $Live
     # Depth 100: ConvertTo-Json defaults to 2 and would truncate nested objects
     $Merged | ConvertTo-Json -Depth 100 | Set-Content $TargetPath
