@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.28.0] - 2026-09-27
+
+### Added
+
+- `update-all.ps1`: winget packages whose manifest requires an install location (`Blizzard.BattleNet` declares `InstallLocationRequired`) are upgraded explicitly with `--location C:\Program Files (x86)\Battle.net` and a non-blocking pin before `winget upgrade --all`, which would otherwise prompt interactively for an install root; locations live in the `$WingetLocationUpgrades` table at the top of the script. `installBehavior.defaultInstallRoot` is deliberately not used: winget appends the package ID to that root, so no root value can produce the `Battle.net` folder
+
+### Changed
+
+- `CLAUDE.md`: rule 8 max file size per file relaxed from 500 to 1000 SLOC
+
+### Fixed
+
+- `deploy.ps1`: Claude settings merge now skips with a warning instead of aborting the whole deploy when `~/.claude/settings.json` parses to a non-object (empty, `null`, or top-level array)
+
+---
+
 ## [5.27.2] - 2026-09-25
 
 ### Fixed
