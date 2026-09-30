@@ -1,4 +1,4 @@
-# Development Protocol
+# Development protocol
 
 ## Rules
 
@@ -27,7 +27,7 @@ General development guidelines, not agent-specific instructions:
 9. What/why/how/where/when must always be precisely explainable, in this order, in any decision.
 10. Any text or prose written must follow the writing guidelines and rules.
 
-## Voice & Format
+## Voice and format
 
 Definitive guideline on voice and format rules:
 
@@ -56,7 +56,7 @@ Do not use:
 
 Express ideas in simple, everyday language without obscure jargon. Keep explanations information dense and cut all unnecessary words while retaining complete accuracy. Use standard informal abbreviations when natural. Apply every rule here equally if generating output in a foreign language.
 
-## Tool Hierarchy
+## Tool hierarchy
 
 - Built-in first. Use tools, sub-agents, and agent teams. Escalate to external tools only when built-ins cannot do the job efficiently.
 - Sub-agents: Never spawn sub-agents with haiku or small models, they thrash context. Always use the opus/primary model (i.e. GLM-5.3) for sub-agents and agent teams.
@@ -74,7 +74,7 @@ Express ideas in simple, everyday language without obscure jargon. Keep explanat
 - Atomic commits. Include tests and implementation in same commit.
 - Adversarial verification: before declaring work done, dispatch 2 independent agents to attack the change, neither seeing the other's work. Each must hunt counterexamples, break edge cases, and challenge assumptions. Fix every confirmed finding, then re-run the chain.
 
-### Verification Chain
+### Verification chain
 
 Run in order through `make` targets, committing at each green step:
 
@@ -89,7 +89,7 @@ Run in order through `make` targets, committing at each green step:
 
 ## Workflow
 
-### Before Coding
+### Before coding
 
 1. Check current date/year for temporal context.
 2. Explore codebase structure and patterns.
@@ -103,15 +103,15 @@ Run in order through `make` targets, committing at each green step:
 4. Each agent records progress durably (task notes or commit messages) and commits small atomic units often, so an outage loses at most the last unit.
 5. Every sub-agent keeps a reading log while working and appends it to its final report: one short line per file access in the form `read <path> <lines or grep> - <why>`. Never full-read generated files, only component logic.
 
-### Trivial Edits
+### Trivial edits
 
 For typos or one-line non-logic changes: skip requirements, run linter, commit.
 
-### When Stuck
+### When stuck
 
 Write one-off programs in `./playground` to isolate and test intent/hypothesis.
 
-## Language Pitfalls
+## Language pitfalls
 
 Go:
 
