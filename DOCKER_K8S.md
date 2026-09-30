@@ -1,10 +1,6 @@
-# Docker & Kubernetes Setup
+# Docker and Kubernetes setup
 
-This guide covers installing Docker Desktop and minikube for container and Kubernetes development.
-
-**Note**: `bootstrap.sh` installs kubectl, helm, and docker-compose automatically. Only install Docker Desktop manually if you need the full GUI and development experience.
-
----
+This guide covers installing Docker Desktop and minikube for container and Kubernetes development. `bootstrap.sh` installs kubectl, helm, and docker-compose automatically, so only install Docker Desktop manually if you need the full GUI and development experience.
 
 ## Docker Desktop for Linux
 
@@ -43,11 +39,7 @@ rm docker-desktop-amd64.deb
 
 ### Starting Docker Desktop
 
-After installation, start Docker Desktop:
-
-**Via GUI**: Navigate to Docker Desktop in your GNOME/KDE application menu
-
-**Via terminal**:
+After installation, start Docker Desktop from the GNOME or KDE application menu, or from the terminal:
 
 ```bash
 systemctl --user start docker-desktop
@@ -61,7 +53,7 @@ To enable Docker Desktop to start automatically on sign-in:
 systemctl --user enable docker-desktop
 ```
 
-### Docker Hub Sign-in (Optional - for higher pull limits)
+### Docker Hub sign-in (optional, for higher pull limits)
 
 Docker Desktop for Linux uses `pass` to store credentials in GPG-encrypted files. Initialize before signing in:
 
@@ -76,13 +68,11 @@ pass init YOUR_GPG_ID_HERE
 
 Now you can sign in to Docker Desktop with increased pull limits. For more details, see [official sign-in docs](https://docs.docker.com/desktop/setup/sign-in/).
 
-### Other Linux Distributions
+### Other Linux distributions
 
 For Debian, Fedora, Arch, RHEL, and other distributions, see [official Docker Desktop docs](https://docs.docker.com/desktop/setup/install/linux/).
 
----
-
-## minikube (Local Kubernetes)
+## minikube (local Kubernetes)
 
 ### Installation
 
@@ -103,18 +93,13 @@ minikube start
 If you see `RSRC_INSUFFICIENT_CONTAINER_MEMORY` error, Docker Desktop needs more memory allocated:
 
 1. Open Docker Desktop
-2. Go to **Settings** → **Resources** → **Advanced**
-3. Increase **Memory** to at least 4GB (default is often too low for Kubernetes)
-4. Click **Apply & Restart**
+2. Open Settings, then Resources, then Advanced
+3. Increase Memory to at least 4GB (default is often too low for Kubernetes)
+4. Click Apply and Restart
 5. Run `minikube delete && minikube start` to recreate the cluster
 
----
+## Windows and macOS
 
-## Windows & macOS
+On Windows and macOS, download Docker Desktop from [docker.com](https://www.docker.com/products/docker-desktop/). On macOS, Homebrew works too: `brew install --cask docker`.
 
-For Windows and macOS, Docker Desktop installation is simpler:
-
-- **Windows**: Download from [docker.com](https://www.docker.com/products/docker-desktop/)
-- **macOS**: Download from [docker.com](https://www.docker.com/products/docker-desktop/) or use Homebrew: `brew install --cask docker`
-
-minikube installation is similar across platforms - see [minikube docs](https://minikube.sigs.k8s.io/docs/start/).
+minikube installation is similar across platforms, see the [minikube docs](https://minikube.sigs.k8s.io/docs/start/).
