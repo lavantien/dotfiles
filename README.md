@@ -244,12 +244,11 @@ Quality checks can be configured per-project using project-specific hooks or MCP
 
 Deploy merges the committed `.claude/settings.template.json` into `~/.claude/settings.json` on every run, on both platforms:
 
-- Missing fields are added recursively at every level
-- Existing values are never overwritten, local tweaks win
-- `env.ANTHROPIC_AUTH_TOKEN` is deliberately absent from the template and always preserved
+- The template is the source of truth: template values win for shared keys recursively at every level
+- Live-only keys survive the merge, including `env.ANTHROPIC_AUTH_TOKEN`, which is deliberately absent from the template
 - When `settings.json` does not exist it is created from the template
 - Linux/macOS uses jq with a python3 fallback, Windows uses native PowerShell JSON
-- Fill-missing never removes keys, so prune the template manually when a setting is retired
+- Keys listed in `.claude/settings.retired.json` are deleted from the live file on every deploy; each entry maps a dotted path to the reason and reference for its retirement
 
 Injected top-level fields:
 
@@ -258,7 +257,7 @@ Injected top-level fields:
 | `env` | 13 variables (table below) | API endpoint, models, limits, feature flags |
 | `model` | `glm-5.3[1m]` | Default model |
 | `statusLine` | `bash ~/.claude/statusline.sh` | Statusline command |
-| `enabledPlugins` | 31 plugins, all enabled | Plugin enablement |
+| `enabledPlugins` | 31 plugins, 30 enabled | Plugin enablement |
 | `alwaysThinkingEnabled` | `true` | Extended thinking by default |
 | `autoUpdatesChannel` | `latest` | Update channel |
 | `tui` | `fullscreen` | Terminal UI mode |
@@ -274,8 +273,8 @@ Injected `env` variables:
 | `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` | `1` | Disable telemetry traffic |
 | `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` | `1` | Enable agent teams |
 | `CLAUDE_CODE_ENABLE_AUTO_MODE` | `1` | Enable auto mode |
-| `CLAUDE_CODE_MAX_OUTPUT_TOKEN` | `131072` | Max output tokens |
-| `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE` | `93.75` | Autocompact trigger percentage |
+| `CLAUDE_CODE_MAX_OUTPUT_TOKENS` | `131072` | Max output tokens |
+| `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE` | `48.5` | Autocompact trigger percentage (48.5% of the 1M window = 485k tokens) |
 | `CLAUDE_CODE_AUTO_COMPACT_WINDOW` | `1000000` | Autocompact context window |
 | `ANTHROPIC_DEFAULT_HAIKU_MODEL` | `glm-5.3-flash[1m]` | Haiku-class model override |
 | `ANTHROPIC_DEFAULT_SONNET_MODEL` | `glm-5.3[1m]` | Sonnet-class model override |
@@ -283,7 +282,13 @@ Injected `env` variables:
 | `CLAUDE_CODE_EFFORT_LEVEL` | `max` | Reasoning effort |
 | `CLAUDE_CODE_SUBAGENT_MODEL` | `glm-5.3[1m]` | Sub-agent model override |
 
-`enabledPlugins` entries: glm-plan-usage@zai-coding-plugins, repomix-commands@repomix, repomix-explorer@repomix, repomix-mcp@repomix, and @claude-plugins-official for frontend-design, context7, feature-dev, code-review, commit-commands, typescript-lsp, playwright, agent-sdk-dev, pr-review-toolkit, pyright-lsp, gopls-lsp, rust-analyzer-lsp, csharp-lsp, php-lsp, jdtls-lsp, clangd-lsp, lua-lsp, code-simplifier, superpowers, claude-code-setup, chrome-devtools-mcp, plugin-dev, remember, microsoft-docs, postman, claude-security, math-olympiad.
+`enabledPlugins` entries: glm-plan-usage@zai-coding-plugins, repomix-commands@repomix, repomix-explorer@repomix, repomix-mcp@repomix, and @claude-plugins-official for frontend-design, context7, feature-dev, code-review, commit-commands, typescript-lsp, playwright, agent-sdk-dev, pr-review-toolkit, pyright-lsp, gopls-lsp, rust-analyzer-lsp, csharp-lsp, php-lsp, jdtls-lsp, clangd-lsp, lua-lsp, code-simplifier, superpowers, claude-code-setup, chrome-devtools-mcp, plugin-dev, microsoft-docs, postman, claude-security, math-olympiad. remember is disabled.
+
+Retired settings, deleted from the live file on deploy via `.claude/settings.retired.json`:
+
+| Retired key | Reason | Reference |
+|-------------|--------|-----------|
+| `env.CLAUDE_CODE_MAX_OUTPUT_TOKEN` | Misspelling of the documented `CLAUDE_CODE_MAX_OUTPUT_TOKENS`, which the template now sets | [env vars reference](https://code.claude.com/docs/en/env-vars) |
 
 ### OpenCode Config Merging
 

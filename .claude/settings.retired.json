@@ -1,0 +1,3 @@
+{
+  "env.CLAUDE_CODE_MAX_OUTPUT_TOKEN": "Misspelling of the documented CLAUDE_CODE_MAX_OUTPUT_TOKENS, which the template now sets. Ref: https://code.claude.com/docs/en/env-vars"
+}
