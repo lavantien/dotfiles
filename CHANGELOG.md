@@ -1,2519 +1,471 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
----
+All notable changes to this project are documented in this file, newest first. Each release is a prose summary of what happened and why, written under the repo writing rules. Versioning follows Semantic Versioning. Unreleased work lands under an `## [Unreleased]` heading that is renamed to the version and date at release time.
 
 ## [5.29.1] - 2026-10-01
 
-### Added
-
-- `.claude/CLAUDE.md`: new Principles section with the general development guidelines: TDD, zero hardcode, centralized constants/configs hub, KISS, first principles, bottom-up, no abstraction or complex patterns unless absolutely necessary, concurrency/parallel native, decisions explainable in the order what, why, how, where, when, and prose following the writing rules
+`.claude/CLAUDE.md` gained a Principles section with the general development guidelines: TDD, zero hardcode, centralized constants and configs hub, KISS, first principles, bottom-up, no abstraction or complex patterns unless absolutely necessary, concurrency and parallel as native, decisions explainable in the order what, why, how, where, when, and prose following the writing rules.
 
 ## [5.29.0] - 2026-10-01
 
-### Added
+Deploy now honors `.claude/settings.retired.json` on both platforms and deletes the listed dotted paths from `~/.claude/settings.json`. Each entry maps a path to the reason and reference for its retirement. The first entry retires `env.CLAUDE_CODE_MAX_OUTPUT_TOKEN`, a misspelling of the documented `CLAUDE_CODE_MAX_OUTPUT_TOKENS` (https://code.claude.com/docs/en/env-vars), which the template now sets.
 
-- `.claude/settings.retired.json`: deploy deletes the listed dotted paths from `~/.claude/settings.json` on both platforms; each entry maps a path to the reason and reference for its retirement. First entry retires `env.CLAUDE_CODE_MAX_OUTPUT_TOKEN`, a misspelling of the documented `CLAUDE_CODE_MAX_OUTPUT_TOKENS` (https://code.claude.com/docs/en/env-vars), which the template now sets
-
-### Changed
-
-- `deploy.ps1`, `lib/json-merge.sh`: the Claude settings merge is template-priority, template values overwrite diverging live values for shared keys recursively while live-only keys (including `env.ANTHROPIC_AUTH_TOKEN`) are preserved. Previously the merge only filled missing keys, so template value changes never propagated
-- `.claude/settings.template.json`: `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=48.5` triggers autocompact at 485k of the 1M window (was 93.75, possibly inert since the docs say percentages above the default are ignored and the default is not published). The percentage is the documented knob that lowers the trigger below `CLAUDE_CODE_AUTO_COMPACT_WINDOW` (https://code.claude.com/docs/en/env-vars)
-- `.claude/settings.template.json`: `CLAUDE_CODE_MAX_OUTPUT_TOKEN` renamed to the documented `CLAUDE_CODE_MAX_OUTPUT_TOKENS` (https://code.claude.com/docs/en/env-vars)
-- `.claude/settings.template.json`: `remember@claude-plugins-official` disabled to match the live setting
-
----
+The Claude settings merge in `deploy.ps1` and `lib/json-merge.sh` is now template-priority: template values overwrite diverging live values for shared keys recursively while live-only keys, including `env.ANTHROPIC_AUTH_TOKEN`, are preserved. The previous merge only filled missing keys, so template value changes never propagated. In `.claude/settings.template.json`, `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=48.5` triggers autocompact at 485k of the 1M window, down from 93.75, which was possibly inert because the docs say percentages above the default are ignored and the default is not published. The percentage is the documented knob that lowers the trigger below `CLAUDE_CODE_AUTO_COMPACT_WINDOW` (https://code.claude.com/docs/en/env-vars). `CLAUDE_CODE_MAX_OUTPUT_TOKEN` was renamed to the documented `CLAUDE_CODE_MAX_OUTPUT_TOKENS`, and `remember@claude-plugins-official` was disabled to match the live setting.
 
 ## [5.28.1] - 2026-09-30
 
-### Changed
-
-- `CLAUDE.md`: "say the word" banned under conversational and meta filler in the wording rules
-
-### Fixed
-
-- `deploy.ps1`: the non-object Claude settings guard compares the concrete type name (`$Live.GetType().Name -ne 'PSCustomObject'`) instead of `-is [PSCustomObject]`, which scalars pass in pwsh, so empty, `null`, array, or scalar settings files now skip the merge with a warning instead of aborting the deploy
-
----
+`CLAUDE.md` bans "say the word" under conversational and meta filler in the wording rules. A `deploy.ps1` bug was fixed alongside: the non-object Claude settings guard compares the concrete type name (`$Live.GetType().Name -ne 'PSCustomObject'`) instead of `-is [PSCustomObject]`, which scalars pass in pwsh, so empty, `null`, array, or scalar settings files now skip the merge with a warning instead of aborting the deploy.
 
 ## [5.28.0] - 2026-09-27
 
-### Added
+`update-all.ps1` now upgrades winget packages whose manifest requires an install location explicitly. `Blizzard.BattleNet` declares `InstallLocationRequired`, so it gets `--location C:\Program Files (x86)\Battle.net` and a non-blocking pin before `winget upgrade --all`, which would otherwise prompt interactively for an install root. Locations live in the `$WingetLocationUpgrades` table at the top of the script. `installBehavior.defaultInstallRoot` is deliberately unused because winget appends the package ID to that root, so no root value can produce the `Battle.net` folder.
 
-- `update-all.ps1`: winget packages whose manifest requires an install location (`Blizzard.BattleNet` declares `InstallLocationRequired`) are upgraded explicitly with `--location C:\Program Files (x86)\Battle.net` and a non-blocking pin before `winget upgrade --all`, which would otherwise prompt interactively for an install root; locations live in the `$WingetLocationUpgrades` table at the top of the script. `installBehavior.defaultInstallRoot` is deliberately not used: winget appends the package ID to that root, so no root value can produce the `Battle.net` folder
-
-### Changed
-
-- `CLAUDE.md`: rule 8 max file size per file relaxed from 500 to 1000 SLOC
-
-### Fixed
-
-- `deploy.ps1`: Claude settings merge now skips with a warning instead of aborting the whole deploy when `~/.claude/settings.json` parses to a non-object (empty, `null`, or top-level array)
-
----
+`CLAUDE.md` rule 8 relaxed the max file size per file from 500 to 1000 SLOC. `deploy.ps1` also stopped aborting the whole deploy when `~/.claude/settings.json` parses to a non-object (empty, `null`, or top-level array): the Claude settings merge now skips with a warning.
 
 ## [5.27.2] - 2026-09-25
 
-### Fixed
-
-- `AGENTS.md`, `GEMINI.md`, `RULES.md`: CLAUDE.md redirect links now target the repo-relative `.claude/CLAUDE.md` instead of the broken `~/.claude/CLAUDE.md`, `README.md` sync description updated to match
-
----
+The CLAUDE.md redirect links in `AGENTS.md`, `GEMINI.md`, and `RULES.md` now target the repo-relative `.claude/CLAUDE.md` instead of the broken `~/.claude/CLAUDE.md`, and the `README.md` sync description was updated to match.
 
 ## [5.27.1] - 2026-09-24
 
-### Changed
-
-- `CLAUDE.md`: rule 8 max file size per file relaxed from 400 to 500 SLOC
-
----
+`CLAUDE.md` rule 8 relaxed the max file size per file from 400 to 500 SLOC.
 
 ## [5.27.0] - 2026-09-24
 
-### Changed
-
-- `CLAUDE.md`: sub-agents never spawn on haiku or small models (they thrash context), always the opus/primary model (i.e. GLM-5.3) for sub-agents and agent teams, closing the gap where `CLAUDE_CODE_SUBAGENT_MODEL` only pins the default and an explicit haiku-class spawn still landed on `glm-5.3-flash[1m]`; the stale GLM-5.1 example is corrected
-
----
+`CLAUDE.md` now requires that sub-agents never spawn on haiku or small models because they thrash context, and always use the opus or primary model (i.e. GLM-5.3) for sub-agents and agent teams. This closes the gap where `CLAUDE_CODE_SUBAGENT_MODEL` only pins the default and an explicit haiku-class spawn still landed on `glm-5.3-flash[1m]`. The stale GLM-5.1 example is corrected.
 
 ## [5.26.2] - 2026-09-24
 
-### Changed
-
-- `CLAUDE.md`: rule 2 now centralizes every config, constant, and tunable into a single config hub with no scoped globals and no stray constants. Inline test tables stay the only exception, and any value that keeps reappearing across them must be centralized too
-
----
+`CLAUDE.md` rule 2 now centralizes every config, constant, and tunable into a single config hub with no scoped globals and no stray constants. Inline test tables stay the only exception, and any value that keeps reappearing across them must be centralized too.
 
 ## [5.26.0] - 2026-09-23
 
-### Added
-
-- `settings.template.json`: `CLAUDE_CODE_SUBAGENT_MODEL=glm-5.3[1m]` pins sub-agents to the same model as the main session instead of falling back to the harness default; injected fill-missing-only on the next deploy
-
----
+`settings.template.json` sets `CLAUDE_CODE_SUBAGENT_MODEL=glm-5.3[1m]`, pinning sub-agents to the same model as the main session so they no longer fall back to the harness default. The value is injected fill-missing-only on the next deploy.
 
 ## [5.25.0] - 2026-09-23
 
-### Added
+`pre-commit` and `pre-commit.ps1` gained a typos spell check gate over all staged files in every repository. It runs before project-type detection, so dotfiles-only repos are covered too, and it honors `typos.toml` allowlists and excludes. Bootstrap installs typos on every platform in the linters phase: scoop `typos` on Windows, brew `typos-cli` on macOS, and cargo `typos-cli` on Linux. The existing update scripts already refresh it through `scoop update -a`, `brew upgrade --greedy`, and `cargo install-update -a`.
 
-- `pre-commit` / `pre-commit.ps1`: typos spell check gate over all staged files in every repository (runs before project-type detection, so dotfiles-only repos are covered too), honoring `typos.toml` allowlists and excludes
-- Bootstrap installs typos on every platform: scoop `typos` on Windows, brew `typos-cli` on macOS, cargo `typos-cli` on Linux, all in the linters phase; the existing update scripts already refresh it through `scoop update -a`, `brew upgrade --greedy`, and `cargo install-update -a`
+`CLAUDE.md` gained the Makefile-first rule: every development and testing activity goes through a `make` target, never ad hoc bash one-liners, and missing targets get added first. The verification chain runs through `make` targets, agents are disposed as soon as they finish or fail, and sub-agents keep a reading log (`read <path> <lines or grep> - <why>`) appended to their report and never full-read generated files. `pre-commit` also adopted the deployed universal rewrite back into the repo, with OS and project-type detection and per-language checks, closing the drift where the deployed hook had evolved past the repo source.
 
-### Changed
-
-- `CLAUDE.md`: Makefile-first rule (every development and testing activity goes through a `make` target, never ad hoc bash one-liners, missing targets get added first) with the verification chain running through `make` targets; agents disposed as soon as they finish or fail; sub-agents keep a reading log (`read <path> <lines or grep> - <why>`) appended to their report and never full-read generated files
-- `pre-commit`: adopted the deployed universal rewrite (OS and project-type detection, per-language checks) back into the repo, closing the drift where the deployed hook had evolved past the repo source
-
-### Fixed
-
-- `pre-commit`: staged paths with spaces or glob characters no longer word-split into bogus typos arguments and false-block clean commits (null-delimited `git diff -z` staging list); typos exit codes are reported accurately (2 typos found, 64 unreadable file, 1 usage/config error) and every nonzero code still fails closed
-- `pre-commit.ps1`: the typos block now runs after the `Test-Command` definition (it previously sat above it and never executed, letting every typo commit cleanly through the PowerShell hook), and every `Start-Process -ArgumentList` array concatenation is parenthesized (the bare `+` was a parameter binding error that left `$process` null and marked clean commits dirty, latent in the golangci-lint, go vet, ruff, eslint, stylelint, and phpstan blocks too)
-
----
+Two hook bugs were fixed. In `pre-commit`, staged paths with spaces or glob characters no longer word-split into bogus typos arguments and false-block clean commits, via a null-delimited `git diff -z` staging list. Typos exit codes are now reported accurately (2 typos found, 64 unreadable file, 1 usage or config error) and every nonzero code still fails closed. In `pre-commit.ps1`, the typos block now runs after the `Test-Command` definition. It previously sat above the definition and never executed, so every typo committed cleanly through the PowerShell hook. Every `Start-Process -ArgumentList` array concatenation is also parenthesized now. The bare `+` was a parameter binding error that left `$process` null and marked clean commits dirty, latent in the golangci-lint, go vet, ruff, eslint, stylelint, and phpstan blocks too.
 
 ## [5.24.3] - 2026-09-23
 
-### Changed
-
-- `CLAUDE.md`: new plan execution workflow: derive a comprehensive conflict-free task list from any plan (no 2 concurrent tasks touch the same files or shared state, dependent tasks stay sequenced), fan out sub-agents max 4 at a time with freed slots recycled until the list is empty, dispose finished agents or defer cleanup so none linger holding context, and require each agent to record progress and commit small atomic units often so an outage loses at most the last unit
-
----
+`CLAUDE.md` gained the plan execution workflow: derive a conflict-free task list from any plan so no 2 concurrent tasks touch the same files or shared state and dependent tasks stay sequenced, fan out sub-agents max 4 at a time with freed slots recycled until the list is empty, dispose finished agents or defer cleanup so none linger holding context, and require each agent to record progress and commit small atomic units often so an outage loses at most the last unit.
 
 ## [5.24.2] - 2026-09-22
 
-### Changed
-
-- `CLAUDE.md`: testing protocol now requires adversarial verification before declaring work done, dispatched as 2 independent agents that attack the change without seeing each other's work, with every confirmed finding fixed and the verification chain re-run; the verification chain gained step 8 for it
-
----
+The `CLAUDE.md` testing protocol now requires adversarial verification before declaring work done, dispatched as 2 independent agents that attack the change without seeing each other's work, with every confirmed finding fixed and the verification chain re-run. The verification chain gained step 8 for it.
 
 ## [5.24.1] - 2026-09-19
 
-### Changed
-
-- README: foldable day-to-day Neovim usage guide added above the keybinding table in the Neovim section (renamed from "Neovim Keybindings"), changelog link refs completed for 5.22.0 through 5.24.0
-
----
+README gained a foldable day-to-day Neovim usage guide above the keybinding table in the Neovim section, which was renamed from "Neovim Keybindings", and the changelog link refs were completed for 5.22.0 through 5.24.0.
 
 ## [5.24.0] - 2026-09-19
 
-### Changed
+`init.lua` pins `nvim-treesitter` to the `main` branch rewrite and adopts 0.13 behaviors: `autoread` with fs-watch reload, and `updatetime` 1000 so `virtual_lines` current-line diagnostics render on `CursorHold`. The unpinned clone had tracked legacy `master`, where the v2 modules do not exist and the parser install block was silently dead. The repo now commits `.config/nvim/nvim-pack-lock.json`, which pins the 7 active plugins, and `deploy.sh` and `deploy.ps1` deploy it next to `init.lua`. `healthcheck.sh` gained an nvim headless startup smoke test.
 
-- `init.lua`: pin `nvim-treesitter` to the `main` branch rewrite (the unpinned clone tracked legacy `master`, where the v2 modules do not exist and the parser install block was silently dead), and adopt 0.13 behaviors: `autoread` with fs-watch reload, `updatetime` 1000 so `virtual_lines` current-line diagnostics render on `CursorHold`
-- `init.lua`: the treesitter `FileType` autocmd now matches all filetypes and guards `vim.treesitter.start()` before setting fold and indent expressions
-- `init.lua`: shrink the treesitter block to a single scheduled `install()` call, and simplify the jdtls gate to `vim.fn.has("win32") == 0`
-- `deploy.sh` / `deploy.ps1`: deploy the committed `nvim-pack-lock.json` next to `init.lua`
-- `update-all.sh` / `update-all.ps1`: update nvim plugins (`vim.pack.update` with `force`) and treesitter parsers headlessly, both calls block until done
-- bootstrap scripts: refresh the stale tree-sitter-cli comment (v2 has no `auto_install`)
-- Docs synced with the implementation: Neovim references say 0.13+ (beta), the keybindings table matches the 40 leader maps plus the builtin dir `-`, and the MCP lists drop serena (3 servers remain: context7, playwright, repomix)
+The treesitter `FileType` autocmd now matches all filetypes and guards `vim.treesitter.start()` before setting fold and indent expressions, fixing the earlier pattern, which was the literal placeholder `<filetype>` and never matched. The treesitter block shrank to a single scheduled `install()` call, and the jdtls gate simplified to `vim.fn.has("win32") == 0`. Two more `init.lua` bugs were fixed: `completeopt` was re-set without `noselect` on every `LspAttach`, which silently undid the startup setting, and the global `root_markers = { ".git" }` LSP override had stopped tinymist, tombi, and codebook from attaching outside git repositories. `update-all.sh` and `update-all.ps1` now update nvim plugins (`vim.pack.update` with `force`) and treesitter parsers headlessly, with both calls blocking until done. The bootstrap scripts refresh the stale tree-sitter-cli comment because v2 has no `auto_install`, and `healthcheck.sh` stopped dying at the first recorded check: `set -e` aborted the run on counters and missing-tool checks that return nonzero by design, while the summary's `FAILED_CHECKS` count already decides the exit code.
 
-### Fixed
-
-- `healthcheck.sh`: `set -e` aborted the run at the first recorded check (counters and missing-tool checks return nonzero by design); the summary's `FAILED_CHECKS` count already decides the exit code
-- `init.lua`: the treesitter `FileType` pattern was the literal placeholder `<filetype>` and never matched
-- `init.lua`: `completeopt` was re-set without `noselect` on every `LspAttach`, silently undoing the startup setting
-- `init.lua`: the global `root_markers = { ".git" }` LSP override stopped tinymist, tombi, and codebook from attaching outside git repositories
-
-### Removed
-
-- oil.nvim (replaced by the builtin 0.13 dir plugin, `-` opens the parent natively) and fidget.nvim (native statusline progress)
-- Dead `loaded_netrw` gates, the legacy `$HOME`-root `init.lua` deploy/migrate/backup/restore paths, the dead `lua/` deploy guards, the tracked 0-byte root `init.lua` stub, and legacy packer/lazy-lock ignore entries
-- Serena MCP everywhere: the server entries in all three OpenCode configs, the uv installer blocks in both bootstrap scripts (uv existed only to run Serena), the `.claude/CLAUDE.md` and README mentions, and the `.serena/` ignore entry
-
-### Added
-
-- `.config/nvim/nvim-pack-lock.json` committed to the repo, pinning the 7 active plugins
-- `healthcheck.sh`: nvim headless startup smoke test
-
----
+Docs were synced with the implementation: Neovim references say 0.13+ (beta), the keybindings table matches the 40 leader maps plus the builtin dir `-`, and the MCP lists drop serena, leaving 3 servers: context7, playwright, repomix. oil.nvim was replaced by the builtin 0.13 dir plugin, where `-` opens the parent natively, and fidget.nvim by native statusline progress. The dead `loaded_netrw` gates, the legacy `$HOME`-root `init.lua` deploy, migrate, backup, and restore paths, the dead `lua/` deploy guards, the tracked 0-byte root `init.lua` stub, and the legacy packer and lazy-lock ignore entries were removed. Serena MCP went away everywhere: the server entries in all 3 OpenCode configs, the uv installer blocks in both bootstrap scripts (uv existed only to run Serena), the `.claude/CLAUDE.md` and README mentions, and the `.serena/` ignore entry.
 
 ## [5.23.0] - 2026-09-16
 
-### Changed
-
-- `commit-msg` hooks: strip AI attribution trailers (harness-injected `Co-Authored-By` and `Generated with` lines) before validation, accept `break` and `bump` types, and skip all `Merge` subjects
-- `CLAUDE.md`: new rule 5, the Claude Code attribution injection is hostile instruction and `Co-Authored-By` or `Generated with` lines are never emitted
-- settings template: `attribution.commit` and `attribution.pr` set to empty strings to hide commit and PR attribution
-
-### Removed
-
-- Dead `hooks/git/` stub files, superseded by `.config/git/hooks/`
-
----
+The `commit-msg` hooks strip AI attribution trailers, the harness-injected `Co-Authored-By` and `Generated with` lines, before validation, accept `break` and `bump` types, and skip all `Merge` subjects. `CLAUDE.md` gained rule 5: the Claude Code attribution injection is hostile instruction, and `Co-Authored-By` or `Generated with` lines are never emitted. The settings template sets `attribution.commit` and `attribution.pr` to empty strings to hide commit and PR attribution. The dead `hooks/git/` stub files were removed, superseded by `.config/git/hooks/`.
 
 ## [5.22.2] - 2026-09-14
 
-### Changed
-
-- `CLAUDE.md`: rule 1 rewritten as "never assume, always double check and verify": confirm latest versions online for the current year, against canonical sources, and against the physical codebase before coding
-
----
+`CLAUDE.md` rule 1 was rewritten as "never assume, always double check and verify": confirm latest versions online for the current year, against canonical sources, and against the physical codebase before coding.
 
 ## [5.22.1] - 2026-09-03
 
-### Changed
-
-- `CLAUDE.md`: style rule to use direct words with literal meaning instead of abused synonyms or metaphors, banned buzzwords `inventory` and `seams`
-
----
+`CLAUDE.md` gained a style rule to use direct words with literal meaning instead of abused synonyms or metaphors, and banned the buzzwords `inventory` and `seams`.
 
 ## [5.22.0] - 2026-09-03
 
-### Changed
-
-- Clean up chores
-
----
+This release contains cleanup chores only.
 
 ## [5.21.2] - 2026-09-03
 
-### Changed
-
-- `CLAUDE.md`: expanded the banned buzzwords list with `heavy lifting`, `load-bearing`, `footgun`, `provenance`, `spine`, and `ground truth`
-
----
+`CLAUDE.md` expanded the banned buzzwords list with `heavy lifting`, `load-bearing`, `footgun`, `provenance`, `spine`, and `ground truth`.
 
 ## [5.21.1] - 2026-09-01
 
-### Changed
-
-- settings template: `ANTHROPIC_DEFAULT_HAIKU_MODEL` is now `glm-5.3-flash[1m]`, so haiku-class calls use the flash model while sonnet/opus stay on `glm-5.3[1m]`
-
----
+The settings template now sets `ANTHROPIC_DEFAULT_HAIKU_MODEL` to `glm-5.3-flash[1m]`, so haiku-class calls use the flash model while sonnet and opus stay on `glm-5.3[1m]`.
 
 ## [5.21.0] - 2026-08-31
 
-### Added
+`deploy` now injects `.claude/settings.template.json` into `~/.claude/settings.json` with a fill-missing-only merge on both platforms: existing values and `env.ANTHROPIC_AUTH_TOKEN` are always preserved, missing keys are added recursively, and the file is created from the template when absent, using jq with a python3 fallback on Linux and macOS and native JSON on Windows. It honors `backup_before_deploy` by running `backup.sh` or `backup.ps1` as a subprocess before any mutation, where the config was previously read but never acted on, and writes the `~/.dotfiles-installed` marker with UTC timestamp, CHANGELOG version, and OS, which `uninstall.sh` already expected. New flags: `deploy.sh` gets `--skip-config` (~/dev scripts only), `--verbose` (per-file copy log), `--backup`, and `--help`, and `deploy.ps1` gets `-Backup`.
 
-- `deploy`: injects `.claude/settings.template.json` into `~/.claude/settings.json` with fill-missing-only merge on both platforms; existing values and `env.ANTHROPIC_AUTH_TOKEN` are always preserved, missing keys are added recursively, and the file is created from the template when absent (jq with python3 fallback on Linux/macOS, native JSON on Windows)
-- `deploy.sh`: flags `--skip-config` (~/dev scripts only), `--verbose` (per-file copy log), `--backup`, `--help`; `deploy.ps1`: `-Backup` switch
-- `deploy`: honors `backup_before_deploy` by running `backup.sh`/`backup.ps1` as a subprocess before any mutation (previously read but never acted on)
-- `deploy`: writes `~/.dotfiles-installed` marker with UTC timestamp, CHANGELOG version, and OS; `uninstall.sh` already expected it
-- `deploy.sh`: deep OpenCode MCP merge matching `deploy.ps1` semantics: template values win shared keys, user servers and user keys survive, malformed scalar `mcp` section repaired
-- `deploy.sh`: strips `cmd.exe` wrappers from a Windows-carried Claude LSP `marketplace.json` on Linux/macOS, mirroring the `gh.exe` gitconfig cleanup
-- `deploy.sh`: copies `.claude/quality-check.ps1` alongside the bash variant
-- `bootstrap.sh`: `--verbose` flag (previously documented in README but not implemented), matching `-VerboseMode` on Windows
-- `bootstrap`: installs coursier on Linux and installs scalafmt, scalafix, metals through it instead of silently skipping
-- `bootstrap`: `verify_installed` post-install checks for VS Code, coursier, and npm MCP packages
+`deploy.sh` gained the deep OpenCode MCP merge matching `deploy.ps1` semantics: template values win shared keys, user servers and user keys survive, and a malformed scalar `mcp` section is repaired. It strips `cmd.exe` wrappers from a Windows-carried Claude LSP `marketplace.json` on Linux and macOS, mirroring the `gh.exe` gitconfig cleanup, and copies `.claude/quality-check.ps1` alongside the bash variant. `bootstrap.sh` gained the `--verbose` flag, previously documented in README but not implemented, matching `-VerboseMode` on Windows. Bootstrap installs coursier on Linux and installs scalafmt, scalafix, and metals through it instead of silently skipping, and its `verify_installed` runs post-install checks for VS Code, coursier, and npm MCP packages.
 
-### Changed
-
-- `deploy.ps1`: copies an explicit `.claude` file list instead of the whole tree, matching `deploy.sh`; `hooks/*.disabled` and `tdd-guard/` no longer deploy
-- statusline registration no longer force-overwrites a customized `statusLine`; it is filled by the template only when missing
-- `bootstrap.sh`: `install_mcp_servers` reuses `npm_package_needs_update`, so outdated npm MCP packages update instead of being skipped forever
-- `common.sh`: `ensure_path` writes the PATH export to shell profiles only once and persists even when the directory is already in the session PATH
-
-### Removed
-
-- `bootstrap.ps1`: dead `-SkipUpdate`/`--skip-update` mapping (bootstrap installs missing packages only, and both forwarded paths were broken)
-- `deploy.sh`: unused `theme`, `categories`, `auto_update_repos` config reads
-- `linux.sh`: dead `remove_system_package` helper (defined, never invoked)
-
-### Fixed
-
-- `deploy.ps1`: recursive `Fill-Missing` emitted its return value into the caller's pipeline, writing `settings.json` as a top-level JSON array when nested objects were merged; recursion output is now discarded (verified in pwsh 7.6.5)
-- `bootstrap`: cleared pre-existing shellcheck warnings across `bootstrap.sh`, `common.sh`, and `linux.sh` so the repo's own pre-commit hook passes: 7 `A && B || C` install/track patterns converted to if/else, unquoted expansions, write-only `handled` variable
-- `README.md`: corrected config table (`auto_commit_changes`, `auto_update_repos`, `backup_before_deploy`), documented deploy flags and Claude Code settings injection with the full parameter list
-
----
+`deploy.ps1` copies an explicit `.claude` file list instead of the whole tree, matching `deploy.sh`, so `hooks/*.disabled` and `tdd-guard/` no longer deploy. Statusline registration no longer force-overwrites a customized `statusLine` and is filled by the template only when missing. `bootstrap.sh` reuses `npm_package_needs_update` in `install_mcp_servers`, so outdated npm MCP packages update instead of being skipped forever, and `common.sh` `ensure_path` writes the PATH export to shell profiles only once and persists even when the directory is already in the session PATH. Dead code went out: the `bootstrap.ps1` `-SkipUpdate` and `--skip-update` mapping (bootstrap installs missing packages only, and both forwarded paths were broken), the unused `theme`, `categories`, and `auto_update_repos` config reads in `deploy.sh`, and the `linux.sh` `remove_system_package` helper that was defined but never invoked. The recursive `Fill-Missing` in `deploy.ps1` emitted its return value into the caller's pipeline and wrote `settings.json` as a top-level JSON array when nested objects were merged, so the recursion output is now discarded (verified in pwsh 7.6.5). Pre-existing shellcheck warnings were cleared across `bootstrap.sh`, `common.sh`, and `linux.sh` so the repo's own pre-commit hook passes: 7 `A && B || C` install and track patterns became if/else, plus unquoted expansions and a write-only `handled` variable. The `README.md` config table was corrected (`auto_commit_changes`, `auto_update_repos`, `backup_before_deploy`) and deploy flags and Claude Code settings injection are documented with the full parameter list.
 
 ## [5.20.0] - 2026-08-23
 
-### Changed
-
-- `CLAUDE.md`: restructured Voice & Format into 5 numbered rules covering directness, punctuation and typography, sentence mechanics, banned words and phrases, and delivery consistency
-- `CLAUDE.md`: expanded the banned words list with conversational filler, framing tropes, promotional jargon, and attribution markers
-
----
+`CLAUDE.md` restructured Voice & Format into 5 numbered rules covering directness, punctuation and typography, sentence mechanics, banned words and phrases, and delivery consistency, and expanded the banned words list with conversational filler, framing tropes, promotional jargon, and attribution markers.
 
 ## [5.19.0] - 2026-08-09
 
-### Changed
-
-- `CLAUDE.md`: added a Voice & Format section covering prose tone, banned words, punctuation whitelist, and formatting rules
-- `CLAUDE.md`: trimmed rule 4 to code-simplicity only, moving prose and format rules into the new section
-
----
+`CLAUDE.md` added a Voice & Format section covering prose tone, banned words, punctuation whitelist, and formatting rules. Rule 4 was trimmed to code-simplicity only, with prose and format rules moved into the new section.
 
 ## [5.18.0] - 2026-07-07
 
-### Changed
-
-- `CLAUDE.md`: "Keep it plain" now forbids em dashes, writing tropes, and cliches, and requires minimal formatting
-- `CLAUDE.md`: removed the existing em dash in rule 4 and the dash substitute in rule 1 so the file follows the new rule
-
----
+`CLAUDE.md` tightened the "Keep it plain" rule to forbid em dashes, writing tropes, and cliches and to require minimal formatting. The existing em dash in rule 4 and the dash substitute in rule 1 were removed so the file follows the new rule.
 
 ## [5.17.0] - 2026-06-20
 
-### Changed
-
-- `CLAUDE.md`: strengthened the "Keep it plain" rule to require the simplest solution, code, and architecture for the task, and to comment only where non-obvious (avoid AI-style over-commenting)
-
----
+`CLAUDE.md` strengthened the "Keep it plain" rule to require the simplest solution, code, and architecture for the task, and to comment only where non-obvious instead of adding AI-style over-commenting.
 
 ## [5.16.0] - 2026-05-13
 
-### Changed
-
-- `CLAUDE.md`: added rule prohibiting manual bash commands for file editing (use built-in Edit/Write tools) to prevent corruption and side effects
-- `CLAUDE.md`: expanded baseline-first testing rule to require running all tests, coverage, and benchmarks before TDD implementation to establish a regression baseline
-
----
+`CLAUDE.md` gained a rule prohibiting manual bash commands for file editing: the built-in Edit and Write tools prevent corruption and side effects. The baseline-first testing rule was expanded to require running all tests, coverage, and benchmarks before TDD implementation. That early run establishes the regression baseline.
 
 ## [5.15.0] - 2026-04-22
 
-### Fixed
-
-- Replaced invalid `bun pm rm -g` with `bun remove -g` across `update-all.ps1`, `update-all.sh`, `bootstrap.ps1` — `bun pm` has no `rm` subcommand, causing the command to print usage help instead of removing the package
-- Replaced `uv self update` with the standalone installer (`irm https://astral.sh/uv/install.ps1 | iex` on Windows, `curl -LsSf https://astral.sh/uv/install.sh | sh` on Unix) — `uv self update` only works when uv was installed via the standalone installer, failing for pip-installed uv with a clear error
-
----
+Two updater commands were fixed because they could never succeed. `bun pm rm -g` is invalid because `bun pm` has no `rm` subcommand and only printed usage help, so `update-all.ps1`, `update-all.sh`, and `bootstrap.ps1` now call `bun remove -g`. `uv self update` only works when uv came from the standalone installer and fails with a clear error for pip-installed uv, so the update now reruns the standalone installer (`irm https://astral.sh/uv/install.ps1 | iex` on Windows, `curl -LsSf https://astral.sh/uv/install.sh | sh` on Unix).
 
 ## [5.14.0] - 2026-04-18
 
-### Changed
-
-- `bootstrap.ps1`: Claude Code CLI now installed via native `irm https://claude.ai/install.ps1 | iex` instead of bun, removing the bun dependency for Claude Code on Windows
-- `update-all.ps1`: Claude Code CLI updates now use native installer instead of bun
-- `update-all.sh`: Windows branch of Claude Code update now calls `pwsh.exe -Command "irm https://claude.ai/install.ps1 | iex"` instead of bun
-
-### Removed
-
-- Dropped npm registry version lookup for Claude Code on Windows — native installer is idempotent and self-versioning
-- Removed bun-specific PATH manipulation for Claude Code (bun global bin, npm shims)
-
----
+Claude Code on Windows moved from bun to the native installer: `bootstrap.ps1` now installs the CLI with `irm https://claude.ai/install.ps1 | iex`, `update-all.ps1` updates through the same installer, and the Windows branch of `update-all.sh` calls `pwsh.exe -Command "irm https://claude.ai/install.ps1 | iex"`. The bun dependency for Claude Code on Windows is gone. The npm registry version lookup was dropped because the native installer is idempotent and self-versioning, and the bun-specific PATH manipulation (bun global bin, npm shims) went with it.
 
 ## [5.13.1] - 2026-04-08
 
-### Fixed
-
-- `sync-system-instructions.sh/ps1`: stale per-repo `CLAUDE.md` is now removed during the copy phase, not only the commit phase, so repositories do not retain a stale copy between sync and commit
-
----
+`sync-system-instructions.sh` and `sync-system-instructions.ps1` now remove a stale per-repo `CLAUDE.md` during the copy phase rather than only the commit phase, so repositories no longer hold a stale copy in the window between sync and commit.
 
 ## [5.13.0] - 2026-04-08
 
-### Changed
-
-- `sync-system-instructions.sh/ps1`: removed CLAUDE.md from sync file list — it is no longer copied to individual repos
-- `AGENTS.md`, `GEMINI.md`, `RULES.md`: simplified to minimal `See [CLAUDE.md](~/.claude/CLAUDE.md)` redirect, pointing to the global `~/.claude/CLAUDE.md` instead of a per-repo copy
-- Both sync scripts now remove stale `CLAUDE.md` from repos during the commit phase (`git rm`)
-
-### Rationale
-
-CLAUDE.md is deployed globally to `~/.claude/CLAUDE.md` by `deploy.sh/ps1`. Duplicating it per-repo was redundant and created drift. Centralizing it means one source of truth — update once in dotfiles, deploy once, all repos reference the same file.
-
----
+`CLAUDE.md` left the sync file list in `sync-system-instructions.sh` and `sync-system-instructions.ps1`, so it is no longer copied into individual repos, and both scripts remove stale per-repo copies with `git rm` during the commit phase. `AGENTS.md`, `GEMINI.md`, and `RULES.md` shrank to a minimal `See [CLAUDE.md](~/.claude/CLAUDE.md)` redirect that points at the global `~/.claude/CLAUDE.md`. The per-repo copy was redundant and drifted: `deploy.sh` and `deploy.ps1` already deploy the file globally, so updating dotfiles once and deploying once leaves every repo reading the same file.
 
 ## [5.12.0] - 2026-04-08
 
-### Changed
-
-- Removed `.claude.json` template deployment from `deploy.sh` — Claude Code MCP servers are managed via plugins, not this config file. The template only wrote an empty `{ "mcpServers": {} }` and introduced unnecessary risk of overwriting user config.
-
-### Removed
-
-- `.claude.json.template` — orphaned file, no longer referenced by any script
-
----
+`deploy.sh` no longer deploys the `.claude.json` template: Claude Code MCP servers are managed via plugins, the template only wrote an empty `{ "mcpServers": {} }`, and deploying it risked overwriting user config. The orphaned `.claude.json.template`, referenced by no script, was deleted.
 
 ## [5.11.0] - 2026-04-08
 
-### Changed
-
-- Restructured CLAUDE.md: 6 sections into 4 (Rules, Tool Hierarchy, Testing, Workflow) by eliminating redundancy
-- Merged overlapping Prime Directives from 8 to 6 non-repeating rules
-- Consolidated Code Standards into Rules and Testing sections
-- Moved Verification Chain under Testing (where it logically belongs)
-- Removed duplicate instructions: testing rules appeared in 3 places, verify-everything in 2, no-bypassing restated no-test-modification
-
-### Reverted
-
-- AGENTS.md, GEMINI.md, RULES.md: restored `./CLAUDE.md` links (correct for deployed repos where CLAUDE.md is synced to root)
-
----
+`CLAUDE.md` was restructured from 6 sections into 4 (Rules, Tool Hierarchy, Testing, Workflow) by eliminating redundancy: overlapping Prime Directives merged from 8 to 6 non-repeating rules, Code Standards consolidated into Rules and Testing, and the Verification Chain moved under Testing. Duplicate instructions were removed because testing rules appeared in 3 places, verify-everything in 2, and no-bypassing restated no-test-modification. `AGENTS.md`, `GEMINI.md`, and `RULES.md` reverted to `./CLAUDE.md` links, which are correct for deployed repos where `CLAUDE.md` is synced to the repo root.
 
 ## [5.10.0] - 2026-02-28
 
-### Changed
+`CLAUDE.md` gained 5 protocol additions: Prime Directive #3 (never manually copy, everything must be programmatically coherent), Prime Directive #8 (simplest approach, never overcomplicate or add unnecessary comments), the Baseline First testing strategy (run all unit tests before implementing and fix existing failures), the No Skipped Tests strategy (detect and re-enable skipped tests, investigate root causes), and the When Stuck workflow (write one-off programs in `./playground` to isolate and test a hypothesis).
 
-**CLAUDE.md Protocol Enhancements**
-
-- Added Prime Directive #3: Never manually copy. Everything must be programmatically coherent.
-- Added Prime Directive #8: Simplest approach. Never overcomplicate or add unnecessary comments.
-- Added Testing Strategy: Baseline First - run all unit tests before implementing, fix existing failures.
-- Added Testing Strategy: No Skipped Tests - detect and re-enable skipped tests, investigate root causes.
-- Added Workflow section: When Stuck - write one-off programs in `./playground` to isolate and test intent/hypothesis.
-
-**Unified Statusline - Bash for All Platforms**
-
-- Removed `statusline.ps1` - Windows now uses `statusline.sh` via Git Bash/MSYS2
-- `deploy.sh`: Simplified statusline registration - single command for all platforms
-- `deploy.ps1`: Changed from `pwsh ... statusline.ps1` to `bash ~/.claude/statusline.sh`
-- Single source of truth for statusline logic across Linux, macOS, and Windows
-
-### Rationale
-
-Using a unified bash script simplifies maintenance and ensures consistent behavior across all platforms. Windows environments typically have Git Bash or MSYS2 available (required for many development tools), making bash a viable cross-platform option.
-
----
+The statusline unified on bash for every platform: `statusline.ps1` was removed, Windows now runs `statusline.sh` through Git Bash or MSYS2, `deploy.ps1` registers `bash ~/.claude/statusline.sh` instead of `pwsh ... statusline.ps1`, and `deploy.sh` simplified its registration to a single command for all platforms. One script now carries the statusline logic for Linux, macOS, and Windows, which simplifies maintenance and keeps behavior consistent. Windows machines typically have Git Bash or MSYS2 available because many development tools require them, so bash is a viable cross-platform option.
 
 ## [5.9.0] - 2026-02-13
 
-### Changed
+Windows opencode installation switched from the official bash installer to bun because that installer mishandles Windows paths when called from PowerShell (HOME variable confusion), while bun handles cross-platform path issues automatically. `update-all.ps1` and `bootstrap.ps1` now run `bun install -g opencode-ai` instead of `curl|bash`, and the complex HOME environment variable handling was simplified away. Linux and macOS keep the proven official installer.
 
-**OpenCode AI CLI Installation - Bun on Windows**
-
-- Switched Windows opencode installation from official bash installer to bun
-- `update-all.ps1`: Uses `bun install -g opencode-ai` instead of curl|bash
-- `bootstrap.ps1`: Uses `bun install -g opencode-ai` instead of curl|bash
-- Linux/macOS continue using the official bash installer (curl|bash)
-- Simplified code: removed complex HOME environment variable handling
-- Bun handles cross-platform path issues automatically
-
-### Added
-
-**PowerShell Profile - Argument Pass-through**
-
-- Added `@args` to Update-AllPackages function in profile
-- Allows passing flags like `-SkipPip` through the `up` alias
-- Example: `up -SkipPip` now correctly passes the skip flag
-
-**deploy.ps1 - Profile Functions Reload**
-
-- Added automatic reload of profile functions into Global scope after deploy
-- PowerShell's scope model prevents child scripts from modifying parent scope
-- Redefines `Update-AllPackages` function and `up` alias in Global scope
-- Changes to update-all.ps1 take effect immediately without restarting shell
-
-**update-all.sh - Skip PIP Summary**
-
-- Added `--skip-pip` status to summary output when flag is used
-- Shows "PIP (skipped by --skip-pip flag)" in completion summary
-
-### Rationale
-
-The official opencode bash installer has Windows path handling issues when called from PowerShell (HOME variable confusion). Bun provides a cleaner cross-platform installation method that avoids these issues entirely. The Windows scripts now use bun while Linux/macOS continue using the proven official installer.
-
----
+The `Update-AllPackages` function in the PowerShell profile gained `@args`, so flags like `-SkipPip` pass through the `up` alias and `up -SkipPip` now works. `deploy.ps1` reloads profile functions into the Global scope after deploying: PowerShell's scope model stops child scripts from modifying the parent scope, so the script redefines `Update-AllPackages` and the `up` alias globally and `update-all.ps1` changes take effect without a shell restart. `update-all.sh` now reports `--skip-pip` in its completion summary, which shows "PIP (skipped by --skip-pip flag)" when the flag is used.
 
 ## [5.8.0] - 2026-02-12
 
-### Fixed
+Fixed silent opencode update failures, which had two causes: old npm shims shadowing the official binary in PATH so version checks returned stale versions, and running opencode processes preventing the installer from replacing the executable on Windows. `update-all.ps1` now stops any running `opencode.exe` before running the official installer, because Windows cannot replace running executables. `update-all.sh` now cleans up npm shims before its version checks, probes the full binary path `$HOME/.opencode/bin/opencode` instead of relying on PATH, and removes old npm shims from `$NPM_CONFIG_PREFIX/bin` and `$APPDATA/npm` on Windows Git Bash, so npm shims can no longer cause false version detection.
 
-**update-all - OpenCode AI CLI Update Reliability (Windows)**
-
-- Added process termination before opencode update (Windows can't replace running executables)
-- Stops any running `opencode.exe` processes before running the official installer
-- Prevents silent update failures when opencode is running during update
-
-**update-all - OpenCode Version Detection (Bash)**
-
-- Aligned bash script with bootstrap: now cleans up npm shims BEFORE version checks
-- Uses full binary path `$HOME/.opencode/bin/opencode` for version checks instead of PATH
-- Removes old npm shims from `$NPM_CONFIG_PREFIX/bin` and `$APPDATA/npm` (Windows Git Bash)
-- Prevents false version detection from npm shim shadowing official binary
-
-**deploy.ps1 - Verbose Script Deployment Logging**
-
-- Added detailed logging showing source and destination timestamps for script files
-- Shows src time, dst time (before), and dst time (after) for each copied script
-- Helps diagnose deployment issues by making it clear which files were updated
-- Verbose output enabled by default for script deployments
-
-### Changed
-
-**update-all.sh - OpenCode Update Section Refactored**
-
-- Clean up npm/bun shims first, then check if binary exists at official installer location
-- Only proceed with update if binary exists at `$HOME/.opencode/bin/opencode`
-- Consistent with bootstrap script's approach to opencode installation management
-
-**Rationale:**
-
-The opencode update was failing silently in some cases due to:
-
-1. Old npm shims shadowing the official binary in PATH, causing version checks to return stale versions
-2. Running opencode processes preventing the installer from replacing the executable on Windows
-
-The fix aligns update-all.sh with bootstrap's proven approach: clean up shims first, use full binary paths for version checks, and terminate running processes before updating. The deploy script now provides verbose logging to help diagnose any future deployment issues.
-
----
+The opencode section of `update-all.sh` was refactored to match the bootstrap approach: clean npm and bun shims first, then update only if the binary exists at the official installer location `$HOME/.opencode/bin/opencode`. `deploy.ps1` gained verbose script deployment logging, on by default, that shows the source timestamp and the destination timestamp before and after each copied script, which makes deployment issues diagnosable.
 
 ## [5.7.0] - 2026-02-11
 
-### Fixed
+Fixed a class of false up-to-date detection where tools counted as installed because a file existed even though the command did not actually run. `bootstrap.ps1` now verifies `gcc --version` executes before skipping installation as up to date, through a `--version` check added to `Install-ScoopPackage`, so a broken shim triggers reinstallation instead of a skip.
 
-**Bootstrap - GCC Installation Verification (Windows)**
-
-- Fixed gcc installation check to verify the command actually works via `gcc --version`
-- Added command execution verification before skipping installation as "up to date"
-- Added `--version` verification in `Install-ScoopPackage` function
-- Fixes issue where gcc was skipped as "up to date" even though shim was broken
-- Now properly reinstalls gcc when command exists but doesn't execute correctly
-
-**update-all - Claude Code and OpenCode Update Verification (Windows)**
-
-- Fixed Claude Code CLI update to verify command actually works before attempting update
-- Fixed OpenCode AI CLI update to verify binary exists AND works before updating
-- Added robust version parsing using regex match instead of fragile `.Matches.Value`
-- Added execution verification after updates to confirm tools work
-- Added shim cleanup for old npm/bun installations that could shadow official binaries
-- Added handling for inconclusive version checks with fallback update attempts
-- Ensures PATH is properly set during skips, not just installs
-
-**Rationale:**
-
-The update-all script was trusting file existence checks and version string parsing without verifying tools actually work. This was the same class of issue as the gcc fix in bootstrap.ps1 - tools could be detected as "installed" but have broken shims or fail to execute. The fix adds actual execution verification (`--version` checks with exit code validation) to ensure tools are functional before and after updates. Version parsing now uses PowerShell regex match groups instead of `.Matches.Value` which can fail on unexpected output formats.
-
----
+`update-all.ps1` applies the same execution verification to the Claude Code and OpenCode CLIs: it verifies each command works before and after updating, parses versions with regex match groups instead of `.Matches.Value` because that call fails on unexpected output formats, cleans up old npm and bun installations that could shadow official binaries, falls back to an update attempt when a version check is inconclusive, and sets PATH during skips as well as installs.
 
 ## [5.6.0] - 2026-02-08
 
-### Fixed
-
-**Bootstrap - GCC Installation Verification (Windows)**
-
-- Fixed gcc installation check to verify the command actually works via `gcc --version`
-- Added command execution verification before skipping installation as "up to date"
-- Added `--version` verification in `Install-ScoopPackage` function
-- Fixes issue where gcc was skipped as "up to date" even though shim was broken
-- Now properly reinstalls gcc when command exists but doesn't execute correctly
-
-**Rationale:**
-
-The bootstrap was trusting Scoop's package state and file existence checks without verifying the command actually works. This caused broken shims to be detected as "installed", skipping the reinstallation. The fix adds actual execution verification (`gcc --version`) to ensure the tool is functional before considering it "up to date".
-
----
+Fixed the gcc installation check in `bootstrap.ps1` to verify the command actually works via `gcc --version` before skipping installation as up to date, with the `--version` verification added to `Install-ScoopPackage`. The bootstrap had trusted Scoop package state and file existence checks, so a broken shim was detected as installed and reinstallation was skipped. Execution verification now confirms the tool is functional before it counts as up to date.
 
 ## [5.5.0] - 2026-02-07
 
-### Added
+Added a pip skip flag to the update scripts: `--skip-pip` in `update-all.sh` and `-SkipPip` in `update-all.ps1` skip pip package updates to speed up update cycles when pip packages are stable. The README Bootstrap Options table gained an Update-All Options section documenting the flag.
 
-**update-all - Skip Pip Flag**
-
-- Added `--skip-pip` flag to bash update-all.sh script
-- Added `-SkipPip` parameter to PowerShell update-all.ps1 script
-- Allows skipping pip package updates to speed up update cycles
-- Useful when pip packages are stable and you want faster updates
-
-**Documentation**
-
-- Updated README Bootstrap Options table with new Update-All Options section
-- Documents `--skip-pip` / `-SkipPip` flag usage
-
-### Fixed
-
-**update-all - pip Update Method (Windows)**
-
-- Changed from `pip install --upgrade pip` to `python -m pip install --upgrade pip`
-- Using `python -m pip` is the recommended method on Windows
-- Avoids issues with pip launcher and multiple Python installations
-- Applies to both pip self-upgrade and package updates
-
-**update-all - OpenCode CLI Update**
-
-- Fixed version comparison to use npm registry as source of truth
-- Fixed opencode update to remove npm/bun-installed versions before running bash installer
-- Fixed version detection after update - now uses installed binary path directly
-- This prevents issues where npm/bun versions in PATH shadow the bash-installed binary
-- Corrected GitHub repo reference from `opencode-ai/opencode` to `anomalyco/opencode`
-- The opencode project migrated: `sst/opencode` -> `anomalyco/opencode`
-
-**Rationale:**
-
-OpenCode can be installed via npm (`opencode-ai` package) or via the official bash installer. Having both installed causes conflicts - the npm version in PATH would shadow the bash-installed binary. The fix removes npm/bun versions first, then runs the official installer which installs to `~/.opencode/bin/opencode`. Version checking now consistently uses npm registry to compare against the bash-installed version.
-
----
+Fixed pip updates on Windows by switching from `pip install --upgrade pip` to `python -m pip install --upgrade pip` for both the self-upgrade and package updates, the recommended method on Windows because it avoids pip launcher issues with multiple Python installations. The opencode update now uses the npm registry as the source of truth for version comparison, removes npm and bun installed versions before running the bash installer, and reads the version back from the installed binary path directly, because npm or bun copies in PATH shadowed the binary the installer had just placed at `~/.opencode/bin/opencode`. The GitHub repo reference was corrected from `opencode-ai/opencode` to `anomalyco/opencode`, following the project's migration from `sst/opencode`.
 
 ## [5.4.0] - 2026-02-05
 
-### Removed
-
-**Hookify Plugin Integration**
-
-- Removed all hookify quality check rules from dotfiles (15 rule files deleted)
-- Removed hookify deployment logic from `deploy.sh` and `deploy.ps1`
-- Removed hookify references from `README.md` and `allow.sh`
-- Hookify was causing PreToolUse hooks to fire on every tool call (including read-only tools like `find_symbol`)
-- Quality checks now handled by individual project configurations instead
-
-**Rationale:**
-
-Hookify's PreToolUse hook was registered without tool matchers, causing it to run on every single tool invocation. This included read-only tools like `find_symbol`, `Read`, and even the `Bash` tool. The plugin's event filtering logic had a bug where unmapped tools (event=None) would skip event filtering entirely, potentially loading all rules regardless of their event type. This caused significant performance degradation and unnecessary test runs.
-
-### Changed
-
-**Documentation Updates**
-
-- Updated README.md AI-Native Agentic Development section to remove hookify references
-- Updated Claude Code Hooks section to reflect current hook architecture
-- Clarified that quality checks are now project-specific configurations
-
----
+Removed the hookify plugin integration entirely: 15 rule files deleted, deployment logic dropped from `deploy.sh` and `deploy.ps1`, and references cleaned out of `README.md` and `allow.sh`. Hookify registered its PreToolUse hook without tool matchers, so it fired on every tool invocation, including read-only tools like `find_symbol`, `Read`, and `Bash`, and its event filtering had a bug where unmapped tools (event `None`) skipped filtering entirely and could load every rule regardless of event type. The result was heavy performance degradation and unnecessary test runs, and quality checks now live in individual project configurations. The README AI-Native Agentic Development and Claude Code Hooks sections were updated to match the new architecture.
 
 ## [5.3.14] - 2026-02-03
 
-### Fixed
-
-**Bootstrap - Test-Command False Positive (Windows)**
-
-- Removed all hookify quality check rules from dotfiles
-- Removed hookify deployment logic from `deploy.sh` and `deploy.ps1`
-- Removed hookify references from `README.md` and `allow.sh`
-- Hookify was causing PreToolUse hooks to fire on every tool call (including read-only tools like `find_symbol`)
-- Quality checks now handled by individual project configurations instead
-
-### Fixed
-
-**Bootstrap - Test-Command False Positive (Windows)**
-
-- Fixed bug in `bootstrap/lib/common.ps1` where `Test-Command` returned true for non-existent commands
-- Removed `where.exe` fallback that was causing false positives
-- `where.exe` returns error output (treated as truthy) when command not found
-- `Get-Command` alone is sufficient and handles PATH resolution correctly
-- This fixes SQLite installation on Windows (and any other tools that may have been skipped)
-
-**Rationale:**
-
-The `where.exe` fallback was intended as redundancy but introduced a bug: PowerShell treats any non-empty output (including error messages) as truthy. This caused the bootstrap to incorrectly detect tools as "already installed" when they weren't, skipping their installation.
-
----
+Fixed a false positive in `Test-Command` in `bootstrap/lib/common.ps1` that returned true for non-existent commands, which had skipped installation of tools such as SQLite on Windows. The `where.exe` fallback was removed: it returns error output when a command is not found, and PowerShell treats any non-empty output, including error messages, as truthy. `Get-Command` alone is sufficient and handles PATH resolution correctly.
 
 ## [5.3.13] - 2026-02-03
 
-### Added
-
-**Bootstrap - SQLite CLI (All Platforms)**
-
-- Added sqlite installation to bootstrap scripts for all platforms
-- Windows: installs via Scoop (`sqlite` package)
-- Linux/macOS: installs via Homebrew (`sqlite` package)
-- Installed in Phase 5 (CLI Tools) alongside fzf, zoxide, bat, eza, lazygit, gh, ripgrep, fd
-- Command: `sqlite3` for SQL database operations
-- Added package descriptions to platform-specific files
-
-**Documentation**
-
-- Updated README Core Features to include sqlite in CLI tools list
-- Updated CLI Tools section with sqlite entry
-
-### Changed
-
-**Bootstrap Options Table (README)**
-
-- Removed `-SkipUpdate` / `--skip-update` parameter row (deprecated in v5.3.12)
-
-**Rationale:**
-
-SQLite is a ubiquitous SQL database engine useful for development, testing, and local data processing. Having sqlite3 available by default enables quick database operations without additional setup.
-
----
+Added the sqlite CLI to bootstrap on all platforms, installed in Phase 5 (CLI Tools) alongside fzf, zoxide, bat, eza, lazygit, gh, ripgrep, and fd. Windows installs it via Scoop and Linux and macOS via Homebrew, both from the `sqlite` package, providing the `sqlite3` command for SQL database operations. Package descriptions were added to the platform-specific files, and the README Core Features and CLI Tools sections picked up the new entry. The README Bootstrap Options table dropped the deprecated `-SkipUpdate` / `--skip-update` row, deprecated in v5.3.12. Having `sqlite3` available by default enables quick database work for development, testing, and local data processing without extra setup.
 
 ## [5.3.12] - 2026-02-03
 
-### Added
+Added the GCC toolchain to the Windows bootstrap via Scoop in `bootstrap.ps1`, installed in Phase 3 (Language Servers) alongside llvm and clangd to give C and C++ development a native GCC option, with a package description added to `Get-PackageDescription`. `update-all` now passes `--include-unknown` to the winget upgrade command, so packages update even when winget does not recognize the source, which covers manually installed applications.
 
-**Bootstrap - GCC C/C++ Toolchain (Windows)**
-
-- Added gcc installation via Scoop to Windows bootstrap (bootstrap.ps1)
-- Installed in Phase 3 (Language Servers) alongside llvm/clangd
-- Provides native GCC toolchain for C/C++ development on Windows
-- Added package description to Get-PackageDescription function
-
-**update-all - Winget Unknown Package Support**
-
-- Added `--include-unknown` flag to winget upgrade command
-- Enables updating packages even when winget doesn't recognize the source
-- Improves coverage for manually installed applications
-
-### Removed
-
-**Bootstrap - Skip Update Parameter**
-
-- Removed `-SkipUpdate` / `--skip-update` parameter from bootstrap scripts
-- Removed Phase 7 (Update All) function from both bootstrap.ps1 and bootstrap.sh
-- Bootstrap now focuses solely on installation, not updates
-- Users can run `up` (update-all) separately after bootstrap
-
-**Documentation Cleanup**
-
-- Removed "Skip update" row from Bootstrap Options table in README
-
-**Rationale:**
-
-Bootstrap should focus on installation, not running updates. The update-all step added significant time to bootstrap and wasn't always necessary. Users can now run `up` explicitly when they want to update all packages. GCC was added to provide an alternative C/C++ toolchain on Windows for developers who prefer GCC over Clang/LLVM.
-
----
+Removed the `-SkipUpdate` / `--skip-update` parameter and the Phase 7 (Update All) step from both `bootstrap.ps1` and `bootstrap.sh`, because bootstrap should install and the update pass added a lot of time without always being necessary. Users run `up` (update-all) separately when they want updates. The README Bootstrap Options table dropped its "Skip update" row.
 
 ## [5.3.11] - 2026-02-01
 
-### Changed
+Restructured `CLAUDE.md` from an XML-tag format to plain markdown as a Development Protocol, dropping verbose tags like `<non-negotiables>`, `<core-principles>`, and `<verification-loop>` and consolidating the content into Prime Directives, Tool Hierarchy, Code Standards, Testing Strategy, and Workflow sections that are shorter and parse more cleanly.
 
-**CLAUDE.md - Simplified Development Protocol**
-
-- Restructured from XML-tag format to plain markdown "Development Protocol"
-- Removed verbose XML tags like `<non-negotiables>`, `<core-principles>`, `<verification-loop>`
-- Consolidated to clear sections: Prime Directives, Tool Hierarchy, Code Standards, Testing Strategy, Workflow
-- More concise and readable while maintaining all essential guidance
-- Improved AI parsing with cleaner structure
-
-**Claude Code Hooks - PostToolUse Deprecation**
-
-- Deprecated PostToolUse hooks in favor of Hookify rules
-- PostToolUse hooks replaced by per-language Hookify quality check reminders
-- Statusline hook remains active and auto-registered
-- Legacy hooks preserved as `.disabled` files for reference
-
-**Deploy Scripts**
-
-- deploy.sh: Removed PostToolUse hook deployment and registration
-- deploy.sh: Added hookify rules deployment with count display
-- deploy.ps1: Added hookify rules count display in deployment output
-- Both scripts now only register statusline in Claude Code settings.json
-
-**allow.sh**
-
-- Removed chmod for PostToolUse hooks
-- Added hookify rules detection and count display
-- Updated comments to reflect PostToolUse deprecation
-
-### Added
-
-**Hookify Rules Documentation**
-
-- README: Added comprehensive Hookify rules section with 16 language-specific rules
-- Documents rule names, enabled/disabled management, creation workflow
-- Lists all 16 supported languages: Go, Rust, Python, TypeScript, C#, PHP, Shell, Lua, C/C++, Markdown, YAML, JSON, Svelte, Typst, TOML
-
-### Removed
-
-**PostToolUse Hooks**
-
-- Deleted `.claude/hooks/post-tool-use.sh`
-- Deleted `.claude/hooks/post-tool-use.ps1`
-- Kept as `.disabled` files for reference
-
-**Rationale:**
-
-Hookify rules provide a better developer experience than PostToolUse hooks. They are rule-based, don't require script execution, work immediately after deployment without restart, and provide per-language quality check reminders that trigger automatically when editing files. The CLAUDE.md simplification makes the development protocol more approachable while maintaining all essential guidance.
-
----
+Deprecated the PostToolUse hooks in favor of Hookify rules: `.claude/hooks/post-tool-use.sh` and `.claude/hooks/post-tool-use.ps1` were deleted and kept as `.disabled` files for reference, `deploy.sh` stopped deploying and registering them and instead deploys hookify rules with a count display, `deploy.ps1` shows the same count in its output, `allow.sh` dropped the PostToolUse chmod and gained hookify rule detection with a count display, and both deploy scripts now register only the statusline in Claude Code `settings.json`. The statusline hook stays active and auto-registered. The README gained a Hookify rules section with the 16 language-specific rules (Go, Rust, Python, TypeScript, C#, PHP, Shell, Lua, C/C++, Markdown, YAML, JSON, Svelte, Typst, TOML), their names, how to enable and disable them, and the creation workflow. Hookify rules are rule-based, need no script execution, work immediately after deployment without a restart, and give per-language quality check reminders that trigger automatically when editing files.
 
 ## [5.3.10] - 2026-01-29
 
-### Changed
-
-**CLAUDE.md - Tool Usage Guidance**
-
-- Added guidance to prefer native built-in tools before plugin-provided tools
-- Native tools (Read, Write, Edit, Glob, Grep, Bash, LSP, Task) are faster and more reliable
-- Plugin tools should only be used when native tools lack the required capability
-
----
+Added tool usage guidance to `CLAUDE.md`: prefer native built-in tools (Read, Write, Edit, Glob, Grep, Bash, LSP, Task) over plugin-provided tools because they are faster and more reliable, and reach for plugin tools only when native tools lack the required capability.
 
 ## [5.3.9] - 2026-01-28
 
-### Fixed
-
-**deploy.ps1 - Cygwin chmod Conflict**
-
-- Fixed "Couldn't reserve space for cygwin's heap, Win32 error 0" error on Windows
-- The chmod.exe from Scoop's coreutils fails with Win32 error 487
-- Now skips chmod call if the command is from Scoop (Cygwin binary)
-- Executable bit is not needed on Windows anyway
-
-### Changed
-
-**PowerShell Profile - Alias Conflict**
-
-- Removed `update` alias to avoid conflict with Scoop's internal update function
-- Use `up` alias instead to run update-all script
-
-**Documentation - CLAUDE.md**
-
-- Refactored system instructions for clarity
-
----
+Fixed `deploy.ps1` failing with `Couldn't reserve space for cygwin's heap, Win32 error 0`: the `chmod.exe` from Scoop's coreutils is a Cygwin binary that fails with Win32 error 487, so the chmod call is now skipped when the command resolves to a Scoop source, and the executable bit is not needed on Windows anyway. The PowerShell profile dropped the `update` alias because it conflicted with Scoop's internal update function, and the `up` alias runs update-all instead. `CLAUDE.md` was refactored for clarity.
 
 ## [5.3.8] - 2026-01-25
 
-### Added
+Added mermaid-cli, a cross-platform CLI for generating Mermaid diagrams such as flowcharts and sequence diagrams, to bootstrap on all platforms. The `@mermaid-js/mermaid-cli` npm global package installs in Phase 4 (Linters and Formatters) of both `bootstrap.ps1` and `bootstrap.sh` and provides the `mmdc` command, and both installs respect `-DryRun`.
 
-**mermaid-cli - Diagram Generation Tool**
-
-- Added mermaid-cli installation to all platforms (Windows, Linux, macOS)
-- Package: `@mermaid-js/mermaid-cli` installed via npm global
-- Command: `mmdc` for generating Mermaid diagrams from CLI
-- Cross-platform support: works on all tested platforms
-- Installation in Phase 4 (Linters & Formatters) of bootstrap
-
-**ComfyUI Desktop - AI Image Generation (Windows)**
-
-- Added ComfyUI Desktop installation via winget for Windows 11
-- Package ID: `Comfy.ComfyUI-Desktop` installed via winget
-- Installation in Phase 5.5 (Development Tools) of bootstrap
-- New `gui_apps` category in packages.yaml for GUI applications
-- Requires `comfy install` post-installation to complete setup
-
-**Documentation**
-
-- Added mermaid-cli to README CLI tools section
-- Added ComfyUI Desktop to README AI Applications section
-- Added GUI Applications Post-Installation subsection with comfy install instructions
-- Updated packages.yaml header to document gui_apps category
-- Updated CLI tools count with mermaid-cli
-
-### Changed
-
-**packages.yaml**
-
-- Added `gui_apps` category for platform-specific GUI applications
-- Added mermaid_cli entry to cli_tools section
-- Documentation header updated to reflect new category
-
-**bootstrap.ps1 (Windows)**
-
-- Added mermaid-cli installation in Phase 4 (Linters & Formatters)
-- Added ComfyUI Desktop installation in Phase 5.5 (Development Tools)
-- Both tools respect -DryRun parameter
-
-**bootstrap.sh (Linux/macOS)**
-
-- Added mermaid-cli installation for Unix-like systems
-- Added documentation note about ComfyUI requiring manual installation on Linux
-
-**windows.ps1**
-
-- Added package descriptions for `mmdc` and `ComfyUI`
-
-**Rationale:**
-
-mermaid-cli is a cross-platform CLI tool for generating Mermaid diagrams (flowcharts, sequence diagrams, etc.). ComfyUI Desktop is a Windows-only GUI application for AI image generation. The bootstrap script handles the initial installation, but ComfyUI requires running `comfy install` afterward to download models and complete setup.
-
----
+Added ComfyUI Desktop, a Windows-only GUI application for AI image generation, via winget on Windows 11 with package ID `Comfy.ComfyUI-Desktop`, installed in Phase 5.5 (Development Tools) of `bootstrap.ps1`. `packages.yaml` gained a `gui_apps` category for platform-specific GUI applications plus a `mermaid_cli` entry under `cli_tools`, with the header updated to document the new category. `windows.ps1` gained package descriptions for `mmdc` and `ComfyUI`, and `bootstrap.sh` notes that ComfyUI requires manual installation on Linux. ComfyUI needs `comfy install` run after installation to download models and complete setup, covered by a new GUI Applications Post-Installation subsection in the README alongside the mermaid-cli CLI tools entry and the updated CLI tools count.
 
 ## [5.3.7] - 2026-01-24
 
-### Changed
-
-**README - Core Features Corrections**
-
-- Corrected LSP count from 19 to 20
-- Changed "Cross-Platform Support" to "Tested Platforms"
-- Removed macOS from tested platforms list
-- Updated Claude Code hooks to mention PostToolUse and Stop hooks
-- Updated Neovim description to 0.12+ with native built-in features
-- Changed Core Features to use plain lists without bold headers
-- Updated platform badge to Windows/Linux only
-
-**Rationale:**
-
-The README now accurately reflects the actual implementation. Neovim 0.12+ uses built-in package manager and LSP/Treesitter configuration, not lazy.nvim. macOS support exists in the codebase but is not part of the actively tested platforms.
-
----
+Corrected the README Core Features to match the implementation: the LSP count went from 19 to 20, the platform badge dropped macOS and shows Windows and Linux only, "Cross-Platform Support" was renamed "Tested Platforms", the Claude Code hooks text now mentions the PostToolUse and Stop hooks, and the Neovim description moved to 0.12+ with native built-in features, since 0.12 uses the built-in package manager and LSP and Treesitter configuration rather than lazy.nvim. Core Features switched to plain lists without bold headers. macOS support still exists in the codebase but is not an actively tested platform.
 
 ## [5.3.6] - 2026-01-24
 
-### Changed
-
-**README - Core Features Enhancement**
-
-- Moved Core Features section to top of README
-- Corrected counts: 19 LSP servers, 30 Treesitter parsers (verified from code)
-- Added Neovim 0.12 with lazy.nvim plugin manager
-- Added WezTerm GPU-accelerated terminal with IosevkaTerm Nerd Font
-- Added tested platforms: Ubuntu 26.04 LTS, Windows 11 with PowerShell 7+
-- Added full vibecoding support with Claude Code and OpenCode
-- Added quality hooks: Git pre-commit/commit-msg + Claude Code PostToolUse
-- Added system instruction sync across repos
-- Added Rose Pine theme mention
-- Added MCP servers count (4)
-
-**Rationale:**
-
-The Core Features section now appears first and contains accurate, verified information from the actual codebase. Users can immediately see what platforms are tested, what tools are included, and what AI capabilities are supported.
-
----
+Moved the Core Features section to the top of the README and rebuilt it with counts verified from the code: 19 LSP servers, 30 Treesitter parsers, and 4 MCP servers. The section now lists Neovim 0.12 with the lazy.nvim plugin manager, the GPU-accelerated WezTerm terminal with IosevkaTerm Nerd Font, tested platforms Ubuntu 26.04 LTS and Windows 11 with PowerShell 7+, full vibecoding support with Claude Code and OpenCode, the Git pre-commit and commit-msg quality hooks plus the Claude Code PostToolUse hook, system instruction sync across repos, and the Rose Pine theme. Users can now see the tested platforms, included tools, and AI capabilities at a glance.
 
 ## [5.3.5] - 2026-01-24
 
-### Changed
-
-**README Structure and Content**
-
-- Renamed "Core Features & Selling Points" to "Core Features"
-- Clarified MCP servers work for both Claude Code and OpenCode
-- Merged bootstrap options, configuration, and health/troubleshooting into "Available Commands"
-- Removed redundant "Updating" section
-
-### Added
-
-- Manual zai-mcp-server patching instructions for Windows
-
-**Rationale:**
-
-The README structure is now more cohesive with all command-related information grouped together. The updating section was redundant since running bootstrap again accomplishes the same thing.
-
----
+Reorganized the README: "Core Features & Selling Points" was renamed "Core Features", the MCP servers wording clarifies they serve both Claude Code and OpenCode, and the bootstrap options, configuration, and health and troubleshooting sections merged into "Available Commands". The "Updating" section was dropped as redundant, since running bootstrap again accomplishes the same thing. Added manual `zai-mcp-server` patching instructions for Windows.
 
 ## [5.3.4] - 2026-01-24
 
-### Changed
+README.md was condensed from 950 lines to 286 lines, about a 70% reduction, by consolidating documentation that had been scattered across 10+ markdown files into one focused README, because the spread made maintenance difficult and duplicated information. The new README carries a header with badges, a quick start for Linux/macOS/Windows with external references, an available commands table, core features and selling points, a complete tools/packages matrix taken from TOOLS.md, hooks and config merging taken from HOOKS.md, a Neovim keybindings table with 40+ bindings from `init.lua`, bootstrap options, optional configuration, updating instructions, health and troubleshooting, and a changelog reference. The quick start also links to DOCKER_K8S.md and CHANGELOG.md, which remain as external references for specialized content.
 
-**Documentation - README Optimization**
-
-- Condensed README.md from 950 lines to 286 lines (~70% reduction)
-- Consolidated multi-file documentation into single focused README
-- Added Quick Start links to DOCKER_K8S.md and CHANGELOG.md
-- Migrated all essential content from deleted docs into README
-- Improved readability with clearer section organization
-
-**README Structure**
-
-- Header with badges
-- Quick Start (Linux/macOS/Windows) with external references
-- Available Commands table
-- Core Features & Selling Points
-- Complete Tools/Packages Matrix (from TOOLS.md)
-- Hooks & Config Merging (from HOOKS.md)
-- Neovim Keybindings table (40+ keybindings from init.lua)
-- Bootstrap Options
-- Configuration (Optional)
-- Updating instructions
-- Health & Troubleshooting
-- Changelog reference
-
-### Removed
-
-**Deprecated Documentation Files**
-
-- TOOLS.md - content migrated to README Tools/Packages Matrix section
-- HOOKS.md - content migrated to README Hooks & Config Merging section
-- ARCHITECTURE.md - system architecture details no longer needed
-- BRIDGE.md - bridge approach documentation consolidated
-- QUICKREF.md - quick reference content integrated into README
-- HISTORY.md - legacy file museum no longer required
-- COMPLETION_SUMMARY.md - temporary summary file
-- FIX_SUMMARY.md - temporary fix tracking file
-
-### Fixed
-
-- Restored AGENTS.md, GEMINI.md, RULES.md for deployment via sync-system-instructions
-- All system instruction files redirect to CLAUDE.md for unified AI guidance
-
-**Rationale:**
-
-The documentation was scattered across 10+ markdown files, making maintenance difficult and causing information duplication. Consolidating essential information into a single, focused README reduces maintenance burden while preserving all important content. External references (DOCKER_K8S.md, CHANGELOG.md) remain for specialized content.
-
----
+Eight deprecated documentation files were removed: the content of TOOLS.md and HOOKS.md moved into the matching README sections, ARCHITECTURE.md's system architecture details were dropped as no longer needed, BRIDGE.md's bridge approach documentation was consolidated, QUICKREF.md's quick reference content was integrated into the README, the HISTORY.md legacy file museum and the temporary COMPLETION_SUMMARY.md and FIX_SUMMARY.md files were deleted. AGENTS.md, GEMINI.md, and RULES.md were restored so `sync-system-instructions` can deploy them, and all three redirect to CLAUDE.md for unified AI guidance.
 
 ## [5.3.3] - 2026-01-24
 
-### Added
+The yazi terminal file manager was added to `bootstrap/config/packages.yaml` for all platforms, with a minimum version requirement of 0.3.0. Debian and Ubuntu install it through cargo (`yazi-cli`), Arch through pacman, macOS through Homebrew, and Windows through Scoop. Shell integration came with a `y()` wrapper in `.bash_aliases` for bash and Git Bash, in `.zshrc` for zsh, and in `Microsoft.PowerShell_profile.ps1` for PowerShell 7+. Every wrapper implements the cd-on-exit pattern, it changes to the last directory visited in yazi by reading a temp file that captures yazi's exit directory, which makes yazi a drop-in replacement for `ranger` with better performance. Yazi is written in Rust and brings asynchronous file operations, thumbnail rendering, and extensive customization.
 
-**Yazi Terminal File Manager**
-
-- Added yazi package installation to bootstrap/config/packages.yaml for all platforms
-- Linux Debian/Ubuntu: installs via cargo (yazi-cli)
-- Linux Arch: installs via pacman
-- macOS: installs via Homebrew
-- Windows: installs via Scoop
-- Minimum version requirement: 0.3.0
-
-**Shell Integration**
-
-- Added `y()` wrapper function to .bash_aliases for bash/Git Bash
-- Added `y()` wrapper function to .zshrc for zsh
-- Added `y()` function to Microsoft.PowerShell_profile.ps1 for PowerShell 7+
-- All wrappers implement cd-on-exit pattern: changes to the last directory visited in yazi
-- Uses temp file to capture yazi's exit directory for seamless navigation
-
-**PowerShell Yazi Configuration**
-
-- Added YAZI_FILE_ONE environment variable setup for file previews
-- Detects Git's file.exe from both Program Files and Scoop installations
-- Enables proper file type detection in yazi previews on Windows
-
-### Changed
-
-**Documentation**
-
-- Added MCP Server Fix for Windows (Manual) section to README.md
-- Documents cmd.exe /c wrapper pattern for npx-based MCP servers
-- Example configuration for zai-mcp-server
-- Updated TOOLS.md to include yazi in CLI tools list
-
-**Rationale:**
-
-Yazi is a modern, blazing-fast terminal file manager written in Rust. It offers asynchronous file operations, thumbnail rendering, and extensive customization. The cd-on-exit wrapper makes it a drop-in replacement for `ranger` with better performance.
-
----
+The PowerShell profile also sets up the `YAZI_FILE_ONE` environment variable for file previews, detecting Git's `file.exe` in both Program Files and Scoop installations so file type detection works in yazi previews on Windows. README.md gained an MCP Server Fix for Windows (Manual) section documenting the `cmd.exe /c` wrapper pattern for npx-based MCP servers with an example configuration for `zai-mcp-server`, and TOOLS.md listed yazi in its CLI tools.
 
 ## [5.3.2] - 2026-01-24
 
-### Added
-
-**Windows LSP Marketplace Auto-Patching**
-
-- Added `Patch-ClaudeLspMarketplace` function to deploy.ps1 for automatic Windows LSP fix
-- Added LSP marketplace patching to bootstrap.ps1 Phase 6 (Deploy)
-- Automatically wraps npm-installed LSP servers with cmd.exe on Windows:
-  - typescript-language-server
-  - pyright-langserver
-  - intelephense
-- Patching is idempotent: checks if already patched before modifying
-- Survives marketplace updates when scripts are re-run
-- Uses regex-based string replacement to handle PowerShell JSON parsing limitations
-
-### Changed
-
-**README Documentation**
-
-- Updated LSP Fix for Windows section to reflect automatic patching
-- Removed manual patching instructions
-- Added note about idempotent patching behavior
-
-### Fixed
-
-- PowerShell's ConvertFrom-Json cannot handle case-sensitive duplicate keys (`.c` vs `.C` in marketplace.json)
-- Bypassed by using direct string replacement instead of JSON parsing
-
-**Rationale:**
-
-The Windows LSP spawn EINVAL issue was previously documented as a manual fix. This automation eliminates the manual step while being safe to run multiple times. The regex approach avoids PowerShell's JSON parsing limitations with case-sensitive keys.
-
----
+A `Patch-ClaudeLspMarketplace` function in `deploy.ps1`, also wired into `bootstrap.ps1` Phase 6 (Deploy), automatically wraps the npm-installed LSP servers `typescript-language-server`, `pyright-langserver`, and `intelephense` with `cmd.exe` on Windows, fixing the LSP spawn EINVAL issue that previously required a manual patch. The patching is idempotent, it checks whether a server is already wrapped before modifying it, and it survives marketplace updates because the scripts re-run it. It works through regex-based string replacement rather than JSON parsing, because PowerShell's `ConvertFrom-Json` cannot handle case-sensitive duplicate keys like `.c` versus `.C` in `marketplace.json`. The README's LSP fix for Windows section now describes the automatic patching, the manual patching instructions are gone, and a note documents the idempotent behavior.
 
 ## [5.3.1] - 2026-01-23
 
-### Fixed
-
-- git-update-repos.ps1: Fixed scope shadowing bug in Wc function where parameter $c shadowed script-scoped $C hashtable, now uses $script:C.N for explicit script scope access
+`git-update-repos.ps1` fixed a scope shadowing bug in its `Wc` function, where the parameter `$c` shadowed the script-scoped `$C` hashtable, which now uses `$script:C.N` for explicit script scope access.
 
 ## [5.3.0] - 2026-01-23
 
-### Added
+The Serena MCP server joined the OpenCode configurations on Windows, Linux, and macOS, providing semantic code navigation, symbol-level editing, and LSP-powered code analysis. It runs through `uvx` straight from GitHub (`git+https://github.com/oraios/serena`), the recommended pattern for MCP servers because it eliminates local Python package management complexity, always runs the latest version, and simplifies updates. The `uv` package manager, required for Serena's `uvx` invocation and recommended for modern Python projects, is now installed in Phase 2 (Core SDKs) alongside Python and Node.js by both bootstrap scripts, through `astral.sh/uv/install.ps1` on Windows and `astral.sh/uv/install.sh` on Linux and macOS, and `update-all.ps1` and `update-all.sh` self-update it alongside the other package managers. Phase 5.25 (MCP Servers) carries the serena configuration, `deploy.sh` lists serena among the universal MCPs, and `deploy.ps1` merges the MCP config across all platforms with conflict detection and hardened scalar handling.
 
-**Serena MCP Integration**
-
-- Added Serena MCP server to OpenCode configurations across all platforms (Windows, Linux, macOS)
-- Serena provides semantic code navigation, symbol-level editing, and LSP-powered code analysis
-- Configured to run via uvx from GitHub (git+https://github.com/oraios/serena)
-- Eliminates local Python package management for Serena - always runs latest version
-
-**uv Python Package Manager**
-
-- Added uv installation to bootstrap scripts (both PowerShell and bash)
-- uv is now installed in Phase 2 (Core SDKs) alongside Python and Node.js
-- Required for running Serena via uvx and recommended for modern Python projects
-- Windows: installed via official PowerShell script (astral.sh/uv/install.ps1)
-- Linux/macOS: installed via official bash script (astral.sh/uv/install.sh)
-
-**uv Self-Update**
-
-- Added uv self-update to update-all.ps1 and update-all.sh scripts
-- uv updates automatically when running update-all alongside other package managers
-
-**CLAUDE.md Documentation**
-
-- Restructured CLAUDE.md with XML-style tags for better AI parsing
-- Added Serena MCP to tool usage documentation
-- Enhanced requirements contract with task planning step
-
-### Changed
-
-**OpenCode Configuration**
-
-- deploy.ps1: Enhanced OpenCode config merge with robust scalar handling
-- deploy.sh: Added serena to universal MCPs list
-- MCP config now merges across all platforms with conflict detection
-
-**Bootstrap Phases**
-
-- Phase 2 (Core SDKs) now includes uv installation
-- Phase 5.25 (MCP Servers) includes serena configuration
-
-### Fixed
-
-**deploy.ps1 - Scalar MCP Section Handling**
-
-- Fixed issue where bad merges could leave mcp section as a scalar instead of object
-- Added type checking to detect and repair malformed mcp sections
-- Prevents deploy failures from previous manual config edits
-
-**Rationale:**
-
-Using uvx to run Serena directly from GitHub is the recommended approach for MCP servers. This eliminates local package management complexity, ensures the latest version is always used, and simplifies updates. The uv package manager itself is a modern Python tooling replacement that significantly speeds up package operations.
-
----
+`deploy.ps1` also gained type checking that detects and repairs malformed `mcp` sections left as scalars by earlier bad merges, preventing deploy failures caused by previous manual config edits. CLAUDE.md was restructured with XML-style tags for better AI parsing, documents Serena MCP in its tool usage section, and extends the requirements contract with a task planning step.
 
 ## [5.2.27] - 2026-01-23
 
-### Fixed
-
-**CLAUDE.md - XML Tags and Spelling**
-
-- Fixed all missing closing XML tags (17 sections were unclosed)
-- Fixed spelling errors: persspective→perspective, offical→official, oudated→outdated
-- Fixed triple-S typo: ADDRESSS→ADDRESS
-- Fixed grammar: "implement any thing"→"implementing anything"
-- Fixed word choice: "bolting"→"bolding"
-- Fixed pluralization: "documentations"→"documentation"
-- Fixed capitalization: "pdfs"→"PDFs"
-- Fixed terminology: "equivalences"→"equivalents"
-- Removed standalone period that created awkward formatting
-- Cleaned up migration example phrasing
-
----
+CLAUDE.md cleanup closed all 17 unclosed XML sections and fixed a batch of wording errors: the misspellings "persspective" to "perspective", "offical" to "official", and "oudated" to "outdated", the triple-S typo "ADDRESSS" to "ADDRESS", the grammar fix "implement any thing" to "implementing anything", the word choice fix "bolting" to "bolding", the pluralization fix "documentations" to "documentation", the capitalization fix "pdfs" to "PDFs", and the terminology fix "equivalences" to "equivalents". A standalone period that created awkward formatting was removed and the migration example phrasing was cleaned up.
 
 ## [5.2.26] - 2026-01-22
 
-### Changed
-
-**CLAUDE.md - Plain Text Format**
-
-- Converted all markdown headers to XML tag format (e.g., ## Non-Negotiables → <non-negotiables>)
-- Removed all bold (**text**) and italic (_text_) markdown formatting
-- Headers now use descriptive tag names for better AI parsing
-- Content remains plain unordered and numbered lists
-
-### Added
-
-**CLAUDE.md - File Handling Section**
-
-- Added new <file-handling> section after <tool-usage>
-- Documents how to work with diverse file types (documents, slideshows, spreadsheets, PDFs)
-- Includes guidance on transpilation, pandoc, python-docx, python-pptx, CSV handling
-
-**Rationale:**
-
-Plain text formatting with XML-style headers improves Claude Code's parsing of system instructions while maintaining readability for humans.
-
----
+CLAUDE.md converted its markdown headers to XML tag format, so `## Non-Negotiables` became `<non-negotiables>`, and dropped all bold and italic markup, because plain text with XML-style headers parses better as Claude Code system instructions while staying readable for humans. Headers now use descriptive tag names for better AI parsing and the content stays plain unordered and numbered lists. A new `<file-handling>` section after `<tool-usage>` documents how to work with documents, slideshows, spreadsheets, and PDFs, with guidance on transpilation, `pandoc`, `python-docx`, `python-pptx`, and CSV handling.
 
 ## [5.2.25] - 2026-01-21
 
-### Changed
+The update-all scripts now show all package manager output by default. Output capture and filtering were removed from `update-all.ps1` and `update-all.sh`, the `Invoke-Update` function gave way to direct command execution, and the bash script's `head -20` output limits are gone, so Scoop bucket and app updates, winget installation and download progress, Chocolatey package upgrade details, npm, pnpm, bun, and yarn package updates, go, gup, cargo, and rustup tool updates, dotnet tool update results, pip package upgrade operations, and poetry self-update output all stream straight to the console.
 
-**update-all Scripts - Verbose Mode as Default**
-
-- Changed output behavior to show all package manager output by default
-- Removed output capture and filtering from update-all.ps1 and update-all.sh
-- Removed `Invoke-Update` function in favor of direct command execution
-- Removed `head -20` output limits from bash script
-- All package manager output now streams directly to console
-
-**Package Manager Updates - Full Output Visibility:**
-
-- Scoop: Shows full bucket and app update output
-- Winget: Shows installation/download progress without filtering
-- Chocolatey: Shows package upgrade details
-- NPM/PNPM/BUN/YARN: Shows all package update output
-- Go/GUP/Cargo/Rustup: Shows full tool update output
-- DOTNET: Shows individual tool update results
-- PIP: Shows all package upgrade operations
-- Poetry: Shows self update output
-
-### Removed
-
-**jdtls Windows Support**
-
-- Removed jdtls installation from Windows bootstrap (bootstrap.ps1)
-- Removed jdtls from Windows platform display name mapping
-- Removed Windows from jdtls platform support in packages.yaml
-- Neovim config excludes jdtls from LSP list on Windows platforms
-- jdtls remains available on Linux and macOS via Homebrew
-
-**Rationale:**
-
-jdtls (Eclipse JDT.LS) is unusable on Windows due to path handling issues and lack of proper Scoop integration. Users requiring Java development on Windows should use WSL or a full IDE.
-
-### Fixed
-
-- README example output now correctly reflects jdtls exclusion on Windows
-- TOOLS.md documents jdtls as Linux/macOS only with Windows limitation note
-
----
+jdtls lost its Windows support because Eclipse JDT.LS is unusable there, its path handling breaks and Scoop integration is missing, so anyone doing Java development on Windows should use WSL or a full IDE. `bootstrap.ps1` no longer installs it, the Windows platform display name mapping and the `packages.yaml` Windows support entry are gone, and the Neovim config excludes jdtls from its LSP list on Windows, while Linux and macOS keep it through Homebrew. The README example output reflects the exclusion and TOOLS.md documents jdtls as Linux/macOS only with a note on the Windows limitation.
 
 ## [5.2.24] - 2026-01-20
 
-### Changed
-
-**Claude Code StatusLine - Enhanced Diagnostics**
-
-- Added debug logging to statusline.ps1 for context window troubleshooting
-- Logs raw JSON input, context window data, and calculated values to `%TEMP%\claude-statusline-debug.log`
-- Added visible debug indicator `[r:X% u:Y%]` when context percentages are both zero
-- Debug output helps diagnose `used_percentage`/`remaining_percentage` issues reported in Claude Code 2.1.12
-
-**update-all.ps1 - Sourced Script Compatibility**
-
-- Changed `exit 1` and `exit 0` to `return` in Main function
-- Prevents terminal from closing when script is sourced (dot-sourced) instead of executed directly
-- Improves compatibility when calling update-all from other scripts or interactive sessions
-
----
+`statusline.ps1` gained debug logging for context window troubleshooting, writing raw JSON input, context window data, and calculated values to `%TEMP%\claude-statusline-debug.log`, plus a visible `[r:X% u:Y%]` debug indicator when both context percentages read zero, which helps diagnose the `used_percentage` and `remaining_percentage` issues reported in Claude Code 2.1.12. In `update-all.ps1`, `exit 1` and `exit 0` in the Main function became `return` so a terminal stays open when the script is dot-sourced instead of executed directly, which improves compatibility when it runs from other scripts or interactive sessions.
 
 ## [5.2.23] - 2026-01-19
 
-### Changed
+The Scoop Node.js package changed from `nodejs-lts` to `nodejs` across the Windows scripts: `bootstrap/bootstrap.ps1` installs the new package, `bootstrap/lib/common.ps1` handles the `nodejs` directory path, `cleanup-scoop-path.ps1` excludes `nodejs` from its cleanup regex, `cleanup-npm-trash.ps1` and `update-all.sh` follow the new npm module paths, and `bootstrap/config/packages.yaml` lists `nodejs`.
 
-**Node.js Package Name Standardization**
-
-- Changed Scoop package from `nodejs-lts` to `nodejs` across all Windows scripts
-- Updated `bootstrap/bootstrap.ps1` to use `nodejs` package
-- Updated `bootstrap/lib/common.ps1` path handling for `nodejs` directory
-- Updated `cleanup-scoop-path.ps1` regex pattern to exclude `nodejs` from cleanup
-- Updated `cleanup-npm-trash.ps1` npm module paths for `nodejs`
-- Updated `update-all.sh` npm global module paths for `nodejs`
-- Updated `bootstrap/config/packages.yaml` to use `nodejs` package
-
-### Removed
-
-**Test Infrastructure**
-
-- Removed all test files and test infrastructure (`tests/` directory)
-- Removed `coverage.json` and test artifacts
-- Removed all PowerShell test files (`.Tests.ps1`)
-- Removed all BATS test files (`.bats`)
-- Removed test helper scripts and coverage tools
-
-**Rationale:**
-Tests were polluting User PATH registry with temporary test directories. Environment-specific testing adds minimal value for a personal dotfiles repository.
-
----
+All test infrastructure was removed: the `tests/` directory, `coverage.json` and other test artifacts, the `.Tests.ps1` and `.bats` files, and the test helper scripts with their coverage tools. The tests polluted the User PATH registry with temporary test directories, and environment-specific testing adds minimal value to a personal dotfiles repository.
 
 ## [5.2.22] - 2026-01-18
 
-### Changed
-
-**update-all.ps1 - Enhanced Package Management**
-
-- Simplified PIP update to use `pip freeze` one-liner for updating all globally installed Python packages
-- Previously only updated `--user` packages, now updates all packages in the environment
-- Added CLAUDE CODE CLI update section with version verification against npm registry
-- Added OPENCODE AI CLI update section with version verification against npm registry
-- Both CLI sections skip updates if already at latest version, showing current version
-
-**Package Update Behavior:**
-
-- PIP: Now runs `pip freeze | %{$_.Split('==')[0]} | % { pip install --upgrade $_ }` to update all packages
-- Claude Code CLI: Checks `@anthropic-ai/claude-code` on npm, runs official installer if outdated
-- OpenCode CLI: Checks `opencode-ai` on npm, runs official installer via bash if outdated
-
-### Fixed
-
-- PowerShell update-all script now matches bash script functionality for AI CLI tool updates
-- All three sections (PIP, Claude Code, OpenCode) now properly increment counters
-
----
+`update-all.ps1` simplified its pip update to a `pip freeze` one-liner, `pip freeze | %{$_.Split('==')[0]} | % { pip install --upgrade $_ }`, so every globally installed Python package gets updated where previously only `--user` packages did. It also gained update sections for the Claude Code and OpenCode AI CLIs that verify the installed version against the npm registry first, checking `@anthropic-ai/claude-code` and `opencode-ai` respectively and running the official installer only when outdated, otherwise skipping with the current version shown, and the OpenCode installer runs through bash. With this the PowerShell script matches the bash script's AI CLI update behavior, and all 3 sections, pip, Claude Code, and OpenCode, increment their counters correctly.
 
 ## [5.2.21] - 2026-01-17
 
-### Added
-
-**Bootstrap - Enhanced Progress Notifications**
-
-- Added "Checking..." messages to all bootstrap phases for real-time visibility
-- Shows "(up to date)" status for tools already installed
-- Affects: Core SDKs, Language Servers, Linters & Formatters, CLI Tools, MCP Servers, Development Tools
-- Changed hidden verbose output to visible status messages
-
-**Phase-by-Phase Notifications:**
-
-- Phase 2 (Core SDKs): Go, Rust, dotnet, Bun, OpenJDK now show "Checking..." messages
-- Phase 3 (Language Servers): All 16 language servers show individual "Checking..." messages
-- Phase 4 (Linters & Formatters): All 26 linters/formatters show individual "Checking..." messages
-- Phase 5 (CLI Tools): All 11 CLI tools show individual "Checking..." messages
-- Phase 5.25 (MCP Servers): tree-sitter-cli, context7-mcp, playwright-mcp, repomix show "Checking..." messages
-- Phase 5.5 (Development Tools): VS Code, Visual Studio, LLVM, LaTeX show "Checking..." messages
-
-### Changed
-
-- `Install-Bun` function now shows "Checking Bun..." instead of "Upgrading Bun..."
-- README SDKs table now includes Bun alongside Node.js, Python, Go, Rust, dotnet, OpenJDK
-- README idempotency example output updated with new "Checking..." pattern
-
-### Fixed
-
-- Fixed typo in `Install-Rustup`: `GetPackageDescription` → `Get-PackageDescription`
-
----
+Bootstrap phases now print "Checking..." messages for real-time visibility and show "(up to date)" for tools already installed, replacing hidden verbose output with visible status messages. Phase 2 (Core SDKs) covers Go, Rust, dotnet, Bun, and OpenJDK, Phase 3 (Language Servers) covers all 16 language servers, Phase 4 (Linters & Formatters) covers all 26 linters and formatters, Phase 5 (CLI Tools) covers all 11 CLI tools, Phase 5.25 (MCP Servers) covers `tree-sitter-cli`, `context7-mcp`, `playwright-mcp`, and `repomix`, and Phase 5.5 (Development Tools) covers VS Code, Visual Studio, LLVM, and LaTeX. `Install-Bun` prints "Checking Bun..." instead of "Upgrading Bun...", the README SDKs table lists Bun alongside Node.js, Python, Go, Rust, dotnet, and OpenJDK, and the README idempotency example output shows the new "Checking..." pattern. A typo in `Install-Rustup` was fixed, `GetPackageDescription` to `Get-PackageDescription`.
 
 ## [5.2.20] - 2026-01-17
 
-### Added
-
-**Claude Code StatusLine Configuration**
-
-- Added comprehensive statusline script for PowerShell 7+ (statusline.ps1) with Windows-compatible stdin reading
-- Added context window tracking with real-time token usage display
-- Added git status indicators showing staged (S#), modified (M#), and untracked (U#) file counts
-- Added automatic statusline registration in settings.json during deployment
-- Supports Claude Code 2.1.6+ context_window percentage fields with fallback to current_usage calculation
-
-**StatusLine Features:**
-
-- Displays: directory, git branch, git status, model name, tokens/max (percentage remaining), session cost
-- Color-coded context warnings: green (>50%), yellow (20-50%), red (<20% remaining)
-- Compatible with both Windows (PowerShell 7+) and Linux/macOS (bash)
-
-### Changed
-
-- Updated bash statusline script with enhanced git status and context window calculation
-- Updated deploy.ps1 to automatically register statusline in Claude Code settings.json
-- Updated README.md deployment documentation to reflect statusline registration
-
----
+A `statusline.ps1` script for PowerShell 7+ with Windows-compatible stdin reading now tracks the context window and displays real-time token usage, git status indicators for staged (S#), modified (M#), and untracked (U#) file counts, and automatic statusline registration in `settings.json` during deployment. It supports the `context_window` percentage fields of Claude Code 2.1.6+ with a fallback to `current_usage` calculation, and displays the directory, git branch, git status, model name, tokens over max with the percentage remaining, and session cost, with color-coded context warnings in green above 50%, yellow from 20% to 50%, and red below 20% remaining. The bash statusline script used on Linux and macOS received the same git status and context window calculation, `deploy.ps1` registers the statusline in Claude Code `settings.json` automatically, and the README deployment documentation reflects the registration.
 
 ## [5.2.19] - 2026-01-17
 
-### Changed
-
-**OpenCode Config - Context7 MCP Remote Endpoint**
-
-- Migrated Context7 MCP from local npx command to remote HTTP endpoint
-- Updated all platform configs (Linux, macOS, Windows) to use `https://mcp.context7.com/mcp`
-- Requires `CONTEXT7_API_KEY` environment variable to be set
-- Enables remote execution without local Node.js dependency
-
-**deploy.ps1 - OpenCode Config Merge Behavior**
-
-- Changed from overwrite to merge for OpenCode config deployment
-- Preserves existing user settings while adding/updating MCP servers from dotfiles
-- Added deep comparison to detect actual changes before updating
-- New output messages: `(created)`, `(merged N server(s))`, `(up to date)`
-
-**deploy.ps1 - Claude Config Deployment**
-
-- Changed from selective file copy to full directory recursion
-- Now deploys entire `.claude/` directory including hooks, tdd-guard, and all scripts
-- Simplified maintenance - new files are automatically included
-
-**README - Deployment Documentation**
-
-- Updated deployment example output to reflect current deploy.ps1 behavior
-- Added "Claude configs" and "OpenCode config" to deployment output
-- Added "Deploy Script Behavior" section documenting merge vs. overwrite behavior
-- Documented OpenCode merge behavior and output messages
-
----
+The Context7 MCP moved from a local npx command to the remote HTTP endpoint `https://mcp.context7.com/mcp` in the Linux, macOS, and Windows OpenCode configs, which requires the `CONTEXT7_API_KEY` environment variable and enables remote execution without a local Node.js dependency. `deploy.ps1` switched its OpenCode config deployment from overwrite to merge, preserving existing user settings while adding or updating MCP servers from the dotfiles, with a deep comparison that detects actual changes before updating and the new output messages `(created)`, `(merged N server(s))`, and `(up to date)`. Claude config deployment changed from selective file copy to full directory recursion, so the entire `.claude/` directory including hooks, tdd-guard, and all scripts deploys and new files are included automatically, which simplifies maintenance. The README deployment example output now shows "Claude configs" and "OpenCode config" lines, and a Deploy Script Behavior section documents the merge and overwrite behavior and the OpenCode merge output messages.
 
 ## [5.2.18] - 2026-01-17
 
-### Changed
-
-**wezterm.lua - PowerShell 7 as Default Shell on Windows**
-
-- Added platform detection to set `pwsh.exe` as default shell on Windows
-- WezTerm now launches PowerShell 7 instead of cmd.exe on Windows
-- Linux behavior unchanged (continues to auto-detect zsh)
-
-**deploy.ps1 - WezTerm Background Assets**
-
-- Added assets directory deployment for WezTerm background images
-- Copies `assets/*` to `$HOME/assets/` on Windows
-- Enables WezTerm background image (tokyo-sunset.jpeg) to load correctly
-- Aligns Windows deployment with Linux/macOS behavior
-
----
+`wezterm.lua` gained platform detection that sets `pwsh.exe` as the default shell on Windows, so WezTerm launches PowerShell 7 instead of cmd.exe, while Linux keeps auto-detecting zsh. `deploy.ps1` now deploys the assets directory for WezTerm background images, copying `assets/*` to `$HOME/assets/` on Windows so the tokyo-sunset.jpeg background image loads correctly, which brings Windows in line with the Linux and macOS deployment.
 
 ## [5.2.17] - 2026-01-17
 
-### Added
-
-**bootstrap.ps1 - WezTerm Installation on Windows**
-
-- Added WezTerm terminal emulator installation to Windows Phase 1 (Foundation)
-- Installs via winget using `wez.wezterm` package ID
-- Respects `-DryRun` parameter for testing
-- Idempotent: skips if already installed
-- Aligns Windows bootstrap with Linux/macOS (already install WezTerm)
-- README already documented winget installation; bootstrap now implements it
-
-**CLAUDE.md - Windows-Specific Notes**
-
-- Documented PowerShell 7+ requirement for Windows (`pwsh.exe`)
-- Clarified to avoid outdated `powershell.exe` (Windows PowerShell 5.1)
-
----
+Windows bootstrap installs the WezTerm terminal emulator in Phase 1 (Foundation) through winget with the `wez.wezterm` package ID, respecting `-DryRun` and skipping when already installed, which brings Windows in line with Linux and macOS where bootstrap already installed it. The README had documented the winget installation and bootstrap now implements it. CLAUDE.md documented the PowerShell 7+ requirement for Windows (`pwsh.exe`) and the advice to avoid the outdated `powershell.exe` (Windows PowerShell 5.1).
 
 ## [5.2.16] - 2026-01-17
 
-### Fixed
+`deploy.ps1` fixed the missing Neovim config deployment on Windows, which previously ran only on Linux and macOS: the config now copies to `%LOCALAPPDATA%\nvim\`, the Windows `stdpath('config')` location, with the `lua/` directory copied recursively for modular Neovim configs. `deploy.ps1` also corrected the WezTerm config path from the incorrect `%LOCALAPPDATA%\wezterm` to `$HOME/.config/wezterm/wezterm.lua`, and both configs are now properly deployed and verified in bootstrap output.
 
-**deploy.ps1 - Neovim and WezTerm Config Deployment**
-
-- Fixed missing Neovim config deployment on Windows (was only deployed on Linux/macOS)
-- Neovim config now copied to `%LOCALAPPDATA%\nvim\` (Windows stdpath('config'))
-- `lua/` directory recursively copied for modular Neovim configs
-- Fixed WezTerm config path to use correct XDG location: `$HOME/.config/wezterm/wezterm.lua`
-- Previous incorrect path `%LOCALAPPDATA%\wezterm` has been corrected
-- Both configs now properly deployed and verified in bootstrap output
-
-**update-all.sh - AI CLI Update Detection**
-
-- Fixed false positive update detection for Claude Code and OpenCode AI CLIs
-- Added `install_and_verify_version` helper function that compares versions before and after install
-- Installer now verified against npm registry as external source of truth
-- Reports warning if installed version differs from npm version (possible silent failure)
-- Prevents misleading "updated" messages when installer re-installs same version
-
----
+`update-all.sh` stopped reporting false positive updates for the Claude Code and OpenCode AI CLIs. An `install_and_verify_version` helper function compares versions before and after install against the npm registry as an external reference, warns when the installed version differs from the npm version, which points to a possible silent failure, and no longer prints misleading "updated" messages when the installer reinstalls the same version.
 
 ## [5.2.15] - 2026-01-17
 
-### Changed
+`update-all.ps1` became a native PowerShell 7 implementation with no bash dependency, a pure PowerShell script that directly updates the Windows package managers Scoop, winget, Chocolatey, npm, pnpm, yarn, gup, go, cargo, rustup, dotnet, pip, and poetry, and the separate `update-all-windows.ps1` was consolidated into it. The `up` alias in `.bash_aliases` now calls `pwsh.exe` instead of `powershell.exe` on Windows Git Bash, with platform detection for MINGW and MSYS environments picking the correct update script, so Git Bash invokes `update-all.ps1` through PowerShell 7.
 
-**update-all.ps1 - Native PowerShell 7 Implementation**
-
-- Replaced wrapper script with native PowerShell 7 implementation (no bash dependency)
-- `update-all.ps1` is now a pure PowerShell 7 script that directly updates Windows package managers
-- Removed `update-all-windows.ps1` (consolidated into single `update-all.ps1`)
-- Supports: Scoop, winget, Chocolatey, npm, pnpm, yarn, gup, go, cargo, rustup, dotnet, pip, poetry
-
-**.bash_aliases - Git Bash Compatibility**
-
-- Fixed `up` alias on Windows Git Bash to use `pwsh.exe` instead of `powershell.exe`
-- Added platform detection for MINGW/MSYS environments to call correct update script
-- Git Bash on Windows now invokes `update-all.ps1` via pwsh7
-
-### Fixed
-
-**Package Manager Detection**
-
-- Fixed winget detection using full path to WindowsApps wrapper executable
-- Fixed `$ErrorActionPreference` causing false failures from native command stderr
-- Set `$PSNativeCommandUseErrorActionPreference = $false` for proper exit code handling
-- Scoop update now handles git bucket warnings gracefully (filters git lock errors)
-
-**Test Coverage**
-
-- Renamed `update-all-windows.Tests.ps1` to `update-all.Tests.ps1`
-- Updated all coverage report scripts to reference consolidated `update-all.ps1`
-
----
+Package manager detection fixes: winget is detected through the full path to its WindowsApps wrapper executable, `$PSNativeCommandUseErrorActionPreference = $false` stops native command stderr from raising false failures from `$ErrorActionPreference` while exit codes still work, and the Scoop update filters git lock errors out of bucket warnings. `update-all-windows.Tests.ps1` was renamed to `update-all.Tests.ps1` and the coverage report scripts reference the consolidated `update-all.ps1`.
 
 ## [5.2.14] - 2026-01-17
 
-### Changed
+`sync-system-instructions.ps1`, `git-update-repos.ps1`, and `deploy.ps1` were converted from bash wrappers to pure PowerShell 7 scripts using `param()`, hashtables, and proper error handling, `deploy.sh` became Linux and macOS only and directs Windows users to `deploy.ps1`, and the Windows-specific code paths left the bash scripts for a cleaner separation. Both platform twins of `git-update-repos` now detect "already up to date" before pulling, the bash version comparing local and remote HEAD and printing "Skipped (already up to date)" instead of "Updated", so runs over current repos no longer produce misleading "mass updated" output, and the PowerShell version has the equivalent detection. Both `sync-system-instructions` twins show "already up to date (no changes to commit)" in the commit phase and "already up to date (nothing to push)" in the push phase, and an arithmetic expansion bug for Git Bash compatibility was fixed with `|| true`.
 
-**Windows Sync Scripts - Pure PowerShell 7 Implementation**
-
-- Converted `sync-system-instructions.ps1` to pure PowerShell 7 (no longer a bash wrapper)
-- Converted `git-update-repos.ps1` to pure PowerShell 7 (no longer a bash wrapper)
-- Converted `deploy.ps1` to pure PowerShell 7 (no longer a bash wrapper)
-- Made `deploy.sh` Linux/macOS only (directs Windows users to deploy.ps1)
-- All Windows scripts now use PowerShell 7 idioms: `param()`, hashtables, proper error handling
-- Removed Windows-specific code paths from bash scripts for cleaner separation
-
-**Script Parity**
-
-- `git-update-repos`: Both bash and PowerShell now detect "already up to date" before pull
-- `sync-system-instructions`: Both bash and PowerShell show "already up to date" for commit/push phases
-- Platform-specific parameter syntax documented in README
-
-### Fixed
-
-**git-update-repos**
-
-- Bash version now compares LOCAL vs REMOTE HEAD before attempting pull
-- Shows "Skipped (already up to date)" instead of "Updated" when no changes
-- PowerShell version has equivalent "already up to date" detection
-- Prevents misleading "mass updated" output when repos are already current
-
-**sync-system-instructions**
-
-- Bash version shows "already up to date (no changes to commit)" in commit phase
-- Bash version shows "already up to date (nothing to push)" in push phase
-- PowerShell version has equivalent status messages
-- Fixed arithmetic expansion for Git Bash compatibility (`|| true`)
-
-**Documentation**
-
-- README Quick Start now correctly uses `.\bootstrap.ps1` on Windows (not `.\deploy.ps1`)
-- README Updating section uses `.\bootstrap.ps1` on Windows
-- Added platform-specific parameter comparison tables
-- Added Entry Point Scripts table with Platform column
-- Windows uses `.ps1` (pure PowerShell 7), Linux/macOS use `.sh` (bash)
-
----
+The README quick start and updating sections now use `.\bootstrap.ps1` on Windows instead of `.\deploy.ps1`, with platform-specific parameter comparison tables and an entry point scripts table carrying a platform column: Windows runs the pure PowerShell 7 `.ps1` scripts, Linux and macOS run the bash `.sh` scripts.
 
 ## [5.2.13] - 2026-01-17
 
-### Fixed
-
-**PATH Persistence for Already-Installed Tools**
-
-- Claude Code CLI: Now ensures ~/.local/bin is added to User PATH even when already at latest version
-- OpenCode AI CLI: Now ensures ~/.opencode/bin is added to User PATH even when already at latest version
-- Previously, if a tool was already installed at the correct version, PATH was never configured
-- This caused tools to not be found in new terminal sessions even though the binary existed
-
-### Changed
-
-- bootstrap.ps1: Added Add-ToPath call for Claude Code and OpenCode when skipping install
-- bootstrap.sh: Added ensure_path call for Claude Code and OpenCode when skipping install
-
----
+Already-installed tools now get their PATH configured. `bootstrap.ps1` calls `Add-ToPath` and `bootstrap.sh` calls `ensure_path` for the Claude Code and OpenCode CLIs when skipping the install, putting `~/.local/bin` and `~/.opencode/bin` on the User PATH. Previously a tool already installed at the correct version never had its PATH configured, which left the tools unfound in new terminal sessions even though the binary existed.
 
 ## [5.2.12] - 2026-01-17
 
-### Changed
+The OpenCode AI CLI switched from npm to the official installer `curl -fsSL https://opencode.ai/install | bash`, which installs to `~/.opencode/bin` on all platforms, automatically uninstalls the old npm version during migration, and pairs with version-aware checking that prevents unnecessary reinstalls. Both AI CLIs now check versions against the npm registry before installing and show the version when skipping, "already at latest version (2.1.9)" for Claude Code and "already at latest version (1.1.23)" for OpenCode.
 
-**OpenCode AI CLI Installation**
-
-- Switched from npm-based installation to official installer (curl -fsSL https://opencode.ai/install | bash)
-- Official installer installs to ~/.opencode/bin on all platforms
-- Old npm version is automatically uninstalled during migration
-- Added version-aware checking to prevent unnecessary reinstalls
-
-**Version Detection**
-
-- Claude Code CLI now displays version in skip message: "already at latest version (2.1.9)"
-- OpenCode AI CLI displays version: "already at latest version (1.1.23)"
-- Both tools now check versions against npm registry before installing
-
-**Bootstrap Idempotency**
-
-- npm package version checking fixed to only check top-level packages (not transitive dependencies)
-- Prettier and other npm packages no longer show as outdated due to dependency version mismatches
-- Added PATH shadowing prevention: old npm shims are removed before version checks
-
-### Fixed
-
-**npm Package Version Checking**
-
-- Fixed false positives from `npm outdated -g` reporting transitive dependency versions
-- Changed to use `npm list -g --json --depth=0` for accurate top-level version detection
-- Affected both PowerShell (Test-NpmPackageNeedsUpdate) and Bash (npm_package_needs_update)
-
-**Invalid npm Package Cleanup**
-
-- cleanup-npm-trash.ps1 now checks scoop-persisted nodejs-lts location
-- update-all.sh now checks multiple npm locations on Windows
-- Fixes blocks from invalid packages like .intelephense-\* that npm cannot uninstall itself
-
-### Added
-
-**Cleanup Scripts**
-
-- cleanup-npm-trash.ps1: Removes invalid npm packages (names starting with dot)
-- cleanup-scoop-path.ps1: Removes individual scoop app paths from User PATH
-
-**Documentation**
-
-- README idempotency section updated with full Windows bootstrap output
-- Shows version-aware detection for Claude Code and OpenCode AI CLI
-
----
+npm package version checking stopped producing false positives. `npm outdated -g` reported transitive dependency versions, so `Test-NpmPackageNeedsUpdate` in PowerShell and `npm_package_needs_update` in bash switched to `npm list -g --json --depth=0` for accurate top-level version detection, Prettier and other npm packages no longer show as outdated from dependency mismatches, and old npm shims are removed before version checks to prevent PATH shadowing. Two cleanup scripts arrived: `cleanup-npm-trash.ps1` removes invalid npm packages whose names start with a dot, such as `.intelephense-*`, which npm cannot uninstall itself, and `cleanup-scoop-path.ps1` removes individual scoop app paths from the User PATH. `cleanup-npm-trash.ps1` also checks the scoop-persisted `nodejs-lts` location and `update-all.sh` checks multiple npm locations on Windows. The README idempotency section shows the full Windows bootstrap output with the version-aware detection for both AI CLIs.
 
 ## [5.2.11] - 2026-01-13
 
-### Fixed
-
-**sync-system-instructions.sh**
-
-- Hardcoded DOTFILES_DIR to ~/dev/github/dotfiles as per README Quick Start
-- Removed complex symlink resolution logic in favor of explicit path
-- Script now works correctly whether run from dotfiles dir or ~/dev
-
-**Documentation**
-
-- Added prominent notice in Quick Start that repo MUST be cloned to ~/dev/github/dotfiles
-- Added note in Git Repository Management section about sync-system-instructions path requirement
-- Clarified that several scripts depend on this exact location to function correctly
-
----
+`sync-system-instructions.sh` hardcodes `DOTFILES_DIR` to `~/dev/github/dotfiles` as the README quick start specifies, dropping the complex symlink resolution logic for an explicit path, so it now works correctly whether run from the dotfiles directory or from `~/`. The README quick start carries a prominent notice that the repo must be cloned to `~/dev/github/dotfiles`, the Git repository management section notes the path requirement of `sync-system-instructions`, and both clarify that several scripts depend on this exact location to function correctly.
 
 ## [5.2.10] - 2026-01-13
 
-### Added
-
-**Documentation**
-
-- RULES.md now redirects to CLAUDE.md for unified development guidelines
-- Centralizes all AI assistant instructions across AGENTS.md, GEMINI.md, and RULES.md
-
-### Fixed
-
-**deploy.sh**
-
-- Added merge_gitconfig() function to preserve user.name and user.email
-- Git config merge instead of overwrite when deploying ~/.gitconfig
-- Keeps user identity from existing config when updating dotfiles settings
-
-**sync-system-instructions.sh**
-
-- commit_changes() now uses config override from dotfiles repo as fallback
-- Shows helpful message when git identity is missing with setup instructions
-- Improved error visibility for commit/push failures
-
----
+RULES.md now redirects to CLAUDE.md for unified development guidelines, centralizing the AI assistant instructions across AGENTS.md, GEMINI.md, and RULES.md. `deploy.sh` gained a `merge_gitconfig()` function that merges instead of overwrites when deploying `~/.gitconfig`, keeping `user.name` and `user.email` from the existing config while updating the dotfiles settings. In `sync-system-instructions.sh`, `commit_changes()` now uses the config override from the dotfiles repo as a fallback, shows a helpful message with setup instructions when the git identity is missing, and gives better error visibility for commit and push failures.
 
 ## [5.2.9] - 2026-01-13
 
-### Fixed
+A documentation sweep touched `README.md`, `TOOLS.md`, `TESTING.md`, `QUICKREF.md`, `BRIDGE.md`, `tests/README.md`, `AGENTS.md`, and `GEMINI.md`. The LSP server count was corrected from 23/25 to 19 after verification against `bootstrap/bootstrap.sh`, the tool counts moved to 20+ linters, 17+ formatters, 9+ testers, and 15+ CLI tools (from 16+, 13+, 5+, and 13+), and the automated test count moved from 150+ to 2,200+ after verification against the test files.
 
-**Documentation**
-
-- Corrected LSP server count from 23/25 to 19 (verified against bootstrap/bootstrap.sh)
-- Updated tool counts: Linters 16+ → 20+, Formatters 13+ → 17+, Testers 5+ → 9+, CLI Tools 13+ → 15+
-- Corrected automated test count from 150+ to 2,200+ (verified against test files)
-- Standardized clone directory path to ~/dev/github/dotfiles across all documentation
-- Fixed config setting name inconsistency: auto_commit_changes/auto_update_repos → auto_commit_repos
-- Fixed rust-analyzer naming (hyphen vs underscore inconsistency)
-- Added bootstrap script structure documentation (wrapper vs implementation)
-- Added HOOKS.md to Additional Documentation table
-- Removed broken CONTRIBUTING.md link from tests/README.md
-- Enhanced AGENTS.md and GEMINI.md with explanatory comments
-
-**Files Changed**
-
-- README.md
-- TOOLS.md
-- TESTING.md
-- QUICKREF.md
-- BRIDGE.md
-- tests/README.md
-- AGENTS.md
-- GEMINI.md
-
----
+The clone directory path was standardized to `~/dev/github/dotfiles` across all documentation, the config setting name inconsistency (`auto_commit_changes`/`auto_update_repos`) was fixed to `auto_commit_repos`, and rust-analyzer naming was made consistent between hyphen and underscore. Bootstrap script structure documentation (wrapper versus implementation) was added, `HOOKS.md` joined the Additional Documentation table, the broken `CONTRIBUTING.md` link left `tests/README.md`, and `AGENTS.md` and `GEMINI.md` gained explanatory comments.
 
 ## [5.2.8] - 2026-01-13
 
-### Fixed
-
-**sync-system-instructions.sh**
-
-- commit_changes() now prints status message (already up to date vs committed)
-- push_changes() checks ahead count before attempting push, prints status
-- Added `|| true` to prevent set -e exits in commit/push loop
-- No more false "pushed" messages when nothing was pushed
-
----
+`sync-system-instructions.sh` stopped misreporting pushes. `commit_changes()` now prints whether each repository was already up to date or committed, `push_changes()` checks the ahead count before pushing and prints its status, and `|| true` guards the commit and push loop so `set -e` cannot abort it mid-run. The false pushed messages are gone because a push that did nothing no longer reports success.
 
 ## [5.2.7] - 2026-01-13
 
-### Fixed
-
-**sync-system-instructions.sh**
-
-- Fixed `set -e` arithmetic bug that caused script to exit after first repository
-- Added `|| true` to counter increments to handle zero values correctly
-- Script now processes all repositories in base directory
-
-### Removed
-
-**sync-system-instructions.sh**
-
-- Removed Claude CLI dependency for commit/push operations
-- Now uses pure git commands (deterministic, no AI agent needed)
-- Deleted `commit_with_claude()` function
-
----
+A `set -e` arithmetic bug made `sync-system-instructions.sh` exit after the first repository because counter increments returned nonzero on zero values. The increments now carry `|| true` and the script processes every repository in the base directory. The Claude CLI dependency for commit and push operations was dropped together with the `commit_with_claude()` function, replaced by pure git commands that are deterministic and need no AI agent.
 
 ## [5.2.6] - 2026-01-12
 
-### Added
+Bootstrap gained an auto-correction system for packages, built on a distro-agnostic `remove_system_package()` helper that drives apt, dnf, pacman, and zypper. It removes and reinstalls the CLI tools `fzf`, `zoxide`, `bat`, `eza`, `lazygit`, `gh`, `tokei`, `ripgrep`, `fd`, and `bats`, the SDKs `nodejs` (including snap installs), `golang`, `php`, and `dotnet`, the language servers `clangd`, `lua-language-server`, `jdtls`, and `rust-analyzer`, the linters and formatters `prettier`, `eslint`, `ruff`, `black`, `mypy`, `yamllint`, `shellcheck`, `shfmt`, `stylua`, `selene`, and `golangci-lint`, and the cargo package `difftastic`. Package name variations such as `fd`/`fd-find`, `gh`/`github-cli`, and `eza`/`exa` are handled, and a catch-all handler covers unknown sources like snap, flatpak, AppImage, and manual installs.
 
-**Bootstrap Scripts**
-
-- Comprehensive AUTO-CORRECTION system for all packages
-- Distro-agnostic `remove_system_package()` helper (apt/dnf/pacman/zypper)
-- CLI tools auto-correction: fzf, zoxide, bat, eza, lazygit, gh, tokei, ripgrep, fd, bats
-- SDKs auto-correction: nodejs (including snap), golang, php, dotnet
-- Language servers: clangd, lua-language-server, jdtls, rust-analyzer
-- Linters/formatters: prettier, eslint, ruff, black, mypy, yamllint, shellcheck, shfmt, stylua, selene, golangci-lint
-- Cargo packages: difftastic
-- Catch-all handler for unknown sources (snap/flatpak/AppImage/manual installs)
-- Handles package name variations (fd/fd-find, gh/github-cli, eza/exa)
-
-### Changed
-
-**Bootstrap Scripts**
-
-- AUTO-CORRECTION now covers 30+ packages across multiple sources
-- Python kept as system fallback (not removed, always safe)
-- Unknown package sources logged for manual cleanup instead of failing
-
----
+The system spans 30+ packages across sources. Python stays as the system fallback and is never removed, so the host distribution stays safe, and unknown package sources are logged for manual cleanup instead of failing the run.
 
 ## [5.2.5] - 2026-01-12
 
-### Added
-
-**Bootstrap Scripts**
-
-- PHP installation with curl extension (required by Composer)
-- Linux: `install_php()` function, prefers brew PHP (curl included), falls back to apt/dnf/pacman/zypper
-- macOS: `install_php()` function via brew (curl included by default)
-- Windows: `Install-PHP()` function via scoop or winget
-- Composer now runs at full speed without the slow fallback HTTP handler
-
-### Fixed
-
-**Bootstrap Scripts**
-
-- Auto-remove apt-installed PHP before installing brew version
-- Add php to brew package mapping and AUTO-CORRECTION section
-
----
+PHP now installs with the curl extension Composer requires. Linux `install_php()` prefers brew PHP, which includes curl, and falls back to apt, dnf, pacman, or zypper, macOS `install_php()` uses brew (curl included by default), and Windows `Install-PHP()` uses scoop or winget. The apt-installed PHP is auto-removed before the brew version goes in, and `php` joined the brew package mapping and the auto-correction section. Composer now runs at full speed because the slow fallback HTTP handler is gone.
 
 ## [5.2.4] - 2026-01-12
 
-### Fixed
-
-**Bootstrap Scripts**
-
-- build dependencies now install even when rustup is already present
-- Moved `install_build_dependencies()` call before early-return check in `install_rustup()`
-- This ensures pkg-config and OpenSSL headers are available for future cargo package compilation
-
----
+Build dependencies now install even when rustup is already present, because the `install_build_dependencies()` call moved ahead of the early-return check inside `install_rustup()`. This keeps pkg-config and the OpenSSL headers available for future cargo package compilation.
 
 ## [5.2.3] - 2026-01-12
 
-### Added
-
-**Build Dependencies**
-
-- Added automatic installation of pkg-config and OpenSSL development headers
-- Linux: Installs distro-specific packages (libssl-dev, openssl-devel, openssl, libopenssl-devel)
-- macOS: Installs via Homebrew (openssl, pkg-config)
-- These are required for compiling Rust packages with native dependencies like cargo-update
-
-### Changed
-
-**Bootstrap Scripts**
-
-- Linux: Added `install_build_dependencies()` function, called before Rust installation
-- macOS: Added `install_build_dependencies()` function, called before Rust installation
-- Both platforms now ensure build deps are present before installing cargo-update
-
----
+Bootstrap now installs pkg-config and the OpenSSL development headers automatically, which Rust packages with native dependencies such as `cargo-update` need for compilation. Linux installs the distro-specific package (`libssl-dev`, `openssl-devel`, `openssl`, or `libopenssl-devel`) and macOS installs `openssl` and `pkg-config` through Homebrew. Both platforms call the new `install_build_dependencies()` before Rust installation so the build dependencies are present before `cargo-update` installs.
 
 ## [5.2.2] - 2026-01-12
 
-### Fixed
-
-**Update Script**
-
-- Reordered RUSTUP before CARGO section (cargo comes from rustup)
-- Added CARGO-UPDATE section to auto-install cargo-update if missing
-- This ensures `cargo-install-update` is available before running cargo package updates
-
----
+The update script's RUSTUP section moved ahead of CARGO because cargo comes from rustup, and a CARGO-UPDATE section now auto-installs `cargo-update` when it is missing, so `cargo-install-update` is available before the cargo package updates run.
 
 ## [5.2.1] - 2026-01-12
 
-### Added
+Bootstrap installs `cargo-update` on Linux, macOS, and Windows through `install_cargo_update()` and `Install-CargoUpdate()`, with `cargo_update` added to the `linters_formatters` category in `packages.yaml`. The package supplies the `cargo-install-update` command that manages all cargo-installed packages. `update-all.sh` gained a Claude Code CLI section that updates Claude through the official install script.
 
-**Package Management**
-
-- Added cargo-update installation during bootstrap for all platforms (Linux/macOS/Windows)
-- Added Claude Code CLI update to update-all.sh script
-- cargo-update provides cargo-install-update command to manage all cargo-installed packages
-
-**Documentation**
-
-- Enhanced CLAUDE.md with "Research Before Implementation" section
-- Added guidance on using Context7, Web Search, Web Reader, ZRead, and GitHub CLI
-- Added "Testing Strategy" section comparing property-based testing vs unit tests
-
-### Changed
-
-**Bootstrap Scripts**
-
-- Linux: Added install_cargo_update() function and cargo-update package handling
-- macOS: Added install_cargo_update() function and cargo-update package handling
-- Windows: Added Install-CargoUpdate function and cargo-update package handling
-- packages.yaml: Added cargo_update to linters_formatters category
-
-**Update Script**
-
-- update-all.sh: Added CLAUDE CODE CLI section for updating Claude via official install script
-
----
+`CLAUDE.md` gained a Research Before Implementation section covering Context7, Web Search, Web Reader, ZRead, and the GitHub CLI, plus a Testing Strategy section comparing property-based testing with unit tests.
 
 ## [5.2] - 2026-01-10
 
-### Added
+`tree-sitter-cli` joined the bootstrap scripts on Linux, macOS, and Windows, and Neovim now auto-installs 32 Treesitter parsers on startup: `lua`, `vim`, `vimdoc`, `query`, `c`, `cpp`, `rust`, `go`, `python`, `java`, `c_sharp`, `php`, `scala`, `javascript`, `typescript`, `tsx`, `jsx`, `html`, `css`, `scss`, `svelte`, `yaml`, `json`, `toml`, `markdown`, `markdown_inline`, `bash`, `powershell`, `dockerfile`, and `typst`. Parser installation is cross-platform with automatic dependency checking.
 
-**Neovim Treesitter Support**
-
-- Added tree-sitter-cli installation to bootstrap scripts (Linux/macOS/Windows)
-- Implemented auto-install of 32 Treesitter parsers on Neovim startup
-- Parsers: lua, vim, vimdoc, query, c, cpp, rust, go, python, java, c_sharp, php, scala, javascript, typescript, tsx, jsx, html, css, scss, svelte, yaml, json, toml, markdown, markdown_inline, bash, powershell, dockerfile, typst
-- Cross-platform parser installation with automatic dependency checking
-
-### Changed
-
-**Neovim 0.12 Compatibility**
-
-- Updated nvim-treesitter configuration for v2.0 API (complete rewrite)
-- Replaced deprecated `nvim-treesitter.configs` with new `nvim-treesitter.config`
-- Removed `ensure_installed`, `auto_install`, `sync_install` options (no longer supported)
-- Implemented manual parser installation via Lua API with startup auto-install
-- Added conditional Treesitter language loading for installed parsers
-
-**Linux Platform**
-
-- Removed powershell_es LSP from Neovim configuration (requires pwsh on Linux)
-- Treesitter PowerShell parser remains available for syntax highlighting
-
-### Fixed
-
-- Neovim LSP error when opening PowerShell files on Linux (pwsh not found)
-- Treesitter parsers not installing automatically with new nvim-treesitter v2.0
-
----
+The nvim-treesitter configuration was rewritten for the v2.0 API: the deprecated `nvim-treesitter.configs` module gave way to `nvim-treesitter.config`, the unsupported `ensure_installed`, `auto_install`, and `sync_install` options were removed, parsers install manually through the Lua API with startup auto-install, and language loading is conditional on the installed parsers. This fixed parsers failing to auto-install under v2.0. On Linux the `powershell_es` LSP left the Neovim configuration because it requires `pwsh`, which fixed the LSP error when opening PowerShell files, while the Treesitter PowerShell parser stays available for syntax highlighting.
 
 ## [5.1] - 2026-01-10
 
-### Changed
+The default theme switched from gruvbox to rose-pine across all configs: Neovim uses the rose-pine colorscheme with a dark background, WezTerm uses the rose-pine color scheme, and the `bat` previewer theme follows. `deploy.sh` and `update-all.sh` moved their theme defaults from `gruvbox-light` to `rose-pine`, the example config `.dotfiles.config.yaml.example` was updated, and `README.md`, `QUICKREF.md`, and `BRIDGE.md` reflect the new values. The test fixtures in `config_test.bats`, `config_e2e_test.bats`, and `config.Tests.ps1` use rose-pine.
 
-**Theme Update - Rose Pine**
+Neovim treesitter highlighting was fixed by replacing the `nvim-treesitter.configs.setup()` call with a manual FileType autocmd and a direct `vim.treesitter.start()` call, with `foldexpr`, `foldmethod`, and `indentexpr` configured for treesitter and the deprecated config pattern removed for Neovim 0.11+ compatibility. The quote style standardized from double to single and indentation settled at 4 spaces.
 
-- Switched default theme from gruvbox to rose-pine across all configs
-- Neovim: Using rose-pine colorscheme with dark background
-- WezTerm: Using rose-pine color scheme
-- Updated bat previewer theme to rose-pine
-
-**Neovim Improvements**
-
-- Fixed nvim-treesitter configuration using manual FileType autocmd
-- Replaced `nvim-treesitter.configs.setup()` with direct `vim.treesitter.start()` call
-- Properly configured foldexpr, foldmethod, and indentexpr for treesitter
-- Removed deprecated treesitter config pattern for Neovim 0.11+ compatibility
-- Standardized quote style from double to single quotes
-- Fixed indentation consistency (4 spaces)
-
-**Deploy Script Enhancement**
-
-- Added WezTerm background asset deployment to `~/assets/`
-- Copies all files from `assets/` directory during deployment
-- Ensures terminal backgrounds are available after running deploy.sh
-
-**Configuration Defaults**
-
-- Updated default theme in `deploy.sh`: gruvbox-light → rose-pine
-- Updated default theme in `update-all.sh`: gruvbox-light → rose-pine
-- Updated example config in `.dotfiles.config.yaml.example`
-
-**Documentation**
-
-- Updated README.md theme values to reflect rose-pine variants
-- Updated QUICKREF.md theme options
-- Updated BRIDGE.md example config
-
-**Test Fixes**
-
-- Updated all test fixtures to use rose-pine theme
-- Bash tests: `config_test.bats`, `config_e2e_test.bats`
-- PowerShell tests: `config.Tests.ps1`
-
-### Fixed
-
-- Neovim treesitter highlighting not working properly with built-in wrapper
-- WezTerm background images missing after deployment
-
----
+`deploy.sh` now deploys WezTerm background assets to `~/assets/` by copying all files from `assets/`, so terminal backgrounds are available after a deploy, which fixes the missing background images.
 
 ## [5.0] - 2026-01-10
 
-### Major Changes
+The Linux platform install in `bootstrap/platforms/linux.sh` was rewritten (677 lines of changes) for Ubuntu 26.04 LTS with Homebrew-first package priority, so brew is used before apt when available and Homebrew installs itself on Linux without prompts. Git is reinstalled through brew after the apt version is uninstalled, VSCode comes from the official Microsoft apt repository instead of a manual .deb, `dotnet-sdk` 10.0 comes from the Microsoft apt repository, and WezTerm comes from the official `apt.fury.io` wez repository. Package detection gained `command -v` fallbacks, the gpt-researcher integration and references were removed together with `.env.gpt-researcher`, and the package priority became brew over official repos over apt. Bootstrap overall gained PATH fix functions (`fix_path_issues` and `fix_package_states` in `bootstrap/lib/common.sh`), better error handling and recovery, improved platform-specific installation ordering, and WezTerm in the bootstrap phases. `bootstrap/bootstrap.sh` took the new platform detection and package priority, `bootstrap/platforms/macos.sh` took 99 lines of additions, `deploy.sh` took 239 lines of deployment handling plus XDG_CONFIG_HOME support across configs, `git-update-repos.sh` took 111 lines of error handling and progress reporting, and `update-all.sh` took better package manager detection and updates.
 
-**Linux Platform Overhaul - Ubuntu 26.04 LTS Ready**
+New files arrived: the platform-specific OpenCode settings `opencode.linux.json`, `opencode.macos.json`, and `opencode.windows.json` (split from the old `opencode.json`), `.config/nvim/init.lua` in its proper XDG location, `wezterm.lua` moved to `.config/wezterm/wezterm.lua`, git hooks separated from `hooks/` into `.config/git/hooks/` (`pre-commit` and `commit-msg`), the documentation files `ARCHITECTURE.md`, `TOOLS.md`, `TESTING.md`, `HISTORY.md` with the legacy museum of 3 years of project history, and `HOOKS.md` moved from `hooks/README.md`, the tests `git-hooks_test.bats`, `bootstrap_new_tools_test.bats`, `bootstrap_new_tools.Tests.ps1`, and `windows-platform.Tests.ps1`, and the Claude tooling `.claude/hooks/`, `quality-check.sh`, `quality-check.ps1`, `statusline.sh`, and the project `CLAUDE.md`. The rewritten pre-commit hooks support more languages, validate conventional commits by type, scope, and format, auto-format with `prettier`, `shfmt`, `gofmt`, `rustfmt`, and `dotnet format`, and lint with `eslint`, `golangci-lint`, `clippy`, `shellcheck`, and `mypy`. `hooks/claude/quality-check.ps1` gained the expanded quality checks.
 
-- Complete rewrite of Linux platform installation in `bootstrap/platforms/linux.sh`
-- Homebrew-first package priority on Linux (uses brew before apt when available)
-- Automatic Homebrew installation on Linux without prompts
-- Git reinstallation via brew after uninstalling apt git
-- VSCode now installed via official Microsoft apt repository (not manual .deb)
-- dotnet-sdk 10.0 installed via Microsoft apt repository
-- WezTerm installation via official apt.fury.io wez repository
-- Enhanced package detection with `command -v` fallbacks
-- Removed gpt-researcher integration and references
-
-**Testing & Coverage Improvements**
-
-- Reintroduced bashcov for accurate bash coverage (47.51% bash, 25% combined)
-- bashcov properly tracks sourced files (unlike kcov)
-- Updated coverage strategy: bashcov (primary) with kcov fallback
-- Coverage reporting enhanced with detailed notes per platform
-
-**Git Hooks Enhancement**
-
-- Rewrote pre-commit hooks with expanded language support
-- Comprehensive conventional commits validation (type, scope, format)
-- Pre-commit auto-format: prettier, shfmt, gofmt, rustfmt, dotnet format
-- Pre-commit linting: eslint, golangci-lint, clippy, shellcheck, mypy
-- Separated git hooks from `hooks/` to `.config/git/hooks/` for proper git integration
-
-**Bootstrap Refactoring**
-
-- Added PATH fix functions for robustness
-- Enhanced error handling and recovery mechanisms
-- Improved platform-specific package installation ordering
-- Added WezTerm installation to bootstrap phases
-- Package priority: brew > official repos > apt
-
-### Added
-
-**New Documentation Files**
-
-- `ARCHITECTURE.md` - System architecture diagrams and design principles
-- `TOOLS.md` - Complete language tool matrix (LSPs, linters, formatters)
-- `TESTING.md` - Testing documentation and coverage procedures
-- `HISTORY.md` - Legacy museum with 3-year project history
-- `HOOKS.md` - Git hooks documentation (moved from hooks/README.md)
-
-**New Configuration Files**
-
-- `.config/opencode/opencode.linux.json` - Linux-specific OpenCode settings
-- `.config/opencode/opencode.macos.json` - macOS-specific OpenCode settings
-- `.config/opencode/opencode.windows.json` - Windows-specific OpenCode settings
-- `.config/git/hooks/pre-commit` - Bash pre-commit hook
-- `.config/git/hooks/commit-msg` - Bash commit-msg hook
-- `.config/nvim/init.lua` - Neovim config in proper XDG location
-
-**New Test Files**
-
-- `tests/bash/git-hooks_test.bats` - Git hooks validation tests
-- `tests/bash/bootstrap_new_tools_test.bats` - New tools installation tests
-- `tests/powershell/bootstrap_new_tools.Tests.ps1` - PowerShell new tools tests
-- `tests/powershell/windows-platform.Tests.ps1` - Windows platform tests
-
-**Quality & Hooks Scripts**
-
-- `.claude/hooks/` - Claude Code hooks directory
-- `.claude/quality-check.sh` - Bash quality check script
-- `.claude/quality-check.ps1` - PowerShell quality check script
-- `.claude/statusline.sh` - Claude Code statusline configuration
-- `.claude/CLAUDE.md` - Project-specific Claude instructions
-
-### Changed
-
-**Bootstrap Script**
-
-- `bootstrap/bootstrap.sh` - Enhanced with new platform detection and package priority
-- `bootstrap/lib/common.sh` - Added fix_path_issues and fix_package_states functions
-- `bootstrap/platforms/linux.sh` - Complete rewrite with 677 lines of improvements
-- `bootstrap/platforms/macos.sh` - Enhanced with 99 lines of additions
-
-**Deployment**
-
-- `deploy.sh` - Added 239 lines of enhancements for better deployment handling
-- Enhanced XDG_CONFIG_HOME support across all configs
-- Better platform-specific config file handling
-
-**Git Scripts**
-
-- `git-update-repos.sh` - Enhanced with 111 lines of improvements
-- Better error handling and progress reporting
-
-**Update Script**
-
-- `update-all.sh` - Enhanced package manager detection and updates
-
-**README Optimization**
-
-- Reduced from 1925 to ~800 lines (~60% reduction)
-- Removed content duplications
-- Consolidated sections for higher information density
-- Reduced mermaid diagrams from 6 to 1
-- Better organization with links to new documentation files
-
-**Hooks**
-
-- `hooks/claude/quality-check.ps1` - Enhanced with comprehensive quality checks
-- Git hooks moved to proper `.config/git/hooks/` location
-
-### Removed
-
-**Deprecated Files**
-
-- `.env.gpt-researcher` - gpt-researcher integration removed
-- `.config/opencode/opencode.json` - Split into platform-specific files
-- `wezterm.lua` - Moved to `.config/wezterm/wezterm.lua`
-
-### Fixed
-
-**Coverage Reporting**
-
-- Fixed bash coverage to use bashcov for accurate sourced file tracking
-- Fixed badge calculation to reflect real coverage numbers
-
-**Platform-Specific Issues**
-
-- Fixed package installation priority on Linux
-- Fixed git installation to use brew version instead of apt
-- Fixed VSCode installation to use official apt repo
-- Fixed dotnet-sdk installation with correct package name
-
-### Testing
-
-**Thoroughly tested on:**
-
-- Ubuntu 26.04 LTS - All bootstrap phases, package installations, git hooks
-- Windows 11 - PowerShell wrapper execution, Git Bash integration, platform-specific tools
-
-**Coverage Results:**
-
-- Bash: 47.51% (1529/3218 lines) via bashcov 3.2.0
-- PowerShell: 10.02% (228/2276 commands) via Pester 5.7.1
-- Combined: 25.0% (weighted: 60% PS + 40% Bash)
-
----
+Coverage returned to bashcov because it tracks sourced files where kcov does not, making it primary with kcov as fallback, and the coverage badge now reflects the real numbers. The README shrank from 1925 to about 800 lines (roughly 60%) by removing duplicated content, consolidating sections, cutting the mermaid diagrams from 6 to 1, and linking to the new documentation files. Everything was tested on Ubuntu 26.04 LTS across all bootstrap phases, package installations, and git hooks, and on Windows 11 for PowerShell wrapper execution, Git Bash integration, and the platform-specific tools. Coverage landed at 47.51% bash (1529 of 3218 lines) via bashcov 3.2.0, 10.02% PowerShell (228 of 2276 commands) via Pester 5.7.1, and 25.0% combined weighted 60% PowerShell and 40% bash.
 
 ## [4.4] - 2026-01-07
 
-### Changed
-
-**git-update-repos: GitHub CLI Integration**
-
-- Migrated from public GitHub API to authenticated `gh repo list` command
-- Now fetches ALL repositories (public **and private**) via authenticated API
-- Added GitHub CLI (`gh`) requirement check with helpful error messages
-- Removed curl/wget-based API fetching and pagination logic
-- Simplified JSON parsing using `jq` when available, falls back to grep/sed
-
-**Documentation**
-
-- Updated README Section 11 with comprehensive git-update-repos documentation
-- Added parameters table with Bash and PowerShell equivalents
-- Documented gh CLI requirement and authentication flow
-- Updated script entry point description to mention private repo support
-
-### Fixed
-
-**git-update-repos**
-
-- Fixed issue where only public repositories were being cloned/updated
-- Script now correctly handles all repos for authenticated user via `gh` CLI
-
----
+`git-update-repos` migrated from the public GitHub API to the authenticated `gh repo list` command, so it now fetches and updates all repositories of the authenticated user, private ones included, fixing the old behavior where only public repositories were cloned or updated. The curl and wget based fetching with its pagination logic is gone, JSON parsing uses `jq` when available and falls back to grep and sed, and a requirement check fails with a helpful error message when `gh` is missing. README section 11 documents the command, the Bash and PowerShell parameter equivalents, the `gh` requirement and its authentication flow, and the private repo support now named in the entry point description.
 
 ## [4.3] - 2026-01-07
 
-### Fixed
-
-**Go Package Installation**
-
-- Fixed `goimports` reinstall issue by normalizing GOPATH paths before comparison
-- Changed from wildcard pattern matching to exact array matching for registry PATH checks
-- Always add `$GOPATH/bin` to current session PATH unconditionally for immediate tool availability
-
-### Removed
-
-**Ruby Runtime & bashcov**
-
-- Removed Ruby runtime from bootstrap (no longer needed)
-- Removed bashcov gem installation
-- Removed ruby from version-check patterns (both PowerShell and Bash)
-- Removed ruby from packages.yaml configuration
-- Updated coverage strategy: kcov is now used exclusively
-  - Linux/macOS: native kcov
-  - Windows: kcov via Docker
-
-### Changed
-
-- Updated README to reflect kcov-only coverage strategy
-- Removed gem from supported language package managers list
-- Updated coverage tools table to show "kcov (via Docker)" for Windows
-
----
+`goimports` stopped reinstalling on every run because GOPATH paths are normalized before comparison, the registry PATH checks moved from wildcard pattern matching to exact array matching, and `$GOPATH/bin` is now added to the current session PATH unconditionally for immediate tool availability. Ruby left the bootstrap entirely, taking the bashcov gem, the ruby entries in the PowerShell and Bash version checks, and the `ruby` entry in `packages.yaml`, because coverage moved to kcov exclusively: native kcov on Linux and macOS, kcov through Docker on Windows. The README reflects the kcov-only strategy, drops `gem` from the supported language package managers, and shows kcov through Docker for Windows in the coverage tools table.
 
 ## [4.2] - 2026-01-03
 
-### Fixed
+PATH detection for npm, Python, and winget-installed packages was fixed. `Initialize-UserPath` now adds all current directories of every Scoop app instead of only current/bin, `Add-ToPath` matches exactly instead of by substring, the WinGet Links directory joined the `Refresh-Path` preservation list, and PATH initialization moved to the beginning of `Main` so tools are detectable early.
 
-**Bootstrap Idempotency & PATH Detection**
-
-- Fixed PATH detection for npm, Python, and winget-installed packages
-- Enhanced Initialize-UserPath to add all Scoop app current directories (not just current/bin)
-- Fixed Add-ToPath to use exact matching instead of substring matching
-- Added WinGet Links directory to Refresh-Path preservation list
-- Moved PATH initialization to beginning of Main function for early tool detection
-
-**Test Infrastructure**
-
-- Fixed test bugs that were wiping User PATH registry entries
-- Removed dangerous registry PATH cleanup from AfterEach blocks
-- Added safety checks to prevent empty PATH conditions
-
-### Changed
-
-- Updated test counts from 2221 to 3221 (2181 PowerShell + 1040 Bash)
-- Updated idempotence documentation with latest bootstrap output (57 skipped items)
-- Enhanced PATH preservation to include WinGet Links for winget-installed tools
-- Improved coverage reporting to 31.4% combined (42.1% PowerShell + 31.2% Bash)
-
----
+Test infrastructure stopped wiping User PATH registry entries: the dangerous registry PATH cleanup left the AfterEach blocks and safety checks now prevent empty PATH conditions. Test counts rose from 2221 to 3221 (2181 PowerShell and 1040 bash), the idempotence documentation shows the latest bootstrap output with 57 skipped items, and combined coverage reached 31.4% (42.1% PowerShell and 31.2% bash).
 
 ## [4.1] - 2026-01-02
 
-### Fixed
-
-- Script entry point mermaid diagram alignment
-
-### Changed
-
-- Updated coverage reporting with real coverage measurements (43.9% combined: 41.9% PowerShell + 46.9% Bash)
-- Enhanced documentation with sequence diagram in Architecture section
-- Improved documentation structure: removed inline navigation links, kept only footer Back to Top
-- Refined subsection formatting: removed separators within subsections
-
----
+The script entry point mermaid diagram was aligned, and the documentation took real coverage measurements (43.9% combined, 41.9% PowerShell and 46.9% bash), gained a sequence diagram in the Architecture section, dropped the inline navigation links in favor of the footer Back to Top link, and lost the separators inside subsections.
 
 ## [4.0] - 2026-01-02
 
-### Major Architecture Changes
+v4.0 converted the `.ps1` scripts into thin compatibility wrappers that call the `.sh` scripts through Git Bash, with all core logic in bash and a Windows-native `bootstrap.ps1` for tighter platform integration that falls back to bash, which buys one implementation to maintain, cross-platform parity, and automatic Windows support. Git now installs on Windows via winget during bootstrap, the wrappers convert Windows paths to Git Bash format with lowercase drive letters, `.gitattributes` keeps LF for `.sh` and CRLF for `.ps1`, and bashcov became the universal bash coverage tool across platforms. New paired entry points arrived: `uninstall.sh`/`uninstall.ps1`, `healthcheck.sh`/`healthcheck.ps1`, `backup.sh`/`backup.ps1`, `restore.sh`/`restore.ps1`, and `sync-system-instructions.sh`/`sync-system-instructions.ps1`.
 
-**Shell-First Architecture (.sh as Source of Truth)**
+The config system gained optional `.dotfiles.config.yaml` on a bridge library (`lib/config.sh` and `lib/config.ps1`) covering editor preference, theme, installation categories, and auto-update options, with graceful fallback to defaults when the config is absent. Bootstrap became phase-based (Foundation, SDKs, LSPs, Linters, CLI Tools, MCP Servers, Deploy, Update) with the minimal, sdk, and full categories (full is the default), idempotent operations with detailed skip tracking, tool descriptions in the summary output, git installation on Windows, and bashcov installation. Deployment cleans `.gitconfig` per platform by removing Linuxbrew gh paths on Windows, absolute Windows `gh.exe` paths on Linux and macOS, and empty helper lines, and it supports XDG_CONFIG_HOME across configs with OneDrive-aware PowerShell profile deployment on Windows. Linux gained the improved package detection and installation, and macOS supports both Apple Silicon and Intel. The GLM MCP servers (`web-search-mcp`, `web-reader-mcp`, `zread-mcp`) left the bootstrap and the duplicate PowerShell implementations died in the wrapper conversion.
 
-- Converted .ps1 scripts to thin compatibility wrappers that call .sh scripts via Git Bash
-- All core logic now lives in bash scripts for single implementation
-- Windows-native bootstrap.ps1 for better platform integration, with fallback to bash
-- Benefits: Single implementation to maintain, cross-platform parity, automatic Windows support
-
-**Git Bash Integration**
-
-- Git is now automatically installed on Windows via winget during bootstrap
-- Wrapper scripts convert Windows paths to Git Bash format for cross-platform compatibility
-- Line endings handled via .gitattributes (LF for .sh, CRLF for .ps1)
-- Universal bashcov for bash coverage reports across all platforms
-
-### Added
-
-**Testing & Coverage**
-
-- Comprehensive bash test suite with 11 BATS test files covering all .sh scripts
-- 5 PowerShell test files focused on wrapper validation
-- Coverage tracking: 46.2% bash coverage, 15% PowerShell coverage, 27.5% combined
-- Test categories: unit tests, integration tests, E2E tests
-- Automated coverage reporting with badges
-
-**Configuration System**
-
-- Optional `.dotfiles.config.yaml` for user preferences
-- Bridge approach config library (`lib/config.sh` and `lib/config.ps1`)
-- Configurable: editor preference, theme, installation categories, auto-update options
-- Graceful fallback to defaults when config not present
-
-**Bootstrap Enhancements**
-
-- Installation categories: minimal, sdk, full (default)
-- Tool descriptions in summary output for better UX
-- Git installation during bootstrap on Windows
-- bashcov installation for coverage testing
-- Idempotent operations with detailed skip tracking
-- Phase-based installation (Foundation, SDKs, LSPs, Linters, CLI Tools, MCP Servers, Deploy, Update)
-
-**Deployment Improvements**
-
-- Automatic .gitconfig cleanup for platform-specific credential helper fixes
-- Removes Linuxbrew gh paths on Windows
-- Removes absolute Windows gh.exe paths on Linux/macOS
-- Removes empty helper lines from gitconfig
-- XDG_CONFIG_HOME support for all configs
-- OneDrive-aware PowerShell profile deployment on Windows
-
-**Platform Support**
-
-- Windows: Git Bash path conversion, lowercase drive letters
-- Linux: Enhanced package detection and installation
-- macOS: Apple Silicon and Intel support
-
-**New Entry Points**
-
-- `uninstall.sh` / `uninstall.ps1` - Remove deployed configs
-- `healthcheck.sh` / `healthcheck.ps1` - System health verification
-- `backup.sh` / `backup.ps1` - Timestamped backup before changes
-- `restore.sh` / `restore.ps1` - Restore from backups
-- `sync-system-instructions.sh` / `sync-system-instructions.ps1` - Sync AI prompts
-
-**Documentation**
-
-- `CHANGELOG.md` - Comprehensive version history from v1.0 to v4.0
-- `Legacy Museum` section in README - Documents historical files with commit hashes
-  - git-clone-all.sh: 2.5 years old (June 2023)
-  - assets/: 1.5 years old (June 2023 - July 2024)
-  - typos.toml, update.sh, .aider\*: 2025 era
-
-### Changed
-
-- **update-all**: Modularized into platform-specific functions
-- **git hooks**: Enhanced with PowerShell versions for Windows
-- **README**: Reorganized with numbered sections, security documentation, entry points table
-- **Neovim**: Removed null-ls, migrated to built-in formatting
-- **Wezterm**: Rose-pine theme, window mode support
-
-### Fixed
-
-- PowerShell alias syntax errors
-- WSL gh credential helper broken paths on Windows
-- Path conversion between Windows and Git Bash formats
-- Duplicate PowerShell test code removed (wrapper pattern)
-- .gitconfig credential helper cross-platform compatibility
-
-### Removed
-
-- GLM MCP servers from bootstrap (web-search-mcp, web-reader-mcp, zread-mcp)
-- Duplicate PowerShell implementations (converted to wrappers)
-
-### Security
-
-- Comprehensive security review completed (January 2026)
-- 0 HIGH/MEDIUM vulnerabilities found
-- Documented threat model and security design principles
-- Wrapper script string interpolation documented (not exploitable for personal dotfiles)
-
----
+Testing grew to 11 BATS files covering all `.sh` scripts and 5 PowerShell files validating the wrappers, spanning unit, integration, and E2E categories, at 46.2% bash, 15% PowerShell, and 27.5% combined coverage with automated reporting and badges. The README reorganized into numbered sections with security documentation and an entry points table, gained a Legacy Museum documenting historical files with commit hashes (`git-clone-all.sh` at 2.5 years old from June 2023, `assets/` at 1.5 years old spanning June 2023 to July 2024, and the 2025-era `typos.toml`, `update.sh`, and `.aider` files), and `CHANGELOG.md` was written covering v1.0 through v4.0. Neovim dropped null-ls and moved to built-in formatting, WezTerm took the rose-pine theme and window mode support, `update-all` modularized into platform-specific functions, and the git hooks gained PowerShell versions for Windows. Fixes covered PowerShell alias syntax errors, the broken WSL gh credential helper paths on Windows, path conversion between Windows and Git Bash formats, duplicate PowerShell test code removed through the wrapper pattern, and `.gitconfig` credential helper cross-platform compatibility. A security review completed in January 2026 found 0 high or medium vulnerabilities, documented the threat model and security design principles, and recorded that the wrapper script string interpolation is not exploitable for personal dotfiles.
 
 ## [3.3.3] - 2026-01-01
 
-### Fixed
-
-- PowerShell syntax errors in bootstrap scripts
-- PowerShell alias conflicts
-
-### Changed
-
-- Enhanced README with clearer documentation
-
----
+Fixed the PowerShell syntax errors in the bootstrap scripts and the PowerShell alias conflicts, and clarified the README documentation.
 
 ## [3.3] - 2026-01-01
 
-### Fixed
-
-- PowerShell syntax errors throughout the codebase
-
-### Changed
-
-- Updated README for clarity
-
----
+Fixed the PowerShell syntax errors throughout the codebase and updated the README for clarity.
 
 ## [3.2] - 2026-01-01
 
-### Changed
-
-- Reorganized README sections with numbering
-- Added section navigation
-
----
+The README sections were reorganized with numbering and gained section navigation.
 
 ## [3.1] - 2026-01-01
 
-### Changed
-
-- Fixed Neovim keybindings documentation
-- Added Claude Code integration section
-- Added hidden hotkeys and Wezterm hotkeys to README
-- Fixed key notation in documentation
-
----
+The Neovim keybindings documentation was fixed, a Claude Code integration section was added, the hidden hotkeys and Wezterm hotkeys joined the README, and the key notation in the documentation was corrected.
 
 ## [3.0] - 2026-01-01
 
-### Added
-
-- **Bridge Approach Config System**: Optional YAML configuration with graceful fallbacks
-- **Testing Framework**: Comprehensive test suite with BATS (bash) and Pester (PowerShell)
-- **Code Coverage**: bashcov for bash coverage, Pester coverage for PowerShell
-- **Conventional Commits**: Git hooks enforce conventional commit format
-- **Claude Code Hooks**: Quality checks and TDD guard for AI-assisted development
-- **System Instructions Sync**: Auto-distribute CLAUDE.md, AGENTS.md, GEMINI.md to all repos
-
-### Changed
-
-- Modularized update-all for better maintainability
-- Enhanced CLAUDE.md with comprehensive AI coding practices
-- Bootstrap now supports installation categories (minimal, sdk, full)
-
----
+Version 3.0 brought the bridge approach config system (optional YAML configuration with graceful fallbacks), a testing framework built on BATS for bash and Pester for PowerShell with bashcov and Pester coverage, git hooks enforcing Conventional Commits, Claude Code hooks running quality checks and a TDD guard for AI-assisted development, and system instructions sync that auto-distributes `CLAUDE.md`, `AGENTS.md`, and `GEMINI.md` to all repositories. `update-all` was modularized for maintainability, `CLAUDE.md` gained the AI coding practices, and bootstrap learned the minimal, sdk, and full installation categories.
 
 ## [2.2] - 2025-12-31
 
-### Changed
-
-- Enhanced README documentation
-- Improved verbose output in scripts
-
----
+Improved the README documentation and the verbose output of the scripts.
 
 ## [2.1] - 2025-12-31
 
-### Changed
-
-- **update-all**: Refactored for modularity and better maintainability
-- Improved package manager detection and handling
-
----
+`update-all` was refactored for modularity and maintainability, with better package manager detection and handling.
 
 ## [2.0] - 2025-12-31
 
-### Added
-
-- **Auto-distribution of System Prompts**: Automatically sync AI system instructions across all repositories
-- CLAUDE.md, AGENTS.md, GEMINI.md support for multiple AI assistants
-
-### Changed
-
-- Enhanced git hooks for better commit message validation
-- Improved bootstrap process
-
----
+System prompts now auto-distribute across all repositories, with `CLAUDE.md`, `AGENTS.md`, and `GEMINI.md` support for multiple AI assistants. The git hooks gained better commit message validation and the bootstrap process improved.
 
 ## [1.0] - 2025-12-30
 
-### Initial Release
+This is the initial release. It supports Windows 11, Linux (Ubuntu, Fedora, Arch), and macOS, built around a universal deployment script for the Neovim, git, and shell profile configs and a bootstrap script that sets up a development environment automatically. Bootstrap installs the package managers `scoop`, `winget`, `brew`, `apt`, `dnf`, and `pacman`, the SDKs Node.js, Python, Go, Rust, dotnet, and OpenJDK, 15+ LSP servers, 10+ linters and formatters, and the CLI tools `fzf`, `zoxide`, `bat`, `eza`, `lazygit`, `gh`, `ripgrep`, and `fd`.
 
-**Core Features**
+The git hooks arrived from the start: a pre-commit hook that auto-formats and lints with support for 15+ languages, and a commit-msg hook that enforces conventional commits. The Neovim configuration runs on the lazy.nvim plugin manager with 15+ LSP servers configured, Treesitter for syntax highlighting, custom keybindings and themes, and linting and formatting on save. The shell profiles cover bash aliases and functions, zsh support on macOS and Linux, the PowerShell 7 profile on Windows, and zoxide integration for smart navigation.
 
-- Cross-platform support: Windows 11, Linux (Ubuntu/Fedora/Arch), macOS
-- Universal deployment script for configs (Neovim, git, shell profiles)
-- Bootstrap script for automated development environment setup
-- Package manager installation (scoop, winget, brew, apt, dnf, pacman)
-- SDK installation (Node.js, Python, Go, Rust, dotnet, OpenJDK)
-- LSP server installation (15+ language servers)
-- Linter and formatter installation (10+ tools)
-- CLI tools installation (fzf, zoxide, bat, eza, lazygit, gh, ripgrep, fd)
-
-**Git Hooks**
-
-- Pre-commit hook for auto-formatting and linting
-- Commit-msg hook for conventional commits enforcement
-- Support for 15+ languages in hooks
-
-**Neovim Configuration**
-
-- Lazy.nvim plugin manager
-- 15+ LSP servers configured
-- Treesitter for syntax highlighting
-- Custom keybindings and themes
-- Linting and formatting on save
-
-**Shell Profiles**
-
-- Bash aliases and functions
-- Zsh support for macOS/Linux
-- PowerShell 7 profile for Windows
-- Zoxide integration for smart navigation
-
-**Utility Scripts**
-
-- `update-all.sh`: Update all package managers
-- `git-update-repos.sh`: Update all git repositories in configured directory
-- `healthcheck.sh`: Verify system health and configurations
-- `backup.sh`: Create timestamped backups
-- `restore.sh`: Restore from backups
-
-**Platform-Specific**
-
-- Windows: OneDrive-aware, PowerShell 7 support, Git Bash integration
-- Linux: Multiple distribution support, systemd services
-- macOS: Homebrew integration, Apple Silicon support
-
----
-
-## Version Summary
-
-| Version | Date       | Major Changes                                                                                            |
-| ------- | ---------- | -------------------------------------------------------------------------------------------------------- |
-| 5.17.0  | 2026-06-20 | CLAUDE.md: simplest-solution and minimal-comment rules strengthened                                      |
-| 5.16.0  | 2026-05-13 | CLAUDE.md: bash-editing and baseline-testing rules                                                       |
-| 5.15.0  | 2026-04-22 | Fixed bun global remove and uv self-update methods                                                       |
-| 5.14.0  | 2026-04-18 | Claude Code native irm installer on Windows, removed bun/npm dependency                                  |
-| 5.13.1  | 2026-04-08 | sync-system-instructions removes stale CLAUDE.md during copy phase                                       |
-| 5.13.0  | 2026-04-08 | Centralized CLAUDE.md, removed per-repo sync, stale CLAUDE.md cleanup                                    |
-| 5.12.0  | 2026-04-08 | Removed .claude.json template deployment, MCP servers via plugins only                                   |
-| 5.11.0  | 2026-04-08 | CLAUDE.md restructured from 6 to 4 sections, eliminated redundancy                                       |
-| 5.10.0  | 2026-02-28 | CLAUDE.md protocol enhancements, unified bash statusline for all platforms                               |
-| 5.9.0   | 2026-02-13 | OpenCode via bun on Windows, PowerShell profile @args pass-through, deploy profile reload                |
-| 5.8.0   | 2026-02-12 | OpenCode update reliability fix, deploy verbose logging, shim cleanup alignment                          |
-| 5.7.0   | 2026-02-11 | Bootstrap GCC verification, update-all AI CLI verification (claude-code, opencode)                       |
-| 5.6.0   | 2026-02-08 | GCC installation verification via --version, Install-ScoopPackage execution check                        |
-| 5.5.0   | 2026-02-07 | Skip pip flag, pip update method fix, OpenCode CLI update fix                                            |
-| 5.3.13  | 2026-02-03 | SQLite CLI added to all platforms, removed -SkipUpdate from README table                                 |
-| 5.3.12  | 2026-02-03 | GCC added to Windows bootstrap, winget --include-unknown, removed update-all from bootstrap              |
-| 5.3.11  | 2026-02-01 | CLAUDE.md simplified, PostToolUse hooks deprecated, Hookify rules integration                            |
-| 5.3.10  | 2026-01-29 | CLAUDE.md tool usage guidance: prefer native built-in tools before plugin tools                          |
-| 5.3.9   | 2026-01-28 | Cygwin chmod fix, PowerShell update alias removal                                                        |
-| 5.3.8   | 2026-01-25 | mermaid-cli diagram generation, ComfyUI Desktop AI image gen, gui_apps category, comfy install note      |
-| 5.3.7   | 2026-01-24 | README corrections: LSP count 20, tested platforms, Neovim 0.12+ native, Stop hooks                      |
-| 5.3.6   | 2026-01-24 | Core Features enhancement, corrected counts, added Neovim/WezTerm details                                |
-| 5.3.5   | 2026-01-24 | README refinements, merged sections, added zai MCP patching                                              |
-| 5.3.4   | 2026-01-24 | Documentation consolidation, README 70% reduction, single-file focus                                     |
-| 5.3.3   | 2026-01-24 | Yazi terminal file manager with cd-on-exit, MCP fix documentation                                        |
-| 5.3.2   | 2026-01-24 | Windows LSP marketplace auto-patching, automated cmd.exe wrapper for npm-installed LSPs                  |
-| 5.3.1   | 2026-01-23 | git-update-repos.ps1 scope shadowing fix                                                                 |
-| 5.3.0   | 2026-01-23 | Serena MCP integration via uvx, uv package manager, scalar handling fix, CLAUDE.md XML tags              |
-| 5.2.17  | 2026-01-17 | Added WezTerm installation to Windows bootstrap, documented PowerShell 7+ requirement                    |
-| 5.2.16  | 2026-01-17 | Fixed Neovim/WezTerm config deployment on Windows, AI CLI update detection fix                           |
-| 5.2.15  | 2026-01-17 | Native PowerShell 7 update-all.ps1, fixed winget/scoop detection, Git Bash pwsh.exe alias                |
-| 5.2.14  | 2026-01-17 | Pure PowerShell 7 scripts for Windows, script parity, "already up to date" detection                     |
-| 5.0     | 2026-01-10 | Linux platform overhaul, Ubuntu 26.04 LTS ready, Homebrew-first, git hooks enhancement, bashcov coverage |
-| 4.4     | 2026-01-07 | git-update-repos migrated to gh CLI for public+private repo support                                      |
-| 4.3     | 2026-01-07 | Fixed goimports reinstall, removed Ruby/bashcov, kcov-only coverage                                      |
-| 4.2     | 2026-01-03 | Bootstrap idempotency fixes, PATH detection improvements                                                 |
-| 4.1     | 2026-01-02 | Documentation improvements, real coverage reporting                                                      |
-| 4.0     | 2026-01-02 | Shell-first architecture, comprehensive testing, config system                                           |
-| 3.3.3   | 2026-01-01 | Bootstrap enhancements, PowerShell fixes                                                                 |
-| 3.3     | 2026-01-01 | PowerShell syntax fixes                                                                                  |
-| 3.2     | 2026-01-01 | README reorganization                                                                                    |
-| 3.1     | 2026-01-01 | Documentation improvements                                                                               |
-| 3.0     | 2026-01-01 | Bridge approach config, testing framework, Claude Code hooks                                             |
-| 2.2     | 2025-12-31 | Documentation enhancements                                                                               |
-| 2.1     | 2025-12-31 | Update-all modularization                                                                                |
-| 2.0     | 2025-12-31 | Auto-distribution of system prompts                                                                      |
-| 1.0     | 2025-12-30 | Initial release                                                                                          |
-
----
-
-## Migration Guide
-
-### From v3.x to v4.0
-
-**Windows Users:**
-
-- Git Bash is now required and will be auto-installed during bootstrap
-- Run `bootstrap.ps1 -y` to update to the new architecture
-- All existing functionality preserved with .sh as source of truth
-
-**All Users:**
-
-- Optional: Create `~/.dotfiles.config.yaml` for custom configuration
-- Run `deploy.sh` / `deploy.ps1` to update configurations
-- Review new security section in README
-
-### From v2.x to v3.0
-
-- Install testing dependencies: `bats` (bash) and `Pester` (PowerShell)
-- Run `bootstrap.sh` / `bootstrap.ps1` to install new tools
-- Create optional config file for customization
-- Run `deploy.sh` / `deploy.ps1` to update Claude Code hooks
-
-### From v1.0 to v2.0
-
-- Run `sync-system-instructions.sh` to distribute AI prompts
-- Update git hooks: `git config --global core.hooksPath ~/.config/git/hooks`
-
----
-
-[Unreleased]: https://github.com/lavantien/dotfiles/compare/v5.24.3...HEAD
-[5.24.3]: https://github.com/lavantien/dotfiles/compare/v5.24.2...v5.24.3
-[5.24.2]: https://github.com/lavantien/dotfiles/compare/v5.24.1...v5.24.2
-[5.24.1]: https://github.com/lavantien/dotfiles/compare/v5.24.0...v5.24.1
-[5.24.0]: https://github.com/lavantien/dotfiles/compare/v5.23.0...v5.24.0
-[5.23.0]: https://github.com/lavantien/dotfiles/compare/v5.22.2...v5.23.0
-[5.22.2]: https://github.com/lavantien/dotfiles/compare/v5.22.1...v5.22.2
-[5.22.1]: https://github.com/lavantien/dotfiles/compare/v5.22.0...v5.22.1
-[5.22.0]: https://github.com/lavantien/dotfiles/compare/v5.21.2...v5.22.0
-[5.21.1]: https://github.com/lavantien/dotfiles/compare/v5.21.0...v5.21.1
-[5.21.0]: https://github.com/lavantien/dotfiles/compare/v5.20.0...v5.21.0
-[5.20.0]: https://github.com/lavantien/dotfiles/compare/v5.19.0...v5.20.0
-[5.19.0]: https://github.com/lavantien/dotfiles/compare/v5.18.0...v5.19.0
-[5.18.0]: https://github.com/lavantien/dotfiles/compare/v5.17.0...v5.18.0
-[5.17.0]: https://github.com/lavantien/dotfiles/compare/v5.16.0...v5.17.0
-[5.16.0]: https://github.com/lavantien/dotfiles/compare/v5.15.0...v5.16.0
-[5.15.0]: https://github.com/lavantien/dotfiles/compare/v5.14.0...v5.15.0
-[5.14.0]: https://github.com/lavantien/dotfiles/compare/v5.13.1...v5.14.0
-[5.13.1]: https://github.com/lavantien/dotfiles/compare/v5.13.0...v5.13.1
-[5.13.0]: https://github.com/lavantien/dotfiles/compare/v5.12.0...v5.13.0
-[5.12.0]: https://github.com/lavantien/dotfiles/compare/v5.11.0...v5.12.0
-[5.11.0]: https://github.com/lavantien/dotfiles/compare/v5.10.0...v5.11.0
-[5.10.0]: https://github.com/lavantien/dotfiles/compare/v5.9.0...v5.10.0
-[5.9.0]: https://github.com/lavantien/dotfiles/compare/v5.8.0...v5.9.0
-[5.8.0]: https://github.com/lavantien/dotfiles/compare/v5.7.0...v5.8.0
-[5.7.0]: https://github.com/lavantien/dotfiles/compare/v5.6.0...v5.7.0
-[5.6.0]: https://github.com/lavantien/dotfiles/compare/v5.5.0...v5.6.0
-[5.5.0]: https://github.com/lavantien/dotfiles/compare/v5.3.14...v5.5.0
-[5.3.14]: https://github.com/lavantien/dotfiles/compare/v5.3.13...v5.3.15
-[5.3.13]: https://github.com/lavantien/dotfiles/compare/v5.3.12...v5.3.13
-[5.3.12]: https://github.com/lavantien/dotfiles/compare/v5.3.11...v5.3.12
-[5.3.11]: https://github.com/lavantien/dotfiles/compare/v5.3.10...v5.3.11
-[5.3.10]: https://github.com/lavantien/dotfiles/compare/v5.3.9...v5.3.10
-[5.3.9]: https://github.com/lavantien/dotfiles/compare/v5.3.8...v5.3.9
-[5.3.8]: https://github.com/lavantien/dotfiles/compare/v5.3.7...v5.3.8
-[5.3.7]: https://github.com/lavantien/dotfiles/compare/v5.3.6...v5.3.7
-[5.3.6]: https://github.com/lavantien/dotfiles/compare/v5.3.5...v5.3.6
-[5.3.5]: https://github.com/lavantien/dotfiles/compare/v5.3.4...v5.3.5
-[5.3.4]: https://github.com/lavantien/dotfiles/compare/v5.3.3...v5.3.4
-[5.3.3]: https://github.com/lavantien/dotfiles/compare/v5.3.2...v5.3.3
-[5.3.2]: https://github.com/lavantien/dotfiles/compare/v5.3.1...v5.3.2
-[5.3.1]: https://github.com/lavantien/dotfiles/compare/v5.3.0...v5.3.1
-[5.3.0]: https://github.com/lavantien/dotfiles/compare/v5.2.27...v5.3.0
-[5.2.27]: https://github.com/lavantien/dotfiles/compare/v5.2.26...v5.2.27
-[5.2.26]: https://github.com/lavantien/dotfiles/compare/v5.2.25...v5.2.26
-[5.2.25]: https://github.com/lavantien/dotfiles/compare/v5.2.24...v5.2.25
-[5.2.16]: https://github.com/lavantien/dotfiles/compare/v5.2.15...v5.2.16
-[5.2.15]: https://github.com/lavantien/dotfiles/compare/v5.2.14...v5.2.15
-[5.2.14]: https://github.com/lavantien/dotfiles/compare/v5.2.13...v5.2.14
-[5.2.13]: https://github.com/lavantien/dotfiles/compare/v5.2.12...v5.2.13
-[5.0]: https://github.com/lavantien/dotfiles/compare/v4.4...v5.0
-[4.4]: https://github.com/lavantien/dotfiles/compare/v4.3...v4.4
-[4.3]: https://github.com/lavantien/dotfiles/compare/v4.2...v4.3
-[4.2]: https://github.com/lavantien/dotfiles/compare/v4.1...v4.2
-[4.1]: https://github.com/lavantien/dotfiles/compare/v4.0...v4.1
-[4.0]: https://github.com/lavantien/dotfiles/compare/v3.3.3...v4.0
-[3.3.3]: https://github.com/lavantien/dotfiles/compare/v3.3...v3.3.3
-[3.3]: https://github.com/lavantien/dotfiles/compare/v3.2...v3.3
-[3.2]: https://github.com/lavantien/dotfiles/compare/v3.1...v3.2
-[3.1]: https://github.com/lavantien/dotfiles/compare/v3.0...v3.1
-[3.0]: https://github.com/lavantien/dotfiles/compare/v2.2...v3.0
-[2.2]: https://github.com/lavantien/dotfiles/compare/v2.1...v2.2
-[2.1]: https://github.com/lavantien/dotfiles/compare/v2.0...v2.1
-[2.0]: https://github.com/lavantien/dotfiles/compare/v1.0...v2.0
-[1.0]: https://github.com/lavantien/dotfiles/releases/tag/v1.0
+The utility scripts cover every package manager through `update-all.sh`, the git repositories in the configured directory through `git-update-repos.sh`, system health and configuration checks through `healthcheck.sh`, timestamped backups through `backup.sh`, and restores from those backups through `restore.sh`. Windows is OneDrive-aware with PowerShell 7 support and Git Bash integration, Linux supports multiple distributions with systemd services, and macOS integrates Homebrew with Apple Silicon support.
