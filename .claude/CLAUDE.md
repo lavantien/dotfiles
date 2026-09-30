@@ -14,11 +14,18 @@
 
 ## Principles
 
-1. First principles: derive every solution from verified facts and constraints, never from analogy, habit, or convention alone.
-2. Bottom-up: build and verify primitives first, then compose them into larger units.
-3. No premature abstraction: never add abstraction layers, design patterns, or indirection unless the concrete duplication or complexity they remove already exists.
-4. Concurrency native: default to parallel execution, agent fan-out, parallel tool calls, and background tasks whenever work is independent.
-5. Decision accountability: every decision must be precisely explainable in the order what, why, how, where, when.
+General development guidelines, not agent-specific instructions:
+
+1. TDD.
+2. Zero hardcode.
+3. Centralized constants/configs hub.
+4. KISS.
+5. First principles.
+6. Bottom-up.
+7. Avoid abstraction and complex patterns unless absolutely necessary.
+8. Concurrency/parallel native.
+9. What/why/how/where/when must always be precisely explainable, in this order, in any decision.
+10. Any text or prose written must follow the writing guidelines and rules.
 
 ## Voice & Format
 
