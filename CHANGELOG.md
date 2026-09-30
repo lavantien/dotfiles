@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.29.1] - 2026-10-01
+
+### Added
+
+- `.claude/CLAUDE.md`: new Principles section with the general development guidelines: TDD, zero hardcode, centralized constants/configs hub, KISS, first principles, bottom-up, no abstraction or complex patterns unless absolutely necessary, concurrency/parallel native, decisions explainable in the order what, why, how, where, when, and prose following the writing rules
+
 ## [5.29.0] - 2026-10-01
 
 ### Added
@@ -472,6 +478,7 @@ The official opencode bash installer has Windows path handling issues when calle
 **Rationale:**
 
 The opencode update was failing silently in some cases due to:
+
 1. Old npm shims shadowing the official binary in PATH, causing version checks to return stale versions
 2. Running opencode processes preventing the installer from replacing the executable on Windows
 
@@ -1113,7 +1120,7 @@ Using uvx to run Serena directly from GitHub is the recommended approach for MCP
 **CLAUDE.md - Plain Text Format**
 
 - Converted all markdown headers to XML tag format (e.g., ## Non-Negotiables → <non-negotiables>)
-- Removed all bold (**text**) and italic (*text*) markdown formatting
+- Removed all bold (**text**) and italic (_text_) markdown formatting
 - Headers now use descriptive tag names for better AI parsing
 - Content remains plain unordered and numbered lists
 
@@ -1293,6 +1300,7 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 - Supports Claude Code 2.1.6+ context_window percentage fields with fallback to current_usage calculation
 
 **StatusLine Features:**
+
 - Displays: directory, git branch, git status, model name, tokens/max (percentage remaining), session cost
 - Color-coded context warnings: green (>50%), yellow (20-50%), red (<20% remaining)
 - Compatible with both Windows (PowerShell 7+) and Linux/macOS (bash)
@@ -1531,7 +1539,7 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 
 - cleanup-npm-trash.ps1 now checks scoop-persisted nodejs-lts location
 - update-all.sh now checks multiple npm locations on Windows
-- Fixes blocks from invalid packages like .intelephense-* that npm cannot uninstall itself
+- Fixes blocks from invalid packages like .intelephense-\* that npm cannot uninstall itself
 
 ### Added
 
@@ -2370,31 +2378,31 @@ Tests were polluting User PATH registry with temporary test directories. Environ
 | 5.14.0  | 2026-04-18 | Claude Code native irm installer on Windows, removed bun/npm dependency                                  |
 | 5.13.1  | 2026-04-08 | sync-system-instructions removes stale CLAUDE.md during copy phase                                       |
 | 5.13.0  | 2026-04-08 | Centralized CLAUDE.md, removed per-repo sync, stale CLAUDE.md cleanup                                    |
-| 5.12.0  | 2026-04-08 | Removed .claude.json template deployment, MCP servers via plugins only                                    |
+| 5.12.0  | 2026-04-08 | Removed .claude.json template deployment, MCP servers via plugins only                                   |
 | 5.11.0  | 2026-04-08 | CLAUDE.md restructured from 6 to 4 sections, eliminated redundancy                                       |
-| 5.10.0  | 2026-02-28 | CLAUDE.md protocol enhancements, unified bash statusline for all platforms                                |
-| 5.9.0   | 2026-02-13 | OpenCode via bun on Windows, PowerShell profile @args pass-through, deploy profile reload               |
+| 5.10.0  | 2026-02-28 | CLAUDE.md protocol enhancements, unified bash statusline for all platforms                               |
+| 5.9.0   | 2026-02-13 | OpenCode via bun on Windows, PowerShell profile @args pass-through, deploy profile reload                |
 | 5.8.0   | 2026-02-12 | OpenCode update reliability fix, deploy verbose logging, shim cleanup alignment                          |
-| 5.7.0   | 2026-02-11 | Bootstrap GCC verification, update-all AI CLI verification (claude-code, opencode)                        |
-| 5.6.0   | 2026-02-08 | GCC installation verification via --version, Install-ScoopPackage execution check                       |
+| 5.7.0   | 2026-02-11 | Bootstrap GCC verification, update-all AI CLI verification (claude-code, opencode)                       |
+| 5.6.0   | 2026-02-08 | GCC installation verification via --version, Install-ScoopPackage execution check                        |
 | 5.5.0   | 2026-02-07 | Skip pip flag, pip update method fix, OpenCode CLI update fix                                            |
-| 5.3.13  | 2026-02-03 | SQLite CLI added to all platforms, removed -SkipUpdate from README table                                  |
-| 5.3.12  | 2026-02-03 | GCC added to Windows bootstrap, winget --include-unknown, removed update-all from bootstrap               |
-| 5.3.11  | 2026-02-01 | CLAUDE.md simplified, PostToolUse hooks deprecated, Hookify rules integration                             |
-| 5.3.10  | 2026-01-29 | CLAUDE.md tool usage guidance: prefer native built-in tools before plugin tools                           |
-| 5.3.9   | 2026-01-28 | Cygwin chmod fix, PowerShell update alias removal                                                         |
-| 5.3.8   | 2026-01-25 | mermaid-cli diagram generation, ComfyUI Desktop AI image gen, gui_apps category, comfy install note          |
-| 5.3.7   | 2026-01-24 | README corrections: LSP count 20, tested platforms, Neovim 0.12+ native, Stop hooks                    |
-| 5.3.6   | 2026-01-24 | Core Features enhancement, corrected counts, added Neovim/WezTerm details                                 |
-| 5.3.5   | 2026-01-24 | README refinements, merged sections, added zai MCP patching                                             |
-| 5.3.4   | 2026-01-24 | Documentation consolidation, README 70% reduction, single-file focus                                    |
-| 5.3.3   | 2026-01-24 | Yazi terminal file manager with cd-on-exit, MCP fix documentation                                      |
-| 5.3.2   | 2026-01-24 | Windows LSP marketplace auto-patching, automated cmd.exe wrapper for npm-installed LSPs           |
-| 5.3.1   | 2026-01-23 | git-update-repos.ps1 scope shadowing fix                                                          |
+| 5.3.13  | 2026-02-03 | SQLite CLI added to all platforms, removed -SkipUpdate from README table                                 |
+| 5.3.12  | 2026-02-03 | GCC added to Windows bootstrap, winget --include-unknown, removed update-all from bootstrap              |
+| 5.3.11  | 2026-02-01 | CLAUDE.md simplified, PostToolUse hooks deprecated, Hookify rules integration                            |
+| 5.3.10  | 2026-01-29 | CLAUDE.md tool usage guidance: prefer native built-in tools before plugin tools                          |
+| 5.3.9   | 2026-01-28 | Cygwin chmod fix, PowerShell update alias removal                                                        |
+| 5.3.8   | 2026-01-25 | mermaid-cli diagram generation, ComfyUI Desktop AI image gen, gui_apps category, comfy install note      |
+| 5.3.7   | 2026-01-24 | README corrections: LSP count 20, tested platforms, Neovim 0.12+ native, Stop hooks                      |
+| 5.3.6   | 2026-01-24 | Core Features enhancement, corrected counts, added Neovim/WezTerm details                                |
+| 5.3.5   | 2026-01-24 | README refinements, merged sections, added zai MCP patching                                              |
+| 5.3.4   | 2026-01-24 | Documentation consolidation, README 70% reduction, single-file focus                                     |
+| 5.3.3   | 2026-01-24 | Yazi terminal file manager with cd-on-exit, MCP fix documentation                                        |
+| 5.3.2   | 2026-01-24 | Windows LSP marketplace auto-patching, automated cmd.exe wrapper for npm-installed LSPs                  |
+| 5.3.1   | 2026-01-23 | git-update-repos.ps1 scope shadowing fix                                                                 |
 | 5.3.0   | 2026-01-23 | Serena MCP integration via uvx, uv package manager, scalar handling fix, CLAUDE.md XML tags              |
-| 5.2.17  | 2026-01-17 | Added WezTerm installation to Windows bootstrap, documented PowerShell 7+ requirement                   |
+| 5.2.17  | 2026-01-17 | Added WezTerm installation to Windows bootstrap, documented PowerShell 7+ requirement                    |
 | 5.2.16  | 2026-01-17 | Fixed Neovim/WezTerm config deployment on Windows, AI CLI update detection fix                           |
-| 5.2.15  | 2026-01-17 | Native PowerShell 7 update-all.ps1, fixed winget/scoop detection, Git Bash pwsh.exe alias               |
+| 5.2.15  | 2026-01-17 | Native PowerShell 7 update-all.ps1, fixed winget/scoop detection, Git Bash pwsh.exe alias                |
 | 5.2.14  | 2026-01-17 | Pure PowerShell 7 scripts for Windows, script parity, "already up to date" detection                     |
 | 5.0     | 2026-01-10 | Linux platform overhaul, Ubuntu 26.04 LTS ready, Homebrew-first, git hooks enhancement, bashcov coverage |
 | 4.4     | 2026-01-07 | git-update-repos migrated to gh CLI for public+private repo support                                      |
