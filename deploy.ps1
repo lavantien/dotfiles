@@ -128,7 +128,22 @@ function Merge-ClaudeSettings {
         return
     }
     if (!(Test-Path $TargetPath)) {
-        Copy-Item $TemplatePath $TargetPath -Force
+        try {
+            $Seeded = Get-Content $TemplatePath -Raw | ConvertFrom-Json
+        }
+        catch {
+            Write-Host "  Claude settings template not valid JSON, skipping" -ForegroundColor Yellow
+            return
+        }
+        # Same concrete-type check as the live guard below: null passes every
+        # -is check and scalars pass -is [PSCustomObject] in pwsh
+        if ($null -eq $Seeded -or $Seeded.GetType().Name -ne 'PSCustomObject') {
+            Write-Host "  Claude settings template not a JSON object, skipping" -ForegroundColor Yellow
+            return
+        }
+        # Seed honors the retirement list so "deleted on every deploy" holds
+        Remove-RetiredKeys $Seeded (Join-Path (Split-Path $TemplatePath -Parent) 'settings.retired.json')
+        $Seeded | ConvertTo-Json -Depth 100 | Set-Content $TargetPath
         Write-Host "  Claude settings (created from template)" -ForegroundColor Green
         return
     }

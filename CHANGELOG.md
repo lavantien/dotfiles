@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - `deploy.ps1`, `lib/json-merge.sh`: the Claude settings merge is template-priority, template values overwrite diverging live values for shared keys recursively while live-only keys (including `env.ANTHROPIC_AUTH_TOKEN`) are preserved. Previously the merge only filled missing keys, so template value changes never propagated
-- `.claude/settings.template.json`: `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=48.5` triggers autocompact at 485k of the 1M window (was 93.75, a 937.5k trigger). The percentage is the documented knob that lowers the trigger below `CLAUDE_CODE_AUTO_COMPACT_WINDOW` (https://code.claude.com/docs/en/env-vars)
+- `.claude/settings.template.json`: `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=48.5` triggers autocompact at 485k of the 1M window (was 93.75, possibly inert since the docs say percentages above the default are ignored and the default is not published). The percentage is the documented knob that lowers the trigger below `CLAUDE_CODE_AUTO_COMPACT_WINDOW` (https://code.claude.com/docs/en/env-vars)
 - `.claude/settings.template.json`: `CLAUDE_CODE_MAX_OUTPUT_TOKEN` renamed to the documented `CLAUDE_CODE_MAX_OUTPUT_TOKENS` (https://code.claude.com/docs/en/env-vars)
 - `.claude/settings.template.json`: `remember@claude-plugins-official` disabled to match the live setting
 

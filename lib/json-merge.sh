@@ -13,12 +13,14 @@ retire_settings_keys() {
 
 	if command -v jq >/dev/null 2>&1; then
 		local out="${merged}.retired"
-		# Only paths whose parent resolves to an object are deletable; getpath
-		# returns null for scalar or missing intermediates, so those skip
+		# Only paths whose parent resolves to an object are deletable.
+		# getpath returns null for missing keys but RAISES when indexing
+		# through a scalar or array, so the try/catch keeps one bad entry
+		# from failing retirement of all entries.
 		if jq --slurpfile r "$retired" '
 			. as $doc |
 			[$r[0] | keys[] | split(".") | . as $p
-				| select(($doc | getpath($p[:-1]) | type) == "object")] as $del |
+				| select(((try ($doc | getpath($p[:-1])) catch null) | type) == "object")] as $del |
 			$doc | delpaths($del)
 		' "$merged" >"$out" 2>/dev/null; then
 			mv "$out" "$merged"
@@ -26,16 +28,19 @@ retire_settings_keys() {
 			rm -f "$out"
 		fi
 	elif command -v python3 >/dev/null 2>&1; then
-		python3 - "$merged" "$retired" <<'PY'
+		local out="${merged}.retired"
+		if python3 - "$merged" "$retired" >"$out" <<'PY'
 import json, sys
 
+# Skip silently on an absent, unparsable, or non-object list: no deletions.
+# The document is always printed so the caller's tmp stays complete.
 try:
     with open(sys.argv[2], encoding="utf-8") as f:
         retired = json.load(f)
 except (OSError, ValueError):
-    sys.exit(0)
+    retired = {}
 if not isinstance(retired, dict):
-    sys.exit(0)
+    retired = {}
 with open(sys.argv[1], encoding="utf-8") as f:
     doc = json.load(f)
 for dotted in retired:
@@ -47,10 +52,13 @@ for dotted in retired:
             break
     if isinstance(node, dict):
         node.pop(segs[-1], None)
-with open(sys.argv[1], "w", encoding="utf-8") as f:
-    json.dump(doc, f, indent=2)
-    f.write("\n")
+print(json.dumps(doc, indent=2))
 PY
+		then
+			mv "$out" "$merged"
+		else
+			rm -f "$out"
+		fi
 	fi
 }
 
