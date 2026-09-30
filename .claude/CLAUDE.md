@@ -12,6 +12,14 @@
 8. Max 1000 SLOC per file. Conventional Commits: feat, fix, docs, refactor, test, chore.
 9. Makefile-first. Run every development and testing activity (build, test, lint, typecheck, run, migrate, deploy) through a `make` target for consistency and documentability. Never invent ad hoc bash one-liners or equivalents on the spot. If no target exists, add it to the Makefile first, then use it.
 
+## Principles
+
+1. First principles: derive every solution from verified facts and constraints, never from analogy, habit, or convention alone.
+2. Bottom-up: build and verify primitives first, then compose them into larger units.
+3. No premature abstraction: never add abstraction layers, design patterns, or indirection unless the concrete duplication or complexity they remove already exists.
+4. Concurrency native: default to parallel execution, agent fan-out, parallel tool calls, and background tasks whenever work is independent.
+5. Decision accountability: every decision must be precisely explainable in the order what, why, how, where, when.
+
 ## Voice & Format
 
 Definitive guideline on voice and format rules:
@@ -62,6 +70,7 @@ Express ideas in simple, everyday language without obscure jargon. Keep explanat
 ### Verification Chain
 
 Run in order through `make` targets, committing at each green step:
+
 1. Feature-specific tests
 2. Formatters
 3. Linters
@@ -74,6 +83,7 @@ Run in order through `make` targets, committing at each green step:
 ## Workflow
 
 ### Before Coding
+
 1. Check current date/year for temporal context.
 2. Explore codebase structure and patterns.
 3. Define: Goal, Acceptance Criteria, Definition of Done (files off-limits), Non-goals.
@@ -87,22 +97,27 @@ Run in order through `make` targets, committing at each green step:
 5. Every sub-agent keeps a reading log while working and appends it to its final report: one short line per file access in the form `read <path> <lines or grep> - <why>`. Never full-read generated files, only component logic.
 
 ### Trivial Edits
+
 For typos or one-line non-logic changes: skip requirements, run linter, commit.
 
 ### When Stuck
+
 Write one-off programs in `./playground` to isolate and test intent/hypothesis.
 
 ## Language Pitfalls
 
 Go:
+
 - Prefix commands with CGO_ENABLED=1 (required for SQLite and race detection).
 - Never edit gen/ directories. Run go generate.
 
 C#:
+
 - Never edit obj/ or bin/.
 - Enable nullable reference types.
 - Never block on async (no .Result or .Wait()).
 - Prefer LINQ except in hot paths.
 
 Windows:
+
 - Use pwsh.exe (v7+), never powershell.exe (v5.1).
