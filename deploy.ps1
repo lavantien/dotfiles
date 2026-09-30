@@ -68,7 +68,7 @@ function Copy-Files {
     }
 }
 
-function Fill-Missing([PSCustomObject]$Template, [PSCustomObject]$Live) {
+function Merge-Template([PSCustomObject]$Template, [PSCustomObject]$Live) {
     foreach ($Prop in $Template.PSObject.Properties) {
         $Existing = $Live.PSObject.Properties[$Prop.Name]
         if ($null -eq $Existing) {
@@ -77,11 +77,47 @@ function Fill-Missing([PSCustomObject]$Template, [PSCustomObject]$Live) {
         elseif ($Prop.Value -is [PSCustomObject] -and $Existing.Value -is [PSCustomObject]) {
             # Recursion mutates in place; discard its return value or it
             # pollutes the pipeline and the result becomes an array
-            $null = Fill-Missing $Prop.Value $Existing.Value
+            $null = Merge-Template $Prop.Value $Existing.Value
         }
-        # else: live value wins, do nothing
+        else {
+            # Template is the source of truth: overwrite diverging live values
+            $Existing.Value = $Prop.Value
+        }
     }
     return $Live
+}
+
+# Delete dotted paths listed in the retired-keys file from the merged settings.
+# The file maps "section.key" paths to the reason and reference for retirement.
+function Remove-RetiredKeys([PSCustomObject]$Settings, [string]$RetiredPath) {
+    if (!(Test-Path $RetiredPath)) {
+        return
+    }
+    try {
+        $Retired = Get-Content $RetiredPath -Raw | ConvertFrom-Json
+    }
+    catch {
+        Write-Host "  Retired-keys file not valid JSON, skipping retirement" -ForegroundColor Yellow
+        return
+    }
+    if ($null -eq $Retired) {
+        return
+    }
+    foreach ($Prop in $Retired.PSObject.Properties) {
+        $Segments = $Prop.Name -split '\.'
+        $Node = $Settings
+        for ($i = 0; $i -lt $Segments.Count - 1; $i++) {
+            $Next = $Node.PSObject.Properties[$Segments[$i]]
+            if ($null -eq $Next -or $Next.Value -isnot [PSCustomObject]) {
+                $Node = $null
+                break
+            }
+            $Node = $Next.Value
+        }
+        if ($Node -is [PSCustomObject]) {
+            $null = $Node.PSObject.Properties.Remove($Segments[-1])
+        }
+    }
 }
 
 function Merge-ClaudeSettings {
@@ -106,7 +142,7 @@ function Merge-ClaudeSettings {
         return
     }
 
-    # Fill-Missing indexes into the live object, so a non-object settings file
+    # Merge-Template indexes into the live object, so a non-object settings file
     # (empty, null, array, scalar) would abort the whole script under
     # ErrorActionPreference Stop. Null passes every -is check and scalars pass
     # -is [PSCustomObject] in pwsh, so compare the concrete type name.
@@ -115,10 +151,11 @@ function Merge-ClaudeSettings {
         return
     }
 
-    $Merged = Fill-Missing $Template $Live
+    $Merged = Merge-Template $Template $Live
+    Remove-RetiredKeys $Merged (Join-Path (Split-Path $TemplatePath -Parent) 'settings.retired.json')
     # Depth 100: ConvertTo-Json defaults to 2 and would truncate nested objects
     $Merged | ConvertTo-Json -Depth 100 | Set-Content $TargetPath
-    Write-Host "  Claude settings (missing fields filled, existing values preserved)" -ForegroundColor Green
+    Write-Host "  Claude settings (template values applied, local-only keys preserved)" -ForegroundColor Green
 }
 
 function Patch-ClaudeLspMarketplace {
@@ -283,8 +320,9 @@ if (-not $SkipConfig) {
     ) $ClaudeDir
     Write-Host "  Claude configs" -ForegroundColor Green
 
-    # Merge settings template into settings.json (fills missing fields only,
-    # preserves existing values including ANTHROPIC_AUTH_TOKEN)
+    # Merge settings template into settings.json (template values win for
+    # shared keys, live-only keys and ANTHROPIC_AUTH_TOKEN survive, retired
+    # keys are deleted)
     Merge-ClaudeSettings -TemplatePath "$DotfilesDir/.claude/settings.template.json" -TargetPath "$HOME/.claude/settings.json"
 
     # OpenCode config (merge MCP servers)

@@ -377,8 +377,9 @@ deploy_claude_hooks() {
 		copy_file "$SCRIPT_DIR/.claude/quality-check.ps1" "$HOME/.claude/"
 	fi
 
-	# Merge settings template into ~/.claude/settings.json (fills missing
-	# fields only, preserves existing values including ANTHROPIC_AUTH_TOKEN)
+	# Merge settings template into ~/.claude/settings.json (template values
+	# win for shared keys, live-only keys and ANTHROPIC_AUTH_TOKEN survive,
+	# retired keys are deleted)
 	inject_claude_settings
 
 	echo -e "${GREEN}Claude Code config deployed${NC}"

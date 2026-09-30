@@ -3,8 +3,54 @@
 # Requires jq or python3; degrades by skipping, never by clobbering.
 # Expects $SCRIPT_DIR and the deploy.sh color vars to be set by the caller.
 
-# Fill-missing merge of the committed template into live Claude Code settings.
-# Live values always win; the template only adds missing keys recursively.
+# Delete dotted paths listed in .claude/settings.retired.json from the merged
+# settings file. The file maps "section.key" paths to the reason and reference
+# for retirement. Skips silently when the list is absent or unparsable.
+retire_settings_keys() {
+	local merged="$1"
+	local retired="$SCRIPT_DIR/.claude/settings.retired.json"
+	[[ -f "$retired" ]] || return 0
+
+	if command -v jq >/dev/null 2>&1; then
+		local out="${merged}.retired"
+		# Only paths whose parent resolves to an object are deletable; getpath
+		# returns null for scalar or missing intermediates, so those skip
+		if jq --slurpfile r "$retired" '
+			. as $doc |
+			[$r[0] | keys[] | split(".") | . as $p
+				| select(($doc | getpath($p[:-1]) | type) == "object")] as $del |
+			$doc | delpaths($del)
+		' "$merged" >"$out" 2>/dev/null; then
+			mv "$out" "$merged"
+		else
+			rm -f "$out"
+		fi
+	elif command -v python3 >/dev/null 2>&1; then
+		python3 - "$merged" "$retired" <<'PY'
+import json, sys
+
+with open(sys.argv[1]) as f:
+    doc = json.load(f)
+with open(sys.argv[2]) as f:
+    retired = json.load(f)
+for dotted in retired:
+    segs = dotted.split(".")
+    node = doc
+    for seg in segs[:-1]:
+        node = node.get(seg) if isinstance(node, dict) else None
+        if node is None:
+            break
+    if isinstance(node, dict):
+        node.pop(segs[-1], None)
+with open(sys.argv[1], "w") as f:
+    json.dump(doc, f, indent=2)
+    f.write("\n")
+PY
+	fi
+}
+
+# Template-priority merge of the committed template into live Claude Code settings.
+# Template values win for shared keys recursively; live-only keys are preserved.
 # env.ANTHROPIC_AUTH_TOKEN never exists in the template, so it is never touched.
 inject_claude_settings() {
 	local template="$SCRIPT_DIR/.claude/settings.template.json"
@@ -25,10 +71,12 @@ inject_claude_settings() {
 	local tmp="${settings}.tmp"
 
 	if command -v jq >/dev/null 2>&1; then
-		# jq object-multiply: recursive merge, right operand (live) wins
-		if jq -s '.[0] * .[1]' "$template" "$settings" >"$tmp" 2>/dev/null; then
+		# jq object-multiply: .[1] (live) * .[0] (template), template wins shared
+		# keys recursively, live-only keys survive
+		if jq -s '.[1] * .[0]' "$template" "$settings" >"$tmp" 2>/dev/null; then
+			retire_settings_keys "$tmp"
 			mv "$tmp" "$settings"
-			echo -e "${GREEN}Claude settings merged (missing fields filled, existing values preserved)${NC}"
+			echo -e "${GREEN}Claude settings merged (template values applied, local-only keys preserved)${NC}"
 			return 0
 		fi
 		rm -f "$tmp"
@@ -36,23 +84,24 @@ inject_claude_settings() {
 		if python3 - "$template" "$settings" >"$tmp" <<'PY'
 import json, sys
 
-def fill(template, live):
-    if isinstance(template, dict) and isinstance(live, dict):
+def overlay(live, template):
+    if isinstance(live, dict) and isinstance(template, dict):
         out = dict(live)
         for key, value in template.items():
-            out[key] = fill(value, live[key]) if key in live else value
+            out[key] = overlay(live[key], value) if key in live else value
         return out
-    return live
+    return template
 
 with open(sys.argv[1]) as f:
     template = json.load(f)
 with open(sys.argv[2]) as f:
     live = json.load(f)
-print(json.dumps(fill(template, live), indent=2))
+print(json.dumps(overlay(live, template), indent=2))
 PY
 		then
+			retire_settings_keys "$tmp"
 			mv "$tmp" "$settings"
-			echo -e "${GREEN}Claude settings merged (missing fields filled, existing values preserved)${NC}"
+			echo -e "${GREEN}Claude settings merged (template values applied, local-only keys preserved)${NC}"
 			return 0
 		fi
 		rm -f "$tmp"
