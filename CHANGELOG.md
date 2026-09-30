@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.28.1] - 2026-09-30
+
+### Changed
+
+- `CLAUDE.md`: "say the word" banned under conversational and meta filler in the wording rules
+
+### Fixed
+
+- `deploy.ps1`: the non-object Claude settings guard compares the concrete type name (`$Live.GetType().Name -ne 'PSCustomObject'`) instead of `-is [PSCustomObject]`, which scalars pass in pwsh, so empty, `null`, array, or scalar settings files now skip the merge with a warning instead of aborting the deploy
+
+---
+
 ## [5.28.0] - 2026-09-27
 
 ### Added
