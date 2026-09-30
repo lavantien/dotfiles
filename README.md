@@ -248,7 +248,7 @@ Deploy merges the committed `.claude/settings.template.json` into `~/.claude/set
 - Live-only keys survive the merge, including `env.ANTHROPIC_AUTH_TOKEN`, which is deliberately absent from the template
 - When `settings.json` does not exist it is created from the template
 - Linux/macOS uses jq with a python3 fallback, Windows uses native PowerShell JSON
-- Keys listed in `.claude/settings.retired.json` are deleted from the live file on every deploy; each entry maps a dotted path to the reason and reference for its retirement
+- Keys listed in `.claude/settings.retired.json` are deleted from the live file on every deploy; each entry maps a dotted path to the reason and reference for its retirement. Entries should target leaf keys: retiring a parent path also removes live-only keys beneath it
 
 Injected top-level fields:
 

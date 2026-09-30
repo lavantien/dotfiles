@@ -29,10 +29,15 @@ retire_settings_keys() {
 		python3 - "$merged" "$retired" <<'PY'
 import json, sys
 
-with open(sys.argv[1]) as f:
+try:
+    with open(sys.argv[2], encoding="utf-8") as f:
+        retired = json.load(f)
+except (OSError, ValueError):
+    sys.exit(0)
+if not isinstance(retired, dict):
+    sys.exit(0)
+with open(sys.argv[1], encoding="utf-8") as f:
     doc = json.load(f)
-with open(sys.argv[2]) as f:
-    retired = json.load(f)
 for dotted in retired:
     segs = dotted.split(".")
     node = doc
@@ -42,7 +47,7 @@ for dotted in retired:
             break
     if isinstance(node, dict):
         node.pop(segs[-1], None)
-with open(sys.argv[1], "w") as f:
+with open(sys.argv[1], "w", encoding="utf-8") as f:
     json.dump(doc, f, indent=2)
     f.write("\n")
 PY
@@ -64,6 +69,7 @@ inject_claude_settings() {
 	# No live settings yet: seed from template (covers statusLine on fresh installs)
 	if [[ ! -f "$settings" ]]; then
 		cp "$template" "$settings"
+		retire_settings_keys "$settings"
 		echo -e "${GREEN}Created $settings from template${NC}"
 		return 0
 	fi
@@ -96,6 +102,8 @@ with open(sys.argv[1]) as f:
     template = json.load(f)
 with open(sys.argv[2]) as f:
     live = json.load(f)
+if not isinstance(template, dict) or not isinstance(live, dict):
+    sys.exit(1)
 print(json.dumps(overlay(live, template), indent=2))
 PY
 		then
@@ -110,7 +118,7 @@ PY
 		return 0
 	fi
 
-	echo -e "${YELLOW}$settings is not valid JSON, skipping settings merge${NC}"
+	echo -e "${YELLOW}$settings is not a valid JSON object, skipping settings merge${NC}"
 	return 0
 }
 
