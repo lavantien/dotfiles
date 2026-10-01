@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented in this file, newest first. Each release is a prose summary of what happened and why, written under the repo writing rules. Versioning follows Semantic Versioning. Unreleased work lands under an `## [Unreleased]` heading that is renamed to the version and date at release time.
 
+## [5.30.0] - 2026-10-01
+
+`sync-release-notes` (`sync-release-notes.sh` and `sync-release-notes.ps1`) pushes each CHANGELOG.md section to its GitHub release: it edits already published bodies and cuts releases for tagged versions that lack one, splitting sections with the same bracket-field logic deploy.sh uses for the version marker so the two can never disagree about section starts. It supports a dry run and skips versions without a git tag. CHANGELOG.md itself was rewritten as prose: every release entry is now a summary of what happened and why under the repo writing rules, newest first, with unreleased work landing under an `[Unreleased]` heading that is renamed to the version and date at release time. The stale `.github/RELEASE_NOTES_v4.0.md` artifact was deleted.
+
+`.claude/CLAUDE.md` principles open with a plain `working principles` statement, the constants hub centralizes enums too, the writing principle requires the highest information density and simplicity at the lowest verbosity and noise, zero bluff or unnecessary comments with the prose and code speaking for themselves, and a new principle bans assuming, guessing, or relying on memory in favor of the latest verified data double checked through edge case attacks, e2e, screenshots, profiling, benchmarking, and blind adversarial review. All CLAUDE.md, README.md, and DOCKER_K8S.md headings are sentence case, and README.md and DOCKER_K8S.md were retouched for voice and format compliance, replacing bullet feature lists with prose.
+
 ## [5.29.1] - 2026-10-01
 
 `.claude/CLAUDE.md` gained a Principles section with the general development guidelines: TDD, zero hardcode, centralized constants and configs hub, KISS, first principles, bottom-up, no abstraction or complex patterns unless absolutely necessary, concurrency and parallel as native, decisions explainable in the order what, why, how, where, when, and prose following the writing rules.
