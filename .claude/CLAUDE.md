@@ -14,18 +14,19 @@
 
 ## Principles
 
-General development guidelines, not agent-specific instructions:
+working principles
 
 1. TDD.
 2. Zero hardcode.
-3. Centralized constants/configs hub.
+3. Centralized constants/configs/enums hub.
 4. KISS.
 5. First principles.
 6. Bottom-up.
 7. Avoid abstraction and complex patterns unless absolutely necessary.
 8. Concurrency/parallel native.
 9. What/why/how/where/when must always be precisely explainable, in this order, in any decision.
-10. Any text or prose written must follow the writing guidelines and rules.
+10. Any text or prose written must follow the writing guidelines and rules. Always write with the highest information density and simplicity, at the lowest verbosity and noise possible: zero bluff or unnecessary comments, the prose and code should speak for themselves.
+11. Never assume or guess anything or rely on memory. Always base everything on the latest verified data and double check: edge case attacks, e2e, screenshots, profiling, benchmarking, blind adversarial review.
 
 ## Voice and format
 
