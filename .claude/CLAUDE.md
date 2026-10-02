@@ -27,6 +27,9 @@ working principles
 9. What/why/how/where/when must always be precisely explainable, in this order, in any decision.
 10. Any text or prose written must follow the writing guidelines and rules. Always write with the highest information density and simplicity, at the lowest verbosity and noise possible: zero bluff or unnecessary comments, the prose and code should speak for themselves.
 11. Never assume or guess anything or rely on memory. Always base everything on the latest verified data and double check: edge case attacks, e2e, screenshots, profiling, benchmarking, blind adversarial review.
+12. Quota guard: every 10 minutes fire a throwaway subagent to query the glm-plan-usage 5-hour window quota, and pause all development and fan-out at 95% until the window resets.
+13. Ground on the books corpus: lazily consult `~/dev/github/resume/books` as the canonical reference for languages, math, DSA, ICPC, patterns and concurrency, infrastructure, KDD, game systems, and interview repertoire. Lazy means locate the matching volume and read only the relevant section, never bulk-load.
+14. Subagent fan-out is the default execution mode: 4 concurrent development slots plus 1 temporary slot for auxiliary checks like the quota guard. Plan task lists ahead so freed slots roll onto queued work immediately, and dispose finished or failed agents at once.
 
 ## Voice and format
 
@@ -99,7 +102,7 @@ Run in order through `make` targets, committing at each green step:
 ### Plan execution
 
 1. Before implementing, derive a comprehensive conflict-free task list from the plan: partition work so concurrent tasks never touch the same files or shared state, and keep dependent tasks sequenced.
-2. Fan out sub-agents over the list, max 4 running at a time. Recycle slots continuously: launch the next queued task in each freed slot until the list is empty.
+2. Fan out sub-agents over the list, max 4 development slots plus 1 temporary slot for auxiliary checks like the quota guard. Recycle slots continuously: launch the next queued task in each freed slot until the list is empty.
 3. Dispose of agents as soon as they finish or fail, or defer cleanup explicitly. Never leave finished, failed, or idle agents holding context.
 4. Each agent records progress durably (task notes or commit messages) and commits small atomic units often, so an outage loses at most the last unit.
 5. Every sub-agent keeps a reading log while working and appends it to its final report: one short line per file access in the form `read <path> <lines or grep> - <why>`. Never full-read generated files, only component logic.
