@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file, newest first. Each release is a prose summary of what happened and why, written under the repo writing rules. Versioning follows Semantic Versioning. Unreleased work lands under an `## [Unreleased]` heading that is renamed to the version and date at release time.
 
+## [5.31.0] - 2026-10-03
+
+`.claude/CLAUDE.md` gained 3 working principles and a matching workflow fix. The quota guard fires a throwaway subagent every 10 minutes to query the glm-plan-usage 5-hour window quota, and pauses all development and fan-out at 95% until the window resets. Books grounding consults `~/dev/github/resume/books` lazily as the canonical reference for languages, math, DSA, ICPC, patterns and concurrency, infrastructure, KDD, game systems, and interview repertoire: locate the matching volume, read only the relevant section, never bulk-load. Subagent fan-out is the default execution mode with 4 concurrent development slots plus 1 temporary slot for auxiliary checks like the quota guard, task lists planned ahead so freed slots roll onto queued work immediately, and finished or failed agents disposed at once. The workflow plan execution rule now states the same 4 plus 1 slot model instead of the old plain max 4, so the two sections cannot disagree.
+
 ## [5.30.0] - 2026-10-01
 
 `sync-release-notes` (`sync-release-notes.sh` and `sync-release-notes.ps1`) pushes each CHANGELOG.md section to its GitHub release: it edits already published bodies and cuts releases for tagged versions that lack one, splitting sections with the same bracket-field logic deploy.sh uses for the version marker so the two can never disagree about section starts. It supports a dry run and skips versions without a git tag. CHANGELOG.md itself was rewritten as prose: every release entry is now a summary of what happened and why under the repo writing rules, newest first, with unreleased work landing under an `[Unreleased]` heading that is renamed to the version and date at release time. The stale `.github/RELEASE_NOTES_v4.0.md` artifact was deleted.
