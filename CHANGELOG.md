@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented in this file, newest first. Each release is a prose summary of what happened and why, written under the repo writing rules. Versioning follows Semantic Versioning. Unreleased work lands under an `## [Unreleased]` heading that is renamed to the version and date at release time.
 
-## [Unreleased]
+## [5.33.0] - 2026-10-03
 
 The remember plugin is gone from the repo entirely. `enabledPlugins.remember@claude-plugins-official` was removed from `.claude/settings.template.json` and added to `.claude/settings.retired.json`, so deploy deletes it from `~/.claude/settings.json` instead of preserving it as a live-only key. A v5.28.1 template sync had copied the live disable flag into the template, and any `enabledPlugins` entry, even a false one, makes the plugin show up in `/plugin`, which is why it kept appearing without ever being installed. The plugin's `.remember/` data directory at the repo root and its `.gitignore` entry were deleted, and the README plugin list and retired-keys table were updated to match.
 
