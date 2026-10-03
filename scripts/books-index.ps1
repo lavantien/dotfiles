@@ -13,7 +13,7 @@ $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $RootDir = Split-Path -Parent $ScriptDir
 $BooksDir = if ($env:BOOKS_DIR) { $env:BOOKS_DIR } else { Join-Path $RootDir '.claude/books' }
 # Neutral phrase printed in the header, identical on every platform
-$PathsNote = 'Paths are corpus-relative, resolve them against the corpus root stated in CLAUDE.md principle 13.'
+$PathsNote = 'Paths are corpus-relative, resolve them against the corpus root stated in CLAUDE.md.'
 $AnnotationsPath = Join-Path $ScriptDir 'books-index.json'
 $BooksOut = Join-Path $RootDir '.claude/BOOKS.md'
 $ClaudeMd = Join-Path $RootDir '.claude/CLAUDE.md'

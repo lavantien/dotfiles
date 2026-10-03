@@ -16,7 +16,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 BOOKS_DIR="${BOOKS_DIR:-$ROOT_DIR/.claude/books}"
 # Neutral phrase printed in the header, identical on every platform
-PATHS_NOTE='Paths are corpus-relative, resolve them against the corpus root stated in CLAUDE.md principle 13.'
+PATHS_NOTE='Paths are corpus-relative, resolve them against the corpus root stated in CLAUDE.md.'
 ANNOTATIONS="$SCRIPT_DIR/books-index.json"
 BOOKS_OUT="$ROOT_DIR/.claude/BOOKS.md"
 CLAUDE_MD="$ROOT_DIR/.claude/CLAUDE.md"
