@@ -224,6 +224,113 @@ function Patch-ClaudeLspMarketplace {
     }
 }
 
+function Test-FileEqual {
+    param($PathA, $PathB)
+    $bytesA = [System.IO.File]::ReadAllBytes($PathA)
+    $bytesB = [System.IO.File]::ReadAllBytes($PathB)
+    return [System.Linq.Enumerable]::SequenceEqual($bytesA, $bytesB)
+}
+
+# Deploy CLAUDE.md with the corpus root sentence spliced between the markers
+# for this machine; everything else in the file stays byte-identical
+function Copy-ClaudeMd {
+    param([string]$Src, [string]$Dst)
+
+    $Begin = '<!-- BEGIN books corpus root -->'
+    $End = '<!-- END books corpus root -->'
+    $CorpusRoot = Join-Path $HOME 'dev/github/resume/books'
+    $Sentence = if (Test-Path -LiteralPath $CorpusRoot -PathType Container) {
+        'The corpus root is ~/dev/github/resume/books.'
+    } else {
+        'The corpus root is ~/.claude/books.'
+    }
+
+    $Content = Get-Content -LiteralPath $Src -Raw
+    if ([string]::IsNullOrEmpty($Content) -or
+        [regex]::Matches($Content, [regex]::Escape($Begin)).Count -ne 1 -or
+        [regex]::Matches($Content, [regex]::Escape($End)).Count -ne 1) {
+        throw "corpus root marker pair must appear exactly once in $Src"
+    }
+    $bi = $Content.IndexOf($Begin)
+    $ei = $Content.IndexOf($End)
+    $between = if ($ei -ge ($bi + $Begin.Length)) { $Content.Substring($bi + $Begin.Length, $ei - ($bi + $Begin.Length)) } else { $null }
+    if ($null -eq $between -or $between -match '\r|\n') {
+        throw "malformed corpus root marker pair in $Src"
+    }
+    $Content.Substring(0, $bi + $Begin.Length) + ' ' + $Sentence + ' ' + $Content.Substring($ei) |
+        Set-Content -LiteralPath $Dst -NoNewline
+}
+
+# Mirror the shipped typst volumes into ~/.claude/books when the private
+# corpus is absent; PDFs are never deployed
+function Copy-ClaudeBooks {
+    $CorpusRoot = Join-Path $HOME 'dev/github/resume/books'
+    if (Test-Path -LiteralPath $CorpusRoot -PathType Container) {
+        Write-Host "  Claude books (private corpus present, skipping copy)" -ForegroundColor Cyan
+        return
+    }
+
+    $SourceRoot = Join-Path $DotfilesDir 'books'
+    if (-not (Test-Path -LiteralPath $SourceRoot -PathType Container)) {
+        Write-Host "  Claude books (no shipped volumes at $SourceRoot)" -ForegroundColor Yellow
+        return
+    }
+
+    $TargetRoot = Join-Path $HOME '.claude/books'
+    $Volumes = @(Get-ChildItem -LiteralPath $SourceRoot -Directory | ForEach-Object { $_.Name })
+    $copied = 0
+    $deleted = 0
+
+    # Retired volumes: any target dir outside the source goes away
+    if (Test-Path -LiteralPath $TargetRoot -PathType Container) {
+        foreach ($path in @(Get-ChildItem -LiteralPath $TargetRoot -Directory)) {
+            if ($Volumes -notcontains $path.Name) {
+                $deleted += @(Get-ChildItem -LiteralPath $path.FullName -Recurse -File).Count
+                Remove-Item -LiteralPath $path.FullName -Recurse -Force
+            }
+        }
+    }
+
+    foreach ($dir in $Volumes) {
+        $src = Join-Path $SourceRoot $dir
+        $dst = Join-Path $TargetRoot $dir
+
+        $relTypFiles = [System.Collections.Generic.List[string]]::new()
+        $relTypFiles.Add('manifest.typ')
+        if (Test-Path -LiteralPath (Join-Path $src 'book.typ') -PathType Leaf) { $relTypFiles.Add('book.typ') }
+        foreach ($sub in 'chapters', 'coverage') {
+            $subDir = Join-Path $src $sub
+            if (Test-Path -LiteralPath $subDir -PathType Container) {
+                foreach ($f in @(Get-ChildItem -LiteralPath $subDir -Filter '*.typ' -File)) {
+                    $relTypFiles.Add("$sub/$($f.Name)")
+                }
+            }
+        }
+
+        foreach ($rel in $relTypFiles) {
+            $inFile = Join-Path $src $rel
+            $outFile = Join-Path $dst $rel
+            [System.IO.Directory]::CreateDirectory((Split-Path -Parent $outFile)) | Out-Null
+            if (-not (Test-Path -LiteralPath $outFile -PathType Leaf) -or -not (Test-FileEqual $inFile $outFile)) {
+                Copy-Item -LiteralPath $inFile -Destination $outFile -Force
+                $copied++
+            }
+        }
+
+        if (Test-Path -LiteralPath $dst -PathType Container) {
+            foreach ($f in @(Get-ChildItem -LiteralPath $dst -Recurse -Filter '*.typ' -File)) {
+                $rel = ([System.IO.Path]::GetRelativePath($dst, $f.FullName)) -replace '\\', '/'
+                if ($relTypFiles -notcontains $rel) {
+                    Remove-Item -LiteralPath $f.FullName -Force
+                    $deleted++
+                }
+            }
+        }
+    }
+
+    Write-Host "  Claude books ($($Volumes.Count) volumes, $copied files copied, $deleted files deleted)" -ForegroundColor Green
+}
+
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "   Windows Dotfiles Deployment" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
@@ -324,13 +431,22 @@ if (-not $SkipConfig) {
     if (!(Test-Path $ClaudeDir)) {
         New-Item -ItemType Directory -Path $ClaudeDir -Force | Out-Null
     }
+
+    # Refresh the repo books front from the private corpus; failure is non-fatal
+    & pwsh -NoProfile -File (Join-Path $PSScriptRoot 'sync-book.ps1')
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "  sync-book.ps1 failed, continuing with shipped books" -ForegroundColor Yellow
+    }
+
+    # CLAUDE.md carries a corpus root spliced for this machine between markers
+    Copy-ClaudeMd "$DotfilesDir/.claude/CLAUDE.md" "$ClaudeDir/CLAUDE.md"
     Copy-Files @(
-        ".claude/CLAUDE.md"
         ".claude/BOOKS.md"
         ".claude/quality-check.sh"
         ".claude/quality-check.ps1"
         ".claude/statusline.sh"
     ) $ClaudeDir
+    Copy-ClaudeBooks
     Write-Host "  Claude configs" -ForegroundColor Green
 
     # Merge settings template into settings.json (template values win for

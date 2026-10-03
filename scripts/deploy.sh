@@ -54,8 +54,8 @@ merge_gitconfig() {
 
 	# Preserve user identity from existing config
 	local user_name user_email
-	user_name=$(git config --file "$target" user.name 2>/dev/null)
-	user_email=$(git config --file "$target" user.email 2>/dev/null)
+	user_name=$(git config --file "$target" user.name 2>/dev/null || true)
+	user_email=$(git config --file "$target" user.email 2>/dev/null || true)
 
 	# Copy new config
 	cp "$source" "$temp_file"
@@ -342,6 +342,125 @@ update_git_config() {
 }
 
 # ============================================================================
+# BOOKS CORPUS
+# ============================================================================
+resume_corpus_present() {
+	[[ -d "$HOME/dev/github/resume/books" ]]
+}
+
+list_has() {
+	local want="$1" item
+	for item in "${@:2}"; do [[ "$item" == "$want" ]] && return 0; done
+	return 1
+}
+
+# Deploy CLAUDE.md with the corpus root sentence spliced between the markers
+# for this machine; everything else in the file stays byte-identical
+deploy_claude_md() {
+	local src="$1" dst="$2"
+	local begin='<!-- BEGIN books corpus root -->'
+	local end='<!-- END books corpus root -->'
+	local sentence
+	if resume_corpus_present; then
+		sentence='The corpus root is ~/dev/github/resume/books.'
+	else
+		sentence='The corpus root is ~/.claude/books.'
+	fi
+
+	local begin_n end_n
+	begin_n=$(grep -oF "$begin" "$src" | wc -l)
+	end_n=$(grep -oF "$end" "$src" | wc -l)
+	if [[ "$begin_n" -ne 1 || "$end_n" -ne 1 ]]; then
+		echo "Error: corpus root marker pair must appear exactly once in $src" >&2
+		exit 1
+	fi
+
+	local tmp="$dst.dotfiles-new"
+	if ! awk -v b="$begin" -v e="$end" -v s="$sentence" '
+		{
+			line = $0
+			bi = index(line, b)
+			ei = index(line, e)
+			if (bi > 0 && ei > bi) {
+				line = substr(line, 1, bi + length(b) - 1) " " s " " substr(line, ei)
+				replaced++
+			}
+			print line
+		}
+		END { if (replaced != 1) exit 3 }
+	' "$src" >"$tmp"; then
+		rm -f "$tmp"
+		echo "Error: malformed corpus root marker pair in $src" >&2
+		exit 1
+	fi
+	mv "$tmp" "$dst"
+}
+
+# Mirror the shipped typst volumes into ~/.claude/books when the private
+# corpus is absent; PDFs are never deployed
+deploy_claude_books() {
+	local src_root="$ROOT_DIR/books" dst_root="$HOME/.claude/books"
+	local volumes=() copied=0 deleted=0
+	local path dir src dst rel in out f
+	local rel_typ_files
+
+	if resume_corpus_present; then
+		echo -e "${CYAN}books: private corpus present, skipping $dst_root${NC}"
+		return 0
+	fi
+	if [[ ! -d "$src_root" ]]; then
+		echo -e "${YELLOW}books: no shipped volumes at $src_root${NC}"
+		return 0
+	fi
+
+	for path in "$src_root"/*/; do
+		[[ -d "$path" ]] || continue
+		volumes+=("$(basename "$path")")
+	done
+
+	# Retired volumes: any target dir outside the source goes away
+	for path in "$dst_root"/*/; do
+		[[ -d "$path" ]] || continue
+		if ! list_has "$(basename "$path")" "${volumes[@]}"; then
+			deleted=$((deleted + $(find "$path" -type f | wc -l)))
+			rm -rf "${path:?}"
+		fi
+	done
+
+	for dir in "${volumes[@]}"; do
+		src="$src_root/$dir"
+		dst="$dst_root/$dir"
+
+		rel_typ_files=("manifest.typ")
+		if [[ -f "$src/book.typ" ]]; then rel_typ_files+=("book.typ"); fi
+		shopt -s nullglob
+		for f in "$src/chapters/"*.typ; do rel_typ_files+=("chapters/$(basename "$f")"); done
+		for f in "$src/coverage/"*.typ; do rel_typ_files+=("coverage/$(basename "$f")"); done
+		shopt -u nullglob
+
+		for rel in "${rel_typ_files[@]}"; do
+			in="$src/$rel"
+			out="$dst/$rel"
+			mkdir -p "$(dirname "$out")"
+			if [[ ! -f "$out" ]] || ! cmp -s "$in" "$out"; then
+				cp "$in" "$out"
+				copied=$((copied + 1))
+			fi
+		done
+
+		while IFS= read -r -d '' f; do
+			rel="${f#"$dst"/}"
+			list_has "$rel" "${rel_typ_files[@]}" || {
+				rm "$f"
+				deleted=$((deleted + 1))
+			}
+		done < <(find "$dst" -type f -name '*.typ' -print0)
+	done
+
+	echo -e "${CYAN}books deploy: ${#volumes[@]} volumes, $copied files copied, $deleted files deleted${NC}"
+}
+
+# ============================================================================
 # CLAUDE CODE HOOKS
 # ============================================================================
 deploy_claude_hooks() {
@@ -349,10 +468,15 @@ deploy_claude_hooks() {
 
 	mkdir -p "$HOME/.claude"
 
-	# Copy CLAUDE.md to global .claude folder for project-agnostic instructions
+	# Refresh the repo books front from the private corpus; failure is non-fatal
+	if ! bash "$SCRIPT_DIR/sync-book.sh"; then
+		echo -e "${YELLOW}sync-book.sh failed, continuing${NC}"
+	fi
+
+	# CLAUDE.md carries a corpus root spliced for this machine between markers
 	# Repo structure: .claude/CLAUDE.md (matches deployment location)
 	if [ -f "$ROOT_DIR/.claude/CLAUDE.md" ]; then
-		copy_file "$ROOT_DIR/.claude/CLAUDE.md" "$HOME/.claude/"
+		deploy_claude_md "$ROOT_DIR/.claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 		echo -e "${GREEN}CLAUDE.md deployed to: $HOME/.claude/${NC}"
 	fi
 
@@ -378,6 +502,8 @@ deploy_claude_hooks() {
 	if [ -f "$ROOT_DIR/.claude/quality-check.ps1" ]; then
 		copy_file "$ROOT_DIR/.claude/quality-check.ps1" "$HOME/.claude/"
 	fi
+
+	deploy_claude_books
 
 	# Merge settings template into ~/.claude/settings.json (template values
 	# win for shared keys, live-only keys and ANTHROPIC_AUTH_TOKEN survive,
