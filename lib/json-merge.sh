@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # JSON merge helpers sourced by deploy.sh.
 # Requires jq or python3; degrades by skipping, never by clobbering.
-# Expects $SCRIPT_DIR and the deploy.sh color vars to be set by the caller.
+# Expects $ROOT_DIR and the deploy.sh color vars to be set by the caller.
 
 # Delete dotted paths listed in .claude/settings.retired.json from the merged
 # settings file. The file maps "section.key" paths to the reason and reference
 # for retirement. Skips silently when the list is absent or unparsable.
 retire_settings_keys() {
 	local merged="$1"
-	local retired="$SCRIPT_DIR/.claude/settings.retired.json"
+	local retired="$ROOT_DIR/.claude/settings.retired.json"
 	[[ -f "$retired" ]] || return 0
 
 	if command -v jq >/dev/null 2>&1; then
@@ -66,7 +66,7 @@ PY
 # Template values win for shared keys recursively; live-only keys are preserved.
 # env.ANTHROPIC_AUTH_TOKEN never exists in the template, so it is never touched.
 inject_claude_settings() {
-	local template="$SCRIPT_DIR/.claude/settings.template.json"
+	local template="$ROOT_DIR/.claude/settings.template.json"
 	local settings="$HOME/.claude/settings.json"
 
 	if [[ ! -f "$template" ]]; then

@@ -262,7 +262,6 @@ echo -e "${YELLOW}=== Restoring PowerShell Configs ===${NC}"
 
 # Restore tool configs
 echo -e "${YELLOW}=== Restoring Tool Configs ===${NC}"
-[[ -f "$RESTORE_PATH/aider.conf.yml" ]] && restore_file "$RESTORE_PATH/aider.conf.yml" "$HOME/.aider.conf.yml" && ((restored_count++)) || true
 [[ -f "$RESTORE_PATH/editorconfig" ]] && restore_file "$RESTORE_PATH/editorconfig" "$HOME/.editorconfig" && ((restored_count++)) || true
 
 # Restore SSH config

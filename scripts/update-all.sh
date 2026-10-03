@@ -171,10 +171,11 @@ done
 # LOAD USER CONFIGURATION
 # ============================================================================
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Source config library if available
-if [[ -f "$SCRIPT_DIR/lib/config.sh" ]]; then
-	source "$SCRIPT_DIR/lib/config.sh"
+if [[ -f "$ROOT_DIR/lib/config.sh" ]]; then
+	source "$ROOT_DIR/lib/config.sh"
 	CONFIG_FILE="$HOME/.dotfiles.config.yaml"
 	load_dotfiles_config "$CONFIG_FILE"
 	# Get config values (only when library is available)

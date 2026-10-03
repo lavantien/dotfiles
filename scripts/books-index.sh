@@ -12,12 +12,13 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 BOOKS_DIR="${BOOKS_DIR:-$HOME/dev/github/resume/books}"
 # Canonical label printed in the header, identical on every platform
 CANON_BOOKS='~/dev/github/resume/books'
 ANNOTATIONS="$SCRIPT_DIR/books-index.json"
-BOOKS_OUT="$SCRIPT_DIR/.claude/BOOKS.md"
-CLAUDE_MD="$SCRIPT_DIR/.claude/CLAUDE.md"
+BOOKS_OUT="$ROOT_DIR/.claude/BOOKS.md"
+CLAUDE_MD="$ROOT_DIR/.claude/CLAUDE.md"
 BEGIN_MARK='<!-- BEGIN books index -->'
 END_MARK='<!-- END books index -->'
 

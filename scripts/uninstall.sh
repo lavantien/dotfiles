@@ -74,7 +74,6 @@ DOTFILES_FILES=(
     "$HOME/.config/powershell"
     "$HOME/init.lua"
     "$HOME/wezterm.lua"
-    "$HOME/.aider.conf.yml"
     "$HOME/.editorconfig"
     "$HOME/.claude"
 )

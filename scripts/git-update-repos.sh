@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Update/Clone All GitHub Repositories for a User
-# Usage: ./git-update-repos.sh [-u username] [-d base_dir] [-s] [--no-sync] [-c] [--commit]
+# Usage: ./git-update-repos.sh [-u username] [-d base_dir] [-s] [-c] [--commit]
 
 set -euo pipefail
 
@@ -21,7 +21,6 @@ fi
 USERNAME="${GITHUB_USERNAME:-$(git config user.name 2>/dev/null || echo "lavantien")}"
 BASE_DIR="${GIT_BASE_DIR:-$HOME/dev/github}"
 USE_SSH=false
-SYNC_INSTRUCTIONS=true
 AUTO_COMMIT=false
 
 # Colors
@@ -32,19 +31,14 @@ BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 NC='\033[0m'
 
-# Path to sync script (relative to this script)
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SYNC_SCRIPT="$SCRIPT_DIR/sync-system-instructions.sh"
-
 # Parse arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
         -u) USERNAME="$2"; shift 2 ;;
         -d) BASE_DIR="$2"; shift 2 ;;
         -s) USE_SSH=true; shift ;;
-        --no-sync) SYNC_INSTRUCTIONS=false; shift ;;
         -c|--commit) AUTO_COMMIT=true; shift ;;
-        *) echo "Usage: $0 [-u username] [-d base_dir] [-s] [--no-sync] [-c|--commit]" >&2; exit 1 ;;
+        *) echo "Usage: $0 [-u username] [-d base_dir] [-s] [-c] [--commit]" >&2; exit 1 ;;
     esac
 done
 
@@ -54,7 +48,6 @@ echo -e "${CYAN}========================================${NC}"
 echo -e "${BLUE}User:${NC}       $USERNAME"
 echo -e "${BLUE}Directory:${NC}   $BASE_DIR"
 echo -e "${BLUE}SSH:${NC}        $USE_SSH"
-echo -e "${BLUE}Sync:${NC}       $SYNC_INSTRUCTIONS"
 echo -e "${BLUE}Auto-commit:${NC} $AUTO_COMMIT"
 echo -e "${CYAN}========================================${NC}"
 echo
@@ -161,24 +154,6 @@ for i in "${!REPO_NAMES[@]}"; do
         fi
     fi
 done
-
-# Sync system instructions to all repos
-if [[ "$SYNC_INSTRUCTIONS" == true ]]; then
-    echo
-    echo -e "${CYAN}========================================${NC}"
-    echo -e "${CYAN}   Syncing System Instructions${NC}"
-    echo -e "${CYAN}========================================${NC}"
-
-    if [[ -f "$SYNC_SCRIPT" ]]; then
-        if [[ "$AUTO_COMMIT" == "true" ]]; then
-            bash "$SYNC_SCRIPT" -d "$BASE_DIR" -c
-        else
-            bash "$SYNC_SCRIPT" -d "$BASE_DIR"
-        fi
-    else
-        echo -e "${YELLOW}Warning: Sync script not found: $SYNC_SCRIPT${NC}"
-    fi
-fi
 
 # Summary
 echo

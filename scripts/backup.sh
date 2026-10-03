@@ -217,7 +217,6 @@ fi
 
 # Backup tool configs
 echo -e "${YELLOW}=== Tool Configs ===${NC}"
-backup_file "$HOME/.aider.conf.yml" "$CURRENT_BACKUP/aider.conf.yml" && ((backuped_count++)) || true
 backup_file "$HOME/.editorconfig" "$CURRENT_BACKUP/editorconfig" && ((backuped_count++)) || true
 
 # Backup ssh config

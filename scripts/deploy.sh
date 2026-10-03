@@ -24,6 +24,7 @@ detect_os() {
 
 OS=$(detect_os)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # On Windows, direct users to the PowerShell deploy script
 if [[ "$OS" == "windows" ]]; then
@@ -109,14 +110,14 @@ migrate_configs_to_xdg() {
 # ============================================================================
 # Source config library if available
 # shellcheck source=/dev/null
-if [[ -f "$SCRIPT_DIR/lib/config.sh" ]]; then
-	source "$SCRIPT_DIR/lib/config.sh"
+if [[ -f "$ROOT_DIR/lib/config.sh" ]]; then
+	source "$ROOT_DIR/lib/config.sh"
 fi
 
 # Source JSON merge helpers (Claude settings injection, OpenCode MCP merge)
 # shellcheck source=/dev/null
-if [[ -f "$SCRIPT_DIR/lib/json-merge.sh" ]]; then
-	source "$SCRIPT_DIR/lib/json-merge.sh"
+if [[ -f "$ROOT_DIR/lib/json-merge.sh" ]]; then
+	source "$ROOT_DIR/lib/json-merge.sh"
 fi
 
 # Load user config
@@ -194,7 +195,7 @@ run_pre_deploy_backup() {
 # Marker read by uninstall.sh; version comes from the CHANGELOG top entry
 write_deploy_marker() {
 	local version
-	version=$(awk -F'[][]' '/^## \[/{print $2; exit}' "$SCRIPT_DIR/CHANGELOG.md" 2>/dev/null)
+	version=$(awk -F'[][]' '/^## \[/{print $2; exit}' "$ROOT_DIR/CHANGELOG.md" 2>/dev/null)
 	{
 		echo "deployed_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 		echo "version=${version:-unknown}"
@@ -211,11 +212,9 @@ deploy_scripts() {
 
 	mkdir -p "$HOME/dev"
 
-	copy_file "$SCRIPT_DIR/git-clone-all.sh" "$HOME/dev/" 2>/dev/null || true
+	copy_file "$ROOT_DIR/git-clone-all.sh" "$HOME/dev/" 2>/dev/null || true
 	copy_file "$SCRIPT_DIR/git-update-repos.sh" "$HOME/dev/"
-	copy_file "$SCRIPT_DIR/sync-system-instructions.sh" "$HOME/dev/"
 	chmod +x "$HOME/dev/git-update-repos.sh" 2>/dev/null || true
-	chmod +x "$HOME/dev/sync-system-instructions.sh" 2>/dev/null || true
 
 	if [ -f "$SCRIPT_DIR/update-all.sh" ]; then
 		copy_file "$SCRIPT_DIR/update-all.sh" "$HOME/dev/"
@@ -232,35 +231,32 @@ deploy_configs() {
 	mkdir -p "$XDG_CONFIG"
 
 	# Copy bash aliases (works on all platforms)
-	copy_file "$SCRIPT_DIR/.bash_aliases" "$HOME/"
+	copy_file "$ROOT_DIR/home/.bash_aliases" "$HOME/"
 
 	# Merge git config (preserves user.name and user.email)
-	merge_gitconfig "$SCRIPT_DIR/.gitconfig" "$HOME/.gitconfig"
+	merge_gitconfig "$ROOT_DIR/home/.gitconfig" "$HOME/.gitconfig"
 
 	# Copy Neovim config (from .config/nvim/ to match repo structure)
-	if [ -f "$SCRIPT_DIR/.config/nvim/init.lua" ]; then
+	if [ -f "$ROOT_DIR/.config/nvim/init.lua" ]; then
 		mkdir -p "$XDG_CONFIG/nvim"
-		copy_file "$SCRIPT_DIR/.config/nvim/init.lua" "$XDG_CONFIG/nvim/"
+		copy_file "$ROOT_DIR/.config/nvim/init.lua" "$XDG_CONFIG/nvim/"
 	fi
 
 	# Copy Neovim plugin lockfile so vim.pack resolves pinned revisions
-	if [ -f "$SCRIPT_DIR/.config/nvim/nvim-pack-lock.json" ]; then
-		copy_file "$SCRIPT_DIR/.config/nvim/nvim-pack-lock.json" "$XDG_CONFIG/nvim/"
+	if [ -f "$ROOT_DIR/.config/nvim/nvim-pack-lock.json" ]; then
+		copy_file "$ROOT_DIR/.config/nvim/nvim-pack-lock.json" "$XDG_CONFIG/nvim/"
 	fi
 
 	# Copy Wezterm config (from .config/wezterm/ to match repo structure)
-	if [ -f "$SCRIPT_DIR/.config/wezterm/wezterm.lua" ]; then
+	if [ -f "$ROOT_DIR/.config/wezterm/wezterm.lua" ]; then
 		mkdir -p "$XDG_CONFIG/wezterm"
-		copy_file "$SCRIPT_DIR/.config/wezterm/wezterm.lua" "$XDG_CONFIG/wezterm/"
+		copy_file "$ROOT_DIR/.config/wezterm/wezterm.lua" "$XDG_CONFIG/wezterm/"
 	fi
 
-	# Copy Aider configs
-	cp "$SCRIPT_DIR/.aider.conf.yml.example" "$HOME/.aider.conf.yml" 2>/dev/null || true
-
 	# Copy WezTerm background assets
-	if [ -d "$SCRIPT_DIR/assets" ]; then
+	if [ -d "$ROOT_DIR/assets" ]; then
 		mkdir -p "$HOME/assets"
-		cp "$SCRIPT_DIR/assets"/* "$HOME/assets/" 2>/dev/null || true
+		cp "$ROOT_DIR/assets"/* "$HOME/assets/" 2>/dev/null || true
 		echo -e "${GREEN}WezTerm background assets copied to: $HOME/assets/${NC}"
 	fi
 
@@ -277,8 +273,8 @@ deploy_git_hooks() {
 	mkdir -p "$hooks_dir"
 
 	# Copy hooks from .config/git/hooks/ (matches repo structure)
-	cp "$SCRIPT_DIR/.config/git/hooks/pre-commit" "$hooks_dir/" 2>/dev/null || true
-	cp "$SCRIPT_DIR/.config/git/hooks/commit-msg" "$hooks_dir/" 2>/dev/null || true
+	cp "$ROOT_DIR/.config/git/hooks/pre-commit" "$hooks_dir/" 2>/dev/null || true
+	cp "$ROOT_DIR/.config/git/hooks/commit-msg" "$hooks_dir/" 2>/dev/null || true
 	chmod +x "$hooks_dir/pre-commit" 2>/dev/null || true
 	chmod +x "$hooks_dir/commit-msg" 2>/dev/null || true
 
@@ -355,32 +351,32 @@ deploy_claude_hooks() {
 
 	# Copy CLAUDE.md to global .claude folder for project-agnostic instructions
 	# Repo structure: .claude/CLAUDE.md (matches deployment location)
-	if [ -f "$SCRIPT_DIR/.claude/CLAUDE.md" ]; then
-		copy_file "$SCRIPT_DIR/.claude/CLAUDE.md" "$HOME/.claude/"
+	if [ -f "$ROOT_DIR/.claude/CLAUDE.md" ]; then
+		copy_file "$ROOT_DIR/.claude/CLAUDE.md" "$HOME/.claude/"
 		echo -e "${GREEN}CLAUDE.md deployed to: $HOME/.claude/${NC}"
 	fi
 
 	# Copy the generated books corpus index referenced by CLAUDE.md principle 13
-	if [ -f "$SCRIPT_DIR/.claude/BOOKS.md" ]; then
-		copy_file "$SCRIPT_DIR/.claude/BOOKS.md" "$HOME/.claude/"
+	if [ -f "$ROOT_DIR/.claude/BOOKS.md" ]; then
+		copy_file "$ROOT_DIR/.claude/BOOKS.md" "$HOME/.claude/"
 		echo -e "${GREEN}BOOKS.md deployed to: $HOME/.claude/${NC}"
 	fi
 
 	# Deploy quality check script
-	if [ -f "$SCRIPT_DIR/.claude/quality-check.sh" ]; then
-		copy_file "$SCRIPT_DIR/.claude/quality-check.sh" "$HOME/.claude/"
+	if [ -f "$ROOT_DIR/.claude/quality-check.sh" ]; then
+		copy_file "$ROOT_DIR/.claude/quality-check.sh" "$HOME/.claude/"
 		chmod +x "$HOME/.claude/quality-check.sh"
 	fi
 
 	# Deploy Claude Code statusline script
-	if [ -f "$SCRIPT_DIR/.claude/statusline.sh" ]; then
-		copy_file "$SCRIPT_DIR/.claude/statusline.sh" "$HOME/.claude/"
+	if [ -f "$ROOT_DIR/.claude/statusline.sh" ]; then
+		copy_file "$ROOT_DIR/.claude/statusline.sh" "$HOME/.claude/"
 		chmod +x "$HOME/.claude/statusline.sh"
 	fi
 
 	# Deploy PowerShell quality check (cross-platform payload, used from Windows)
-	if [ -f "$SCRIPT_DIR/.claude/quality-check.ps1" ]; then
-		copy_file "$SCRIPT_DIR/.claude/quality-check.ps1" "$HOME/.claude/"
+	if [ -f "$ROOT_DIR/.claude/quality-check.ps1" ]; then
+		copy_file "$ROOT_DIR/.claude/quality-check.ps1" "$HOME/.claude/"
 	fi
 
 	# Merge settings template into ~/.claude/settings.json (template values
@@ -407,17 +403,17 @@ deploy_mcp_configs() {
 	local platform_template=""
 	case $OS in
 	linux)
-		platform_template="$SCRIPT_DIR/.config/opencode/opencode.linux.json"
+		platform_template="$ROOT_DIR/.config/opencode/opencode.linux.json"
 		;;
 	macos)
-		platform_template="$SCRIPT_DIR/.config/opencode/opencode.macos.json"
+		platform_template="$ROOT_DIR/.config/opencode/opencode.macos.json"
 		;;
 	windows)
-		platform_template="$SCRIPT_DIR/.config/opencode/opencode.windows.json"
+		platform_template="$ROOT_DIR/.config/opencode/opencode.windows.json"
 		;;
 	*)
 		# Fallback to generic if no platform match
-		platform_template="$SCRIPT_DIR/.config/opencode/opencode.windows.json"
+		platform_template="$ROOT_DIR/.config/opencode/opencode.windows.json"
 		;;
 	esac
 
@@ -446,8 +442,8 @@ deploy_linux() {
 	echo -e "${GREEN}Deploying Linux-specific configs...${NC}"
 
 	# Copy zshrc
-	if [ -f "$SCRIPT_DIR/.zshrc" ]; then
-		cp "$SCRIPT_DIR/.zshrc" "$HOME/"
+	if [ -f "$ROOT_DIR/home/.zshrc" ]; then
+		cp "$ROOT_DIR/home/.zshrc" "$HOME/"
 	fi
 
 	deploy_git_hooks
@@ -457,8 +453,8 @@ deploy_macos() {
 	echo -e "${GREEN}Deploying macOS-specific configs...${NC}"
 
 	# Copy zshrc (macOS default shell)
-	if [ -f "$SCRIPT_DIR/.zshrc" ]; then
-		cp "$SCRIPT_DIR/.zshrc" "$HOME/"
+	if [ -f "$ROOT_DIR/home/.zshrc" ]; then
+		cp "$ROOT_DIR/home/.zshrc" "$HOME/"
 	fi
 
 	deploy_git_hooks

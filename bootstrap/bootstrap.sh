@@ -141,7 +141,6 @@ install_foundation() {
 
 	# Make sure bootstrap scripts are executable
 	chmod +x "$SCRIPT_DIR/bootstrap.sh" 2>/dev/null || true
-	chmod +x "$ROOT_DIR/bootstrap.sh" 2>/dev/null || true
 
 	# Install prerequisites via apt BEFORE homebrew (for fresh Ubuntu)
 	if [[ "$OS" == "linux" ]] && [[ -f /etc/debian_version ]]; then
@@ -1322,7 +1321,7 @@ install_development_tools() {
 deploy_configs() {
 	print_header "Phase 6: Deploying Configurations"
 
-	local deploy_script="$SCRIPT_DIR/../deploy.sh"
+	local deploy_script="$SCRIPT_DIR/../scripts/deploy.sh"
 
 	if [[ ! -f "$deploy_script" ]]; then
 		log_warning "deploy.sh not found at $deploy_script"
