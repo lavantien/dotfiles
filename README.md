@@ -1,9 +1,8 @@
 # Universal dotfiles
 
-[![Security](https://img.shields.io/badge/security-reviewed-brightgreen)](#security) [![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)](https://github.com/lavantien/dotfiles) [![Windows](https://img.shields.io/badge/Windows-0078D6?logo=windows&logoColor=white)](https://github.com/lavantien/dotfiles) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)](https://github.com/lavantien/dotfiles) [![Windows](https://img.shields.io/badge/Windows-0078D6?logo=windows&logoColor=white)](https://github.com/lavantien/dotfiles) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-
-These portable, production-grade dotfiles set up a software engineering environment for Linux and Windows 11 in one click.
+These portable, production-grade dotfiles set up a software engineering environment for Linux and Windows 11 in one click. The repo is also the publishing front for a 14 volume typst books corpus that serves as the AI grounding reference.
 
 The toolchain auto-detects the platform and degrades gracefully when something is unavailable. Bootstrap and updates are idempotent and safe to rerun, and the setup covers the full terminal tooling.
 
@@ -11,9 +10,9 @@ The toolchain auto-detects the platform and degrades gracefully when something i
 
 The editor stack pairs Neovim 0.13+ (beta), configured with the vim.pack manager plus lockfile, LSP and Treesitter setup, native completion, and the builtin dir browser, with the GPU-accelerated WezTerm terminal running the IosevkaTerm Nerd Font. The Rose Pine theme runs across every config.
 
-Language tooling covers 21 LSP servers (jdtls excluded on Windows), 28 Treesitter parsers, and 40+ CLI tools for modern development workflows: fzf, yazi, zoxide, bat, eza, lazygit, gh, ripgrep, fd, sqlite, tokei, btop, repomix, docker-compose, helm, kubectl.
+Language tooling covers 21 LSP servers (jdtls excluded on Windows), 30 Treesitter parsers, and 16 CLI tools for modern development workflows: fzf, yazi, zoxide, bat, eza, lazygit, gh, ripgrep, fd, sqlite, tokei, btop, repomix, docker-compose, helm, kubectl.
 
-AI-native development supports Claude Code and OpenCode with 3 MCP servers (context7, playwright, repomix), Git pre-commit and commit-msg hooks that auto-detect and trigger format, lint, and check runs, a Claude Code statusline hook driven by one bash script and auto-registered in settings.json, and system instruction sync across all repos through AGENTS.md, GEMINI.md, and RULES.md stubs that redirect to .claude/CLAUDE.md.
+AI-native development supports Claude Code and OpenCode with 3 MCP servers (context7, playwright, repomix), Git pre-commit and commit-msg hooks that auto-detect and trigger format, lint, and check runs, a Claude Code statusline hook driven by one bash script and auto-registered in settings.json, and offline grounding on the books corpus described below.
 
 Automation is built around safety: bootstrap and update-all are idempotent and safe to run multiple times, they auto-detect the environment and degrade gracefully when a tool is unavailable, Windows stays OneDrive-aware, and timestamped backup and restore wrap major changes. The tested platforms are Linux (Ubuntu 26.04+) and Windows 11 with PowerShell 7+.
 
@@ -28,8 +27,8 @@ Automation is built around safety: bootstrap and update-all are idempotent and s
 ```bash
 git clone https://github.com/lavantien/dotfiles.git ~/dev/github/dotfiles
 cd ~/dev/github/dotfiles
-chmod +x allow.sh && ./allow.sh
-./bootstrap.sh
+chmod +x scripts/allow.sh && ./scripts/allow.sh
+./bootstrap/bootstrap.sh
 chsh -s $(which zsh)
 exec zsh
 ```
@@ -39,8 +38,8 @@ exec zsh
 ```bash
 git clone https://github.com/lavantien/dotfiles.git ~/dev/github/dotfiles
 cd ~/dev/github/dotfiles
-chmod +x allow.sh && ./allow.sh
-./bootstrap.sh
+chmod +x scripts/allow.sh && ./scripts/allow.sh
+./bootstrap/bootstrap.sh
 exec zsh
 ```
 
@@ -49,7 +48,7 @@ exec zsh
 ```powershell
 git clone https://github.com/lavantien/dotfiles.git $HOME/dev/github/dotfiles
 cd $HOME/dev/github/dotfiles
-.\bootstrap.ps1
+.\bootstrap\bootstrap.ps1
 . $PROFILE
 ```
 
@@ -61,11 +60,30 @@ which lg  # Should point to lazygit
 up  # Runs update-all
 ```
 
+## Repo layout
+
+| Entry | Holds |
+|-------|-------|
+| `.claude/` | Claude Code config: CLAUDE.md, BOOKS.md, settings.template.json, settings.retired.json, statusline.sh, quality-check twins, tdd-guard |
+| `.config/` | Tool configs deployed to the XDG config dir: nvim (init.lua plus lockfile), wezterm, git hooks, opencode platform templates |
+| `.vscode/` | VS Code settings |
+| `assets/` | WezTerm background wallpapers, deployed to ~/assets |
+| `bootstrap/` | bootstrap.sh and bootstrap.ps1, packages.yaml, per-platform install scripts |
+| `books/` | The 14 volume typst books corpus with compiled PDFs |
+| `home/` | Home-level configs: .bash_aliases, .zshrc, .gitconfig, Microsoft.PowerShell_profile.ps1, wezterm.lua, .dotfiles.config.yaml.example |
+| `hooks/` | Claude Code hook scripts (quality-check) |
+| `lib/` | Shared script libraries: config parsing, JSON merge, Git Bash detection |
+| `scripts/` | Every maintenance script: allow, deploy, update, update-all, git-update-repos, sync-book, books-index, healthcheck, backup, restore, uninstall, cleanup one-offs |
+
+The root also carries README.md, CHANGELOG.md, DOCKER_K8S.md, LICENSE, CLAUDE.local.md, the lint configs selene.toml, typos.toml, and vim.yml, and git-clone-all.sh, a vendored gh utility kept at the root.
+
 ## Available commands
 
-`bootstrap` is the entry point for initial setup: it installs package managers, SDKs, LSPs, and tools, then deploys configs. `deploy` handles config and script deployment (Neovim, git hooks, shell, Claude Code settings, OpenCode MCPs, ~/dev scripts), with its options listed under deploy options below.
+`scripts/allow.sh` runs once after cloning and makes the shell scripts executable. `bootstrap/bootstrap.sh` and `bootstrap/bootstrap.ps1` are the entry point for initial setup: they install package managers, SDKs, LSPs, and tools, then deploy configs. `scripts/deploy.sh` and `scripts/deploy.ps1` handle config and script deployment (Neovim, git hooks, shell, Claude Code settings, OpenCode MCPs, ~/dev scripts, books grounding), with their options listed under deploy options below.
 
-Maintenance goes through `update-all`, aliased `up`, which updates all package managers and system packages (20+ managers). `git-update-repos` clones or updates every GitHub repo through the gh CLI and optionally syncs system instructions. `sync-system-instructions` syncs the AI system instructions (AGENTS.md, GEMINI.md, RULES.md) to all repos and removes stale CLAUDE.md copies. `sync-release-notes` pushes each CHANGELOG.md section to its GitHub release, editing published bodies and cutting releases for tagged versions that lack one (`-n` or `-DryRun` prints the plan). `books-index` regenerates `.claude/BOOKS.md` and the books index table inside `.claude/CLAUDE.md` from the books corpus manifests plus `books-index.json`, run it after corpus or annotation changes and redeploy. `healthcheck` verifies tools, configs, and git hooks. `backup` creates a timestamped backup before major changes and `restore` rolls one back. `uninstall` removes deployed configs and keeps installed packages.
+Maintenance goes through `scripts/update-all.sh` and `scripts/update-all.ps1`, aliased `up`, which update all package managers and system packages (20+ managers). `scripts/update.sh` pulls the live configs (bash aliases, zshrc, gitconfig, wezterm config) back into the repo. `scripts/git-update-repos.sh` and `scripts/git-update-repos.ps1` clone or update every GitHub repo through the gh CLI, with `-u` for the username, `-d` for the base dir, and `-s` for SSH. `git-clone-all.sh` clones every repo of a GitHub user or org and is re-runnable to collect new repos and pull updates. `scripts/healthcheck.sh` and `scripts/healthcheck.ps1` verify tools, configs, and git hooks. `scripts/backup.sh` and `scripts/backup.ps1` create a timestamped backup before major changes and `scripts/restore.sh` and `scripts/restore.ps1` roll one back. `scripts/uninstall.sh` and `scripts/uninstall.ps1` remove deployed configs and keep installed packages.
+
+Two Windows one-offs clean up package manager damage: `scripts/cleanup-npm-trash.ps1` removes invalid dot-prefixed npm global packages that npm cannot uninstall itself, and `scripts/cleanup-scoop-path.ps1` strips redundant scoop app paths from the user PATH while keeping the shims and nodejs.
 
 Windows uses `.ps1` scripts. Linux/macOS uses `.sh` scripts.
 
@@ -102,9 +120,9 @@ The categories are cumulative tiers. minimal covers package managers, git, and C
 All scripts use hardcoded defaults by default (`categories: full`, interactive prompts).
 
 ```bash
-cp .dotfiles.config.yaml.example ~/.dotfiles.config.yaml
+cp home/.dotfiles.config.yaml.example ~/.dotfiles.config.yaml
 vim ~/.dotfiles.config.yaml
-./bootstrap.sh  # Auto-detects config
+./bootstrap/bootstrap.sh  # Auto-detects config
 ```
 
 Configuration priority: command-line flags override the config file, and the config file overrides the hardcoded defaults.
@@ -123,20 +141,28 @@ Configuration priority: command-line flags override the config file, and the con
 ### Health and troubleshooting
 
 ```bash
-./healthcheck.sh
+./scripts/healthcheck.sh
 
 # JSON output (for CI/CD)
-./healthcheck.sh --format json
+./scripts/healthcheck.sh --format json
 ```
 
 If git hooks are not running, set `git config --global core.hooksPath ~/.config/git/hooks`. If the PowerShell execution policy blocks the scripts, run `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`. If Neovim plugins are not installing, run `:packupdate` in Neovim or press `<leader>u`. If zoxide is not jumping, use directories normally for a few days to let it learn.
+
+## Books corpus
+
+The 14 volumes are c-os-cloud, math, go, csharp-net, javascript, python, lua, dsa, icpc, patterns-concurrency-distributed, infrastructure, kdd, game-systems, and interview-repertoire. `books/` carries each volume's typst sources (manifest.typ, book.typ, chapters, coverage) and the compiled PDF at the top level named `NN-<volume>.pdf`. The typst sources are the source of truth for AI grounding, the PDFs are for human reading.
+
+`scripts/sync-book.sh` and `scripts/sync-book.ps1` refresh `books/` from the private authoring repo at `~/dev/github/resume` when it exists and skip otherwise. Deploy follows the same split: with `~/dev/github/resume` present, the deployed CLAUDE.md grounds directly on it, without it, deploy copies the typst volumes into `~/.claude/books` and CLAUDE.md grounds there. Implementation code behind the books (samples, capstones, api projects) falls back to the private repo.
+
+`scripts/books-index.sh` and `scripts/books-index.ps1` regenerate `.claude/BOOKS.md` and the appendix table inside `.claude/CLAUDE.md` from the corpus manifests plus `scripts/books-index.json`. Run them after corpus or annotation changes, then redeploy.
 
 ## Complete tools/packages matrix
 
 | Language | LSP | Tester | Formatter | Linter | Type Check |
 |----------|-----|--------|-----------|--------|------------|
 | Bash | bashls | bats | shfmt | shellcheck | - |
-| PowerShell | powershell_es | Pester | Invoke-Formatter | PSScriptAnalyzer | PSScriptAnalyzer |
+| PowerShell | - | Pester | Invoke-Formatter | PSScriptAnalyzer | PSScriptAnalyzer |
 | Go | gopls | go test | gofmt, goimports | golangci-lint | go vet |
 | Rust | rust-analyzer | cargo test | rustfmt | clippy | cargo check |
 | Python | pyright | pytest | ruff, black | ruff | mypy |
@@ -147,16 +173,19 @@ If git hooks are not running, set `git config --global core.hooksPath ~/.config/
 | C/C++ | clangd | Catch2 | clang-format | clang-tidy, cppcheck | compiler |
 | C# | csharp_ls | dotnet test | dotnet format | Roslyn analyzers | dotnet build |
 | Java | jdtls (Linux/macOS only) | JUnit | checkstyle | checkstyle | javac |
+| Dart | dartls | - | dart format | - | - |
 | PHP | intelephense | php, PHPUnit | pint | PHPStan, Psalm | - |
 | Scala | metals | ScalaTest | scalafmt | scalafix | scalac |
 | Lua | lua_ls | busted | stylua | selene | - |
 | Typst | tinymist | built-in | tinymist | tinymist | - |
-| Dockerfile | docker_ls | - | - | hadolint | - |
-| Docker Compose | docker_ls | - | prettier | - | - |
+| Dockerfile | docker_language_server | - | - | hadolint | - |
+| Docker Compose | docker_language_server | - | prettier | - | - |
 | Helm | helm_ls | - | prettier | - | - |
 | Kubernetes YAML | yamlls | kubectl | prettier | yamllint | - |
 | YAML | yamlls | - | prettier | yamllint | - |
 | TOML | tombi | - | taplo | - | - |
+
+The authoritative lists live in `.config/nvim/init.lua`: 21 LSP servers with jdtls excluded on Windows, plus dartls and codebook, and 30 Treesitter parsers.
 
 ### CLI tools
 
@@ -199,12 +228,13 @@ Injected top-level fields:
 | `env` | 13 variables (table below) | API endpoint, models, limits, feature flags |
 | `model` | `glm-5.3[1m]` | Default model |
 | `statusLine` | `bash ~/.claude/statusline.sh` | Statusline command |
-| `enabledPlugins` | 31 plugins, 30 enabled | Plugin enablement |
+| `enabledPlugins` | 30 plugins, all enabled | Plugin enablement |
 | `alwaysThinkingEnabled` | `true` | Extended thinking by default |
 | `autoUpdatesChannel` | `latest` | Update channel |
 | `tui` | `fullscreen` | Terminal UI mode |
 | `skipDangerousModePermissionPrompt` | `true` | Skip dangerous-mode prompt |
 | `teammateMode` | `auto` | Agent teams mode |
+| `attribution` | `{commit: "", pr: ""}` | No attribution lines in commits and PRs |
 
 Injected `env` variables:
 
@@ -224,7 +254,7 @@ Injected `env` variables:
 | `CLAUDE_CODE_EFFORT_LEVEL` | `max` | Reasoning effort |
 | `CLAUDE_CODE_SUBAGENT_MODEL` | `glm-5.3[1m]` | Sub-agent model override |
 
-`enabledPlugins` entries: glm-plan-usage@zai-coding-plugins, repomix-commands@repomix, repomix-explorer@repomix, repomix-mcp@repomix, and @claude-plugins-official for frontend-design, context7, feature-dev, code-review, commit-commands, typescript-lsp, playwright, agent-sdk-dev, pr-review-toolkit, pyright-lsp, gopls-lsp, rust-analyzer-lsp, csharp-lsp, php-lsp, jdtls-lsp, clangd-lsp, lua-lsp, code-simplifier, superpowers, claude-code-setup, chrome-devtools-mcp, plugin-dev, microsoft-docs, postman, claude-security, math-olympiad.
+`enabledPlugins` carries 30 entries, all enabled: glm-plan-usage@zai-coding-plugins, the 3 repomix plugins (commands, explorer, mcp), and @claude-plugins-official for agent-sdk-dev, chrome-devtools-mcp, clangd-lsp, claude-code-setup, claude-security, code-review, code-simplifier, commit-commands, context7, csharp-lsp, feature-dev, frontend-design, gopls-lsp, jdtls-lsp, lua-lsp, math-olympiad, microsoft-docs, php-lsp, playwright, plugin-dev, postman, pr-review-toolkit, pyright-lsp, rust-analyzer-lsp, superpowers, typescript-lsp.
 
 Retired settings, deleted from the live file on deploy via `.claude/settings.retired.json`:
 
@@ -361,6 +391,10 @@ Typst: `<leader>pt` toggles the live preview, which re-renders in a browser pane
 | `<leader>o` | LSP type definitions |
 | `<leader>j` | LSP definitions |
 | `<leader>v` | LSP declarations |
+
+## Release process
+
+Versioning is major.minor. Work lands under an `## [Unreleased]` heading in CHANGELOG.md, one short line per change. At release the heading is renamed to `## [X.Y] - date`, committed as `chore: release vX.Y`, tagged `vX.Y`, and pushed. The release is then published with `gh release create vX.Y` using the changelog line as the note.
 
 ## Changelog
 
