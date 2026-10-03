@@ -31,7 +31,7 @@ working principles
 13. Ground on the books corpus: lazily consult `~/dev/github/resume/books` as the canonical reference for languages, math, DSA, ICPC, patterns and concurrency, infrastructure, KDD, game systems, and interview repertoire. Lazy means locate the matching volume and read only the relevant section, never bulk-load.
 14. Subagent fan-out is the default execution mode: 4 concurrent development slots plus 1 temporary slot for auxiliary checks like the quota guard. Plan task lists ahead so freed slots roll onto queued work immediately, and dispose finished or failed agents at once.
 15. Terminate unused browser instances after playwright or direct browser MCP work, or use the built-in defer cleanup when the MCP provides one, so no orphaned browser process holds resources.
-16. Every crawl, sourcing, or transcribing action must leave a physical artifact in a text format, commonly typst, markdown, or code, so the result survives the session and no work reruns.
+16. Every crawl, sourcing, or transcribing action must leave a physical artifact in a text format, commonly typst, markdown, or code, so the result survives the session and no work reruns, no effort duplicated.
 
 ## Voice and format
 
