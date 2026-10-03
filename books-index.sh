@@ -27,9 +27,16 @@ command -v jq >/dev/null 2>&1 || die "jq is required (scoop install jq)"
 [[ -d "$BOOKS_DIR" ]] || die "books dir not found: $BOOKS_DIR"
 [[ -f "$ANNOTATIONS" ]] || die "annotations not found: $ANNOTATIONS"
 [[ -f "$CLAUDE_MD" ]] || die "missing $CLAUDE_MD"
-grep -qF "$BEGIN_MARK" "$CLAUDE_MD" || die "$BEGIN_MARK not found in .claude/CLAUDE.md"
-grep -qF "$END_MARK" "$CLAUDE_MD" || die "$END_MARK not found in .claude/CLAUDE.md"
-! grep -q $'\r' "$CLAUDE_MD" || die ".claude/CLAUDE.md has CRLF line endings"
+# Markers must be exact single lines in order, a stray or duplicated marker is fatal
+begin_count="$(grep -Fxc "$BEGIN_MARK" "$CLAUDE_MD")"
+end_count="$(grep -Fxc "$END_MARK" "$CLAUDE_MD")"
+[[ "$begin_count" == 1 && "$end_count" == 1 ]] ||
+	die "expected exactly one BEGIN and one END marker line in .claude/CLAUDE.md, got $begin_count and $end_count"
+begin_ln="$(grep -Fxn "$BEGIN_MARK" "$CLAUDE_MD" | cut -d: -f1)"
+end_ln="$(grep -Fxn "$END_MARK" "$CLAUDE_MD" | cut -d: -f1)"
+[[ "$begin_ln" -lt "$end_ln" ]] || die "BEGIN marker must come before END marker in .claude/CLAUDE.md"
+# od is byte-true, MSYS2 grep and gawk are CRLF-transparent in text mode
+od -An -c "$CLAUDE_MD" | grep -q '\\r' && die ".claude/CLAUDE.md has CRLF line endings"
 
 mapfile -t EXCLUDED < <(jq -r '.exclude[]' "$ANNOTATIONS" | tr -d '\r')
 mapfile -t ANNOTATED < <(jq -r '.books | keys[]' "$ANNOTATIONS" | tr -d '\r')
@@ -48,13 +55,14 @@ for path in "$BOOKS_DIR"/*/; do
 	is_excluded "$dir" && continue
 	manifest="$path/manifest.typ"
 	[[ -f "$manifest" ]] || die "no manifest.typ in $dir"
-	num="$(sed -n 's/^[[:space:]]*num: \([0-9][0-9]*\),.*$/\1/p' "$manifest" | head -n1)"
-	title="$(sed -n 's/^[[:space:]]*title: "\([^"]*\)",.*$/\1/p' "$manifest" | head -n1)"
-	version="$(sed -n 's/^[[:space:]]*version: "\([^"]*\)",.*$/\1/p' "$manifest" | head -n1)"
-	subtitle="$(sed -n 's/^[[:space:]]*subtitle: "\([^"]*\)",.*$/\1/p' "$manifest" | head -n1)"
+	num="$(sed -n 's/^[[:space:]]*num:[[:space:]]*\([0-9][0-9]*\),.*$/\1/p' "$manifest" | head -n1)"
+	title="$(sed -n 's/^[[:space:]]*title:[[:space:]]*"\([^"]*\)",.*$/\1/p' "$manifest" | head -n1)"
+	version="$(sed -n 's/^[[:space:]]*version:[[:space:]]*"\([^"]*\)",.*$/\1/p' "$manifest" | head -n1)"
+	subtitle="$(sed -n 's/^[[:space:]]*subtitle:[[:space:]]*"\([^"]*\)",.*$/\1/p' "$manifest" | head -n1)"
 	[[ -n "$num" && -n "$title" && -n "$version" && -n "$subtitle" ]] ||
 		die "incomplete manifest meta in $dir (num/title/version/subtitle)"
-	jq -e --arg d "$dir" '.books[$d].summary and .books[$d].capstone and .books[$d].capstone_short and .books[$d].walkthroughs' "$ANNOTATIONS" >/dev/null ||
+	num="$((10#$num))"
+	jq -e --arg d "$dir" '[.books[$d].summary, .books[$d].capstone, .books[$d].capstone_short, .books[$d].walkthroughs | length] | all(. > 0)' "$ANNOTATIONS" >/dev/null ||
 		die "books-index.json is missing summary, capstone, capstone_short, or walkthroughs for $dir"
 	META[$dir]="$num|$title|$version|$subtitle"
 	ORDER+=("$dir")
@@ -65,8 +73,8 @@ for dir in "${ANNOTATED[@]}"; do
 	[[ -n "${META[$dir]:-}" ]] || die "books-index.json entry '$dir' matches no included book"
 done
 
-# Order books by book num
-mapfile -t ORDER < <(for dir in "${ORDER[@]}"; do echo "${META[$dir]%%|*} $dir"; done | sort -n | awk '{print $2}')
+# Order books by book num, dir name breaks ties deterministically
+mapfile -t ORDER < <(for dir in "${ORDER[@]}"; do echo "${META[$dir]%%|*} $dir"; done | sort -k1,1n -k2,2 | awk '{print $2}')
 
 exclude_line="$(printf '%s, ' "${EXCLUDED[@]}")"
 exclude_line="${exclude_line%, }"
@@ -101,7 +109,7 @@ for dir in "${ORDER[@]}"; do
 	chapters=()
 	missing=()
 	while IFS= read -r line; do
-		[[ "$line" =~ \(id:[[:space:]]*\"([^\"]+)\",[[:space:]]*num:[[:space:]]*([0-9]+),[[:space:]]*title:[[:space:]]*\"([^\"]+)\" ]] || continue
+		[[ "$line" =~ \([[:space:]]*id:[[:space:]]*\"([^\"]+)\",[[:space:]]*num:[[:space:]]*([0-9]+),[[:space:]]*title:[[:space:]]*\"([^\"]+)\" ]] || continue
 		chid="${BASH_REMATCH[1]}"
 		chnum="${BASH_REMATCH[2]}"
 		chtitle="${BASH_REMATCH[3]}"

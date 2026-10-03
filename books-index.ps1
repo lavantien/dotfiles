@@ -79,7 +79,8 @@ foreach ($prop in $AnnBooks.PSObject.Properties) {
 	if (-not $Books.ContainsKey($prop.Name)) { throw "books-index.json entry '$($prop.Name)' matches no included book" }
 }
 
-$Order = $Books.GetEnumerator() | Sort-Object { $_.Value.Num } | ForEach-Object { $_.Key }
+# Order books by book num, dir name breaks ties deterministically
+$Order = $Books.GetEnumerator() | Sort-Object { $_.Value.Num }, { $_.Key } | ForEach-Object { $_.Key }
 $ExcludeLine = $Excluded -join ', '
 
 foreach ($cell in @(
@@ -144,9 +145,13 @@ for ($r = 0; $r -lt $T1.Count; $r++) {
 $tableLines.Add('')
 
 $lines = [System.IO.File]::ReadAllLines($ClaudeMd)
+# Markers must be exact single lines in order, a stray or duplicated marker is fatal
+$beginHits = @($lines | Where-Object { $_ -eq $BeginMark })
+$endHits = @($lines | Where-Object { $_ -eq $EndMark })
+if ($beginHits.Count -ne 1 -or $endHits.Count -ne 1) { throw "expected exactly one BEGIN and one END marker line in .claude/CLAUDE.md" }
 $beginIdx = [array]::IndexOf($lines, $BeginMark)
 $endIdx = [array]::IndexOf($lines, $EndMark)
-if ($beginIdx -lt 0 -or $endIdx -lt 0 -or $endIdx -le $beginIdx) { throw "markers not found or out of order in .claude/CLAUDE.md" }
+if ($endIdx -le $beginIdx) { throw "BEGIN marker must come before END marker in .claude/CLAUDE.md" }
 $spliced = @()
 if ($beginIdx -gt 0) { $spliced += $lines[0..($beginIdx - 1)] }
 $spliced += $BeginMark
