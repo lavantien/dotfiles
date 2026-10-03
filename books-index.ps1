@@ -23,13 +23,14 @@ $Utf8NoBom = [System.Text.UTF8Encoding]::new($false)
 if (-not (Test-Path -LiteralPath $BooksDir -PathType Container)) { throw "books dir not found: $BooksDir" }
 if (-not (Test-Path -LiteralPath $AnnotationsPath -PathType Leaf)) { throw "annotations not found: $AnnotationsPath" }
 if (-not (Test-Path -LiteralPath $ClaudeMd -PathType Leaf)) { throw "missing $ClaudeMd" }
+if ([System.IO.File]::ReadAllText($ClaudeMd).Contains("`r`n")) { throw '.claude/CLAUDE.md has CRLF line endings' }
 
 $Ann = Get-Content -LiteralPath $AnnotationsPath -Raw | ConvertFrom-Json
 $Excluded = @($Ann.exclude)
 $AnnBooks = $Ann.books
 
 # Collect book metadata from each non-excluded manifest
-$Books = @{} # dir -> @{ Num; Title; Version; Subtitle }
+$Books = @{} # dir -> @{ Num; Title; Version; Subtitle; Chapters }
 foreach ($path in Get-ChildItem -LiteralPath $BooksDir -Directory) {
 	$dir = $path.Name
 	if ($Excluded -contains $dir) { continue }
@@ -50,7 +51,7 @@ foreach ($path in Get-ChildItem -LiteralPath $BooksDir -Directory) {
 			$nn = '{0:d2}' -f $chNum
 			$candidates = @(Get-ChildItem -LiteralPath (Join-Path $path.FullName 'chapters') -Filter "$nn-*.typ" -File)
 			if ($candidates.Count -eq 1) {
-				$file = "chapters/$($candidates[0].Name)"
+				$file = "$dir/chapters/$($candidates[0].Name)"
 				$chapters.Add("- $nn $chTitle ($file)")
 			} else {
 				$missing.Add("$nn-$chId.typ ($($candidates.Count) candidates)")
@@ -59,7 +60,7 @@ foreach ($path in Get-ChildItem -LiteralPath $BooksDir -Directory) {
 	}
 	if ($null -in @($num, $title, $version, $subtitle)) { throw "incomplete manifest meta in $dir (num/title/version/subtitle)" }
 	if ($chapters.Count -eq 0) { throw "${dir}: no chapters parsed from manifest" }
-	if ($missing.Count -gt 0) { throw "${dir}: chapter files not found: $($missing -join ', ')" }
+	if ($missing.Count -gt 0) { throw "${dir}: chapter files not found or ambiguous: $($missing -join ', ')" }
 
 	$entry = $AnnBooks.PSObject.Properties[$dir]
 	if ($null -eq $entry) { throw "books-index.json has no entry for $dir" }
@@ -95,9 +96,10 @@ $bookLines.Add('')
 $bookLines.Add("Generated from the books corpus manifests and books-index.json by books-index.sh or books-index.ps1, do not edit by hand. Grep this file for a topic, note the chapter file, read only that file. Paths are relative to $CanonBooks. Out of scope: $ExcludeLine.")
 $bookLines.Add('')
 
-$tableLines = [System.Collections.Generic.List[string]]::new()
-$tableLines.Add('| book | scope | capstone | walkthroughs |')
-$tableLines.Add('|---|---|---|---|')
+$T1 = [System.Collections.Generic.List[string]]::new()
+$T2 = [System.Collections.Generic.List[string]]::new()
+$T3 = [System.Collections.Generic.List[string]]::new()
+$T4 = [System.Collections.Generic.List[string]]::new()
 
 $totalChapters = 0
 foreach ($dir in $Order) {
@@ -111,12 +113,35 @@ foreach ($dir in $Order) {
 	$bookLines.Add("capstone: $($ann.capstone)")
 	$bookLines.Add("walkthroughs: $($ann.walkthroughs)")
 	$bookLines.Add('toc:')
+	$bookLines.Add('')
 	$bookLines.AddRange([string[]]$b.Chapters)
 	$bookLines.Add('')
-	$tableLines.Add("| $($b.Title) ($dir) | $($b.Subtitle) | $($ann.capstone_short) | $($ann.walkthroughs) |")
+	$T1.Add("$($b.Title) ($dir)")
+	$T2.Add($b.Subtitle)
+	$T3.Add($ann.capstone_short)
+	$T4.Add($ann.walkthroughs)
 }
 
-[System.IO.File]::WriteAllText($BooksOut, ($bookLines -join "`n") + "`n", $Utf8NoBom)
+# Exactly one trailing newline, prettier trims blank lines at EOF
+[System.IO.File]::WriteAllText($BooksOut, ($bookLines -join "`n").TrimEnd("`n") + "`n", $Utf8NoBom)
+
+# Prettier-stable table: blank lines around it, cells padded to column width
+$Header = @('book', 'scope', 'capstone', 'walkthroughs')
+$Columns = @($T1, $T2, $T3, $T4)
+$Widths = for ($i = 0; $i -lt 4; $i++) {
+	$w = $Header[$i].Length
+	foreach ($cell in $Columns[$i]) { if ($cell.Length -gt $w) { $w = $cell.Length } }
+	$w
+}
+$tableLines = [System.Collections.Generic.List[string]]::new()
+$tableLines.Add('')
+$tableLines.Add('| ' + (($Header | ForEach-Object -Begin { $i = 0 } -Process { $_.PadRight($Widths[$i++]) }) -join ' | ') + ' |')
+$tableLines.Add('| ' + (($Widths | ForEach-Object { '-' * $_ }) -join ' | ') + ' |')
+for ($r = 0; $r -lt $T1.Count; $r++) {
+	$row = @($T1[$r], $T2[$r], $T3[$r], $T4[$r])
+	$tableLines.Add('| ' + (($row | ForEach-Object -Begin { $i = 0 } -Process { $_.PadRight($Widths[$i++]) }) -join ' | ') + ' |')
+}
+$tableLines.Add('')
 
 $lines = [System.IO.File]::ReadAllLines($ClaudeMd)
 $beginIdx = [array]::IndexOf($lines, $BeginMark)

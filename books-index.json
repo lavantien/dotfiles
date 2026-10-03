@@ -5,7 +5,7 @@
       "summary": "covers c23, llvm internals, the os layer, terraform, aws, gcp, and one deployed service. chapters 1 to 20 build language and machine knowledge, 22 to 27 infrastructure as code, 28 to 40 one http service. the coverage appendix maps each topic to a std counterpart.",
       "capstone": "particle kernel and row cruncher (ch 21): steps a million particles behind the 3 allocator designs in aos and soa layouts with asserted checksums, then ten million rows through sqlite and duckdb dlls loaded at runtime.",
       "capstone_short": "particle kernel and row cruncher (ch 21)",
-      "walkthroughs": "terraform language through multi-cloud infra (ch 22 to 27), one service build: http kernel, auth, store, cache, limits, observability, ship, test suite (ch 28 to 40)"
+      "walkthroughs": "cloud model through multi-cloud practice (ch 22 to 27), one service build: http kernel, auth, store, cache, limits, observability, ship, test suite (ch 28 to 40)"
     },
     "math": {
       "summary": "mathematics for programmers in c23: floating point and error analysis, linear algebra, calculus, optimization and autodiff, logic, algebra, and graphs, probability, statistics, numerical methods, game theory, then functional patterns in c23. 33 chapters, the coverage appendix names the sample check proving each topic.",

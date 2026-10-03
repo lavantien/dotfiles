@@ -82,10 +82,11 @@ trap 'rm -f "$TMP_BOOKS" "$TMP_TABLE" "$TMP_CLAUDE"' EXIT
 	echo
 } >"$TMP_BOOKS"
 
-{
-	echo "| book | scope | capstone | walkthroughs |"
-	echo "|---|---|---|---|"
-} >"$TMP_TABLE"
+TABLE_HDR=(book scope capstone walkthroughs)
+T_C1=()
+T_C2=()
+T_C3=()
+T_C4=()
 
 total_chapters=0
 for dir in "${ORDER[@]}"; do
@@ -110,7 +111,7 @@ for dir in "${ORDER[@]}"; do
 		candidates=("$BOOKS_DIR/$dir/chapters/$nn-"*.typ)
 		shopt -u nullglob
 		if [[ ${#candidates[@]} -eq 1 ]]; then
-			file="chapters/$(basename "${candidates[0]}")"
+			file="$dir/chapters/$(basename "${candidates[0]}")"
 			chapters+=("- $nn $chtitle ($file)")
 		else
 			missing+=("$nn-$chid.typ (${#candidates[@]} candidates)")
@@ -131,13 +132,41 @@ for dir in "${ORDER[@]}"; do
 		echo "capstone: $capstone"
 		echo "walkthroughs: $walkthroughs"
 		echo "toc:"
+		echo
 		printf '%s\n' "${chapters[@]}"
 		echo
 	} >>"$TMP_BOOKS"
 
-	echo "| $title ($dir) | $subtitle | $capstone_short | $walkthroughs |" >>"$TMP_TABLE"
+	T_C1+=("$title ($dir)")
+	T_C2+=("$subtitle")
+	T_C3+=("$capstone_short")
+	T_C4+=("$walkthroughs")
 done
 
+# Prettier-stable table: blank lines around it, cells padded to column width
+pad() { printf '%-*s' "$2" "$1"; }
+dashes() { printf '%*s' "$2" '' | tr ' ' '-'; }
+maxw() {
+	local w="$1" cell
+	shift
+	for cell in "$@"; do
+		((${#cell} > w)) && w=${#cell}
+	done
+	echo "$w"
+}
+widths=($(maxw "${#TABLE_HDR[0]}" "${T_C1[@]}") $(maxw "${#TABLE_HDR[1]}" "${T_C2[@]}") $(maxw "${#TABLE_HDR[2]}" "${T_C3[@]}") $(maxw "${#TABLE_HDR[3]}" "${T_C4[@]}"))
+{
+	echo
+	echo "| $(pad "${TABLE_HDR[0]}" "${widths[0]}") | $(pad "${TABLE_HDR[1]}" "${widths[1]}") | $(pad "${TABLE_HDR[2]}" "${widths[2]}") | $(pad "${TABLE_HDR[3]}" "${widths[3]}") |"
+	echo "| $(dashes "" "${widths[0]}") | $(dashes "" "${widths[1]}") | $(dashes "" "${widths[2]}") | $(dashes "" "${widths[3]}") |"
+	for i in "${!T_C1[@]}"; do
+		echo "| $(pad "${T_C1[$i]}" "${widths[0]}") | $(pad "${T_C2[$i]}" "${widths[1]}") | $(pad "${T_C3[$i]}" "${widths[2]}") | $(pad "${T_C4[$i]}" "${widths[3]}") |"
+	done
+	echo
+} >"$TMP_TABLE"
+
+# Exactly one trailing newline, prettier trims blank lines at EOF
+printf '%s\n' "$(cat "$TMP_BOOKS")" >"$TMP_BOOKS"
 mv "$TMP_BOOKS" "$BOOKS_OUT"
 
 awk -v begin="$BEGIN_MARK" -v end="$END_MARK" -v table="$TMP_TABLE" '
