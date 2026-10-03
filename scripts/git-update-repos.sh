@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Update/Clone All GitHub Repositories for a User
-# Usage: ./git-update-repos.sh [-u username] [-d base_dir] [-s] [-c] [--commit]
+# Usage: ./git-update-repos.sh [-u username] [-d base_dir] [-s]
 
 set -euo pipefail
 
@@ -21,7 +21,6 @@ fi
 USERNAME="${GITHUB_USERNAME:-$(git config user.name 2>/dev/null || echo "lavantien")}"
 BASE_DIR="${GIT_BASE_DIR:-$HOME/dev/github}"
 USE_SSH=false
-AUTO_COMMIT=false
 
 # Colors
 RED='\033[0;31m'
@@ -37,8 +36,7 @@ while [[ $# -gt 0 ]]; do
         -u) USERNAME="$2"; shift 2 ;;
         -d) BASE_DIR="$2"; shift 2 ;;
         -s) USE_SSH=true; shift ;;
-        -c|--commit) AUTO_COMMIT=true; shift ;;
-        *) echo "Usage: $0 [-u username] [-d base_dir] [-s] [-c] [--commit]" >&2; exit 1 ;;
+        *) echo "Usage: $0 [-u username] [-d base_dir] [-s]" >&2; exit 1 ;;
     esac
 done
 
@@ -48,7 +46,6 @@ echo -e "${CYAN}========================================${NC}"
 echo -e "${BLUE}User:${NC}       $USERNAME"
 echo -e "${BLUE}Directory:${NC}   $BASE_DIR"
 echo -e "${BLUE}SSH:${NC}        $USE_SSH"
-echo -e "${BLUE}Auto-commit:${NC} $AUTO_COMMIT"
 echo -e "${CYAN}========================================${NC}"
 echo
 

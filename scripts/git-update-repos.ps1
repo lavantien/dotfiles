@@ -1,12 +1,11 @@
 # Update/Clone All GitHub Repositories (Pure PowerShell 7)
 # Transcribed from git-update-repos.sh
-# Usage: .\git-update-repos.ps1 [-Username] "user" [-BaseDir] "path" [-UseSSH] [-Commit]
+# Usage: .\git-update-repos.ps1 [-Username] "user" [-BaseDir] "path" [-UseSSH]
 
 param(
     [string]$Username = (git config user.name 2>$null ?? "lavantien"),
     [string]$BaseDir = "$HOME/dev/github",
-    [switch]$UseSSH,
-    [switch]$Commit
+    [switch]$UseSSH
 )
 
 # Colors
@@ -43,7 +42,6 @@ Wc $C.C "========================================"
 Wc $C.B "User:           $Username"
 Wc $C.B "Directory:      $BaseDir"
 Wc $C.B "SSH:            $UseSSH"
-Wc $C.B "Auto-commit:    $Commit"
 Wc $C.C "========================================"
 Write-Host ""
 

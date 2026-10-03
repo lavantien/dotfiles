@@ -1,6 +1,6 @@
 # Docker and Kubernetes setup
 
-This guide covers installing Docker Desktop and minikube for container and Kubernetes development. `bootstrap.sh` installs kubectl, helm, and docker-compose automatically, so only install Docker Desktop manually if you need the full GUI and development experience.
+This guide covers installing Docker Desktop and minikube for container and Kubernetes development. `bootstrap/bootstrap.sh` installs kubectl, helm, and docker-compose automatically, so only install Docker Desktop manually if you need the full GUI and development experience.
 
 ## Docker Desktop for Linux
 
