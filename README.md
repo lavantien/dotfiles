@@ -224,13 +224,14 @@ Injected `env` variables:
 | `CLAUDE_CODE_EFFORT_LEVEL` | `max` | Reasoning effort |
 | `CLAUDE_CODE_SUBAGENT_MODEL` | `glm-5.3[1m]` | Sub-agent model override |
 
-`enabledPlugins` entries: glm-plan-usage@zai-coding-plugins, repomix-commands@repomix, repomix-explorer@repomix, repomix-mcp@repomix, and @claude-plugins-official for frontend-design, context7, feature-dev, code-review, commit-commands, typescript-lsp, playwright, agent-sdk-dev, pr-review-toolkit, pyright-lsp, gopls-lsp, rust-analyzer-lsp, csharp-lsp, php-lsp, jdtls-lsp, clangd-lsp, lua-lsp, code-simplifier, superpowers, claude-code-setup, chrome-devtools-mcp, plugin-dev, microsoft-docs, postman, claude-security, math-olympiad. remember is disabled.
+`enabledPlugins` entries: glm-plan-usage@zai-coding-plugins, repomix-commands@repomix, repomix-explorer@repomix, repomix-mcp@repomix, and @claude-plugins-official for frontend-design, context7, feature-dev, code-review, commit-commands, typescript-lsp, playwright, agent-sdk-dev, pr-review-toolkit, pyright-lsp, gopls-lsp, rust-analyzer-lsp, csharp-lsp, php-lsp, jdtls-lsp, clangd-lsp, lua-lsp, code-simplifier, superpowers, claude-code-setup, chrome-devtools-mcp, plugin-dev, microsoft-docs, postman, claude-security, math-olympiad.
 
 Retired settings, deleted from the live file on deploy via `.claude/settings.retired.json`:
 
 | Retired key | Reason | Reference |
 |-------------|--------|-----------|
 | `env.CLAUDE_CODE_MAX_OUTPUT_TOKEN` | Misspelling of the documented `CLAUDE_CODE_MAX_OUTPUT_TOKENS`, which the template now sets | [env vars reference](https://code.claude.com/docs/en/env-vars) |
+| `enabledPlugins.remember@claude-plugins-official` | Unused plugin that only appeared in /plugin because a v5.28.1 template sync copied the live disable flag in | [plugins reference](https://code.claude.com/docs/en/plugins) |
 
 ### OpenCode config merging
 

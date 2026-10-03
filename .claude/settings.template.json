@@ -50,7 +50,6 @@
     "claude-code-setup@claude-plugins-official": true,
     "chrome-devtools-mcp@claude-plugins-official": true,
     "plugin-dev@claude-plugins-official": true,
-    "remember@claude-plugins-official": false,
     "microsoft-docs@claude-plugins-official": true,
     "postman@claude-plugins-official": true,
     "claude-security@claude-plugins-official": true,
