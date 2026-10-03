@@ -1,0 +1,89 @@
+{
+  "exclude": ["analysis", "defense-cookbook", "theme", "theme-demo"],
+  "books": {
+    "c-os-cloud": {
+      "summary": "covers c23, llvm internals, the os layer, terraform, aws, gcp, and one deployed service. chapters 1 to 20 build language and machine knowledge, 22 to 27 infrastructure as code, 28 to 40 one http service. the coverage appendix maps each topic to a std counterpart.",
+      "capstone": "particle kernel and row cruncher (ch 21): steps a million particles behind the 3 allocator designs in aos and soa layouts with asserted checksums, then ten million rows through sqlite and duckdb dlls loaded at runtime.",
+      "capstone_short": "particle kernel and row cruncher (ch 21)",
+      "walkthroughs": "terraform language through multi-cloud infra (ch 22 to 27), one service build: http kernel, auth, store, cache, limits, observability, ship, test suite (ch 28 to 40)"
+    },
+    "math": {
+      "summary": "mathematics for programmers in c23: floating point and error analysis, linear algebra, calculus, optimization and autodiff, logic, algebra, and graphs, probability, statistics, numerical methods, game theory, then functional patterns in c23. 33 chapters, the coverage appendix names the sample check proving each topic.",
+      "capstone": "the arena game in 3 parts: design (game spec, adt state, numerics budget, mixed-strategy plus mcts ai, two-lane bit-exact architecture), implementation (verlet physics, sat collision, group hashing, allegro host), verification (discipline-to-module audit, determinism pins).",
+      "capstone_short": "the arena game in 3 parts",
+      "walkthroughs": "none beyond the capstone"
+    },
+    "go": {
+      "summary": "go 1.27 language manual: toolchain, types, generics, concurrency, runtime, allocation, profiling, stdlib tours, testing, idioms, then htmx and templ, a full service build, numerical statistics, and a capstone. 35 chapters. coverage appendices track keywords against the spec and stdlib components per chapter.",
+      "capstone": "concurrent crawler, indexer, and web ui (ch 34): a search engine front half, goroutine crawler under a semaphore cap, inverted index with uuid v7 documents, sqlite store with fts5, htmx/templ search ui, 32 tests.",
+      "capstone_short": "concurrent crawler, indexer, and web ui",
+      "walkthroughs": "http kernel service build (ch 18 to 29) with its test suite (ch 30), numerical statistics, fitting, and the offline engine with its js twin (ch 31 to 33)"
+    },
+    "csharp-net": {
+      "summary": "c# 15 manual on .net 11 with an f# 11 tour: type system, patterns, async, memory, allocation, profilers, reflection and source generators, linq, stdlib tours, functional programming, then a full api service build. 36 chapters. coverage appendices track 125 keywords plus stdlib components.",
+      "capstone": "a small language interpreter (ch 35): test-first interpreter with a ref struct span lexer, c# 15 union syntax tree through System.Text.Json, pattern-matching checker, async evaluator, source-generated builtin table, sqlite persistence, 54 xunit tests.",
+      "capstone_short": "a small language interpreter",
+      "walkthroughs": "f# 11 tour (ch 19 to 21), api service build: kernel through ship it and test suite (ch 22 to 34)"
+    },
+    "javascript": {
+      "summary": "covers javascript es2026 as a runtime across ch 1 to 10, adds the typescript 7 type layer, react 19 and svelte 5 frameworks, then a 13 chapter http service. the coverage appendix maps all 75 grammar keywords to chapters.",
+      "capstone": "the query engine, microfrontend: a document query engine in 3 faces, a plain no-compiler core, a typed layer, and a web microfrontend with react and svelte islands sharing one engine, driven by 63 tests.",
+      "capstone_short": "the query engine, microfrontend",
+      "walkthroughs": "web service, kernel to test suite (ch 23 to 35), typed service layer and suite (ch 36 to 37)"
+    },
+    "python": {
+      "summary": "a python 3.14 manual from toolchain and object model through cpython internals, pymalloc, profiling, concurrency, asyncio, and fastapi, then the numpy, pandas, pydantic stack and a 13 chapter http service. coverage topics carry measured costs and stdlib surface per chapter.",
+      "capstone": "ingest and analysis pipeline in 2 parts: part 1 builds async jsonl ingest with pydantic validation and dead letters, part 2 adds pandas and numpy aggregation, a canonical report, a cli, and a fastapi api, 78 tests over 9 modules.",
+      "capstone_short": "ingest and analysis pipeline in 2 parts",
+      "walkthroughs": "data stack (ch 23 to 26), http service kernel to suite (ch 27 to 39)"
+    },
+    "lua": {
+      "summary": "a lua 5.5 manual covering metatables, coroutines, the collector, and profiling, the stdlib in three passes, then the c api, ffi, and an allegro 5 host, closing with a 13 chapter http service. coverage maps every reserved word to its chapter.",
+      "capstone": "auto chess, human versus bot: a complete 2 player auto chess game in 10 pure lua modules with 34 tests, shops, gold, merges, deterministic combat, embedded in the allegro c host, scripted drivers pin whole games to one digest.",
+      "capstone_short": "auto chess, human versus bot",
+      "walkthroughs": "stdlib tour (ch 11 to 13), c embedding with ffi and allegro (ch 17 to 18), http service kernel to suite (ch 19 to 31)"
+    },
+    "dsa": {
+      "summary": "a data structures and algorithms handbook in 6 languages, from complexity analysis and arrays through hashing, trees, graphs, dynamic programming, geometry, flows, and game theory, pairing each structure with cost and library counterpart. the appendix tracks each topic with cost and library columns.",
+      "capstone": "storage engine toolkit: a log-structured storage engine with a crc-32 framed write-ahead log, bloom filters, crash recovery, prefix scans, and compaction, plus an htmx 4 web dashboard, every file under 260 lines.",
+      "capstone_short": "storage engine toolkit",
+      "walkthroughs": "geometry and lattices (ch 23 to 24), interpreter build (ch 26 to 27), big arithmetic (ch 28 to 29)"
+    },
+    "icpc": {
+      "summary": "walks six icpc world finals (2017 to 2025), every problem solved in c, c#, go, javascript, python, and lua. chapters 2 to 7 build the language toolboxes, 8 to 13 the finals, 14 fast big arithmetic. the coverage matrix tracks all 68 problems.",
+      "capstone": "none: chapters 8 to 13 walk six world finals (2017 to 2025), every problem solved in all six languages with year-local helper kits, chapter 14 closes on fast big arithmetic.",
+      "capstone_short": "none: six world finals walkthroughs",
+      "walkthroughs": "language toolboxes (ch 2 to 7), six world finals walkthroughs (ch 8 to 13)"
+    },
+    "patterns-concurrency-distributed": {
+      "summary": "an engineering handbook: go pattern discipline, the creational, structural, behavioral, and functional catalogs, then concurrency fundamentals, primitives, patterns, and hazards, then distributed systems from raft to resilience. a topic matrix maps every mechanism to its chapter, cost, and stdlib counterpart.",
+      "capstone": "raft replicated configuration service: a small complete raft in go (randomized elections, log replication, persistence) plus a config service hiding leadership behind retries, 19 tests, tick-driven determinism.",
+      "capstone_short": "raft replicated configuration service",
+      "walkthroughs": "go pattern catalog (ch 2 to 5), concurrency arc (ch 6 to 9), distributed arc (ch 10 to 15)"
+    },
+    "infrastructure": {
+      "summary": "an engineering handbook pairing docker (toolchain, images, containers, compose, networking) with embedded databases: sqlite schemas through production, duckdb analytics, mongo aggregation, nats and jetstream messaging, and closes with docker-free testing, mocks, and test-driven migrations. the coverage matrix names each mechanism's running proof.",
+      "capstone": "two parts: part 1 builds six go services (chat, presence, notify, history, analytics, web) over nats, sqlite, mongo, and duckdb, each owning one store. part 2 adds the htmx chat ui and a gated suite proving the stack from one compose command.",
+      "capstone_short": "chat and notifications stack in 2 parts",
+      "walkthroughs": "docker arc (ch 1 to 5), sqlite arc (ch 6 to 10), duckdb engine pair (ch 11 to 12), messaging arc (ch 14 to 15), testing arc (ch 16 to 18)"
+    },
+    "kdd": {
+      "summary": "a c23 data mining volume: preprocessing, distance and similarity, pca and wavelets, olap, classifiers (trees, bayes, knn, neural nets, svm, ensembles), association rules, clustering, anomaly detection, hypothesis testing, rough sets, self-organizing maps. a c to go bridge leads into the go and duckdb capstone.",
+      "capstone": "a go and duckdb kdd pipeline: seeded corpus generator, embedded column store, chi2, cart, som, apriori, and lof miners, evaluator, and htmx results panel, one build tag splitting pure go and duckdb lanes, with live-computed coverage appendices.",
+      "capstone_short": "go and duckdb kdd pipeline",
+      "walkthroughs": "preprocessing arc (ch 2 to 10), classifier arc (ch 13 to 24), association rules arc (ch 25 to 30), clustering arc (ch 31 to 36), rough sets (ch 41 to 43), som (ch 44 to 46)"
+    },
+    "game-systems": {
+      "summary": "covers engine systems in single-topic chapters: game loop, ecs theory plus a c# implementation, data oriented design, fsm and behavior trees, deterministic math, physics, terrain, saves, testing, lua hosting. a four part capstone then assembles them into a playable, balanced game.",
+      "capstone": "the battle engine in 4 parts: part 1 builds the tick stepped shell battle engine, part 2 the deterministic campaign core (gear, pets, expeditions), part 3 a kni window plus htmx playable frontend, part 4 monte carlo balance tuning.",
+      "capstone_short": "the battle engine in 4 parts",
+      "walkthroughs": "campaign content arc (ch 14 to 17), ecs theory into a c# implementation (ch 2 to 3)"
+    },
+    "interview-repertoire": {
+      "summary": "answer bank for interview rounds across algorithms, javascript, react, go, databases, networks, distributed systems, security, and behavioral questions. chapters drill frequent questions as [DRILL] definitional answers or [TDD] tested go and c# code under make verify, with sources pinned by access date.",
+      "capstone": "none: chapters instead drill question rounds and end in worked builds, like the test driven react listing page and the go storefront with live features.",
+      "capstone_short": "none: worked interview builds",
+      "walkthroughs": "react arc (ch 11 to 14), go build arc: rest apis, storefront, jetstream pipelines (ch 20 to 22), classics (ch 5 to 6), algorithms (ch 3 to 4 and 23 to 24)"
+    }
+  }
+}

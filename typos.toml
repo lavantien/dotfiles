@@ -1,6 +1,7 @@
 [default.extend-words]
 noice = "noice"
 nd = "nd"
+som = "som"
 
 [default.extend-identifiers]
 noice = "noice"
