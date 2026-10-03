@@ -10,12 +10,13 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$RootDir = Split-Path -Parent $ScriptDir
 $BooksDir = if ($env:BOOKS_DIR) { $env:BOOKS_DIR } else { Join-Path $HOME 'dev/github/resume/books' }
 # Canonical label printed in the header, identical on every platform
 $CanonBooks = '~/dev/github/resume/books'
 $AnnotationsPath = Join-Path $ScriptDir 'books-index.json'
-$BooksOut = Join-Path $ScriptDir '.claude/BOOKS.md'
-$ClaudeMd = Join-Path $ScriptDir '.claude/CLAUDE.md'
+$BooksOut = Join-Path $RootDir '.claude/BOOKS.md'
+$ClaudeMd = Join-Path $RootDir '.claude/CLAUDE.md'
 $BeginMark = '<!-- BEGIN books index -->'
 $EndMark = '<!-- END books index -->'
 $Utf8NoBom = [System.Text.UTF8Encoding]::new($false)

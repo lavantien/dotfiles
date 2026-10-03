@@ -20,7 +20,7 @@ $BackupBeforeDeploy = ($CONFIG_BACKUP_BEFORE_DEPLOY -eq "true")
 # Pre-deploy backup before any mutation (-Backup flag or backup_before_deploy config)
 if ($Backup -or $BackupBeforeDeploy) {
     Write-Host "Running pre-deploy backup..." -ForegroundColor Cyan
-    $BackupScript = Join-Path $DotfilesDir "backup.ps1"
+    $BackupScript = Join-Path $PSScriptRoot "backup.ps1"
     if (Get-Command bash -ErrorAction SilentlyContinue) {
         & $BackupScript
     }
@@ -238,17 +238,14 @@ if (!(Test-Path $DevDir)) {
 # Deploy scripts to ~/dev
 Write-Host "Deploying scripts to ~/dev..." -ForegroundColor Cyan
 Copy-Files @(
-    "git-update-repos.sh"
-    "git-update-repos.ps1"
-    "sync-system-instructions.sh"
-    "sync-system-instructions.ps1"
-    "update-all.ps1"
+    "scripts/git-update-repos.sh"
+    "scripts/git-update-repos.ps1"
+    "scripts/update-all.ps1"
 ) $DevDir -Verbose
 
 # Make shell scripts executable (only if running in WSL/Git Bash context)
 $shFiles = @(
-    "$DevDir/git-update-repos.sh",
-    "$DevDir/sync-system-instructions.sh"
+    "$DevDir/git-update-repos.sh"
 )
 $chmodCmd = Get-Command chmod -ErrorAction SilentlyContinue
 if ($chmodCmd -and $chmodCmd.Source -notmatch "scoop") {
@@ -268,12 +265,12 @@ if (-not $SkipConfig) {
 
     # PowerShell profile
     $PwshProfileDir = if ($env:POWERSHELL_PROFILE_CONFIG) { $env:POWERSHELL_PROFILE_CONFIG } else { "$HOME/Documents/PowerShell" }
-    if (Test-Path "$DotfilesDir/Microsoft.PowerShell_profile.ps1") {
+    if (Test-Path "$DotfilesDir/home/Microsoft.PowerShell_profile.ps1") {
         $ProfileDir = "$PwshProfileDir"
         if (!(Test-Path $ProfileDir)) {
             New-Item -ItemType Directory -Path $ProfileDir -Force | Out-Null
         }
-        Copy-File "$DotfilesDir/Microsoft.PowerShell_profile.ps1" "$ProfileDir/Microsoft.PowerShell_profile.ps1"
+        Copy-File "$DotfilesDir/home/Microsoft.PowerShell_profile.ps1" "$ProfileDir/Microsoft.PowerShell_profile.ps1"
         Write-Host "  PowerShell profile" -ForegroundColor Green
     }
 
@@ -484,6 +481,5 @@ Write-Host "           Complete!" -ForegroundColor Green
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Run from ~/dev:" -ForegroundColor Yellow
-Write-Host "  .\sync-system-instructions.ps1"
 Write-Host "  .\git-update-repos.ps1"
 Write-Host ""

@@ -1228,7 +1228,7 @@ function Install-DevelopmentTools {
 function Deploy-Configs {
     Write-Header "Phase 6: Deploying Configurations"
 
-    $deployScript = Join-Path $ScriptDir "..\deploy.ps1"
+    $deployScript = Join-Path $ScriptDir "..\scripts\deploy.ps1"
 
     if (-not (Test-Path $deployScript)) {
         Write-Warning "deploy.ps1 not found at $deployScript"

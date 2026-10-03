@@ -1,12 +1,11 @@
 # Update/Clone All GitHub Repositories (Pure PowerShell 7)
 # Transcribed from git-update-repos.sh
-# Usage: .\git-update-repos.ps1 [-Username] "user" [-BaseDir] "path" [-UseSSH] [-NoSync] [-Commit]
+# Usage: .\git-update-repos.ps1 [-Username] "user" [-BaseDir] "path" [-UseSSH] [-Commit]
 
 param(
     [string]$Username = (git config user.name 2>$null ?? "lavantien"),
     [string]$BaseDir = "$HOME/dev/github",
     [switch]$UseSSH,
-    [switch]$NoSync,
     [switch]$Commit
 )
 
@@ -44,7 +43,6 @@ Wc $C.C "========================================"
 Wc $C.B "User:           $Username"
 Wc $C.B "Directory:      $BaseDir"
 Wc $C.B "SSH:            $UseSSH"
-Wc $C.B "Sync:           $(-not $NoSync)"
 Wc $C.B "Auto-commit:    $Commit"
 Wc $C.C "========================================"
 Write-Host ""
@@ -125,22 +123,6 @@ foreach ($Repo in $Repos) {
             Wc $C.Y "Error cloning"
             $Failed++
         }
-    }
-}
-
-# Sync system instructions
-if (-not $NoSync) {
-    Write-Host ""
-    Wc $C.C "========================================"
-    Wc $C.C "   Syncing System Instructions"
-    Wc $C.C "========================================"
-    Write-Host ""
-
-    $SyncScript = Join-Path $PSScriptRoot "sync-system-instructions.ps1"
-    if (Test-Path $SyncScript) {
-        & $SyncScript -BaseDir $BaseDir -Commit:$Commit
-    } else {
-        Wc $C.Y "Warning: Sync script not found: $SyncScript"
     }
 }
 
