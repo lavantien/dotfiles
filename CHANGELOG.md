@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file, newest first. Each release is a prose summary of what happened and why, written under the repo writing rules. Versioning follows Semantic Versioning. Unreleased work lands under an `## [Unreleased]` heading that is renamed to the version and date at release time.
 
+## [5.32.0] - 2026-10-03
+
+`.claude/CLAUDE.md` gained 2 working principles. Browser hygiene terminates unused browser instances after playwright or direct browser MCP work, or uses the built-in defer cleanup when the MCP provides one, so no orphaned browser process holds resources. Every crawl, sourcing, or transcribing action must leave a physical artifact in a text format, commonly typst, markdown, or code, so the result survives the session and no work reruns, no effort duplicated.
+
 ## [5.31.0] - 2026-10-03
 
 `.claude/CLAUDE.md` gained 3 working principles and a matching workflow fix. The quota guard fires a throwaway subagent every 10 minutes to query the glm-plan-usage 5-hour window quota, and pauses all development and fan-out at 95% until the window resets. Books grounding consults `~/dev/github/resume/books` lazily as the canonical reference for languages, math, DSA, ICPC, patterns and concurrency, infrastructure, KDD, game systems, and interview repertoire: locate the matching volume, read only the relevant section, never bulk-load. Subagent fan-out is the default execution mode with 4 concurrent development slots plus 1 temporary slot for auxiliary checks like the quota guard, task lists planned ahead so freed slots roll onto queued work immediately, and finished or failed agents disposed at once. The workflow plan execution rule now states the same 4 plus 1 slot model instead of the old plain max 4, so the two sections cannot disagree.
