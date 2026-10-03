@@ -454,7 +454,8 @@ deploy_claude_books() {
 				rm "$f"
 				deleted=$((deleted + 1))
 			}
-		done < <(find "$dst" -type f -name '*.typ' -print0)
+		done < <(find "$dst" -type f -print0)
+		find "$dst" -mindepth 1 -type d -empty -delete 2>/dev/null || true
 	done
 
 	echo -e "${CYAN}books deploy: ${#volumes[@]} volumes, $copied files copied, $deleted files deleted${NC}"
@@ -471,6 +472,11 @@ deploy_claude_hooks() {
 	# Refresh the repo books front from the private corpus; failure is non-fatal
 	if ! bash "$SCRIPT_DIR/sync-book.sh"; then
 		echo -e "${YELLOW}sync-book.sh failed, continuing${NC}"
+	fi
+
+	# Regenerate the books index from the refreshed front; failure is non-fatal
+	if ! bash "$SCRIPT_DIR/books-index.sh"; then
+		echo -e "${YELLOW}books-index.sh failed, continuing${NC}"
 	fi
 
 	# CLAUDE.md carries a corpus root spliced for this machine between markers

@@ -27,7 +27,9 @@ command -v jq >/dev/null 2>&1 || die "jq is required (scoop install jq)"
 excluded_json="$(jq -r '.exclude[]' "$ANNOTATIONS" 2>/dev/null)" || die "cannot parse $ANNOTATIONS"
 excluded_json="${excluded_json//$'\r'/}"
 EXCLUDED=()
-[[ -n "$excluded_json" ]] && mapfile -t EXCLUDED <<<"$excluded_json"
+if [[ -n "$excluded_json" ]]; then
+	while IFS= read -r dir; do EXCLUDED+=("$dir"); done <<<"$excluded_json"
+fi
 
 list_has() {
 	local want="$1" item
@@ -35,11 +37,14 @@ list_has() {
 	return 1
 }
 
-mapfile -t INCLUDED < <(for path in "$CORPUS"/*/; do
-	[[ -d "$path" ]] || continue
-	dir="$(basename "$path")"
-	list_has "$dir" "${EXCLUDED[@]}" || printf '%s\n' "$dir"
-done | LC_ALL=C sort)
+INCLUDED=()
+while IFS= read -r dir; do INCLUDED+=("$dir"); done < <(
+	for path in "$CORPUS"/*/; do
+		[[ -d "$path" ]] || continue
+		dir="$(basename "$path")"
+		list_has "$dir" "${EXCLUDED[@]}" || printf '%s\n' "$dir"
+	done | LC_ALL=C sort
+)
 
 if [[ ${#INCLUDED[@]} -eq 0 ]]; then
 	die "no included volumes found under $CORPUS, refusing to touch $TARGET"
@@ -92,13 +97,14 @@ for dir in "${INCLUDED[@]}"; do
 			if list_has "$rel" "${rel_typ_files[@]}"; then continue; fi
 			rm "$f"
 			deleted=$((deleted + 1))
-		done < <(find "$dst" -type f -name '*.typ' -print0)
+		done < <(find "$dst" -type f -print0)
+		find "$dst" -mindepth 1 -type d -empty -delete 2>/dev/null || true
 	fi
 done
 
 shopt -s nullglob
 for dir in "${INCLUDED[@]}"; do
-	hits=("$PDF_SRC/"*-"$dir".pdf)
+	hits=("$PDF_SRC/"[0-9][0-9]-"$dir".pdf)
 	if [[ ${#hits[@]} -eq 0 ]]; then
 		echo "warning: no pdf for $dir in $PDF_SRC" >&2
 		continue
@@ -119,7 +125,7 @@ for f in "$TARGET"/*.pdf; do
 	base="$(basename "$f")"
 	keep=false
 	for dir in "${INCLUDED[@]}"; do
-		if [[ "$base" == *-"$dir".pdf ]]; then keep=true; break; fi
+		if [[ "$base" == [0-9][0-9]-"$dir".pdf ]]; then keep=true; break; fi
 	done
 	if [[ "$keep" == false ]]; then
 		rm "$f"

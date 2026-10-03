@@ -318,13 +318,18 @@ function Copy-ClaudeBooks {
         }
 
         if (Test-Path -LiteralPath $dst -PathType Container) {
-            foreach ($f in @(Get-ChildItem -LiteralPath $dst -Recurse -Filter '*.typ' -File)) {
+            foreach ($f in @(Get-ChildItem -LiteralPath $dst -Recurse -File)) {
                 $rel = ([System.IO.Path]::GetRelativePath($dst, $f.FullName)) -replace '\\', '/'
                 if ($relTypFiles -notcontains $rel) {
                     Remove-Item -LiteralPath $f.FullName -Force
                     $deleted++
                 }
             }
+            Get-ChildItem -LiteralPath $dst -Recurse -Directory |
+                Sort-Object { $_.FullName.Length } -Descending |
+                ForEach-Object {
+                    if (-not @(Get-ChildItem -LiteralPath $_.FullName -Force)) { Remove-Item -LiteralPath $_.FullName -Force }
+                }
         }
     }
 
@@ -441,6 +446,15 @@ if (-not $SkipConfig) {
         }
     } else {
         Write-Host "  sync-book.ps1 not found, continuing with shipped books" -ForegroundColor Yellow
+    }
+
+    # Regenerate the books index from the refreshed front; failure is non-fatal
+    $BooksIndex = Join-Path $DotfilesDir 'scripts/books-index.ps1'
+    if (Test-Path -LiteralPath $BooksIndex) {
+        & pwsh -NoProfile -File $BooksIndex
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host "  books-index.ps1 failed, continuing with the committed index" -ForegroundColor Yellow
+        }
     }
 
     # CLAUDE.md carries a corpus root spliced for this machine between markers

@@ -91,20 +91,28 @@ foreach ($dir in $Included) {
 	}
 
 	if (Test-Path -LiteralPath $dst -PathType Container) {
-		foreach ($f in @(Get-ChildItem -LiteralPath $dst -Recurse -Filter '*.typ' -File)) {
+		foreach ($f in @(Get-ChildItem -LiteralPath $dst -Recurse -File)) {
 			$rel = ([System.IO.Path]::GetRelativePath($dst, $f.FullName)) -replace '\\', '/'
 			if ($relTypFiles -notcontains $rel) {
 				Remove-Item -LiteralPath $f.FullName -Force
 				$deleted++
 			}
 		}
+		Get-ChildItem -LiteralPath $dst -Recurse -Directory |
+			Sort-Object { $_.FullName.Length } -Descending |
+			ForEach-Object {
+				if (-not @(Get-ChildItem -LiteralPath $_.FullName -Force)) { Remove-Item -LiteralPath $_.FullName -Force }
+			}
 	}
 }
 
 $hasPdfSrc = Test-Path -LiteralPath $PdfSrc -PathType Container
 foreach ($dir in $Included) {
 	$hits = @()
-	if ($hasPdfSrc) { $hits = @(Get-ChildItem -LiteralPath $PdfSrc -Filter "*-$dir.pdf" -File) }
+	if ($hasPdfSrc) {
+		$hits = @(Get-ChildItem -LiteralPath $PdfSrc -File |
+			Where-Object { $_.Name -match ('^\d\d-' + [regex]::Escape($dir) + '\.pdf$') })
+	}
 	if ($hits.Count -eq 0) {
 		[Console]::Error.WriteLine("warning: no pdf for $dir in $PdfSrc")
 		continue
@@ -119,12 +127,9 @@ foreach ($dir in $Included) {
 }
 
 # Retired volumes leave no orphan PDF behind at the top level
+$keepPattern = '^\d\d-(' + (($Included | ForEach-Object { [regex]::Escape($_) }) -join '|') + ')\.pdf$'
 foreach ($f in @(Get-ChildItem -LiteralPath $Target -Filter '*.pdf' -File)) {
-	$keep = $false
-	foreach ($dir in $Included) {
-		if ($f.Name.EndsWith("-$dir.pdf", [System.StringComparison]::Ordinal)) { $keep = $true; break }
-	}
-	if (-not $keep) {
+	if ($f.Name -notmatch $keepPattern) {
 		Remove-Item -LiteralPath $f.FullName -Force
 		$deleted++
 	}
