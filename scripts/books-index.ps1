@@ -11,9 +11,9 @@ $ErrorActionPreference = 'Stop'
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $RootDir = Split-Path -Parent $ScriptDir
-$BooksDir = if ($env:BOOKS_DIR) { $env:BOOKS_DIR } else { Join-Path $HOME 'dev/github/resume/books' }
-# Canonical label printed in the header, identical on every platform
-$CanonBooks = '~/dev/github/resume/books'
+$BooksDir = if ($env:BOOKS_DIR) { $env:BOOKS_DIR } else { Join-Path $RootDir 'books' }
+# Neutral phrase printed in the header, identical on every platform
+$PathsNote = 'Paths are corpus-relative, resolve them against the corpus root stated in CLAUDE.md principle 13.'
 $AnnotationsPath = Join-Path $ScriptDir 'books-index.json'
 $BooksOut = Join-Path $RootDir '.claude/BOOKS.md'
 $ClaudeMd = Join-Path $RootDir '.claude/CLAUDE.md'
@@ -95,7 +95,7 @@ foreach ($cell in @(
 $bookLines = [System.Collections.Generic.List[string]]::new()
 $bookLines.Add('# Books corpus index')
 $bookLines.Add('')
-$bookLines.Add("Generated from the books corpus manifests and books-index.json by books-index.sh or books-index.ps1, do not edit by hand. Grep this file for a topic, note the chapter file, read only that file. Paths are relative to $CanonBooks. Out of scope: $ExcludeLine.")
+$bookLines.Add("Generated from the books corpus manifests and books-index.json by books-index.sh or books-index.ps1, do not edit by hand. Grep this file for a topic, note the chapter file, read only that file. $PathsNote Out of scope: $ExcludeLine.")
 $bookLines.Add('')
 
 $T1 = [System.Collections.Generic.List[string]]::new()

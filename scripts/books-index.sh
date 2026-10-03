@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Books corpus index generator
 #
-# Reads the books corpus manifests at ~/dev/github/resume/books (or $BOOKS_DIR)
+# Reads the books corpus manifests at the repo's books/ dir (or $BOOKS_DIR)
 # plus curated annotations from books-index.json, then:
 #   1. emits .claude/BOOKS.md, the chapter-level grounding index
 #   2. splices the compact routing table into .claude/CLAUDE.md between markers
@@ -13,9 +13,9 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-BOOKS_DIR="${BOOKS_DIR:-$HOME/dev/github/resume/books}"
-# Canonical label printed in the header, identical on every platform
-CANON_BOOKS='~/dev/github/resume/books'
+BOOKS_DIR="${BOOKS_DIR:-$ROOT_DIR/books}"
+# Neutral phrase printed in the header, identical on every platform
+PATHS_NOTE='Paths are corpus-relative, resolve them against the corpus root stated in CLAUDE.md principle 13.'
 ANNOTATIONS="$SCRIPT_DIR/books-index.json"
 BOOKS_OUT="$ROOT_DIR/.claude/BOOKS.md"
 CLAUDE_MD="$ROOT_DIR/.claude/CLAUDE.md"
@@ -87,7 +87,7 @@ trap 'rm -f "$TMP_BOOKS" "$TMP_TABLE" "$TMP_CLAUDE"' EXIT
 {
 	echo "# Books corpus index"
 	echo
-	echo "Generated from the books corpus manifests and books-index.json by books-index.sh or books-index.ps1, do not edit by hand. Grep this file for a topic, note the chapter file, read only that file. Paths are relative to $CANON_BOOKS. Out of scope: $exclude_line."
+	echo "Generated from the books corpus manifests and books-index.json by books-index.sh or books-index.ps1, do not edit by hand. Grep this file for a topic, note the chapter file, read only that file. $PATHS_NOTE Out of scope: $exclude_line."
 	echo
 } >"$TMP_BOOKS"
 
