@@ -10,7 +10,7 @@ The toolchain auto-detects the platform and degrades gracefully when something i
 
 The editor stack pairs Neovim 0.13+ (beta), configured with the vim.pack manager plus lockfile, LSP and Treesitter setup, native completion, and the builtin dir browser, with the GPU-accelerated WezTerm terminal running the IosevkaTerm Nerd Font. The Rose Pine theme runs across every config.
 
-Language tooling covers 21 LSP servers (jdtls excluded on Windows), 30 Treesitter parsers, and 16 CLI tools for modern development workflows: fzf, yazi, zoxide, bat, eza, lazygit, gh, ripgrep, fd, sqlite, tokei, btop, repomix, docker-compose, helm, kubectl.
+Language tooling covers 21 LSP servers (jdtls excluded on Windows), 30 Treesitter parsers, and a CLI toolset for modern development workflows: fzf, yazi, zoxide, bat, eza, lazygit, gh, ripgrep, fd, sqlite, tokei, btop, repomix, docker-compose, helm, kubectl, with the authoritative list in `bootstrap/config/packages.yaml`.
 
 AI-native development supports Claude Code and OpenCode with 3 MCP servers (context7, playwright, repomix), Git pre-commit and commit-msg hooks that auto-detect and trigger format, lint, and check runs, a Claude Code statusline hook driven by one bash script and auto-registered in settings.json, and offline grounding on the books corpus described below.
 
@@ -71,8 +71,8 @@ up  # Runs update-all
 | `bootstrap/` | bootstrap.sh and bootstrap.ps1, packages.yaml, per-platform install scripts |
 | `books/` | The 14 volume typst books corpus with compiled PDFs |
 | `home/` | Home-level configs: .bash_aliases, .zshrc, .gitconfig, Microsoft.PowerShell_profile.ps1, wezterm.lua, .dotfiles.config.yaml.example |
-| `hooks/` | Claude Code hook scripts (quality-check) |
 | `lib/` | Shared script libraries: config parsing, JSON merge, Git Bash detection |
+| `playground/` | Scratch space for one-off programs, untracked |
 | `scripts/` | Every maintenance script: allow, deploy, update, update-all, git-update-repos, sync-book, books-index, healthcheck, backup, restore, uninstall, cleanup one-offs |
 
 The root also carries README.md, CHANGELOG.md, DOCKER_K8S.md, LICENSE, CLAUDE.local.md, the lint configs selene.toml, typos.toml, and vim.yml, and git-clone-all.sh, a vendored gh utility kept at the root.
@@ -185,11 +185,11 @@ The 14 volumes are c-os-cloud, math, go, csharp-net, javascript, python, lua, ds
 | YAML | yamlls | - | prettier | yamllint | - |
 | TOML | tombi | - | taplo | - | - |
 
-The authoritative lists live in `.config/nvim/init.lua`: 21 LSP servers with jdtls excluded on Windows, plus dartls and codebook, and 30 Treesitter parsers.
+The authoritative lists live in `.config/nvim/init.lua`: 21 LSP servers including dartls and codebook, with jdtls excluded on Windows, and 30 Treesitter parsers.
 
 ### CLI tools
 
-The CLI tool set is fzf, yazi, zoxide, bat, eza, lazygit, gh, ripgrep, fd, sqlite, tokei, btop, repomix, docker-compose, helm, and kubectl.
+The everyday CLI set is fzf, yazi, zoxide, bat, eza, lazygit, gh, ripgrep, fd, sqlite, tokei, btop, repomix, docker-compose, helm, and kubectl. The full install set, which also includes difftastic, bats, jq, ffmpeg, poppler, imagemagick, sevenzip, and mermaid-cli, is defined in `bootstrap/config/packages.yaml` and the per-platform install scripts.
 
 ### MCP servers (Claude Code and OpenCode)
 
@@ -394,7 +394,7 @@ Typst: `<leader>pt` toggles the live preview, which re-renders in a browser pane
 
 ## Release process
 
-Versioning is major.minor. Work lands under an `## [Unreleased]` heading in CHANGELOG.md, one short line per change. At release the heading is renamed to `## [X.Y] - date`, committed as `chore: release vX.Y`, tagged `vX.Y`, and pushed. The release is then published with `gh release create vX.Y` using the changelog line as the note.
+Versioning is major.minor since v6.0, earlier releases carried SemVer patch levels. Work lands under an `## [Unreleased]` heading in CHANGELOG.md, one short line per change. At release the heading is renamed to `## [X.Y] - date`, committed as `chore: release vX.Y`, tagged `vX.Y`, and pushed. The release is then published with `gh release create vX.Y` using the changelog line as the note.
 
 ## Changelog
 

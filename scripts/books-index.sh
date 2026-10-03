@@ -87,7 +87,7 @@ trap 'rm -f "$TMP_BOOKS" "$TMP_TABLE" "$TMP_CLAUDE"' EXIT
 {
 	echo "# Books corpus index"
 	echo
-	echo "Generated from the books corpus manifests and books-index.json by books-index.sh or books-index.ps1, do not edit by hand. Grep this file for a topic, note the chapter file, read only that file. $PATHS_NOTE Out of scope: $exclude_line."
+	echo "Generated from the books corpus manifests and scripts/books-index.json by scripts/books-index.sh or scripts/books-index.ps1, do not edit by hand. Grep this file for a topic, note the chapter file, read only that file. $PATHS_NOTE Out of scope: $exclude_line."
 	echo
 } >"$TMP_BOOKS"
 

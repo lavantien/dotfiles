@@ -251,7 +251,7 @@ if [[ "$DRY_RUN" == "false" ]] && [[ "$VERIFY_ONLY" == "false" ]]; then
     echo ""
     log_success "Uninstall complete!"
     echo -e "${YELLOW}Please reload your shell to apply changes${NC}"
-    echo -e "${YELLOW}Run ./restore.sh to restore from backup if needed${NC}"
+    echo -e "${YELLOW}Run $SCRIPT_DIR/restore.sh to restore from backup if needed${NC}"
 else
     echo ""
     log_info "Dry run/verify complete - no files were actually removed"

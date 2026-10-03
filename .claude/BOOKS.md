@@ -1,6 +1,6 @@
 # Books corpus index
 
-Generated from the books corpus manifests and books-index.json by books-index.sh or books-index.ps1, do not edit by hand. Grep this file for a topic, note the chapter file, read only that file. Paths are corpus-relative, resolve them against the corpus root stated in CLAUDE.md principle 13. Out of scope: analysis, defense-cookbook, theme, theme-demo.
+Generated from the books corpus manifests and scripts/books-index.json by scripts/books-index.sh or scripts/books-index.ps1, do not edit by hand. Grep this file for a topic, note the chapter file, read only that file. Paths are corpus-relative, resolve them against the corpus root stated in CLAUDE.md principle 13. Out of scope: analysis, defense-cookbook, theme, theme-demo.
 
 ## c23: the language, the machine, and the cloud (book 1, v4.0, c-os-cloud, 41 chapters)
 

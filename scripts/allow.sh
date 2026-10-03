@@ -17,6 +17,7 @@ chmod +x "$SCRIPT_DIR/restore.sh"
 chmod +x "$SCRIPT_DIR/uninstall.sh"
 chmod +x "$SCRIPT_DIR/git-update-repos.sh"
 chmod +x "$SCRIPT_DIR/books-index.sh"
+chmod +x "$SCRIPT_DIR/sync-book.sh"
 
 chmod +x "$ROOT_DIR/bootstrap/bootstrap.sh"
 chmod +x "$ROOT_DIR/.claude/statusline.sh"

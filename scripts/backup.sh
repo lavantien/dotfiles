@@ -244,7 +244,7 @@ if [[ "$DRY_RUN" == "false" ]]; then
     print_backup_summary "$CURRENT_BACKUP" "$backuped_count"
     echo ""
     log_success "Backup complete!"
-    echo -e "${YELLOW}To restore, run: ./restore.sh --backup-dir $CURRENT_BACKUP${NC}"
+    echo -e "${YELLOW}To restore, run: $SCRIPT_DIR/restore.sh --backup-dir $CURRENT_BACKUP${NC}"
 else
     echo ""
     log_info "Dry run complete - no files were actually backed up"

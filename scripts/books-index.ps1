@@ -95,7 +95,7 @@ foreach ($cell in @(
 $bookLines = [System.Collections.Generic.List[string]]::new()
 $bookLines.Add('# Books corpus index')
 $bookLines.Add('')
-$bookLines.Add("Generated from the books corpus manifests and books-index.json by books-index.sh or books-index.ps1, do not edit by hand. Grep this file for a topic, note the chapter file, read only that file. $PathsNote Out of scope: $ExcludeLine.")
+$bookLines.Add("Generated from the books corpus manifests and scripts/books-index.json by scripts/books-index.sh or scripts/books-index.ps1, do not edit by hand. Grep this file for a topic, note the chapter file, read only that file. $PathsNote Out of scope: $ExcludeLine.")
 $bookLines.Add('')
 
 $T1 = [System.Collections.Generic.List[string]]::new()
