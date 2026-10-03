@@ -433,13 +433,22 @@ if (-not $SkipConfig) {
     }
 
     # Refresh the repo books front from the private corpus; failure is non-fatal
-    & pwsh -NoProfile -File (Join-Path $PSScriptRoot 'sync-book.ps1')
-    if ($LASTEXITCODE -ne 0) {
-        Write-Host "  sync-book.ps1 failed, continuing with shipped books" -ForegroundColor Yellow
+    $SyncBook = Join-Path $DotfilesDir 'scripts/sync-book.ps1'
+    if (Test-Path -LiteralPath $SyncBook) {
+        & pwsh -NoProfile -File $SyncBook
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host "  sync-book.ps1 failed, continuing with shipped books" -ForegroundColor Yellow
+        }
+    } else {
+        Write-Host "  sync-book.ps1 not found, continuing with shipped books" -ForegroundColor Yellow
     }
 
     # CLAUDE.md carries a corpus root spliced for this machine between markers
-    Copy-ClaudeMd "$DotfilesDir/.claude/CLAUDE.md" "$ClaudeDir/CLAUDE.md"
+    if (Test-Path -LiteralPath "$DotfilesDir/.claude/CLAUDE.md") {
+        Copy-ClaudeMd "$DotfilesDir/.claude/CLAUDE.md" "$ClaudeDir/CLAUDE.md"
+    } else {
+        Write-Host "  .claude/CLAUDE.md not found, skipping corpus root splice" -ForegroundColor Yellow
+    }
     Copy-Files @(
         ".claude/BOOKS.md"
         ".claude/quality-check.sh"

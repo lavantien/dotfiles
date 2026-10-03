@@ -36,9 +36,17 @@ list_has() {
 }
 
 mapfile -t INCLUDED < <(for path in "$CORPUS"/*/; do
+	[[ -d "$path" ]] || continue
 	dir="$(basename "$path")"
 	list_has "$dir" "${EXCLUDED[@]}" || printf '%s\n' "$dir"
 done | LC_ALL=C sort)
+
+if [[ ${#INCLUDED[@]} -eq 0 ]]; then
+	die "no included volumes found under $CORPUS, refusing to touch $TARGET"
+fi
+for dir in "${INCLUDED[@]}"; do
+	[[ -f "$CORPUS/$dir/manifest.typ" ]] || die "no manifest.typ in $dir"
+done
 
 mkdir -p "$TARGET"
 
@@ -102,6 +110,21 @@ for dir in "${INCLUDED[@]}"; do
 			pdfs=$((pdfs + 1))
 		fi
 	done
+done
+shopt -u nullglob
+
+# Retired volumes leave no orphan PDF behind at the top level
+shopt -s nullglob
+for f in "$TARGET"/*.pdf; do
+	base="$(basename "$f")"
+	keep=false
+	for dir in "${INCLUDED[@]}"; do
+		if [[ "$base" == *-"$dir".pdf ]]; then keep=true; break; fi
+	done
+	if [[ "$keep" == false ]]; then
+		rm "$f"
+		deleted=$((deleted + 1))
+	fi
 done
 shopt -u nullglob
 

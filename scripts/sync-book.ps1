@@ -44,6 +44,11 @@ $Included = @(
 )
 [System.Array]::Sort($Included, [System.StringComparer]::Ordinal)
 
+if ($Included.Count -eq 0) { throw "no included volumes found under $Corpus, refusing to touch $Target" }
+foreach ($dir in $Included) {
+	if (-not (Test-Path -LiteralPath (Join-Path $Corpus "$dir/manifest.typ") -PathType Leaf)) { throw "no manifest.typ in $dir" }
+}
+
 [System.IO.Directory]::CreateDirectory($Target) | Out-Null
 
 $copied = 0
@@ -110,6 +115,18 @@ foreach ($dir in $Included) {
 			Copy-Item -LiteralPath $f.FullName -Destination $outFile -Force
 			$pdfCount++
 		}
+	}
+}
+
+# Retired volumes leave no orphan PDF behind at the top level
+foreach ($f in @(Get-ChildItem -LiteralPath $Target -Filter '*.pdf' -File)) {
+	$keep = $false
+	foreach ($dir in $Included) {
+		if ($f.Name.EndsWith("-$dir.pdf", [System.StringComparison]::Ordinal)) { $keep = $true; break }
+	}
+	if (-not $keep) {
+		Remove-Item -LiteralPath $f.FullName -Force
+		$deleted++
 	}
 }
 
