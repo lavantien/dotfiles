@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented in this file, newest first. One short line per release states what happened, with no detail enumeration, the commit history carries the detail. Versioning is major.minor. Unreleased work lands under an `## [Unreleased]` heading that is renamed to the version and date at release time.
 
-## [Unreleased]
+## [6.1] - 2026-10-03
 
 The books corpus moved under .claude/books as the single source of truth, deploy mirrors it verbatim on machines without the private repo, and the README gained a contents list and a generated reference table.
 
