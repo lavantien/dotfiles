@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file, newest first. One short line per release states what happened, with no detail enumeration, the commit history carries the detail. Versioning is major.minor. Unreleased work lands under an `## [Unreleased]` heading that is renamed to the version and date at release time.
 
+## [6.0] - 2026-10-03
+
+v6.0 folds all scripts into scripts/ and home configs into home/, publishes the books corpus front with the sync-book twins and deploy-time corpus root resolution, removes the aider configs, instruction stubs, and sync utilities, switches to major.minor versioning with one-line changelog entries, and moves the license to real MIT.
+
 ## [5.34.0] - 2026-10-03
 
 The books corpus grounding gained a chapter-level lookup layer with the books-index twins generating BOOKS.md and the CLAUDE.md appendix table.
