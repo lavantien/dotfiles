@@ -1,9 +1,10 @@
 #!/usr/bin/env pwsh
-# Refresh the repo books/ publishing front from the private corpus, PowerShell
+# Refresh the repo books publishing front from the private corpus, PowerShell
 # twin of sync-book.sh. Mirrors manifest.typ, book.typ, chapters/*.typ,
-# coverage/*.typ per volume plus the compiled PDFs from ~/dev/github/resume,
-# pruning retired volumes and stale target .typ files. Skips cleanly when the
-# corpus is absent.
+# coverage/*.typ per volume into .claude/books (the typst corpus agents ground
+# on) plus the compiled PDFs into books/ at the root (human reading copies
+# only), pruning retired volumes and stale target files. Skips cleanly when
+# the corpus is absent.
 #
 # Usage: ./scripts/sync-book.ps1
 
@@ -13,7 +14,8 @@ $ErrorActionPreference = 'Stop'
 $ScriptDir = $PSScriptRoot
 $Corpus = Join-Path $HOME 'dev/github/resume/books'
 $PdfSrc = Join-Path $HOME 'dev/github/resume/output/books'
-$Target = Join-Path (Split-Path -Parent $ScriptDir) 'books'
+$TypstTarget = Join-Path (Split-Path -Parent $ScriptDir) '.claude/books'
+$PdfTarget = Join-Path (Split-Path -Parent $ScriptDir) 'books'
 $AnnotationsPath = Join-Path $ScriptDir 'books-index.json'
 
 function Test-FileEqual {
@@ -39,33 +41,40 @@ $Excluded = @($Ann.exclude)
 
 $Included = @(
 	Get-ChildItem -LiteralPath $Corpus -Directory |
-		Where-Object { $Excluded -notcontains $_.Name } |
+		Where-Object { $Excluded -cnotcontains $_.Name } |
 		ForEach-Object { $_.Name }
 )
 [System.Array]::Sort($Included, [System.StringComparer]::Ordinal)
 
-if ($Included.Count -eq 0) { throw "no included volumes found under $Corpus, refusing to touch $Target" }
+if ($Included.Count -eq 0) { throw "no included volumes found under $Corpus, refusing to touch $TypstTarget" }
 foreach ($dir in $Included) {
 	if (-not (Test-Path -LiteralPath (Join-Path $Corpus "$dir/manifest.typ") -PathType Leaf)) { throw "no manifest.typ in $dir" }
 }
 
-[System.IO.Directory]::CreateDirectory($Target) | Out-Null
+[System.IO.Directory]::CreateDirectory($TypstTarget) | Out-Null
+[System.IO.Directory]::CreateDirectory($PdfTarget) | Out-Null
 
 $copied = 0
 $deleted = 0
 $pdfCount = 0
 
-# Retired volumes: any target dir outside the include list goes away
-foreach ($path in @(Get-ChildItem -LiteralPath $Target -Directory)) {
-	if ($Included -notcontains $path.Name) {
+# Retired volumes: any typst target dir outside the include list goes away
+foreach ($path in @(Get-ChildItem -LiteralPath $TypstTarget -Directory)) {
+	if ($Included -cnotcontains $path.Name) {
 		$deleted += @(Get-ChildItem -LiteralPath $path.FullName -Recurse -File).Count
 		Remove-Item -LiteralPath $path.FullName -Recurse -Force
 	}
 }
 
+# books/ at the root is PDFs only, any directory there is stale typst
+foreach ($path in @(Get-ChildItem -LiteralPath $PdfTarget -Directory)) {
+	$deleted += @(Get-ChildItem -LiteralPath $path.FullName -Recurse -File).Count
+	Remove-Item -LiteralPath $path.FullName -Recurse -Force
+}
+
 foreach ($dir in $Included) {
 	$src = Join-Path $Corpus $dir
-	$dst = Join-Path $Target $dir
+	$dst = Join-Path $TypstTarget $dir
 	if (-not (Test-Path -LiteralPath (Join-Path $src 'manifest.typ') -PathType Leaf)) { throw "no manifest.typ in $dir" }
 
 	$relTypFiles = [System.Collections.Generic.List[string]]::new()
@@ -111,14 +120,14 @@ foreach ($dir in $Included) {
 	$hits = @()
 	if ($hasPdfSrc) {
 		$hits = @(Get-ChildItem -LiteralPath $PdfSrc -File |
-			Where-Object { $_.Name -match ('^\d\d-' + [regex]::Escape($dir) + '\.pdf$') })
+			Where-Object { $_.Name -cmatch ('^\d\d-' + [regex]::Escape($dir) + '\.pdf$') })
 	}
 	if ($hits.Count -eq 0) {
 		[Console]::Error.WriteLine("warning: no pdf for $dir in $PdfSrc")
 		continue
 	}
 	foreach ($f in $hits) {
-		$outFile = Join-Path $Target $f.Name
+		$outFile = Join-Path $PdfTarget $f.Name
 		if (-not (Test-Path -LiteralPath $outFile -PathType Leaf) -or -not (Test-FileEqual $f.FullName $outFile)) {
 			Copy-Item -LiteralPath $f.FullName -Destination $outFile -Force
 			$pdfCount++
@@ -128,8 +137,8 @@ foreach ($dir in $Included) {
 
 # Retired volumes leave no orphan PDF behind at the top level
 $keepPattern = '^\d\d-(' + (($Included | ForEach-Object { [regex]::Escape($_) }) -join '|') + ')\.pdf$'
-foreach ($f in @(Get-ChildItem -LiteralPath $Target -Filter '*.pdf' -File)) {
-	if ($f.Name -notmatch $keepPattern) {
+foreach ($f in @(Get-ChildItem -LiteralPath $PdfTarget -Filter '*.pdf' -File)) {
+	if ($f.Name -cnotmatch $keepPattern) {
 		Remove-Item -LiteralPath $f.FullName -Force
 		$deleted++
 	}

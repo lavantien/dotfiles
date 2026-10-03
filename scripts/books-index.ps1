@@ -1,8 +1,8 @@
 #!/usr/bin/env pwsh
 # Books corpus index generator, PowerShell twin of books-index.sh.
 # Reads the books corpus manifests plus curated annotations from books-index.json,
-# then emits .claude/BOOKS.md and splices the compact table into .claude/CLAUDE.md.
-# Output is byte-identical to books-index.sh.
+# then emits .claude/BOOKS.md and splices the compact table into .claude/CLAUDE.md
+# and README.md. Output is byte-identical to books-index.sh.
 #
 # Usage: ./books-index.ps1
 
@@ -11,7 +11,7 @@ $ErrorActionPreference = 'Stop'
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $RootDir = Split-Path -Parent $ScriptDir
-$BooksDir = if ($env:BOOKS_DIR) { $env:BOOKS_DIR } else { Join-Path $RootDir 'books' }
+$BooksDir = if ($env:BOOKS_DIR) { $env:BOOKS_DIR } else { Join-Path $RootDir '.claude/books' }
 # Neutral phrase printed in the header, identical on every platform
 $PathsNote = 'Paths are corpus-relative, resolve them against the corpus root stated in CLAUDE.md principle 13.'
 $AnnotationsPath = Join-Path $ScriptDir 'books-index.json'
@@ -19,12 +19,28 @@ $BooksOut = Join-Path $RootDir '.claude/BOOKS.md'
 $ClaudeMd = Join-Path $RootDir '.claude/CLAUDE.md'
 $BeginMark = '<!-- BEGIN books index -->'
 $EndMark = '<!-- END books index -->'
+$ReadmeMd = Join-Path $RootDir 'README.md'
+$ReadmeBegin = '<!-- BEGIN books readme table -->'
+$ReadmeEnd = '<!-- END books readme table -->'
 $Utf8NoBom = [System.Text.UTF8Encoding]::new($false)
 
 if (-not (Test-Path -LiteralPath $BooksDir -PathType Container)) { throw "books dir not found: $BooksDir" }
 if (-not (Test-Path -LiteralPath $AnnotationsPath -PathType Leaf)) { throw "annotations not found: $AnnotationsPath" }
 if (-not (Test-Path -LiteralPath $ClaudeMd -PathType Leaf)) { throw "missing $ClaudeMd" }
 if ([System.IO.File]::ReadAllText($ClaudeMd).Contains("`r`n")) { throw '.claude/CLAUDE.md has CRLF line endings' }
+if (-not (Test-Path -LiteralPath $ReadmeMd -PathType Leaf)) { throw "missing $ReadmeMd" }
+if ([System.IO.File]::ReadAllText($ReadmeMd).Contains("`r`n")) { throw 'README.md has CRLF line endings' }
+
+# Markers must be exact single lines in order, a stray or duplicated marker is fatal
+function Assert-MarkerPair([string]$Path, [string]$BeginMark, [string]$EndMark) {
+    $lines = [System.IO.File]::ReadAllLines($Path)
+    $beginHits = @($lines | Where-Object { $_ -eq $BeginMark })
+    $endHits = @($lines | Where-Object { $_ -eq $EndMark })
+    if ($beginHits.Count -ne 1 -or $endHits.Count -ne 1) { throw "expected exactly one BEGIN and one END marker line in $Path" }
+    if ([array]::IndexOf($lines, $BeginMark) -ge [array]::IndexOf($lines, $EndMark)) { throw "BEGIN marker must come before END marker in $Path" }
+}
+Assert-MarkerPair $ClaudeMd $BeginMark $EndMark
+Assert-MarkerPair $ReadmeMd $ReadmeBegin $ReadmeEnd
 
 $Ann = Get-Content -LiteralPath $AnnotationsPath -Raw | ConvertFrom-Json
 $Excluded = @($Ann.exclude)
@@ -32,11 +48,17 @@ $AnnBooks = $Ann.books
 
 # Collect book metadata from each non-excluded manifest
 $Books = @{} # dir -> @{ Num; Title; Version; Subtitle; Chapters }
+# The corpus root holds volume dirs only, loose files are drift
+foreach ($f in @(Get-ChildItem -LiteralPath $BooksDir -File)) { throw "loose file at the corpus root: $($f.Name)" }
 foreach ($path in Get-ChildItem -LiteralPath $BooksDir -Directory) {
 	$dir = $path.Name
-	if ($Excluded -contains $dir) { continue }
+	if ($Excluded -ccontains $dir) { continue }
 	$manifest = Join-Path $path.FullName 'manifest.typ'
 	if (-not (Test-Path -LiteralPath $manifest -PathType Leaf)) { throw "no manifest.typ in $dir" }
+	# The corpus is typst-only, any other file in the tree is drift
+	foreach ($f in @(Get-ChildItem -LiteralPath $path.FullName -Recurse -File)) {
+		if ($f.Extension -ne '.typ') { throw "non-typst file in corpus: $dir/$($f.FullName.Substring($path.FullName.Length + 1))" }
+	}
 
 	$num = $null; $title = $null; $version = $null; $subtitle = $null
 	$chapters = [System.Collections.Generic.List[string]]::new()
@@ -50,7 +72,11 @@ foreach ($path in Get-ChildItem -LiteralPath $BooksDir -Directory) {
 			$chId = $Matches[1]; $chNum = [int]$Matches[2]; $chTitle = $Matches[3]
 			# Resolve by number prefix, a few manifest ids disagree with file names
 			$nn = '{0:d2}' -f $chNum
-			$candidates = @(Get-ChildItem -LiteralPath (Join-Path $path.FullName 'chapters') -Filter "$nn-*.typ" -File)
+			$chaptersDir = Join-Path $path.FullName 'chapters'
+			$candidates = @()
+			if (Test-Path -LiteralPath $chaptersDir -PathType Container) {
+				$candidates = @(Get-ChildItem -LiteralPath $chaptersDir -Filter "$nn-*.typ" -File)
+			}
 			if ($candidates.Count -eq 1) {
 				$file = "$dir/chapters/$($candidates[0].Name)"
 				$chapters.Add("- $nn $chTitle ($file)")
@@ -90,6 +116,7 @@ foreach ($cell in @(
 			$Books.Values.Ann.summary + $Books.Values.Ann.capstone
 		)) {
 	if ($cell -match '\|') { throw "pipe character breaks the markdown tables: $cell" }
+	if ($cell -match '[^\x20-\x7E]') { throw "non-ascii or control character breaks twin table parity: $cell" }
 }
 
 $bookLines = [System.Collections.Generic.List[string]]::new()
@@ -145,19 +172,19 @@ for ($r = 0; $r -lt $T1.Count; $r++) {
 }
 $tableLines.Add('')
 
-$lines = [System.IO.File]::ReadAllLines($ClaudeMd)
-# Markers must be exact single lines in order, a stray or duplicated marker is fatal
-$beginHits = @($lines | Where-Object { $_ -eq $BeginMark })
-$endHits = @($lines | Where-Object { $_ -eq $EndMark })
-if ($beginHits.Count -ne 1 -or $endHits.Count -ne 1) { throw "expected exactly one BEGIN and one END marker line in .claude/CLAUDE.md" }
-$beginIdx = [array]::IndexOf($lines, $BeginMark)
-$endIdx = [array]::IndexOf($lines, $EndMark)
-if ($endIdx -le $beginIdx) { throw "BEGIN marker must come before END marker in .claude/CLAUDE.md" }
-$spliced = @()
-if ($beginIdx -gt 0) { $spliced += $lines[0..($beginIdx - 1)] }
-$spliced += $BeginMark
-$spliced += $tableLines
-$spliced += $lines[$endIdx..($lines.Count - 1)]
-[System.IO.File]::WriteAllText($ClaudeMd, ($spliced -join "`n") + "`n", $Utf8NoBom)
+# Replace the lines between the marker pair with the generated table
+function Splice-Table([string]$Path, [string]$BeginMark, [string]$EndMark) {
+    $lines = [System.IO.File]::ReadAllLines($Path)
+    $beginIdx = [array]::IndexOf($lines, $BeginMark)
+    $endIdx = [array]::IndexOf($lines, $EndMark)
+    $spliced = @()
+    if ($beginIdx -gt 0) { $spliced += $lines[0..($beginIdx - 1)] }
+    $spliced += $BeginMark
+    $spliced += $tableLines
+    $spliced += $lines[$endIdx..($lines.Count - 1)]
+    [System.IO.File]::WriteAllText($Path, ($spliced -join "`n") + "`n", $Utf8NoBom)
+}
+Splice-Table $ClaudeMd $BeginMark $EndMark
+Splice-Table $ReadmeMd $ReadmeBegin $ReadmeEnd
 
-Write-Host "books index: $($Books.Count) books, $totalChapters chapters -> .claude/BOOKS.md, table updated in .claude/CLAUDE.md"
+Write-Host "books index: $($Books.Count) books, $totalChapters chapters -> .claude/BOOKS.md, tables updated in .claude/CLAUDE.md and README.md"

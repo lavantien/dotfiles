@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 # Books corpus index generator
 #
-# Reads the books corpus manifests at the repo's books/ dir (or $BOOKS_DIR)
+# Reads the books corpus manifests at the repo's .claude/books dir (or $BOOKS_DIR)
 # plus curated annotations from books-index.json, then:
 #   1. emits .claude/BOOKS.md, the chapter-level grounding index
 #   2. splices the compact routing table into .claude/CLAUDE.md between markers
-# Both outputs are fully regenerated, never edit them by hand.
+#   3. splices the reference table into README.md between markers
+# All outputs are fully regenerated, never edit them by hand.
 #
 # Usage: ./books-index.sh
 
@@ -13,7 +14,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-BOOKS_DIR="${BOOKS_DIR:-$ROOT_DIR/books}"
+BOOKS_DIR="${BOOKS_DIR:-$ROOT_DIR/.claude/books}"
 # Neutral phrase printed in the header, identical on every platform
 PATHS_NOTE='Paths are corpus-relative, resolve them against the corpus root stated in CLAUDE.md principle 13.'
 ANNOTATIONS="$SCRIPT_DIR/books-index.json"
@@ -21,6 +22,9 @@ BOOKS_OUT="$ROOT_DIR/.claude/BOOKS.md"
 CLAUDE_MD="$ROOT_DIR/.claude/CLAUDE.md"
 BEGIN_MARK='<!-- BEGIN books index -->'
 END_MARK='<!-- END books index -->'
+README_MD="$ROOT_DIR/README.md"
+README_BEGIN='<!-- BEGIN books readme table -->'
+README_END='<!-- END books readme table -->'
 
 die() { echo "Error: $*" >&2; exit 1; }
 
@@ -28,6 +32,7 @@ command -v jq >/dev/null 2>&1 || die "jq is required (scoop install jq)"
 [[ -d "$BOOKS_DIR" ]] || die "books dir not found: $BOOKS_DIR"
 [[ -f "$ANNOTATIONS" ]] || die "annotations not found: $ANNOTATIONS"
 [[ -f "$CLAUDE_MD" ]] || die "missing $CLAUDE_MD"
+[[ -f "$README_MD" ]] || die "missing $README_MD"
 # Markers must be exact single lines in order, a stray or duplicated marker is fatal
 begin_count="$(grep -Fxc "$BEGIN_MARK" "$CLAUDE_MD")"
 end_count="$(grep -Fxc "$END_MARK" "$CLAUDE_MD")"
@@ -36,8 +41,16 @@ end_count="$(grep -Fxc "$END_MARK" "$CLAUDE_MD")"
 begin_ln="$(grep -Fxn "$BEGIN_MARK" "$CLAUDE_MD" | cut -d: -f1)"
 end_ln="$(grep -Fxn "$END_MARK" "$CLAUDE_MD" | cut -d: -f1)"
 [[ "$begin_ln" -lt "$end_ln" ]] || die "BEGIN marker must come before END marker in .claude/CLAUDE.md"
+readme_begin_count="$(grep -Fxc "$README_BEGIN" "$README_MD")"
+readme_end_count="$(grep -Fxc "$README_END" "$README_MD")"
+[[ "$readme_begin_count" == 1 && "$readme_end_count" == 1 ]] ||
+	die "expected exactly one BEGIN and one END marker line in README.md, got $readme_begin_count and $readme_end_count"
+readme_begin_ln="$(grep -Fxn "$README_BEGIN" "$README_MD" | cut -d: -f1)"
+readme_end_ln="$(grep -Fxn "$README_END" "$README_MD" | cut -d: -f1)"
+[[ "$readme_begin_ln" -lt "$readme_end_ln" ]] || die "BEGIN marker must come before END marker in README.md"
 # od is byte-true, MSYS2 grep and gawk are CRLF-transparent in text mode
 od -An -c "$CLAUDE_MD" | grep -q '\\r' && die ".claude/CLAUDE.md has CRLF line endings"
+od -An -c "$README_MD" | grep -q '\\r' && die "README.md has CRLF line endings"
 
 mapfile -t EXCLUDED < <(jq -r '.exclude[]' "$ANNOTATIONS" | tr -d '\r')
 mapfile -t ANNOTATED < <(jq -r '.books | keys[]' "$ANNOTATIONS" | tr -d '\r')
@@ -51,11 +64,21 @@ is_excluded() {
 # Collect book metadata: dir -> "num|title|version|subtitle"
 declare -A META
 ORDER=()
+
+# The corpus root holds volume dirs only, loose files are drift
+while IFS= read -r stray; do
+	die "loose file at the corpus root: $stray"
+done < <(find "$BOOKS_DIR" -mindepth 1 -maxdepth 1 -type f -exec basename {} \;)
+
 for path in "$BOOKS_DIR"/*/; do
 	dir="$(basename "$path")"
 	is_excluded "$dir" && continue
 	manifest="$path/manifest.typ"
 	[[ -f "$manifest" ]] || die "no manifest.typ in $dir"
+	# The corpus is typst-only, any other file in the tree is drift
+	while IFS= read -r -d '' stray; do
+		die "non-typst file in corpus: $dir/${stray#"$path"}"
+	done < <(find "$path" -type f ! -name '*.typ' -print0)
 	num="$(sed -n 's/^[[:space:]]*num:[[:space:]]*\([0-9][0-9]*\),.*$/\1/p' "$manifest" | head -n1)"
 	title="$(sed -n 's/^[[:space:]]*title:[[:space:]]*"\([^"]*\)",.*$/\1/p' "$manifest" | head -n1)"
 	version="$(sed -n 's/^[[:space:]]*version:[[:space:]]*"\([^"]*\)",.*$/\1/p' "$manifest" | head -n1)"
@@ -75,14 +98,15 @@ for dir in "${ANNOTATED[@]}"; do
 done
 
 # Order books by book num, dir name breaks ties deterministically
-mapfile -t ORDER < <(for dir in "${ORDER[@]}"; do echo "${META[$dir]%%|*} $dir"; done | sort -k1,1n -k2,2 | awk '{print $2}')
+mapfile -t ORDER < <(for dir in "${ORDER[@]}"; do echo "${META[$dir]%%|*} $dir"; done | LC_ALL=C sort -k1,1n -k2,2 | awk '{print $2}')
 
 exclude_line="$(printf '%s, ' "${EXCLUDED[@]}")"
 exclude_line="${exclude_line%, }"
 TMP_BOOKS="$(mktemp)"
 TMP_TABLE="$(mktemp)"
 TMP_CLAUDE="$(mktemp)"
-trap 'rm -f "$TMP_BOOKS" "$TMP_TABLE" "$TMP_CLAUDE"' EXIT
+TMP_README="$(mktemp)"
+trap 'rm -f "$TMP_BOOKS" "$TMP_TABLE" "$TMP_CLAUDE" "$TMP_README"' EXIT
 
 {
 	echo "# Books corpus index"
@@ -132,6 +156,9 @@ for dir in "${ORDER[@]}"; do
 
 	for cell in "$title" "$subtitle" "$capstone_short" "$walkthroughs" "$summary" "$capstone"; do
 		[[ "$cell" != *"|"* ]] || die "$dir: pipe character breaks the markdown tables: $cell"
+		if LC_ALL=C grep -q '[^ -~]' <<<"$cell"; then
+			die "$dir: non-ascii or control character breaks twin table parity: $cell"
+		fi
 	done
 
 	{
@@ -178,11 +205,20 @@ widths=($(maxw "${#TABLE_HDR[0]}" "${T_C1[@]}") $(maxw "${#TABLE_HDR[1]}" "${T_C
 printf '%s\n' "$(cat "$TMP_BOOKS")" >"$TMP_BOOKS"
 mv "$TMP_BOOKS" "$BOOKS_OUT"
 
-awk -v begin="$BEGIN_MARK" -v end="$END_MARK" -v table="$TMP_TABLE" '
-	$0 == begin { print; while ((getline line < table) > 0) print line; close(table); inblock = 1; next }
-	$0 == end { inblock = 0; print; next }
-	!inblock { print }
-' "$CLAUDE_MD" >"$TMP_CLAUDE"
+# Replace the lines between the marker pair with the generated table
+splice() {
+	local src="$1" out="$2" begin="$3" end="$4"
+	awk -v begin="$begin" -v end="$end" -v table="$TMP_TABLE" '
+		$0 == begin { print; while ((getline line < table) > 0) print line; close(table); inblock = 1; next }
+		$0 == end { inblock = 0; print; next }
+		!inblock { print }
+	' "$src" >"$out"
+}
+splice "$CLAUDE_MD" "$TMP_CLAUDE" "$BEGIN_MARK" "$END_MARK"
 mv "$TMP_CLAUDE" "$CLAUDE_MD"
+splice "$README_MD" "$TMP_README" "$README_BEGIN" "$README_END"
+mv "$TMP_README" "$README_MD"
+# mktemp hands out 0600, the outputs must stay world-readable
+chmod 644 "$BOOKS_OUT" "$CLAUDE_MD" "$README_MD"
 
-echo "books index: ${#ORDER[@]} books, $total_chapters chapters -> .claude/BOOKS.md, table updated in .claude/CLAUDE.md"
+echo "books index: ${#ORDER[@]} books, $total_chapters chapters -> .claude/BOOKS.md, tables updated in .claude/CLAUDE.md and README.md"

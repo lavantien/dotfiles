@@ -261,8 +261,8 @@ function Copy-ClaudeMd {
         Set-Content -LiteralPath $Dst -NoNewline
 }
 
-# Mirror the shipped typst volumes into ~/.claude/books when the private
-# corpus is absent; PDFs are never deployed
+# Mirror the shipped typst corpus into ~/.claude/books when the private
+# corpus is absent; the shipped corpus is curated, so it mirrors as is
 function Copy-ClaudeBooks {
     $CorpusRoot = Join-Path $HOME 'dev/github/resume/books'
     if (Test-Path -LiteralPath $CorpusRoot -PathType Container) {
@@ -270,67 +270,45 @@ function Copy-ClaudeBooks {
         return
     }
 
-    $SourceRoot = Join-Path $DotfilesDir 'books'
+    $SourceRoot = Join-Path $DotfilesDir '.claude/books'
     if (-not (Test-Path -LiteralPath $SourceRoot -PathType Container)) {
-        Write-Host "  Claude books (no shipped volumes at $SourceRoot)" -ForegroundColor Yellow
+        Write-Host "  Claude books (no shipped corpus at $SourceRoot)" -ForegroundColor Yellow
+        return
+    }
+    $Volumes = @(Get-ChildItem -LiteralPath $SourceRoot -Directory)
+    if ($Volumes.Count -eq 0) {
+        Write-Host "  Claude books (no volumes under $SourceRoot, leaving target untouched)" -ForegroundColor Yellow
         return
     }
 
     $TargetRoot = Join-Path $HOME '.claude/books'
-    $Volumes = @(Get-ChildItem -LiteralPath $SourceRoot -Directory | ForEach-Object { $_.Name })
     $copied = 0
     $deleted = 0
 
-    # Retired volumes: any target dir outside the source goes away
-    if (Test-Path -LiteralPath $TargetRoot -PathType Container) {
-        foreach ($path in @(Get-ChildItem -LiteralPath $TargetRoot -Directory)) {
-            if ($Volumes -notcontains $path.Name) {
-                $deleted += @(Get-ChildItem -LiteralPath $path.FullName -Recurse -File).Count
-                Remove-Item -LiteralPath $path.FullName -Recurse -Force
-            }
+    foreach ($f in @(Get-ChildItem -LiteralPath $SourceRoot -Recurse -File)) {
+        $rel = [System.IO.Path]::GetRelativePath($SourceRoot, $f.FullName)
+        $outFile = Join-Path $TargetRoot $rel
+        [System.IO.Directory]::CreateDirectory((Split-Path -Parent $outFile)) | Out-Null
+        if (-not (Test-Path -LiteralPath $outFile -PathType Leaf) -or -not (Test-FileEqual $f.FullName $outFile)) {
+            Copy-Item -LiteralPath $f.FullName -Destination $outFile -Force
+            $copied++
         }
     }
 
-    foreach ($dir in $Volumes) {
-        $src = Join-Path $SourceRoot $dir
-        $dst = Join-Path $TargetRoot $dir
-
-        $relTypFiles = [System.Collections.Generic.List[string]]::new()
-        $relTypFiles.Add('manifest.typ')
-        if (Test-Path -LiteralPath (Join-Path $src 'book.typ') -PathType Leaf) { $relTypFiles.Add('book.typ') }
-        foreach ($sub in 'chapters', 'coverage') {
-            $subDir = Join-Path $src $sub
-            if (Test-Path -LiteralPath $subDir -PathType Container) {
-                foreach ($f in @(Get-ChildItem -LiteralPath $subDir -Filter '*.typ' -File)) {
-                    $relTypFiles.Add("$sub/$($f.Name)")
-                }
+    # Stale target files outside the shipped corpus go away, empty dirs too
+    if (Test-Path -LiteralPath $TargetRoot -PathType Container) {
+        foreach ($f in @(Get-ChildItem -LiteralPath $TargetRoot -Recurse -File)) {
+            $rel = [System.IO.Path]::GetRelativePath($TargetRoot, $f.FullName)
+            if (-not (Test-Path -LiteralPath (Join-Path $SourceRoot $rel) -PathType Leaf)) {
+                Remove-Item -LiteralPath $f.FullName -Force
+                $deleted++
             }
         }
-
-        foreach ($rel in $relTypFiles) {
-            $inFile = Join-Path $src $rel
-            $outFile = Join-Path $dst $rel
-            [System.IO.Directory]::CreateDirectory((Split-Path -Parent $outFile)) | Out-Null
-            if (-not (Test-Path -LiteralPath $outFile -PathType Leaf) -or -not (Test-FileEqual $inFile $outFile)) {
-                Copy-Item -LiteralPath $inFile -Destination $outFile -Force
-                $copied++
+        Get-ChildItem -LiteralPath $TargetRoot -Recurse -Directory |
+            Sort-Object { $_.FullName.Length } -Descending |
+            ForEach-Object {
+                if (-not @(Get-ChildItem -LiteralPath $_.FullName -Force)) { Remove-Item -LiteralPath $_.FullName -Force }
             }
-        }
-
-        if (Test-Path -LiteralPath $dst -PathType Container) {
-            foreach ($f in @(Get-ChildItem -LiteralPath $dst -Recurse -File)) {
-                $rel = ([System.IO.Path]::GetRelativePath($dst, $f.FullName)) -replace '\\', '/'
-                if ($relTypFiles -notcontains $rel) {
-                    Remove-Item -LiteralPath $f.FullName -Force
-                    $deleted++
-                }
-            }
-            Get-ChildItem -LiteralPath $dst -Recurse -Directory |
-                Sort-Object { $_.FullName.Length } -Descending |
-                ForEach-Object {
-                    if (-not @(Get-ChildItem -LiteralPath $_.FullName -Force)) { Remove-Item -LiteralPath $_.FullName -Force }
-                }
-        }
     }
 
     Write-Host "  Claude books ($($Volumes.Count) volumes, $copied files copied, $deleted files deleted)" -ForegroundColor Green

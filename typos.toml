@@ -5,6 +5,7 @@ som = "som"
 
 [default.extend-identifiers]
 noice = "noice"
+ccontains = "ccontains"
 
 # Historical changelog entries quote the typos they fixed
 [type.changelog]
@@ -16,6 +17,6 @@ offical = "offical"
 oudated = "oudated"
 ADDRESSS = "ADDRESSS"
 
-# Published books corpus front mirrors the private corpus, not repo-authored prose
+# Published books corpus mirrors the private corpus, not repo-authored prose
 [files]
-extend-exclude = ["books/**"]
+extend-exclude = [".claude/books/**"]

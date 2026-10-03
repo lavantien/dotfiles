@@ -6,6 +6,20 @@ These portable, production-grade dotfiles set up a software engineering environm
 
 The toolchain auto-detects the platform and degrades gracefully when something is unavailable. Bootstrap and updates are idempotent and safe to rerun, and the setup covers the full terminal tooling.
 
+## Contents
+
+- [Core features](#core-features)
+- [Quick start](#quick-start)
+- [Repo layout](#repo-layout)
+- [Available commands](#available-commands)
+- [Books corpus](#books-corpus)
+- [Complete tools/packages matrix](#complete-toolspackages-matrix)
+- [Hooks and config merging](#hooks-and-config-merging)
+- [Neovim](#neovim)
+- [Release process](#release-process)
+- [Changelog](#changelog)
+- [License](#license)
+
 ## Core features
 
 The editor stack pairs Neovim 0.13+ (beta), configured with the vim.pack manager plus lockfile, LSP and Treesitter setup, native completion, and the builtin dir browser, with the GPU-accelerated WezTerm terminal running the IosevkaTerm Nerd Font. The Rose Pine theme runs across every config.
@@ -64,12 +78,11 @@ up  # Runs update-all
 
 | Entry | Holds |
 |-------|-------|
-| `.claude/` | Claude Code config: CLAUDE.md, BOOKS.md, settings.template.json, settings.retired.json, statusline.sh, quality-check twins, tdd-guard |
+| `.claude/` | Claude Code config: CLAUDE.md, BOOKS.md, settings templates, statusline.sh, quality-check twins, tdd-guard, and books/ holding the 14 volume typst corpus |
 | `.config/` | Tool configs deployed to the XDG config dir: nvim (init.lua plus lockfile), wezterm, git hooks, opencode platform templates |
 | `.vscode/` | VS Code settings |
 | `assets/` | WezTerm background wallpapers, deployed to ~/assets |
 | `bootstrap/` | bootstrap.sh and bootstrap.ps1, packages.yaml, per-platform install scripts |
-| `books/` | The 14 volume typst books corpus with compiled PDFs |
 | `home/` | Home-level configs: .bash_aliases, .zshrc, .gitconfig, Microsoft.PowerShell_profile.ps1, wezterm.lua, .dotfiles.config.yaml.example |
 | `lib/` | Shared script libraries: config parsing, JSON merge, Git Bash detection |
 | `playground/` | Scratch space for one-off programs, untracked |
@@ -151,11 +164,32 @@ If git hooks are not running, set `git config --global core.hooksPath ~/.config/
 
 ## Books corpus
 
-The 14 volumes are c-os-cloud, math, go, csharp-net, javascript, python, lua, dsa, icpc, patterns-concurrency-distributed, infrastructure, kdd, game-systems, and interview-repertoire. `books/` carries each volume's typst sources (manifest.typ, book.typ, chapters, coverage) and the compiled PDF at the top level named `NN-<volume>.pdf`. The typst sources are the source of truth for AI grounding, the PDFs are for human reading.
+The 14 volumes are c-os-cloud, math, go, csharp-net, javascript, python, lua, dsa, icpc, patterns-concurrency-distributed, infrastructure, kdd, game-systems, and interview-repertoire. `.claude/books/` carries each volume's typst sources (manifest.typ, book.typ, chapters, coverage), and the typst files are the source of truth.
 
-`scripts/sync-book.sh` and `scripts/sync-book.ps1` refresh `books/` from the private authoring repo at `~/dev/github/resume` when it exists and skip otherwise. Deploy follows the same split: with `~/dev/github/resume` present, the deployed CLAUDE.md grounds directly on it, without it, deploy copies the typst volumes into `~/.claude/books` and CLAUDE.md grounds there. Implementation code behind the books (samples, capstones, api projects) falls back to the private repo.
+`scripts/sync-book.sh` and `scripts/sync-book.ps1` refresh `.claude/books/` from the private authoring repo at `~/dev/github/resume` when it exists and skip otherwise. Deploy follows the same split: with `~/dev/github/resume` present, the deployed CLAUDE.md grounds directly on it, without it, deploy mirrors `.claude/books/` into `~/.claude/books` as is and CLAUDE.md grounds there. Implementation code behind the books (samples, capstones, api projects) falls back to the private repo.
 
-`scripts/books-index.sh` and `scripts/books-index.ps1` regenerate `.claude/BOOKS.md` and the appendix table inside `.claude/CLAUDE.md` from the corpus manifests plus `scripts/books-index.json`. Run them after corpus or annotation changes, then redeploy.
+`scripts/books-index.sh` and `scripts/books-index.ps1` regenerate `.claude/BOOKS.md`, the appendix table inside `.claude/CLAUDE.md`, and the reference table below from the corpus manifests plus `scripts/books-index.json`. Run them after corpus or annotation changes, then redeploy.
+
+<!-- BEGIN books readme table -->
+
+| book                                                                                     | scope                                                                            | capstone                                 | walkthroughs                                                                                                                                                                 |
+| ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| c23: the language, the machine, and the cloud (c-os-cloud)                               | llvm/clang 23, the operating system, terraform, aws, gcp, and a service          | particle kernel and row cruncher (ch 21) | cloud model through multi-cloud practice (ch 22 to 27), one service build: http kernel, auth, store, cache, limits, observability, ship, test suite (ch 28 to 40)            |
+| mathematics for programmers (math)                                                       | trigonometry to monads in c23, with a physics game capstone                      | the arena game in 3 parts                | none beyond the capstone                                                                                                                                                     |
+| go 1.27 (go)                                                                             | a complete language manual                                                       | concurrent crawler, indexer, and web ui  | http kernel service build (ch 18 to 29) with its test suite (ch 30), numerical statistics, fitting, and the offline engine with its js twin (ch 31 to 33)                    |
+| c# 15, f# 11, and .net 11 (csharp-net)                                                   | a complete c# manual with an f# tour                                             | a small language interpreter             | f# 11 tour (ch 19 to 21), api service build: kernel through ship it and test suite (ch 22 to 34)                                                                             |
+| javascript es2026 and typescript 7 (javascript)                                          | a complete manual for two layers                                                 | the query engine, microfrontend          | web service, kernel to test suite (ch 23 to 35), typed service layer and suite (ch 36 to 37)                                                                                 |
+| python 3.14 (python)                                                                     | a complete language manual                                                       | ingest and analysis pipeline in 2 parts  | data stack (ch 23 to 26), http service kernel to suite (ch 27 to 39)                                                                                                         |
+| lua 5.5 (lua)                                                                            | a complete language manual                                                       | auto chess, human versus bot             | stdlib tour (ch 11 to 13), c embedding with ffi and allegro (ch 17 to 18), http service kernel to suite (ch 19 to 31)                                                        |
+| practical data structures and algorithms (dsa)                                           | an engineering handbook in six languages                                         | storage engine toolkit                   | geometry and lattices (ch 23 to 24), interpreter build (ch 26 to 27), big arithmetic (ch 28 to 29)                                                                           |
+| the icpc world finals (icpc)                                                             | six finals, six languages, first principles                                      | none: six world finals walkthroughs      | language toolboxes (ch 2 to 7), six world finals walkthroughs (ch 8 to 13)                                                                                                   |
+| design patterns, concurrency, and distributed systems (patterns-concurrency-distributed) | an engineering handbook                                                          | raft replicated configuration service    | go pattern catalog (ch 2 to 5), concurrency arc (ch 6 to 9), distributed arc (ch 10 to 15)                                                                                   |
+| infrastructure: docker, databases, and testing (infrastructure)                          | an engineering handbook                                                          | chat and notifications stack in 2 parts  | docker arc (ch 1 to 5), sqlite arc (ch 6 to 10), duckdb engine pair (ch 11 to 12), messaging arc (ch 14 to 15), testing arc (ch 16 to 18)                                    |
+| knowledge discovery (kdd)                                                                | from preprocessing to self-organizing maps in c23, with a go and duckdb capstone | go and duckdb kdd pipeline               | preprocessing arc (ch 2 to 10), classifier arc (ch 13 to 24), association rules arc (ch 25 to 30), clustering arc (ch 31 to 36), rough sets (ch 41 to 43), som (ch 44 to 46) |
+| game systems and architecture (game-systems)                                             | an engineering handbook                                                          | the battle engine in 4 parts             | campaign content arc (ch 14 to 17), ecs theory into a c# implementation (ch 2 to 3)                                                                                          |
+| the interview repertoire (interview-repertoire)                                          | working answers for frequent questions                                           | none: worked interview builds            | react arc (ch 11 to 14), go build arc: rest apis, storefront, jetstream pipelines (ch 20 to 22), classics (ch 5 to 6), algorithms (ch 3 to 4 and 23 to 24)                   |
+
+<!-- END books readme table -->
 
 ## Complete tools/packages matrix
 

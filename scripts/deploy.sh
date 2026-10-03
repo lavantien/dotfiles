@@ -348,12 +348,6 @@ resume_corpus_present() {
 	[[ -d "$HOME/dev/github/resume/books" ]]
 }
 
-list_has() {
-	local want="$1" item
-	for item in "${@:2}"; do [[ "$item" == "$want" ]] && return 0; done
-	return 1
-}
-
 # Deploy CLAUDE.md with the corpus root sentence spliced between the markers
 # for this machine; everything else in the file stays byte-identical
 deploy_claude_md() {
@@ -396,20 +390,19 @@ deploy_claude_md() {
 	mv "$tmp" "$dst"
 }
 
-# Mirror the shipped typst volumes into ~/.claude/books when the private
-# corpus is absent; PDFs are never deployed
+# Mirror the shipped typst corpus into ~/.claude/books when the private
+# corpus is absent; the shipped corpus is curated, so it mirrors as is
 deploy_claude_books() {
-	local src_root="$ROOT_DIR/books" dst_root="$HOME/.claude/books"
+	local src_root="$ROOT_DIR/.claude/books" dst_root="$HOME/.claude/books"
 	local volumes=() copied=0 deleted=0
-	local path dir src dst rel in out f
-	local rel_typ_files
+	local path f rel out
 
 	if resume_corpus_present; then
 		echo -e "${CYAN}books: private corpus present, skipping $dst_root${NC}"
 		return 0
 	fi
 	if [[ ! -d "$src_root" ]]; then
-		echo -e "${YELLOW}books: no shipped volumes at $src_root${NC}"
+		echo -e "${YELLOW}books: no shipped corpus at $src_root${NC}"
 		return 0
 	fi
 
@@ -417,46 +410,34 @@ deploy_claude_books() {
 		[[ -d "$path" ]] || continue
 		volumes+=("$(basename "$path")")
 	done
+	if [[ ${#volumes[@]} -eq 0 ]]; then
+		echo -e "${YELLOW}books: no volumes under $src_root, leaving $dst_root untouched${NC}"
+		return 0
+	fi
 
-	# Retired volumes: any target dir outside the source goes away
-	for path in "$dst_root"/*/; do
-		[[ -d "$path" ]] || continue
-		if ! list_has "$(basename "$path")" "${volumes[@]}"; then
-			deleted=$((deleted + $(find "$path" -type f | wc -l)))
-			rm -rf "${path:?}"
+	while IFS= read -r -d '' f; do
+		rel="${f#"$src_root"/}"
+		out="$dst_root/$rel"
+		mkdir -p "$(dirname "$out")"
+		if [[ ! -f "$out" ]] || ! cmp -s "$f" "$out"; then
+			# mv over a read-only target needs directory write only, cp needs more
+			cp "$f" "$out.dotfiles-new"
+			mv -f "$out.dotfiles-new" "$out"
+			copied=$((copied + 1))
 		fi
-	done
+	done < <(find "$src_root" -type f -print0)
 
-	for dir in "${volumes[@]}"; do
-		src="$src_root/$dir"
-		dst="$dst_root/$dir"
-
-		rel_typ_files=("manifest.typ")
-		if [[ -f "$src/book.typ" ]]; then rel_typ_files+=("book.typ"); fi
-		shopt -s nullglob
-		for f in "$src/chapters/"*.typ; do rel_typ_files+=("chapters/$(basename "$f")"); done
-		for f in "$src/coverage/"*.typ; do rel_typ_files+=("coverage/$(basename "$f")"); done
-		shopt -u nullglob
-
-		for rel in "${rel_typ_files[@]}"; do
-			in="$src/$rel"
-			out="$dst/$rel"
-			mkdir -p "$(dirname "$out")"
-			if [[ ! -f "$out" ]] || ! cmp -s "$in" "$out"; then
-				cp "$in" "$out"
-				copied=$((copied + 1))
-			fi
-		done
-
+	# Stale target files outside the shipped corpus go away, empty dirs too
+	if [[ -d "$dst_root" ]]; then
 		while IFS= read -r -d '' f; do
-			rel="${f#"$dst"/}"
-			list_has "$rel" "${rel_typ_files[@]}" || {
+			rel="${f#"$dst_root"/}"
+			if [[ ! -f "$src_root/$rel" ]]; then
 				rm "$f"
 				deleted=$((deleted + 1))
-			}
-		done < <(find "$dst" -type f -print0)
-		find "$dst" -mindepth 1 -type d -empty -delete 2>/dev/null || true
-	done
+			fi
+		done < <(find "$dst_root" -type f -print0)
+		find "$dst_root" -mindepth 1 -type d -empty -delete 2>/dev/null || true
+	fi
 
 	echo -e "${CYAN}books deploy: ${#volumes[@]} volumes, $copied files copied, $deleted files deleted${NC}"
 }

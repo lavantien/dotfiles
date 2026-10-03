@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-# Refresh the repo books/ publishing front from the private corpus
+# Refresh the repo books publishing front from the private corpus
 #
 # Mirrors manifest.typ, book.typ, chapters/*.typ, coverage/*.typ per volume
-# plus the compiled PDFs from ~/dev/github/resume, pruning retired volumes
-# and stale target .typ files. Skips cleanly when the corpus is absent.
+# into .claude/books (the typst corpus agents ground on) plus the compiled
+# PDFs into books/ at the root (human reading copies only), pruning retired
+# volumes and stale target files. Skips cleanly when the corpus is absent.
 #
 # Usage: ./scripts/sync-book.sh
 
@@ -12,7 +13,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CORPUS="$HOME/dev/github/resume/books"
 PDF_SRC="$HOME/dev/github/resume/output/books"
-TARGET="$SCRIPT_DIR/../books"
+TYPO_TARGET="$SCRIPT_DIR/../.claude/books"
+PDF_TARGET="$SCRIPT_DIR/../books"
 ANNOTATIONS="$SCRIPT_DIR/books-index.json"
 
 die() { echo "Error: $*" >&2; exit 1; }
@@ -47,20 +49,20 @@ while IFS= read -r dir; do INCLUDED+=("$dir"); done < <(
 )
 
 if [[ ${#INCLUDED[@]} -eq 0 ]]; then
-	die "no included volumes found under $CORPUS, refusing to touch $TARGET"
+	die "no included volumes found under $CORPUS, refusing to touch $TYPO_TARGET"
 fi
 for dir in "${INCLUDED[@]}"; do
 	[[ -f "$CORPUS/$dir/manifest.typ" ]] || die "no manifest.typ in $dir"
 done
 
-mkdir -p "$TARGET"
+mkdir -p "$TYPO_TARGET" "$PDF_TARGET"
 
 copied=0
 deleted=0
 pdfs=0
 
-# Retired volumes: any target dir outside the include list goes away
-for path in "$TARGET"/*/; do
+# Retired volumes: any typst target dir outside the include list goes away
+for path in "$TYPO_TARGET"/*/; do
 	[[ -d "$path" ]] || continue
 	dir="$(basename "$path")"
 	if ! list_has "$dir" "${INCLUDED[@]}"; then
@@ -69,9 +71,16 @@ for path in "$TARGET"/*/; do
 	fi
 done
 
+# books/ at the root is PDFs only, any directory there is stale typst
+for path in "$PDF_TARGET"/*/; do
+	[[ -d "$path" ]] || continue
+	deleted=$((deleted + $(find "$path" -type f | wc -l)))
+	rm -rf "${path:?}"
+done
+
 for dir in "${INCLUDED[@]}"; do
 	src="$CORPUS/$dir"
-	dst="$TARGET/$dir"
+	dst="$TYPO_TARGET/$dir"
 	[[ -f "$src/manifest.typ" ]] || die "no manifest.typ in $dir"
 
 	rel_typ_files=("manifest.typ")
@@ -110,7 +119,7 @@ for dir in "${INCLUDED[@]}"; do
 		continue
 	fi
 	for f in "${hits[@]}"; do
-		out="$TARGET/$(basename "$f")"
+		out="$PDF_TARGET/$(basename "$f")"
 		if [[ ! -f "$out" ]] || ! cmp -s "$f" "$out"; then
 			cp "$f" "$out"
 			pdfs=$((pdfs + 1))
@@ -121,7 +130,7 @@ shopt -u nullglob
 
 # Retired volumes leave no orphan PDF behind at the top level
 shopt -s nullglob
-for f in "$TARGET"/*.pdf; do
+for f in "$PDF_TARGET"/*.pdf; do
 	base="$(basename "$f")"
 	keep=false
 	for dir in "${INCLUDED[@]}"; do
