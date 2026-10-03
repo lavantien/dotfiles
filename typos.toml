@@ -15,3 +15,7 @@ persspective = "persspective"
 offical = "offical"
 oudated = "oudated"
 ADDRESSS = "ADDRESSS"
+
+# Published books corpus front mirrors the private corpus, not repo-authored prose
+[files]
+extend-exclude = ["books/**"]

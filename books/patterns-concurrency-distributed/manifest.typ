@@ -1,0 +1,32 @@
+// book 10 manifest: chapter registry used by cross references and stubs
+#let patterns = (
+  num: 10,
+  volume: false,
+  title: "design patterns, concurrency, and distributed systems",
+  meta: (
+    title: "design patterns, concurrency, and distributed systems",
+    subtitle: "an engineering handbook",
+    author: "gabriel la",
+    version: "3.0",
+    volume-label: "book 10",
+  ),
+  chapters: (
+    (id: "discipline", num: 1, title: "pattern discipline"),
+    (id: "creational", num: 2, title: "creational patterns"),
+    (id: "structural", num: 3, title: "structural patterns"),
+    (id: "behavioral", num: 4, title: "behavioral patterns"),
+    (id: "functional", num: 5, title: "functional alternatives"),
+    (id: "concfundamentals", num: 6, title: "concurrency fundamentals and the memory model"),
+    (id: "sync", num: 7, title: "sync primitives in depth"),
+    (id: "concpatterns", num: 8, title: "concurrency patterns"),
+    (id: "hazards", num: 9, title: "hazards and detectors"),
+    (id: "distributed", num: 10, title: "distributed fundamentals"),
+    (id: "consensus", num: 11, title: "replication and consensus: raft"),
+    (id: "partitioning", num: 12, title: "partitioning and consistent hashing"),
+    (id: "messaging", num: 13, title: "messaging semantics and idempotency"),
+    (id: "observability", num: 14, title: "observability"),
+    (id: "resilience", num: 15, title: "resilience"),
+    (id: "capstone", num: 16, title: "capstone: raft replicated configuration service"),
+    (id: "appendices", num: 17, title: "appendices: topic matrix and sources"),
+  ),
+)

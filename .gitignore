@@ -3,5 +3,5 @@ nul
 .claude/settings.local.json
 .claude/settings.json
 .claude/*.local.md
-coverage
+/coverage
 coverage-bash.json
