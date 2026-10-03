@@ -329,6 +329,7 @@ if (-not $SkipConfig) {
     }
     Copy-Files @(
         ".claude/CLAUDE.md"
+        ".claude/BOOKS.md"
         ".claude/quality-check.sh"
         ".claude/quality-check.ps1"
         ".claude/statusline.sh"

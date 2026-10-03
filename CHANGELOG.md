@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file, newest first. Each release is a prose summary of what happened and why, written under the repo writing rules. Versioning follows Semantic Versioning. Unreleased work lands under an `## [Unreleased]` heading that is renamed to the version and date at release time.
 
+## [Unreleased]
+
+The books corpus grounding in `.claude/CLAUDE.md` gained a lookup layer so agents route topics to chapters instead of grepping the corpus blind. Principle 13 now states the smart lazy loading protocol: match the topic against a generated appendix index table at the bottom of CLAUDE.md, open `~/.claude/BOOKS.md` for chapter-level targeting, then read only the matched chapter file, never a whole book, with `analysis`, `defense-cookbook`, and the theme volumes declared out of scope. The new `books-index` utility pair (`books-index.sh` and `books-index.ps1`, byte-identical output) generates both artifacts from the corpus `manifest.typ` files plus curated annotations in `books-index.json`, asserting every emitted chapter path exists. `BOOKS.md` holds 14 books and 466 chapters with per-book summary, capstone, walkthroughs, and full toc, and deploy copies it to `~/.claude/` alongside CLAUDE.md on both platforms.
+
 ## [5.33.0] - 2026-10-03
 
 The remember plugin is gone from the repo entirely. `enabledPlugins.remember@claude-plugins-official` was removed from `.claude/settings.template.json` and added to `.claude/settings.retired.json`, so deploy deletes it from `~/.claude/settings.json` instead of preserving it as a live-only key. A v5.28.1 template sync had copied the live disable flag into the template, and any `enabledPlugins` entry, even a false one, makes the plugin show up in `/plugin`, which is why it kept appearing without ever being installed. The plugin's `.remember/` data directory at the repo root and its `.gitignore` entry were deleted, and the README plugin list and retired-keys table were updated to match.

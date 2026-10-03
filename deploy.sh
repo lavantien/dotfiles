@@ -360,6 +360,12 @@ deploy_claude_hooks() {
 		echo -e "${GREEN}CLAUDE.md deployed to: $HOME/.claude/${NC}"
 	fi
 
+	# Copy the generated books corpus index referenced by CLAUDE.md principle 13
+	if [ -f "$SCRIPT_DIR/.claude/BOOKS.md" ]; then
+		copy_file "$SCRIPT_DIR/.claude/BOOKS.md" "$HOME/.claude/"
+		echo -e "${GREEN}BOOKS.md deployed to: $HOME/.claude/${NC}"
+	fi
+
 	# Deploy quality check script
 	if [ -f "$SCRIPT_DIR/.claude/quality-check.sh" ]; then
 		copy_file "$SCRIPT_DIR/.claude/quality-check.sh" "$HOME/.claude/"
