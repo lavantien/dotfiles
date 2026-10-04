@@ -21,7 +21,7 @@
 
 ## Workflow
 
-Subagent fan-out is the default execution mode. Quota guard: every 10 minutes fire a throwaway subagent to query the glm-plan-usage 5-hour window quota, and pause all development and fan-out at 95% until the window resets.
+Subagent fan-out is the default execution mode. Quota guard: every 10 minutes fire a throwaway subagent to query the glm-plan-usage 5-hour window quota, and pause all development and fan-out at 95% until the window resets. CI watcher: if the repo has CI, after every push to main fire a temporary subagent to watch the run to completion. The watcher only collects and reports: run status, failed jobs, failing steps, and log excerpts. It never edits files or fixes anything itself. Route its report into a dev slot for a root-cause fix through the verification chain, then push and watch again.
 
 ### Before coding
 
