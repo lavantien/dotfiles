@@ -3,7 +3,7 @@
 ## Principles
 
 1. Verify first. Never assume, guess, or rely on memory. Confirm latest versions online for the current year, against canonical sources, and against the physical codebase before coding, because training data goes stale. Base everything on the latest verified data and double check: edge case attacks, e2e, screenshots, profiling, benchmarking, and blind adversarial review per the adversarial verification step under Testing.
-2. Generalize. Never hardcode or manually copy. Every solution must be programmatically coherent, even "quick tests". Centralize every config, constant, tunable, and enum into a single config hub: no scoped globals, no stray constants. Inline test tables are the only exception, and any value that keeps reappearing across them must be centralized too.
+2. Generalize. Always prefer generalized, os-agnostic solutions. Never hardcode paths or constants, never manually copy. Every solution must be programmatically coherent, even "quick tests". Centralize every config, constant, tunable, enum, and argument path into a single config hub: no scoped globals, no stray constants. Inline test tables are the only exception, and any value that keeps reappearing across them must be centralized too.
 3. Keep it plain. Use the simplest solution, code, and architecture that solves the task. Never overcomplicate. Avoid abstraction and complex patterns unless absolutely necessary. Comment only where non-obvious, no AI-style over-commenting or decorative comments.
 4. First principles.
 5. Bottom-up.
@@ -33,7 +33,7 @@ Subagent fan-out is the default execution mode. Quota guard: every 20 minutes fi
 
 1. Before implementing, derive a comprehensive conflict-free task list from the plan: partition work so concurrent tasks never touch the same files or shared state, and keep dependent tasks sequenced.
 2. Fan out sub-agents over the list, max 4 concurrent development slots plus 1 temporary slot for auxiliary checks like the quota guard. Recycle slots continuously: launch the next queued task in each freed slot until the list is empty.
-3. Dispose of agents as soon as they finish or fail, or defer cleanup explicitly. Never leave finished, failed, or idle agents holding context.
+3. Dispose of and clean up every agent you do not intend to reuse as soon as it finishes, fails, or goes idle, temp agents (quota guard, CI watcher) especially, or defer cleanup explicitly. Prevent self-inflicted memory leaks at all cost: never leave a finished, failed, idle, or unused agent holding context.
 4. Each agent records progress durably (task notes or commit messages) and commits small atomic units often, so an outage loses at most the last unit.
 5. Every sub-agent keeps a reading log while working and appends it to its final report: one short line per file access in the form `read <path> <lines or grep> - <why>`. Never full-read generated files, only component logic.
 6. A task counts as done only when it passes the verification chain under Testing.
