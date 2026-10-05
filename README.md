@@ -30,6 +30,8 @@ Language tooling covers 21 LSP servers (jdtls excluded on Windows), 30 Treesitte
 
 AI-native development supports Claude Code and OpenCode with 3 MCP servers (context7, playwright, repomix), Git pre-commit and commit-msg hooks that auto-detect and trigger format, lint, and check runs, a Claude Code statusline hook driven by one bash script and auto-registered in settings.json, and offline grounding on the books corpus described below.
 
+The books corpus is the opening book for the agent harness: the 15 typst volumes load like precomputed opening lines in a chess or gomoku engine, so sessions start from standardized protocols, precompiled deterministic patterns, and current official idioms instead of model memory, which cuts hallucination and drift independent of the LLM used, and the same volumes double as human reference material.
+
 Automation is built around safety: bootstrap and update-all are idempotent and safe to run multiple times, they auto-detect the environment and degrade gracefully when a tool is unavailable, Windows stays OneDrive-aware, and timestamped backup and restore wrap major changes. The tested platforms are Linux (Ubuntu 26.04+) and Windows 11 with PowerShell 7+.
 
 ## Quick start
