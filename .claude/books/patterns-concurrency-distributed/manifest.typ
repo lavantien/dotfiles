@@ -6,7 +6,7 @@
   meta: (
     title: "design patterns, concurrency, and distributed systems",
     subtitle: "an engineering handbook",
-    author: "gabriel la",
+    author: "Mr. Raheliosol",
     version: "3.0",
     volume-label: "book 11",
   ),

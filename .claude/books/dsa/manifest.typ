@@ -6,7 +6,7 @@
   meta: (
     title: "practical data structures and algorithms",
     subtitle: "an engineering handbook in six languages",
-    author: "gabriel la",
+    author: "Mr. Raheliosol",
     version: "6.0",
     volume-label: "book 9",
   ),

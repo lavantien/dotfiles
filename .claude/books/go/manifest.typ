@@ -6,7 +6,7 @@
   meta: (
     title: "go 1.27",
     subtitle: "a complete language manual",
-    author: "gabriel la",
+    author: "Mr. Raheliosol",
     version: "7.0",
     volume-label: "book 3",
   ),

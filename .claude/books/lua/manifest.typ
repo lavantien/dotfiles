@@ -6,7 +6,7 @@
   meta: (
     title: "lua 5.5",
     subtitle: "a complete language manual",
-    author: "gabriel la",
+    author: "Mr. Raheliosol",
     version: "5.0",
     volume-label: "book 8",
   ),

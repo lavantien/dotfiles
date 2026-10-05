@@ -6,7 +6,7 @@
   meta: (
     title: "java 27",
     subtitle: "a complete language manual",
-    author: "gabriel la",
+    author: "Mr. Raheliosol",
     version: "1.0",
     volume-label: "book 4",
   ),

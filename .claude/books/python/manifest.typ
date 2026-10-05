@@ -6,7 +6,7 @@
   meta: (
     title: "python 3.14",
     subtitle: "a complete language manual",
-    author: "gabriel la",
+    author: "Mr. Raheliosol",
     version: "4.0",
     volume-label: "book 7",
   ),

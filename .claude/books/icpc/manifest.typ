@@ -6,7 +6,7 @@
   meta: (
     title: "the icpc world finals",
     subtitle: "six finals, six languages, first principles",
-    author: "gabriel la",
+    author: "Mr. Raheliosol",
     version: "4.0",
     volume-label: "book 10",
   ),

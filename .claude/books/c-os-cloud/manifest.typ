@@ -6,7 +6,7 @@
   meta: (
     title: "c23: the language, the machine, and the cloud",
     subtitle: "llvm/clang 23, the operating system, terraform, aws, gcp, and a service",
-    author: "gabriel la",
+    author: "Mr. Raheliosol",
     version: "4.0",
     volume-label: "book 1",
   ),

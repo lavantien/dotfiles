@@ -6,7 +6,7 @@
   meta: (
     title: "knowledge discovery",
     subtitle: "from preprocessing to self-organizing maps in c23, with a go and duckdb capstone",
-    author: "gabriel la",
+    author: "Mr. Raheliosol",
     version: "2.0",
     volume-label: "book 13",
   ),
