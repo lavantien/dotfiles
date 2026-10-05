@@ -2,7 +2,7 @@
 
 [![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)](https://github.com/lavantien/dotfiles) [![Windows](https://img.shields.io/badge/Windows-0078D6?logo=windows&logoColor=white)](https://github.com/lavantien/dotfiles) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-These portable, production-grade dotfiles set up a software engineering environment for Linux and Windows 11 in one click. The repo is also the publishing front for a 14 volume typst books corpus that serves as the AI grounding reference.
+These portable, production-grade dotfiles set up a software engineering environment for Linux and Windows 11 in one click. The repo is also the publishing front for a 15 volume typst books corpus that serves as the AI grounding reference.
 
 The toolchain auto-detects the platform and degrades gracefully when something is unavailable. Bootstrap and updates are idempotent and safe to rerun, and the setup covers the full terminal tooling.
 
@@ -78,17 +78,18 @@ up  # Runs update-all
 
 | Entry | Holds |
 |-------|-------|
-| `.claude/` | Claude Code config: CLAUDE.md, BOOKS.md, settings templates, statusline.sh, quality-check twins, tdd-guard, and books/ holding the 14 volume typst corpus |
+| `.claude/` | Claude Code config: CLAUDE.md, BOOKS.md, settings templates, statusline.sh, quality-check twins, tdd-guard, and books/ holding the 15 volume typst corpus |
 | `.config/` | Tool configs deployed to the XDG config dir: nvim (init.lua plus lockfile), wezterm, git hooks, opencode platform templates |
 | `.vscode/` | VS Code settings |
 | `assets/` | WezTerm background wallpapers, deployed to ~/assets |
 | `bootstrap/` | bootstrap.sh and bootstrap.ps1, packages.yaml, per-platform install scripts |
+| `books/` | The 15 published corpus volumes as PDFs, numbered 01 through 14 plus 16 |
 | `home/` | Home-level configs: .bash_aliases, .zshrc, .gitconfig, Microsoft.PowerShell_profile.ps1, wezterm.lua, .dotfiles.config.yaml.example |
 | `lib/` | Shared script libraries: config parsing, JSON merge, Git Bash detection |
 | `playground/` | Scratch space for one-off programs, untracked |
 | `scripts/` | Every maintenance script: allow, deploy, update, update-all, git-update-repos, sync-book, books-index, healthcheck, backup, restore, uninstall, cleanup one-offs |
 
-The root also carries README.md, CHANGELOG.md, DOCKER_K8S.md, LICENSE, CLAUDE.local.md, the lint configs selene.toml, typos.toml, and vim.yml, and git-clone-all.sh, a vendored gh utility kept at the root.
+The root also carries README.md, CHANGELOG.md, DOCKER_K8S.md, LICENSE, the lint configs selene.toml, typos.toml, and vim.yml, and git-clone-all.sh, a vendored gh utility kept at the root.
 
 ## Available commands
 
@@ -164,7 +165,7 @@ If git hooks are not running, set `git config --global core.hooksPath ~/.config/
 
 ## Books corpus
 
-The 14 volumes are c-os-cloud, math, go, csharp-net, javascript, python, lua, dsa, icpc, patterns-concurrency-distributed, infrastructure, kdd, game-systems, and interview-repertoire. `.claude/books/` carries each volume's typst sources (manifest.typ, book.typ, chapters, coverage), and the typst files are the source of truth.
+The 15 volumes are c-os-cloud, math, go, java, csharp-net, javascript, python, lua, dsa, icpc, patterns-concurrency-distributed, infrastructure, kdd, game-systems, and interview-repertoire. `.claude/books/` carries each volume's typst sources (manifest.typ, book.typ, chapters, coverage), and the typst files are the source of truth. `books/` holds each volume as a published PDF under the authoring repo's NN-name numbering, so the set runs 01 through 14 plus 16, with 15 held by defense-cookbook, an out-of-scope volume.
 
 `scripts/sync-book.sh` and `scripts/sync-book.ps1` refresh `.claude/books/` from the private authoring repo at `~/dev/github/resume` when it exists and skip otherwise. Deploy follows the same split: with `~/dev/github/resume` present, the deployed CLAUDE.md grounds directly on it, without it, deploy mirrors `.claude/books/` into `~/.claude/books` as is and CLAUDE.md grounds there. Implementation code behind the books (samples, capstones, api projects) falls back to the private repo.
 
