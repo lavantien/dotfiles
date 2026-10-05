@@ -6,7 +6,7 @@ These portable, production-grade dotfiles set up a software engineering environm
 
 The toolchain auto-detects the platform and degrades gracefully when something is unavailable. Bootstrap and updates are idempotent and safe to rerun, and the setup covers the full terminal tooling.
 
-Inspired by chess and gomoku engines that load an opening book for precomputed accuracy and lower computation, the corpus plays the same role for the agentic harness: it grounds sessions in standardized protocols, precompiled deterministic patterns, and the latest official idioms and information, which cuts hallucination and drift at the harness level independent of the LLM used, and the same volumes double as comprehensive reference material for humans, covering the 95th percentile of software engineering tasks.
+Inspired by chess and gomoku variant engines that load an opening book for precomputed accuracy and lower computation, the corpus plays the same role for the agentic harness that grounds sessions in standardized protocols, precompiled deterministic patterns, and the latest official idioms and information, which maximally reduces hallucination and drift at the harness level independent of the LLMs used, and the same volumes double as comprehensive reference material for humans, covering the 95th percentile of software engineering tasks.
 
 ## Contents
 
