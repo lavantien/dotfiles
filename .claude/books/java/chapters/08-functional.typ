@@ -154,13 +154,13 @@ operation that pulls everything through:
 
 #flow(
   [one pipeline, one pull],
-  node((0, 0), [source, stream.of, iterate, a collection]),
+  node((0, 0), [source, #linebreak() stream.of, iterate, #linebreak() a collection]),
   edge("-|>"),
-  node((2.2, 0), [intermediates, map, filter, limit: lazy, build only]),
+  node((2.2, 0), [intermediates, #linebreak() map, filter, limit: #linebreak() lazy, build only]),
   edge("-|>"),
-  node((4.6, 0), [terminal, tolist, foreach, findfirst: the pull]),
+  node((4.6, 0), [terminal, #linebreak() tolist, foreach, #linebreak() findfirst: the pull]),
   edge((4.6, 0), (4.6, -1.2), "-|>"),
-  node((4.6, -1.2), [values flow back through, one element at a time]),
+  node((4.6, -1.2), [values flow back through, #linebreak() one element at a time]),
 )
 
 The laziness is not a claim, the sample traces it. Building the

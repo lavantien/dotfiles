@@ -80,13 +80,13 @@ procedure:
 
 #flow(
   [exhaustiveness checking over a sealed tree],
-  node((0, 0), [selector type, sealed Shape]),
+  node((0, 0), [selector type, #linebreak() sealed Shape]),
   edge("-|>"),
-  node((2.1, 0), [permits, Circle, Rect, from the declaration]),
+  node((1.9, 0), [permits, Circle, Rect, #linebreak() from the #linebreak() declaration]),
   edge("-|>"),
-  node((4.4, 0), [each case, subtract what it covers]),
+  node((3.8, 0), [each case, #linebreak() subtract #linebreak() what it covers]),
   edge("-|>"),
-  node((6.8, 0), [anything left?, yes: compile error, no: exhaustive]),
+  node((5.8, 0), [anything left?, #linebreak() yes: compile error, #linebreak() no: exhaustive]),
 )
 
 The error is precise. Add a `Triangle` to the permits list and the

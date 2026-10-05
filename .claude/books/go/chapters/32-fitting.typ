@@ -472,7 +472,7 @@ ALS completion and masked-cell CV from analytics/complete.go and
 eval/fitcompletion.go, the comparators from eval/knn.go and
 eval/naivebayes.go, the blend from eval/ensemble.go, the replay and
 calibration from eval/replay.go and eval/metrics.go, and the guarded
-promotion from eval/promote.go, all accessed 2026-09-30. Verified by
+promotion from eval/promote.go, all accessed 2026-10-05. Verified by
 `go/data/internal/fit` tests under `go vet`, `go test`, and the race
 detector, with the Spearman, AUC, and PercentileCI machinery reused
 from `go/data/internal/stats`.

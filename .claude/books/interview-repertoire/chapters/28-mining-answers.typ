@@ -213,7 +213,7 @@ stranger and drift every query toward the rarer class. Both
 comparators floor to the kdd handbook, #xref-to("kdd",
 "similarity") for the measure, #xref-to("kdd", "knn") and
 #xref-to("kdd", "bayes") for the families, and the same pair runs
-report-only beside the mined dota-helper engine's live blend,
+report-only beside the mined dota-helper engine's live linear scorer,
 #xref-to("go", "fitting").
 
 #diagram([the tie query cancels its two equal votes, the stranger item adds nothing], length: 13pt, {

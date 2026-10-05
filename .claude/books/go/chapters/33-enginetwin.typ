@@ -361,7 +361,7 @@ section later.
     cdraw.content((x0 + w / 2, 5.2), [#l3], size: 6pt)
   }
   cellf(0.3, 7.2, [this module], [in-memory map], [provenance rows], [rebuilt per run])
-  cellf(8.2, 7.2, [dota-helper], [duckdb via duckdb-go], [behind a build tag], [columnar scans])
+  cellf(8.2, 7.2, [dota-helper], [duckdb via duckdb-go], [unconditional import], [columnar scans])
   cellf(16.1, 7.4, [chapter 23], [the wal engine], [durability taught], [snapshot compaction])
   cdraw.content((4.0, 3.6), [roster-sized tables], size: 6pt)
   cdraw.content((4.0, 2.8), [stdlib-only ruling], size: 6pt)
@@ -562,7 +562,7 @@ emitter honors, reflect for the value walk, and testing for the flag
 pattern inside go test, nodejs.org for node:test and node:assert/strict,
 plus the dota-helper repository's engine (internal/ingest, internal/emit,
 internal/order) and picker layer this chapter adapts, read at
-`C:\Users\lavantien\dev\github\dota-helper`, all accessed 2026-09-30.
+`C:\Users\lavantien\dev\github\dota-helper`, all accessed 2026-10-05.
 Verified by `go/data/internal/engine` tests, 47 of them across 12 files,
 under `go vet`, `go test`, and the race detector, and the twin, 8 node
 tests, under `make verify-data-twin`, with the parity artifact pinned

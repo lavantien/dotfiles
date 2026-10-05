@@ -29,7 +29,7 @@ one port.
 
 #flow(
   [the capstone, one process, one port, two protocols],
-  node((0, 0), [react ui, vite build]),
+  node((0, 0), [react ui, #linebreak() vite build]),
   edge((0, 0), (1.5, 0), "-|>", label: [http get]),
   node((1.5, 0), [static site]),
   edge((2.9, 0), (4.4, 0), "-|>", label: [upgrade]),
@@ -39,7 +39,7 @@ one port.
   edge((5.9, 0), (7.4, 0), "-|>", label: [app frames]),
   node((7.4, 0), [mini apps]),
   edge((7.4, 0), (8.9, -0.9), "-|>"),
-  node((8.9, -0.9), [rooms and fan-out]),
+  node((8.9, -0.9), [rooms and #linebreak() fan-out]),
 )
 
 == the shape in thirty seconds
