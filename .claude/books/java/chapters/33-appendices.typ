@@ -121,7 +121,7 @@ consulted and how it verified live. The book level pins:
 )
 
 #callout("note", "version drift rule", [
-  34 of these pins were fetched 2026-10-04 and 2026-10-05 against
+  35 of these pins were fetched 2026-10-04 and 2026-10-05 against
   the ga jdk 27, build 27+35-2325, with the 19 release pages
   re-verified per release and the spec read at se 27. The one older
   date is the junit maven fetch, 2026-08-07, the day the jar was

@@ -86,7 +86,7 @@ in time for an lts landing.
   inset: 4pt,
   table.header([*release*], [*language*], [*platform*], [*remembered for*]),
   [9, 2017-09],
-  [module declarations, `permits`, jigsaw syntax],
+  [module declarations, jigsaw syntax, the ten contextual keywords (`module`, `open`, `requires`, `transitive`, `exports`, `opens`, `to`, `uses`, `provides`, `with`)],
   [JPMS, jshell, collection factories, G1 default, compact strings],
   [the jdk restructured, internal apis closed],
   [10, 2018-03],

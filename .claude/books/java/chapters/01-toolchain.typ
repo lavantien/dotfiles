@@ -165,7 +165,7 @@ One measured wrinkle from this build: jshell's default execution runs
 through a remote agent and resolves everything this book needs, but
 `--execution local` failed to load nested enum classes like
 `HttpClient$Version` with a `ClassNotFoundException`. The flag looks
-like a performance win and is not; the default agent is the mode the
+like a performance win and is not one. The default agent is the mode the
 probes in this book ran under.
 
 == the compile discipline

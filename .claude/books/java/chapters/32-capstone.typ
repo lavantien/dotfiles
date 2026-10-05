@@ -318,7 +318,8 @@ room, `create` with a question up to 200 characters and 2 to 8
 options of up to 80 each, every member votes once whether or not
 their panel is open, each vote fans the live tallies with voter
 names per option to the whole room, and the creator closes with the
-winner or a tie, a strict majority or the word tie. The creator
+winner or a tie: plurality, the option standing alone at the top count
+wins even below half, the word tie only when the top is level. The creator
 leaving an open poll closes it, since nobody else could.
 
 #diagram([the four apps' bounds, every number from the source], length: 13pt, {

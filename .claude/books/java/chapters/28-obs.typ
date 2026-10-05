@@ -184,7 +184,7 @@ small allocation and 2 calls that return immediately. Nothing buffers,
 nothing spawns, nothing ships. A recording changes that: started from
 outside the process with `jcmd <pid> JFR.start` or at boot with
 `-XX:StartFlightRecording`, it begins consuming events, ours beside
-the runtime's own, and the measurement is not a promise but a capture:
+the runtime's own, and the measurement is a capture, never a promise:
 
 #listing("java/api/captures/2026-10-05-jfr.txt", first: 8, last: 21, caption: [measured 2026-10-05 on this machine: jcmd started a recording on the running server, one closed loop ran through it, the dump answered])
 

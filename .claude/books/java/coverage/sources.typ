@@ -35,5 +35,6 @@
   (topic: "docker docs, multi-stage builds and compose up --wait", url: "https://docs.docker.com", accessed: "2026-10-05"),
   (topic: "hub.docker.com registry api, temurin and ubuntu digests", url: "https://hub.docker.com", accessed: "2026-10-05"),
   (topic: "oracle javadoc, java se 27", url: "https://docs.oracle.com/en/java/javase/27", accessed: "2026-10-05"),
+  (topic: "oracle jdk 27 ga archive, the pinned windows zip the installer sha256-gates", url: "https://download.oracle.com/java/27/archive/jdk-27_windows-x64_bin.zip", accessed: "2026-10-04"),
   (topic: "Java in a Nutshell, 8th edition (local ref/java pdf)", url: "ref/java/Java-nutshell-8th-edition-ebook-Red-Hat-Developer.pdf", accessed: "2026-10-04"),
 )
