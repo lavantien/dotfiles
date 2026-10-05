@@ -22,13 +22,13 @@ repos_complete=0
 echo
 
 echo "$repos" | while read -r repo; do
-        repo_name="$(echo "$repo" | cut -f1)"
-        echo -ne "\r\e[0K[ $repos_complete / $repo_total ] Cloning $repo_name"
-        gh repo clone "$repo_name" "$repo_name" -- -q 2>/dev/null || (
-                cd "$repo_name"
-                git pull -q
-        )
-        repos_complete=$((repos_complete + 1))
+	repo_name="$(echo "$repo" | cut -f1)"
+	echo -ne "\r\e[0K[ $repos_complete / $repo_total ] Cloning $repo_name"
+	gh repo clone "$repo_name" "$repo_name" -- -q 2>/dev/null || (
+		cd "$repo_name"
+		git pull -q
+	)
+	repos_complete=$((repos_complete + 1))
 done
 
 echo "Finished cloning all repos in $org."

@@ -6,15 +6,15 @@ set -euo pipefail
 
 # Check for GitHub CLI
 if ! command -v gh >/dev/null 2>&1; then
-    echo -e "${RED}Error: GitHub CLI (gh) not found${NC}" >&2
-    echo -e "${YELLOW}Install it from: https://cli.github.com/${NC}" >&2
-    echo -e "${YELLOW}Or run your bootstrap script${NC}" >&2
-    exit 1
+	echo -e "${RED}Error: GitHub CLI (gh) not found${NC}" >&2
+	echo -e "${YELLOW}Install it from: https://cli.github.com/${NC}" >&2
+	echo -e "${YELLOW}Or run your bootstrap script${NC}" >&2
+	exit 1
 fi
 
 if ! gh auth status >/dev/null 2>&1; then
-    echo -e "${RED}Error: gh not authenticated. Run: gh auth login${NC}" >&2
-    exit 1
+	echo -e "${RED}Error: gh not authenticated. Run: gh auth login${NC}" >&2
+	exit 1
 fi
 
 # Defaults (can be overridden by environment variables)
@@ -32,12 +32,24 @@ NC='\033[0m'
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
-    case $1 in
-        -u) USERNAME="$2"; shift 2 ;;
-        -d) BASE_DIR="$2"; shift 2 ;;
-        -s) USE_SSH=true; shift ;;
-        *) echo "Usage: $0 [-u username] [-d base_dir] [-s]" >&2; exit 1 ;;
-    esac
+	case $1 in
+	-u)
+		USERNAME="$2"
+		shift 2
+		;;
+	-d)
+		BASE_DIR="$2"
+		shift 2
+		;;
+	-s)
+		USE_SSH=true
+		shift
+		;;
+	*)
+		echo "Usage: $0 [-u username] [-d base_dir] [-s]" >&2
+		exit 1
+		;;
+	esac
 done
 
 echo -e "${CYAN}========================================${NC}"
@@ -51,9 +63,9 @@ echo
 
 # Create base directory if it doesn't exist
 if [[ ! -d "$BASE_DIR" ]]; then
-    mkdir -p "$BASE_DIR"
-    echo -e "${GREEN}Created directory:${NC} $BASE_DIR"
-    echo
+	mkdir -p "$BASE_DIR"
+	echo -e "${GREEN}Created directory:${NC} $BASE_DIR"
+	echo
 fi
 
 echo -e "${CYAN}Fetching repositories via GitHub CLI...${NC}"
@@ -68,25 +80,25 @@ REPO_NAMES=()
 
 # Parse JSON into arrays
 if command -v jq >/dev/null 2>&1; then
-    while IFS='|' read -r name ssh_url web_url; do
-        # Strip carriage returns (\r) that may appear on Windows
-        name="${name//$'\r'/}"
-        ssh_url="${ssh_url//$'\r'/}"
-        web_url="${web_url//$'\r'/}"
-        REPO_NAMES+=("$name")
-        SSH_URLS+=("$ssh_url")
-        CLONE_URLS+=("${web_url}.git")  # Construct HTTPS clone URL
-    done < <(echo "$REPOS_JSON" | jq -r '.[] | "\(.name)|\(.sshUrl)|\(.url)"')
+	while IFS='|' read -r name ssh_url web_url; do
+		# Strip carriage returns (\r) that may appear on Windows
+		name="${name//$'\r'/}"
+		ssh_url="${ssh_url//$'\r'/}"
+		web_url="${web_url//$'\r'/}"
+		REPO_NAMES+=("$name")
+		SSH_URLS+=("$ssh_url")
+		CLONE_URLS+=("${web_url}.git") # Construct HTTPS clone URL
+	done < <(echo "$REPOS_JSON" | jq -r '.[] | "\(.name)|\(.sshUrl)|\(.url)"')
 else
-    # Fallback: simple grep/sed parsing if jq not available
-    while IFS= read -r line; do
-        name=$(echo "$line" | grep -oP '"name":\s*"\K[^"]+' || true)
-        ssh_url=$(echo "$line" | grep -oP '"sshUrl":\s*"\K[^"]+' || true)
-        web_url=$(echo "$line" | grep -oP '"url":\s*"\K[^"]+' || true)
-        [[ -n "$name" ]] && REPO_NAMES+=("$name")
-        [[ -n "$ssh_url" ]] && SSH_URLS+=("$ssh_url")
-        [[ -n "$web_url" ]] && CLONE_URLS+=("${web_url}.git")
-    done <<< "$REPOS_JSON"
+	# Fallback: simple grep/sed parsing if jq not available
+	while IFS= read -r line; do
+		name=$(echo "$line" | grep -oP '"name":\s*"\K[^"]+' || true)
+		ssh_url=$(echo "$line" | grep -oP '"sshUrl":\s*"\K[^"]+' || true)
+		web_url=$(echo "$line" | grep -oP '"url":\s*"\K[^"]+' || true)
+		[[ -n "$name" ]] && REPO_NAMES+=("$name")
+		[[ -n "$ssh_url" ]] && SSH_URLS+=("$ssh_url")
+		[[ -n "$web_url" ]] && CLONE_URLS+=("${web_url}.git")
+	done <<<"$REPOS_JSON"
 fi
 
 echo -e "${GREEN}Found ${#REPO_NAMES[@]} repositories${NC}"
@@ -99,57 +111,57 @@ FAILED=0
 
 # Process each repo
 for i in "${!REPO_NAMES[@]}"; do
-    REPO_NAME="${REPO_NAMES[$i]}"
-    REPO_PATH="$BASE_DIR/$REPO_NAME"
+	REPO_NAME="${REPO_NAMES[$i]}"
+	REPO_PATH="$BASE_DIR/$REPO_NAME"
 
-    # Choose clone URL based on SSH flag
-    if [[ "$USE_SSH" == "true" ]]; then
-        CLONE_URL="${SSH_URLS[$i]}"
-    else
-        CLONE_URL="${CLONE_URLS[$i]}"
-    fi
+	# Choose clone URL based on SSH flag
+	if [[ "$USE_SSH" == "true" ]]; then
+		CLONE_URL="${SSH_URLS[$i]}"
+	else
+		CLONE_URL="${CLONE_URLS[$i]}"
+	fi
 
-    if [[ -d "$REPO_PATH" ]]; then
-        # Repo exists, update it
-        echo -n "[$REPO_NAME] "
+	if [[ -d "$REPO_PATH" ]]; then
+		# Repo exists, update it
+		echo -n "[$REPO_NAME] "
 
-        if cd "$REPO_PATH" 2>/dev/null; then
-            if git rev-parse --git-dir >/dev/null 2>&1; then
-                # Check if local HEAD equals upstream (already at latest)
-                LOCAL=$(git rev-parse HEAD 2>/dev/null || echo "")
-                REMOTE=$(git rev-parse @{u} 2>/dev/null || echo "")
+		if cd "$REPO_PATH" 2>/dev/null; then
+			if git rev-parse --git-dir >/dev/null 2>&1; then
+				# Check if local HEAD equals upstream (already at latest)
+				LOCAL=$(git rev-parse HEAD 2>/dev/null || echo "")
+				REMOTE=$(git rev-parse @{u} 2>/dev/null || echo "")
 
-                if [[ -n "$LOCAL" && -n "$REMOTE" && "$LOCAL" == "$REMOTE" ]]; then
-                    echo -e "${BLUE}Skipped (already up to date)${NC}"
-                    SKIPPED=$((SKIPPED + 1))
-                elif git fetch origin && git pull; then
-                    echo -e "${YELLOW}Updated${NC}"
-                    UPDATED=$((UPDATED + 1))
-                else
-                    echo -e "${RED}Error updating${NC}"
-                    FAILED=$((FAILED + 1))
-                fi
-            else
-                echo -e "${YELLOW}Skipped (not a git repo)${NC}"
-                SKIPPED=$((SKIPPED + 1))
-            fi
-            cd - >/dev/null
-        else
-            echo -e "${YELLOW}Error accessing${NC}"
-            FAILED=$((FAILED + 1))
-        fi
-    else
-        # Repo doesn't exist, clone it
-        echo -n "[$REPO_NAME] "
+				if [[ -n "$LOCAL" && -n "$REMOTE" && "$LOCAL" == "$REMOTE" ]]; then
+					echo -e "${BLUE}Skipped (already up to date)${NC}"
+					SKIPPED=$((SKIPPED + 1))
+				elif git fetch origin && git pull; then
+					echo -e "${YELLOW}Updated${NC}"
+					UPDATED=$((UPDATED + 1))
+				else
+					echo -e "${RED}Error updating${NC}"
+					FAILED=$((FAILED + 1))
+				fi
+			else
+				echo -e "${YELLOW}Skipped (not a git repo)${NC}"
+				SKIPPED=$((SKIPPED + 1))
+			fi
+			cd - >/dev/null
+		else
+			echo -e "${YELLOW}Error accessing${NC}"
+			FAILED=$((FAILED + 1))
+		fi
+	else
+		# Repo doesn't exist, clone it
+		echo -n "[$REPO_NAME] "
 
-        if git clone "$CLONE_URL" "$REPO_PATH"; then
-            echo -e "${GREEN}Cloned${NC}"
-            CLONED=$((CLONED + 1))
-        else
-            echo -e "${YELLOW}Error cloning${NC}"
-            FAILED=$((FAILED + 1))
-        fi
-    fi
+		if git clone "$CLONE_URL" "$REPO_PATH"; then
+			echo -e "${GREEN}Cloned${NC}"
+			CLONED=$((CLONED + 1))
+		else
+			echo -e "${YELLOW}Error cloning${NC}"
+			FAILED=$((FAILED + 1))
+		fi
+	fi
 done
 
 # Summary
@@ -161,7 +173,7 @@ echo -e " ${GREEN}Cloned:${NC}  $CLONED"
 echo -e " ${YELLOW}Updated:${NC} $UPDATED"
 echo -e " ${BLUE}Skipped:${NC} $SKIPPED"
 if [[ $FAILED -gt 0 ]]; then
-    echo -e " ${YELLOW}Failed:${NC}   $FAILED"
+	echo -e " ${YELLOW}Failed:${NC}   $FAILED"
 fi
 echo -e " ${CYAN}Total:${NC}    ${#REPO_NAMES[@]} repositories"
 echo -e "${CYAN}========================================${NC}"

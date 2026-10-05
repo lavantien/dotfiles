@@ -25,42 +25,42 @@ SELECTED_BACKUP=""
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
-    case $1 in
-        --backup-dir)
-            BACKUP_DIR="$2"
-            shift 2
-            ;;
-        --list)
-            LIST_ONLY=true
-            shift
-            ;;
-        --dry-run)
-            DRY_RUN=true
-            shift
-            ;;
-        --force)
-            FORCE=true
-            shift
-            ;;
-        -h|--help)
-            echo "Usage: $0 [--backup-dir path] [--list] [--dry-run] [--force]"
-            echo "  --backup-dir    Path to backup directory (default: ~/.dotfiles-backup)"
-            echo "  --list          List available backups and exit"
-            echo "  --dry-run       Show what would be restored without doing it"
-            echo "  --force         Restore without confirmation prompts"
-            exit 0
-            ;;
-        *)
-            if [[ -z "$SELECTED_BACKUP" ]] && [[ -d "$BACKUP_DIR/$1" ]]; then
-                SELECTED_BACKUP="$1"
-            else
-                echo "Unknown option or invalid backup: $1"
-                echo "Use --help for usage"
-                exit 1
-            fi
-            shift
-            ;;
-    esac
+	case $1 in
+	--backup-dir)
+		BACKUP_DIR="$2"
+		shift 2
+		;;
+	--list)
+		LIST_ONLY=true
+		shift
+		;;
+	--dry-run)
+		DRY_RUN=true
+		shift
+		;;
+	--force)
+		FORCE=true
+		shift
+		;;
+	-h | --help)
+		echo "Usage: $0 [--backup-dir path] [--list] [--dry-run] [--force]"
+		echo "  --backup-dir    Path to backup directory (default: ~/.dotfiles-backup)"
+		echo "  --list          List available backups and exit"
+		echo "  --dry-run       Show what would be restored without doing it"
+		echo "  --force         Restore without confirmation prompts"
+		exit 0
+		;;
+	*)
+		if [[ -z "$SELECTED_BACKUP" ]] && [[ -d "$BACKUP_DIR/$1" ]]; then
+			SELECTED_BACKUP="$1"
+		else
+			echo "Unknown option or invalid backup: $1"
+			echo "Use --help for usage"
+			exit 1
+		fi
+		shift
+		;;
+	esac
 done
 
 # ============================================================================
@@ -73,106 +73,106 @@ log_warning() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
 list_backups() {
-    echo -e "${CYAN}Available Backups:${NC}"
-    echo -e "${CYAN}========================================${NC}"
+	echo -e "${CYAN}Available Backups:${NC}"
+	echo -e "${CYAN}========================================${NC}"
 
-    if [[ ! -d "$BACKUP_DIR" ]]; then
-        log_warning "Backup directory not found: $BACKUP_DIR"
-        return 1
-    fi
+	if [[ ! -d "$BACKUP_DIR" ]]; then
+		log_warning "Backup directory not found: $BACKUP_DIR"
+		return 1
+	fi
 
-    local found=false
-    for backup in $(ls -1t "$BACKUP_DIR" 2>/dev/null); do
-        local backup_path="$BACKUP_DIR/$backup"
-        local manifest="$backup_path/MANIFEST.txt"
+	local found=false
+	for backup in $(ls -1t "$BACKUP_DIR" 2>/dev/null); do
+		local backup_path="$BACKUP_DIR/$backup"
+		local manifest="$backup_path/MANIFEST.txt"
 
-        if [[ -d "$backup_path" ]] && [[ -f "$manifest" ]]; then
-            found=true
-            echo ""
-            echo -e "${BLUE}Backup:${NC}   $backup"
-            echo -e "${BLUE}Path:${NC}     $backup_path"
+		if [[ -d "$backup_path" ]] && [[ -f "$manifest" ]]; then
+			found=true
+			echo ""
+			echo -e "${BLUE}Backup:${NC}   $backup"
+			echo -e "${BLUE}Path:${NC}     $backup_path"
 
-            # Show manifest info
-            if [[ -f "$manifest" ]]; then
-                echo -e "${BLUE}Details:${NC}"
-                cat "$manifest" | sed 's/^/    /'
-            fi
-        fi
-    done
+			# Show manifest info
+			if [[ -f "$manifest" ]]; then
+				echo -e "${BLUE}Details:${NC}"
+				cat "$manifest" | sed 's/^/    /'
+			fi
+		fi
+	done
 
-    if [[ "$found" == "false" ]]; then
-        log_warning "No backups found in $BACKUP_DIR"
-        return 1
-    fi
+	if [[ "$found" == "false" ]]; then
+		log_warning "No backups found in $BACKUP_DIR"
+		return 1
+	fi
 
-    return 0
+	return 0
 }
 
 confirm_restore() {
-    local target="$1"
+	local target="$1"
 
-    if [[ "$FORCE" == "true" ]]; then
-        return 0
-    fi
+	if [[ "$FORCE" == "true" ]]; then
+		return 0
+	fi
 
-    echo -e "${YELLOW}WARNING: This will overwrite your current configurations!${NC}"
-    echo -e "${YELLOW}Target: $target${NC}"
-    echo ""
-    read -p "Continue? (yes/no): " -n 1 -r
-    echo
+	echo -e "${YELLOW}WARNING: This will overwrite your current configurations!${NC}"
+	echo -e "${YELLOW}Target: $target${NC}"
+	echo ""
+	read -p "Continue? (yes/no): " -n 1 -r
+	echo
 
-    if [[ $REPLY =~ ^[Yy]es$ ]]; then
-        return 0
-    else
-        log_info "Restore cancelled"
-        exit 0
-    fi
+	if [[ $REPLY =~ ^[Yy]es$ ]]; then
+		return 0
+	else
+		log_info "Restore cancelled"
+		exit 0
+	fi
 }
 
 restore_file() {
-    local src="$1"
-    local dst="$2"
+	local src="$1"
+	local dst="$2"
 
-    if [[ ! -e "$src" ]]; then
-        log_warning "Source not found (skipping): $src"
-        return 1
-    fi
+	if [[ ! -e "$src" ]]; then
+		log_warning "Source not found (skipping): $src"
+		return 1
+	fi
 
-    if [[ "$DRY_RUN" == "true" ]]; then
-        echo -e "  ${CYAN}[DRY-RUN]${NC} Would restore: $src → $dst"
-        return 0
-    fi
+	if [[ "$DRY_RUN" == "true" ]]; then
+		echo -e "  ${CYAN}[DRY-RUN]${NC} Would restore: $src → $dst"
+		return 0
+	fi
 
-    # Create destination directory if needed
-    local dest_dir
-    dest_dir="$(dirname "$dst")"
-    if ! mkdir -p "$dest_dir" 2>/dev/null; then
-        log_error "Failed to create directory: $dest_dir"
-        return 1
-    fi
+	# Create destination directory if needed
+	local dest_dir
+	dest_dir="$(dirname "$dst")"
+	if ! mkdir -p "$dest_dir" 2>/dev/null; then
+		log_error "Failed to create directory: $dest_dir"
+		return 1
+	fi
 
-    # Backup existing file first
-    if [[ -e "$dst" ]]; then
-        local timestamp
-        timestamp=$(date +%Y%m%d-%H%M%S)
-        local backup_existing="$dst.dotfiles-backup-$timestamp"
-        if ! cp -r "$dst" "$backup_existing" 2>/dev/null; then
-            log_warning "Failed to backup existing: $dst (continuing anyway)"
-        else
-            log_info "Backed up existing: $dst → $backup_existing"
-        fi
-    fi
+	# Backup existing file first
+	if [[ -e "$dst" ]]; then
+		local timestamp
+		timestamp=$(date +%Y%m%d-%H%M%S)
+		local backup_existing="$dst.dotfiles-backup-$timestamp"
+		if ! cp -r "$dst" "$backup_existing" 2>/dev/null; then
+			log_warning "Failed to backup existing: $dst (continuing anyway)"
+		else
+			log_info "Backed up existing: $dst → $backup_existing"
+		fi
+	fi
 
-    # Restore file with better error handling
-    local error_output
-    if ! error_output=$(cp -r "$src" "$dst" 2>&1); then
-        log_error "Failed to restore: $src → $dst"
-        log_error "Error: $error_output"
-        return 1
-    fi
+	# Restore file with better error handling
+	local error_output
+	if ! error_output=$(cp -r "$src" "$dst" 2>&1); then
+		log_error "Failed to restore: $src → $dst"
+		log_error "Error: $error_output"
+		return 1
+	fi
 
-    log_success "Restored: $src → $dst"
-    return 0
+	log_success "Restored: $src → $dst"
+	return 0
 }
 
 # ============================================================================
@@ -181,28 +181,28 @@ restore_file() {
 
 # List backups and exit if --list
 if [[ "$LIST_ONLY" == "true" ]]; then
-    list_backups
-    exit $?
+	list_backups
+	exit $?
 fi
 
 # If no backup specified, prompt user
 if [[ -z "$SELECTED_BACKUP" ]]; then
-    echo -e "${CYAN}Select a backup to restore:${NC}"
-    list_backups
-    echo ""
-    read -p "Enter backup name (or 'cancel'): " SELECTED_BACKUP
+	echo -e "${CYAN}Select a backup to restore:${NC}"
+	list_backups
+	echo ""
+	read -p "Enter backup name (or 'cancel'): " SELECTED_BACKUP
 
-    if [[ "$SELECTED_BACKUP" == "cancel" ]]; then
-        log_info "Restore cancelled"
-        exit 0
-    fi
+	if [[ "$SELECTED_BACKUP" == "cancel" ]]; then
+		log_info "Restore cancelled"
+		exit 0
+	fi
 fi
 
 # Validate backup exists
 RESTORE_PATH="$BACKUP_DIR/$SELECTED_BACKUP"
 if [[ ! -d "$RESTORE_PATH" ]]; then
-    log_error "Backup not found: $RESTORE_PATH"
-    exit 1
+	log_error "Backup not found: $RESTORE_PATH"
+	exit 1
 fi
 
 echo -e "${CYAN}========================================${NC}"
@@ -221,9 +221,9 @@ echo ""
 # Read manifest if available
 MANIFEST="$RESTORE_PATH/MANIFEST.txt"
 if [[ -f "$MANIFEST" ]]; then
-    echo -e "${YELLOW}Backup Manifest:${NC}"
-    cat "$MANIFEST"
-    echo ""
+	echo -e "${YELLOW}Backup Manifest:${NC}"
+	cat "$MANIFEST"
+	echo ""
 fi
 
 restored_count=0
@@ -283,13 +283,13 @@ echo -e "${BLUE}Date:${NC}       $(date '+%Y-%m-%d %H:%M:%S')"
 echo -e "${CYAN}========================================${NC}"
 
 if [[ "$DRY_RUN" == "false" ]]; then
-    echo ""
-    log_success "Restore complete!"
-    echo -e "${YELLOW}Please reload your shell to apply changes${NC}"
+	echo ""
+	log_success "Restore complete!"
+	echo -e "${YELLOW}Please reload your shell to apply changes${NC}"
 else
-    echo ""
-    log_info "Dry run complete - no files were actually restored"
-    echo -e "${YELLOW}Run without --dry-run to perform actual restore${NC}"
+	echo ""
+	log_info "Dry run complete - no files were actually restored"
+	echo -e "${YELLOW}Run without --dry-run to perform actual restore${NC}"
 fi
 
 exit 0

@@ -17,7 +17,10 @@ TYPO_TARGET="$SCRIPT_DIR/../.claude/books"
 PDF_TARGET="$SCRIPT_DIR/../books"
 ANNOTATIONS="$SCRIPT_DIR/books-index.json"
 
-die() { echo "Error: $*" >&2; exit 1; }
+die() {
+	echo "Error: $*" >&2
+	exit 1
+}
 
 if [[ ! -d "$CORPUS" ]]; then
 	echo "books corpus not found, skipping sync: $CORPUS"
@@ -134,7 +137,10 @@ for f in "$PDF_TARGET"/*.pdf; do
 	base="$(basename "$f")"
 	keep=false
 	for dir in "${INCLUDED[@]}"; do
-		if [[ "$base" == [0-9][0-9]-"$dir".pdf ]]; then keep=true; break; fi
+		if [[ "$base" == [0-9][0-9]-"$dir".pdf ]]; then
+			keep=true
+			break
+		fi
 	done
 	if [[ "$keep" == false ]]; then
 		rm "$f"
