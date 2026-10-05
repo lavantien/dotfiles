@@ -106,7 +106,7 @@ books that follow, where the components are built rather than used.
   cdraw.content((5.8, 3.5), [collections, numerics, #linebreak() decimal floats, spans, json, #linebreak() unions on the wire, io, http, #linebreak() channels, text, utilities, #linebreak() linq, joins, exceptions, #linebreak() nullable, pools, reflection, generators], size: 6pt)
   cdraw.rect((12.4, 0.0), (23.4, 7.4), fill: luma(230), radius: 0.02)
   cdraw.content((17.9, 6.8), [#pointed-n rows point elsewhere], size: 6.5pt)
-  cdraw.content((17.9, 3.15), [`Regex` to the ch 13 generator, #linebreak() threading and locks to book 10, #linebreak() diagnostics to book 10, #linebreak() utf8 reader, writer, complex, #linebreak() mentioned only], size: 6pt)
+  cdraw.content((17.9, 3.15), [`Regex` to the ch 13 generator, #linebreak() threading and locks to book 11, #linebreak() diagnostics to book 11, #linebreak() utf8 reader, writer, complex, #linebreak() mentioned only], size: 6pt)
   cdraw.content((11.8, -0.7), [the pointer rows are promises the systems books keep], size: 6.5pt)
 })
 

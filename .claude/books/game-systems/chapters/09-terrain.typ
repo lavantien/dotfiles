@@ -18,7 +18,7 @@ a different hill.
 
 A lattice point, a knot every 16 columns, gets its height by hashing
 its coordinates. The hash is splitmix64's finalizer, the avalanche
-stage whose absence bit book 10, and chapter 11 owns the generator:
+stage whose absence bit book 11, and chapter 11 owns the generator:
 without it, adjacent knots share high bits and the terrain comes out
 as broad terraces instead of hills. The top 32 bits of the mixed value become a fraction of the
 amplitude, and between knots the height is the smoothstep of the
@@ -109,7 +109,7 @@ roughness dial, amplitude its height dial, seed its identity.
 sources: value noise, smoothstep interpolation, and octave stacking
 follow the standard noise treatments, Iñigo Quílez's articles at
 iquilezles.org on value noise among them, and the splitmix64
-finalizer constants from the splitmix paper as used in book 10
+finalizer constants from the splitmix paper as used in book 11
 chapter 12, accessed 2026-09-08. Verified by `dotnet test
 books/game-systems/samples/GameSystemsBook.slnx`, 6 tests in
 `GameSystems.Samples.Tests.Ch09`.

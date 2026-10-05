@@ -188,9 +188,10 @@ rollback test exercises by deleting a document's instant.
 
 The engine underneath is node's own build. `node:sqlite` embeds
 its sqlite inside the node binary. The corpus pins 3.53.4 for the
-c, go, and lua toolchains, and node 26.3.0 here reports exactly
-3.53.1, which the suite asserts as an exact string, never a floor,
-since in this one book the version is a property of the runtime.
+c, go, and lua toolchains, and node 26.10.0 here reports exactly
+3.53.4, caught up to the pin; node 26.3.0 reported 3.53.1, and the
+suite asserts an exact string, never a floor, since in this one book
+the version is a property of the runtime.
 Test files are created under the system temp directory through
 `mkdtempSync`, never inside the repo, and cleaned in an `after`
 hook. The snapshots stay on `node:sqlite` because a save is one
@@ -343,7 +344,7 @@ rather than a stack trace. The snapshot endpoint is chapter 8's
 boundary rule end to end, iso text on the wire,
 `Temporal.Instant.from` at the persist layer's edge, one
 transactional save, and a checksum-verified load back out, through
-the same `node:sqlite` the core suite pins at 3.53.1.
+the same `node:sqlite` the core suite pins at 3.53.4.
 
 #flow(
   [one request through the server],
@@ -378,9 +379,9 @@ the same `node:sqlite` the core suite pins at 3.53.1.
 
   for x in (6.4, 15.0) { cdraw.line((x, 5.7), (x, 12.0), stroke: luma(220)) }
   cdraw.rect((0.4, 4.1), (22.8, 5.1), fill: luma(235), radius: 0.02)
-  cdraw.content((11.6, 4.6), [the loop tail mirrors one round of synchronous work: #linebreak() p50 5.706 ms, p99 7.143 ms over 7 samples], size: 6pt)
-  cdraw.content((11.6, 3.0), [200,000 documents, 8 rounds in 47.04 ms, all measured 2026-09-13], size: 6.5pt)
-  cdraw.content((11.6, 2.0), [best save of 5,000 documents 30.35 ms, best load 11.56 ms, against engine 3.53.1], size: 6.5pt)
+  cdraw.content((11.6, 4.6), [the loop tail mirrors one round of synchronous work: #linebreak() p50 5.779 ms, p99 7.754 ms over 7 samples], size: 6pt)
+  cdraw.content((11.6, 3.0), [200,000 documents, 8 rounds in 48.31 ms, all measured 2026-10-04], size: 6.5pt)
+  cdraw.content((11.6, 2.0), [best save of 5,000 documents 32.48 ms, best load 12.18 ms, engine 3.53.4], size: 6.5pt)
 })
 
 The engine's own runtime, profiled by its own book: chapter 10's
@@ -419,13 +420,14 @@ over 7 samples, because the loop cannot yield inside a round: the
 tail mirrors one round of synchronous work, chapter 10's rule that
 delay is born where a long callback holds the thread.
 
-The server-shaped read, 2,000 limited queries, lands at p50 0.059
-ms, p99 0.23 ms, p99.9 0.46 ms. A limited query is still a full
+The server-shaped read, 2,000 limited queries, lands at p50 0.073
+ms, p99 0.268 ms, p99.9 0.495 ms. A limited query is still a full
 scan until `take` closes the pull, so its latency is corpus-shaped
 rather than page-shaped, and the honest fix at scale is a store
 with an index, which is what the sqlite step is for: the best save
-of 5,000 documents measured 30.35 ms and the best load 11.56 ms
-against engine 3.53.1, persistence that costs about one scan of a
+of 5,000 documents measured 32.48 ms and the best load 12.18 ms
+against engine 3.53.4 on node 26.10.0, re-measured 2026-10-04,
+persistence that costs about one scan of a
 fortieth of the corpus.
 
 #listing("javascript/capstone/core/profile.test.mjs", first: 14, last: 45, caption: [the in-suite smokes, a parsed child profile and an ordered histogram])

@@ -1,4 +1,4 @@
-// book 9, chapter 2: the c toolbox. ten modules over eleven
+// book 10, chapter 2: the c toolbox. ten modules over eleven
 // headers in books/icpc/samples-c/src/Ch02/, one test program per
 // module, all listings sliced from the landed files
 #import "../../theme/lib.typ": listing, callout, xref-to, diagram, cdraw
@@ -989,6 +989,6 @@ sources: R. Rivest, RFC 1321, The MD5 Message-Digest Algorithm, April
 1992, the K table, shift schedule, and the test vectors this suite
 pins; the FNV-1a constants from the Fowler, Noll, Vo reference hash
 page; the `__umodti3` link outcome is the machine fact recorded by
-the chapter 16 probe in book 8 and reconfirmed by this suite's gate
+the chapter 16 probe in book 9 and reconfirmed by this suite's gate
 run, 2026-09-14. The Lua comparisons cite the landed
 `books/icpc/samples-lua/` modules read the same day.

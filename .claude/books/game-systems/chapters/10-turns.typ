@@ -14,7 +14,7 @@ chapter's data structure.
 
 The order is computed once from the roster, and the sort is stable,
 which is not decoration here: initiative ties resolved by
-registration order are the same discipline book 8's sorting chapter
+registration order are the same discipline book 9's sorting chapter
 defended for `OrderBy`, an unstable sort would make the tie break
 change between runs and the match would not replay. `Round` counts
 completed cycles of the living, `Current` is a cursor, and the

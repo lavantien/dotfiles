@@ -13,7 +13,7 @@ reporting sweep that lists every crossing instead of stopping at
 the first one. Everything runs in float64 across the six languages,
 decision predicates at eps 1e-9, pinned outputs rounded to six
 decimals and asserted within 1e-6, negative zero normalized to
-zero. The anchor application is icpc 2018 problem G (book 9,
+zero. The anchor application is icpc 2018 problem G (book 10,
 chapter 9), whose panda preserve builds voronoi cells by exactly
 this chapter's clip.
 
@@ -534,7 +534,7 @@ is 7 over sqrt(2), the max distance from vertex (0,0) to the line
 through (5,2) and (2,5). The collinear edge case degenerates to a
 2-point hull with diameter 3.0 and width 0, and every suite
 cross-checks the diameter against a brute vertex-pair scan. The
-honest contest note belongs here: icpc 2017 problem A (book 9,
+honest contest note belongs here: icpc 2017 problem A (book 10,
 chapter 8) asks for an optimal strip, and its answer equals the
 point-set diameter only in special shapes. The finals solution
 enumerates the O(n^2) vertex-pair chords, so this section
@@ -682,10 +682,10 @@ comparing cycles.
   cdraw.content((16.6, 4.6), [empty slab: c1 + c2 below 0], size: 6pt)
   cdraw.content((16.6, 3.7), [incremental deque, both cleanups], size: 6pt)
   cdraw.content((16.6, 2.8), [radius sqrt(34) to the far corner], size: 6pt)
-  cdraw.content((16.6, 1.9), [icpc 2018/G, book 9 chapter 9], size: 6pt)
+  cdraw.content((16.6, 1.9), [icpc 2018/G, book 10 chapter 9], size: 6pt)
 })
 
-The application is icpc 2018 problem G (book 9, chapter 9), the
+The application is icpc 2018 problem G (book 10, chapter 9), the
 panda preserve: each receiver's voronoi cell is built by exactly
 this clip, cell against cell, and the covering radius comes from
 voronoi vertices and edge crossings.
@@ -898,7 +898,7 @@ list grows to the 4 rim edges plus the 4 spokes (0,4), (1,4),
 exactly 1 nonempty cell. The property fixture runs the 37.3 fan
 test: every cell is convex and contains its site, and cell areas
 always sum to the box area. The application is icpc 2018 problem
-G (book 9, chapter 9) again, at n = 2000 receivers, this
+G (book 10, chapter 9) again, at n = 2000 receivers, this
 construction verbatim.
 
 #diagram([the four-corner box with the center site added, cells shaded, one shared edge bolded with its delaunay spoke], length: 13pt, {
@@ -1302,9 +1302,9 @@ no dedicated cp-algorithms article: the calipers section cites
 chapter 33 for the antipodal-pair argument, and the ottmann
 section cites "Search for a pair of intersecting segments" for the
 neighbor-ordering groundwork plus the same clrs chapter for the
-full sweep. Application sources: icpc 2018 problem G (book 9,
+full sweep. Application sources: icpc 2018 problem G (book 10,
 chapter 9) for the half-plane, voronoi, and planar-faces sections,
-and icpc 2017 problem A (book 9, chapter 8) cross-named as the
+and icpc 2017 problem A (book 10, chapter 8) cross-named as the
 calipers kin. Sample behavior verified by the six suite gates
 scoped to chapter 37: c 10 files and 113 checks, c\# 25 facts, go
 31 test functions, javascript 35 tests and 101 asserts across the

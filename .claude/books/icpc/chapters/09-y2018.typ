@@ -1,4 +1,4 @@
-// book 9, chapter 9: the icpc world finals 2018, eleven problems A
+// book 10, chapter 9: the icpc world finals 2018, eleven problems A
 // through K, six languages each, listings sliced from the landed
 // solver files under books/icpc/samples*/
 #import "../../theme/lib.typ": listing, callout, xref-to, diagram, cdraw
@@ -507,7 +507,7 @@ kill the alternatives together.
 
 With armies on the nodes of a weighted tree and a garrison requirement
 at every node, the task is a minimum-cost flow on a tree where only
-sources and sinks carry capacity. Book 8's chapter 38, network flows
+sources and sinks carry capacity. Book 9's chapter 38, network flows
 ii, develops the min-cost flow formulation this task reduces to. The
 shipped vehicle in all six languages is the convex tree dp from the
 sketch: each subtree keeps
@@ -681,7 +681,7 @@ memoized recursion over states with `a+b <= n+d`, O(n^2 d) terms
 `coef(x) = C(a,x) C(b-1,a-x-1) / C(a+b-1,b)`. All six languages
 evaluate it in floats with log-space binomials from a shared
 ln-factorial table, coefficients in [0,1] summing to 1, so the total
-error stays near 1e-11 against a 1e-6 bound. Book 8's chapter 35,
+error stays near 1e-11 against a 1e-6 bound. Book 9's chapter 35,
 combinatorics, builds the log-space binomial table and the
 stars-and-bars counts this recursion draws from.
 

@@ -1,4 +1,4 @@
-// book 13: written map grows chapter by chapter
+// book 14: written map grows chapter by chapter
 #import "../theme/lib.typ": book
 #import "manifest.typ": gamesystems
 

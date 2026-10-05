@@ -145,7 +145,7 @@ same graph, the cross-check the kuhn section below leans on.
   cdraw.content((16.4, 2.6), [cut side: residual-reachable], size: 6pt)
 })
 
-The application is icpc world finals 2017 problem J (book 9, chapter
+The application is icpc world finals 2017 problem J (book 10, chapter
 8), son of pipe stream, whose water-equivalent network is answered by
 four dinic runs over exactly this residual machinery, and the F3
 fixture above is its crafted sample.
@@ -363,7 +363,7 @@ the demands transform below handles honestly.
   cdraw.content((16.8, 2.2), [o(f v e) per spfa round], size: 6pt)
 })
 
-The application is icpc world finals 2018 problem C (book 9, chapter
+The application is icpc world finals 2018 problem C (book 10, chapter
 9), conquer the world, a min-cost flow on a tree whose finals solution
 runs a convex dp with heaps. This section pins the direct flow
 formulation the dp replaces.
@@ -709,12 +709,12 @@ complete 3 by 3 at 3.
   cdraw.content((6.6, 0.4), [delete 4 or 6: drops to 2], size: 6pt)
 })
 
-The applications are icpc world finals 2017 problem C (book 9,
+The applications are icpc world finals 2017 problem C (book 10,
 chapter 8), mission improbable, one matching per distinct crate height
 with m + n minus match piles left standing, icpc world finals 2022
-problem X (book 9, chapter 11), quartets, re-testing the 32-slot
+problem X (book 10, chapter 11), quartets, re-testing the 32-slot
 matching after every action and reporting the first failure, and icpc
-world finals 2025 problem B (book 9, chapter 13), blackboard game,
+world finals 2025 problem B (book 10, chapter 13), blackboard game,
 whose openings are decided by whether some maximum matching avoids the
 erased vertex.
 
@@ -1003,7 +1003,7 @@ holds, and 2, 2, 2 over m = 3 fails at q = 1 again.
   cdraw.content((14.2, 2.9), [the counting face of matching], size: 6pt)
 })
 
-The application is icpc world finals 2025 problem F (book 9, chapter
+The application is icpc world finals 2025 problem F (book 10, chapter
 13), herding cats, where variety lower bounds L(z) and the prefix
 sufficiency check are the whole solution. Hall has no dedicated
 cp-algorithms article, and the sources below cite the kuhn article
@@ -1042,7 +1042,7 @@ algorithm", cp-algorithms.com/graph/hungarian-algorithm.html, and
 "Assignment problem", cp-algorithms.com/graph/Assignment-problem-min-flow.html,
 all accessed 2026-09-20, cc by-sa 4.0, our own words and code
 throughout. Application sources: icpc world finals 2017 problems C and
-J, 2018 problem C, 2022 problem X, and 2025 problems B and F (book 9).
+J, 2018 problem C, 2022 problem X, and 2025 problems B and F (book 10).
 Sample behavior verified by the six suite gates scoped to chapter 38:
 c 9 files and 83 checks, c\# 28 facts, go 26 test functions,
 javascript 29 tests and 66 asserts across its two split files, python

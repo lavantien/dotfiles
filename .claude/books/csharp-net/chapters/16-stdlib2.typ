@@ -204,7 +204,7 @@ sample ships a stub handler answering every request offline:
 
 For real work, `IHttpClientFactory` manages handler lifetimes, and
 resilience policies, retries, timeouts, circuit breakers, live in
-`Microsoft.Extensions.Http.Resilience`, the same patterns book 10
+`Microsoft.Extensions.Http.Resilience`, the same patterns book 11
 implements by hand.
 
 == channels
@@ -244,7 +244,7 @@ consumer genuinely interleave, and `TryComplete` closes the stream so
   the producer concurrently, is the shape to copy.
 ])
 
-Channels are the in-process messaging primitive that book 10 builds
+Channels are the in-process messaging primitive that book 11 builds
 pipelines on, and `await foreach` from chapter 9 is how the reading
 side consumes them.
 
@@ -254,7 +254,7 @@ side consumes them.
 systems book gets deterministic replays. `Guid` names things.
 `Stopwatch` measures elapsed time without wall clock drift concerns.
 `DateTimeOffset` over `DateTime` when the moment matters across
-machines. `Interlocked` and `lock` belong to book 10's concurrency
+machines. `Interlocked` and `lock` belong to book 11's concurrency
 chapters:
 
 #listing("csharp-net/samples/src/Ch16/Streams.cs", first: 89, last: 94, caption: [seeded random, the determinism lever])
@@ -280,7 +280,7 @@ Diagnostics on this machine, `Stopwatch`, `dotnet-counters`,
 `dotnet-trace`, and the benchmarking and percentile discipline around
 them, get their full treatment in chapter 12. Authoring
 observability, `EventSource`, `DiagnosticListener`, and the metrics
-APIs you emit from a service, stays with book 10's distributed
+APIs you emit from a service, stays with book 11's distributed
 observability material.
 
 sources: learn.microsoft.com, system.text.json overview, system.io,

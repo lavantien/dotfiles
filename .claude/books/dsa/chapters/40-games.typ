@@ -231,7 +231,7 @@ itself is the kuhn section of #xref-to("dsa", "flows2").
   cdraw.content((6.0, 0.2), [one sweep, o(v + e)], size: 6pt)
 })
 
-The application is icpc world finals 2025 problem B (book 9, chapter
+The application is icpc world finals 2025 problem B (book 10, chapter
 13), blackboard game, the prime-multiple graph whose openings are
 decided by the matching characterization stated above, with the kuhn
 solver of chapter 38 doing the matching.
@@ -378,7 +378,7 @@ neither at a span of 3.
   cdraw.content((11.2, -0.5), [the schedule that works: 1-3, 4-6, 6-8], size: 6pt)
 })
 
-The application is icpc world finals 2017 problem H (book 9, chapter
+The application is icpc world finals 2017 problem H (book 10, chapter
 8), scenery, where the garey-johnson-simons-tarjan two-phase machine
 is exactly the fourth solver, and the shipped six-language solvers of
 the icpc book are its contest-grade siblings. When an instance
@@ -413,7 +413,7 @@ and "Optimal schedule of jobs given their deadlines and durations",
 cp-algorithms.com/schedules/schedule-with-completion-duration.html,
 all accessed 2026-09-20, cc by-sa 4.0, our own words and code
 throughout. Application sources: icpc world finals 2025 problem B and
-2017 problem H (book 9, chapters 13 and 8). Sample behavior verified
+2017 problem H (book 10, chapters 13 and 8). Sample behavior verified
 by the six suite gates scoped to chapter 40: c 3 files and 65 checks,
 c\# 12 facts, go 12 test functions, javascript 12 tests and 47
 asserts, python 3 files and 41 asserts, lua 12 checks, zero skipped.

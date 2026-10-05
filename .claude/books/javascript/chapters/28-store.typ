@@ -32,8 +32,9 @@ the stability question empirically: the import prints no
 not exist here, so the code never cites that flag. Inside one process
 the sync shape is the design, one event loop schedules every call,
 each call is short, no pool to size, no promise surface to await. The
-engine underneath answers `sqlite_version()` as 3.53.1, the known node
-delta against this corpus's 3.53.4 pins, stated once here.
+engine underneath answers `sqlite_version()` as 3.53.4 on node
+26.10.0, matching this corpus's pins; it answered 3.53.1 through the
+node 26.3.0 era, the known node delta, stated once here.
 
 Values ride placeholders, never concatenation. `exec` runs bare sql
 and exists for ddl and transaction control alone, `stmt` prepares once
@@ -55,7 +56,7 @@ file.
   cdraw.line((7.2, 4.2), (7.2, 3.6), stroke: luma(100), mark: (end: ">>"))
   stage(2.0, [DatabaseSync], [#"run, get, all, synchronous"], luma(235))
   cdraw.line((7.2, 1.9), (7.2, 1.3), stroke: luma(100), mark: (end: ">>"))
-  stage(-0.3, [sqlite 3.53.1 + wal], [#"one file, snapshot reads"], luma(245))
+  stage(-0.3, [sqlite 3.53.4 + wal], [#"one file, snapshot reads"], luma(245))
   pane(14.4, 22.6, 6.6, [the discipline], [values ride placeholders,], [exec carries none])
 })
 
@@ -239,10 +240,11 @@ daily active count is one `group by` over distinct users in day order,
 and the frozen report rows fall out exactly: seed the three events the
 vector's setup names and the query answers the pair of rows the
 contract freezes. The window functions are where one query replaces a
-loop, and the probe pinned them on this build's 3.53.1: the running
-total is `sum(active) over (order by day)`, and each user's first day
-is `row_number() over (partition by user_id)`. Both answered in the
-probe, so the chapter promises them.
+loop, and the probe pinned them on this build's engine, on 3.53.1 at
+first measure and again on the 3.53.4 that node 26.10.0 bundles: the
+running total is `sum(active) over (order by day)`, and each user's
+first day is `row_number() over (partition by user_id)`. Both answered
+in the probe, so the chapter promises them.
 
 The queries stay in sql because the engine's own aggregation is the
 honest tool, and the rows leave the family as plain objects, the

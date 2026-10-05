@@ -248,7 +248,7 @@ the c book dissects, integer representation in #xref-to("c-os-cloud",
 "machine") and float autovectorization in #xref-to("c-os-cloud",
 "opt").
 
-The reading order continues at book 8, where every algorithm this book
+The reading order continues at book 9, where every algorithm this book
 used as a black box gets built from scratch.
 
 #callout("verify", "recounting this chapter", [

@@ -1,6 +1,6 @@
-// book 7 manifest: chapter registry used by cross references and stubs
+// book 8 manifest: chapter registry used by cross references and stubs
 #let luabook = (
-  num: 7,
+  num: 8,
   volume: false,
   title: "lua 5.5",
   meta: (
@@ -8,7 +8,7 @@
     subtitle: "a complete language manual",
     author: "gabriel la",
     version: "5.0",
-    volume-label: "book 7",
+    volume-label: "book 8",
   ),
   chapters: (
     (id: "toolchain", num: 1, title: "toolchain"),

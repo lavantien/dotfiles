@@ -196,7 +196,7 @@ inheritance explicit opt-in, and renamed events to
 `htmx:phase:action`, but the surface this chapter uses is the same
 as 2.x: `hx-get`, `hx-post`, `hx-trigger`, `hx-target`, `hx-swap`.
 
-The vendoring recipe is book 8's, reused exactly. The `next`-tagged
+The vendoring recipe is book 9's, reused exactly. The `next`-tagged
 npm package `htmx.org@4.0.0` ships `dist/htmx.min.js`, 36,716
 bytes, its SHA-384 digest matches the published SRI value byte for
 byte, and the file lives in the project's `wwwroot/js` with the

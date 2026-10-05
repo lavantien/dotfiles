@@ -1,6 +1,6 @@
-// book 11 manifest: chapter registry used by cross references and stubs
+// book 12 manifest: chapter registry used by cross references and stubs
 #let infrastructure = (
-  num: 11,
+  num: 12,
   volume: false,
   title: "infrastructure: docker, databases, and testing",
   meta: (
@@ -8,7 +8,7 @@
     subtitle: "an engineering handbook",
     author: "gabriel la",
     version: "2.0",
-    volume-label: "book 11",
+    volume-label: "book 12",
   ),
   chapters: (
     (id: "toolchain", num: 1, title: "the toolchain: docker on windows"),

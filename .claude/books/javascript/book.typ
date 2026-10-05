@@ -1,4 +1,4 @@
-// book 4: written chapters are included, the rest render as stubs until authored
+// book 6: written chapters are included, the rest render as stubs until authored
 #import "../theme/lib.typ": book
 #import "manifest.typ": jsbook
 

@@ -1,4 +1,4 @@
-// book 5: written map grows chapter by chapter
+// book 7: written map grows chapter by chapter
 #import "../theme/lib.typ": book
 #import "manifest.typ": pybook
 

@@ -327,7 +327,7 @@ frozen original.
   [lua], [936], [checks, the run.lua runner], [`make verify-lua`],
 )
 
-The icpc toolbox suites ride beside these in book 9 and share
+The icpc toolbox suites ride beside these in book 10 and share
 the same six toolchains, 26 c\# tests, 36 javascript tests, 67
 python asserts, and 45 lua checks over 6 to 10 files per language.
 

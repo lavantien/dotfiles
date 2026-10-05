@@ -150,6 +150,6 @@ service and its own file.
 
 sources: sqlite.org wal.html and the crash semantics chapters behind
 the probes already cited, accessed 2026-09-10; the three cross
-referenced stores live in books 8, 10, and 13 and are tested by their
+referenced stores live in books 9, 11, and 14 and are tested by their
 own suites under `make verify`. Verified by the capstone store suite,
 4 tests, and the ch07 and ch08 probes, green 2026-09-10.

@@ -1,4 +1,4 @@
-// book 13 pinned sources, each row carries its verified access date
+// book 14 pinned sources, each row carries its verified access date
 #let sources = (
   (topic: "ddtank customizable characters and weapon upgrading",
    url: "https://ddtank-us.fandom.com/wiki/Games",

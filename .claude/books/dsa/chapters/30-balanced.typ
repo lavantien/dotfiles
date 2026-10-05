@@ -12,7 +12,7 @@ pairs it with two meldable heaps that lean on the same coin-flip
 reasoning, and closes with the two order-statistic structures built on
 top: rank and select over a fenwick tree of frequencies, and the
 implicit treap that keys nodes by array position instead. The
-flagship application is icpc world finals 2019 problem F (book 9,
+flagship application is icpc world finals 2019 problem F (book 10,
 chapter 10), a rainfall dp that runs on exactly this treap, and its
 rebuild-versus-depth-gate decision is the one the sample suites pin.
 
@@ -164,7 +164,7 @@ with no allocation, and erasing an absent key is a no-op.
   cdraw.content((cx + 2.2, -1.0), [gate = 3 ceil(log2(n+1)) + 8], size: 6pt)
 })
 
-The application is icpc world finals 2019 problem F (book 9, chapter
+The application is icpc world finals 2019 problem F (book 10, chapter
 10), directing rainfall. The shipped solver's piecewise dp lives on a
 run treap with lazy adds, subtree min and max, and splits at cell
 boundaries, and its authors faced exactly this chapter's decision:
@@ -550,7 +550,7 @@ rank/select extension is taught in our own words, and "K-th order
 statistic in O(N)", cp-algorithms.com/sequences/k-th.html, the
 quickselect kin, all accessed 2026-09-20, cc by-sa 4.0, our own words
 and code throughout. Application source: icpc world finals 2019
-problem F (book 9, chapter 10). Sample behavior verified by the six
+problem F (book 10, chapter 10). Sample behavior verified by the six
 suite gates scoped to chapter 30: c 3 files and 82 checks, c\# 17
 facts, go 12 test functions, javascript 13 tests and 73 asserts,
 python 3 files and 57 asserts, lua 14 checks, zero skipped.

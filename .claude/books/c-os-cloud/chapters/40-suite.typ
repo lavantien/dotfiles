@@ -262,8 +262,8 @@ The closer maps each layer to the fact it establishes, the grid below.
 The cross-lane claim is checkable in the tree: five books carry the 16
 vectors byte-identical today, go as the oracle with c, csharp,
 javascript, and python as mirrors, one rolling hash over the set, and
-the program's later lanes join the same spine when they land, lua and
-typescript on the same vectors and the same hash.
+the program's later lanes join the same spine when they land, lua,
+typescript, and java on the same vectors and the same hash.
 
 The honest boundary is the one the composition chapter paid to learn,
 and the suite is what could not see it. Three defects lived green under

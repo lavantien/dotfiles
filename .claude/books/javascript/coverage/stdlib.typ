@@ -46,7 +46,7 @@
   (component: "live bindings, dynamic import, import.meta", chapter: "modules", status: "covered"),
   (component: "node:test and node:assert/strict", chapter: "toolchain", status: "covered"),
   (component: "node:fs, node:path, node:child_process probes", chapter: "typemodules", status: "covered"),
-  (component: "node:sqlite, DatabaseSync, Symbol.dispose", chapter: "capstone", status: "covered, engine 3.53.1 measured"),
+  (component: "node:sqlite, DatabaseSync, Symbol.dispose", chapter: "capstone", status: "covered, engine 3.53.4 measured on node 26.10.0"),
   // 3.0 runtime deep dives
   (component: "node:v8, getHeapSpaceStatistics, heap spaces", chapter: "heap", status: "covered, 15 spaces measured on 26.3.0"),
   (component: "ArrayBuffer external memory, memoryUsage counters", chapter: "heap", status: "covered, arrayBuffers against heapUsed measured"),

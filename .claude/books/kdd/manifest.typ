@@ -1,6 +1,6 @@
-// book 12 manifest: chapter registry used by cross references and stubs
+// book 13 manifest: chapter registry used by cross references and stubs
 #let kddbook = (
-  num: 12,
+  num: 13,
   volume: false,
   title: "knowledge discovery",
   meta: (
@@ -8,7 +8,7 @@
     subtitle: "from preprocessing to self-organizing maps in c23, with a go and duckdb capstone",
     author: "gabriel la",
     version: "2.0",
-    volume-label: "book 12",
+    volume-label: "book 13",
   ),
   chapters: (
     (id: "process", num: 1, title: "the knowledge discovery process"),

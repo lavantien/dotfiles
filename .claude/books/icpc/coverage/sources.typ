@@ -1,4 +1,4 @@
-// book 9 pinned sources, puzzle text is never reproduced, only linked
+// book 10 pinned sources, puzzle text is never reproduced, only linked
 #let sources = (
   (topic: "icpc world finals 2017 problems and solutions, icpc foundation",
    url: "https://icpc.global/worldfinals/problems/2017-ICPC-World-Finals/icpc2017.pdf",

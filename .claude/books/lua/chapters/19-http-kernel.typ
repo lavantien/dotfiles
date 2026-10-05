@@ -186,7 +186,7 @@ never echoed:
 
 == json in and out
 
-Book 7 at 4.0 owns no json encoder, so the service rolls its own and
+Book 8 at 4.0 owns no json encoder, so the service rolls its own and
 this chapter is the book's home for encoding discipline. The decoder
 is a position scanner, recursive descent over the string, strict the
 way input deserves: duplicate members, trailing garbage, control

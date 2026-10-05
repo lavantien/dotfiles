@@ -1,4 +1,4 @@
-// book 11 pinned sources, each row carries its verified access date
+// book 12 pinned sources, each row carries its verified access date
 #let sources = (
   (topic: "sqlite change log, 3.53.4 released 2026-07-24",
    url: "https://www.sqlite.org/changes.html",

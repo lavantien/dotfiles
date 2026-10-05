@@ -1,4 +1,4 @@
-// book 9, chapter 7: the lua toolbox. nine modules plus their own
+// book 10, chapter 7: the lua toolbox. nine modules plus their own
 // lib.lua in books/icpc/samples-lua/, one runner, listings sliced
 // from the landed files
 #import "../../theme/lib.typ": listing, callout, xref-to, diagram, cdraw

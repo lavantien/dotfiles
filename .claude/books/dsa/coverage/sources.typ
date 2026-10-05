@@ -1,4 +1,4 @@
-// book 8 pinned sources, accessed and verified 2026-09-08 and 2026-09-20
+// book 9 pinned sources, accessed and verified 2026-09-08 and 2026-09-20
 #let sources = (
   (topic: "collections and spans",
    url: "https://learn.microsoft.com/en-us/dotnet/standard/collections/",

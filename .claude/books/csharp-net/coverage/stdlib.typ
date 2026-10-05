@@ -30,7 +30,7 @@
   (component: "source generators", chapter: "reflection", status: "covered, real generator in suite"),
   (component: "Linq operators", chapter: "linq", status: "covered"),
   (component: "LeftJoin, RightJoin, FullJoin", chapter: "linq", status: "covered"),
-  (component: "Threading, locks, Interlocked", chapter: "async", status: "pointer to book 10"),
+  (component: "Threading, locks, Interlocked", chapter: "async", status: "pointer to book 11"),
   (component: "Exceptions hierarchy", chapter: "exceptions", status: "covered"),
-  (component: "diagnostics, metrics, EventSource", chapter: "profilers", status: "covered, language-level; book 10 keeps distributed observability"),
+  (component: "diagnostics, metrics, EventSource", chapter: "profilers", status: "covered, language-level; book 11 keeps distributed observability"),
 )

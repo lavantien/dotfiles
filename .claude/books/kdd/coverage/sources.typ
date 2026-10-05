@@ -1,4 +1,4 @@
-// book 12 pinned sources, every external claim carries a dated url
+// book 13 pinned sources, every external claim carries a dated url
 #let sources = (
   (topic: "robust z definition", url: "Leys, Allen, Fisher, Lumley 2013, Detecting outliers: Do not use standard deviation around the mean, use absolute deviation around the median, J. Exp. Soc. Psych. 49(4) 764-766", accessed: "2026-09-22"),
   (topic: "play-tennis dataset", url: "Mitchell, Machine Learning, McGraw-Hill 1997, Table 3.2 p. 59 (after Quinlan 1986, Machine Learning 1:81-106)", accessed: "2026-09-22"),

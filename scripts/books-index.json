@@ -19,6 +19,12 @@
       "capstone_short": "concurrent crawler, indexer, and web ui",
       "walkthroughs": "http kernel service build (ch 18 to 29) with its test suite (ch 30), numerical statistics, fitting, and the offline engine with its js twin (ch 31 to 33)"
     },
+    "java": {
+      "summary": "a java 27 manual pinned to jdk 27 (ga 2026-09-15): toolchain, the version ladder from java 8 to 27 release by release, lexical through reflection and security, then a 13 chapter http service on jdk.httpserver with virtual threads, a hand-rolled rfc 8259 json writer, hmac jwt, and a file-backed wal store. 33 chapters, junit console discipline throughout, coverage appendices track keyword arrivals, the stdlib census, and 35 pinned sources.",
+      "capstone": "the line clone (ch 32): chat over a hand-rolled rfc 6455 websocket on a raw ServerSocketChannel, rooms with history, typing, and read state, an embeddable mini app runtime over the same wire with four apps (quick poll, rock paper scissors duel, sketchpad, 2048), and a mobile-first react 19.3 frontend, 131 junit plus 21 web tests and an e2e suite driving the real server through all four apps.",
+      "capstone_short": "the line clone",
+      "walkthroughs": "the version ladder from java 8 to java 27 (ch 2), http service build kernel to suite (ch 19 to 31), the line clone capstone (ch 32)"
+    },
     "csharp-net": {
       "summary": "c# 15 manual on .net 11 with an f# 11 tour: type system, patterns, async, memory, allocation, profilers, reflection and source generators, linq, stdlib tours, functional programming, then a full api service build. 36 chapters. coverage appendices track 125 keywords plus stdlib components.",
       "capstone": "a small language interpreter (ch 35): test-first interpreter with a ref struct span lexer, c# 15 union syntax tree through System.Text.Json, pattern-matching checker, async evaluator, source-generated builtin table, sqlite persistence, 54 xunit tests.",

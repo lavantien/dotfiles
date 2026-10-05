@@ -116,7 +116,7 @@ have ready: kafka exposes the offset and lets the consumer commit
 it, jetstream tracks delivery per consumer with explicit acks,
 both redeliver on timeout or nack, and the choice between them is
 ecosystem and operations, topic partitioning and mirror making
-versus jetstream's simpler single-binary model. Book 11's
+versus jetstream's simpler single-binary model. Book 12's
 #xref-to("infrastructure", "jetstream") chapter carries the full
 comparison against its own running capstone.
 

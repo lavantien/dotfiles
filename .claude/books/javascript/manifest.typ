@@ -1,6 +1,6 @@
-// book 5 manifest: chapter registry used by cross references and stubs
+// book 6 manifest: chapter registry used by cross references and stubs
 #let jsbook = (
-  num: 5,
+  num: 6,
   volume: false,
   title: "javascript es2026 and typescript 7",
   meta: (
@@ -8,7 +8,7 @@
     subtitle: "a complete manual for two layers",
     author: "gabriel la",
     version: "6.1",
-    volume-label: "book 5",
+    volume-label: "book 6",
   ),
   // the book is javascript first: chapters 1-10 are the runtime
   // without a build step, 11-20 the typescript layer, 21-22 the

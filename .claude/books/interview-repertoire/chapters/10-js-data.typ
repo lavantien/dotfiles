@@ -111,12 +111,12 @@ one standalone script rather than the package's ESM modules:
   cdraw.content((12.0, 1.5), [outside npm run verify on purpose: the gate stays offline], size: 6.5pt)
 })
 
-Run it against the compose stack of book 11: `docker compose up
+Run it against the compose stack of book 12: `docker compose up
 -d`, then `mongosh mongodb://localhost:27017 shop --file
 real/import.mjs`, and compare the printed totals with the suite's.
 It is deliberately outside `npm run verify`: the gate stays
 offline and deterministic, and the network path is a separate,
-named step, the same split book 11 uses for its docker-gated
+named step, the same split book 12 uses for its docker-gated
 suites.
 
 sources: batch insert and driver behavior from the mongodb manual,

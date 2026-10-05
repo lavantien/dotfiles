@@ -1,4 +1,4 @@
-// book 13 topic coverage matrix, one row per topic per chapter
+// book 14 topic coverage matrix, one row per topic per chapter
 #let topics = (
   (topic: "fixed timestep accumulator", chapter: "gameloop", cost: "sim and render decouple", bcl: "kni Game IsFixedTimeStep"),
   (topic: "spiral of death clamp", chapter: "gameloop", cost: "backlog dropped on stall", bcl: "framework catch up budget"),

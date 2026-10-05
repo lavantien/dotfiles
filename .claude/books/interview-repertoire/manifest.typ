@@ -1,6 +1,6 @@
-// book 15 manifest: chapter registry used by cross references and stubs
+// book 16 manifest: chapter registry used by cross references and stubs
 #let repertoire = (
-  num: 15,
+  num: 16,
   volume: false,
   title: "the interview repertoire",
   meta: (
@@ -8,7 +8,7 @@
     subtitle: "working answers for frequent questions",
     author: "gabriel la",
     version: "4.2",
-    volume-label: "book 15",
+    volume-label: "book 16",
   ),
   chapters: (
     (id: "landscape", num: 1, title: "the 2026 interview landscape"),

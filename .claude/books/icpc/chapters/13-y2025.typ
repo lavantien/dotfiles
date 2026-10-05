@@ -1,4 +1,4 @@
-// book 9, chapter 13: the 2025 world finals. twelve problems, a
+// book 10, chapter 13: the 2025 world finals. twelve problems, a
 // through l, six languages each, listings sliced from the landed files
 #import "../../theme/lib.typ": listing, callout, xref-to, diagram, cdraw
 
@@ -348,11 +348,11 @@ above n/4 and at most n/3, opening 2p leaves the six semiprimes 2p,
 the book cuts over at n = 200, the pdf noting any cutoff between about
 200 and 1e5 serves
 (#link("https://worldfinals.icpc.global/problems/2025/finals/problems/problemset.pdf")[statement],
-solutions.pdf pp. 2-3). Book 8's chapter 38, network flows ii, builds
+solutions.pdf pp. 2-3). Book 9's chapter 38, network flows ii, builds
 kuhn's augmenting-path matching that the small-n engine runs here.
-Book 8's chapter 40, game theory and scheduling, collects the
+Book 9's chapter 40, game theory and scheduling, collects the
 games-on-graphs strategy arguments the matching criterion
-instantiates. Book 8's chapter 28, advanced number theory, carries the
+instantiates. Book 9's chapter 28, advanced number theory, carries the
 primality testing behind the Bertrand prime hunt, and the c engine
 opens the walkthrough.
 
@@ -524,7 +524,7 @@ r = 2 is a one-dimensional search over the single free weight, and
 r = 3 nests one more level on the simplex, about 200 iterations per
 level holding the error near 1e-9
 (#link("https://worldfinals.icpc.global/problems/2025/finals/problems/problemset.pdf")[statement],
-solutions.pdf p. 3). Book 8's chapter 36, numerical methods, develops
+solutions.pdf p. 3). Book 9's chapter 36, numerical methods, develops
 the lp duality and dual weights this reduction rests on together with
 the ternary and golden-section searches that scan the reservoir
 simplex.
@@ -944,7 +944,7 @@ because filling pots left to right always leaves a legal variety for
 the next pot. Both are checkable in one sorted pass, O(n + m + K log K)
 with K the total like count
 (#link("https://worldfinals.icpc.global/problems/2025/finals/problems/problemset.pdf")[statement],
-solutions.pdf pp. 4-5). Book 8's chapter 38, network flows ii, states
+solutions.pdf pp. 4-5). Book 9's chapter 38, network flows ii, states
 hall's theorem in exactly this prefix form and proves it, the
 matching argument the two conditions encode.
 
@@ -1093,7 +1093,7 @@ tracks each component's total length as a linear function a + b*h plus
 west and east border flags. The answer for an anchor vertex is the
 cheapest component touching both borders, O(n log^2 n)
 (#link("https://worldfinals.icpc.global/problems/2025/finals/problems/problemset.pdf")[statement],
-solutions.pdf p. 5). Book 8's chapter 31, sqrt decomposition and
+solutions.pdf p. 5). Book 9's chapter 31, sqrt decomposition and
 offline queries, builds this offline dynamic connectivity from
 scratch, the segment tree over time carrying the edge lifetimes and
 the rollback union-find holding the growing chains. Two solved teams
@@ -1254,7 +1254,7 @@ value mod g per position tracking the best count of the target digit,
 with m's own length staying tight along m's digits, a sieve to about
 2e6 plus 9 digits by 19 lengths by g by 10 in the dp
 (#link("https://worldfinals.icpc.global/problems/2025/finals/problems/problemset.pdf")[statement],
-solutions.pdf pp. 5-6). Book 8's chapter 35, combinatorics, carries
+solutions.pdf pp. 5-6). Book 9's chapter 35, combinatorics, carries
 the frobenius numerical-semigroup bound this split rides on.
 
 The worked run: trace the model on sample 1, m = 1000 with the values 60, 100, 222, and 650. The generators share gcd 2, and m sits inside the sieve tier, so the reachable scores are enumerated outright and the nine counts read off their witnesses, the table. The cap itself is reachable, 1000 = 10 × 100, and supplies three 0 signs, 222 with its multiples 444 and 666 supplies three 2s, 4s, and 6s, 770 = 650 + 2 × 60 supplies two 7s, 888 = 4 × 222 supplies three 8s, and no reachable score repeats a 1, a 3, or a 5, the repeated-1 candidates 110 through 118 all missing from the semigroup and 1100 sitting past the cap, so those digits peak at one sign, and the trace ends at the printed answer `8 3`.

@@ -132,7 +132,7 @@ The probe asserts the float sum is not exactly 1999, the drift premise
 is real and not folklore, then asserts the integer cent sum is exact.
 The rule it backs: store cents, add and compare in integers, format
 for humans at the edge where the decimal point is a display concern.
-The game shop in book 13 prices stock in whole gold for the same
+The game shop in book 14 prices stock in whole gold for the same
 reason, no rounding anywhere near a balance.
 
 == strict tables

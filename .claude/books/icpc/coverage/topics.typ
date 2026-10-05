@@ -1,4 +1,4 @@
-// book 9 topic matrix: the wave 1 toolbox chapters, the six finals
+// book 10 topic matrix: the wave 1 toolbox chapters, the six finals
 // chapters, and the fast arithmetic chapter: one row per problem, 68
 // problems across 2017-2025, plus five chapter 14 topics
 #let topics = (

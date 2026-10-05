@@ -1,4 +1,4 @@
-// book 9, chapter 10: icpc world finals 2019. eleven problems, letters
+// book 10, chapter 10: icpc world finals 2019. eleven problems, letters
 // A through K, each walked in six languages over the frozen solver
 // trees under samples-c, samples, samples-go, samples-js, samples-py,
 // and samples-lua
@@ -939,7 +939,7 @@ component that peels entirely is a tree, where only the original leaf
 entrances survive redundancy pruning, and otherwise every street with
 exactly one peeled endpoint keeps its sign at the core endpoint, since
 everything on the peeled branch reaches that entrance without a
-U-turn (solutions.pdf p. 4, O(n + m)). Book 8's chapter 39, graph
+U-turn (solutions.pdf p. 4, O(n + m)). Book 9's chapter 39, graph
 connectivity and decomposition, builds this 2-core peel, degree queues
 and all, from scratch. The six peelings follow.
 
@@ -1218,7 +1218,7 @@ the trace ends at the printed answer `2`.
 The vehicle is the year's own: V lives as a run treap, equal-value
 runs in a treap with subtree min and max, lazy addition, and
 cell-boundary splits and merges, ported from the judge-green go
-implementation. Book 8's chapter 30, balanced trees and order
+implementation. Book 9's chapter 30, balanced trees and order
 statistics, builds this treap from scratch, lazy adds and subtree
 aggregates included. Run cuts cannot keep a treap heap-consistent under
 adversarial cut orders, so the vehicle rebuilds, and the rebuild
@@ -1561,7 +1561,7 @@ node whose ring entry is reached within k legs, ring nodes at distance
 zero included, adds one to the forward ring arc of length
 min(k - dist + 1, ring length) starting at its entry, accumulated with
 a wrapped difference array, and ring answers are the arc prefix sums
-while tree answers are g (solutions.pdf pp. 5-6, O(n)). Book 8's
+while tree answers are g (solutions.pdf pp. 5-6, O(n)). Book 9's
 chapter 39, graph connectivity and decomposition, develops the
 functional graph itself, this ring-with-hanging-trees decomposition
 included. The six tree walks follow.
@@ -1796,7 +1796,7 @@ state means the evaluation cannot terminate and every state it
 touched goes divergent, and results are caller-independent so the
 memo carries across all programs (solutions.pdf pp. 6-7, O(rcs) over
 the configuration space times the code). The interpreter machine is
-book 8's chapter 27, an opcode machine, a memoized program-counter
+book 9's chapter 27, an opcode machine, a memoized program-counter
 interpreter with configuration-space cycle detection, and this letter
 is its contest form. The machine runs in two vehicles
 here: c, javascript, and python evaluate over an explicit resume
@@ -2150,9 +2150,9 @@ reduced periods share a prime join one group whose modulus is the
 least common multiple of the members, since their free phases
 correlate through the shared j residue, distinct groups are
 independent by the chinese remainder theorem, and the q = 1 lights
-form one extra group of period one. Book 8's chapter 16, number
+form one extra group of period one. Book 9's chapter 16, number
 theory and modular arithmetic, develops the chinese remainder theorem
-this independence rides on, and book 8's chapter 28, advanced number
+this independence rides on, and book 9's chapter 28, advanced number
 theory, reconstructs each merged residue the garner way. Per residue
 t0, each group walks
 its lights in position order over its k phases for first-red counts

@@ -1,6 +1,6 @@
-// book 6 manifest: chapter registry used by cross references and stubs
+// book 7 manifest: chapter registry used by cross references and stubs
 #let pybook = (
-  num: 6,
+  num: 7,
   volume: false,
   title: "python 3.14",
   meta: (
@@ -8,7 +8,7 @@
     subtitle: "a complete language manual",
     author: "gabriel la",
     version: "4.0",
-    volume-label: "book 6",
+    volume-label: "book 7",
   ),
   chapters: (
     (id: "toolchain", num: 1, title: "toolchain: cpython 3.14 on windows"),

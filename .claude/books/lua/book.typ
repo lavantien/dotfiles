@@ -1,4 +1,4 @@
-// book 6: all chapters written, the written map is complete
+// book 8: all chapters written, the written map is complete
 #import "../theme/lib.typ": book
 #import "manifest.typ": luabook
 

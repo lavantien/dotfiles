@@ -1,4 +1,4 @@
-// official sources pinned for book 4, with access dates
+// official sources pinned for book 5, with access dates
 #let sources = (
   (topic: "keyword and contextual keyword inventory", url: "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/", accessed: "2026-09-08"),
   (topic: "what is new in c# 14", url: "https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-14", accessed: "2026-09-07"),

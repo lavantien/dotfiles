@@ -1,4 +1,4 @@
-// book 9, chapter 12: icpc world finals 2023, problems A through K,
+// book 10, chapter 12: icpc world finals 2023, problems A through K,
 // six languages per problem, listings sliced from the frozen solver
 // files under books/icpc/samples*
 #import "../../theme/lib.typ": listing, callout, xref-to, diagram, cdraw
@@ -226,7 +226,7 @@ legs by Cramer's rule and the other survivors cross-check them, and
 exactly one hypothesis survives, the argument on the solutions pdf
 page 2, problem at
 #link("https://icpc.global/worldfinals/problems/2023-ICPC-World-Finals/icpc2023.pdf")[icpc2023.pdf].
-Book 8's chapter 34, linear algebra, builds the determinant screen
+Book 9's chapter 34, linear algebra, builds the determinant screen
 and the small-system solve this lie isolation rests on. The last row
 is not negotiable: replacing (1,2,3) with (1,1,2) or (0,1,2) creates
 dependent triples and breaks the guarantee. The deduction is O(1)
@@ -428,7 +428,7 @@ lexicographic order, team 1 taking the largest, and repeat the block
 cyclically to w weeks, `O(n*k)` after a tiny binomial search, the
 construction on the solutions pdf pages 2 and 3, problem at
 #link("https://icpc.global/worldfinals/problems/2023-ICPC-World-Finals/icpc2023.pdf")[icpc2023.pdf].
-Book 8's chapter 35, combinatorics, teaches the binomial search
+Book 9's chapter 35, combinatorics, teaches the binomial search
 over ordered selections that pins this k. Descending lex is the
 canonical output every suite pins.
 
@@ -1133,7 +1133,7 @@ string to the end string, which is the end string searched inside the
 doubled start cycle, every match at offset a yielding the congruence
 n = a (mod m) for m the cycle length, problem at
 #link("https://icpc.global/worldfinals/problems/2023-ICPC-World-Finals/icpc2023.pdf")[icpc2023.pdf].
-Book 8's chapter 33, string algorithms ii, builds the rotation match
+Book 9's chapter 33, string algorithms ii, builds the rotation match
 on the doubled cycle, z-function and all, that this coset search
 runs on. Two contracts the sketch leaves open, and every porting
 language hits both. First, the congruences, per cycle the valid
@@ -1143,7 +1143,7 @@ lcm, the accumulator was observed overflowing 64-bit at 1.9e18 and
 then by a factor of 185. Keep one canonical residue per distinct
 modulus and check every pair with the gcd of the two moduli dividing
 the difference of the two residues, which is a chinese-remainder
-consistency check in plain text, no constructed solution. Book 8's
+consistency check in plain text, no constructed solution. Book 9's
 chapter 16, number theory and modular arithmetic, develops the
 chinese-remainder residue merge over shared prime groups that this
 pairwise check stands in for. Moduli divide their cycle lengths, so
@@ -1931,7 +1931,7 @@ shortcut can freeze early when refinements with larger distances pop
 late, and the pdf itself notes every contest team used value
 iteration, problem at
 #link("https://icpc.global/worldfinals/problems/2023-ICPC-World-Finals/icpc2023.pdf")[icpc2023.pdf].
-Book 8's chapter 32, dynamic programming ii, develops this style of
+Book 9's chapter 32, dynamic programming ii, develops this style of
 value iteration over the word-multiset states.
 
 The worked run: trace the model on sample 1. The five printed dice

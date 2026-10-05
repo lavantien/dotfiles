@@ -94,7 +94,7 @@ brute enumeration of all cut masks. The meter is the point: 39
 candidate evaluations across three layers against 45 for the full
 scan, 15 per layer. The edges cover k = n, all singles, k = 1, and
 the k past n layers staying infeasible. The application is icpc
-world finals 2017 problem D (book 9, chapter 8), money for nothing:
+world finals 2017 problem D (book 10, chapter 8), money for nothing:
 after pruning producers and consumers to staircases, the best
 consumer index for the middle producer is found by exactly this
 monotone-optimum divide and conquer at O((m+n) log n).
@@ -307,7 +307,7 @@ columns 2 and 3, and the reference cross-checked 300 random grids
 against brute-force rectangles. Tiling runs O(n 2^m) and the
 submatrix O(rows times cols). The counting cousin, the
 tiling-tiles style sweep of icpc world finals 2023 problem F
-(book 9, chapter 12), stays in the icpc book.
+(book 10, chapter 12), stays in the icpc book.
 
 #diagram([the 3 by 4 grid mid-sweep with its protrusion mask, beside the 4 by 6 zero matrix as height bars with the 8-cell rectangle shaded], length: 13pt, {
   // left: 3x4 grid, column 1 filling: incoming mask 100 (row 0 protrudes),
@@ -434,7 +434,7 @@ costs 0, the single element costs 0, 10, 1, 1 costs 9, and 4, 4, 8,
 -2 and costs 7, holds 5, 5, 5 at 2 through z 5, 4, 3, and 1, 1, 1
 at 2. The reference cross-checked 400 random instances against an
 independent dp ground truth for both variants. The kin application
-is icpc world finals 2022 problem S (book 9, chapter 11), bridging
+is icpc world finals 2022 problem S (book 10, chapter 11), bridging
 the gap: its judge-green engine is a pull-based dp row sweep whose
 offers live in lazily-shifted window heaps, the same lazy-offset
 heap idiom, kin to the classic objective rather than an instance of
@@ -532,7 +532,7 @@ state rolling toward the goal at one sixth: V converges to exactly
 6. The edges cover a goal-only mdp at 0, an unreachable state
 keeping its initialized 0 by stated convention, and a state whose
 every action leads to the goal. The application is icpc world
-finals 2023 problem K (book 9, chapter 12), alea iacta est: the
+finals 2023 problem K (book 10, chapter 12), alea iacta est: the
 7^d expected-rolls mdp solved by value iteration, the approach
 every contest team used where the editorial ran the backward
 dijkstra of #xref-to("dsa", "shortestpaths").
@@ -587,7 +587,7 @@ amortized-doubling argument as the dynamic array growth of
 of capacity. The consumers are the standard trio: dsu component
 lists, subtree queries that merge children into the heaviest first,
 and heavy path bookkeeping in tree decompositions. The kin
-application is icpc world finals 2025 problem E (book 9, chapter
+application is icpc world finals 2025 problem E (book 10, chapter
 13), delivery service, whose component-merge accounting runs on
 exactly this lemma. No samples ship for it: the proof is the
 doubling ladder below, and the tree structures that consume it
@@ -704,9 +704,9 @@ cp-algorithms.com/dynamic_programming/zero_matrix.html, all accessed
 2026-09-20, cc by-sa 4.0, our own words and code throughout. The
 slope trick and value iteration sections have no cp-algorithms
 article and stand as general techniques with their icpc applications
-as sources: icpc world finals 2017 problem D (book 9, chapter 8),
-2022 problem S (book 9, chapter 11), 2023 problem K (book 9,
-chapter 12), and 2025 problem E (book 9, chapter 13) as the kin
+as sources: icpc world finals 2017 problem D (book 10, chapter 8),
+2022 problem S (book 10, chapter 11), 2023 problem K (book 10,
+chapter 12), and 2025 problem E (book 10, chapter 13) as the kin
 clause of the last section. Sample behavior verified by the six
 suite gates scoped to chapter 32: c 5 files and 129 checks, c\# 23
 facts, go 19 test functions, javascript 18 tests and 66 asserts,

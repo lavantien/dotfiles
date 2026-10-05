@@ -339,7 +339,7 @@ articulation vertex at all, the root trap: the root has one child.
   cdraw.content((2.6, 0.9), [the ringed 2 appears on both sides], size: 6pt)
 })
 
-The application is icpc world finals 2022 problem R (book 9, chapter
+The application is icpc world finals 2022 problem R (book 10, chapter
 11), zoo management, which drops every bridge and solves each
 2-edge-connected component alone. The online variant, bridges under
 edge insertion via link-cut machinery, is one prose paragraph in the
@@ -849,7 +849,7 @@ and 1, 3, 3 at k = 2, the ring saturating as the budget grows.
   cdraw.content((4.2, 1.5), [answers 1, 3, 3, 3, 4, 2, 1], size: 6pt)
 })
 
-The application is icpc world finals 2019 problem H (book 9, chapter
+The application is icpc world finals 2019 problem H (book 10, chapter
 10), hobson's trains, exactly this structure at n of 5e5 with
 k-th-ancestor counts and ring difference arrays, and the chapter
 sample is the contest's own crafted case.
@@ -937,7 +937,7 @@ sides and survive.
   cdraw.content((3.0, 1.6), [one queue, degree drops drive it], size: 6pt)
 })
 
-The application is icpc world finals 2019 problem E (book 9, chapter
+The application is icpc world finals 2019 problem E (book 10, chapter
 10), dead-end detector, this peel plus a sign-placement rule on the
 boundary edges, and the fixture above is its sample graph.
 
@@ -1052,7 +1052,7 @@ the ancestor, and every cycle of the graph becomes a directed cycle,
 which is exactly the local strong connectivity the flood needs. No
 samples ship for this section, the decision is two existing tools
 composed, and the theorem is the prose payoff. Icpc world finals 2022
-problem R (book 9, chapter 11) is the reachability kin, its
+problem R (book 10, chapter 11) is the reachability kin, its
 2-edge-connected components being the maximal pieces that qualify.
 
 The dry run: no suite carries this section, the numbers are
@@ -1180,7 +1180,7 @@ Orientation", cp-algorithms.com/graph/strong-orientation.html, all
 accessed 2026-09-20, cc by-sa 4.0, our own words and code throughout.
 Functional graphs and the 2-core have no dedicated cp-algorithms
 article, both taught as general technique with the icpc world finals
-2019 problem H and problem E solutions (book 9, chapter 10) as the
+2019 problem H and problem E solutions (book 10, chapter 10) as the
 application sources, alongside icpc world finals 2022 problem R (book
 9, chapter 11). Sample behavior verified by the six suite gates scoped
 to chapter 39: c 10 files and 208 checks, c\# 32 facts, go 32 test

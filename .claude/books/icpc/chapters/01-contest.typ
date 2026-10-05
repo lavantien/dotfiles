@@ -1,4 +1,4 @@
-// book 9, chapter 1: the contest, the content rules, and the chapter shape
+// book 10, chapter 1: the contest, the content rules, and the chapter shape
 // every later chapter follows. no listings here: this chapter reads the
 // cached finals pdfs and defines the rules the sample suites obey
 #import "../../theme/lib.typ": callout, xref-to, diagram, cdraw
@@ -276,7 +276,7 @@ by hand on the official sample before any code is printed, as a
 figure when the run is visual and a numbered state table when it is
 tabular, ending at the byte-exact printed answer. After the trace
 the solver walks in six listings, one per language, in the fixed
-order c, c\#, go, javascript, python, lua. That order is book 8's
+order c, c\#, go, javascript, python, lua. That order is book 9's
 order, the data structures book this series pairs with, and keeping
 it means a reader moving between the two books always knows where a
 language's version of a structure lives. A helper section opens the
@@ -340,7 +340,7 @@ on the machine, so the judge data stays a private second gate.
 == the six languages and their integers
 
 The six languages were not chosen for this book. They are the
-series: five language manuals and C, the same six that book 8
+series: five language manuals and C, the same six that book 9
 rebuilt every data structure in, in the same order. What differs
 between them, and what every toolbox chapter has to say out loud,
 is what happens when a product outgrows the machine word, and a
@@ -423,7 +423,7 @@ other four, and the chapter that owns each suite restates its own.
 })
 
 The test discipline is the same across all six, and it is the same
-discipline book 8's suites run under. Tests are table-driven over
+discipline book 9's suites run under. Tests are table-driven over
 crafted fixtures with hand-computed answers. No network, no clock,
 no randomness unless it is seeded deterministically. Brute-force
 cross-checks are welcome and counted, because a clever method that

@@ -1,4 +1,4 @@
-// book 9, chapter 14: fast big integer arithmetic, the ladder the finals
+// book 10, chapter 14: fast big integer arithmetic, the ladder the finals
 // never needed but the education does. a dynamic bigint core, karatsuba,
 // exact ntt, complex fft plain and split, and knuth algorithm d division,
 // from scratch in six languages, every measured number from the ch14

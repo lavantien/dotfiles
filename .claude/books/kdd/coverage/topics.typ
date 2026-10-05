@@ -1,4 +1,4 @@
-// book 12 topic matrix: every data mining concept against its chapter,
+// book 13 topic matrix: every data mining concept against its chapter,
 // each row naming the sample CHECK that proves the behavioral claim.
 // rows land chapter by chapter as the waves fill the book
 #let topics = (

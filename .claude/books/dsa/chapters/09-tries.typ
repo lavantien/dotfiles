@@ -116,7 +116,7 @@ way.
   is fast and enormous, as a dictionary it is compact with one more
   indirection. The version here uses the dictionary form and the
   collect sorts children explicitly rather than trusting dictionary
-  iteration order, a lesson from book 4's collection semantics.
+  iteration order, a lesson from book 5's collection semantics.
 ])
 
 == the prefix scan

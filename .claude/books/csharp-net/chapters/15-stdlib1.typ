@@ -223,7 +223,7 @@ full width. `BitConverter` converts it to and from bits, and
   `Queue<T>` when fairness matters, `PriorityQueue` when urgency does,
   sorted types when iteration order is the product, immutable types
   when sharing beats mutation, and frozen types when reads outnumber
-  writes by thousands to one. Book 8 implements most of these from
+  writes by thousands to one. Book 9 implements most of these from
   first principles, which is where the performance intuition comes
   from.
 ])

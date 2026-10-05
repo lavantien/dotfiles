@@ -99,7 +99,7 @@ chapters 2 and 16 both pinned, re-pinned here as the reference every
 multiply below must match. Parse refuses "-0", "007", and "+5"
 through each language's refusal channel, and a zero multiplicand
 returns zero. One finals solver in the corpus ever needed this
-ladder, icpc 2018 problem C (book 9, chapter 9), whose cost
+ladder, icpc 2018 problem C (book 10, chapter 9), whose cost
 accumulator peaks at 2.5e17 past 2^53 and carries BigInt in
 javascript, and the icpc book's chapter 14 owns that contest-suite
 twin.

@@ -109,7 +109,7 @@ fork named streams at construction, wind from `Stream("wind")`,
 terrain from `Stream("terrain")`, so subsystems never consume each
 other's draws. The stream seed is the name hashed with fnv-1a and
 passed through the same splitmix finalizer, and the reason for the
-finalizer is book 10's chapter 12 finding again: raw fnv shares high
+finalizer is book 11's chapter 12 finding again: raw fnv shares high
 bits across similar inputs, and seeded streams named `"a"`, `"b"`,
 `"c"` would land in correlated corners of the state space.
 

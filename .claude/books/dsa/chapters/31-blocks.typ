@@ -15,7 +15,7 @@ embed, the li chao tree answers online line queries by segment
 descent, the disjoint sparse table buys O(1) range folds for sums and
 other non-idempotent folds, and rollback dsu plus a segment tree
 over time answer dynamic connectivity offline. The last engine is the
-substrate of icpc world finals 2025 problem G (book 9, chapter 13).
+substrate of icpc world finals 2025 problem G (book 10, chapter 13).
 
 == sqrt decomposition
 
@@ -643,7 +643,7 @@ gives 6, and a duplicate union of a connected pair leaves the stack
 at depth 1. The hop-meter family builds the binomial merge shape on 8
 vertices, the worst union-by-size permits, and find from vertices 4,
 6, and 7 each walks exactly 2 hops against the log2 8 = 3 bound. This
-structure serves icpc world finals 2025 problem G (book 9, chapter
+structure serves icpc world finals 2025 problem G (book 10, chapter
 13) through the engine below.
 
 #diagram([the union stack with snapshot ticks and one unwind restoring two components, beside the binomial 8-vertex shape with a 2-hop find path], length: 13pt, {
@@ -764,7 +764,7 @@ performs 9 unions total, and a brute per-time dsu agrees on every
 cell. The negative family holds: 1 and 5 are never connected, vertex
 5 joins only at t = 7 when 1 is already isolated. The edges cover the
 whole horizon, an empty interval, and a query at t = 0 before any
-edge. This engine is icpc world finals 2025 problem G (book 9,
+edge. This engine is icpc world finals 2025 problem G (book 10,
 chapter 13), lava moat: the level sweep runs exactly this machine
 over edge lifetimes with per-component length and border flags, at
 O(n log^2 n).
@@ -853,7 +853,7 @@ cp-algorithms.com/data_structures/disjoint_set_union.html, the
 substrate of 31.6 whose rollback variant is likewise ours, all
 accessed 2026-09-20, cc by-sa 4.0, our own words and code throughout.
 The offline connectivity engine of 31.7 has no dedicated article
-there and cites icpc world finals 2025 problem G (book 9, chapter 13)
+there and cites icpc world finals 2025 problem G (book 10, chapter 13)
 as its application source. Sample behavior verified by the six suite
 gates scoped to chapter 31: c 7 files and 136 checks, c\# 23 facts,
 go 21 test functions, javascript 21 tests and 68 asserts, python 7

@@ -1,4 +1,4 @@
-// book 9, chapter 11: icpc world finals 2022, problems P through Z,
+// book 10, chapter 11: icpc world finals 2022, problems P through Z,
 // six languages per problem, listings sliced from the frozen solver
 // files under books/icpc/samples*
 #import "../../theme/lib.typ": listing, callout, xref-to, diagram, cdraw
@@ -184,7 +184,7 @@ the solver tries the consistent root values and keeps the cheapest
 press total, linear in lights plus buttons, the model the solutions
 pdf sketches on its page 2, problem at
 #link("https://icpc.global/worldfinals/problems/2022-ICPC-World-Finals/icpc2022.pdf")[icpc2022.pdf].
-Book 8's chapter 34, linear algebra, develops the gaussian
+Book 9's chapter 34, linear algebra, develops the gaussian
 elimination that solves exactly this shape of small modular system,
 of which the component propagation below is the sparse special case.
 The six walks below all propagate with a BFS over a CSR adjacency,
@@ -516,7 +516,7 @@ parity of the required relabeling automatic whenever a type repeats.
 Linear in vertices plus edges, per the solutions pdf pages 3 and 4,
 problem at
 #link("https://icpc.global/worldfinals/problems/2022-ICPC-World-Finals/icpc2022.pdf")[icpc2022.pdf].
-Book 8's chapter 39, graph connectivity and decomposition, builds
+Book 9's chapter 39, graph connectivity and decomposition, builds
 the bridge-finding and 2-edge-connected decomposition this
 drop-bridges step runs on. The six walks find
 bridges with one iterative low-link DFS each, then part ways on the
@@ -891,7 +891,7 @@ base corners with each end leg minimized independently by a grid
 sweep plus ternary refinement under segment validity, plus the 16
 two-corner chains. The completion was validated against a dense
 two-parameter sweep reference on 60 random pyramid pairs with a
-worst difference of 4e-14. Book 8's chapter 36, numerical methods,
+worst difference of 4e-14. Book 9's chapter 36, numerical methods,
 builds the ternary-search refinement those corner legs are minimized
 with. Every predicate is a cross product from
 the year-local geo kit, endpoints shrink by a relative 1e-9 before
@@ -1608,7 +1608,7 @@ everything, and the first failing action is the answer, with the
 matching cost 32 cards per action through augmenting paths, per the
 solutions pdf pages 7 and 8, problem at
 #link("https://icpc.global/worldfinals/problems/2022-ICPC-World-Finals/icpc2022.pdf")[icpc2022.pdf].
-Book 8's chapter 38, network flows ii, builds kuhn's
+Book 9's chapter 38, network flows ii, builds kuhn's
 augmenting-path bipartite matching this feasibility test runs once
 per action. Directly visible contradictions, denying a card visibly held,
 handing a card held elsewhere, laying a quartet containing someone
@@ -1757,7 +1757,7 @@ to hang on, so the invariant is the only budget that closes.
 The first and last characters can never change, no character value vanishes
 entirely, and the final string admits no further deletion, meaning
 it is square-free, and binary square-free strings have length at
-most 3. Book 8's chapter 33, string algorithms ii, finds the square
+most 3. Book 9's chapter 33, string algorithms ii, finds the square
 repetitions a square-free string must avoid. So the answer is the
 single character when the input is
 uniform, the two endpoints when they differ, and the endpoints
@@ -1932,7 +1932,7 @@ summing to v, which shifts the whole multiset uniformly onto the
 input, with the work dominated by 3^k times n plus 3^k, per the
 solutions pdf pages 9 and 10, problem at
 #link("https://icpc.global/worldfinals/problems/2022-ICPC-World-Finals/icpc2022.pdf")[icpc2022.pdf].
-Book 8's chapter 34, linear algebra, carries the linear-system
+Book 9's chapter 34, linear algebra, carries the linear-system
 machinery over Z_p^k this reconstruction runs on.
 Zero teams solved it in contest.
 

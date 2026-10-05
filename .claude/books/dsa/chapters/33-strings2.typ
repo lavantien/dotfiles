@@ -112,7 +112,7 @@ nowhere, and a in aaaa at 0, 1, 2, 3. The rotation family pins
 of a as 1, z of aa as 2, 1, and every suite keeps a brute
 longest-common-prefix-per-position twin agreeing on the whole batch.
 
-The application is icpc world finals 2023 problem F (book 9,
+The application is icpc world finals 2023 problem F (book 10,
 chapter 12), tilting tiles, whose per-cycle reasoning matches a
 pattern against the
 doubled cycle, exactly the separator search shape, with the chapter
@@ -678,7 +678,7 @@ batch, and the repetition scan against an independent brute
 enumerator, with the javascript suite adding its own 150 seeded
 random strings on top.
 
-The application is icpc world finals 2022 problem Y (book 9,
+The application is icpc world finals 2022 problem Y (book 10,
 chapter 11), compression, where a square-free reachability argument is the contest
 face of repetition detection; the problem's answer reasoning stays
 with the icpc book.
@@ -755,7 +755,7 @@ and the least-rotation duel, and "Finding repetitions",
 cp-algorithms.com/string/main_lorentz.html, the O(n log n) reference
 for the period scan, all accessed 2026-09-20, cc by-sa 4.0, our own
 words and code throughout. Application sources: icpc world finals
-2023 problem F and 2022 problem Y (book 9). Sample behavior verified
+2023 problem F and 2022 problem Y (book 10). Sample behavior verified
 by the six suite gates scoped to chapter 33: c 5 files and 147
 checks, c\# 24 facts, go 16 test functions, javascript 19 tests and
 119 asserts, python 5 files and 333 asserts, lua 19 checks, zero

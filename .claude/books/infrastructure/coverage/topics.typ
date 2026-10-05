@@ -1,4 +1,4 @@
-// book 11 topic coverage matrix: mechanism, owning chapter, the
+// book 12 topic coverage matrix: mechanism, owning chapter, the
 // guarantee or cost it carries, and where the running proof lives.
 #let topics = (
   (topic: "two engines pinned once, cgo confined to the duckdb lanes", chapter: "toolchain", cost: "sqlite lanes stay compiler-free through modernc", proof: "duckdb_use_lib tag, analytics.Dockerfile, make duckdb-tools"),

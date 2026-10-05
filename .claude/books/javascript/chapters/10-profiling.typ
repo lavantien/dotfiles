@@ -233,9 +233,11 @@ measurement: one table, `station TEXT NOT NULL` plus eight `REAL`
 columns, 412 stations `st000` through `st411`, seeded values, 10k
 rows per transaction through one prepared statement, then the same
 aggregation twice, SQL `GROUP BY` against a manual cursor walk. The
-engine is node's own `node:sqlite`, measured at exactly 3.53.1 on
-node 26.3.0, asserted as a string by the suite the way the capstone
-pins it.
+engine is node's own `node:sqlite`, measured at exactly 3.53.4 on
+node 26.10.0, asserted as a string by the suite the way the capstone
+pins it. The 3.53.1 reading the book first recorded on node 26.3.0,
+the one delta against the corpus's 3.53.4 pins, closed when the
+runtime's bundled engine caught the pin.
 
 #listing("javascript/samples/src/ch10-rows.mjs", first: 38, last: 70, caption: [the seeded insert, one prepared statement, the commit timed per 10k chunk])
 

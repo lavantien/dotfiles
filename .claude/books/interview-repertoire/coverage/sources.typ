@@ -1,4 +1,4 @@
-// book 15 pinned sources, each row carries its verified access date
+// book 16 pinned sources, each row carries its verified access date
 // 2026 meta rows verified online 2026-09-10 before any chapter cited them
 #let sources = (
   (topic: "sqlite change log, 3.53.4 released 2026-07-24",

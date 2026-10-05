@@ -260,8 +260,8 @@ halves. Edge behavior: 1 is not prime, rho of 4 returns 2, factoring
 a prime refuses through the miller-rabin gate in every refusal
 channel, and every factor list multiplies back to its input. Two
 finals problems live one rung below and one rung above this section:
-icpc 2025 problem F (book 9, chapter 13) takes the largest prime up
-to n/3 by trial division, and icpc 2025 problem B (book 9, chapter
+icpc 2025 problem F (book 10, chapter 13) takes the largest prime up
+to n/3 by trial division, and icpc 2025 problem B (book 10, chapter
 13) bipartitions its graph by the parity of the prime factor count,
 omega read off exactly these factorizations.
 
@@ -591,7 +591,7 @@ wilson pair, 30! mod 1000000007 = 109361473, 100! mod 1000000007 =
 437918130, 1000! mod 998244353 = 421678599, and 101! mod 101 = 0.
 Legendre: v~2~ of 100! is 97, v~3~ of 1000! is 498, v~5~ of 2026! is
 505, and 0! = 1! = 1. The contest tie is the third fixture: icpc
-2019 problem K (book 9, chapter 10) multiplies survival fractions
+2019 problem K (book 10, chapter 10) multiplies survival fractions
 over residue classes of a departure time mod 2520 = 8 \* 9 \* 5 \* 7,
 chapter 16 names the crt existence clause, and the departure time
 1736 with residues (0, 8, 1, 0) and digits (0, 1, 4, 4) rebuilds
@@ -708,7 +708,7 @@ consecutive members differ by exactly (b/g, -a/g), which is (5, -13)
 on the first equation. Edges: 4x + 6y = 3 refuses because gcd 2 does
 not divide 3, zero coefficients solve on their own branches with 0x +
 5y = 15 at (0, 3) and 5x + 0y = 15 at (3, 0). The contest kin: icpc
-2023 problem A (book 9, chapter 12) solves an overdetermined integer
+2023 problem A (book 10, chapter 12) solves an overdetermined integer
 3 by 3 system whose triples have determinant 1 or 2, and the exact
 two-variable theory here is the same no-rounding backbone. This is
 general technique beyond that one problem.

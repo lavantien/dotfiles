@@ -1,4 +1,4 @@
-// book 8 topic matrix: every structure and algorithm against its chapter
+// book 9 topic matrix: every structure and algorithm against its chapter
 #let topics = (
   (topic: "op counting and allocation metering", chapter: "analysis", cost: "n/a instrument", bcl: "BenchmarkDotNet"),
   (topic: "binary search probe bound", chapter: "analysis", cost: "O(log n)", bcl: "Array.BinarySearch"),

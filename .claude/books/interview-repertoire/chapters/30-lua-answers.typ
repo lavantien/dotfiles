@@ -188,7 +188,7 @@ while lua's globals are a captured variable, so a sandbox is
 })
 
 sources: no measurements in this chapter, every claim the manual's
-own semantics, and every drill floors to the lua manual, book 7,
+own semantics, and every drill floors to the lua manual, book 8,
 #xref-to("lua", "values") for the event tables and the raw access,
 #xref-to("lua", "functions") for the upvalue box,
 #xref-to("lua", "coroutines") for the stack, the resume yield

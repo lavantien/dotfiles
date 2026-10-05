@@ -1,4 +1,4 @@
-// book 9, chapter 8: icpc world finals 2017, rapid city. twelve problems
+// book 10, chapter 8: icpc world finals 2017, rapid city. twelve problems
 // a through l, every one walked in c, c#, go, javascript, python and lua,
 // listings sliced from the frozen solver files under samples-c, samples,
 // samples-go, samples-js, samples-py and samples-lua
@@ -176,7 +176,7 @@ chord's line can touch an edge at a point, run along it, and veer
 back to its own side, or cross over to the far side, and only the
 crossing toggles the inside parity, so the classifier has to tell a
 touch-and-return from a touch-and-cross using exact integer cross
-products on the given coordinates. Book 8's chapter 24, lattice
+products on the given coordinates. Book 9's chapter 24, lattice
 geometry and grid algorithms, develops that lattice polygon
 arithmetic from scratch. Six solvers, six exactness strategies on
 that classification.
@@ -504,7 +504,7 @@ cell keeps exactly one crate, so the kept total is the sum of
 H times (m + n - match(H)) over all heights plus the leftover singles,
 and the answer is the initial total minus that. Each height runs its
 own matching on at most 100 plus 100 nodes, well inside the limit.
-Book 8's chapter 38, network flows ii, teaches Kuhn's
+Book 9's chapter 38, network flows ii, teaches Kuhn's
 augmenting-path bipartite matching from scratch. The matching is
 what separates this from the naive max(m, n) tally.
 
@@ -645,7 +645,7 @@ sides to staircases, and then a divide and conquer finds every
 producer's best consumer: for the middle producer scan the consumers
 linearly, and because the optimal consumer index is monotone across
 the recursion, each level touches each consumer once, O((m + n) log n)
-in total. Book 8's chapter 32, dynamic programming ii, develops the
+in total. Book 9's chapter 32, dynamic programming ii, develops the
 divide-and-conquer over a monotone argmax that this sweep is the
 bare-bones shape of. An alternative half-plane sweep with the same
 bound exists.
@@ -1204,7 +1204,7 @@ per s. Incremental bookkeeping makes the phase O(n^2). Phase two runs
 a forward earliest-deadline greedy that never starts a shot inside a
 forbidden region, and the solutions prove that a greedy failure
 always exhibits a phase-one failure, so a greedy success is final.
-Book 8's chapter 40, game theory and scheduling, collects the
+Book 9's chapter 40, game theory and scheduling, collects the
 Garey-Johnson-Simons-Tarjan window scheduling family this comes
 from. A greedy that shoots at time zero on the fixture is exactly
 the trap.
@@ -1517,7 +1517,7 @@ residual carrying water gives f1, max water first with the residual
 carrying flubber gives f2, mixing alpha times f1 plus 1 minus alpha
 times f2 reaches the target totals, and one final max flubber flow
 from node 1 through a digraph whose arcs are the mixed usages splits
-each pipe into flubber plus leftover water. Book 8's chapter 38,
+each pipe into flubber plus leftover water. Book 9's chapter 38,
 network flows ii, builds Dinic's algorithm from scratch. Four Dinic
 runs per input.
 
@@ -1666,7 +1666,7 @@ threshold 2 l - n because two occurrences cannot both fit in n rounds
 below it, and a uniform trailing zero entry never affects the order,
 so it is dropped. A lexicographically smaller border sequence means a
 more likely prediction, so the sort is ascending and stable, O(l + s
-log s) overall. Book 8's chapter 35, combinatorics, carries the
+log s) overall. Book 9's chapter 35, combinatorics, carries the
 inclusion-exclusion machinery the ranking's first-order terms are an
 instance of. Both official samples fall out of the rule, the
 second one ranking the border-free PRSPS first and the 4-3-2-1 chain

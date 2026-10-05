@@ -15,7 +15,7 @@ duality that turns one world finals flow problem into a one
 dimensional search. Simulated annealing closes the chapter in
 prose, the one heuristic in the neighborhood, kept honest by the
 same seeded determinism the coded sections use. The anchor
-application is icpc 2025 problem C (book 9, chapter 13), whose
+application is icpc 2025 problem C (book 10, chapter 13), whose
 reservoir model supplies the duality section end to end.
 
 == ternary search
@@ -126,10 +126,10 @@ and a ramp left of it, closes on 2.0 exactly on (0, 6).
   cdraw.content((14.6, 0.7), [no float decides control flow], size: 6pt)
 })
 
-The contest face is icpc 2025 problem C (book 9, chapter 13), where
+The contest face is icpc 2025 problem C (book 10, chapter 13), where
 the r = 2 case of the pipe model is exactly this driver over the
 free reservoir weight and r = 3 nests two of them, and icpc 2022
-problem T (book 9, chapter 11), which refines a grid answer with a
+problem T (book 10, chapter 11), which refines a grid answer with a
 ternary pass over each corner-bend leg. The monotone cousin,
 bisection over a boolean answer space, is
 #xref-to("dsa", "searching") territory and stays there.
@@ -623,7 +623,7 @@ not of 1/2000, the grid is genuinely that dense.
   cdraw.content((13.8, 1.6), [r = 2: ternary over t, O(V) per eval], size: 6pt)
 })
 
-The application is icpc 2025 problem C (book 9, chapter 13), the
+The application is icpc 2025 problem C (book 10, chapter 13), the
 anchor for the whole construction: the primal formulation, the
 dual collapse to bottom-up max propagation on this dag, and the
 final one-dimensional search are all its solution's shape, and
@@ -659,8 +659,8 @@ accessed 2026-09-20, cc by-sa 4.0, our own words and code
 throughout. Golden-section search has no cp-algorithms page and
 is derived here from the ternary article, cited as such. LP
 duality likewise has no cp-algorithms article. Application
-sources: icpc 2025 problem C (book 9, chapter 13) and icpc 2022
-problem T (book 9, chapter 11). Sample behavior verified by the
+sources: icpc 2025 problem C (book 10, chapter 13) and icpc 2022
+problem T (book 10, chapter 11). Sample behavior verified by the
 six suite gates scoped to chapter 36: c 5 files and 74 checks,
 c\# 21 facts, go 15 test functions, javascript 19 tests and 56
 asserts, python 5 files and 59 asserts, lua 18 checks, zero

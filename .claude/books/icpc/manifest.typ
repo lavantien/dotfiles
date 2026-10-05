@@ -1,6 +1,6 @@
-// book 9 manifest: chapter registry used by cross references and stubs
+// book 10 manifest: chapter registry used by cross references and stubs
 #let icpc = (
-  num: 9,
+  num: 10,
   volume: false,
   title: "the icpc world finals",
   meta: (
@@ -8,7 +8,7 @@
     subtitle: "six finals, six languages, first principles",
     author: "gabriel la",
     version: "4.0",
-    volume-label: "book 9",
+    volume-label: "book 10",
   ),
   chapters: (
     (id: "contest", num: 1, title: "the contest and the house rules"),

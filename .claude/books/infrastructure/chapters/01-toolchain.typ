@@ -78,7 +78,7 @@ every lane that is not deliberately duckdb stays compiler-free.
 
 The single place that owns a compiler is the toolchain. `make sqlite-tools`
 builds SQLite 3.53.4 and LuaJIT from pinned source with mingw, the same
-compiler that builds Lua 5.5 for book 7, and `make duckdb-tools` fetches
+compiler that builds Lua 5.5 for book 8, and `make duckdb-tools` fetches
 the duckdb 1.5.5 cli and libduckdb with sha256 pins against
 install.duckdb.org, warming the sqlite extension into the home cache for
 the attach chapter. The outputs live in `tools/sqlite/build/`,
@@ -94,7 +94,7 @@ download fails the build instead of producing a quietly different engine.
   }
   tier(0.2, [go], [modernc + duckdb-go])
   tier(6.2, [c\#], [bundled engine])
-  tier(12.2, [javascript], [node:sqlite 3.53.1])
+  tier(12.2, [javascript], [node:sqlite 3.53.4])
   tier(18.2, [lua], [luajit ffi])
 
   cdraw.line((3.15, 5.9), (3.3, 4.2), stroke: luma(100), mark: (end: ">>"))
@@ -122,9 +122,12 @@ download fails the build instead of producing a quietly different engine.
   Pinning one version per engine across every runtime keeps the database
   chapters honest. When #xref-to("infrastructure", "sqlite-features") says
   a JSON function or an ALTER TABLE capability exists, it exists in the
-  engine the Go, C\#, and Lua suites assert on. Node 26 ships its own
-  sqlite build at 3.53.1, the one measured delta, and the javascript
-  capstone asserts that exact string. The duckdb chapters do the same for
+  engine the Go, C\#, and Lua suites assert on. Node ships its own
+  sqlite build rather than the pinned amalgamation: it read 3.53.1 on
+  node 26.3.0, the one measured delta, and reads 3.53.4 on node
+  26.10.0, caught up to the pin, and the javascript capstone asserts
+  that exact string either way, because driver-bundled engines drift.
+  The duckdb chapters do the same for
   1.5.5: the go module tag encodes it, and the probes assert `select
   version()` returns it exactly. Driver-bundled engines drift. The pinned
   amalgamation and the pinned dll do not.
@@ -132,7 +135,7 @@ download fails the build instead of producing a quietly different engine.
 
 == lua, two runtimes, never crossed
 
-Book 7 teaches Lua 5.5 from the manual and its runner is a 5.5 interpreter
+Book 8 teaches Lua 5.5 from the manual and its runner is a 5.5 interpreter
 built from lua.org source. This book adds LuaJIT for exactly one job, the
 sqlite wrapper in the persistence chapters, and LuaJIT speaks Lua 5.1. The
 split is a rule the make targets enforce: the 5.5 runner never executes FFI
@@ -144,7 +147,7 @@ later.
   cdraw.rect((0.0, 3.6), (10.2, 8.0), fill: luma(235), radius: 0.02)
   cdraw.content((5.1, 7.5), [lua 5.5 runner], size: 6.5pt)
   cdraw.content((5.1, 6.4), [built from lua.org source], size: 6pt)
-  cdraw.content((5.1, 5.3), [runs the book 7 samples], size: 6pt)
+  cdraw.content((5.1, 5.3), [runs the book 8 samples], size: 6pt)
   cdraw.content((5.1, 4.2), [never executes ffi code], size: 6pt)
 
   cdraw.line((11.0, 1.4), (11.0, 8.0), stroke: luma(100))

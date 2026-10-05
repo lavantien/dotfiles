@@ -94,10 +94,10 @@ times 47 by legendre, and the exact 30-digit value 1008913445455641
 538992043 mod 1e9+7.
 
 Two finals problems ride this section. Icpc world finals 2018
-problem D (book 9, chapter 9), gem island, prices its drop recursion
+problem D (book 10, chapter 9), gem island, prices its drop recursion
 in floats from an lnfact table because the raw binomials near
 C(999,500) overflow doubles before the division. Icpc world finals
-2023 problem B (book 9, chapter 12), schedule, searches for the
+2023 problem B (book 10, chapter 12), schedule, searches for the
 smallest k with C(k-1, ceil(k/2)) at least n, the modular road with
 the search loop living in the k-subset section below.
 
@@ -195,7 +195,7 @@ which needs no division at all, and lua carries the exact ladder
 inline, C(40,20) = 137846528820 divided by 21 landing the same
 6564120420. This is a general technique section, the counting shape
 beneath the bracket section and the nesting facet of icpc world
-finals 2019 problem D (book 9, chapter 10).
+finals 2019 problem D (book 10, chapter 10).
 
 #diagram([triangulations of a convex (n+2)-gon count as C~n~: the hexagon's 14 (C~4~) with one fan drawn], length: 13pt, {
   // hexagon with a fan from vertex 0
@@ -291,7 +291,7 @@ w = 30 with each at most 10 gives 286 as C(33,3) - 4 C(22,3) +
 read k = 1 as 1 exactly when n fits the cap, n = 0 into k parts as
 the one all-zero tuple, and x + y = 5 each at most 2 as 0, the
 impossible bound. The application is icpc world finals 2018 problem
-D (book 9, chapter 9) again, whose drop allocations are compositions
+D (book 10, chapter 9) again, whose drop allocations are compositions
 walking this bounded and unbounded ladder in log space.
 
 #diagram([10 stars cut by 2 bars into one of the 66 arrangements, a bounded row struck out by the IE term], length: 13pt, {
@@ -392,7 +392,7 @@ terms reading 100 - 50 - 33 - 20 + 16 + 10 + 6 - 3. Squarefree up to
 empty prime set leaving all 100, a single prime leaving 100 minus
 100 over p, and the exactly-r profile on two sets of sizes 20 and 15
 sharing 8: union 27, A-only 12, B-only 7. The application is icpc
-world finals 2017 problem K (book 9, chapter 8), tarot sham boast,
+world finals 2017 problem K (book 10, chapter 8), tarot sham boast,
 which ranks predictions by first-order inclusion-exclusion terms that
 turn out identical for all strings of one length, the differences
 coming only from self-overlaps.
@@ -587,7 +587,7 @@ the listings below run the walk in six languages.
 #listing("dsa/samples-lua/ch35_ksubset.lua", first: 9, last: 43, caption: [lua, the advance and the office strings emitted descending])
 
 The 2023/B construction rides the same walk. Icpc world finals 2023
-problem B (book 9, chapter 12), schedule, builds its candidate
+problem B (book 10, chapter 12), schedule, builds its candidate
 strings as length-k binary strings with first bit 0 and exactly
 ceil(k/2) ones among the remaining k - 1 bits, and it needs the n
 largest compatible strings. The walk over the one-positions emits
@@ -711,7 +711,7 @@ and never asserted as a derived number, the brute being 2^32
 families out of sample reach. The pinned counterexample reads the
 chain of the empty set inside {1} as not an antichain. The
 application is the optimality half of icpc world finals 2023
-problem B (book 9, chapter 12): its compatibility condition makes
+problem B (book 10, chapter 12): its compatibility condition makes
 the strings an antichain, so C(k-1, ceil(k/2)) is not just reachable
 but the maximum, which is why the search of the previous section is
 exactly optimal.
@@ -807,7 +807,7 @@ gaps, conductor 44, the gap list itself pinned digit for digit. The
 edges refuse gcd(4,6) = 2 loudly, report -1 when a generator is 1
 and everything is reachable, and assert the bound: every fixture's
 conductor sits under p~max~ squared plus p~max~. The application is
-icpc world finals 2025 problem H (book 9, chapter 13), score values,
+icpc world finals 2025 problem H (book 10, chapter 13), score values,
 whose reachable scores are exactly this semigroup capped at the
 score ceiling, and past the frobenius region, bounded by the square
 of the largest denomination, exactly the multiples of the gcd
@@ -1375,9 +1375,9 @@ carries no sperner or frobenius article; the sperner section cites
 Sperner's 1928 theorem and the LYM inequality by name, and the
 frobenius conductor bound is stated as the classical schur-type
 result. Application sources: icpc world finals 2018 problem D (book
-9, chapter 9), 2023 problem B (book 9, chapter 12), 2017 problem K
-(book 9, chapter 8), 2025 problem H (book 9, chapter 13), and 2019
-problem D (book 9, chapter 10). Sample behavior verified by the six
+9, chapter 9), 2023 problem B (book 10, chapter 12), 2017 problem K
+(book 10, chapter 8), 2025 problem H (book 10, chapter 13), and 2019
+problem D (book 10, chapter 10). Sample behavior verified by the six
 suite gates scoped to chapter 35: c 12 files and 216 checks, c\# 57
 facts, go 39 test functions, javascript 36 tests and 150 asserts
 across the two-file split, python 12 files and 148 asserts, lua 42

@@ -87,7 +87,7 @@ as underdetermined against 2, 4, no solution emitted either way. The
 edges run the 1x1 system 2x = 4 to x = 2 and the identity returning
 its right-hand side untouched.
 
-The application is icpc world finals 2022 problem P (book 9,
+The application is icpc world finals 2022 problem P (book 10,
 chapter 11), turning red, where lights and buttons form a linear
 system over Z~3~, each light one equation in the press counts
 and each press contributing its color's shift. The official
@@ -212,7 +212,7 @@ system. Nine of the ten are plus or minus 1 or 2, and the triple
 holding the first, second, and fifth rows gives 3, one more than
 the icpc problem statement's parenthetical claims.
 
-The application is icpc world finals 2023 problem A (book 9,
+The application is icpc world finals 2023 problem A (book 10,
 chapter 12), riddle of the sphinx, whose solvability after any
 single lie is exactly this argument: whichever answer is false, the
 surviving three rows stay independent, so the system always solves.
@@ -335,7 +335,7 @@ fractions back into A x = b exactly. The singular pair 1, 2, 2, 4
 against 3, 6 reads det 0 and refuses.
 
 The application is the same icpc world finals 2023 problem A
-(book 9, chapter 12): once the lie is identified, the surviving
+(book 10, chapter 12): once the lie is identified, the surviving
 3x3 is solved exactly this way, and the answer's fractions stay
 honest because no division ever rounds.
 
@@ -737,7 +737,7 @@ the 3 by 3 grid 2, 2, 0 by 2, 2, 0 by 0, 0, 0, re-derived by
 direct enumeration of all 8 subsets. The valuation family pins the
 minima: 1, 1, 2 and 1, 2, 1 at 0, and 2, 4, 6 and 4, 2, 6 at 1.
 
-The application is icpc world finals 2022 problem Z (book 9,
+The application is icpc world finals 2022 problem Z (book 10,
 chapter 11), archaeological recovery, whose state multisets over
 Z~3~^k^, projected residue counts, and subset-sum convolutions
 are exactly this machinery, with the full recovery algorithm

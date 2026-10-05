@@ -90,7 +90,7 @@ ones that separate a practitioner from a memorizer, cross reference the
 handbooks: the language manuals for books 3 through 7 floor the syntax
 questions, #xref-to("dsa", "analysis") and its neighbors floor the
 complexity claims, #xref-to("infrastructure", "jetstream") floors the
-streaming answers, and the defense cookbook, book 14, owns the resume
+streaming answers, and the defense cookbook, book 15, owns the resume
 itself. Part 3, chapters 23 through 31, is that promise kept in reverse:
 the algorithm whiteboard staples gated under tdd in two go workspaces, and
 seven spoken-answer chapters floored on the handbooks they name, the

@@ -1,4 +1,4 @@
-// book 5 keyword coverage: every reserved and contextual word the
+// book 6 keyword coverage: every reserved and contextual word the
 // grammar admits, mapped to the chapter that teaches it. the census
 // was recounted against the live mdn lexical grammar page on
 // 2026-09-13: 35 reserved, 4 strict mode and module, 7 future, and

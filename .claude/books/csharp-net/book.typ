@@ -1,4 +1,4 @@
-// book 2: written chapters are included, the rest render as stubs until authored
+// book 5: written chapters are included, the rest render as stubs until authored
 #import "../theme/lib.typ": book
 #import "manifest.typ": csharpnet
 

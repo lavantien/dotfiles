@@ -83,7 +83,7 @@ dividing 1000 cents three ways sums back to exactly 1000 because
 the remainder spreads over the first shares. The postgres framing:
 `numeric` for money in postgres, never `float4` or `float8`, and
 integer cents is the sqlite-native answer this tree uses
-everywhere, demonstrated across the capstones of books 11 and 13.
+everywhere, demonstrated across the capstones of books 12 and 14.
 
 == normalization, proven on both shapes [TDD]
 
@@ -209,7 +209,7 @@ stateless and positionally inconsistent under concurrent writes,
 keyset and cursors are stable and bounded. Jsonb in postgres is
 for queryable semi-structured data with GIN indexes, the inverted
 index over json paths, the sqlite counterpart is the json1
-extension book 11 demonstrates on 3.53, and both books agree on
+extension book 12 demonstrates on 3.53, and both books agree on
 the boundary: structured columns for what you filter and join,
 json for what you store and return.
 
