@@ -24,32 +24,32 @@ TIMESTAMP=$(date +%Y%m%d-%H%M%S)
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
-    case $1 in
-        --dry-run)
-            DRY_RUN=true
-            shift
-            ;;
-        --keep)
-            KEEP_BACKUPS="$2"
-            shift 2
-            ;;
-        --backup-dir)
-            BACKUP_DIR="$2"
-            shift 2
-            ;;
-        -h|--help)
-            echo "Usage: $0 [--dry-run] [--keep N] [--backup-dir path]"
-            echo "  --dry-run     Show what would be backed up without doing it"
-            echo "  --keep N       Keep N most recent backups (default: 5)"
-            echo "  --backup-dir    Custom backup directory (default: ~/.dotfiles-backup)"
-            exit 0
-            ;;
-        *)
-            echo "Unknown option: $1"
-            echo "Use --help for usage"
-            exit 1
-            ;;
-    esac
+	case $1 in
+	--dry-run)
+		DRY_RUN=true
+		shift
+		;;
+	--keep)
+		KEEP_BACKUPS="$2"
+		shift 2
+		;;
+	--backup-dir)
+		BACKUP_DIR="$2"
+		shift 2
+		;;
+	-h | --help)
+		echo "Usage: $0 [--dry-run] [--keep N] [--backup-dir path]"
+		echo "  --dry-run     Show what would be backed up without doing it"
+		echo "  --keep N       Keep N most recent backups (default: 5)"
+		echo "  --backup-dir    Custom backup directory (default: ~/.dotfiles-backup)"
+		exit 0
+		;;
+	*)
+		echo "Unknown option: $1"
+		echo "Use --help for usage"
+		exit 1
+		;;
+	esac
 done
 
 # Set CURRENT_BACKUP after argument parsing (so --backup-dir takes effect)
@@ -65,96 +65,96 @@ log_warning() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
 backup_file() {
-    local src="$1"
-    local dst="$2"
+	local src="$1"
+	local dst="$2"
 
-    if [[ ! -e "$src" ]]; then
-        log_warning "File not found (skipping): $src"
-        return 1
-    fi
+	if [[ ! -e "$src" ]]; then
+		log_warning "File not found (skipping): $src"
+		return 1
+	fi
 
-    if [[ "$DRY_RUN" == "true" ]]; then
-        echo -e "  ${CYAN}[DRY-RUN]${NC} Would backup: $src"
-        return 0
-    fi
+	if [[ "$DRY_RUN" == "true" ]]; then
+		echo -e "  ${CYAN}[DRY-RUN]${NC} Would backup: $src"
+		return 0
+	fi
 
-    # Create destination directory if needed
-    if ! mkdir -p "$(dirname "$dst")" 2>/dev/null; then
-        log_error "Failed to create directory: $(dirname "$dst")"
-        return 1
-    fi
+	# Create destination directory if needed
+	if ! mkdir -p "$(dirname "$dst")" 2>/dev/null; then
+		log_error "Failed to create directory: $(dirname "$dst")"
+		return 1
+	fi
 
-    # Copy file/directory with better error handling
-    local error_output
-    if ! error_output=$(cp -r "$src" "$dst" 2>&1); then
-        log_error "Failed to backup: $src"
-        log_error "Error: $error_output"
-        return 1
-    fi
+	# Copy file/directory with better error handling
+	local error_output
+	if ! error_output=$(cp -r "$src" "$dst" 2>&1); then
+		log_error "Failed to backup: $src"
+		log_error "Error: $error_output"
+		return 1
+	fi
 
-    log_success "Backed up: $src"
-    return 0
+	log_success "Backed up: $src"
+	return 0
 }
 
 cleanup_old_backups() {
-    if [[ "$KEEP_BACKUPS" -le 0 ]]; then
-        return 0
-    fi
+	if [[ "$KEEP_BACKUPS" -le 0 ]]; then
+		return 0
+	fi
 
-    log_info "Cleaning up old backups (keeping $KEEP_BACKUPS most recent)..."
+	log_info "Cleaning up old backups (keeping $KEEP_BACKUPS most recent)..."
 
-    # Check backup directory exists
-    if [[ ! -d "$BACKUP_DIR" ]]; then
-        return 0
-    fi
+	# Check backup directory exists
+	if [[ ! -d "$BACKUP_DIR" ]]; then
+		return 0
+	fi
 
-    # Get list of backup directories, sorted by name (which is timestamp)
-    # Filter for timestamp format: YYYYMMDD-HHMMSS
-    local backups=()
-    while IFS= read -r -d '' backup; do
-        local dirname=$(basename "$backup")
-        # Check if dirname matches timestamp pattern
-        if [[ "$dirname" =~ ^[0-9]{8}-[0-9]{6}$ ]]; then
-            backups+=("$dirname")
-        fi
-    done < <(find "$BACKUP_DIR" -maxdepth 1 -type d -print0 2>/dev/null | sort -rz)
+	# Get list of backup directories, sorted by name (which is timestamp)
+	# Filter for timestamp format: YYYYMMDD-HHMMSS
+	local backups=()
+	while IFS= read -r -d '' backup; do
+		local dirname=$(basename "$backup")
+		# Check if dirname matches timestamp pattern
+		if [[ "$dirname" =~ ^[0-9]{8}-[0-9]{6}$ ]]; then
+			backups+=("$dirname")
+		fi
+	done < <(find "$BACKUP_DIR" -maxdepth 1 -type d -print0 2>/dev/null | sort -rz)
 
-    if [[ ${#backups[@]} -le $KEEP_BACKUPS ]]; then
-        log_info "No old backups to remove (have ${#backups[@]}, keeping $KEEP_BACKUPS)"
-        return 0
-    fi
+	if [[ ${#backups[@]} -le $KEEP_BACKUPS ]]; then
+		log_info "No old backups to remove (have ${#backups[@]}, keeping $KEEP_BACKUPS)"
+		return 0
+	fi
 
-    # Remove old backups
-    local to_remove=("${backups[@]:$KEEP_BACKUPS}")
-    for old_backup in "${to_remove[@]}"; do
-        local backup_path="$BACKUP_DIR/$old_backup"
-        if [[ "$DRY_RUN" == "true" ]]; then
-            echo -e "  ${CYAN}[DRY-RUN]${NC} Would remove old backup: $backup_path"
-        else
-            local error_output
-            if ! error_output=$(rm -rf "$backup_path" 2>&1); then
-                log_error "Failed to remove: $backup_path"
-                log_error "Error: $error_output"
-            else
-                log_success "Removed old backup: $backup_path"
-            fi
-        fi
-    done
+	# Remove old backups
+	local to_remove=("${backups[@]:$KEEP_BACKUPS}")
+	for old_backup in "${to_remove[@]}"; do
+		local backup_path="$BACKUP_DIR/$old_backup"
+		if [[ "$DRY_RUN" == "true" ]]; then
+			echo -e "  ${CYAN}[DRY-RUN]${NC} Would remove old backup: $backup_path"
+		else
+			local error_output
+			if ! error_output=$(rm -rf "$backup_path" 2>&1); then
+				log_error "Failed to remove: $backup_path"
+				log_error "Error: $error_output"
+			else
+				log_success "Removed old backup: $backup_path"
+			fi
+		fi
+	done
 }
 
 print_backup_summary() {
-    local backup_path="$1"
-    local count="$2"
+	local backup_path="$1"
+	local count="$2"
 
-    echo ""
-    echo -e "${CYAN}========================================${NC}"
-    echo -e "${CYAN}       Backup Summary${NC}"
-    echo -e "${CYAN}========================================${NC}"
-    echo -e "${BLUE}Location:${NC}  $backup_path"
-    echo -e "${BLUE}Files:${NC}     $count"
-    echo -e "${BLUE}Date:${NC}      $(date '+%Y-%m-%d %H:%M:%S')"
-    echo -e "${BLUE}Size:${NC}      $(du -sh "$backup_path" 2>/dev/null | cut -f1)"
-    echo -e "${CYAN}========================================${NC}"
+	echo ""
+	echo -e "${CYAN}========================================${NC}"
+	echo -e "${CYAN}       Backup Summary${NC}"
+	echo -e "${CYAN}========================================${NC}"
+	echo -e "${BLUE}Location:${NC}  $backup_path"
+	echo -e "${BLUE}Files:${NC}     $count"
+	echo -e "${BLUE}Date:${NC}      $(date '+%Y-%m-%d %H:%M:%S')"
+	echo -e "${BLUE}Size:${NC}      $(du -sh "$backup_path" 2>/dev/null | cut -f1)"
+	echo -e "${CYAN}========================================${NC}"
 }
 
 # ============================================================================
@@ -172,10 +172,10 @@ echo ""
 
 # Create backup directory
 if [[ "$DRY_RUN" == "false" ]]; then
-    mkdir -p "$CURRENT_BACKUP"
-    log_success "Created backup directory: $CURRENT_BACKUP"
+	mkdir -p "$CURRENT_BACKUP"
+	log_success "Created backup directory: $CURRENT_BACKUP"
 else
-    echo -e "${CYAN}[DRY-RUN]${NC} Would create backup directory: $CURRENT_BACKUP"
+	echo -e "${CYAN}[DRY-RUN]${NC} Would create backup directory: $CURRENT_BACKUP"
 fi
 echo ""
 
@@ -212,7 +212,7 @@ backup_file "$HOME/wezterm.lua" "$CURRENT_BACKUP/wezterm.lua-root" && ((backuped
 # Backup PowerShell (on Windows or if present)
 echo -e "${YELLOW}=== PowerShell Configs ===${NC}"
 if [[ -d "$HOME/.config/powershell" ]]; then
-    backup_file "$HOME/.config/powershell" "$CURRENT_BACKUP/powershell" && ((backuped_count++)) || true
+	backup_file "$HOME/.config/powershell" "$CURRENT_BACKUP/powershell" && ((backuped_count++)) || true
 fi
 
 # Backup tool configs
@@ -229,11 +229,11 @@ backup_file "$HOME/.claude" "$CURRENT_BACKUP/claude-config" && ((backuped_count+
 
 # Create backup manifest
 if [[ "$DRY_RUN" == "false" ]]; then
-    echo "Timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$CURRENT_BACKUP/MANIFEST.txt"
-    echo "Hostname: $(hostname)" >> "$CURRENT_BACKUP/MANIFEST.txt"
-    echo "User: $(whoami)" >> "$CURRENT_BACKUP/MANIFEST.txt"
-    echo "Files backed up: $backuped_count" >> "$CURRENT_BACKUP/MANIFEST.txt"
-    log_success "Created backup manifest"
+	echo "Timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)" >"$CURRENT_BACKUP/MANIFEST.txt"
+	echo "Hostname: $(hostname)" >>"$CURRENT_BACKUP/MANIFEST.txt"
+	echo "User: $(whoami)" >>"$CURRENT_BACKUP/MANIFEST.txt"
+	echo "Files backed up: $backuped_count" >>"$CURRENT_BACKUP/MANIFEST.txt"
+	log_success "Created backup manifest"
 fi
 
 # Clean up old backups
@@ -241,14 +241,14 @@ cleanup_old_backups
 
 # Print summary
 if [[ "$DRY_RUN" == "false" ]]; then
-    print_backup_summary "$CURRENT_BACKUP" "$backuped_count"
-    echo ""
-    log_success "Backup complete!"
-    echo -e "${YELLOW}To restore, run: $SCRIPT_DIR/restore.sh --backup-dir $CURRENT_BACKUP${NC}"
+	print_backup_summary "$CURRENT_BACKUP" "$backuped_count"
+	echo ""
+	log_success "Backup complete!"
+	echo -e "${YELLOW}To restore, run: $SCRIPT_DIR/restore.sh --backup-dir $CURRENT_BACKUP${NC}"
 else
-    echo ""
-    log_info "Dry run complete - no files were actually backed up"
-    echo -e "${YELLOW}Run without --dry-run to create actual backup${NC}"
+	echo ""
+	log_info "Dry run complete - no files were actually backed up"
+	echo -e "${YELLOW}Run without --dry-run to create actual backup${NC}"
 fi
 
 exit 0

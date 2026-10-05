@@ -26,7 +26,10 @@ README_MD="$ROOT_DIR/README.md"
 README_BEGIN='<!-- BEGIN books readme table -->'
 README_END='<!-- END books readme table -->'
 
-die() { echo "Error: $*" >&2; exit 1; }
+die() {
+	echo "Error: $*" >&2
+	exit 1
+}
 
 command -v jq >/dev/null 2>&1 || die "jq is required (scoop install jq)"
 [[ -d "$BOOKS_DIR" ]] || die "books dir not found: $BOOKS_DIR"

@@ -89,10 +89,10 @@ script_tool_needs_update() {
 
 	# Compare versions (simple string comparison should work for semantic versioning)
 	if [[ "$current_version" == "$latest_version" ]]; then
-		return 1  # Up to date
+		return 1 # Up to date
 	fi
 
-	return 0  # Needs update
+	return 0 # Needs update
 }
 
 # Run installer and verify version actually changed
@@ -103,7 +103,7 @@ install_and_verify_version() {
 	local install_cmd="$1"
 	local binary_name="$2"
 	local version_cmd="$3"
-	local npm_package="${4:-}"  # Optional
+	local npm_package="${4:-}" # Optional
 
 	# Get latest version from npm if package name provided (external source of truth)
 	local npm_version=""
@@ -163,7 +163,7 @@ install_and_verify_version() {
 SKIP_PIP=false
 for arg in "$@"; do
 	case "$arg" in
-		--skip-pip) SKIP_PIP=true ;;
+	--skip-pip) SKIP_PIP=true ;;
 	esac
 done
 
@@ -582,7 +582,7 @@ _main() {
 	if should_skip_package "npm"; then
 		update_skip "npm (in skip list)"
 	else
-	if cmd_exists npm; then
+		if cmd_exists npm; then
 			# Clean up invalid npm packages (names starting with dot from failed installs)
 			# These can't be removed via npm uninstall due to invalid names, must delete directly
 			if is_windows; then
@@ -641,7 +641,7 @@ _main() {
 						if [[ -d "$npm_global/.$pkg" ]]; then
 							rm -rf "$npm_global/.$pkg" 2>/dev/null || true
 						fi
-					done <<< "$invalid_packages"
+					done <<<"$invalid_packages"
 				fi
 			fi
 			update_and_report "npm update -g" "npm"

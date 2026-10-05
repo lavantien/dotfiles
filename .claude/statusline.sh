@@ -77,7 +77,7 @@ if [ -n "$context_size" ] && [ "$context_size" != "null" ] && [ "$context_size" 
 	if [ -n "$remaining_pct" ] && [ "$remaining_pct" != "null" ] && [ "$remaining_pct" != "empty" ]; then
 		# Use 2.1.6+ percentage field
 		pct_int=${remaining_pct%.*}
-		used_k=$(( (context_size * (100 - pct_int)) / 100000 ))
+		used_k=$(((context_size * (100 - pct_int)) / 100000))
 	else
 		# Fall back to calculating from current_usage
 		current_usage=$(echo "$input" | jq -r '.context_window.current_usage // empty')
