@@ -2,9 +2,9 @@
 
 All notable changes to this project are documented in this file, newest first. One short line per release states what happened, with no detail enumeration, the commit history carries the detail. Versioning is major.minor. Unreleased work lands under an `## [Unreleased]` heading that is renamed to the version and date at release time.
 
-## [6.2] - 2026-10-03
+## [6.2] - 2026-10-05
 
-CLAUDE.md mandated fuzzy, mutation, and e2e testing alongside TDD, then merged its duplicated rules into single owners, reordered its sections from principles to knowledge grounding, and made the books index note location-agnostic.
+v6.2 mandates fuzzy, mutation, and e2e testing alongside TDD, tightens CLAUDE.md around os-agnostic centralization, agent disposal, the CI watcher, and the 20 minute quota rate, adds the java 27 volume with the 01 through 14 plus 16 PDF renumber, refreshes the README to the 15 volume corpus and layout, and retires CLAUDE.local.md.
 
 ## [6.1] - 2026-10-03
 
