@@ -33,7 +33,7 @@ Subagent fan-out is the default execution mode. Quota guard: every 20 minutes fi
 
 1. Before implementing, derive a comprehensive conflict-free task list from the plan: partition work so concurrent tasks never touch the same files or shared state, and keep dependent tasks sequenced.
 2. Fan out sub-agents over the list, max 4 concurrent development slots plus 1 temporary slot for auxiliary checks like the quota guard. Recycle slots continuously: launch the next queued task in each freed slot until the list is empty.
-3. Dispose of and clean up every agent you do not intend to reuse as soon as it finishes, fails, or goes idle, temp agents (quota guard, CI watcher) especially, or defer cleanup explicitly. Prevent self-inflicted memory leaks at all cost: never leave a finished, failed, idle, or unused agent holding context.
+3. Dispose of and clean up every agent you do not intend to reuse as soon as it finishes, fails, or goes idle, temp agents (quota guard, CI watcher) especially, or defer cleanup explicitly. Prevent self-inflicted memory leaks at all cost: never leave a finished, failed, idle, or unused agent holding context. Disposal includes the process: kill the agent's process tree and verify the OS process is gone, a released agent with a live orphaned process is still a leak.
 4. Each agent records progress durably (task notes or commit messages) and commits small atomic units often, so an outage loses at most the last unit.
 5. Every sub-agent keeps a reading log while working and appends it to its final report: one short line per file access in the form `read <path> <lines or grep> - <why>`. Never full-read generated files, only component logic.
 6. A task counts as done only when it passes the verification chain under Testing.
