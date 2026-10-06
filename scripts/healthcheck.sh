@@ -72,6 +72,13 @@ record_result() {
 	local status="$2"
 	local message="$3"
 
+	# Fold line breaks into one stored line: both printers read the record
+	# with a newline-delimited read, so an embedded newline would truncate
+	# the message at the first line
+	message="${message//$'\r'/}"
+	message="${message//$'\n'/ }"
+	message="${message//$'\t'/ }"
+
 	CHECK_RESULTS+=("$name|$status|$message")
 	((TOTAL_CHECKS++))
 
