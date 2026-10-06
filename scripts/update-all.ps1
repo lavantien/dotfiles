@@ -1,3 +1,4 @@
+#requires -Version 7
 # Native Windows Update All Script
 # Updates all package managers and tools on Windows (no WSL, no sudo)
 # VERSION POLICY: Always updates to LATEST available versions
