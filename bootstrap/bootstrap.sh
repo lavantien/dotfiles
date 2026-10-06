@@ -936,7 +936,7 @@ install_cli_tools() {
 				# Priority: brew → official script → apt (with k8s repo setup)
 				if ! cmd_exists brew || ! install_brew_package kubectl "" kubectl 2>/dev/null; then
 					# Brew not available or failed, try official script
-					if ! run_cmd "curl -LO 'https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl' && \
+					if ! run_cmd "curl -fsSL -o kubectl 'https://dl.k8s.io/release/$(curl -fsSL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl' && \
                         chmod +x kubectl && sudo mv kubectl /usr/local/bin/kubectl"; then
 						# Official script failed, try apt as last resort
 						install_linux_package kubectl "" kubectl || true

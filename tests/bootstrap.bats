@@ -48,3 +48,8 @@ ALIASES="$REPO_ROOT/home/.bash_aliases"
 	[ "$status" -eq 0 ]
 	echo "$output" | grep -q 'rc=0 skipped=1'
 }
+
+@test "the kubectl download fails on http errors instead of saving an error page" {
+	grep -qF "curl -fsSL -o kubectl 'https://dl.k8s.io" "$BOOTSTRAP_SH"
+	! grep -q 'curl -LO' "$BOOTSTRAP_SH"
+}
