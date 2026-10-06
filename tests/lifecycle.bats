@@ -265,6 +265,24 @@ PS1
 	head -n 3 "$REPO_ROOT/scripts/deploy.ps1" | grep -q '#requires -Version 7'
 }
 
+@test "deploy.ps1 deploys the bash hooks and wires core.hooksPath" {
+	command -v pwsh >/dev/null 2>&1 || skip "pwsh not installed"
+	local sb
+	sb="$(cd "$(mktemp -d)" && pwd -W)"
+	write_pwsh_harness "$sb/harness.ps1" 'Deploy-GitHooks -HooksDir "$env:DF_CONFIGDIR/git/hooks"'
+	HOME="$sb" USERPROFILE="$sb" DF_CONFIGDIR="$sb/.config" DF_DOTFILESDIR="$REPO_ROOT" \
+		run pwsh -NoProfile -File "$sb/harness.ps1" \
+			-ScriptPath "$REPO_ROOT/scripts/deploy.ps1" -FunctionName Deploy-GitHooks
+	[ "$status" -eq 0 ] || { echo "$output"; false; }
+	[ -f "$sb/.config/git/hooks/pre-commit" ]
+	[ -f "$sb/.config/git/hooks/commit-msg" ]
+	run env HOME="$sb" git config --global core.hooksPath
+	[ "$output" = "$sb/.config/git/hooks" ]
+	run env HOME="$sb" git config --global init.templatedir
+	[ "$output" = "$sb/.config/git/hooks" ]
+	rm -rf "$sb"
+}
+
 @test "deploy.ps1 Merge-Gitconfig preserves identity and normalizes helpers" {
 	command -v pwsh >/dev/null 2>&1 || skip "pwsh not installed"
 	local sb
