@@ -4,6 +4,15 @@
 
 set -euo pipefail
 
+# Colors (must be assigned before any use under set -u, the gh checks below
+# are the first users)
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+NC='\033[0m'
+
 # Check for GitHub CLI
 if ! command -v gh >/dev/null 2>&1; then
 	echo -e "${RED}Error: GitHub CLI (gh) not found${NC}" >&2
@@ -21,14 +30,6 @@ fi
 USERNAME="${GITHUB_USERNAME:-$(git config user.name 2>/dev/null || echo "lavantien")}"
 BASE_DIR="${GIT_BASE_DIR:-$HOME/dev/github}"
 USE_SSH=false
-
-# Colors
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-CYAN='\033[0;36m'
-NC='\033[0m'
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
