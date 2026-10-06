@@ -124,6 +124,30 @@ make_backup() {
 	rm -rf "$sb"
 }
 
+@test "answering a keeps the marker, the files, and reports aborted" {
+	local sb
+	sb="$(mktemp -d)"
+	touch "$sb/.dotfiles-installed" "$sb/.bash_aliases" "$sb/.gitconfig"
+	run env HOME="$sb" bash "$UNINSTALL" <<< $'a\n'
+	[ "$status" -eq 0 ] || { echo "exit $status: $output"; false; }
+	[ -e "$sb/.bash_aliases" ]
+	[ -e "$sb/.gitconfig" ]
+	[ -f "$sb/.dotfiles-installed" ] || { echo "marker deleted after a"; false; }
+	[[ "$output" == *"aborted"* ]]
+	rm -rf "$sb"
+}
+
+@test "answering a skips the backup directory prompt" {
+	local sb
+	sb="$(mktemp -d)"
+	touch "$sb/.dotfiles-installed" "$sb/.bash_aliases"
+	mkdir -p "$sb/.dotfiles-backup/20260101-000000"
+	run env HOME="$sb" bash "$UNINSTALL" <<< $'a\ny\n'
+	[ "$status" -eq 0 ] || { echo "exit $status: $output"; false; }
+	[ -d "$sb/.dotfiles-backup" ] || { echo "backup dir removed after a"; false; }
+	rm -rf "$sb"
+}
+
 @test "uninstall driven with piped y removes deployed files and exits 0" {
 	local sb
 	sb="$(mktemp -d)"

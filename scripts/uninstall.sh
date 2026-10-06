@@ -226,7 +226,7 @@ safe_remove() {
 }
 
 remove_backup_dir() {
-	if [[ "$KEEP_BACKUPS" == "true" ]] || [[ ! -d "$HOME/.dotfiles-backup" ]]; then
+	if [[ "$SKIP_REMAINING" == "true" ]] || [[ "$KEEP_BACKUPS" == "true" ]] || [[ ! -d "$HOME/.dotfiles-backup" ]]; then
 		return 0
 	fi
 
@@ -251,7 +251,9 @@ remove_backup_dir() {
 }
 
 remove_marker() {
-	if [[ -f "$DOTFILES_MARKER" ]] && [[ "$VERIFY_ONLY" == "false" ]] && [[ "$DRY_RUN" == "false" ]]; then
+	# An uninstall that removed nothing is an abort, the deployment stays
+	# marked so future runs still verify against the marker
+	if [[ "$DELETED_COUNT" -gt 0 ]] && [[ -f "$DOTFILES_MARKER" ]] && [[ "$VERIFY_ONLY" == "false" ]] && [[ "$DRY_RUN" == "false" ]]; then
 		echo ""
 		echo -e "${YELLOW}=== Cleanup ===${NC}"
 		if rm -f "$DOTFILES_MARKER" 2>/dev/null; then
@@ -261,9 +263,13 @@ remove_marker() {
 }
 
 # Undo the git hook wiring deploy set; when the whole .gitconfig was removed
-# the keys went with it, so only a surviving file needs the unset.
+# the keys went with it, and while the hooks dir itself is still deployed the
+# wiring is live, so only a surviving file next to a gone hooks dir needs it.
 undo_git_wiring() {
 	if [[ "$VERIFY_ONLY" == "true" ]] || [[ "$DRY_RUN" == "true" ]]; then
+		return 0
+	fi
+	if [[ -d "$HOME/.config/git/hooks" ]]; then
 		return 0
 	fi
 	if [[ ! -f "$HOME/.gitconfig" ]]; then
@@ -324,9 +330,16 @@ main() {
 
 	if [[ "$DRY_RUN" == "false" ]] && [[ "$VERIFY_ONLY" == "false" ]]; then
 		echo ""
-		log_success "Uninstall complete!"
-		echo -e "${YELLOW}Please reload your shell to apply changes${NC}"
-		echo -e "${YELLOW}Run $SCRIPT_DIR/restore.sh to restore from a backup if needed${NC}"
+		if [[ "$DELETED_COUNT" -eq 0 ]]; then
+			log_warning "Uninstall aborted, nothing was removed"
+			if [[ -f "$DOTFILES_MARKER" ]]; then
+				log_info "Deployment marker kept: $DOTFILES_MARKER"
+			fi
+		else
+			log_success "Uninstall complete!"
+			echo -e "${YELLOW}Please reload your shell to apply changes${NC}"
+			echo -e "${YELLOW}Run $SCRIPT_DIR/restore.sh to restore from a backup if needed${NC}"
+		fi
 	else
 		echo ""
 		log_info "Dry run/verify complete - no files were actually removed"
