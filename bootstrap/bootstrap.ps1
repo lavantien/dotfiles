@@ -798,6 +798,44 @@ function Install-CLITools {
         }
     }
 
+    # Interactive gh auth login, ported from bootstrap.sh's foundation phase.
+    # gh lands in this phase on Windows, so the offer runs here; a fresh box
+    # converges without a manual pre-step and -Y skips it.
+    if ($DryRun) {
+        Write-Info "[DRY-RUN] Would check gh auth and offer 'gh auth login'"
+    }
+    elseif (Test-Command gh) {
+        Write-Step "Checking GitHub authentication..."
+        gh auth status *> $null
+        if ($LASTEXITCODE -eq 0) {
+            Write-Success "GitHub CLI already authenticated"
+        }
+        elseif ($Script:Interactive) {
+            Write-Host "You need to authenticate with GitHub to continue." -ForegroundColor Yellow
+            Write-Host "A browser window will open for you to complete authentication." -ForegroundColor Cyan
+            if (Read-Confirmation "Authenticate with GitHub now?" "y") {
+                Write-Step "Running gh auth login..."
+                gh auth login
+                if ($LASTEXITCODE -eq 0) {
+                    Write-Success "GitHub authentication successful"
+                }
+                else {
+                    Write-Warning "GitHub authentication failed or was cancelled"
+                    Write-Info "You can run 'gh auth login' later to authenticate"
+                }
+            }
+            else {
+                Write-Info "Skipping GitHub authentication. Run 'gh auth login' later."
+            }
+        }
+        else {
+            Write-Info "Non-interactive mode: Skipping 'gh auth login'. Run it manually later."
+        }
+    }
+    else {
+        Write-Info "gh not installed yet, skipping GitHub authentication"
+    }
+
     Write-Success "CLI tools installation complete"
     return $true
 }
