@@ -179,6 +179,63 @@ make_backup() {
 }
 
 # ============================================================================
+# gitconfig credential helper
+# ============================================================================
+
+@test "shipped gitconfig resolves gh through PATH" {
+	run grep -F 'helper = !gh auth git-credential' "$REPO_ROOT/home/.gitconfig"
+	[ "$status" -eq 0 ]
+	run grep -E 'linuxbrew|gh\.exe' "$REPO_ROOT/home/.gitconfig"
+	[ "$status" -ne 0 ]
+}
+
+@test "normalize_gh_helpers folds legacy absolute gh paths into the portable form" {
+	local f
+	f="$(mktemp)"
+	cat >"$f" <<'EOF'
+[credential "https://github.com"]
+	helper =
+	helper = !/home/linuxbrew/.linuxbrew/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper =
+	helper = !"C:/Users/u/scoop/apps/gh/current/gh.exe" auth git-credential
+EOF
+	run bash -c 'source "$1"; normalize_gh_helpers "$2"' _ "$DEPLOY" "$f"
+	[ "$status" -eq 0 ]
+	[ "$(grep -c '^helper = !gh auth git-credential$' "$f")" -eq 2 ]
+	run grep -E 'linuxbrew|gh\.exe' "$f"
+	[ "$status" -ne 0 ]
+	rm -f "$f"
+}
+
+@test "merge_gitconfig preserves identity and drops legacy helpers" {
+	local sb
+	sb="$(mktemp -d)"
+	cat >"$sb/existing" <<'EOF'
+[user]
+	name = Old Name
+	email = old@example.invalid
+[credential "https://github.com"]
+	helper = /home/linuxbrew/.linuxbrew/bin/gh auth git-credential
+EOF
+	cat >"$sb/template" <<'EOF'
+[user]
+	name = Template
+	email = template@example.invalid
+[credential "https://github.com"]
+	helper =
+	helper = !/home/linuxbrew/.linuxbrew/bin/gh auth git-credential
+EOF
+	run bash -c 'source "$1"; merge_gitconfig "$2/template" "$2/existing"' _ "$DEPLOY" "$sb"
+	[ "$status" -eq 0 ]
+	[ "$(git config --file "$sb/existing" user.name)" = "Old Name" ]
+	[ "$(git config --file "$sb/existing" user.email)" = "old@example.invalid" ]
+	run grep -E 'linuxbrew|gh\.exe' "$sb/existing"
+	[ "$status" -ne 0 ]
+	rm -rf "$sb"
+}
+
+# ============================================================================
 # restore non-interactive paths
 # ============================================================================
 
