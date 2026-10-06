@@ -1,3 +1,4 @@
+#requires -Version 7
 # Deploy Script for Windows (Pure PowerShell 7)
 # Deploys dotfiles, scripts, and configs to appropriate locations
 
@@ -66,6 +67,40 @@ function Copy-Files {
         $Dst = Join-Path $DestDir (Split-Path $f -Leaf)
         Copy-File $Src $Dst -Verbose:$Verbose
     }
+}
+
+# Port of merge_gitconfig in deploy.sh: replace ~/.gitconfig with the repo
+# template while preserving the live user.name and user.email.
+function Merge-Gitconfig {
+    param([string]$Src, [string]$Dst)
+
+    if (!(Test-Path $Dst)) {
+        Copy-Item $Src $Dst
+        Write-Host "  Git config (created)" -ForegroundColor Cyan
+        return
+    }
+
+    $UserName = git config --file $Dst user.name 2>$null
+    if ($LASTEXITCODE -ne 0) { $UserName = $null }
+    $UserEmail = git config --file $Dst user.email 2>$null
+    if ($LASTEXITCODE -ne 0) { $UserEmail = $null }
+
+    $TempFile = "$Dst.dotfiles-new"
+    Copy-Item $Src $TempFile -Force
+    if ($UserName) { git config --file $TempFile user.name "$UserName" | Out-Null }
+    if ($UserEmail) { git config --file $TempFile user.email "$UserEmail" | Out-Null }
+
+    # Fold legacy absolute gh credential helper paths (linuxbrew, gh.exe)
+    # into the PATH-resolved form; git runs helpers through sh either way
+    $Content = Get-Content $TempFile -Raw
+    $Pattern = '(?m)^[ \t]*helper[ \t]*=[ \t]*!?\S*gh(\.exe)?"?[ \t]+auth[ \t]+git-credential[ \t]*\r?$'
+    if ($Content -match $Pattern) {
+        $Content = $Content -replace $Pattern, 'helper = !gh auth git-credential'
+        Set-Content -LiteralPath $TempFile $Content -NoNewline
+    }
+
+    Move-Item $TempFile $Dst -Force
+    Write-Host "  Git config (updated, user identity preserved)" -ForegroundColor Cyan
 }
 
 function Merge-Template([PSCustomObject]$Template, [PSCustomObject]$Live) {
@@ -363,6 +398,9 @@ if (-not $SkipConfig) {
         Copy-File "$DotfilesDir/home/Microsoft.PowerShell_profile.ps1" "$ProfileDir/Microsoft.PowerShell_profile.ps1"
         Write-Host "  PowerShell profile" -ForegroundColor Green
     }
+
+    # Git config (merges the template, preserves the live git identity)
+    Merge-Gitconfig -Src "$DotfilesDir/home/.gitconfig" -Dst "$HOME/.gitconfig"
 
     # Git hooks
     $HooksDir = "$ConfigDir/git/hooks"
