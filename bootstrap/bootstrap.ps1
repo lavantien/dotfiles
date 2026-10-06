@@ -574,7 +574,7 @@ function Install-LintersFormatters {
 
     # gup (Go package manager - always latest)
     if ((Test-Command go) -and (-not (Test-Command gup))) {
-        Install-GoPackage "nao.vi/gup@latest" "gup" ""
+        Install-GoPackage "github.com/nao1215/gup@latest" "gup" ""
     }
     elseif (Test-Command gup) {
         Write-Step "Checking gup..."
