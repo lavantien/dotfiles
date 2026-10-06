@@ -58,10 +58,12 @@ done
 # CHECK FUNCTIONS
 # ============================================================================
 
-log_check() { echo -e "${BLUE}[CHECK]${NC} $1"; }
-log_pass() { echo -e "${GREEN}[PASS]${NC} $1"; }
-log_fail() { echo -e "${RED}[FAIL]${NC} $1"; }
-log_warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
+# Progress lines go to stderr so stdout carries results only: the table, or
+# in json mode a parseable document with no banner mixed in
+log_check() { echo -e "${BLUE}[CHECK]${NC} $1" >&2; }
+log_pass() { echo -e "${GREEN}[PASS]${NC} $1" >&2; }
+log_fail() { echo -e "${RED}[FAIL]${NC} $1" >&2; }
+log_warn() { echo -e "${YELLOW}[WARN]${NC} $1" >&2; }
 
 # Record check result
 # Usage: record_result <name> <status> <message>
@@ -81,10 +83,13 @@ record_result() {
 }
 
 # Check if command exists and optionally verify version
+# 4th argument: required (default true), optional missing tools record a warn
+# and return 0 instead of a fail and exit 1
 check_command() {
 	local name="$1"
 	local cmd="$2"
 	local min_version="${3:-}"
+	local required="${4:-true}"
 
 	if command -v "$cmd" >/dev/null 2>&1; then
 		if [[ -n "$min_version" ]]; then
@@ -101,12 +106,43 @@ check_command() {
 		log_pass "Found: $cmd"
 		record_result "$name" "pass" "Found $cmd"
 		return 0
-	else
-		log_check "$name"
+	fi
+	log_check "$name"
+	if [[ "$required" == "true" ]]; then
 		log_fail "Not found: $cmd"
 		record_result "$name" "fail" "Not found"
 		return 1
 	fi
+	log_warn "Optional, not found: $cmd"
+	record_result "$name" "warn" "Optional, not found"
+	return 0
+}
+
+# Check the first available command from a fallback group: one recorded result
+# for the whole group, so a missing twin never records a fail before the other
+# passes. 2nd argument: required (default true).
+check_command_any() {
+	local name="$1"
+	local required="${2:-true}"
+	shift 2
+	local cmd
+	for cmd in "$@"; do
+		if command -v "$cmd" >/dev/null 2>&1; then
+			log_check "$name"
+			log_pass "Found: $cmd"
+			record_result "$name" "pass" "Found $cmd"
+			return 0
+		fi
+	done
+	log_check "$name"
+	if [[ "$required" == "true" ]]; then
+		log_fail "None found: $*"
+		record_result "$name" "fail" "Not found"
+		return 1
+	fi
+	log_warn "Optional, none found: $*"
+	record_result "$name" "warn" "Optional, not found"
+	return 0
 }
 
 # Check if file exists
@@ -136,22 +172,29 @@ check_file() {
 }
 
 # Check git configuration
+# 3rd argument: required (default true), matching check_file and check_command
 check_git_config() {
 	local name="$1"
 	local key="$2"
+	local required="${3:-true}"
 
-	local value=$(git config --global "$key" 2>/dev/null)
+	local value
+	value=$(git config --global "$key" 2>/dev/null)
 	if [[ -n "$value" ]]; then
 		log_check "$name"
 		log_pass "Set: $key = $value"
 		record_result "$name" "pass" "$key = $value"
 		return 0
-	else
-		log_check "$name"
+	fi
+	log_check "$name"
+	if [[ "$required" == "true" ]]; then
 		log_fail "Not set: $key"
 		record_result "$name" "fail" "Not configured"
 		return 1
 	fi
+	log_warn "Optional, not set: $key"
+	record_result "$name" "warn" "Not configured"
+	return 0
 }
 
 # Check if git hook is installed
@@ -176,21 +219,21 @@ check_git_hook() {
 # HEALTH CHECKS
 # ============================================================================
 
-echo -e "${CYAN}========================================${NC}"
-echo -e "${CYAN}   Dotfiles Health Check${NC}"
-echo -e "${CYAN}========================================${NC}"
-echo -e "${BLUE}Verbose:${NC}   $VERBOSE"
-echo -e "${BLUE}Format:${NC}    $FORMAT"
-echo -e "${CYAN}========================================${NC}"
-echo ""
+echo -e "${CYAN}========================================${NC}" >&2
+echo -e "${CYAN}   Dotfiles Health Check${NC}" >&2
+echo -e "${CYAN}========================================${NC}" >&2
+echo -e "${BLUE}Verbose:${NC}   $VERBOSE" >&2
+echo -e "${BLUE}Format:${NC}    $FORMAT" >&2
+echo -e "${CYAN}========================================${NC}" >&2
+echo "" >&2
 
 # Check required tools
-echo -e "${YELLOW}=== Required Tools ===${NC}"
+echo -e "${YELLOW}=== Required Tools ===${NC}" >&2
 check_command "Git" "git"
-check_command "Editor (nvim/vim)" "nvim" || check_command "Editor (nvim/vim)" "vim"
+check_command_any "Editor (nvim/vim)" nvim vim
 
 # Check package managers
-echo -e "${YELLOW}=== Package Managers ===${NC}"
+echo -e "${YELLOW}=== Package Managers ===${NC}" >&2
 check_command "Homebrew" "brew" "" "false"
 check_command "npm" "npm" "" "false"
 check_command "pip" "pip" "" "false"
@@ -198,14 +241,14 @@ check_command "Go" "go" "" "false"
 check_command "Cargo" "cargo" "" "false"
 
 # Check CLI tools
-echo -e "${YELLOW}=== CLI Tools ===${NC}"
+echo -e "${YELLOW}=== CLI Tools ===${NC}" >&2
 check_command "fzf" "fzf" "" "false"
 check_command "bat" "bat" "" "false"
-check_command "eza/exa" "eza" "" "false" || check_command "eza/exa" "exa" "" "false"
+check_command_any "eza/exa" false eza exa
 check_command "ripgrep" "rg" "" "false"
 
 # Check configuration files
-echo -e "${YELLOW}=== Configuration Files ===${NC}"
+echo -e "${YELLOW}=== Configuration Files ===${NC}" >&2
 check_file "Bash aliases" "$HOME/.bash_aliases" "false"
 check_file "Zsh config" "$HOME/.zshrc" "false"
 check_file "Git config" "$HOME/.gitconfig" "true"
@@ -228,20 +271,20 @@ if command -v nvim >/dev/null 2>&1; then
 fi
 
 # Check git configuration
-echo -e "${YELLOW}=== Git Configuration ===${NC}"
+echo -e "${YELLOW}=== Git Configuration ===${NC}" >&2
 check_git_config "Git user.name" "user.name"
 check_git_config "Git user.email" "user.email"
 check_git_config "Git core.editor" "core.editor"
 check_git_config "Git init.defaultBranch" "init.defaultBranch" "false"
 
 # Check git hooks
-echo -e "${YELLOW}=== Git Hooks ===${NC}"
+echo -e "${YELLOW}=== Git Hooks ===${NC}" >&2
 HOOKS_DIR="$HOME/.config/git/hooks"
 check_git_hook "pre-commit" "$HOOKS_DIR/pre-commit"
 check_git_hook "commit-msg" "$HOOKS_DIR/commit-msg"
 
 # Check language servers
-echo -e "${YELLOW}=== Language Servers ===${NC}"
+echo -e "${YELLOW}=== Language Servers ===${NC}" >&2
 check_command "LSP: lua_ls" "lua-language-server" "" "false"
 check_command "LSP: clangd" "clangd" "" "false"
 check_command "LSP: gopls" "gopls" "" "false"
@@ -250,7 +293,7 @@ check_command "LSP: pyright" "pyright" "" "false"
 check_command "LSP: tsserver" "typescript-language-server" "" "false"
 
 # Check linters/formatters
-echo -e "${YELLOW}=== Linters & Formatters ===${NC}"
+echo -e "${YELLOW}=== Linters & Formatters ===${NC}" >&2
 check_command "Prettier" "prettier" "" "false"
 check_command "ESLint" "eslint" "" "false"
 check_command "Ruff" "ruff" "" "false"
@@ -302,6 +345,18 @@ print_table() {
 	echo -e "${CYAN}========================================${NC}"
 }
 
+# Escape a string for a JSON value: backslash, double quote, and control
+# characters folded to spaces (messages are single line by contract)
+json_escape() {
+	local s="$1"
+	s="${s//\\/\\\\}"
+	s="${s//\"/\\\"}"
+	s="${s//$'\n'/ }"
+	s="${s//$'\r'/}"
+	s="${s//$'\t'/ }"
+	printf '%s' "$s"
+}
+
 print_json() {
 	echo "{"
 	echo "  \"total\": $TOTAL_CHECKS,"
@@ -321,9 +376,9 @@ print_json() {
 		fi
 
 		echo -n "    {"
-		echo -n "\"name\": \"$name\", "
+		echo -n "\"name\": \"$(json_escape "$name")\", "
 		echo -n "\"status\": \"$status\", "
-		echo -n "\"message\": \"$message\""
+		echo -n "\"message\": \"$(json_escape "$message")\""
 		echo -n "}"
 	done
 
