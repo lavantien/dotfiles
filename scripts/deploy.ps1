@@ -69,8 +69,13 @@ function Copy-Files {
     }
 }
 
-# Port of merge_gitconfig in deploy.sh: replace ~/.gitconfig with the repo
-# template while preserving the live user.name and user.email.
+# Port of merge_gitconfig in deploy.sh: deep merge the repo template into the
+# live ~/.gitconfig. Template keys win, live-only keys (signingkey, gpgsign,
+# includes, aliases, extra sections) survive in reopened sections at the end,
+# and user.name plus user.email are never template-managed so git
+# last-value-wins keeps the live identity. Legacy absolute gh helper paths,
+# quoted forms included, fold into the PATH-resolved form with indentation
+# kept; git runs helpers through sh either way.
 function Merge-Gitconfig {
     param([string]$Src, [string]$Dst)
 
@@ -80,27 +85,84 @@ function Merge-Gitconfig {
         return
     }
 
-    $UserName = git config --file $Dst user.name 2>$null
-    if ($LASTEXITCODE -ne 0) { $UserName = $null }
-    $UserEmail = git config --file $Dst user.email 2>$null
-    if ($LASTEXITCODE -ne 0) { $UserEmail = $null }
-
-    $TempFile = "$Dst.dotfiles-new"
-    Copy-Item $Src $TempFile -Force
-    if ($UserName) { git config --file $TempFile user.name "$UserName" | Out-Null }
-    if ($UserEmail) { git config --file $TempFile user.email "$UserEmail" | Out-Null }
-
-    # Fold legacy absolute gh credential helper paths (linuxbrew, gh.exe)
-    # into the PATH-resolved form; git runs helpers through sh either way
-    $Content = Get-Content $TempFile -Raw
-    $Pattern = '(?m)^[ \t]*helper[ \t]*=[ \t]*!?\S*gh(\.exe)?"?[ \t]+auth[ \t]+git-credential[ \t]*\r?$'
-    if ($Content -match $Pattern) {
-        $Content = $Content -replace $Pattern, 'helper = !gh auth git-credential'
-        Set-Content -LiteralPath $TempFile $Content -NoNewline
+    function ConvertTo-SectionId([string]$Inner) {
+        $Inner = $Inner.Trim()
+        $Name = $Inner
+        $Sub = ''
+        $Quote = $Inner.IndexOf('"')
+        if ($Quote -ge 0) {
+            $Name = $Inner.Substring(0, $Quote).Trim()
+            $Sub = $Inner.Substring($Quote)
+        }
+        return $Name.ToLowerInvariant() + '|' + $Sub
     }
 
+    # Fold legacy absolute gh helper lines, quoted forms included, keeping
+    # indentation; already canonical lines come back byte-identical
+    function ConvertTo-CanonicalHelper([string]$Line) {
+        if ($Line -match '^(?<indent>[ \t]*)helper[ \t]*=[ \t]*!?"?[^"]*gh(\.exe)?"?[ \t]+auth[ \t]+git-credential"?[ \t]*$') {
+            return $Matches['indent'] + 'helper = !gh auth git-credential'
+        }
+        return $Line
+    }
+
+    $HeaderRx = '^\s*\[(?<inner>[^\]]+)\]\s*(?:[#;].*)?$'
+    $Managed = @{}
+    $TplSections = @{}
+
+    # Template pass: emit verbatim (folded) and collect the managed keys
+    $Out = [System.Collections.Generic.List[string]]::new()
+    $Section = ''
+    foreach ($Line in Get-Content -LiteralPath $Src) {
+        $Line = ConvertTo-CanonicalHelper $Line
+        $Out.Add($Line)
+        if ($Line -match $HeaderRx) {
+            $Section = ConvertTo-SectionId $Matches['inner']
+            $TplSections[$Section] = $true
+            continue
+        }
+        $Key = ($Line.Trim() -replace '[\s=].*$', '').ToLowerInvariant()
+        if ($Key -and $Section -and -not ($Section -eq 'user|' -and ($Key -eq 'name' -or $Key -eq 'email'))) {
+            $Managed["$Section|$Key"] = $true
+        }
+    }
+
+    # Live pass: keep live-only keys grouped by section, in first-seen order
+    $AppendOrder = [System.Collections.Generic.List[string]]::new()
+    $AppendLines = @{}
+    $AppendHeader = @{}
+    $Section = ''
+    foreach ($Line in Get-Content -LiteralPath $Dst) {
+        if ($Line -match $HeaderRx) {
+            $Section = ConvertTo-SectionId $Matches['inner']
+            if (-not $AppendLines.ContainsKey($Section)) {
+                $AppendLines[$Section] = [System.Collections.Generic.List[string]]::new()
+                $AppendHeader[$Section] = $Line
+                $AppendOrder.Add($Section)
+            }
+            continue
+        }
+        if (-not $Section) { continue }
+        if ($Line -match '^\s*$' -or $Line -match '^\s*[#;]') {
+            if (-not $TplSections.ContainsKey($Section)) { $AppendLines[$Section].Add($Line) }
+            continue
+        }
+        $Key = ($Line.Trim() -replace '[\s=].*$', '').ToLowerInvariant()
+        if ($Managed.ContainsKey("$Section|$Key")) { continue }
+        $AppendLines[$Section].Add((ConvertTo-CanonicalHelper $Line))
+    }
+
+    foreach ($Sec in $AppendOrder) {
+        if ($AppendLines[$Sec].Count -eq 0) { continue }
+        $Out.Add('')
+        $Out.Add($AppendHeader[$Sec])
+        $Out.AddRange($AppendLines[$Sec])
+    }
+
+    $TempFile = "$Dst.dotfiles-new"
+    $Out | Set-Content -LiteralPath $TempFile
     Move-Item $TempFile $Dst -Force
-    Write-Host "  Git config (updated, user identity preserved)" -ForegroundColor Cyan
+    Write-Host "  Git config (updated, live-only keys preserved)" -ForegroundColor Cyan
 }
 
 # Port of deploy_git_hooks in deploy.sh: the bash hooks are the single

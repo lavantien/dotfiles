@@ -434,6 +434,51 @@ EOF
 	rm -rf "$sb"
 }
 
+@test "deploy.ps1 Merge-Gitconfig deep merge preserves live-only keys" {
+	command -v pwsh >/dev/null 2>&1 || skip "pwsh not installed"
+	local sb tab
+	sb="$(cd "$(mktemp -d)" && pwd -W)"
+	tab=$'\t'
+	cat >"$sb/existing" <<EOF
+[user]
+${tab}name = Old Name
+${tab}email = old@example.invalid
+${tab}signingkey = ABC123DEF
+[commit]
+${tab}gpgsign = true
+[include]
+${tab}path = ~/work/gitconfig.extra
+[alias]
+${tab}custom = !sh -c 'echo hi'
+[credential]
+${tab}helper = store
+${tab}helper = "!/home/linuxbrew/.linuxbrew/bin/gh auth git-credential"
+[init]
+${tab}defaultBranch = master
+EOF
+	write_pwsh_harness "$sb/harness.ps1" 'Merge-Gitconfig -Src $env:DF_SRC -Dst $env:DF_DST'
+	DF_SRC="$REPO_ROOT/home/.gitconfig" DF_DST="$sb/existing" run pwsh -NoProfile -File "$sb/harness.ps1" \
+		-ScriptPath "$REPO_ROOT/scripts/deploy.ps1" -FunctionName Merge-Gitconfig
+	[ "$status" -eq 0 ] || { echo "$output"; false; }
+	[ "$(git config --file "$sb/existing" user.name)" = "Old Name" ]
+	[ "$(git config --file "$sb/existing" user.signingkey)" = "ABC123DEF" ]
+	[ "$(git config --file "$sb/existing" commit.gpgsign)" = "true" ]
+	[ "$(git config --file "$sb/existing" include.path)" = "~/work/gitconfig.extra" ]
+	[ "$(git config --file "$sb/existing" alias.custom)" = "!sh -c 'echo hi'" ]
+	# Both live-only credential helpers survive: store untouched, gh folded
+	grep -qF "${tab}helper = store" "$sb/existing"
+	# Managed keys flip back to the template's values
+	[ "$(git config --file "$sb/existing" init.defaultBranch)" = "main" ]
+	[ "$(git config --file "$sb/existing" alias.dft)" = "difftool" ]
+	# Live-only legacy helper folded in place, indentation kept
+	grep -qF "${tab}helper = !gh auth git-credential" "$sb/existing"
+	run grep -E 'linuxbrew|gh\.exe' "$sb/existing"
+	[ "$status" -ne 0 ]
+	run git config --file "$sb/existing" --list
+	[ "$status" -eq 0 ]
+	rm -rf "$sb"
+}
+
 # ============================================================================
 # restore non-interactive paths
 # ============================================================================
