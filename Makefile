@@ -4,7 +4,7 @@ SHELL := /usr/bin/env bash
 E2E_IMAGE := dotfiles-e2e
 # Wave 1 debt gate carve-outs, format file:SC code. Delete each entry when
 # its owning slot lands the fix so the gate never hides new errors.
-KNOWN_SHELLCHECK_ERRORS := scripts/update.sh:SC2148
+KNOWN_SHELLCHECK_ERRORS :=
 
 PSSA_LINT := pwsh -NoProfile -Command 'if (-not (Get-Module -ListAvailable PSScriptAnalyzer)) { "skip: PSScriptAnalyzer not installed"; exit 0 }; $$files = @(git ls-files -- "*.ps1"); if ($$files.Count -eq 0) { exit 0 }; $$findings = @(Invoke-ScriptAnalyzer -Path $$files -Severity Error); if ($$findings.Count -gt 0) { foreach ($$x in $$findings) { "{0}:{1}:{2}: {3}" -f $$x.ScriptName, $$x.Line, $$x.Column, $$x.Message }; exit 1 }; "PSScriptAnalyzer: 0 errors in $$($$files.Count) files"'
 PSSA_FORMAT := pwsh -NoProfile -Command 'if (-not (Get-Module -ListAvailable PSScriptAnalyzer)) { "skip: PSScriptAnalyzer not installed"; exit 0 }; foreach ($$f in @(git ls-files -- "*.ps1")) { $$c = Get-Content -Raw $$f; $$n = Invoke-Formatter $$c; if ($$n -ne $$c) { Set-Content -NoNewline -Path $$f -Value $$n; "formatted: $$f" } }'

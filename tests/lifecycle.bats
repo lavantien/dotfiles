@@ -265,6 +265,11 @@ PS1
 	head -n 3 "$REPO_ROOT/scripts/deploy.ps1" | grep -q '#requires -Version 7'
 }
 
+@test "update.sh carries a shebang and the shellcheck debt list is empty" {
+	[ "$(head -n 1 "$REPO_ROOT/scripts/update.sh")" = "#!/usr/bin/env bash" ]
+	grep -qE '^KNOWN_SHELLCHECK_ERRORS := *$' "$REPO_ROOT/Makefile"
+}
+
 @test "deploy.ps1 deploys the bash hooks and wires core.hooksPath" {
 	command -v pwsh >/dev/null 2>&1 || skip "pwsh not installed"
 	local sb
