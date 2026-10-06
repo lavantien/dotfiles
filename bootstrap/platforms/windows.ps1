@@ -128,6 +128,8 @@ function Get-PackageDescription {
         "shfmt" { return "Shell script formatter" }
         "scalafmt" { return "Scala formatter" }
         "typos" { return "Spell checker" }
+        "yamllint" { return "YAML linter" }
+        "hadolint" { return "Dockerfile linter" }
 
         # CLI tools
         "fzf" { return "fuzzy finder" }
@@ -144,6 +146,11 @@ function Get-PackageDescription {
         "btop-lhm" { return "system monitor" }
         "sqlite" { return "SQL database CLI" }
         "sqlite3" { return "SQL database CLI" }
+        "jq" { return "JSON processor" }
+        "yazi" { return "file manager" }
+        "helm" { return "Kubernetes package manager" }
+        "kubectl" { return "Kubernetes CLI" }
+        "oh-my-posh" { return "prompt engine" }
 
         # Development tools
         "vscode" { return "code editor" }
