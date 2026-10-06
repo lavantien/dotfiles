@@ -1,12 +1,8 @@
-# Universal dotfiles
+# dotfiles
 
 [![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)](https://github.com/lavantien/dotfiles) [![Windows](https://img.shields.io/badge/Windows-0078D6?logo=windows&logoColor=white)](https://github.com/lavantien/dotfiles) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-These portable, production-grade dotfiles set up a software engineering environment for Linux and Windows 11 in one click. The repo is also the publishing front for a 15 volume typst books corpus that serves as the AI grounding reference.
-
-The toolchain auto-detects the platform and degrades gracefully when something is unavailable. Bootstrap and updates are idempotent and safe to rerun, and the setup covers the full terminal tooling.
-
-Inspired by chess and gomoku variant engines that load an opening book for precomputed accuracy and lower computation, the corpus plays the same role for the agentic harness that grounds sessions in standardized protocols, precompiled deterministic patterns, and the latest official idioms and information, which maximally reduces hallucination and drift at the harness level independent of the LLMs used, and the same volumes double as comprehensive reference material for humans, covering the 95th percentile of software engineering tasks.
+The repo deploys an engineering environment for Linux and Windows: Neovim, WezTerm, zsh, and PowerShell configs, git hooks, Claude Code and OpenCode settings, the maintenance scripts, and a typst books corpus used for offline grounding. The supported platforms are Ubuntu 26.04 and newer plus Windows 11 with PowerShell 7. Bootstrap and deploy are idempotent, rerunning them converges the machine.
 
 ## Contents
 
@@ -15,7 +11,7 @@ Inspired by chess and gomoku variant engines that load an opening book for preco
 - [Repo layout](#repo-layout)
 - [Available commands](#available-commands)
 - [Books corpus](#books-corpus)
-- [Complete tools/packages matrix](#complete-toolspackages-matrix)
+- [Tools matrix](#tools-matrix)
 - [Hooks and config merging](#hooks-and-config-merging)
 - [Neovim](#neovim)
 - [Release process](#release-process)
@@ -24,15 +20,13 @@ Inspired by chess and gomoku variant engines that load an opening book for preco
 
 ## Core features
 
-The editor stack pairs Neovim 0.13+ (beta), configured with the vim.pack manager plus lockfile, LSP and Treesitter setup, native completion, and the builtin dir browser, with the GPU-accelerated WezTerm terminal running the IosevkaTerm Nerd Font. The Rose Pine theme runs across every config.
+The editor stack pairs Neovim 0.13+ with WezTerm. Neovim uses the builtin vim.pack manager with a committed lockfile, LSP and Treesitter setup, native completion, and the builtin directory browser. Bootstrap installs Neovim through the snap edge channel, which delivers the 0.13 nightlies, with a brew or apt fallback on hosts without snap. WezTerm runs the IosevkaTerm Nerd Font, which bootstrap installs on both platforms. The Rose Pine theme colors nvim, WezTerm, and the bat previews inside nvim.
 
-Language tooling covers 21 LSP servers (jdtls excluded on Windows), 30 Treesitter parsers, and a CLI toolset for modern development workflows: fzf, yazi, zoxide, bat, eza, lazygit, gh, ripgrep, fd, sqlite, tokei, btop, repomix, docker-compose, helm, kubectl, with the authoritative list in `bootstrap/config/packages.yaml`.
+Language tooling covers the servers and parsers enabled in `.config/nvim/init.lua` plus a CLI toolset installed by the bootstrap scripts: fzf, yazi, zoxide, bat, eza, lazygit, gh, ripgrep, fd, sqlite, tokei, btop, repomix, docker-compose, helm, and kubectl.
 
-AI-native development supports Claude Code and OpenCode with 3 MCP servers (context7, playwright, repomix), Git pre-commit and commit-msg hooks that auto-detect and trigger format, lint, and check runs, a Claude Code statusline hook driven by one bash script and auto-registered in settings.json, and offline grounding on the books corpus described below.
+AI-native development covers Claude Code and OpenCode. The MCP servers are context7, playwright, and repomix. One git pre-commit and commit-msg hook set serves both platforms and is described under hooks below. A statusline hook runs from one bash script on both platforms and is registered by the settings injection. Sessions ground offline on the books corpus described below.
 
-The books corpus doubles as the opening book for the agent harness, cutting hallucination and drift independent of the LLM used.
-
-Automation is built around safety: bootstrap and update-all are idempotent and safe to run multiple times, they auto-detect the environment and degrade gracefully when a tool is unavailable, Windows stays OneDrive-aware, and timestamped backup and restore wrap major changes. The tested platforms are Linux (Ubuntu 26.04+) and Windows 11 with PowerShell 7+.
+Automation keeps safety: bootstrap and update-all are idempotent and safe to run multiple times, they auto-detect the environment and skip cleanly when a tool is unavailable, and timestamped backup and restore wrap major changes.
 
 ## Quick start
 
@@ -82,28 +76,30 @@ up  # Runs update-all
 
 | Entry | Holds |
 |-------|-------|
-| `.claude/` | Claude Code config: CLAUDE.md, BOOKS.md, settings templates, statusline.sh, quality-check twins, tdd-guard, and books/ holding the 15 volume typst corpus |
+| `.claude/` | Claude Code config: CLAUDE.md, BOOKS.md, settings templates, statusline.sh, quality-check twins, tdd-guard, and books/ holding the typst corpus |
 | `.config/` | Tool configs deployed to the XDG config dir: nvim (init.lua plus lockfile), wezterm, git hooks, opencode platform templates |
 | `.vscode/` | VS Code settings |
 | `assets/` | WezTerm background wallpapers, deployed to ~/assets |
-| `bootstrap/` | bootstrap.sh and bootstrap.ps1, packages.yaml, per-platform install scripts |
-| `books/` | The 15 published corpus volumes as PDFs, numbered 01 through 14 plus 16 |
-| `home/` | Home-level configs: .bash_aliases, .zshrc, .gitconfig, Microsoft.PowerShell_profile.ps1, wezterm.lua, .dotfiles.config.yaml.example |
-| `lib/` | Shared script libraries: config parsing, JSON merge, Git Bash detection |
-| `playground/` | Scratch space for one-off programs, untracked |
+| `bootstrap/` | bootstrap.sh and bootstrap.ps1, per-platform install scripts, and lib/ helpers |
+| `books/` | The published corpus volumes as PDFs, numbered 01 through 14 plus 16 |
+| `home/` | Home-level configs: .bash_aliases, .zshrc, .gitconfig, Microsoft.PowerShell_profile.ps1, .dotfiles.config.yaml.example |
+| `lib/` | Shared script libraries: config parsing and JSON merge |
+| `playground/` | Scratch space for one-off programs, untracked and gitignored |
 | `scripts/` | Every maintenance script: allow, deploy, update, update-all, git-update-repos, sync-book, books-index, healthcheck, backup, restore, uninstall, cleanup one-offs |
 
-The root also carries README.md, CHANGELOG.md, DOCKER_K8S.md, LICENSE, the lint configs selene.toml, typos.toml, and vim.yml, and git-clone-all.sh, a vendored gh utility kept at the root.
+The root also carries README.md, CHANGELOG.md, DOCKER_K8S.md, LICENSE, the Makefile, the lint configs selene.toml, typos.toml, and vim.yml, and git-clone-all.sh, a vendored gh utility kept at the root.
 
 ## Available commands
 
-`scripts/allow.sh` runs once after cloning and makes the shell scripts executable. `bootstrap/bootstrap.sh` and `bootstrap/bootstrap.ps1` are the entry point for initial setup: they install package managers, SDKs, LSPs, and tools, then deploy configs. `scripts/deploy.sh` and `scripts/deploy.ps1` handle config and script deployment (Neovim, git hooks, shell, Claude Code settings, OpenCode MCPs, ~/dev scripts, books grounding), with their options listed under deploy options below.
+`scripts/allow.sh` runs once after cloning and makes every tracked shell script executable. `bootstrap/bootstrap.sh` and `bootstrap/bootstrap.ps1` are the entry point for initial setup: they install package managers, SDKs, LSPs, and tools, then deploy configs. `scripts/deploy.sh` and `scripts/deploy.ps1` handle config and script deployment (Neovim, git hooks, gitconfig, shell, Claude Code settings, OpenCode MCPs, ~/dev scripts, books grounding), with their options listed under deploy options below. Deploy also migrates a legacy `~/.wezterm.lua` into `~/.config/wezterm/`.
 
-Maintenance goes through `scripts/update-all.sh` and `scripts/update-all.ps1`, aliased `up`, which update all package managers and system packages (20+ managers). `scripts/update.sh` pulls the live configs (bash aliases, zshrc, gitconfig, wezterm config) back into the repo. `scripts/git-update-repos.sh` and `scripts/git-update-repos.ps1` clone or update every GitHub repo through the gh CLI, with `-u` for the username, `-d` for the base dir, and `-s` for SSH. `git-clone-all.sh` clones every repo of a GitHub user or org and is re-runnable to collect new repos and pull updates. `scripts/healthcheck.sh` and `scripts/healthcheck.ps1` verify tools, configs, and git hooks. `scripts/backup.sh` and `scripts/backup.ps1` create a timestamped backup before major changes and `scripts/restore.sh` and `scripts/restore.ps1` roll one back. `scripts/uninstall.sh` and `scripts/uninstall.ps1` remove deployed configs and keep installed packages.
+Maintenance goes through `scripts/update-all.sh` and `scripts/update-all.ps1`, aliased `up`. They update the system package managers (apt, dnf, pacman, zypper, brew, snap, flatpak), the language managers (npm, yarn, pnpm, bun, gup, rustup, cargo, dotnet tools, pip, poetry, uv, composer, spin), and the AI CLIs (Neovim plugins and parsers, Claude Code, OpenCode). On Unix the npm step also removes invalid dot-prefixed global packages that npm cannot uninstall itself. `scripts/update.sh` pulls the live configs (bash aliases, zshrc, gitconfig, wezterm config) back into the repo. `scripts/git-update-repos.sh` and `scripts/git-update-repos.ps1` clone or update every GitHub repo through the gh CLI, with `-u` for the username, `-d` for the base dir, and `-s` for SSH. `git-clone-all.sh` clones every repo of a GitHub user or org and is re-runnable to collect new repos and pull updates. `scripts/healthcheck.sh` and `scripts/healthcheck.ps1` verify tools, configs, and git hooks, with `--format json` emitting machine-readable results on stdout. `scripts/backup.sh` and `scripts/backup.ps1` create a timestamped backup before major changes and `scripts/restore.sh` and `scripts/restore.ps1` roll one back. `scripts/uninstall.sh` and `scripts/uninstall.ps1` remove deployed configs and keep installed packages.
 
 Two Windows one-offs clean up package manager damage: `scripts/cleanup-npm-trash.ps1` removes invalid dot-prefixed npm global packages that npm cannot uninstall itself, and `scripts/cleanup-scoop-path.ps1` strips redundant scoop app paths from the user PATH while keeping the shims and nodejs.
 
 Windows uses `.ps1` scripts. Linux/macOS uses `.sh` scripts.
+
+Development gates run through make: `make check` runs the lint gate plus the bats suite, `make e2e-linux` runs the docker lifecycle harness and skips with a message when the docker daemon is down, and `make e2e-windows` runs the bootstrap dry run, a deploy against an isolated HOME, and the PSScriptAnalyzer pass.
 
 ### Bootstrap options
 
@@ -114,7 +110,7 @@ Windows uses `.ps1` scripts. Linux/macOS uses `.sh` scripts.
 | Categories | `--categories sdk` | `-Categories sdk` | full |
 | Verbose | `--verbose` | `-VerboseMode` | Show detailed output |
 
-### Update-All options
+### Update-all options
 
 `--skip-pip` (bash) or `-SkipPip` (PowerShell) skips pip package updates to speed up the run. Use it through the alias as `up --skip-pip` or `up -SkipPip`.
 
@@ -127,7 +123,7 @@ Windows uses `.ps1` scripts. Linux/macOS uses `.sh` scripts.
 | Pre-deploy backup | `--backup` | `-Backup` | Force backup before deploy (also via `backup_before_deploy` config) |
 | Help | `--help` | (Get-Help) | Show usage |
 
-Both deploys write a `~/.dotfiles-installed` marker (timestamp, version, OS) read by uninstall. `-DotfilesDir` and `POWERSHELL_PROFILE_CONFIG` are Windows-only parameters. Bash derives the repo location from the script path and honors `XDG_CONFIG_HOME`.
+Both deploys write a `~/.dotfiles-installed` marker (timestamp, version, OS) read by uninstall. `-DotfilesDir` is a Windows-only parameter and `POWERSHELL_PROFILE_CONFIG` is a Windows-only environment variable. Bash derives the repo location from the script path and honors `XDG_CONFIG_HOME`.
 
 ### Installation categories
 
@@ -149,12 +145,20 @@ Configuration priority: command-line flags override the config file, and the con
 |---------|--------|---------|
 | categories | minimal, sdk, full | full |
 | editor | nvim, vim, code, nano | (none) |
+| terminal | wezterm, alacritty, kitty | (none) |
 | theme | rose-pine, rose-pine-dawn, rose-pine-moon | (none) |
-| github_username | your github username | lavantien |
+| github_username | your github username | git config user.name, else lavantien |
 | base_dir | path to git repos | ~/dev/github |
 | auto_commit_changes | true, false | false |
 | auto_update_repos | true, false | false |
 | backup_before_deploy | true, false | false |
+| sign_commits | true, false | false |
+| default_branch | branch name for new repos | main |
+| skip_packages | comma or space separated package list | (empty) |
+| linux.package_manager | auto, apt, dnf, pacman, zypper | auto |
+| linux.display_server | x11, wayland | (none) |
+| windows.package_manager | scoop, winget, choco | scoop |
+| macos.package_manager | brew | brew |
 
 ### Health and troubleshooting
 
@@ -165,11 +169,11 @@ Configuration priority: command-line flags override the config file, and the con
 ./scripts/healthcheck.sh --format json
 ```
 
-If git hooks are not running, set `git config --global core.hooksPath ~/.config/git/hooks`. If the PowerShell execution policy blocks the scripts, run `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`. If Neovim plugins are not installing, run `:packupdate` in Neovim or press `<leader>u`. If zoxide is not jumping, use directories normally for a few days to let it learn.
+If git hooks are not running, set `git config --global core.hooksPath ~/.config/git/hooks`. If the PowerShell execution policy blocks the scripts, run `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`. If Neovim plugins are not installing, run `:lua vim.pack.update()` in Neovim or press `<leader>u`. If zoxide is not jumping, use directories normally for a few days to let it learn.
 
 ## Books corpus
 
-The 15 volumes are c-os-cloud, math, go, java, csharp-net, javascript, python, lua, dsa, icpc, patterns-concurrency-distributed, infrastructure, kdd, game-systems, and interview-repertoire. `.claude/books/` carries each volume's typst sources (manifest.typ, book.typ, chapters, coverage), and the typst files are the source of truth. `books/` holds each volume as a published PDF under the authoring repo's NN-name numbering, so the set runs 01 through 14 plus 16, with 15 held by defense-cookbook, an out-of-scope volume.
+The corpus volumes are c-os-cloud, math, go, java, csharp-net, javascript, python, lua, dsa, icpc, patterns-concurrency-distributed, infrastructure, kdd, game-systems, and interview-repertoire. `.claude/books/` carries each volume's typst sources (manifest.typ, book.typ, chapters, coverage), and the typst files are the source of truth. `books/` holds each volume as a published PDF under the authoring repo's NN-name numbering, so the set runs 01 through 14 plus 16, with 15 held by defense-cookbook, an out-of-scope volume.
 
 `scripts/sync-book.sh` and `scripts/sync-book.ps1` refresh `.claude/books/` from the private authoring repo at `~/dev/github/resume` when it exists and skip otherwise. Deploy follows the same split: with `~/dev/github/resume` present, the deployed CLAUDE.md grounds directly on it, without it, deploy mirrors `.claude/books/` into `~/.claude/books` as is and CLAUDE.md grounds there. Implementation code behind the books (samples, capstones, api projects) falls back to the private repo.
 
@@ -197,7 +201,9 @@ The 15 volumes are c-os-cloud, math, go, java, csharp-net, javascript, python, l
 
 <!-- END books readme table -->
 
-## Complete tools/packages matrix
+## Tools matrix
+
+Cells list what the bootstrap scripts install, what the git hooks invoke, and what ships with the SDKs the bootstrap installs. A dash means nothing installs or invokes it.
 
 | Language | LSP | Tester | Formatter | Linter | Type Check |
 |----------|-----|--------|-----------|--------|------------|
@@ -206,34 +212,33 @@ The 15 volumes are c-os-cloud, math, go, java, csharp-net, javascript, python, l
 | Go | gopls | go test | gofmt, goimports | golangci-lint | go vet |
 | Rust | rust-analyzer | cargo test | rustfmt | clippy | cargo check |
 | Python | pyright | pytest | ruff, black | ruff | mypy |
-| JavaScript/TypeScript | ts_ls | jest | prettier | eslint | tsc |
+| JavaScript/TypeScript | ts_ls | - | prettier | eslint | tsc |
 | HTML | html | - | prettier | - | - |
 | CSS/SCSS/SASS | cssls | - | prettier | stylelint | - |
 | Svelte | svelte | - | prettier | - | svelte-check |
-| C/C++ | clangd | Catch2 | clang-format | clang-tidy, cppcheck | compiler |
+| C/C++ | clangd | Catch2 (Linux/macOS) | clang-format | clang-tidy, cppcheck | compiler |
 | C# | csharp_ls | dotnet test | dotnet format | Roslyn analyzers | dotnet build |
-| Java | jdtls (Linux/macOS only) | JUnit | checkstyle | checkstyle | javac |
-| Dart | dartls | - | dart format | - | - |
-| PHP | intelephense | php, PHPUnit | pint | PHPStan, Psalm | - |
-| Scala | metals | ScalaTest | scalafmt | scalafix | scalac |
-| Lua | lua_ls | busted | stylua | selene | - |
+| Java | jdtls (Linux/macOS only) | - | - | checkstyle (Linux/macOS) | javac |
+| PHP | intelephense | php | pint | - | - |
+| Scala | metals | - | scalafmt | scalafix | - |
+| Lua | lua_ls | busted (Linux/macOS) | stylua | selene | - |
 | Typst | tinymist | built-in | tinymist | tinymist | - |
 | Dockerfile | docker_language_server | - | - | hadolint | - |
 | Docker Compose | docker_language_server | - | prettier | - | - |
 | Helm | helm_ls | - | prettier | - | - |
 | Kubernetes YAML | yamlls | kubectl | prettier | yamllint | - |
 | YAML | yamlls | - | prettier | yamllint | - |
-| TOML | tombi | - | taplo | - | - |
+| TOML | tombi | - | - | - | - |
 
-The authoritative lists live in `.config/nvim/init.lua`: 21 LSP servers including dartls and codebook, with jdtls excluded on Windows, and 30 Treesitter parsers.
+The enabled servers and parsers are listed in `.config/nvim/init.lua`, which is the source of truth for the Neovim side.
 
 ### CLI tools
 
-The everyday CLI set is fzf, yazi, zoxide, bat, eza, lazygit, gh, ripgrep, fd, sqlite, tokei, btop, repomix, docker-compose, helm, and kubectl. The full install set, which also includes difftastic, bats, jq, ffmpeg, poppler, imagemagick, sevenzip, and mermaid-cli, is defined in `bootstrap/config/packages.yaml` and the per-platform install scripts.
+The everyday CLI set is fzf, yazi, zoxide, bat, eza, lazygit, gh, ripgrep, fd, sqlite, tokei, btop, repomix, docker-compose, helm, and kubectl. The install set also covers difftastic, jq, bats, oh-my-posh, and mermaid-cli, with the per-platform install lists living in `bootstrap/bootstrap.sh`, `bootstrap/platforms/`, and `bootstrap/bootstrap.ps1`. docker-compose on Windows comes with Docker Desktop, see [DOCKER_K8S.md](DOCKER_K8S.md).
 
 ### MCP servers (Claude Code and OpenCode)
 
-The 3 MCP servers are context7, playwright, and repomix.
+The MCP servers are context7, playwright, and repomix.
 
 ### Diagram generation
 
@@ -247,7 +252,11 @@ ComfyUI Desktop covers AI image generation and needs `comfy install` after boots
 
 ### Git hooks
 
-The pre-commit hook auto-formats, lints, type-checks, and re-stages fixed files. The commit-msg hook enforces Conventional Commits (feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert). Both ship per platform: `.sh` for Linux/macOS, `.ps1` for Windows.
+One bash hook set serves both platforms: `.config/git/hooks/pre-commit` and `.config/git/hooks/commit-msg`. Deploy copies them to `~/.config/git/hooks`, sets `core.hooksPath` and `init.templatedir`, and prunes the retired `.ps1` twins from the deployed directory. Git for Windows runs the bash hooks through its bundled sh.
+
+The pre-commit hook detects the project type from marker files (go.mod, Cargo.toml, package.json, and friends), formats, lints, and type checks the staged files, and re-stages what the formatters fixed. Extension-keyed checks run regardless of project type: shfmt and shellcheck on staged shell files, stylua and selene on lua, scalafmt on scala, pint on php, and a PSScriptAnalyzer pass through pwsh on Windows. Every check skips cleanly when its tool is missing.
+
+The commit-msg hook enforces Conventional Commits (feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert, break, bump) with the subject capped at 100 characters, counted in codepoints so multibyte subjects measure correctly. The merge and revert skip reads the subject line only. The hook strips AI attribution trailers (Co-Authored-By and Generated with lines from Claude, Copilot, Cursor, and friends) before the merge skip, so merge commits get the strip too.
 
 ### Claude Code hooks
 
@@ -265,10 +274,10 @@ Injected top-level fields:
 
 | Field | Template value | Purpose |
 |-------|----------------|---------|
-| `env` | 13 variables (table below) | API endpoint, models, limits, feature flags |
+| `env` | the variables in the table below | API endpoint, models, limits, feature flags |
 | `model` | `glm-5.3[1m]` | Default model |
 | `statusLine` | `bash ~/.claude/statusline.sh` | Statusline command |
-| `enabledPlugins` | 30 plugins, all enabled | Plugin enablement |
+| `enabledPlugins` | the plugins listed in the template | Plugin enablement |
 | `alwaysThinkingEnabled` | `true` | Extended thinking by default |
 | `autoUpdatesChannel` | `latest` | Update channel |
 | `tui` | `fullscreen` | Terminal UI mode |
@@ -294,7 +303,7 @@ Injected `env` variables:
 | `CLAUDE_CODE_EFFORT_LEVEL` | `max` | Reasoning effort |
 | `CLAUDE_CODE_SUBAGENT_MODEL` | `glm-5.3[1m]` | Sub-agent model override |
 
-`enabledPlugins` carries 30 entries, all enabled: glm-plan-usage@zai-coding-plugins, the 3 repomix plugins (commands, explorer, mcp), and @claude-plugins-official for agent-sdk-dev, chrome-devtools-mcp, clangd-lsp, claude-code-setup, claude-security, code-review, code-simplifier, commit-commands, context7, csharp-lsp, feature-dev, frontend-design, gopls-lsp, jdtls-lsp, lua-lsp, math-olympiad, microsoft-docs, php-lsp, playwright, plugin-dev, postman, pr-review-toolkit, pyright-lsp, rust-analyzer-lsp, superpowers, typescript-lsp.
+`enabledPlugins` enables the plugins listed in `.claude/settings.template.json`: the repomix plugins, the official LSP plugins, and the workflow plugins such as feature-dev, code-review, superpowers, and claude-security.
 
 Retired settings, deleted from the live file on deploy via `.claude/settings.retired.json`:
 
@@ -351,13 +360,13 @@ Unmapped native keys stay live: `Q` toggles a multicursor (`[count]Q` places one
 
 ### Big picture
 
-The config is builtin-first. Neovim 0.13 itself does editing, completion, LSP, diagnostics, folding, commenting, multicursor, and file browsing. The 7 plugins only fill gaps: fzf-lua for pickers, treesitter for parser installs, lspconfig for server definitions, rose-pine for color, the two preview plugins for documents, devicons for icons.
+The config leans on the builtins. Neovim 0.13 itself does editing, completion, LSP, diagnostics, folding, commenting, multicursor, and file browsing. The small plugin set only fills gaps: fzf-lua for pickers, treesitter for parser installs, lspconfig for server definitions, rose-pine for color, the two preview plugins for documents, devicons for icons.
 
-2 options change the daily rhythm more than any keybinding. Autosave is always on (`autowriteall` plus a `TextChanged` autocmd), files write themselves while you type, so you almost never run `:w` and `:q` is safe. Autoread with the 0.13 fs watcher reloads files changed underneath you by formatters, code generators, or another pane. Between the 2, buffer state and disk state stay glued together with zero keystrokes.
+2 options change the daily rhythm more than any keybinding. Autosave is always on (`autowriteall` plus a `TextChanged` autocmd), files write themselves while you type, so you almost never run `:w` and `:q` is safe. Autoread with the 0.13 fs watcher reloads files changed underneath you by formatters, code generators, or another pane. Between the 2, buffer state and disk state stay in sync without manual saves.
 
 ### Getting around
 
-`<leader>f` finds files, `<leader>z` live-greps the project as you type, `<leader>/` greps the current buffer. `<leader>e` and `<leader>n` are the kitchen-sink pickers when you do not remember which specific one you need. Previews render through bat in the rose-pine theme. `-` opens the parent directory in the builtin dir browser, Enter edits, `-` again goes up. For heavier file management drop to yazi with `y` in the shell, which cd's on exit. `<leader>'` flips to the alternate file for the edit/test or header/impl ping-pong, `<leader>h` searches help tags, `<leader>k` lists every keymap.
+`<leader>f` finds files, `<leader>z` live-greps the project as you type, `<leader>/` greps the current buffer. `<leader>e` and `<leader>n` are the catch-all pickers when you do not remember which specific one you need. Previews render through bat in the rose-pine theme. `-` opens the parent directory in the builtin dir browser, Enter edits, `-` again goes up. For heavier file management drop to yazi with `y` in the shell, which cd's on exit. `<leader>'` flips to the alternate file for the edit/test or header/impl ping-pong, `<leader>h` searches help tags, `<leader>k` lists every keymap.
 
 ### The edit loop
 
@@ -383,7 +392,7 @@ Typst: `<leader>pt` toggles the live preview, which re-renders in a browser pane
 
 ### Upkeep
 
-`<leader>u` updates all 7 plugins and rewrites the deployed lockfile. After an intentional bump, copy the deployed `nvim-pack-lock.json` from nvim's config dir back to `.config/nvim/` in the repo and commit, the lockfile is the pin mechanism, there are no version pins in `init.lua`. `up` in the shell covers everything else including nvim itself and treesitter parsers. `<leader>x` after any config tweak re-sources in place.
+`<leader>u` updates all plugins and rewrites the deployed lockfile. After an intentional bump, copy the deployed `nvim-pack-lock.json` from nvim's config dir back to `.config/nvim/` in the repo and commit, the lockfile is the pin mechanism, there are no version pins in `init.lua`. `up` in the shell covers everything else including nvim itself and treesitter parsers. `<leader>x` after any config tweak re-sources in place.
 
 </details>
 
