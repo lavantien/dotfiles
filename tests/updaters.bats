@@ -254,3 +254,23 @@ EOF
 		grep -q '^#requires -Version 7' "$REPO_ROOT/$f"
 	done
 }
+
+@test "make e2e-linux wraps the docker info guard in a timeout" {
+	if ! grep -qE 'timeout [0-9]+ docker info' "$REPO_ROOT/Makefile"; then
+		echo "a wedged daemon would block make e2e-linux forever" >&2
+		return 1
+	fi
+}
+
+@test "make e2e-linux degrades to the skip when the docker daemon hangs" {
+	fakebin="$BATS_TEST_TMPDIR/hangbin"
+	mkdir -p "$fakebin"
+	printf '#!%s\nsleep 60\n' "$(command -v bash)" >"$fakebin/docker"
+	chmod +x "$fakebin/docker"
+	run env PATH="$fakebin:$PATH" make e2e-linux
+	[ "$status" -eq 0 ]
+	if ! grep -q 'skip: docker daemon' <<<"$output"; then
+		echo "wedged daemon did not degrade to the documented skip: $output" >&2
+		return 1
+	fi
+}
