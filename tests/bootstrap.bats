@@ -107,3 +107,12 @@ ALIASES="$REPO_ROOT/home/.bash_aliases"
 	echo "$foundation" | grep -qF 'Install-WezTerm'
 	echo "$foundation" | grep -qF 'Install-NerdFont'
 }
+
+@test "windows bootstrap offers gh login with a non-interactive skip" {
+	grep -qF 'gh auth status' "$BOOTSTRAP_PS1"
+	grep -qF 'gh auth login' "$BOOTSTRAP_PS1"
+	grep -qF "Non-interactive mode: Skipping 'gh auth login'" "$BOOTSTRAP_PS1"
+	# the offer lives in the cli phase where gh gets installed on windows
+	cli="$(awk '/^function Install-CLITools \{/,/^\}/' "$BOOTSTRAP_PS1")"
+	echo "$cli" | grep -qF 'gh auth login'
+}
