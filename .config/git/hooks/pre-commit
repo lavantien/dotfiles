@@ -72,10 +72,11 @@ command_exists() {
     command -v "$1" >/dev/null 2>&1
 }
 
-# Staged added/copied/modified files whose names match regex $1,
-# null-delimited so odd filenames survive
+# Staged added/copied/modified/renamed files whose names match regex $1,
+# null-delimited so odd filenames survive. R included so a renamed plus
+# edited file still gets checked
 staged_files() {
-    git diff --cached --name-only -z --diff-filter=ACM | grep -zE "$1" || true
+    git diff --cached --name-only -z --diff-filter=ACMR | grep -zE "$1" || true
 }
 
 # ============================================================================
@@ -85,7 +86,7 @@ staged_files() {
 # === GO ===
 run_go_checks() {
     echo -e "\n${YELLOW}=== Go ===${NC}"
-    local staged=$(git diff --cached --name-only --diff-filter=ACM | grep '\.go$' || true)
+    local staged=$(git diff --cached --name-only --diff-filter=ACMR | grep '\.go$' || true)
     [ -z "$staged" ] && return
 
     # Format: gofmt + goimports
@@ -113,7 +114,7 @@ run_go_checks() {
 # === RUST ===
 run_rust_checks() {
     echo -e "\n${YELLOW}=== Rust ===${NC}"
-    local staged=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.rs$' | head -20 || true)
+    local staged=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.rs$' | head -20 || true)
     [ -z "$staged" ] && return
 
     # Format: cargo fmt
@@ -138,7 +139,7 @@ run_rust_checks() {
 # === C/C++ ===
 run_c_checks() {
     echo -e "\n${YELLOW}=== C/C++ ===${NC}"
-    local staged=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(c|h|cpp|hpp|cc|cxx)$' || true)
+    local staged=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.(c|h|cpp|hpp|cc|cxx)$' || true)
     [ -z "$staged" ] && return
 
     # Format: clang-format
@@ -209,7 +210,7 @@ run_node_checks() {
 # === PYTHON ===
 run_python_checks() {
     echo -e "\n${YELLOW}=== Python ===${NC}"
-    local staged=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.py$|pyproject\.toml' || true)
+    local staged=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.py$|pyproject\.toml' || true)
     [ -z "$staged" ] && return
 
     # Format/Lint: ruff (recommended - replaces black, isort, flake8)
@@ -257,7 +258,7 @@ run_csharp_checks() {
     # work from the repo root: staged paths are repo-relative and some
     # dispatch branches cd into backend/ first
     cd "$(git rev-parse --show-toplevel)"
-    local staged=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(cs|csproj)$' || true)
+    local staged=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.(cs|csproj)$' || true)
     [ -z "$staged" ] && return
 
     if ! command_exists dotnet; then
@@ -337,7 +338,7 @@ run_scala_checks() {
 # === PHP ===
 run_php_checks() {
     echo -e "\n${YELLOW}=== PHP ===${NC}"
-    local staged=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.php$' || true)
+    local staged=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.php$' || true)
     [ -z "$staged" ] && return
 
     # Format: Laravel Pint
@@ -503,7 +504,7 @@ _pre_commit_main() {
     if command_exists typos; then
         echo -e "\n${YELLOW}=== Spell check ===${NC}"
         STAGED_SPELL=()
-        while IFS= read -r -d '' f; do STAGED_SPELL+=("$f"); done < <(git diff --cached --name-only -z --diff-filter=ACM)
+        while IFS= read -r -d '' f; do STAGED_SPELL+=("$f"); done < <(git diff --cached --name-only -z --diff-filter=ACMR)
         if [ ${#STAGED_SPELL[@]} -gt 0 ]; then
             SPELL_STATUS=0
             SPELL_OUT=$(typos --force-exclude "${STAGED_SPELL[@]}" 2>&1) || SPELL_STATUS=$?
