@@ -325,6 +325,10 @@ deploy_git_hooks() {
 	chmod +x "$hooks_dir/pre-commit" 2>/dev/null || true
 	chmod +x "$hooks_dir/commit-msg" 2>/dev/null || true
 
+	# Retired .ps1 twins linger in deployed dirs and init.templatedir keeps
+	# copying them into new repos; prune so only the bash pair remains
+	rm -f "$hooks_dir/pre-commit.ps1" "$hooks_dir/commit-msg.ps1"
+
 	# Configure git to use the hooks
 	git config --global init.templatedir "$hooks_dir"
 	git config --global core.hooksPath "$hooks_dir"

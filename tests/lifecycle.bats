@@ -463,16 +463,33 @@ PS1
 	[[ "$output" == *"Restart your shell"* ]]
 }
 
+@test "deploy_git_hooks prunes the retired ps1 hook twins" {
+	local sb
+	sb="$(mktemp -d)"
+	mkdir -p "$sb/.config/git/hooks"
+	touch "$sb/.config/git/hooks/pre-commit.ps1" "$sb/.config/git/hooks/commit-msg.ps1"
+	run bash -c 'source "$1"; HOME="$2"; XDG_CONFIG="$2/.config"; ROOT_DIR="$3"; deploy_git_hooks' \
+		_ "$DEPLOY" "$sb" "$REPO_ROOT"
+	[ "$status" -eq 0 ] || { echo "$output"; false; }
+	[ ! -e "$sb/.config/git/hooks/pre-commit.ps1" ]
+	[ ! -e "$sb/.config/git/hooks/commit-msg.ps1" ]
+	[ -f "$sb/.config/git/hooks/pre-commit" ]
+	[ -f "$sb/.config/git/hooks/commit-msg" ]
+	rm -rf "$sb"
+}
+
 @test "backup.sh stops trafficking the root wezterm.lua stub" {
 	run grep -F '"$HOME/wezterm.lua"' "$REPO_ROOT/scripts/backup.sh"
 	[ "$status" -ne 0 ]
 	[ ! -e "$REPO_ROOT/home/wezterm.lua" ]
 }
 
-@test "deploy.ps1 deploys the bash hooks and wires core.hooksPath" {
+@test "deploy.ps1 deploys the bash hooks, wires core.hooksPath, prunes ps1 twins" {
 	command -v pwsh >/dev/null 2>&1 || skip "pwsh not installed"
 	local sb
 	sb="$(cd "$(mktemp -d)" && pwd -W)"
+	mkdir -p "$sb/.config/git/hooks"
+	touch "$sb/.config/git/hooks/pre-commit.ps1" "$sb/.config/git/hooks/commit-msg.ps1"
 	write_pwsh_harness "$sb/harness.ps1" 'Deploy-GitHooks -HooksDir "$env:DF_CONFIGDIR/git/hooks"'
 	HOME="$sb" USERPROFILE="$sb" DF_CONFIGDIR="$sb/.config" DF_DOTFILESDIR="$REPO_ROOT" \
 		run pwsh -NoProfile -File "$sb/harness.ps1" \
@@ -480,6 +497,8 @@ PS1
 	[ "$status" -eq 0 ] || { echo "$output"; false; }
 	[ -f "$sb/.config/git/hooks/pre-commit" ]
 	[ -f "$sb/.config/git/hooks/commit-msg" ]
+	[ ! -e "$sb/.config/git/hooks/pre-commit.ps1" ]
+	[ ! -e "$sb/.config/git/hooks/commit-msg.ps1" ]
 	run env HOME="$sb" git config --global core.hooksPath
 	[ "$output" = "$sb/.config/git/hooks" ]
 	run env HOME="$sb" git config --global init.templatedir
