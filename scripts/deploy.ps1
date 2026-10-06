@@ -188,6 +188,13 @@ function Deploy-GitHooks {
     Copy-Item "$DotfilesDir/.config/git/hooks/pre-commit" "$HooksDir/pre-commit" -Force
     Copy-Item "$DotfilesDir/.config/git/hooks/commit-msg" "$HooksDir/commit-msg" -Force
 
+    # Retired .ps1 twins linger in deployed dirs and init.templatedir keeps
+    # copying them into new repos; prune so only the bash pair remains
+    foreach ($Twin in @("pre-commit.ps1", "commit-msg.ps1")) {
+        $Stale = Join-Path $HooksDir $Twin
+        if (Test-Path -LiteralPath $Stale) { Remove-Item -LiteralPath $Stale -Force }
+    }
+
     # Configure git to use the hooks, same wiring as deploy.sh
     git config --global init.templatedir $HooksDir
     git config --global core.hooksPath $HooksDir
