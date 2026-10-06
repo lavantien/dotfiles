@@ -198,6 +198,15 @@ EOF
 	fi
 }
 
+@test "update-all.sh never calls the undefined log_info helper" {
+	# no logger named log_info exists in the script, any call prints a
+	# command-not-found error instead of the intended message
+	if grep -n 'log_info' "$REPO_ROOT/scripts/update-all.sh"; then
+		echo "log_info is undefined in update-all.sh, use the file's own echo idiom" >&2
+		return 1
+	fi
+}
+
 @test "update-all.sh holds at or below its current line ceiling" {
 	# 1000 SLOC repo cap, grandfathered ceiling while fixes land
 	[ "$(wc -l <"$REPO_ROOT/scripts/update-all.sh")" -le 1012 ]
