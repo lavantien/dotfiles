@@ -66,3 +66,29 @@ setup_sandbox() {
 	json_ok "$output"
 	jq -e '.checks[] | select(.message | contains("tester with"))' >/dev/null <<<"$output"
 }
+
+@test "healthcheck json stays valid when a message carries ansi escape and bel" {
+	setup_sandbox
+	# absolute bash shebang: env would PATH-search the stripped sandbox PATH
+	{
+		echo "#!$(command -v bash)"
+		cat <<'STUB'
+printf '\033[31mred error\033[0m bell\007\n' >&2
+exit 1
+STUB
+	} >"$SBBIN/nvim"
+	chmod +x "$SBBIN/nvim"
+	run --separate-stderr env HOME="$SBHOME" PATH="$SBBIN" "$(command -v bash)" "$REPO_ROOT/scripts/healthcheck.sh" --format json
+	# the nvim startup check fails on purpose, the json must still parse
+	[ "$status" -eq 1 ]
+	# python json.loads is strict about raw control characters in strings,
+	# jq is equally strict, use whichever the host offers
+	if command -v python3 >/dev/null 2>&1; then
+		python3 -c 'import json,sys; json.load(sys.stdin)' <<<"$output"
+	elif command -v python >/dev/null 2>&1; then
+		python -c 'import json,sys; json.load(sys.stdin)' <<<"$output"
+	else
+		jq -e . >/dev/null <<<"$output"
+	fi
+	grep -q 'red error' <<<"$output"
+}
