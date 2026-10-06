@@ -62,7 +62,7 @@ test: ## run the bats suite under tests/
 check: lint test ## lint plus tests, no e2e, fast default gate
 
 e2e-linux: ## docker linux lifecycle harness, skips when the daemon is down
-	@command -v timeout >/dev/null 2>&1 && guard='timeout 10 docker info' || guard='docker info'; \
+	@command -v timeout >/dev/null 2>&1 && guard='timeout -k 5 10 docker info' || guard='docker info'; \
 	if $$guard >/dev/null 2>&1; then \
 		docker build -q -t $(E2E_IMAGE) tests/e2e >/dev/null; \
 		FULL='$(FULL)' bash tests/e2e/run.sh '$(E2E_IMAGE)'; \
