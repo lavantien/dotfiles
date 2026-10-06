@@ -9,18 +9,20 @@ COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
 # before the merge skip so merge commits get the strip too
 ATTRIBUTION_PATTERN='^(Co-Authored-By:.+(Claude|Anthropic|Copilot|Cursor|Gemini|Codeium|Windsurf|Cline|Aider)|Generated with .*(Claude|Copilot|Cursor))'
 
-if echo "$COMMIT_MSG" | grep -qE "$ATTRIBUTION_PATTERN"; then
-    COMMIT_MSG=$(echo "$COMMIT_MSG" | grep -vE "$ATTRIBUTION_PATTERN")
+if printf '%s\n' "$COMMIT_MSG" | grep -qE "$ATTRIBUTION_PATTERN"; then
+    COMMIT_MSG=$(printf '%s\n' "$COMMIT_MSG" | grep -vE "$ATTRIBUTION_PATTERN")
     printf '%s\n' "$COMMIT_MSG" > "$COMMIT_MSG_FILE"
     echo "Stripped AI attribution trailer from commit message."
 fi
 
-# Get the first line (subject). The skip decision reads the subject only:
-# a body line quoting "Merge ..." must not defeat the gate
-SUBJECT=$(echo "$COMMIT_MSG" | head -n 1)
+# Get the first line (subject). printf, not echo: the echo builtin eats a
+# subject word that is exactly -n, -e, or a mix of those flag letters.
+# The skip decision reads the subject only: a body line quoting
+# "Merge ..." must not defeat the gate
+SUBJECT=$(printf '%s\n' "$COMMIT_MSG" | head -n 1)
 
 # Skip validation for merge and revert commits (they follow their own convention)
-if echo "$SUBJECT" | grep -qE "^(Merge|Revert)"; then
+if printf '%s\n' "$SUBJECT" | grep -qE "^(Merge|Revert)"; then
     exit 0
 fi
 
@@ -36,9 +38,15 @@ fi
 # Type is required, scope is optional. Fully anchored so the subject
 # length cap below actually fires, an unanchored .{1,N} matched any prefix.
 MAX_SUBJECT_LENGTH=100
+
+# Subject length in codepoints. LC_ALL=C pins tr to byte semantics, and
+# UTF-8 continuation bytes (octal 200-277) extend a codepoint instead of
+# starting one, so a C locale cannot over-reject multibyte subjects
+SUBJECT_LENGTH=$(printf '%s' "$SUBJECT" | LC_ALL=C tr -d '\200-\277' | wc -c)
+SUBJECT_LENGTH=$((SUBJECT_LENGTH))
 CONVENTIONAL_PATTERN="^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert|break|bump)(\(.+\))?: .+$"
 
-if ! echo "$SUBJECT" | grep -qE "$CONVENTIONAL_PATTERN"; then
+if ! printf '%s\n' "$SUBJECT" | grep -qE "$CONVENTIONAL_PATTERN"; then
     echo "ERROR: Commit message does not follow Conventional Commits format." >&2
     echo "" >&2
     echo "Expected format: type(scope): description" >&2
@@ -54,20 +62,20 @@ if ! echo "$SUBJECT" | grep -qE "$CONVENTIONAL_PATTERN"; then
     echo "  test(auth): add unit tests for login flow" >&2
     echo "" >&2
     echo "Your subject: $SUBJECT" >&2
-    echo "Subject length: ${#SUBJECT} characters (max $MAX_SUBJECT_LENGTH)" >&2
+    echo "Subject length: $SUBJECT_LENGTH characters (max $MAX_SUBJECT_LENGTH)" >&2
     exit 1
 fi
 
-if [ "${#SUBJECT}" -gt "$MAX_SUBJECT_LENGTH" ]; then
+if [ "$SUBJECT_LENGTH" -gt "$MAX_SUBJECT_LENGTH" ]; then
     echo "ERROR: Subject exceeds $MAX_SUBJECT_LENGTH characters." >&2
-    echo "Subject length: ${#SUBJECT} characters (max $MAX_SUBJECT_LENGTH)" >&2
+    echo "Subject length: $SUBJECT_LENGTH characters (max $MAX_SUBJECT_LENGTH)" >&2
     echo "Your subject: $SUBJECT" >&2
     exit 1
 fi
 
 # Check for blank line after subject
 # Get lines 2-3 (the line immediately after subject)
-SECOND_LINE=$(echo "$COMMIT_MSG" | sed -n '2p')
+SECOND_LINE=$(printf '%s\n' "$COMMIT_MSG" | sed -n '2p')
 
 if [ -n "$SECOND_LINE" ]; then
     echo "ERROR: Commit message must have a blank line between subject and body." >&2
