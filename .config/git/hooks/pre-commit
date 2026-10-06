@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # Universal git pre-commit hook - Auto-detects OS and project type
 # Supports: Windows (Git Bash, WSL) and Linux/macOS
-# Languages: Go, Rust, C/C++, JavaScript/TypeScript, Python, C#, Java, Scala, PHP
+# Languages: Go, Rust, C/C++, JavaScript/TypeScript, Python, C#, Java, Scala,
+# PHP, plus staged-file checks for Shell, Lua, and PowerShell absorbed from
+# the former pre-commit.ps1 so one bash hook set serves both OSes
 
 set -e
 
@@ -68,6 +70,12 @@ detect_projects() {
 # ============================================================================
 command_exists() {
     command -v "$1" >/dev/null 2>&1
+}
+
+# Staged added/copied/modified files whose names match regex $1,
+# null-delimited so odd filenames survive
+staged_files() {
+    git diff --cached --name-only -z --diff-filter=ACM | grep -zE "$1" || true
 }
 
 # ============================================================================
@@ -316,11 +324,8 @@ run_java_checks() {
 run_scala_checks() {
     echo -e "\n${YELLOW}=== Scala ===${NC}"
 
-    # Format: scalafmt
-    if command_exists scalafmt; then
-        echo "Running scalafmt..."
-        scalafmt --non-interactive 2>/dev/null || true
-    fi
+    # scalafmt moved to run_scala_format_check, keyed on staged .scala
+    # files so non-sbt repos get it too
 
     # Type check/Lint: scalac
     if [ -f "build.sbt" ] && command_exists sbt; then
@@ -363,6 +368,123 @@ run_php_checks() {
     if [ -f "vendor/bin/psalm" ]; then
         echo "Running Psalm..."
         ./vendor/bin/psalm --show-info=false 2>/dev/null || echo -e "${YELLOW}Psalm warnings.${NC}"
+    fi
+}
+
+# ============================================================================
+# EXTENSION-KEYED CHECKS (absorbed from the former pre-commit.ps1)
+# Run on staged file types regardless of project detection. Every check
+# skips cleanly when its tool is missing so a fresh machine never fails
+# a commit over an absent linter.
+# ============================================================================
+
+# === SHELL ===
+run_shell_checks() {
+    echo -e "\n${YELLOW}=== Shell ===${NC}"
+    local files=() f out status
+    while IFS= read -r -d '' f; do files+=("$f"); done < <(staged_files '\.(sh|bash)$')
+    [ ${#files[@]} -eq 0 ] && return
+
+    if command_exists shfmt; then
+        echo "Running shfmt..."
+        for f in "${files[@]}"; do
+            shfmt -w "$f" 2>/dev/null && git add "$f"
+        done
+    fi
+
+    # severity=error mirrors the repo make lint gate, warnings stay debt
+    if command_exists shellcheck; then
+        echo "Running shellcheck..."
+        status=0
+        out=$(shellcheck --severity=error "${files[@]}" 2>&1) || status=$?
+        if [ "$status" -ne 0 ]; then
+            printf '%s\n' "$out" | head -40
+            echo -e "${RED}shellcheck found errors in staged shell files.${NC}"
+            FAILED=1
+        fi
+    fi
+}
+
+# === LUA ===
+run_lua_checks() {
+    local files=() f
+    while IFS= read -r -d '' f; do files+=("$f"); done < <(staged_files '\.lua$')
+    [ ${#files[@]} -eq 0 ] && return
+
+    echo -e "\n${YELLOW}=== Lua ===${NC}"
+    if command_exists stylua; then
+        echo "Running stylua..."
+        for f in "${files[@]}"; do
+            stylua "$f" 2>/dev/null && git add "$f"
+        done
+    fi
+
+    # non-blocking, matches the former ps1 twin
+    if command_exists selene; then
+        echo "Running selene..."
+        selene "${files[@]}" 2>&1 | head -30
+    fi
+}
+
+# === SCALA FORMAT ===
+run_scala_format_check() {
+    local files=() f
+    while IFS= read -r -d '' f; do files+=("$f"); done < <(staged_files '\.scala$')
+    [ ${#files[@]} -eq 0 ] && return
+
+    if ! command_exists scalafmt; then
+        return
+    fi
+    echo -e "\n${YELLOW}=== Scala format ===${NC}"
+    echo "Running scalafmt..."
+    if scalafmt --non-interactive >/dev/null 2>&1; then
+        for f in "${files[@]}"; do
+            git add "$f" 2>/dev/null || true
+        done
+    else
+        echo -e "${YELLOW}scalafmt failed, check .scalafmt.conf.${NC}"
+    fi
+}
+
+# === PHP PINT (PATH fallback when vendor/bin/pint is absent) ===
+run_php_pint_check() {
+    local files=() f
+    while IFS= read -r -d '' f; do files+=("$f"); done < <(staged_files '\.php$')
+    [ ${#files[@]} -eq 0 ] && return
+    [ -x "vendor/bin/pint" ] && return
+
+    if ! command_exists pint; then
+        return
+    fi
+    echo -e "\n${YELLOW}=== PHP ===${NC}"
+    echo "Running pint..."
+    for f in "${files[@]}"; do
+        pint "$f" 2>/dev/null && git add "$f"
+    done
+}
+
+# === POWERSHELL (windows only, pwsh plus PSScriptAnalyzer module) ===
+run_powershell_checks() {
+    local files=() out
+    while IFS= read -r -d '' f; do files+=("$f"); done < <(staged_files '\.ps1$')
+    [ ${#files[@]} -eq 0 ] && return
+    # bare "return" after a failed gate would carry status 1 into set -e
+    if [ "$OS" != "windows" ]; then
+        return
+    fi
+    if ! command_exists pwsh; then
+        return
+    fi
+
+    if ! pwsh -NoProfile -Command 'exit [int](-not (Get-Module -ListAvailable PSScriptAnalyzer))' >/dev/null 2>&1; then
+        return
+    fi
+    echo -e "\n${YELLOW}=== PowerShell ===${NC}"
+    echo "Running PSScriptAnalyzer..."
+    out=$(pwsh -NoProfile -Command '@(Invoke-ScriptAnalyzer -Path $args -Severity Error) | ForEach-Object { "{0}:{1}: {2}" -f $_.ScriptName, $_.Line, $_.Message }' "${files[@]}" 2>/dev/null) || true
+    if [ -n "$out" ]; then
+        printf '%s\n' "$out"
+        echo -e "${YELLOW}PSScriptAnalyzer issues in staged PowerShell files.${NC}"
     fi
 }
 
@@ -416,6 +538,12 @@ _pre_commit_main() {
             php) run_php_checks ;;
         esac
     done
+
+    run_shell_checks
+    run_lua_checks
+    run_scala_format_check
+    run_php_pint_check
+    run_powershell_checks
 
     # ============================================================================
     # RESULT

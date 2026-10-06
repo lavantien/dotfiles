@@ -32,6 +32,10 @@ subject_of_length() {
 	printf 'fix: %s' "$pad"
 }
 
+skip_unless_pwsh() {
+	command -v pwsh >/dev/null 2>&1 || skip "pwsh not installed"
+}
+
 @test "commit-msg rejects a garbage subject" {
 	setup_hook_repo
 	run git -C "$REPO" commit -q -m "garbage message that no convention allows"
@@ -140,4 +144,61 @@ STUB
 		return 1
 	}
 	rm -rf "$tmp" "$stubbin"
+}
+
+@test "pre-commit blocks shellcheck errors in staged shell files" {
+	setup_hook_repo
+	printf '#!/usr/bin/env bash\ncat $@\n' >"$REPO/bad.sh"
+	git -C "$REPO" add bad.sh
+	run git -C "$REPO" commit -q -m "fix: add script"
+	[ "$status" -ne 0 ]
+}
+
+@test "pre-commit formats staged shell files with shfmt" {
+	setup_hook_repo
+	printf '#!/usr/bin/env bash\nif true;then echo hi;fi\n' >"$REPO/good.sh"
+	git -C "$REPO" add good.sh
+	run git -C "$REPO" commit -q -m "fix: add script"
+	[ "$status" -eq 0 ]
+	[ -z "$(shfmt -ln bash -d "$REPO/good.sh")" ] || {
+		echo "staged file was not shfmt formatted:"
+		shfmt -ln bash -d "$REPO/good.sh"
+		return 1
+	}
+}
+
+@test "pre-commit formats staged lua files with stylua" {
+	setup_hook_repo
+	printf 'local x=1\nprint(x)\n' >"$REPO/t.lua"
+	git -C "$REPO" add t.lua
+	run git -C "$REPO" commit -q -m "fix: add lua"
+	[ "$status" -eq 0 ]
+	grep -q 'local x = 1' "$REPO/t.lua" || {
+		echo "staged lua file was not stylua formatted"
+		return 1
+	}
+}
+
+@test "absorbed checks skip cleanly when tools are missing" {
+	setup_hook_repo
+	# bad.sh would fail shellcheck, t.scala wants scalafmt, page.php wants
+	# pint, s.ps1 wants PSScriptAnalyzer, none installed on a fresh machine
+	printf '#!/usr/bin/env bash\ncat $@\n' >"$REPO/bad.sh"
+	printf '// scala source\n' >"$REPO/t.scala"
+	printf '<?php echo 1;\n' >"$REPO/page.php"
+	printf 'Write-Host "ok"\n' >"$REPO/s.ps1"
+	git -C "$REPO" add bad.sh t.scala page.php s.ps1
+	local gitdir
+	gitdir="$(dirname "$(command -v git)")"
+	run env PATH="/usr/bin:$gitdir" git -C "$REPO" commit -q -m "fix: fresh machine commit"
+	[ "$status" -eq 0 ]
+}
+
+@test "powershell analyzer probe skips when the module is absent" {
+	setup_hook_repo
+	skip_unless_pwsh
+	printf 'Write-Host "ok"\n' >"$REPO/s.ps1"
+	git -C "$REPO" add s.ps1
+	run git -C "$REPO" commit -q -m "fix: add ps1"
+	[ "$status" -eq 0 ]
 }
