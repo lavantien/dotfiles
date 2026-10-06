@@ -37,6 +37,11 @@ while [[ $# -gt 0 ]]; do
 		shift
 		;;
 	--format)
+		if [[ $# -lt 2 ]]; then
+			echo "Error: --format requires a value (table or json)"
+			echo "Usage: $0 [--verbose] [--format table|json]"
+			exit 2
+		fi
 		FORMAT="$2"
 		shift 2
 		;;
