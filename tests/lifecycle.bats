@@ -236,6 +236,59 @@ EOF
 }
 
 # ============================================================================
+# windows deploy ports
+# ============================================================================
+
+# Write a pwsh harness that dot-sources one function out of a .ps1 script
+# without executing the script, then runs the given body. DF_* environment
+# variables carry paths so the body stays argument-free.
+write_pwsh_harness() {
+	local out="$1" body="$2"
+	cat >"$out" <<'PS1'
+param([string]$ScriptPath, [string]$FunctionName)
+$tokens = $null
+$errors = $null
+$ast = [System.Management.Automation.Language.Parser]::ParseFile($ScriptPath, [ref]$tokens, [ref]$errors)
+if ($errors.Count -gt 0) { $errors | ForEach-Object { Write-Error $_.Message }; exit 2 }
+$fn = $ast.Find({ param($node)
+    $node -is [System.Management.Automation.Language.FunctionDefinitionAst] -and
+    $node.Name -eq $FunctionName }, $true)
+if ($null -eq $fn) { Write-Error "function $FunctionName not found"; exit 3 }
+. ([scriptblock]::Create($fn.Extent.Text))
+if ($env:DF_DOTFILESDIR) { $DotfilesDir = $env:DF_DOTFILESDIR }
+if ($env:DF_CONFIGDIR) { $ConfigDir = $env:DF_CONFIGDIR }
+PS1
+	printf '%s\n' "$body" >>"$out"
+}
+
+@test "deploy.ps1 requires PowerShell 7" {
+	head -n 3 "$REPO_ROOT/scripts/deploy.ps1" | grep -q '#requires -Version 7'
+}
+
+@test "deploy.ps1 Merge-Gitconfig preserves identity and normalizes helpers" {
+	command -v pwsh >/dev/null 2>&1 || skip "pwsh not installed"
+	local sb
+	sb="$(cd "$(mktemp -d)" && pwd -W)"
+	cat >"$sb/existing" <<'EOF'
+[user]
+	name = Old Name
+	email = old@example.invalid
+[credential "https://github.com"]
+	helper = /home/linuxbrew/.linuxbrew/bin/gh auth git-credential
+EOF
+	cp "$REPO_ROOT/home/.gitconfig" "$sb/template"
+	write_pwsh_harness "$sb/harness.ps1" 'Merge-Gitconfig -Src $env:DF_SRC -Dst $env:DF_DST'
+	DF_SRC="$sb/template" DF_DST="$sb/existing" run pwsh -NoProfile -File "$sb/harness.ps1" \
+		-ScriptPath "$REPO_ROOT/scripts/deploy.ps1" -FunctionName Merge-Gitconfig
+	[ "$status" -eq 0 ] || { echo "$output"; false; }
+	[ "$(git config --file "$sb/existing" user.name)" = "Old Name" ]
+	[ "$(git config --file "$sb/existing" user.email)" = "old@example.invalid" ]
+	run grep -E 'linuxbrew|gh\.exe' "$sb/existing"
+	[ "$status" -ne 0 ]
+	rm -rf "$sb"
+}
+
+# ============================================================================
 # restore non-interactive paths
 # ============================================================================
 
