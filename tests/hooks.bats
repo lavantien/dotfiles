@@ -101,6 +101,24 @@ skip_unless_pwsh() {
 	[ "$status" -ne 0 ]
 }
 
+@test "commit-msg strips attribution trailers from merge commits" {
+	setup_hook_repo
+	local base
+	base="$(git -C "$REPO" symbolic-ref --short HEAD)"
+	git -C "$REPO" commit -q -m "fix: seed the trunk"
+	git -C "$REPO" checkout -q -b feature
+	echo feature >"$REPO/feature.txt"
+	git -C "$REPO" add feature.txt
+	git -C "$REPO" commit -q -m "feat: feature work"
+	git -C "$REPO" checkout -q "$base"
+	run git -C "$REPO" merge --no-ff feature -m "Merge branch 'feature'
+
+Co-Authored-By: Claude Code <noreply@anthropic.com>"
+	[ "$status" -eq 0 ]
+	run git -C "$REPO" log -1 --format=%B
+	[[ "$output" != *"Co-Authored-By"* ]]
+}
+
 @test "pre-commit passes --no-install to every npx call" {
 	setup_hook_repo
 	echo '{}' >"$REPO/package.json"
