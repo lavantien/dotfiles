@@ -345,18 +345,34 @@ update_and_report() {
 	return 0
 }
 
+# pip install wrapper with a PEP 668 fallback: plain install first, retry
+# with --break-system-packages only when the failure output names
+# externally-managed-environment, so pip older than 23 (no such flag) works
+pip_install() {
+	local pip_cmd="$1"
+	shift
+	local output rc
+	output=$($pip_cmd install "$@" 2>&1)
+	rc=$?
+	if [[ $rc -ne 0 ]] && grep -q 'externally-managed-environment' <<<"$output"; then
+		output=$($pip_cmd install --break-system-packages "$@" 2>&1)
+		rc=$?
+	fi
+	echo "$output"
+	return "$rc"
+}
+
 # Update helper for pip (handles list and update loop)
 update_pip() {
 	local pip_cmd="$1"
 	local name="$2"
 
-	# Upgrade pip first
-	$pip_cmd install --upgrade pip
+	pip_install "$pip_cmd" --upgrade pip
 
 	# Update user packages only
 	while IFS='=' read -r pkg _; do
 		if [[ -n "$pkg" ]] && [[ ! "$pkg" =~ ^(pip|setuptools|wheel)$ ]]; then
-			$pip_cmd install --upgrade --user "$pkg"
+			pip_install "$pip_cmd" --upgrade --user "$pkg"
 		fi
 	done < <($pip_cmd list --user --format=freeze 2>/dev/null | grep -v '^(pip|setuptools|wheel)==')
 
