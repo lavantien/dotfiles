@@ -26,20 +26,28 @@ OS=$(detect_os)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-# On Windows, direct users to the PowerShell deploy script
-if [[ "$OS" == "windows" ]]; then
-	echo -e "${YELLOW}Detected Windows environment${NC}"
-	echo -e "${CYAN}Please run: pwsh -File deploy.ps1${NC}"
-	echo -e "${CYAN}Or from PowerShell: .\deploy.ps1${NC}"
-	exit 0
-fi
-
 # Support XDG_CONFIG_HOME
 XDG_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}"
 
 # ============================================================================
 # GIT CONFIG MERGE - Preserves user identity
 # ============================================================================
+
+# Rewrite legacy absolute gh credential helper paths (linuxbrew installs,
+# gh.exe on Windows) to the PATH-resolved form. Git runs credential helpers
+# through sh, so !gh auth git-credential finds gh wherever it is installed.
+normalize_gh_helpers() {
+	local file="$1"
+	grep -Eq '^[[:space:]]*helper[[:space:]]*=[[:space:]]*!?[^[:space:]]*gh(\.exe)?"?[[:space:]]+auth[[:space:]]+git-credential[[:space:]]*$' "$file" || return 0
+	awk '
+		/^[[:space:]]*helper[[:space:]]*=[[:space:]]*!?[^[:space:]]*gh(\.exe)?"?[[:space:]]+auth[[:space:]]+git-credential[[:space:]]*$/ {
+			print "helper = !gh auth git-credential"
+			next
+		}
+		{ print }
+	' "$file" >"$file.dotfiles-norm" && mv "$file.dotfiles-norm" "$file"
+}
+
 merge_gitconfig() {
 	local source="$1"
 	local target="$2"
@@ -68,6 +76,11 @@ merge_gitconfig() {
 		git config --file "$temp_file" user.email "$user_email"
 	fi
 
+
+
+	# Fold any legacy absolute gh helper paths into the portable form
+	normalize_gh_helpers "$temp_file"
+
 	# Atomically replace the target
 	mv "$temp_file" "$target"
 	echo -e "${CYAN}Updated ~/.gitconfig (preserved user identity)${NC}"
@@ -86,7 +99,7 @@ migrate_configs_to_xdg() {
 		mkdir -p "$XDG_CONFIG/wezterm"
 		mv "$HOME/.wezterm.lua" "$XDG_CONFIG/wezterm/wezterm.lua"
 		echo -e "${CYAN}Moved ~/.wezterm.lua to ~/.config/wezterm/${NC}"
-		((moved++)) || true
+		moved=$((moved + 1))
 	fi
 
 	# Migrate git config from old location if XDG was set
@@ -106,45 +119,8 @@ migrate_configs_to_xdg() {
 }
 
 # ============================================================================
-# LOAD USER CONFIGURATION
+# CLI
 # ============================================================================
-# Source config library if available
-# shellcheck source=/dev/null
-if [[ -f "$ROOT_DIR/lib/config.sh" ]]; then
-	source "$ROOT_DIR/lib/config.sh"
-fi
-
-# Source JSON merge helpers (Claude settings injection, OpenCode MCP merge)
-# shellcheck source=/dev/null
-if [[ -f "$ROOT_DIR/lib/json-merge.sh" ]]; then
-	source "$ROOT_DIR/lib/json-merge.sh"
-fi
-
-# Load user config
-CONFIG_FILE="$HOME/.dotfiles.config.yaml"
-load_dotfiles_config "$CONFIG_FILE"
-
-# Get config values (with defaults)
-CONFIG_EDITOR=$(get_config "editor" "nvim")
-CONFIG_BACKUP_BEFORE_DEPLOY=$(get_config "backup_before_deploy" "false")
-
-# Show config status
-if [[ -f "$CONFIG_FILE" ]]; then
-	echo -e "${GREEN}Using config: $CONFIG_FILE${NC}"
-else
-	echo -e "${YELLOW}No config file found, using defaults${NC}"
-fi
-
-echo -e "${BLUE}Deploying dotfiles for: $OS${NC}"
-echo -e "${BLUE}Script directory: $SCRIPT_DIR${NC}"
-echo -e "${BLUE}Config directory: $XDG_CONFIG${NC}"
-
-# ============================================================================
-# CLI FLAGS
-# ============================================================================
-SKIP_CONFIG=false
-VERBOSE_MODE=false
-FORCE_BACKUP=false
 
 usage() {
 	echo "Usage: deploy.sh [--skip-config] [--verbose] [--backup] [-h|--help]"
@@ -153,20 +129,6 @@ usage() {
 	echo "  --backup       Run backup.sh before deploying (overrides config)"
 	echo "  -h, --help     Show this help"
 }
-
-while [[ $# -gt 0 ]]; do
-	case $1 in
-	--skip-config) SKIP_CONFIG=true && shift ;;
-	--verbose) VERBOSE_MODE=true && shift ;;
-	--backup) FORCE_BACKUP=true && shift ;;
-	-h | --help) usage && exit 0 ;;
-	*)
-		echo "Unknown option: $1"
-		usage
-		exit 1
-		;;
-	esac
-done
 
 # Copy with optional verbose logging (mirrors Copy-File -Verbose in deploy.ps1)
 copy_file() {
@@ -299,23 +261,6 @@ update_git_config() {
 
 	local modified=false
 	local fixes=()
-
-	# Detect platform and apply appropriate fixes
-	case "$OS" in
-	linux | macos)
-		# Remove absolute Windows paths to gh.exe (may have been copied from Windows)
-		if grep -qE 'gh\.exe' "$gitconfig" 2>/dev/null; then
-			fixes+=("absolute Windows path to gh.exe")
-			if command -v perl >/dev/null 2>&1; then
-				perl -i -ne 'print unless /^\s*helper\s*=\s*!".*?[A-Z]:\\/.*?gh\.exe"/' "$gitconfig" 2>/dev/null || true
-			else
-				sed -i '/gh\.exe.*auth/d' "$gitconfig" 2>/dev/null ||
-					sed -i '' '/gh\.exe.*auth/d' "$gitconfig" 2>/dev/null || true
-			fi
-			modified=true
-		fi
-		;;
-	esac
 
 	# Universal cleanup: remove duplicate/empty helper lines
 	if grep -qE '^\s*helper\s*=\s*$' "$gitconfig" 2>/dev/null; then
@@ -576,7 +521,71 @@ deploy_macos() {
 # ============================================================================
 # MAIN
 # ============================================================================
+
+print_final_message() {
+	echo -e "${GREEN}=== Deployment Complete ===${NC}"
+	echo -e "${YELLOW}Run 'source ~/.zshrc' (or restart your shell) to apply changes${NC}"
+}
+
 main() {
+	# On Windows, direct users to the PowerShell deploy script
+	if [[ "$OS" == "windows" ]]; then
+		echo -e "${YELLOW}Detected Windows environment${NC}"
+		echo -e "${CYAN}Please run: pwsh -File deploy.ps1${NC}"
+		echo -e "${CYAN}Or from PowerShell: .\deploy.ps1${NC}"
+		return 0
+	fi
+
+	# Source config library if available
+	# shellcheck source=/dev/null
+	if [[ -f "$ROOT_DIR/lib/config.sh" ]]; then
+		source "$ROOT_DIR/lib/config.sh"
+	fi
+
+	# Source JSON merge helpers (Claude settings injection, OpenCode MCP merge)
+	# shellcheck source=/dev/null
+	if [[ -f "$ROOT_DIR/lib/json-merge.sh" ]]; then
+		source "$ROOT_DIR/lib/json-merge.sh"
+	fi
+
+	# Load user config
+	CONFIG_FILE="$HOME/.dotfiles.config.yaml"
+	load_dotfiles_config "$CONFIG_FILE"
+
+	# Get config values (with defaults)
+	CONFIG_EDITOR=$(get_config "editor" "nvim")
+	CONFIG_BACKUP_BEFORE_DEPLOY=$(get_config "backup_before_deploy" "false")
+
+	# Show config status
+	if [[ -f "$CONFIG_FILE" ]]; then
+		echo -e "${GREEN}Using config: $CONFIG_FILE${NC}"
+	else
+		echo -e "${YELLOW}No config file found, using defaults${NC}"
+	fi
+
+	echo -e "${BLUE}Deploying dotfiles for: $OS${NC}"
+	echo -e "${BLUE}Script directory: $SCRIPT_DIR${NC}"
+	echo -e "${BLUE}Config directory: $XDG_CONFIG${NC}"
+
+	# CLI flags
+	SKIP_CONFIG=false
+	VERBOSE_MODE=false
+	FORCE_BACKUP=false
+
+	while [[ $# -gt 0 ]]; do
+		case $1 in
+		--skip-config) SKIP_CONFIG=true && shift ;;
+		--verbose) VERBOSE_MODE=true && shift ;;
+		--backup) FORCE_BACKUP=true && shift ;;
+		-h | --help) usage && return 0 ;;
+		*)
+			echo "Unknown option: $1"
+			usage
+			return 1
+			;;
+		esac
+	done
+
 	# Backup before any mutation when requested
 	run_pre_deploy_backup
 
@@ -617,8 +626,10 @@ main() {
 
 	write_deploy_marker
 
-	echo -e "${GREEN}=== Deployment Complete ===${NC}"
-	echo -e "${YELLOW}Run 'source ~/.zshrc' (or restart your shell) to apply changes${NC}"
+	print_final_message
 }
 
-main
+# Sourced runs (bats) define the functions only; direct runs deploy.
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+	main "$@"
+fi

@@ -27,22 +27,17 @@
 	rebase = true
 
 # ============================================================================
-# PLATFORM-SPECIFIC CREDENTIAL HELPERS
+# CREDENTIAL HELPERS
 # ============================================================================
 
-# Linux/macOS - use gh if available via Homebrew
+# gh resolved through PATH on every platform: git runs credential helpers
+# through sh, so the portable form finds brew, scoop, and winget installs.
 [credential "https://github.com"]
     helper =
-    helper = !/home/linuxbrew/.linuxbrew/bin/gh auth git-credential
+    helper = !gh auth git-credential
 [credential "https://gist.github.com"]
     helper =
-    helper = !/home/linuxbrew/.linuxbrew/bin/gh auth git-credential
-
-# Windows - gh is typically installed via scoop or winget
-# The deploy.ps1 script will update these paths automatically
-# [credential "https://github.com"]
-#     helper =
-#     helper = !"C:/Users/YourName/scoop/apps/gh/current/gh.exe" auth git-credential
+    helper = !gh auth git-credential
 
 [http]
 	postBuffer = 524288000
