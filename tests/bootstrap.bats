@@ -16,3 +16,35 @@ ALIASES="$REPO_ROOT/home/.bash_aliases"
 	grep -qF 'Install-GoPackage "github.com/nao1215/gup@latest"' "$BOOTSTRAP_PS1"
 	! grep -q 'nao\.vi/gup' "$BOOTSTRAP_PS1"
 }
+
+@test "a failed brew install is tracked as failed, not installed" {
+	run bash -c '
+		set -euo pipefail
+		source bootstrap/lib/common.sh
+		source bootstrap/lib/version-check.sh
+		source bootstrap/platforms/linux.sh
+		cmd_exists() { [ "$1" = brew ]; }
+		brew() { echo "Error: brew exploded"; return 1; }
+		rc=0; install_brew_package zzz || rc=$?
+		echo "rc=$rc installed=${#INSTALLED_PACKAGES[@]} failed=${#FAILED_PACKAGES[@]}"
+		exit 0
+	'
+	[ "$status" -eq 0 ]
+	echo "$output" | grep -q 'rc=1 installed=0 failed=1'
+}
+
+@test "an already installed brew package is still tracked as skipped" {
+	run bash -c '
+		set -euo pipefail
+		source bootstrap/lib/common.sh
+		source bootstrap/lib/version-check.sh
+		source bootstrap/platforms/linux.sh
+		cmd_exists() { [ "$1" = brew ]; }
+		brew() { echo "Warning: zzz 1.0 is already installed"; return 1; }
+		rc=0; install_brew_package zzz || rc=$?
+		echo "rc=$rc skipped=${#SKIPPED_PACKAGES[@]}"
+		exit 0
+	'
+	[ "$status" -eq 0 ]
+	echo "$output" | grep -q 'rc=0 skipped=1'
+}

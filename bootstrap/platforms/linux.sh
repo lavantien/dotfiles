@@ -1598,8 +1598,8 @@ install_brew_package() {
 	if needs_install "$check_cmd" "$min_version"; then
 		log_step "Installing $package via brew..."
 		local brew_output
-		brew_output="$(brew install "$package" 2>&1)" || true
-		local exit_code=$?
+		local exit_code=0
+		brew_output="$(brew install "$package" 2>&1)" || exit_code=$?
 
 		# Check if brew said it was already installed
 		if echo "$brew_output" | grep -qiE "already installed|up-to-date|not installed|reinstall.*to"; then
@@ -1668,8 +1668,8 @@ ensure_brew_version() {
 	# Install via brew directly, checking for "already installed" messages
 	log_step "Installing $brew_pkg via brew..."
 	local brew_output
-	brew_output="$(brew install "$brew_pkg" 2>&1)" || true
-	local exit_code=$?
+	local exit_code=0
+	brew_output="$(brew install "$brew_pkg" 2>&1)" || exit_code=$?
 
 	# Check if brew said it was already installed
 	if echo "$brew_output" | grep -qiE "already installed|up-to-date|not installed|reinstall.*to"; then
