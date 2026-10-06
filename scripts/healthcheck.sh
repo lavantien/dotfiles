@@ -345,16 +345,24 @@ print_table() {
 	echo -e "${CYAN}========================================${NC}"
 }
 
-# Escape a string for a JSON value: backslash, double quote, and control
-# characters folded to spaces (messages are single line by contract)
+# Escape a string for a JSON value: backslash, double quote, and every C0
+# control character (a failing check can carry ANSI or BEL noise), anything
+# else passes through untouched
 json_escape() {
-	local s="$1"
-	s="${s//\\/\\\\}"
-	s="${s//\"/\\\"}"
-	s="${s//$'\n'/ }"
-	s="${s//$'\r'/}"
-	s="${s//$'\t'/ }"
-	printf '%s' "$s"
+	local s="$1" out="" c i hex
+	for ((i = 0; i < ${#s}; i++)); do
+		c="${s:i:1}"
+		case "$c" in
+		'\\') out+='\\' ;;
+		'"') out+='\"' ;;
+		[[:cntrl:]])
+			printf -v hex '\\u%04x' "'$c"
+			out+="$hex"
+			;;
+		*) out+="$c" ;;
+		esac
+	done
+	printf '%s' "$out"
 }
 
 print_json() {
