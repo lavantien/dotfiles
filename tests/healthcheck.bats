@@ -91,6 +91,9 @@ STUB
 		jq -e . >/dev/null <<<"$output"
 	fi
 	grep -q 'red error' <<<"$output"
+	# the controls must be escaped, not silently dropped
+	grep -q '\\u001b' <<<"$output"
+	grep -q '\\u0007' <<<"$output"
 }
 
 @test "multiline check messages survive whole in table and json output" {
