@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Slot 2 updater contracts: gh-missing crash, gup module path, pip PEP 668
 # retry, fetch-before-pull, and skip counting.
+# Note: this bats install has no fail() helper, guards echo and return 1.
 
 REPO_ROOT="$(cd "$BATS_TEST_DIRNAME/.." && pwd)"
 
@@ -12,14 +13,16 @@ REPO_ROOT="$(cd "$BATS_TEST_DIRNAME/.." && pwd)"
 	[ "$status" -eq 1 ]
 	grep -q 'gh) not found' <<<"$output"
 	if grep -qi 'unbound variable' <<<"$output"; then
-		fail "script died on unbound color variables: $output"
+		echo "script died on unbound color variables: $output" >&2
+		return 1
 	fi
 }
 
 @test "update-all.sh installs gup from its real module path, never all@latest" {
 	grep -q 'github.com/nao1215/gup@latest' "$REPO_ROOT/scripts/update-all.sh"
 	if grep -q 'all@latest' "$REPO_ROOT/scripts/update-all.sh"; then
-		fail "all@latest is an invalid module path, go install rejects it"
+		echo "all@latest is an invalid module path, go install rejects it" >&2
+		return 1
 	fi
 	# the go fallback only exists to bootstrap gup, gup update must not run twice
 	[ "$(grep -v '^[[:space:]]*#' "$REPO_ROOT/scripts/update-all.sh" | grep -c 'gup update')" -le 2 ]
@@ -28,7 +31,8 @@ REPO_ROOT="$(cd "$BATS_TEST_DIRNAME/.." && pwd)"
 @test "update-all.ps1 installs gup from its real module path, never all@latest" {
 	grep -q 'github.com/nao1215/gup@latest' "$REPO_ROOT/scripts/update-all.ps1"
 	if grep -q 'all@latest' "$REPO_ROOT/scripts/update-all.ps1"; then
-		fail "all@latest is an invalid module path, go install rejects it"
+		echo "all@latest is an invalid module path, go install rejects it" >&2
+		return 1
 	fi
 	[ "$(grep -v '^[[:space:]]*#' "$REPO_ROOT/scripts/update-all.ps1" | grep -c 'gup update')" -le 2 ]
 }
@@ -93,7 +97,8 @@ EOF
 	[ "$status" -eq 0 ]
 	[ "$(wc -l <"$log")" -eq 1 ]
 	if grep -q -- '--break-system-packages' "$log"; then
-		fail "old pip has no --break-system-packages flag, it must never see it"
+		echo "old pip has no --break-system-packages flag, it must never see it" >&2
+		return 1
 	fi
 }
 
@@ -111,6 +116,12 @@ EOF
 	# the old output-truthiness chain must be gone: quiet fetch success
 	# evaluated to false and reported Error updating
 	if grep -q -- '-and (git pull' "$ps1"; then
-		fail "found the old -and fetch/pull chain"
+		echo "found the old -and fetch/pull chain" >&2
+		return 1
 	fi
+}
+
+@test "update-all.sh holds at or below its current line ceiling" {
+	# 1000 SLOC repo cap, grandfathered ceiling while fixes land
+	[ "$(wc -l <"$REPO_ROOT/scripts/update-all.sh")" -le 1012 ]
 }
