@@ -71,10 +71,8 @@ get_pwsh() {
 	return 0
 }
 
-# Run installer and verify version actually changed
-# Usage: install_and_verify_version <install_command> <binary_name> <version_command> [npm_package_name]
-# If npm_package_name is provided, verifies against npm registry as external source of truth
-# This addresses installers that don't clearly indicate if an update occurred
+# Run installer and verify the version actually changed, npm registry as the
+# external source of truth when npm_package_name is provided
 install_and_verify_version() {
 	local install_cmd="$1"
 	local binary_name="$2"
@@ -297,8 +295,7 @@ update_and_report() {
 }
 
 # pip install wrapper with a PEP 668 fallback: plain install first, retry
-# with --break-system-packages only when the failure output names
-# externally-managed-environment, so pip older than 23 (no such flag) works
+# with --break-system-packages only on externally-managed-environment errors
 pip_install() {
 	local pip_cmd="$1"
 	shift
@@ -313,20 +310,23 @@ pip_install() {
 	return "$rc"
 }
 
-# Update helper for pip (handles list and update loop)
+# Update helper for pip (handles list and update loop), pip_install failures
+# propagate into the failed counter instead of a blanket success line
 update_pip() {
 	local pip_cmd="$1"
 	local name="$2"
-
-	pip_install "$pip_cmd" --upgrade pip
-
+	local rc=0
+	pip_install "$pip_cmd" --upgrade pip || rc=$?
 	# Update user packages only
 	while IFS='=' read -r pkg _; do
 		if [[ -n "$pkg" ]] && [[ ! "$pkg" =~ ^(pip|setuptools|wheel)$ ]]; then
-			pip_install "$pip_cmd" --upgrade --user "$pkg"
+			pip_install "$pip_cmd" --upgrade --user "$pkg" || rc=$?
 		fi
 	done < <($pip_cmd list --user --format=freeze 2>/dev/null | grep -v '^(pip|setuptools|wheel)==')
-
+	if [[ $rc -ne 0 ]]; then
+		update_fail "$name" ""
+		return 1
+	fi
 	update_success "$name"
 }
 

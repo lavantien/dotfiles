@@ -167,6 +167,37 @@ EOF
 	fi
 }
 
+@test "update_pip counts failed upgrades instead of always printing success" {
+	fakebin="$BATS_TEST_TMPDIR/pipfail"
+	mkdir -p "$fakebin"
+	cat >"$fakebin/pip" <<EOF
+#!/usr/bin/env bash
+if [[ "\$1" == "list" ]]; then
+	printf 'requests==1.0.0\n'
+	exit 0
+fi
+if [[ "\$*" == "install --upgrade pip" ]]; then
+	echo "self-upgrade ok"
+	exit 0
+fi
+echo "error: simulated pip failure" >&2
+exit 1
+EOF
+	chmod +x "$fakebin/pip"
+	# shellcheck disable=SC1091
+	source "$REPO_ROOT/scripts/update-all.sh"
+	out="$BATS_TEST_TMPDIR/pip-out"
+	rc=0
+	update_pip "$fakebin/pip" "pip" >"$out" 2>&1 || rc=$?
+	[ "$rc" -ne 0 ]
+	[ "$failed" -ge 1 ]
+	grep -q 'simulated pip failure' "$out"
+	if grep -q '✓ pip' "$out"; then
+		echo "update_pip printed success despite a failing upgrade: $(cat "$out")" >&2
+		return 1
+	fi
+}
+
 @test "update-all.sh holds at or below its current line ceiling" {
 	# 1000 SLOC repo cap, grandfathered ceiling while fixes land
 	[ "$(wc -l <"$REPO_ROOT/scripts/update-all.sh")" -le 1012 ]
