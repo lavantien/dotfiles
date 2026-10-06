@@ -189,23 +189,68 @@ make_backup() {
 	[ "$status" -ne 0 ]
 }
 
-@test "normalize_gh_helpers folds legacy absolute gh paths into the portable form" {
+@test "normalize_gh_helpers folds legacy and quoted gh paths keeping indentation" {
 	local f
 	f="$(mktemp)"
 	cat >"$f" <<'EOF'
 [credential "https://github.com"]
-	helper =
 	helper = !/home/linuxbrew/.linuxbrew/bin/gh auth git-credential
+	helper = "!gh auth git-credential"
+	helper = !"C:/Program Files/GitHub CLI/gh.exe" auth git-credential
+	helper = store
 [credential "https://gist.github.com"]
 	helper =
 	helper = !"C:/Users/u/scoop/apps/gh/current/gh.exe" auth git-credential
 EOF
 	run bash -c 'source "$1"; normalize_gh_helpers "$2"' _ "$DEPLOY" "$f"
 	[ "$status" -eq 0 ]
-	[ "$(grep -c '^helper = !gh auth git-credential$' "$f")" -eq 2 ]
+	local tab=$'\t'
+	[ "$(grep -cE "^${tab}helper = !gh auth git-credential$" "$f")" -eq 4 ]
 	run grep -E 'linuxbrew|gh\.exe' "$f"
 	[ "$status" -ne 0 ]
+	# Unrelated helper values are untouched
+	[ "$(grep -cE '^[[:space:]]*helper = store$' "$f")" -eq 1 ]
+	# The intentional empty reset survives
+	[ "$(grep -cE '^[[:space:]]*helper[[:space:]]*=$' "$f")" -eq 1 ]
 	rm -f "$f"
+}
+
+@test "normalize_gh_helpers leaves canonical files byte-identical" {
+	local f keep
+	f="$(mktemp)"
+	cat >"$f" <<'EOF'
+[credential "https://github.com"]
+	helper =
+	helper = !gh auth git-credential
+EOF
+	cp "$f" "$f.keep"
+	run bash -c 'source "$1"; normalize_gh_helpers "$2"' _ "$DEPLOY" "$f"
+	[ "$status" -eq 0 ]
+	cmp -s "$f" "$f.keep" || { echo "canonical file was rewritten"; false; }
+	rm -f "$f" "$f.keep"
+}
+
+@test "empty helper reset lines survive the deploy fixes and a merge round trip" {
+	local sb
+	sb="$(mktemp -d)"
+	printf '[user]\n\tname = Old Name\n\temail = old@example.invalid\n[credential "https://github.com"]\n\thelper =\n\thelper = !gh auth git-credential\n' >"$sb/.gitconfig"
+	run bash -c 'source "$1"; HOME="$2"; update_git_config' _ "$DEPLOY" "$sb"
+	[ "$status" -eq 0 ]
+	[ "$(grep -cE '^[[:space:]]*helper[[:space:]]*=$' "$sb/.gitconfig")" -eq 1 ]
+	rm -rf "$sb"
+}
+
+@test "the template helper reset survives a full merge plus normalize round trip" {
+	local sb
+	sb="$(mktemp -d)"
+	printf '[user]\n\tname = Old Name\n\temail = old@example.invalid\n[credential "https://github.com"]\n\thelper = !/home/linuxbrew/.linuxbrew/bin/gh auth git-credential\n' >"$sb/roundtrip"
+	run bash -c 'source "$1"; merge_gitconfig "$3" "$2/roundtrip" && normalize_gh_helpers "$2/roundtrip"' \
+		_ "$DEPLOY" "$sb" "$REPO_ROOT/home/.gitconfig"
+	[ "$status" -eq 0 ] || { echo "$output"; false; }
+	[ "$(grep -cE '^[[:space:]]*helper[[:space:]]*=$' "$sb/roundtrip")" -eq 2 ]
+	[ "$(grep -cE '^[[:space:]]*helper = !gh auth git-credential$' "$sb/roundtrip")" -eq 2 ]
+	[ "$(git config --file "$sb/roundtrip" user.name)" = "Old Name" ]
+	rm -rf "$sb"
 }
 
 @test "merge_gitconfig preserves live-only keys with template values on top" {
