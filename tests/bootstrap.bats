@@ -53,3 +53,44 @@ ALIASES="$REPO_ROOT/home/.bash_aliases"
 	grep -qF "curl -fsSL -o kubectl 'https://dl.k8s.io" "$BOOTSTRAP_SH"
 	! grep -q 'curl -LO' "$BOOTSTRAP_SH"
 }
+
+@test "jq and yazi are installed in the linux cli phase before the deploy phase" {
+	local cli_body
+	cli_body="$(awk '/^install_cli_tools\(\) \{/,/^\}/' "$BOOTSTRAP_SH")"
+	# jq is a hard dependency of the deployed configs (statusline, sync-book,
+	# books-index) so it must land before deploy runs those scripts
+	echo "$cli_body" | grep -q 'install_brew_package jq "" jq'
+	echo "$cli_body" | grep -q 'install_linux_package jq "" jq'
+	echo "$cli_body" | grep -q 'install_brew_package yazi "" yazi'
+	echo "$cli_body" | grep -q 'install_linux_package yazi "" yazi'
+	# phase ordering: cli tools run before deploy in main
+	local tab cli_line deploy_line
+	tab="$(printf '\t')"
+	cli_line="$(grep -n "^${tab}install_cli_tools" "$BOOTSTRAP_SH" | cut -d: -f1)"
+	deploy_line="$(grep -n "^${tab}deploy_configs" "$BOOTSTRAP_SH" | cut -d: -f1)"
+	[ -n "$cli_line" ] && [ -n "$deploy_line" ]
+	[ "$cli_line" -lt "$deploy_line" ]
+}
+
+@test "difftastic is installed in the linux cli phase on both platforms" {
+	local cli_body
+	cli_body="$(awk '/^install_cli_tools\(\) \{/,/^\}/' "$BOOTSTRAP_SH")"
+	echo "$cli_body" | grep -q 'install_brew_package difftastic "" difft'
+	echo "$cli_body" | grep -q 'install_linux_package difftastic "" difft'
+}
+
+@test "linux and macos package descriptions cover the new cli tools" {
+	for f in "$LINUX_SH" "$MACOS_SH"; do
+		grep -q 'jq) echo "JSON processor"' "$f"
+		grep -q 'yazi) echo "file manager"' "$f"
+		grep -q 'difftastic | difft) echo "diff viewer"' "$f"
+	done
+}
+
+@test "bootstrap.ps1 installs jq and yazi in the base scoop package list" {
+	local base_list
+	base_list="$(awk '/\$scoopPackages = @\(/,/^\s*\)/' "$BOOTSTRAP_PS1")"
+	echo "$base_list" | grep -q 'Package = "jq"'
+	echo "$base_list" | grep -q 'Package = "yazi"'
+	grep -q 'Package = "difftastic"' "$BOOTSTRAP_PS1"
+}

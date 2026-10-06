@@ -757,7 +757,11 @@ function Install-CLITools {
         @{Package = "gh"; MinVersion = ""; Cmd = "gh"; Desc = "GitHub CLI"},
         @{Package = "ripgrep"; MinVersion = ""; Cmd = "rg"; Desc = "Grep alternative"},
         @{Package = "fd"; MinVersion = ""; Cmd = "fd"; Desc = "Find alternative"},
-        @{Package = "sqlite"; MinVersion = ""; Cmd = "sqlite3"; Desc = "SQL database CLI"}
+        @{Package = "sqlite"; MinVersion = ""; Cmd = "sqlite3"; Desc = "SQL database CLI"},
+        # jq and yazi are hard dependencies of the deployed configs (statusline,
+        # sync-book, books-index, aliases) and must exist before the deploy phase
+        @{Package = "jq"; MinVersion = ""; Cmd = "jq"; Desc = "JSON processor"},
+        @{Package = "yazi"; MinVersion = ""; Cmd = "yazi"; Desc = "File manager"}
     )
 
     # Add extra packages for full install

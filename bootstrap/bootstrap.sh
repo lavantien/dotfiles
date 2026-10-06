@@ -799,6 +799,14 @@ install_linters_formatters() {
 install_cli_tools() {
 	print_header "Phase 5: CLI Tools"
 
+	# jq (hard dependency: aliases, statusline, sync-book, and books-index all
+	# call it, and deploy runs the books scripts, so it must exist pre-deploy)
+	if [[ "$OS" == "macos" ]]; then
+		install_brew_package jq "" jq
+	elif [[ "$OS" == "linux" ]]; then
+		install_linux_package jq "" jq
+	fi
+
 	# fzf (always latest)
 	if [[ "$OS" == "macos" ]]; then
 		install_brew_package fzf "" ""
@@ -826,6 +834,22 @@ install_cli_tools() {
 	elif [[ "$OS" == "linux" ]]; then
 		install_linux_package eza "" eza ||
 			install_linux_package exa "" eza || true
+	fi
+
+	# yazi (file manager, aliased in the deployed shell configs)
+	if [[ "$OS" == "macos" ]]; then
+		install_brew_package yazi "" yazi
+	elif [[ "$OS" == "linux" ]]; then
+		install_linux_package yazi "" yazi
+	fi
+
+	# difftastic (difft is the default difftool in the deployed .gitconfig)
+	if [[ "$CATEGORIES" == "full" ]]; then
+		if [[ "$OS" == "macos" ]]; then
+			install_brew_package difftastic "" difft
+		elif [[ "$OS" == "linux" ]]; then
+			install_linux_package difftastic "" difft
+		fi
 	fi
 
 	# lazygit (always latest)
