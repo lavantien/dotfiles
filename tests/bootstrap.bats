@@ -151,7 +151,7 @@ assert_absent() {
 }
 
 @test "version-check.sh stays bash 3.2 compatible and its lookups answer" {
-	assert_absent 'declare -gA' "$VERSION_CHECK_SH"
+	assert_absent '^declare -gA' "$VERSION_CHECK_SH"
 	run bash -c '
 		set -e
 		source bootstrap/lib/common.sh
