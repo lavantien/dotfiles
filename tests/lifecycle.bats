@@ -208,6 +208,43 @@ EOF
 	rm -f "$f"
 }
 
+@test "merge_gitconfig preserves live-only keys with template values on top" {
+	local sb
+	sb="$(mktemp -d)"
+	cat >"$sb/live" <<'EOF'
+[user]
+	name = Old Name
+	email = old@example.invalid
+	signingkey = ABC123DEF
+[commit]
+	gpgsign = true
+[include]
+	path = ~/work/gitconfig.extra
+[alias]
+	dft = difftool
+	custom = !sh -c 'echo hi'
+[credential]
+	helper = store
+[init]
+	defaultBranch = master
+EOF
+	run bash -c 'source "$1"; merge_gitconfig "$3" "$2/live"' \
+		_ "$DEPLOY" "$sb" "$REPO_ROOT/home/.gitconfig"
+	[ "$status" -eq 0 ] || { echo "$output"; false; }
+	[ "$(git config --file "$sb/live" user.name)" = "Old Name" ]
+	[ "$(git config --file "$sb/live" user.signingkey)" = "ABC123DEF" ]
+	[ "$(git config --file "$sb/live" commit.gpgsign)" = "true" ]
+	[ "$(git config --file "$sb/live" include.path)" = "~/work/gitconfig.extra" ]
+	[ "$(git config --file "$sb/live" alias.custom)" = "!sh -c 'echo hi'" ]
+	[ "$(git config --file "$sb/live" credential.helper)" = "store" ]
+	# Managed keys flip back to the template's values
+	[ "$(git config --file "$sb/live" init.defaultBranch)" = "main" ]
+	[ "$(git config --file "$sb/live" alias.dft)" = "difftool" ]
+	run git config --file "$sb/live" --list
+	[ "$status" -eq 0 ]
+	rm -rf "$sb"
+}
+
 @test "merge_gitconfig preserves identity and drops legacy helpers" {
 	local sb
 	sb="$(mktemp -d)"

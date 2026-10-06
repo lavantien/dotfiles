@@ -48,6 +48,76 @@ normalize_gh_helpers() {
 	' "$file" >"$file.dotfiles-norm" && mv "$file.dotfiles-norm" "$file"
 }
 
+# Deep merge for git config files: the template is the source of truth for
+# every key it manages, live-only keys (signingkey, gpgsign, includes,
+# aliases, extra sections) survive in reopened sections at the end, and
+# user.name plus user.email are never template-managed so git
+# last-value-wins keeps the live identity even under placeholder templates.
+merge_gitconfig_files() {
+	local template="$1" live="$2"
+	awk '
+		function section_id(inner) {
+			sub(/^[[:space:]]+/, "", inner)
+			sub(/[[:space:]]+$/, "", inner)
+			if (match(inner, /"[^"]*"$/)) {
+				head = substr(inner, 1, RSTART - 1)
+				sub(/[[:space:]]+$/, "", head)
+				return tolower(head) "\t" substr(inner, RSTART)
+			}
+			return tolower(inner) "\t"
+		}
+		function key_of(line) {
+			sub(/^[[:space:]]+/, "", line)
+			sub(/[[:space:]=].*$/, "", line)
+			return tolower(line)
+		}
+		function flush_live(i) {
+			if (n > 0) {
+				print ""
+				print live_hdr
+				for (i = 1; i <= n; i++) print buf[i]
+				n = 0
+			}
+		}
+		NR == FNR {
+			if ($0 ~ /^[[:space:]]*\[/) {
+				tpl_sec = ""
+				if (match($0, /\[[^]]*\]/)) {
+					tpl_sec = section_id(substr($0, RSTART + 1, RLENGTH - 2))
+					tpl_secs[tpl_sec] = 1
+				}
+				print
+				next
+			}
+			k = key_of($0)
+			if (k != "" && tpl_sec != "" && !(tpl_sec == "user\t" && (k == "name" || k == "email"))) {
+				managed[tpl_sec, k] = 1
+			}
+			print
+			next
+		}
+		{
+			if ($0 ~ /^[[:space:]]*\[/) {
+				flush_live()
+				live_sec = ""
+				if (match($0, /\[[^]]*\]/)) {
+					live_sec = section_id(substr($0, RSTART + 1, RLENGTH - 2))
+					live_hdr = $0
+				}
+				next
+			}
+			if (live_sec == "") next
+			if ($0 ~ /^[[:space:]]*$|^[[:space:]]*[#;]/) {
+				if (!(live_sec in tpl_secs)) buf[++n] = $0
+				next
+			}
+			k = key_of($0)
+			if (!((live_sec, k) in managed)) buf[++n] = $0
+		}
+		END { flush_live() }
+	' "$template" "$live"
+}
+
 merge_gitconfig() {
 	local source="$1"
 	local target="$2"
@@ -56,24 +126,14 @@ merge_gitconfig() {
 	# If target doesn't exist, just copy
 	if [[ ! -f "$target" ]]; then
 		cp "$source" "$target"
-		echo -e "${CYAN}Created ~/.gitconfig${NC}"
+		echo -e "${CYAN}Created $target${NC}"
 		return 0
 	fi
 
-	# Preserve user identity from existing config
-	local user_name user_email
-	user_name=$(git config --file "$target" user.name 2>/dev/null || true)
-	user_email=$(git config --file "$target" user.email 2>/dev/null || true)
-
-	# Copy new config
-	cp "$source" "$temp_file"
-
-	# Restore user identity if it existed
-	if [[ -n "$user_name" ]]; then
-		git config --file "$temp_file" user.name "$user_name"
-	fi
-	if [[ -n "$user_email" ]]; then
-		git config --file "$temp_file" user.email "$user_email"
+	if ! merge_gitconfig_files "$source" "$target" >"$temp_file"; then
+		rm -f "$temp_file"
+		echo -e "${YELLOW}Warning: gitconfig merge failed, $target left unchanged${NC}"
+		return 0
 	fi
 
 	# Fold any legacy absolute gh helper paths into the portable form
@@ -81,7 +141,7 @@ merge_gitconfig() {
 
 	# Atomically replace the target
 	mv "$temp_file" "$target"
-	echo -e "${CYAN}Updated ~/.gitconfig (preserved user identity)${NC}"
+	echo -e "${CYAN}Updated $target (template applied, live-only keys preserved)${NC}"
 }
 
 # ============================================================================
