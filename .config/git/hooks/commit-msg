@@ -1,6 +1,6 @@
 #!/bin/bash
 # Git commit-msg hook - Enforces Conventional Commits specification
-# Validates: type(scope): subject format with 72-char subject limit
+# Validates: type(scope): subject format with a 100-char subject limit
 
 COMMIT_MSG_FILE=$1
 COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
@@ -31,8 +31,10 @@ if [ -z "$SUBJECT" ]; then
 fi
 
 # Conventional Commits pattern: type(scope): description
-# Type is required, scope is optional
-CONVENTIONAL_PATTERN="^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert|break|bump)(\(.+\))?: .{1,72}"
+# Type is required, scope is optional. Fully anchored so the subject
+# length cap below actually fires, an unanchored .{1,N} matched any prefix.
+MAX_SUBJECT_LENGTH=100
+CONVENTIONAL_PATTERN="^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert|break|bump)(\(.+\))?: .+$"
 
 if ! echo "$SUBJECT" | grep -qE "$CONVENTIONAL_PATTERN"; then
     echo "ERROR: Commit message does not follow Conventional Commits format." >&2
@@ -41,7 +43,7 @@ if ! echo "$SUBJECT" | grep -qE "$CONVENTIONAL_PATTERN"; then
     echo "" >&2
     echo "Type (required): feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert, break, bump" >&2
     echo "Scope (optional): component or module in parentheses" >&2
-    echo "Description: brief description (max 72 characters)" >&2
+    echo "Description: brief description (subject capped at $MAX_SUBJECT_LENGTH characters)" >&2
     echo "" >&2
     echo "Examples:" >&2
     echo "  feat(api): add user authentication endpoint" >&2
@@ -50,7 +52,14 @@ if ! echo "$SUBJECT" | grep -qE "$CONVENTIONAL_PATTERN"; then
     echo "  test(auth): add unit tests for login flow" >&2
     echo "" >&2
     echo "Your subject: $SUBJECT" >&2
-    echo "Subject length: ${#SUBJECT} characters (max 72)" >&2
+    echo "Subject length: ${#SUBJECT} characters (max $MAX_SUBJECT_LENGTH)" >&2
+    exit 1
+fi
+
+if [ "${#SUBJECT}" -gt "$MAX_SUBJECT_LENGTH" ]; then
+    echo "ERROR: Subject exceeds $MAX_SUBJECT_LENGTH characters." >&2
+    echo "Subject length: ${#SUBJECT} characters (max $MAX_SUBJECT_LENGTH)" >&2
+    echo "Your subject: $SUBJECT" >&2
     exit 1
 fi
 
