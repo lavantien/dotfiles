@@ -70,15 +70,6 @@ command_exists() {
     command -v "$1" >/dev/null 2>&1
 }
 
-# npx wrapper for cross-platform
-npx_cmd() {
-    if [ "$OS" = "windows" ]; then
-        npx "$@" 2>/dev/null || ./node_modules/.bin/"$@" 2>/dev/null
-    else
-        npx "$@" 2>/dev/null || ./node_modules/.bin/"$@" 2>/dev/null
-    fi
-}
-
 # ============================================================================
 # LANGUAGE-SPECIFIC CHECKS
 # ============================================================================
@@ -170,7 +161,7 @@ run_node_checks() {
     echo -e "\n${YELLOW}=== JavaScript/TypeScript ===${NC}"
 
     # Format: Prettier
-    if npx prettier --version &>/dev/null 2>&1 || [ -f "node_modules/.bin/prettier" ]; then
+    if npx --no-install prettier --version &>/dev/null 2>&1 || [ -f "node_modules/.bin/prettier" ]; then
         echo "Running Prettier..."
         # Only use svelte plugin if actually installed
         if [ -f "node_modules/prettier-plugin-svelte/index.js" ] || [ -f "node_modules/prettier-plugin-svelte/dist/index.js" ]; then
@@ -178,17 +169,17 @@ run_node_checks() {
         else
             prettier_args=""
         fi
-        if ! npx prettier --check . $prettier_args >/dev/null 2>&1; then
-            npx prettier --write . $prettier_args 2>&1 | head -5
+        if ! npx --no-install prettier --check . $prettier_args >/dev/null 2>&1; then
+            npx --no-install prettier --write . $prettier_args 2>&1 | head -5
             git add . 2>/dev/null || true
             echo -e "${YELLOW}Files formatted with Prettier.${NC}"
         fi
     fi
 
     # Lint: ESLint
-    if npx eslint --version &>/dev/null 2>&1 || [ -f "node_modules/.bin/eslint" ]; then
+    if npx --no-install eslint --version &>/dev/null 2>&1 || [ -f "node_modules/.bin/eslint" ]; then
         echo "Running ESLint..."
-        if ! npx eslint . 2>&1 | head -20; then
+        if ! npx --no-install eslint . 2>&1 | head -20; then
             echo -e "${RED}ESLint errors found.${NC}"
             FAILED=1
         fi
@@ -201,9 +192,9 @@ run_node_checks() {
             echo -e "${RED}Type check failed.${NC}"
             FAILED=1
         fi
-    elif npx tsc --version &>/dev/null 2>&1 && [ -f "tsconfig.json" ]; then
+    elif npx --no-install tsc --version &>/dev/null 2>&1 && [ -f "tsconfig.json" ]; then
         echo "Running tsc..."
-        npx tsc --noEmit 2>/dev/null || echo -e "${YELLOW}TypeScript errors found.${NC}"
+        npx --no-install tsc --noEmit 2>/dev/null || echo -e "${YELLOW}TypeScript errors found.${NC}"
     fi
 }
 
