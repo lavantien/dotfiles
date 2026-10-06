@@ -36,6 +36,14 @@ skip_unless_pwsh() {
 	command -v pwsh >/dev/null 2>&1 || skip "pwsh not installed"
 }
 
+@test "tracked hook files carry the executable bit" {
+	local mode
+	mode="$(git -C "$REPO_ROOT" ls-files -s .config/git/hooks/pre-commit | awk '{print $1}')"
+	[ "$mode" = "100755" ] || { echo "pre-commit index mode is $mode, want 100755"; return 1; }
+	mode="$(git -C "$REPO_ROOT" ls-files -s .config/git/hooks/commit-msg | awk '{print $1}')"
+	[ "$mode" = "100755" ] || { echo "commit-msg index mode is $mode, want 100755"; return 1; }
+}
+
 @test "commit-msg rejects a garbage subject" {
 	setup_hook_repo
 	run git -C "$REPO" commit -q -m "garbage message that no convention allows"
