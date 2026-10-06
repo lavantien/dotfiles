@@ -380,10 +380,10 @@ run_php_checks() {
 
 # === SHELL ===
 run_shell_checks() {
-    echo -e "\n${YELLOW}=== Shell ===${NC}"
     local files=() f out status
     while IFS= read -r -d '' f; do files+=("$f"); done < <(staged_files '\.(sh|bash)$')
     [ ${#files[@]} -eq 0 ] && return
+    echo -e "\n${YELLOW}=== Shell ===${NC}"
 
     if command_exists shfmt; then
         echo "Running shfmt..."
