@@ -94,3 +94,16 @@ ALIASES="$REPO_ROOT/home/.bash_aliases"
 	echo "$base_list" | grep -q 'Package = "yazi"'
 	grep -q 'Package = "difftastic"' "$BOOTSTRAP_PS1"
 }
+
+@test "windows bootstrap installs the iosevka nerd font with a per-user fallback" {
+	grep -qF 'Add-ScoopBucket "nerd-fonts"' "$WINDOWS_PS1"
+	grep -qF 'Install-ScoopPackage $FontName' "$WINDOWS_PS1"
+	# fallback: official release zip, per-user font dir, HKCU registration
+	grep -qF 'releases/latest/download/$ZipName.zip' "$WINDOWS_PS1"
+	grep -qF 'Join-Path $env:LOCALAPPDATA "Microsoft\Windows\Fonts"' "$WINDOWS_PS1"
+	grep -qF '"HKCU:\Software\Microsoft\Windows NT\CurrentVersion\Fonts"' "$WINDOWS_PS1"
+	# wired into the foundation phase after wezterm
+	foundation="$(awk '/^function Install-Foundation \{/,/^\}/' "$BOOTSTRAP_PS1")"
+	echo "$foundation" | grep -qF 'Install-WezTerm'
+	echo "$foundation" | grep -qF 'Install-NerdFont'
+}

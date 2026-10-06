@@ -520,6 +520,104 @@ function Install-WezTerm {
 }
 
 # ============================================================================
+# NERD FONT (IosevkaTerm for WezTerm)
+# ============================================================================
+function Test-NerdFontInstalled {
+    param([string]$FontFile = "IosevkaTerm")
+
+    $fontDirs = @(
+        (Join-Path $env:LOCALAPPDATA "Microsoft\Windows\Fonts"),
+        "$env:WINDIR\Fonts"
+    )
+    foreach ($dir in $fontDirs) {
+        if (Test-Path $dir) {
+            if (Get-ChildItem $dir -Filter "$FontFile*.ttf" -ErrorAction SilentlyContinue) {
+                return $true
+            }
+        }
+    }
+
+    $fontsReg = "HKCU:\Software\Microsoft\Windows NT\CurrentVersion\Fonts"
+    if (Test-Path $fontsReg) {
+        $props = (Get-ItemProperty $fontsReg).PSObject.Properties.Name
+        if ($props -match "$FontFile") {
+            return $true
+        }
+    }
+
+    return $false
+}
+
+function Install-NerdFont {
+    # WezTerm's config expects IosevkaTerm Nerd Font glyphs; without them the
+    # terminal renders tofu. Primary: scoop nerd-fonts bucket (the live alias
+    # for matthewjberger/scoop-nerd-fonts, no winget package exists).
+    # Fallback: per-user copy from the official release plus HKCU registration.
+    param(
+        [string]$FontName = "IosevkaTerm-NF",
+        [string]$ZipName = "IosevkaTerm"
+    )
+
+    if (Test-NerdFontInstalled) {
+        Write-VerboseInfo "IosevkaTerm Nerd Font already installed"
+        Track-Skipped $FontName "Nerd Font"
+        return $true
+    }
+
+    Write-Step "Installing $FontName Nerd Font..."
+    if ($DryRun) {
+        Write-Info "[DRY-RUN] Would install: $FontName"
+        Track-Installed $FontName "Nerd Font"
+        return $true
+    }
+
+    Add-ScoopBucket "nerd-fonts"
+    $null = Install-ScoopPackage $FontName "" ""
+    if (Test-NerdFontInstalled) {
+        Track-Installed $FontName "Nerd Font"
+        return $true
+    }
+
+    try {
+        $url = "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/$ZipName.zip"
+        $zipPath = Join-Path $env:TEMP "$ZipName.zip"
+        $extractDir = Join-Path $env:TEMP "$ZipName-fonts"
+        Invoke-WebRequest -Uri $url -OutFile $zipPath
+        Expand-Archive -Path $zipPath -DestinationPath $extractDir -Force
+
+        $userFontDir = Join-Path $env:LOCALAPPDATA "Microsoft\Windows\Fonts"
+        New-Item -ItemType Directory -Path $userFontDir -Force | Out-Null
+        $fontsReg = "HKCU:\Software\Microsoft\Windows NT\CurrentVersion\Fonts"
+        if (-not (Test-Path $fontsReg)) {
+            New-Item -Path $fontsReg -Force | Out-Null
+        }
+        Get-ChildItem $extractDir -Filter "*.ttf" | ForEach-Object {
+            $dest = Join-Path $userFontDir $_.Name
+            Copy-Item $_.FullName $dest -Force
+            New-ItemProperty -Path $fontsReg -Name "$($_.BaseName) (TrueType)" -Value $dest -PropertyType String -Force | Out-Null
+        }
+        Remove-Item $zipPath -Force -ErrorAction SilentlyContinue
+        Remove-Item $extractDir -Recurse -Force -ErrorAction SilentlyContinue
+
+        if (Test-NerdFontInstalled) {
+            Track-Installed $FontName "Nerd Font"
+            Write-Info "Restart WezTerm to pick up the new font"
+            return $true
+        }
+        Write-Warning "$FontName install finished but the font is still not detectable"
+        Write-Info "Install IosevkaTerm Nerd Font manually from: https://www.nerdfonts.com/font-downloads"
+        Track-Failed $FontName "Nerd Font"
+        return $false
+    }
+    catch {
+        Write-Warning ("Failed to install {0}: {1}" -f $FontName, $_.Exception.Message)
+        Write-Info "Install IosevkaTerm Nerd Font manually from: https://www.nerdfonts.com/font-downloads"
+        Track-Failed $FontName "Nerd Font"
+        return $false
+    }
+}
+
+# ============================================================================
 # CHOCOLATEY (Alternative)
 # ============================================================================
 function Ensure-Choco {
