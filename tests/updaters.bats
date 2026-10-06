@@ -159,12 +159,14 @@ EOF
 	g -C "$seed" push -q origin HEAD
 	run env PATH="$rt/fakebin:$PATH" bash "$REPO_ROOT/scripts/git-update-repos.sh" -u tester -d "$rt/base"
 	[ "$status" -eq 0 ]
-	# summary count, git's own fetch and pull output splits the per-repo line
-	plain="$(sed 's/\x1b\[[0-9;]*m//g' <<<"$output")"
-	if ! grep -qE 'Updated:[[:space:]]*[1-9]' <<<"$plain"; then
-		echo "stale tracking ref reported up to date, no fetch happened: $plain" >&2
+	# assert on repo state, not on colored output: the clone must carry the
+	# remote tip and its content after the pull
+	if grep -q 'Skipped (already up to date)' <<<"$output"; then
+		echo "stale tracking ref reported up to date, no fetch happened: $output" >&2
 		return 1
 	fi
+	[ "$(g -C "$rt/base/c1repo" rev-parse HEAD)" = "$(g -C "$seed" rev-parse HEAD)" ]
+	grep -q two "$rt/base/c1repo/f"
 }
 
 @test "update_pip counts failed upgrades instead of always printing success" {
