@@ -15,7 +15,8 @@ json_ok() {
 	elif command -v python >/dev/null 2>&1; then
 		python -c 'import json,sys; json.load(sys.stdin)' <<<"$1"
 	else
-		fail "no json validator available (jq or python)"
+		echo "no json validator available (jq or python)" >&2
+		return 1
 	fi
 }
 
