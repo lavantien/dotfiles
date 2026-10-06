@@ -66,6 +66,29 @@ skip_unless_pwsh() {
 	[ "$status" -eq 0 ]
 }
 
+@test "commit-msg keeps a subject of literally -n intact" {
+	setup_hook_repo
+	run git -C "$REPO" commit -q -m "-n"
+	[ "$status" -ne 0 ]
+	[[ "$output" == *"does not follow Conventional Commits"* ]]
+	[[ "$output" != *"cannot be empty"* ]]
+}
+
+@test "commit-msg counts multibyte subjects in codepoints" {
+	setup_hook_repo
+	local pad bytes ok_subject over_subject
+	pad="$(printf 'é%.0s' $(seq 95))"
+	bytes="$(printf '%s' "$pad" | wc -c)"
+	[ "$bytes" -eq 190 ] || { echo "setup: pad is $bytes bytes, want 190"; return 1; }
+	ok_subject="fix: $pad"
+	over_subject="fix: ${pad}é"
+	run env LC_ALL=C git -C "$REPO" commit -q -m "$ok_subject"
+	[ "$status" -eq 0 ]
+	setup_hook_repo
+	run env LC_ALL=C git -C "$REPO" commit -q -m "$over_subject"
+	[ "$status" -ne 0 ]
+}
+
 @test "commit-msg accepts break and bump types" {
 	setup_hook_repo
 	run git -C "$REPO" commit -q -m "break: remove the legacy api"
