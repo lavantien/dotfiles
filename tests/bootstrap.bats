@@ -143,6 +143,29 @@ assert_absent() {
 	done
 }
 
+@test "a failed winget install is tracked as failed, not installed" {
+	command -v pwsh >/dev/null 2>&1 || skip "pwsh not available"
+	run pwsh -NoProfile -Command '
+		$ErrorActionPreference = "Stop"
+		. "$PWD/bootstrap/platforms/windows.ps1"
+		function winget {
+			if ($args[0] -eq "install") {
+				"Failed to install package: 0x80070005"
+				cmd /c exit 1
+			}
+			else {
+				"No installed package found matching input criteria."
+				cmd /c exit 1
+			}
+		}
+		$result = Install-WingetPackage -Id "Fake.Tool" -DisplayName "FakeTool"
+		"rc=$result failed=$($Script:FailedPackages.Count) installed=$($Script:InstalledPackages.Count)"
+	'
+	[ "$status" -eq 0 ]
+	echo "$output" | grep -q "rc=False failed=1 installed=0"
+	echo "$output" | grep -q "\[WARN\] Failed to install FakeTool"
+}
+
 @test "winget pins use the current dotnet 10 and jdk 25 ids" {
 	grep -q -- '--id Microsoft.DotNet.SDK.10' "$BOOTSTRAP_PS1"
 	grep -q -- '--id Microsoft.OpenJDK.25' "$BOOTSTRAP_PS1"
