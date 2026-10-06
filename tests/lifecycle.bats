@@ -339,6 +339,55 @@ EOF
 	rm -rf "$sb"
 }
 
+@test "merge_gitconfig is idempotent across repeated deploys" {
+	local sb
+	sb="$(mktemp -d)"
+	cat >"$sb/live" <<'EOF'
+[user]
+	name = Old Name
+	email = old@example.invalid
+	signingkey = ABC123DEF
+[alias]
+	custom = !echo hi
+[other]
+	value = 1
+EOF
+	bash -c 'source "$1"; merge_gitconfig "$3" "$2/live"' _ "$DEPLOY" "$sb" "$REPO_ROOT/home/.gitconfig"
+	cp "$sb/live" "$sb/first"
+	run bash -c 'source "$1"; merge_gitconfig "$3" "$2/live"' _ "$DEPLOY" "$sb" "$REPO_ROOT/home/.gitconfig"
+	[ "$status" -eq 0 ] || { echo "$output"; false; }
+	cmp -s "$sb/first" "$sb/live" || { echo "second merge changed the file"; diff "$sb/first" "$sb/live"; false; }
+	rm -rf "$sb"
+}
+
+@test "deploy.ps1 Merge-Gitconfig is idempotent across repeated deploys" {
+	command -v pwsh >/dev/null 2>&1 || skip "pwsh not installed"
+	local sb
+	sb="$(cd "$(mktemp -d)" && pwd -W)"
+	cat >"$sb/existing" <<'EOF'
+[user]
+	name = Old Name
+	email = old@example.invalid
+	signingkey = ABC123DEF
+[alias]
+	custom = !echo hi
+[other]
+	value = 1
+EOF
+	write_pwsh_harness "$sb/harness.ps1" 'Merge-Gitconfig -Src $env:DF_SRC -Dst $env:DF_DST'
+	DF_SRC="$REPO_ROOT/home/.gitconfig" DF_DST="$sb/existing" pwsh -NoProfile -File "$sb/harness.ps1" \
+		-ScriptPath "$REPO_ROOT/scripts/deploy.ps1" -FunctionName Merge-Gitconfig
+	cp "$sb/existing" "$sb/first"
+	DF_SRC="$REPO_ROOT/home/.gitconfig" DF_DST="$sb/existing" run pwsh -NoProfile -File "$sb/harness.ps1" \
+		-ScriptPath "$REPO_ROOT/scripts/deploy.ps1" -FunctionName Merge-Gitconfig
+	[ "$status" -eq 0 ] || { echo "$output"; false; }
+	cmp -s "$sb/first" "$sb/existing" || { echo "second merge changed the file"; false; }
+	[ "$(git config --file "$sb/existing" user.signingkey)" = "ABC123DEF" ]
+	[ "$(git config --file "$sb/existing" alias.custom)" = "!echo hi" ]
+	[ "$(git config --file "$sb/existing" other.value)" = "1" ]
+	rm -rf "$sb"
+}
+
 @test "merge_gitconfig preserves identity and drops legacy helpers" {
 	local sb
 	sb="$(mktemp -d)"

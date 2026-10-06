@@ -84,12 +84,15 @@ merge_gitconfig_files() {
 			return tolower(line)
 		}
 		function flush_live(i) {
+			# Trailing blanks are block separators, not content; dropping
+			# them keeps repeated deploys from accumulating blank lines
+			while (n > 0 && buf[n] ~ /^[[:space:]]*$/) n--
 			if (n > 0) {
 				print ""
 				print live_hdr
 				for (i = 1; i <= n; i++) print buf[i]
-				n = 0
 			}
+			n = 0
 		}
 		NR == FNR {
 			if ($0 ~ /^[[:space:]]*\[/) {
