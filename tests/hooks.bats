@@ -84,3 +84,29 @@ subject_of_length() {
 	run git -C "$REPO" log -1 --format=%B
 	[[ "$output" != *"Co-Authored-By"* ]]
 }
+
+@test "pre-commit passes --no-install to every npx call" {
+	setup_hook_repo
+	echo '{}' >"$REPO/package.json"
+	echo 'const ok = 1;' >"$REPO/clean.js"
+	git -C "$REPO" add package.json clean.js
+	local stubbin log
+	stubbin="$(mktemp -d)"
+	log="$stubbin/npx.log"
+	: >"$log"
+	printf '#!/usr/bin/env bash\nprintf %%s\\\\n "$*" >> "$NPX_LOG"\nexit 0\n' >"$stubbin/npx"
+	chmod +x "$stubbin/npx"
+	run env PATH="$stubbin:$PATH" NPX_LOG="$log" \
+		git -C "$REPO" commit -q -m "fix: trigger node checks"
+	[ "$status" -eq 0 ]
+	[ -s "$log" ] || { echo "hook never invoked npx"; return 1; }
+	local bad=""
+	while IFS= read -r line; do
+		case "$line" in
+		--no-install\ *) ;;
+		*) bad="$bad [$line]" ;;
+		esac
+	done <"$log"
+	[ -z "$bad" ] || { echo "npx called without --no-install:$bad"; return 1; }
+	rm -rf "$stubbin"
+}
