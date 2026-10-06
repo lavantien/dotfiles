@@ -124,6 +124,61 @@ make_backup() {
 }
 
 # ============================================================================
+# uninstall inventory (what deploy actually writes)
+# ============================================================================
+
+@test "verify-only inventory covers the deploy copy sites" {
+	local sb
+	sb="$(mktemp -d)"
+	mkdir -p "$sb/.config/nvim" "$sb/.config/opencode" "$sb/assets" "$sb/dev" "$sb/.claude"
+	touch "$sb/.dotfiles-installed" "$sb/.bash_aliases" "$sb/.zshrc" "$sb/.gitconfig" \
+		"$sb/.config/nvim/init.lua" "$sb/.config/opencode/opencode.json" \
+		"$sb/assets/bg.png" "$sb/dev/git-clone-all.sh" "$sb/dev/git-update-repos.sh" \
+		"$sb/dev/update-all.sh" "$sb/.claude/CLAUDE.md"
+	run env HOME="$sb" bash "$UNINSTALL" --verify-only </dev/null
+	[ "$status" -eq 0 ]
+	local p
+	for p in "$sb/.config/nvim" "$sb/.config/opencode/opencode.json" "$sb/assets" \
+		"$sb/dev/git-clone-all.sh" "$sb/dev/git-update-repos.sh" "$sb/dev/update-all.sh" \
+		"$sb/.claude/CLAUDE.md"; do
+		[[ "$output" == *"Would remove: $p"* ]] || { echo "missing from inventory: $p"; false; }
+	done
+	for p in "$sb/.config/nvim/init.lua" "$sb/.bash_aliases"; do
+		[ -e "$p" ]
+	done
+	rm -rf "$sb"
+}
+
+@test "verify-only never offers paths deploy stopped writing" {
+	local sb
+	sb="$(mktemp -d)"
+	touch "$sb/.dotfiles-installed" "$sb/.bashrc" "$sb/.bash_profile" "$sb/init.lua" \
+		"$sb/wezterm.lua" "$sb/.editorconfig"
+	run env HOME="$sb" bash "$UNINSTALL" --verify-only </dev/null
+	[ "$status" -eq 0 ]
+	local p
+	for p in "$sb/.bashrc" "$sb/.bash_profile" "$sb/init.lua" "$sb/wezterm.lua" "$sb/.editorconfig"; do
+		[[ "$output" != *"Would remove: $p"* ]] || { echo "legacy path offered: $p"; false; }
+		[ -e "$p" ]
+	done
+	rm -rf "$sb"
+}
+
+@test "uninstall unsets core.hooksPath when the gitconfig survives" {
+	local sb
+	sb="$(mktemp -d)"
+	touch "$sb/.dotfiles-installed" "$sb/.bash_aliases"
+	git config --file "$sb/.gitconfig" core.hooksPath "$sb/.config/git/hooks"
+	run env HOME="$sb" bash "$UNINSTALL" <<< $'y\nn\n'
+	[ "$status" -eq 0 ]
+	[ ! -e "$sb/.bash_aliases" ]
+	[ -f "$sb/.gitconfig" ]
+	run env HOME="$sb" git config --global core.hooksPath
+	[ "$status" -ne 0 ]
+	rm -rf "$sb"
+}
+
+# ============================================================================
 # restore non-interactive paths
 # ============================================================================
 

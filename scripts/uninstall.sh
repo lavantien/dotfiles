@@ -29,22 +29,31 @@ SKIP_REMAINING=false
 # Dotfiles marker file (created during deploy)
 DOTFILES_MARKER="$HOME/.dotfiles-installed"
 
-# Files deployed by dotfiles
+# Files and directories the deploy scripts actually write (deploy.sh on
+# Linux/macOS, deploy.ps1 on Windows). Legacy deployments also carried
+# ~/.bashrc ~/.bash_profile ~/.gitignore ~/.gitattributes ~/.editorconfig
+# ~/init.lua ~/wezterm.lua and ~/.config/powershell, but deploy stopped
+# writing those, so they are left to the user and only mentioned here as
+# migration context.
 DOTFILES_FILES=(
 	"$HOME/.bash_aliases"
-	"$HOME/.bashrc"
 	"$HOME/.zshrc"
-	"$HOME/.bash_profile"
 	"$HOME/.gitconfig"
-	"$HOME/.gitignore"
-	"$HOME/.gitattributes"
+	"$HOME/.config/nvim"
 	"$HOME/.config/wezterm"
-	"$HOME/.config/git"
-	"$HOME/.config/powershell"
-	"$HOME/init.lua"
-	"$HOME/wezterm.lua"
-	"$HOME/.editorconfig"
-	"$HOME/.claude"
+	"$HOME/.config/git/hooks"
+	"$HOME/.config/opencode/opencode.json"
+	"$HOME/assets"
+	"$HOME/dev/git-clone-all.sh"
+	"$HOME/dev/git-update-repos.sh"
+	"$HOME/dev/update-all.sh"
+	"$HOME/.claude/CLAUDE.md"
+	"$HOME/.claude/BOOKS.md"
+	"$HOME/.claude/quality-check.sh"
+	"$HOME/.claude/quality-check.ps1"
+	"$HOME/.claude/statusline.sh"
+	"$HOME/.claude/books"
+	"$HOME/.claude/settings.json"
 )
 
 # ============================================================================
@@ -248,6 +257,19 @@ remove_marker() {
 	fi
 }
 
+# Undo the git hook wiring deploy set; when the whole .gitconfig was removed
+# the keys went with it, so only a surviving file needs the unset.
+undo_git_wiring() {
+	if [[ "$VERIFY_ONLY" == "true" ]] || [[ "$DRY_RUN" == "true" ]]; then
+		return 0
+	fi
+	if [[ ! -f "$HOME/.gitconfig" ]]; then
+		return 0
+	fi
+	git config --global --unset core.hooksPath >/dev/null 2>&1 || true
+	git config --global --unset init.templatedir >/dev/null 2>&1 || true
+}
+
 # ============================================================================
 # MAIN UNINSTALL PROCESS
 # ============================================================================
@@ -285,6 +307,7 @@ main() {
 
 	remove_backup_dir
 	remove_marker
+	undo_git_wiring
 
 	# Print summary
 	echo ""
