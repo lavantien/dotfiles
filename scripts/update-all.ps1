@@ -311,7 +311,7 @@ function Main {
     }
 
     # ============================================================================
-    # GUP (Go global packages)
+    # GUP (Go global packages): go installs gup when missing, gup updates all
     # ============================================================================
     Write-Step "GUP (Go global packages)"
     if (Test-Command gup) {
@@ -325,34 +325,19 @@ function Main {
             $script:failed++
         }
     }
+    elseif (Test-Command go) {
+        try {
+            go install github.com/nao1215/gup@latest && gup update
+            Write-Success "gup"
+            $script:updated++
+        }
+        catch {
+            Write-Fail "gup"
+            $script:failed++
+        }
+    }
     else {
         Write-Skip "gup not found"
-        $script:skipped++
-    }
-
-    # ============================================================================
-    # GO (direct update)
-    # ============================================================================
-    Write-Step "GO (update all)"
-    if (Test-Command go) {
-        if (-not (Test-Command gup)) {
-            try {
-                go install all@latest
-                Write-Success "go"
-                $script:updated++
-            }
-            catch {
-                Write-Fail "go"
-                $script:failed++
-            }
-        }
-        else {
-            Write-Skip "go (using gup instead)"
-            $script:skipped++
-        }
-    }
-    else {
-        Write-Skip "go not found"
         $script:skipped++
     }
 

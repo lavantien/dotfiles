@@ -732,21 +732,16 @@ _main() {
 	fi
 
 	# ============================================================================
-	# GUP (Go global packages)
+	# GUP (Go global packages): go installs gup when missing, gup updates all
 	# ============================================================================
 	if cmd_exists gup; then
 		update_section "GUP (Go global packages)"
 		update_and_report "gup update" "gup"
+	elif cmd_exists go; then
+		update_section "GUP (installing gup, then Go global packages)"
+		update_and_report "go install github.com/nao1215/gup@latest && gup update" "gup"
 	else
 		update_skip "gup not found"
-	fi
-
-	# ============================================================================
-	# GO (direct update)
-	# ============================================================================
-	if cmd_exists go && ! cmd_exists gup; then
-		update_section "GO (update all)"
-		update_and_report "go install all@latest" "go"
 	fi
 
 	# ============================================================================

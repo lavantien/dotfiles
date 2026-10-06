@@ -15,3 +15,20 @@ REPO_ROOT="$(cd "$BATS_TEST_DIRNAME/.." && pwd)"
 		fail "script died on unbound color variables: $output"
 	fi
 }
+
+@test "update-all.sh installs gup from its real module path, never all@latest" {
+	grep -q 'github.com/nao1215/gup@latest' "$REPO_ROOT/scripts/update-all.sh"
+	if grep -q 'all@latest' "$REPO_ROOT/scripts/update-all.sh"; then
+		fail "all@latest is an invalid module path, go install rejects it"
+	fi
+	# the go fallback only exists to bootstrap gup, gup update must not run twice
+	[ "$(grep -v '^[[:space:]]*#' "$REPO_ROOT/scripts/update-all.sh" | grep -c 'gup update')" -le 2 ]
+}
+
+@test "update-all.ps1 installs gup from its real module path, never all@latest" {
+	grep -q 'github.com/nao1215/gup@latest' "$REPO_ROOT/scripts/update-all.ps1"
+	if grep -q 'all@latest' "$REPO_ROOT/scripts/update-all.ps1"; then
+		fail "all@latest is an invalid module path, go install rejects it"
+	fi
+	[ "$(grep -v '^[[:space:]]*#' "$REPO_ROOT/scripts/update-all.ps1" | grep -c 'gup update')" -le 2 ]
+}
