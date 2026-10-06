@@ -8,7 +8,7 @@ REPO_ROOT="$(cd "$BATS_TEST_DIRNAME/.." && pwd)"
 	while IFS= read -r -d '' f; do
 		bash -n "$REPO_ROOT/$f" || failed+=("$f")
 	done < <(git -C "$REPO_ROOT" ls-files -z -- '*.sh')
-	[ ${#failed[@]} -eq 0 ] || fail "bash -n failed for: ${failed[*]}"
+	[ ${#failed[@]} -eq 0 ] || { echo "bash -n failed for: ${failed[*]}" >&3; return 1; }
 }
 
 @test "key lifecycle scripts and harness files exist" {
