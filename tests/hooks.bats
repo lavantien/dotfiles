@@ -259,6 +259,14 @@ STUB
 	[ "$status" -eq 0 ]
 }
 
+@test "pre-commit omits the spell check header when nothing is staged" {
+	setup_hook_repo
+	git -C "$REPO" commit -q -m "fix: seed the trunk"
+	run git -C "$REPO" commit -q --allow-empty -m "chore: empty"
+	[ "$status" -eq 0 ]
+	[[ "$output" != *"Spell check"* ]]
+}
+
 @test "powershell analyzer probe skips when the module is absent" {
 	setup_hook_repo
 	skip_unless_pwsh
