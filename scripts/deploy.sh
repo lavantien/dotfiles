@@ -76,8 +76,6 @@ merge_gitconfig() {
 		git config --file "$temp_file" user.email "$user_email"
 	fi
 
-
-
 	# Fold any legacy absolute gh helper paths into the portable form
 	normalize_gh_helpers "$temp_file"
 
