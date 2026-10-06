@@ -89,6 +89,18 @@ skip_unless_pwsh() {
 	[[ "$output" != *"Co-Authored-By"* ]]
 }
 
+@test "commit-msg rejects a garbage subject over a Merge body line" {
+	setup_hook_repo
+	run git -C "$REPO" commit -q -m "garbage subject" -m "Merge branch 'feature'"
+	[ "$status" -ne 0 ]
+}
+
+@test "commit-msg rejects a garbage subject over a Revert body line" {
+	setup_hook_repo
+	run git -C "$REPO" commit -q -m "garbage subject" -m 'Revert "fix: ok"'
+	[ "$status" -ne 0 ]
+}
+
 @test "pre-commit passes --no-install to every npx call" {
 	setup_hook_repo
 	echo '{}' >"$REPO/package.json"

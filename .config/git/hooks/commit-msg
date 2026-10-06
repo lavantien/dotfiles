@@ -5,8 +5,12 @@
 COMMIT_MSG_FILE=$1
 COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
 
+# Get the first line (subject). The skip decision reads the subject only:
+# a body line quoting "Merge ..." must not defeat the gate
+SUBJECT=$(echo "$COMMIT_MSG" | head -n 1)
+
 # Skip validation for merge and revert commits (they follow their own convention)
-if echo "$COMMIT_MSG" | grep -qE "^(Merge|Revert)"; then
+if echo "$SUBJECT" | grep -qE "^(Merge|Revert)"; then
     exit 0
 fi
 
@@ -18,9 +22,6 @@ if echo "$COMMIT_MSG" | grep -qE "$ATTRIBUTION_PATTERN"; then
     printf '%s\n' "$COMMIT_MSG" > "$COMMIT_MSG_FILE"
     echo "Stripped AI attribution trailer from commit message."
 fi
-
-# Get the first line (subject)
-SUBJECT=$(echo "$COMMIT_MSG" | head -n 1)
 
 # Check for empty commit message
 if [ -z "$SUBJECT" ]; then
