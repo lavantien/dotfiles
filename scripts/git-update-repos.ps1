@@ -93,12 +93,21 @@ foreach ($Repo in $Repos) {
                 if ($Local -and $Remote -and $Local -eq $Remote) {
                     Wc $C.B "Skipped (already up to date)"
                     $Skipped++
-                } elseif ((git fetch origin 2>&1) -and (git pull 2>&1)) {
-                    Wc $C.Y "Updated"
-                    $Updated++
                 } else {
-                    Wc $C.R "Error updating"
-                    $Failed++
+                    # sequential fetch then pull, each gated on $LASTEXITCODE:
+                    # (git fetch) -and (git pull) tested output truthiness, so
+                    # a quiet fetch success reported "Error updating"
+                    $null = git fetch origin 2>&1
+                    if ($LASTEXITCODE -eq 0) {
+                        $null = git pull 2>&1
+                    }
+                    if ($LASTEXITCODE -eq 0) {
+                        Wc $C.Y "Updated"
+                        $Updated++
+                    } else {
+                        Wc $C.R "Error updating"
+                        $Failed++
+                    }
                 }
             } else {
                 Wc $C.Y "Skipped (not a git repo)"
