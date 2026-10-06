@@ -446,11 +446,14 @@ function Install-WingetPackage {
     }
 
     # Check if winget already has this package installed (for idempotency)
-    $wingetList = winget list --id $Id --exact 2>&1
-    if ($LASTEXITCODE -eq 0 -and $wingetList -match $Id) {
-        # Package already installed by winget - trust winget's state
-        Track-Skipped $DisplayName (Get-PackageDescription $DisplayName)
-        return $true
+    # Skip the query in dry-run mode so no real winget invocation happens
+    if (-not $DryRun) {
+        $wingetList = winget list --id $Id --exact 2>&1
+        if ($LASTEXITCODE -eq 0 -and $wingetList -match $Id) {
+            # Package already installed by winget - trust winget's state
+            Track-Skipped $DisplayName (Get-PackageDescription $DisplayName)
+            return $true
+        }
     }
 
     if (Test-NeedsInstall $CheckCmd $MinVersion) {

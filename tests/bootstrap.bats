@@ -166,6 +166,27 @@ assert_absent() {
 	echo "$output" | grep -q "\[WARN\] Failed to install FakeTool"
 }
 
+@test "the winget list presence query never runs during dry runs" {
+	command -v pwsh >/dev/null 2>&1 || skip "pwsh not available"
+	run pwsh -NoProfile -Command '
+		$ErrorActionPreference = "Stop"
+		. "$PWD/bootstrap/platforms/windows.ps1"
+		$log = Join-Path ([IO.Path]::GetTempPath()) "winget-dryrun-$(Get-Random).log"
+		function winget {
+			Add-Content -Path $log -Value ($args -join " ")
+			"stubbed winget output"
+			cmd /c exit 0
+		}
+		$Script:DryRun = $true
+		$result = Install-WingetPackage -Id "Fake.Tool" -DisplayName "FakeTool"
+		$calls = if (Test-Path $log) { @(Get-Content $log).Count } else { 0 }
+		Remove-Item $log -Force -ErrorAction SilentlyContinue
+		"rc=$result winget-calls=$calls"
+	'
+	[ "$status" -eq 0 ]
+	echo "$output" | grep -q "rc=True winget-calls=0"
+}
+
 @test "winget pins use the current dotnet 10 and jdk 25 ids" {
 	grep -q -- '--id Microsoft.DotNet.SDK.10' "$BOOTSTRAP_PS1"
 	grep -q -- '--id Microsoft.OpenJDK.25' "$BOOTSTRAP_PS1"
