@@ -105,7 +105,7 @@ if bash /work/scripts/healthcheck.sh >/tmp/step5.log 2>&1; then
 	report pass "5 healthcheck exit 0 with optional tools missing"
 else
 	rc=$?
-	report fail "5 healthcheck exit 0 with optional tools missing" "exit $rc, optional tools counted as FAIL (defect L9)"
+	report fail "5 healthcheck exit 0 with optional tools missing" "exit $rc"
 	echo "    $(grep -c '\[FAIL\]' /tmp/step5.log) FAIL lines, first few:"
 	grep '\[FAIL\]' /tmp/step5.log | head -n 5 | sed 's/^/    | /'
 fi
@@ -136,7 +136,7 @@ done
 if [ "$rc" -eq 0 ] && [ "$removed" -eq 1 ]; then
 	report pass "7 uninstall with piped y"
 else
-	report fail "7 uninstall with piped y" "exit $rc, removed_any=$removed, single-char y never matches the ^[Yy]es$ prompt regex (defect L1)"
+	report fail "7 uninstall with piped y" "exit $rc, removed_any=$removed, piped y must confirm every single-char prompt"
 	tail_log /tmp/step7.log
 fi
 
