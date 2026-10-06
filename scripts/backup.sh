@@ -112,7 +112,8 @@ cleanup_old_backups() {
 	# Filter for timestamp format: YYYYMMDD-HHMMSS
 	local backups=()
 	while IFS= read -r -d '' backup; do
-		local dirname=$(basename "$backup")
+		local dirname
+		dirname="$(basename "$backup")"
 		# Check if dirname matches timestamp pattern
 		if [[ "$dirname" =~ ^[0-9]{8}-[0-9]{6}$ ]]; then
 			backups+=("$dirname")
@@ -183,56 +184,57 @@ backuped_count=0
 
 # Backup shell configs
 echo -e "${YELLOW}=== Shell Configs ===${NC}"
-backup_file "$HOME/.bashrc" "$CURRENT_BACKUP/bashrc" && ((backuped_count++)) || true
-backup_file "$HOME/.bash_aliases" "$CURRENT_BACKUP/bash_aliases" && ((backuped_count++)) || true
-backup_file "$HOME/.zshrc" "$CURRENT_BACKUP/zshrc" && ((backuped_count++)) || true
-backup_file "$HOME/.bash_profile" "$CURRENT_BACKUP/bash_profile" && ((backuped_count++)) || true
+backup_file "$HOME/.bashrc" "$CURRENT_BACKUP/bashrc" && backuped_count=$((backuped_count + 1)) || true
+backup_file "$HOME/.bash_aliases" "$CURRENT_BACKUP/bash_aliases" && backuped_count=$((backuped_count + 1)) || true
+backup_file "$HOME/.zshrc" "$CURRENT_BACKUP/zshrc" && backuped_count=$((backuped_count + 1)) || true
+backup_file "$HOME/.bash_profile" "$CURRENT_BACKUP/bash_profile" && backuped_count=$((backuped_count + 1)) || true
 
 # Backup git configs
 echo -e "${YELLOW}=== Git Configs ===${NC}"
-backup_file "$HOME/.gitconfig" "$CURRENT_BACKUP/gitconfig" && ((backuped_count++)) || true
-backup_file "$HOME/.gitignore" "$CURRENT_BACKUP/gitignore" && ((backuped_count++)) || true
-backup_file "$HOME/.gitattributes" "$CURRENT_BACKUP/gitattributes" && ((backuped_count++)) || true
+backup_file "$HOME/.gitconfig" "$CURRENT_BACKUP/gitconfig" && backuped_count=$((backuped_count + 1)) || true
+backup_file "$HOME/.gitignore" "$CURRENT_BACKUP/gitignore" && backuped_count=$((backuped_count + 1)) || true
+backup_file "$HOME/.gitattributes" "$CURRENT_BACKUP/gitattributes" && backuped_count=$((backuped_count + 1)) || true
 
 # Backup Neovim configs
 echo -e "${YELLOW}=== Neovim Configs ===${NC}"
-backup_file "$HOME/.config/nvim" "$CURRENT_BACKUP/nvim-config" && ((backuped_count++)) || true
-backup_file "$HOME/.config/nvim/init.lua" "$CURRENT_BACKUP/init.lua" && ((backuped_count++)) || true
+backup_file "$HOME/.config/nvim" "$CURRENT_BACKUP/nvim-config" && backuped_count=$((backuped_count + 1)) || true
+backup_file "$HOME/.config/nvim/init.lua" "$CURRENT_BACKUP/init.lua" && backuped_count=$((backuped_count + 1)) || true
 
 # Backup other editor configs
 echo -e "${YELLOW}=== Editor Configs ===${NC}"
-backup_file "$HOME/.vimrc" "$CURRENT_BACKUP/vimrc" && ((backuped_count++)) || true
-backup_file "$HOME/.vim" "$CURRENT_BACKUP/vim" && ((backuped_count++)) || true
+backup_file "$HOME/.vimrc" "$CURRENT_BACKUP/vimrc" && backuped_count=$((backuped_count + 1)) || true
+backup_file "$HOME/.vim" "$CURRENT_BACKUP/vim" && backuped_count=$((backuped_count + 1)) || true
 
 # Backup terminal configs
 echo -e "${YELLOW}=== Terminal Configs ===${NC}"
-backup_file "$HOME/.config/wezterm/wezterm.lua" "$CURRENT_BACKUP/wezterm.lua" && ((backuped_count++)) || true
-backup_file "$HOME/wezterm.lua" "$CURRENT_BACKUP/wezterm.lua-root" && ((backuped_count++)) || true
+backup_file "$HOME/.config/wezterm/wezterm.lua" "$CURRENT_BACKUP/wezterm.lua" && backuped_count=$((backuped_count + 1)) || true
 
 # Backup PowerShell (on Windows or if present)
 echo -e "${YELLOW}=== PowerShell Configs ===${NC}"
 if [[ -d "$HOME/.config/powershell" ]]; then
-	backup_file "$HOME/.config/powershell" "$CURRENT_BACKUP/powershell" && ((backuped_count++)) || true
+	backup_file "$HOME/.config/powershell" "$CURRENT_BACKUP/powershell" && backuped_count=$((backuped_count + 1)) || true
 fi
 
 # Backup tool configs
 echo -e "${YELLOW}=== Tool Configs ===${NC}"
-backup_file "$HOME/.editorconfig" "$CURRENT_BACKUP/editorconfig" && ((backuped_count++)) || true
+backup_file "$HOME/.editorconfig" "$CURRENT_BACKUP/editorconfig" && backuped_count=$((backuped_count + 1)) || true
 
 # Backup ssh config
 echo -e "${YELLOW}=== SSH Configs ===${NC}"
-backup_file "$HOME/.ssh/config" "$CURRENT_BACKUP/ssh-config" && ((backuped_count++)) || true
+backup_file "$HOME/.ssh/config" "$CURRENT_BACKUP/ssh-config" && backuped_count=$((backuped_count + 1)) || true
 
 # Backup Claude configs
 echo -e "${YELLOW}=== Claude Configs ===${NC}"
-backup_file "$HOME/.claude" "$CURRENT_BACKUP/claude-config" && ((backuped_count++)) || true
+backup_file "$HOME/.claude" "$CURRENT_BACKUP/claude-config" && backuped_count=$((backuped_count + 1)) || true
 
 # Create backup manifest
 if [[ "$DRY_RUN" == "false" ]]; then
-	echo "Timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)" >"$CURRENT_BACKUP/MANIFEST.txt"
-	echo "Hostname: $(hostname)" >>"$CURRENT_BACKUP/MANIFEST.txt"
-	echo "User: $(whoami)" >>"$CURRENT_BACKUP/MANIFEST.txt"
-	echo "Files backed up: $backuped_count" >>"$CURRENT_BACKUP/MANIFEST.txt"
+	{
+		echo "Timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+		echo "Hostname: $(hostname)"
+		echo "User: $(whoami)"
+		echo "Files backed up: $backuped_count"
+	} >"$CURRENT_BACKUP/MANIFEST.txt"
 	log_success "Created backup manifest"
 fi
 
