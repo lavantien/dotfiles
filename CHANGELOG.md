@@ -6,6 +6,8 @@ All notable changes to this project are documented in this file, newest first. O
 
 The README core features gained an opening book line framing the books corpus as precomputed grounding for the agent harness.
 
+CLAUDE.md raised the fan-out cap to 8 development plus 1 temporary slot in flight, added a memory guard capping the combined working set of all project processes at machine RAM / 4 through a monitor process, and extended the orphan sweeps to project processes.
+
 ## [6.2] - 2026-10-05
 
 v6.2 mandates fuzzy, mutation, and e2e testing alongside TDD, tightens CLAUDE.md around os-agnostic centralization, agent disposal, the CI watcher, and the 20 minute quota rate, adds the java 27 volume with the 01 through 14 plus 16 PDF renumber, refreshes the README to the 15 volume corpus and layout, and retires CLAUDE.local.md.
