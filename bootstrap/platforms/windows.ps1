@@ -463,19 +463,18 @@ function Install-WingetPackage {
 
         try {
             $output = winget install --id $Id --exact --accept-source-agreements --accept-package-agreements 2>&1
-            # Check if winget reported "already installed"
-            if ($output -match "already installed" -or $LASTEXITCODE -eq 0) {
-                if ($output -match "already installed") {
-                    Track-Skipped $DisplayName (Get-PackageDescription $DisplayName)
-                }
-                else {
-                    Track-Installed $DisplayName (Get-PackageDescription $DisplayName)
-                }
+            # winget exits nonzero without throwing on real failures
+            if ($output -match "already installed") {
+                Track-Skipped $DisplayName (Get-PackageDescription $DisplayName)
+                return $true
             }
-            else {
+            if ($LASTEXITCODE -eq 0) {
                 Track-Installed $DisplayName (Get-PackageDescription $DisplayName)
+                return $true
             }
-            return $true
+            Write-WarningMsg ("Failed to install {0}: {1}" -f $DisplayName, ($output -join " "))
+            Track-Failed $DisplayName (Get-PackageDescription $DisplayName)
+            return $false
         }
         catch {
             Write-WarningMsg ("Failed to install {0}: {1}" -f $DisplayName, $_.Exception.Message)
