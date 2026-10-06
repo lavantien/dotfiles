@@ -92,3 +92,22 @@ STUB
 	fi
 	grep -q 'red error' <<<"$output"
 }
+
+@test "multiline check messages survive whole in table and json output" {
+	setup_sandbox
+	{
+		echo "#!$(command -v bash)"
+		cat <<'STUB'
+printf 'error line one\nerror line two\n' >&2
+exit 1
+STUB
+	} >"$SBBIN/nvim"
+	chmod +x "$SBBIN/nvim"
+	run --separate-stderr env HOME="$SBHOME" PATH="$SBBIN" "$(command -v bash)" "$REPO_ROOT/scripts/healthcheck.sh" --format json
+	[ "$status" -eq 1 ]
+	json_ok "$output"
+	jq -e '.checks[] | select(.message | contains("error line one")) | select(.message | contains("error line two"))' >/dev/null <<<"$output"
+	run --separate-stderr env HOME="$SBHOME" PATH="$SBBIN" "$(command -v bash)" "$REPO_ROOT/scripts/healthcheck.sh"
+	grep -q 'error line one' <<<"$output"
+	grep -q 'error line two' <<<"$output"
+}
