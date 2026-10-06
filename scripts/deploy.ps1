@@ -139,37 +139,41 @@ function Merge-Gitconfig {
         }
     }
 
-    # Live pass: keep live-only keys grouped by section, in first-seen order
-    $AppendOrder = [System.Collections.Generic.List[string]]::new()
-    $AppendLines = @{}
-    $AppendHeader = @{}
+    # Live pass: keep live-only keys grouped per contiguous section run, so
+    # repeated deploys re-emit the appended blocks in a stable order
     $Section = ''
+    $CurHdr = $null
+    $Buf = [System.Collections.Generic.List[string]]::new()
+    function Add-LiveBlock {
+        # Trailing blanks are block separators, not content; dropping them
+        # keeps repeated deploys from accumulating blank lines
+        while ($Buf.Count -gt 0 -and $Buf[$Buf.Count - 1] -match '^\s*$') {
+            $Buf.RemoveAt($Buf.Count - 1)
+        }
+        if ($Buf.Count -gt 0 -and $null -ne $CurHdr) {
+            $Out.Add('')
+            $Out.Add($CurHdr)
+            $Out.AddRange([string[]]$Buf)
+        }
+        $Buf.Clear()
+    }
     foreach ($Line in Get-Content -LiteralPath $Dst) {
         if ($Line -match $HeaderRx) {
+            Add-LiveBlock
             $Section = ConvertTo-SectionId $Matches['inner']
-            if (-not $AppendLines.ContainsKey($Section)) {
-                $AppendLines[$Section] = [System.Collections.Generic.List[string]]::new()
-                $AppendHeader[$Section] = $Line
-                $AppendOrder.Add($Section)
-            }
+            $CurHdr = $Line
             continue
         }
         if (-not $Section) { continue }
         if ($Line -match '^\s*$' -or $Line -match '^\s*[#;]') {
-            if (-not $TplSections.ContainsKey($Section)) { $AppendLines[$Section].Add($Line) }
+            if (-not $TplSections.ContainsKey($Section)) { $Buf.Add($Line) }
             continue
         }
         $Key = ($Line.Trim() -replace '[\s=].*$', '').ToLowerInvariant()
         if ($Managed.ContainsKey("$Section|$Key")) { continue }
-        $AppendLines[$Section].Add((ConvertTo-CanonicalHelper $Line))
+        $Buf.Add((ConvertTo-CanonicalHelper $Line))
     }
-
-    foreach ($Sec in $AppendOrder) {
-        if ($AppendLines[$Sec].Count -eq 0) { continue }
-        $Out.Add('')
-        $Out.Add($AppendHeader[$Sec])
-        $Out.AddRange($AppendLines[$Sec])
-    }
+    Add-LiveBlock
 
     $TempFile = "$Dst.dotfiles-new"
     $Out | Set-Content -LiteralPath $TempFile
