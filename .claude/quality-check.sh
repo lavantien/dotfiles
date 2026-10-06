@@ -28,11 +28,12 @@ cmd_exists() {
 }
 
 # Helper: run a tool
+# usage: run_tool <cmd> <display> <args...>
 run_tool() {
 	local cmd="$1"
-	shift
+	local name="$2"
+	shift 2
 	local args=("$@")
-	local name="${1:-$cmd}"
 
 	if ! cmd_exists "$cmd"; then
 		return 0
@@ -99,132 +100,132 @@ find_project_root() {
 
 # --- Go files (*.go) ---
 if [[ "$extension" == "go" ]]; then
-	run_tool gofmt -w "$CHANGED_FILE" "gofmt"
+	run_tool gofmt "gofmt" -w "$CHANGED_FILE"
 	if cmd_exists goimports; then
-		run_tool goimports -w "$CHANGED_FILE" "goimports"
+		run_tool goimports "goimports" -w "$CHANGED_FILE"
 	fi
 	if cmd_exists golangci-lint; then
-		run_tool golangci-lint run "$CHANGED_FILE" "golangci-lint"
+		run_tool golangci-lint "golangci-lint" run "$CHANGED_FILE"
 	fi
 	if cmd_exists go; then
-		run_tool go vet "$CHANGED_FILE" "go vet"
+		run_tool go "go vet" vet "$CHANGED_FILE"
 	fi
 
 # --- Rust files (*.rs) ---
 elif [[ "$extension" == "rs" ]]; then
-	run_tool rustfmt "$CHANGED_FILE" "rustfmt"
+	run_tool rustfmt "rustfmt" "$CHANGED_FILE"
 	if cmd_exists cargo; then
-		(cd "$(dirname "$CHANGED_FILE")" && run_tool cargo check "cargo check")
-		(cd "$(dirname "$CHANGED_FILE")" && run_tool cargo clippy --all-targets "clippy")
+		(cd "$(dirname "$CHANGED_FILE")" && run_tool cargo "cargo check" check)
+		(cd "$(dirname "$CHANGED_FILE")" && run_tool cargo "clippy" clippy --all-targets)
 	fi
 
 # --- Python files (*.py) ---
 elif [[ "$extension" == "py" ]]; then
 	if cmd_exists ruff; then
-		run_tool ruff format "$CHANGED_FILE" "ruff format"
-		run_tool ruff check --fix "$CHANGED_FILE" "ruff check"
+		run_tool ruff "ruff format" format "$CHANGED_FILE"
+		run_tool ruff "ruff check" check --fix "$CHANGED_FILE"
 	fi
 	if cmd_exists mypy; then
-		run_tool mypy "$CHANGED_FILE" "mypy"
+		run_tool mypy "mypy" "$CHANGED_FILE"
 	fi
 
 # --- JavaScript/TypeScript files (*.js, *.ts, *.tsx, *.jsx) ---
 elif [[ "$extension" =~ ^(js|ts|tsx|jsx)$ ]]; then
 	if cmd_exists prettier; then
-		run_tool prettier --write "$CHANGED_FILE" "prettier"
+		run_tool prettier "prettier" --write "$CHANGED_FILE"
 	fi
 	if cmd_exists eslint; then
-		run_tool eslint --fix "$CHANGED_FILE" "eslint"
+		run_tool eslint "eslint" --fix "$CHANGED_FILE"
 	fi
 	if [[ "$extension" =~ ^(ts|tsx)$ ]] && cmd_exists tsc; then
-		run_tool tsc --noEmit "tsc"
+		run_tool tsc "tsc" --noEmit
 	fi
 
 # --- C/C++ files (*.c, *.cpp, *.h, *.hpp) ---
 elif [[ "$extension" =~ ^(c|cpp|h|hpp)$ ]]; then
 	if cmd_exists clang-format; then
-		run_tool clang-format -i "$CHANGED_FILE" "clang-format"
+		run_tool clang-format "clang-format" -i "$CHANGED_FILE"
 	fi
 	if cmd_exists clang-tidy; then
-		run_tool clang-tidy "$CHANGED_FILE" "clang-tidy"
+		run_tool clang-tidy "clang-tidy" "$CHANGED_FILE"
 	fi
 	if cmd_exists cppcheck; then
-		run_tool cppcheck "$CHANGED_FILE" "cppcheck"
+		run_tool cppcheck "cppcheck" "$CHANGED_FILE"
 	fi
 
 # --- C# files (*.cs) ---
 elif [[ "$extension" == "cs" ]]; then
 	if cmd_exists dotnet; then
-		run_tool dotnet format "dotnet format"
+		run_tool dotnet "dotnet format" format
 	fi
 
 # --- PHP files (*.php) ---
 elif [[ "$extension" == "php" ]]; then
 	if cmd_exists pint; then
-		run_tool pint "$CHANGED_FILE" "Laravel Pint"
+		run_tool pint "Laravel Pint" "$CHANGED_FILE"
 	fi
 	if cmd_exists phpstan; then
-		run_tool phpstan analyse "$CHANGED_FILE" "PHPStan"
+		run_tool phpstan "PHPStan" analyse "$CHANGED_FILE"
 	fi
 	if cmd_exists psalm; then
-		run_tool psalm "$CHANGED_FILE" "Psalm"
+		run_tool psalm "Psalm" "$CHANGED_FILE"
 	fi
 
 # --- Bash/Shell files (*.sh, *.bash) ---
 elif [[ "$extension" =~ ^(sh|bash)$ ]]; then
 	if cmd_exists shfmt; then
-		run_tool shfmt -w "$CHANGED_FILE" "shfmt"
+		run_tool shfmt "shfmt" -w "$CHANGED_FILE"
 	fi
 	if cmd_exists shellcheck; then
-		run_tool shellcheck "$CHANGED_FILE" "shellcheck"
+		run_tool shellcheck "shellcheck" "$CHANGED_FILE"
 	fi
 
 # --- Lua files (*.lua) ---
 elif [[ "$extension" == "lua" ]]; then
 	if cmd_exists stylua; then
-		run_tool stylua "$CHANGED_FILE" "stylua"
+		run_tool stylua "stylua" "$CHANGED_FILE"
 	fi
 	if cmd_exists selene; then
-		run_tool selene "$CHANGED_FILE" "selene"
+		run_tool selene "selene" "$CHANGED_FILE"
 	fi
 
 # --- HTML files (*.html, *.htm) ---
 elif [[ "$extension" =~ ^(html|htm)$ ]]; then
 	if cmd_exists prettier; then
-		run_tool prettier --write "$CHANGED_FILE" "prettier (HTML)"
+		run_tool prettier "prettier (HTML)" --write "$CHANGED_FILE"
 	fi
 
 # --- CSS/SCSS/SASS files (*.css, *.scss, *.sass) ---
 elif [[ "$extension" =~ ^(css|scss|sass)$ ]]; then
 	if cmd_exists prettier; then
-		run_tool prettier --write "$CHANGED_FILE" "prettier (CSS)"
+		run_tool prettier "prettier (CSS)" --write "$CHANGED_FILE"
 	fi
 	if cmd_exists stylelint; then
-		run_tool stylelint --fix "$CHANGED_FILE" "stylelint"
+		run_tool stylelint "stylelint" --fix "$CHANGED_FILE"
 	fi
 
 # --- Svelte files (*.svelte) ---
 elif [[ "$extension" == "svelte" ]]; then
 	if cmd_exists prettier; then
-		run_tool prettier --write "$CHANGED_FILE" "prettier (Svelte)"
+		run_tool prettier "prettier (Svelte)" --write "$CHANGED_FILE"
 	fi
 	if cmd_exists svelte-check; then
-		run_tool svelte-check "$CHANGED_FILE" "svelte-check"
+		run_tool svelte-check "svelte-check" "$CHANGED_FILE"
 	fi
 
 # --- YAML files (*.yml, *.yaml) ---
 elif [[ "$extension" =~ ^(yml|yaml)$ ]]; then
 	if cmd_exists prettier; then
-		run_tool prettier --write "$CHANGED_FILE" "prettier"
+		run_tool prettier "prettier" --write "$CHANGED_FILE"
 	fi
 	if cmd_exists yamllint; then
-		run_tool yamllint "$CHANGED_FILE" "yamllint"
+		run_tool yamllint "yamllint" "$CHANGED_FILE"
 	fi
 
 # --- JSON files (*.json) ---
 elif [[ "$extension" == "json" ]]; then
 	if cmd_exists prettier; then
-		run_tool prettier --write "$CHANGED_FILE" "prettier"
+		run_tool prettier "prettier" --write "$CHANGED_FILE"
 	fi
 	if cmd_exists jq; then
 		if jq empty "$CHANGED_FILE" 2>/dev/null; then
@@ -237,22 +238,22 @@ elif [[ "$extension" == "json" ]]; then
 # --- Markdown files (*.md) ---
 elif [[ "$extension" == "md" ]]; then
 	if cmd_exists prettier; then
-		run_tool prettier --write "$CHANGED_FILE" "prettier"
+		run_tool prettier "prettier" --write "$CHANGED_FILE"
 	fi
 	if cmd_exists markdownlint; then
-		run_tool markdownlint "$CHANGED_FILE" "markdownlint"
+		run_tool markdownlint "markdownlint" "$CHANGED_FILE"
 	fi
 
 # --- Typst files (*.typ) ---
 elif [[ "$extension" == "typ" ]]; then
 	if cmd_exists typst; then
-		run_tool typst check "$CHANGED_FILE" "typst check"
+		run_tool typst "typst check" check "$CHANGED_FILE"
 	fi
 
 # --- TOML files (*.toml) ---
 elif [[ "$extension" == "toml" ]]; then
 	if cmd_exists taplo; then
-		run_tool taplo format "$CHANGED_FILE" "taplo"
+		run_tool taplo "taplo" format "$CHANGED_FILE"
 	fi
 
 else
@@ -260,7 +261,8 @@ else
 fi
 
 # --- Run Unit Tests based on project type ---
-project_root=$(find_project_root "$CHANGED_FILE")
+# find_project_root returns 1 outside any project, tolerable under set -e
+project_root="$(find_project_root "$CHANGED_FILE")" || project_root=""
 
 if [[ -n "$project_root" ]]; then
 	echo ""
