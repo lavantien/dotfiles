@@ -131,6 +131,9 @@ function Install-Foundation {
     # Install WezTerm terminal emulator
     Install-WezTerm
 
+    # Install IosevkaTerm Nerd Font (WezTerm config glyphs, avoids tofu)
+    Install-NerdFont
+
     Write-Success "Foundation complete"
     return $true
 }
