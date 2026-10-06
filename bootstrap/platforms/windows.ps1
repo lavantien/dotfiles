@@ -531,7 +531,10 @@ function Install-WezTerm {
 # NERD FONT (IosevkaTerm for WezTerm)
 # ============================================================================
 function Test-NerdFontInstalled {
-    param([string]$FontFile = "IosevkaTerm")
+    # NF file names carry the NerdFont infix (IosevkaTermNerdFont-Regular.ttf,
+    # IosevkaTermNerdFontMono-*.ttf). Plain IosevkaTerm variants have no nerd
+    # glyphs and must not satisfy the check, or WezTerm keeps rendering tofu.
+    param([string]$FontFile = "IosevkaTermNerdFont")
 
     $fontDirs = @(
         (Join-Path $env:LOCALAPPDATA "Microsoft\Windows\Fonts"),
@@ -547,8 +550,11 @@ function Test-NerdFontInstalled {
 
     $fontsReg = "HKCU:\Software\Microsoft\Windows NT\CurrentVersion\Fonts"
     if (Test-Path $fontsReg) {
+        # Registry names use the spaced display name ("IosevkaTerm Nerd Font"),
+        # file-backed entries keep the unspaced base name
         $props = (Get-ItemProperty $fontsReg).PSObject.Properties.Name
-        if ($props -match "$FontFile") {
+        $displayName = $FontFile -replace 'NerdFont', ' Nerd Font'
+        if ($props -match "$FontFile" -or $props -match $displayName) {
             return $true
         }
     }

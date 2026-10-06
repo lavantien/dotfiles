@@ -117,6 +117,74 @@ assert_absent() {
 	echo "$foundation" | grep -qF 'Install-NerdFont'
 }
 
+@test "plain non nerd font iosevka variants do not satisfy the font check" {
+	command -v pwsh >/dev/null 2>&1 || skip "pwsh not available"
+	run pwsh -NoProfile -Command '
+		$ErrorActionPreference = "Stop"
+		. "$PWD/bootstrap/platforms/windows.ps1"
+		$probe = Join-Path ([IO.Path]::GetTempPath()) "nf-probe-$(Get-Random)"
+		$fontsDir = New-Item -ItemType Directory -Force -Path (Join-Path $probe "Microsoft\Windows\Fonts")
+		$env:LOCALAPPDATA = $probe
+		$fontsReg = "HKCU:\Software\Microsoft\Windows NT\CurrentVersion\Fonts"
+		function Test-Path {
+			param([string]$p)
+			$p -eq $fontsReg -or $p -eq $fontsDir.FullName
+		}
+		function Get-ItemProperty {
+			param($Path)
+			[pscustomobject]@{ "IosevkaTerm (TrueType)" = "plain" }
+		}
+		Set-Content (Join-Path $fontsDir.FullName "IosevkaTerm-Regular.ttf") "stub"
+		$plain = Test-NerdFontInstalled
+		Remove-Item $probe -Recurse -Force
+		"plain-file-and-registry=$plain"
+	'
+	[ "$status" -eq 0 ]
+	echo "$output" | grep -q "plain-file-and-registry=False"
+}
+
+@test "the font check accepts the nf file and registry shapes" {
+	command -v pwsh >/dev/null 2>&1 || skip "pwsh not available"
+	run pwsh -NoProfile -Command '
+		$ErrorActionPreference = "Stop"
+		. "$PWD/bootstrap/platforms/windows.ps1"
+		$probe = Join-Path ([IO.Path]::GetTempPath()) "nf-probe-$(Get-Random)"
+		$fontsDir = New-Item -ItemType Directory -Force -Path (Join-Path $probe "Microsoft\Windows\Fonts")
+		$env:LOCALAPPDATA = $probe
+		$fontsReg = "HKCU:\Software\Microsoft\Windows NT\CurrentVersion\Fonts"
+		function Test-Path {
+			param([string]$p)
+			$p -eq $fontsReg -or $p -eq $fontsDir.FullName
+		}
+		function Get-ItemProperty {
+			param($Path)
+			[pscustomobject]@{}
+		}
+		# nf file shape: what scoop and the zip fallback copy into the fonts dir
+		Set-Content (Join-Path $fontsDir.FullName "IosevkaTermNerdFontMono-Regular.ttf") "stub"
+		$nfFile = Test-NerdFontInstalled
+		Remove-Item (Join-Path $fontsDir.FullName "*") -Force
+		# spaced registry shape: the display name font installs register
+		function Get-ItemProperty {
+			param($Path)
+			[pscustomobject]@{ "IosevkaTerm Nerd Font (TrueType)" = "user" }
+		}
+		$regDisplay = Test-NerdFontInstalled
+		# unspaced registry shape: what the zip fallback itself writes
+		function Get-ItemProperty {
+			param($Path)
+			[pscustomobject]@{ "IosevkaTermNerdFont-Regular (TrueType)" = "user" }
+		}
+		$regBaseName = Test-NerdFontInstalled
+		Remove-Item $probe -Recurse -Force
+		"nf-file=$nfFile reg-display=$regDisplay reg-basename=$regBaseName"
+	'
+	[ "$status" -eq 0 ]
+	echo "$output" | grep -q "nf-file=True"
+	echo "$output" | grep -q "reg-display=True"
+	echo "$output" | grep -q "reg-basename=True"
+}
+
 @test "windows bootstrap offers gh login with a non-interactive skip" {
 	grep -qF 'gh auth status' "$BOOTSTRAP_PS1"
 	grep -qF 'gh auth login' "$BOOTSTRAP_PS1"
