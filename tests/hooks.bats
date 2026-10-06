@@ -22,7 +22,7 @@ setup_hook_repo() {
 }
 
 teardown() {
-	[ -n "$REPO" ] && rm -rf "$REPO"
+	[ -z "$REPO" ] || rm -rf "$REPO"
 }
 
 # Total subject length $1 chars: "fix: " plus x padding.
@@ -109,4 +109,35 @@ subject_of_length() {
 	done <"$log"
 	[ -z "$bad" ] || { echo "npx called without --no-install:$bad"; return 1; }
 	rm -rf "$stubbin"
+}
+
+@test "quality-check run_tool passes only real tool arguments" {
+	local tmp stubbin
+	tmp="$(mktemp -d)"
+	stubbin="$(mktemp -d)"
+	for tool in shellcheck shfmt; do
+		cat >"$stubbin/$tool" <<'STUB'
+#!/usr/bin/env bash
+printf '%s\n' "$*" >> "$QC_LOG"
+exit 0
+STUB
+	done
+	chmod +x "$stubbin/shellcheck" "$stubbin/shfmt"
+	printf '#!/usr/bin/env bash\necho ok\n' >"$tmp/sample.sh"
+	run env QC_LOG="$tmp/qc.log" PATH="$stubbin:$PATH" \
+		bash "$REPO_ROOT/.claude/quality-check.sh" "$tmp/sample.sh"
+	[ "$status" -eq 0 ]
+	[ -s "$tmp/qc.log" ] || { echo "no stubbed tool ran"; return 1; }
+	# exact argv match catches display names leaking in as arguments
+	grep -qx -F "$tmp/sample.sh" "$tmp/qc.log" || {
+		echo "shellcheck argv wrong, expected exactly the file path"
+		cat "$tmp/qc.log"
+		return 1
+	}
+	grep -qx -F -- "-w $tmp/sample.sh" "$tmp/qc.log" || {
+		echo "shfmt argv wrong, expected exactly: -w <file>"
+		cat "$tmp/qc.log"
+		return 1
+	}
+	rm -rf "$tmp" "$stubbin"
 }
