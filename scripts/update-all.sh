@@ -875,7 +875,7 @@ _main() {
 		[[ -d "$shim_loc" ]] || continue
 		for shim in "$shim_loc"/opencode "$shim_loc"/opencode.cmd; do
 			if [[ -f "$shim" ]]; then
-				log_info "Removing old npm shim: $(basename "$shim")"
+				echo -e "  ${YELLOW}Removing old npm shim: $(basename "$shim")${NC}"
 				rm -f "$shim" 2>/dev/null || true
 			fi
 		done
