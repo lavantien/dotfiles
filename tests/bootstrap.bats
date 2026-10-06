@@ -116,3 +116,11 @@ ALIASES="$REPO_ROOT/home/.bash_aliases"
 	cli="$(awk '/^function Install-CLITools \{/,/^\}/' "$BOOTSTRAP_PS1")"
 	echo "$cli" | grep -qF 'gh auth login'
 }
+
+@test "windows bootstrap covers helm kubectl oh-my-posh yamllint hadolint" {
+	grep -qF 'Install-WingetPackage -Id "Helm.Helm"' "$BOOTSTRAP_PS1"
+	grep -qF 'Install-WingetPackage -Id "Kubernetes.kubectl"' "$BOOTSTRAP_PS1"
+	grep -qF 'Install-WingetPackage -Id "JanDeDobbeleer.OhMyPosh"' "$BOOTSTRAP_PS1"
+	grep -qF 'Install-PipGlobal "yamllint"' "$BOOTSTRAP_PS1"
+	grep -qF 'Install-ScoopPackage "hadolint" "" "hadolint"' "$BOOTSTRAP_PS1"
+}

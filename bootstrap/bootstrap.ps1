@@ -630,6 +630,30 @@ function Install-LintersFormatters {
         }
     }
 
+    # yamllint (YAML linter for Docker Compose, Helm, Kubernetes - via pip)
+    if ($Script:Categories -eq "full" -and (Test-Command python)) {
+        if (Test-Command yamllint) {
+            Write-Step "Checking yamllint..."
+            Write-Success "yamllint (up to date)"
+            Track-Skipped "yamllint" "YAML linter"
+        }
+        else {
+            Install-PipGlobal "yamllint" "yamllint" ""
+        }
+    }
+
+    # hadolint (Dockerfile linter - scoop Main bucket)
+    if ($Script:Categories -eq "full") {
+        if (Test-Command hadolint) {
+            Write-Step "Checking hadolint..."
+            Write-Success "hadolint (up to date)"
+            Track-Skipped "hadolint" "Dockerfile linter"
+        }
+        else {
+            Install-ScoopPackage "hadolint" "" "hadolint"
+        }
+    }
+
     # cppcheck (C++ static analysis)
     if ($Script:Categories -eq "full") {
         if (Test-Command cppcheck) {
@@ -796,6 +820,16 @@ function Install-CLITools {
         else {
             Install-NpmGlobal "bats" "bats" ""
         }
+    }
+
+    # Infrastructure tools and prompt engine via winget (full category).
+    # helm and kubectl close the Linux parity gap; oh-my-posh is expected by
+    # the deployed PowerShell profile. docker-compose stays Docker Desktop
+    # territory on Windows.
+    if ($Script:Categories -eq "full") {
+        Install-WingetPackage -Id "Helm.Helm" -DisplayName "helm" -CheckCmd "helm"
+        Install-WingetPackage -Id "Kubernetes.kubectl" -DisplayName "kubectl" -CheckCmd "kubectl"
+        Install-WingetPackage -Id "JanDeDobbeleer.OhMyPosh" -DisplayName "oh-my-posh" -CheckCmd "oh-my-posh"
     }
 
     # Interactive gh auth login, ported from bootstrap.sh's foundation phase.
