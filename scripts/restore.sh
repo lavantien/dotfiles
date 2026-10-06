@@ -36,6 +36,11 @@ parse_args() {
 	while [[ $# -gt 0 ]]; do
 		case $1 in
 		--backup-dir)
+			if [[ $# -lt 2 || -z "${2:-}" ]]; then
+				echo "--backup-dir requires a path argument" >&2
+				echo "Use --help for usage" >&2
+				exit 1
+			fi
 			BACKUP_DIR="$2"
 			shift 2
 			;;
