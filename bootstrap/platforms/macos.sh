@@ -58,7 +58,9 @@ get_package_description() {
 	tokei) echo "code stats" ;;
 	ripgrep) echo "text search" ;;
 	fd-find | fd) echo "find alternative" ;;
-	difft) echo "diff viewer" ;;
+	jq) echo "JSON processor" ;;
+	yazi) echo "file manager" ;;
+	difftastic | difft) echo "diff viewer" ;;
 	bats) echo "bash testing" ;;
 	vscode) echo "code editor" ;;
 	latex) echo "document preparation" ;;
