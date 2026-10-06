@@ -270,6 +270,47 @@ PS1
 	grep -qE '^KNOWN_SHELLCHECK_ERRORS := *$' "$REPO_ROOT/Makefile"
 }
 
+# ============================================================================
+# cosmetics
+# ============================================================================
+
+@test "deploy_scripts copies and chmods git-clone-all.sh" {
+	local sb fake probe
+	sb="$(mktemp -d)"
+	fake="$(mktemp -d)"
+	# A non-executable source proves the chmod is deploy's job, not cp's
+	echo 'echo clone-all' >"$fake/git-clone-all.sh"
+	mkdir -p "$fake/scripts"
+	echo 'echo update-repos' >"$fake/scripts/git-update-repos.sh"
+	echo 'echo update-all' >"$fake/scripts/update-all.sh"
+	run bash -c 'source "$1"; HOME="$2"; ROOT_DIR="$3"; SCRIPT_DIR="$3/scripts"; deploy_scripts' \
+		_ "$DEPLOY" "$sb" "$fake"
+	[ "$status" -eq 0 ]
+	[ -f "$sb/dev/git-clone-all.sh" ]
+	[ -f "$sb/dev/git-update-repos.sh" ]
+	# chmod is a no-op on noacl MSYS mounts, assert the exec bit only where
+	# the platform tracks it as metadata
+	probe="$(mktemp)"
+	chmod +x "$probe" 2>/dev/null
+	if [ -x "$probe" ]; then
+		[ -x "$sb/dev/git-clone-all.sh" ] || { echo "git-clone-all.sh not executable"; false; }
+	fi
+	rm -rf "$sb" "$fake" "$probe"
+}
+
+@test "deploy.sh final message is shell-agnostic" {
+	run bash -c 'source "$1"; print_final_message' _ "$DEPLOY"
+	[ "$status" -eq 0 ]
+	[[ "$output" != *zshrc* ]] || { echo "message still names zshrc"; false; }
+	[[ "$output" == *"Restart your shell"* ]]
+}
+
+@test "backup.sh stops trafficking the root wezterm.lua stub" {
+	run grep -F '"$HOME/wezterm.lua"' "$REPO_ROOT/scripts/backup.sh"
+	[ "$status" -ne 0 ]
+	[ ! -e "$REPO_ROOT/home/wezterm.lua" ]
+}
+
 @test "deploy.ps1 deploys the bash hooks and wires core.hooksPath" {
 	command -v pwsh >/dev/null 2>&1 || skip "pwsh not installed"
 	local sb

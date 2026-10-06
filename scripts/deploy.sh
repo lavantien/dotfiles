@@ -174,7 +174,10 @@ deploy_scripts() {
 
 	mkdir -p "$HOME/dev"
 
-	copy_file "$ROOT_DIR/git-clone-all.sh" "$HOME/dev/" 2>/dev/null || true
+	if [[ -f "$ROOT_DIR/git-clone-all.sh" ]]; then
+		copy_file "$ROOT_DIR/git-clone-all.sh" "$HOME/dev/git-clone-all.sh"
+		chmod +x "$HOME/dev/git-clone-all.sh" 2>/dev/null || true
+	fi
 	copy_file "$SCRIPT_DIR/git-update-repos.sh" "$HOME/dev/"
 	chmod +x "$HOME/dev/git-update-repos.sh" 2>/dev/null || true
 
@@ -524,7 +527,7 @@ deploy_macos() {
 
 print_final_message() {
 	echo -e "${GREEN}=== Deployment Complete ===${NC}"
-	echo -e "${YELLOW}Run 'source ~/.zshrc' (or restart your shell) to apply changes${NC}"
+	echo -e "${YELLOW}Restart your shell (or source your rc file) to apply changes${NC}"
 }
 
 main() {
