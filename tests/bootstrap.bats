@@ -12,9 +12,18 @@ COMMON_PS1="$REPO_ROOT/bootstrap/lib/common.ps1"
 VERSION_CHECK_SH="$REPO_ROOT/bootstrap/lib/version-check.sh"
 ALIASES="$REPO_ROOT/home/.bash_aliases"
 
+# Negated greps must be explicit guards: bats runs tests under errexit, which
+# exempts `!`-inverted failures, so a bare `! grep` mid-test can be swallowed.
+assert_absent() {
+	if grep -q "$1" "$2"; then
+		echo "unexpected pattern in $2: $1" >&2
+		return 1
+	fi
+}
+
 @test "bootstrap.ps1 installs gup from its real module path" {
 	grep -qF 'Install-GoPackage "github.com/nao1215/gup@latest"' "$BOOTSTRAP_PS1"
-	! grep -q 'nao\.vi/gup' "$BOOTSTRAP_PS1"
+	assert_absent 'nao\.vi/gup' "$BOOTSTRAP_PS1"
 }
 
 @test "a failed brew install is tracked as failed, not installed" {
@@ -51,7 +60,7 @@ ALIASES="$REPO_ROOT/home/.bash_aliases"
 
 @test "the kubectl download fails on http errors instead of saving an error page" {
 	grep -qF "curl -fsSL -o kubectl 'https://dl.k8s.io" "$BOOTSTRAP_SH"
-	! grep -q 'curl -LO' "$BOOTSTRAP_SH"
+	assert_absent 'curl -LO' "$BOOTSTRAP_SH"
 }
 
 @test "jq and yazi are installed in the linux cli phase before the deploy phase" {
@@ -137,6 +146,25 @@ ALIASES="$REPO_ROOT/home/.bash_aliases"
 @test "winget pins use the current dotnet 10 and jdk 25 ids" {
 	grep -q -- '--id Microsoft.DotNet.SDK.10' "$BOOTSTRAP_PS1"
 	grep -q -- '--id Microsoft.OpenJDK.25' "$BOOTSTRAP_PS1"
-	! grep -q 'DotNet\.SDK\.8\b' "$BOOTSTRAP_PS1"
-	! grep -q 'OpenJDK\.21\b' "$BOOTSTRAP_PS1"
+	assert_absent 'DotNet\.SDK\.8\b' "$BOOTSTRAP_PS1"
+	assert_absent 'OpenJDK\.21\b' "$BOOTSTRAP_PS1"
+}
+
+@test "version-check.sh stays bash 3.2 compatible and its lookups answer" {
+	assert_absent 'declare -gA' "$VERSION_CHECK_SH"
+	run bash -c '
+		set -e
+		source bootstrap/lib/common.sh
+		source bootstrap/lib/version-check.sh
+		[ "$(get_version_flag go)" = "version" ]
+		[ "$(get_version_flag cargo)" = "--version" ]
+		[ "$(get_version_flag curl)" = "--version" ]
+		[ "$(get_version_pattern gh)" = "gh version ([0-9]+\.[0-9]+\.[0-9]+)" ]
+		[ "$(get_version_pattern gh.exe)" = "gh version ([0-9]+\.[0-9]+\.[0-9]+)" ]
+		[ "$(get_version_pattern python3.12)" = "Python ([0-9]+\.[0-9]+\.[0-9]+)" ]
+		[ "$(get_version_pattern lazygit.exe)" = "version=([0-9]+\.[0-9]+\.[0-9]+)" ]
+		[ -z "$(get_version_pattern curl)" ]
+	'
+	[ "$status" -eq 0 ]
+	[ -z "$output" ]
 }
