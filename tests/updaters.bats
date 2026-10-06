@@ -32,3 +32,67 @@ REPO_ROOT="$(cd "$BATS_TEST_DIRNAME/.." && pwd)"
 	fi
 	[ "$(grep -v '^[[:space:]]*#' "$REPO_ROOT/scripts/update-all.ps1" | grep -c 'gup update')" -le 2 ]
 }
+
+@test "pip_install retries with --break-system-packages only on PEP 668 errors" {
+	fakebin="$BATS_TEST_TMPDIR/pipbin"
+	mkdir -p "$fakebin"
+	log="$BATS_TEST_TMPDIR/pip.log"
+	cat >"$fakebin/pip" <<EOF
+#!/usr/bin/env bash
+printf '%s\n' "\$*" >>"$log"
+if [[ "\$*" == *--break-system-packages* ]]; then
+	echo "installed with flag"
+	exit 0
+fi
+echo "error: externally-managed-environment" >&2
+echo "hint: PEP 668 blocks system package mutation" >&2
+exit 1
+EOF
+	chmod +x "$fakebin/pip"
+	# shellcheck disable=SC1091
+	source "$REPO_ROOT/scripts/update-all.sh"
+	run pip_install "$fakebin/pip" --upgrade --user requests
+	[ "$status" -eq 0 ]
+	[ "$(wc -l <"$log")" -eq 2 ]
+	grep -q 'install --break-system-packages --upgrade --user requests' "$log"
+}
+
+@test "pip_install surfaces other pip errors without the PEP 668 retry" {
+	fakebin="$BATS_TEST_TMPDIR/pipbin"
+	mkdir -p "$fakebin"
+	log="$BATS_TEST_TMPDIR/pip.log"
+	cat >"$fakebin/pip" <<EOF
+#!/usr/bin/env bash
+printf '%s\n' "\$*" >>"$log"
+echo "error: no space left on device" >&2
+exit 2
+EOF
+	chmod +x "$fakebin/pip"
+	# shellcheck disable=SC1091
+	source "$REPO_ROOT/scripts/update-all.sh"
+	run pip_install "$fakebin/pip" --upgrade pip
+	[ "$status" -ne 0 ]
+	[ "$(wc -l <"$log")" -eq 1 ]
+	grep -q 'no space left on device' <<<"$output"
+}
+
+@test "pip_install keeps plain upgrades plain on pip older than 23" {
+	fakebin="$BATS_TEST_TMPDIR/pipbin"
+	mkdir -p "$fakebin"
+	log="$BATS_TEST_TMPDIR/pip.log"
+	cat >"$fakebin/pip" <<EOF
+#!/usr/bin/env bash
+printf '%s\n' "\$*" >>"$log"
+echo "Requirement already satisfied"
+exit 0
+EOF
+	chmod +x "$fakebin/pip"
+	# shellcheck disable=SC1091
+	source "$REPO_ROOT/scripts/update-all.sh"
+	run pip_install "$fakebin/pip" --upgrade --user requests
+	[ "$status" -eq 0 ]
+	[ "$(wc -l <"$log")" -eq 1 ]
+	if grep -q -- '--break-system-packages' "$log"; then
+		fail "old pip has no --break-system-packages flag, it must never see it"
+	fi
+}
