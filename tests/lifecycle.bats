@@ -74,6 +74,31 @@ make_backup() {
 	[[ "$output" == *"rc=1"* ]]
 }
 
+@test "ask_yn accepts y with a trailing carriage return" {
+	local input
+	for input in $'y\r\n' $'Y\r\n'; do
+		run drive "$UNINSTALL" "$input" \
+			'if ask_yn "Remove?"; then echo confirmed; else echo denied; fi'
+		[ "$output" = "confirmed" ] || { echo "input '$input' denied"; false; }
+	done
+	for input in $'y\r\n' $'Y\r\n'; do
+		run drive "$RESTORE" "$input" \
+			'if ask_yn "Continue?"; then echo go; else echo stop; fi'
+		[[ "$output" == *"go"* ]] || { echo "restore input '$input' denied"; false; }
+	done
+}
+
+@test "uninstall driven with crlf y removes deployed files" {
+	local sb
+	sb="$(mktemp -d)"
+	touch "$sb/.dotfiles-installed" "$sb/.bash_aliases" "$sb/.gitconfig"
+	run env HOME="$sb" bash "$UNINSTALL" <<< $'y\r\ny\r\ny\r\n'
+	[ "$status" -eq 0 ] || { echo "exit $status: $output"; false; }
+	[ ! -e "$sb/.bash_aliases" ]
+	[ ! -e "$sb/.gitconfig" ]
+	rm -rf "$sb"
+}
+
 @test "safe_remove removes on y and keeps the file on n" {
 	local sb
 	sb="$(mktemp -d)"

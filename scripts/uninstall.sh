@@ -101,10 +101,13 @@ parse_args() {
 # ============================================================================
 
 # Classify one reply line under the single-char contract.
-# Prints yes, no, or all. EOF, an empty line, and any input that is not
-# exactly one y, n, or a byte (longer words, padding, multibyte) prints no.
+# Prints yes, no, or all. A single trailing CR is stripped first so CRLF
+# stdin (cmd.exe pipes) classifies like LF. EOF, an empty line, and any
+# input that is not exactly one y, n, or a byte (longer words, padding,
+# multibyte) prints no.
 classify_reply() {
 	local reply="$1" allow_all="$2"
+	reply="${reply%$'\r'}"
 	if [[ "$reply" =~ ^[Yy]$ ]]; then
 		echo yes
 	elif [[ "$allow_all" == "true" ]] && [[ "$reply" =~ ^[Aa]$ ]]; then
