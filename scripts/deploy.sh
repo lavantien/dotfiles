@@ -34,18 +34,30 @@ XDG_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}"
 # ============================================================================
 
 # Rewrite legacy absolute gh credential helper paths (linuxbrew installs,
-# gh.exe on Windows) to the PATH-resolved form. Git runs credential helpers
-# through sh, so !gh auth git-credential finds gh wherever it is installed.
+# gh.exe on Windows, quoted forms included) to the PATH-resolved form. Git
+# runs credential helpers through sh, so !gh auth git-credential finds gh
+# wherever it is installed. Indentation is preserved and already canonical
+# files are left byte-identical.
 normalize_gh_helpers() {
-	local file="$1"
-	grep -Eq '^[[:space:]]*helper[[:space:]]*=[[:space:]]*!?[^[:space:]]*gh(\.exe)?"?[[:space:]]+auth[[:space:]]+git-credential[[:space:]]*$' "$file" || return 0
+	local file="$1" tmp="$1.dotfiles-norm"
 	awk '
-		/^[[:space:]]*helper[[:space:]]*=[[:space:]]*!?[^[:space:]]*gh(\.exe)?"?[[:space:]]+auth[[:space:]]+git-credential[[:space:]]*$/ {
-			print "helper = !gh auth git-credential"
-			next
+		function fold(line, indent) {
+			if (line ~ /^[[:space:]]*helper[[:space:]]*=[[:space:]]*!?"?[^"]*gh(\.exe)?"?[[:space:]]+auth[[:space:]]+git-credential"?[[:space:]]*$/) {
+				match(line, /^[[:space:]]*/)
+				return substr(line, RSTART, RLENGTH) "helper = !gh auth git-credential"
+			}
+			return line
 		}
-		{ print }
-	' "$file" >"$file.dotfiles-norm" && mv "$file.dotfiles-norm" "$file"
+		{ print fold($0) }
+	' "$file" >"$tmp" || {
+		rm -f "$tmp"
+		return 1
+	}
+	if cmp -s "$file" "$tmp"; then
+		rm -f "$tmp"
+	else
+		mv "$tmp" "$file"
+	fi
 }
 
 # Deep merge for git config files: the template is the source of truth for
@@ -320,31 +332,12 @@ update_git_config() {
 		return
 	fi
 
-	local modified=false
-	local fixes=()
+	# The template ships an intentional empty helper = reset (gh-only
+	# credentials for github.com and gist.github.com), so empty helper lines
+	# must survive: only legacy absolute gh paths are folded here.
+	normalize_gh_helpers "$gitconfig"
 
-	# Universal cleanup: remove duplicate/empty helper lines
-	if grep -qE '^\s*helper\s*=\s*$' "$gitconfig" 2>/dev/null; then
-		fixes+=("empty helper lines")
-		# Remove empty helper lines (backup first for safety)
-		cp "$gitconfig" "$gitconfig.bak"
-		grep -vE '^\s*helper\s*=\s*$' "$gitconfig.bak" >"$gitconfig" 2>/dev/null || true
-		rm -f "$gitconfig.bak"
-		modified=true
-	fi
-
-	# Remove empty credential sections
-	if grep -E '\[credential "[^"]+"\]' "$gitconfig" 2>/dev/null | head -1 | grep -q .; then
-		# This is complex, skip for now or use perl
-		:
-	fi
-
-	if $modified; then
-		echo -e "${YELLOW}  Fixes applied: ${fixes[*]}${NC}"
-		echo -e "${GREEN}  .gitconfig updated${NC}"
-	else
-		echo -e "${GREEN}  .gitconfig is clean${NC}"
-	fi
+	echo -e "${GREEN}  .gitconfig checked${NC}"
 }
 
 # ============================================================================
