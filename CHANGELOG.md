@@ -4,9 +4,37 @@ All notable changes to this project are documented in this file, newest first. O
 
 ## [Unreleased]
 
-The README core features gained an opening book line framing the books corpus as precomputed grounding for the agent harness.
-
 CLAUDE.md raised the fan-out cap to 8 development plus 1 temporary slot in flight, added a memory guard capping the combined working set of all project processes at machine RAM / 4 through a monitor process, and extended the orphan sweeps to project processes.
+
+A Makefile arrived with make check, baseline, lint, format, test, e2e-linux, and e2e-windows targets over a new bats suite and a docker linux lifecycle harness.
+
+The playground scratch directory is gitignored.
+
+Bootstrap now installs jq, yazi, and difftastic on every platform, plus helm, kubectl, oh-my-posh, yamllint, and hadolint on Windows, the IosevkaTerm Nerd Font with a scoop or registry fallback, and an interactive gh login offer.
+
+Bootstrap passes --exact to winget installs with refreshed pins, tracks failed winget installs as failed, and guards the winget query during dry runs.
+
+Bootstrap on Unix fails the kubectl download on http errors, keeps failed brew installs out of the installed set, ports version-check off bash 4 arrays for macOS, and converges neovim on snapless hosts through a brew or apt fallback.
+
+Windows reached config parity: deploy.ps1 now deploys the gitconfig and the bash git hooks, so one pre-commit and commit-msg set serves both platforms and the .ps1 hook twins are gone.
+
+The gitconfig deploy merge resolves the gh credential helper through PATH, preserves live-only keys, the empty helper reset, and quoted helper lines, and backs up an unparsable live file instead of replacing it.
+
+The commit-msg hook anchors the Conventional Commits pattern with the break and bump types, caps the subject at 100 characters counted in codepoints, reads the merge skip from the subject line, and strips AI attribution trailers on merge commits too.
+
+The pre-commit hook checks renamed staged files, gates its headers on the staged count, detects npx tools without prompting, and runs PSScriptAnalyzer through pwsh on Windows.
+
+update-all installs gup from its real module path, retries pip upgrades with --break-system-packages only on PEP 668 distros, counts pip failures, and cleans invalid dot-prefixed npm packages on Unix.
+
+healthcheck treats missing optional tools as warnings, escapes all control characters in its JSON output on stdout, folds multiline messages, and rejects a valueless --format.
+
+uninstall and restore accept single y, n, and a answers, tolerate CRLF stdin, keep the marker when aborted, and cover the paths deploy actually writes.
+
+git-update-repos fetches before comparing so advanced remotes update, assigns its colors before first use, and sequences fetch before pull in the PowerShell twin.
+
+The dead packages.yaml manifest is gone and the README now points at the bootstrap scripts.
+
+The README was rewritten to verified claims without bragging counts, its tools matrix cells now list only what bootstrap installs or the hooks invoke, and its configuration section documents the real settings keys.
 
 ## [6.2] - 2026-10-05
 
