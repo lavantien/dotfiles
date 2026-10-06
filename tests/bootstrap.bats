@@ -204,3 +204,17 @@ assert_absent() {
 @test "bootstrap.ps1 enforces powershell 7" {
 	head -30 "$BOOTSTRAP_PS1" | grep -q '#requires -Version 7'
 }
+
+@test "bootstrap.ps1 dry run walks every new windows step" {
+	command -v pwsh >/dev/null 2>&1 || skip "pwsh not available"
+	run pwsh -NoProfile -File "$BOOTSTRAP_PS1" -DryRun -Y
+	[ "$status" -eq 0 ]
+	# the gh auth offer is announced unconditionally in dry run
+	echo "$output" | grep -q "Would check gh auth"
+	# every newly wired tool must be visited: tracked or skipped, never silent.
+	# already installed tools surface under their display name, fresh ones
+	# under the winget id, so accept either shape.
+	for tool in IosevkaTerm-NF 'Helm.Helm|helm' 'Kubernetes.kubectl|kubectl' 'JanDeDobbeleer.OhMyPosh|oh-my-posh' jq yazi yamllint hadolint difftastic; do
+		echo "$output" | grep -qE "$tool"
+	done
+}
