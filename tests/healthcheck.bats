@@ -111,3 +111,12 @@ STUB
 	grep -q 'error line one' <<<"$output"
 	grep -q 'error line two' <<<"$output"
 }
+
+@test "a valueless --format prints a usage error and exits 2" {
+	run env "$(command -v bash)" "$REPO_ROOT/scripts/healthcheck.sh" --format
+	[ "$status" -eq 2 ]
+	if ! grep -qi 'usage' <<<"$output"; then
+		echo "expected a usage error, got: $output" >&2
+		return 1
+	fi
+}
