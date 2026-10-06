@@ -121,6 +121,52 @@ EOF
 	fi
 }
 
+@test "git-update-repos.sh fetches before comparing so an advanced remote reports an update" {
+	# A clean clone holds a stale tracking ref: comparing before any fetch
+	# reports up to date forever. Advance the remote after cloning and the
+	# script must notice and pull.
+	rt="$BATS_TEST_TMPDIR/rt"
+	# isolate git from the host gitconfig: the live core.hooksPath drags the
+	# deployed pre-commit into seed commits and aborts them
+	g() { env GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_SYSTEM=/dev/null git "$@"; }
+	mkdir -p "$rt/remote" "$rt/base" "$rt/fakebin"
+	bare="$rt/remote/c1repo.git"
+	g init -q --bare "$bare"
+	seed="$rt/seed"
+	g init -q "$seed"
+	g -C "$seed" config user.email tester@example.invalid
+	g -C "$seed" config user.name tester
+	echo one >"$seed/f"
+	g -C "$seed" add f
+	g -C "$seed" commit -qm one
+	g -C "$seed" remote add origin "$bare"
+	g -C "$seed" push -q origin HEAD
+	cat >"$rt/fakebin/gh" <<EOF
+#!/usr/bin/env bash
+if [[ "\$1" == "repo" ]]; then
+	printf '[{"name":"c1repo","sshUrl":"x","url":"%s"}]\n' '$rt/remote/c1repo'
+else
+	exit 0
+fi
+EOF
+	chmod +x "$rt/fakebin/gh"
+	run env PATH="$rt/fakebin:$PATH" bash "$REPO_ROOT/scripts/git-update-repos.sh" -u tester -d "$rt/base"
+	[ "$status" -eq 0 ]
+	grep -q 'Cloned' <<<"$output"
+	# push a commit the clone has never fetched
+	echo two >"$seed/f"
+	g -C "$seed" commit -qam two
+	g -C "$seed" push -q origin HEAD
+	run env PATH="$rt/fakebin:$PATH" bash "$REPO_ROOT/scripts/git-update-repos.sh" -u tester -d "$rt/base"
+	[ "$status" -eq 0 ]
+	# summary count, git's own fetch and pull output splits the per-repo line
+	plain="$(sed 's/\x1b\[[0-9;]*m//g' <<<"$output")"
+	if ! grep -qE 'Updated:[[:space:]]*[1-9]' <<<"$plain"; then
+		echo "stale tracking ref reported up to date, no fetch happened: $plain" >&2
+		return 1
+	fi
+}
+
 @test "update-all.sh holds at or below its current line ceiling" {
 	# 1000 SLOC repo cap, grandfathered ceiling while fixes land
 	[ "$(wc -l <"$REPO_ROOT/scripts/update-all.sh")" -le 1012 ]
