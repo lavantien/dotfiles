@@ -47,7 +47,7 @@ function Write-Success {
     Write-Color "[OK] $Message" Green
 }
 
-function Write-Warning {
+function Write-WarningMsg {
     param([string]$Message)
     Write-Host "[WARN] $Message" -ForegroundColor Yellow
 }
@@ -298,7 +298,7 @@ function Invoke-CommandSafe {
         return $?
     }
     catch {
-        Write-Warning "Command failed: $Command"
+        Write-WarningMsg "Command failed: $Command"
         return $false
     }
 }
@@ -315,7 +315,7 @@ function Invoke-SafeInstall {
         return $true
     }
     catch {
-        Write-Warning ("Installation failed: {0} (exit: {1})" -f $PackageName, $_.Exception.Message)
+        Write-WarningMsg ("Installation failed: {0} (exit: {1})" -f $PackageName, $_.Exception.Message)
         Track-Failed $PackageName
         return $false
     }
@@ -367,7 +367,7 @@ function Refresh-Path {
 
     # Safety check: if both are null/empty, keep original PATH
     if ([string]::IsNullOrWhiteSpace($machinePath) -and [string]::IsNullOrWhiteSpace($userPath)) {
-        Write-Warning "Both User and Machine PATH registry values are empty. Preserving current session PATH."
+        Write-WarningMsg "Both User and Machine PATH registry values are empty. Preserving current session PATH."
         return
     }
 
@@ -404,7 +404,7 @@ function Refresh-Path {
     } else {
         # Fallback to original if something went wrong
         $env:Path = $originalPath
-        Write-Warning "Failed to build PATH from registry. Preserving current session PATH."
+        Write-WarningMsg "Failed to build PATH from registry. Preserving current session PATH."
     }
 }
 

@@ -82,7 +82,6 @@ function Get-PackageDescription {
         # Package managers
         "scoop" { return "package manager" }
         "winget" { return "Windows package manager" }
-        "chocolatey" { return "package manager" }
         "npm" { return "Node.js package manager" }
         "coursier" { return "JVM dependency manager" }
 
@@ -112,7 +111,7 @@ function Get-PackageDescription {
         "intelephense" { return "PHP LSP" }
         "docker-langserver" { return "Docker LSP" }
         "tombi" { return "TOML LSP" }
-        "tinymist" { return "Nim LSP" }
+        "tinymist" { return "Typst LSP" }
 
         # Linters & formatters
         "prettier" { return "code formatter" }
@@ -188,7 +187,7 @@ function Ensure-Scoop {
         return $true
     }
     catch {
-        Write-Warning ("Failed to install Scoop: {0}" -f $_.Exception.Message)
+        Write-WarningMsg ("Failed to install Scoop: {0}" -f $_.Exception.Message)
         Track-Failed "scoop" (Get-PackageDescription "scoop")
         return $false
     }
@@ -230,7 +229,7 @@ function Install-ScoopPackage {
 
     # Check if Scoop is available before attempting installation
     if (-not $scoopInstalled -and -not $scoopCommandAvailable -and -not $DryRun) {
-        Write-Warning "Scoop not installed, skipping $Package"
+        Write-WarningMsg "Scoop not installed, skipping $Package"
         Track-Failed $Package (Get-PackageDescription $Package)
         return $false
     }
@@ -284,7 +283,7 @@ function Install-ScoopPackage {
         return $true
     }
     catch {
-        Write-Warning ("Failed to install {0}: {1}" -f $Package, $_.Exception.Message)
+        Write-WarningMsg ("Failed to install {0}: {1}" -f $Package, $_.Exception.Message)
         Track-Failed $Package (Get-PackageDescription $Package)
         return $false
     }
@@ -347,7 +346,7 @@ function Install-ScoopPackages {
     if ($toInstall.Count -gt 0) {
         # Check if Scoop is available before attempting installation
         if (-not $scoopInstalled -and -not $scoopCommandAvailable -and -not $DryRun) {
-            Write-Warning "Scoop not installed"
+            Write-WarningMsg "Scoop not installed"
             foreach ($pkg in $toInstall) {
                 Track-Failed $pkg (Get-PackageDescription $pkg)
             }
@@ -380,7 +379,7 @@ function Install-ScoopPackages {
             return $true
         }
         catch {
-            Write-Warning ("Failed to install packages: {0}" -f $_.Exception.Message)
+            Write-WarningMsg ("Failed to install packages: {0}" -f $_.Exception.Message)
             foreach ($pkg in $toInstall) {
                 Track-Failed $pkg (Get-PackageDescription $pkg)
             }
@@ -423,7 +422,7 @@ function Ensure-Winget {
         return $true
     }
 
-    Write-Warning "winget not available (may need Windows update)"
+    Write-WarningMsg "winget not available (may need Windows update)"
     Track-Failed "winget" (Get-PackageDescription "winget")
     return $false
 }
@@ -437,7 +436,7 @@ function Install-WingetPackage {
     )
 
     if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
-        Write-Warning "winget not available, skipping $DisplayName"
+        Write-WarningMsg "winget not available, skipping $DisplayName"
         return $false
     }
 
@@ -479,7 +478,7 @@ function Install-WingetPackage {
             return $true
         }
         catch {
-            Write-Warning ("Failed to install {0}: {1}" -f $DisplayName, $_.Exception.Message)
+            Write-WarningMsg ("Failed to install {0}: {1}" -f $DisplayName, $_.Exception.Message)
             Track-Failed $DisplayName (Get-PackageDescription $DisplayName)
             return $false
         }
@@ -514,13 +513,13 @@ function Install-WezTerm {
             return $true
         }
         else {
-            Write-Warning "winget output: $output"
+            Write-WarningMsg "winget output: $output"
             Track-Failed "wezterm" "terminal emulator"
             return $false
         }
     }
     catch {
-        Write-Warning "Failed to install WezTerm: $_"
+        Write-WarningMsg "Failed to install WezTerm: $_"
         Track-Failed "wezterm" "terminal emulator"
         return $false
     }
@@ -611,83 +610,16 @@ function Install-NerdFont {
             Write-Info "Restart WezTerm to pick up the new font"
             return $true
         }
-        Write-Warning "$FontName install finished but the font is still not detectable"
+        Write-WarningMsg "$FontName install finished but the font is still not detectable"
         Write-Info "Install IosevkaTerm Nerd Font manually from: https://www.nerdfonts.com/font-downloads"
         Track-Failed $FontName "Nerd Font"
         return $false
     }
     catch {
-        Write-Warning ("Failed to install {0}: {1}" -f $FontName, $_.Exception.Message)
+        Write-WarningMsg ("Failed to install {0}: {1}" -f $FontName, $_.Exception.Message)
         Write-Info "Install IosevkaTerm Nerd Font manually from: https://www.nerdfonts.com/font-downloads"
         Track-Failed $FontName "Nerd Font"
         return $false
-    }
-}
-
-# ============================================================================
-# CHOCOLATEY (Alternative)
-# ============================================================================
-function Ensure-Choco {
-    if (Get-Command choco -ErrorAction SilentlyContinue) {
-        Track-Skipped "chocolatey" (Get-PackageDescription "chocolatey")
-        return $true
-    }
-
-    Write-Step "Installing Chocolatey..."
-    if ($DryRun) {
-        Write-Info "[DRY-RUN] Would install Chocolatey"
-        Track-Installed "chocolatey" (Get-PackageDescription "chocolatey")
-        return $true
-    }
-
-    try {
-        Set-ExecutionPolicy Bypass -Scope Process -Force
-        [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
-        Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-        Track-Installed "chocolatey" (Get-PackageDescription "chocolatey")
-        return $true
-    }
-    catch {
-        Write-Warning ("Failed to install Chocolatey: {0}" -f $_.Exception.Message)
-        Track-Failed "chocolatey" (Get-PackageDescription "chocolatey")
-        return $false
-    }
-}
-
-function Install-ChocoPackage {
-    param(
-        [string]$Package,
-        [string]$MinVersion = "",
-        [string]$CheckCmd = $Package
-    )
-
-    if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
-        Write-Warning "Chocolatey not installed, skipping $Package"
-        return $false
-    }
-
-    if (Test-NeedsInstall $CheckCmd $MinVersion) {
-        Write-Step "Installing $Package via Chocolatey..."
-        if ($DryRun) {
-            Write-Info "[DRY-RUN] Would install: $Package"
-            Track-Installed $Package (Get-PackageDescription $Package)
-            return $true
-        }
-
-        try {
-            choco install $Package -y *> $null
-            Track-Installed $Package (Get-PackageDescription $Package)
-            return $true
-        }
-        catch {
-            Write-Warning ("Failed to install {0}: {1}" -f $Package, $_.Exception.Message)
-            Track-Failed $Package (Get-PackageDescription $Package)
-            return $false
-        }
-    }
-    else {
-        Track-Skipped $CheckCmd (Get-PackageDescription $CheckCmd)
-        return $true
     }
 }
 
@@ -709,7 +641,7 @@ function Install-NpmGlobal {
     }
 
     if (-not (Get-Command npm -ErrorAction SilentlyContinue)) {
-        Write-Warning "npm not found, skipping $Package"
+        Write-WarningMsg "npm not found, skipping $Package"
         Track-Failed $Package (Get-PackageDescription $Package)
         return $false
     }
@@ -731,13 +663,13 @@ function Install-NpmGlobal {
                 return $true
             }
             else {
-                Write-Warning ("Failed to install {0}: {1}" -f $Package, $output)
+                Write-WarningMsg ("Failed to install {0}: {1}" -f $Package, $output)
                 Track-Failed $Package (Get-PackageDescription $Package)
                 return $false
             }
         }
         catch {
-            Write-Warning ("Failed to install {0}: {1}" -f $Package, $_.Exception.Message)
+            Write-WarningMsg ("Failed to install {0}: {1}" -f $Package, $_.Exception.Message)
             Track-Failed $Package (Get-PackageDescription $Package)
             return $false
         }
@@ -762,7 +694,7 @@ function Install-GoPackage {
     }
 
     if (-not (Get-Command go -ErrorAction SilentlyContinue)) {
-        Write-Warning "go not found, skipping $Package"
+        Write-WarningMsg "go not found, skipping $Package"
         Track-Failed $Package (Get-PackageDescription $Package)
         return $false
     }
@@ -807,7 +739,7 @@ function Install-GoPackage {
             return $true
         }
         catch {
-            Write-Warning "gup install failed, falling back to go install..."
+            Write-WarningMsg "gup install failed, falling back to go install..."
         }
     }
 
@@ -825,7 +757,7 @@ function Install-GoPackage {
         return $true
     }
     catch {
-        Write-Warning ("Failed to install {0}: {1}" -f $Package, $_.Exception.Message)
+        Write-WarningMsg ("Failed to install {0}: {1}" -f $Package, $_.Exception.Message)
         Track-Failed $Package (Get-PackageDescription $Package)
         return $false
     }
@@ -840,7 +772,7 @@ function Install-CargoPackage {
     )
 
     if (-not (Get-Command cargo -ErrorAction SilentlyContinue)) {
-        Write-Warning "cargo not found, skipping $Package"
+        Write-WarningMsg "cargo not found, skipping $Package"
         Track-Failed $Package (Get-PackageDescription $Package)
         return $false
     }
@@ -860,7 +792,7 @@ function Install-CargoPackage {
             return $true
         }
         catch {
-            Write-Warning ("Failed to install {0}: {1}" -f $Package, $_.Exception.Message)
+            Write-WarningMsg ("Failed to install {0}: {1}" -f $Package, $_.Exception.Message)
             Track-Failed $Package (Get-PackageDescription $Package)
             return $false
         }
@@ -879,7 +811,7 @@ function Install-CargoUpdate {
     }
 
     if (-not (Get-Command cargo -ErrorAction SilentlyContinue)) {
-        Write-Warning "cargo not found, skipping cargo-update"
+        Write-WarningMsg "cargo not found, skipping cargo-update"
         Track-Failed "cargo-update" (Get-PackageDescription "cargo-update")
         return $false
     }
@@ -898,69 +830,10 @@ function Install-CargoUpdate {
         return $true
     }
     catch {
-        Write-Warning ("Failed to install cargo-update: {0}" -f $_.Exception.Message)
+        Write-WarningMsg ("Failed to install cargo-update: {0}" -f $_.Exception.Message)
         Track-Failed "cargo-update" (Get-PackageDescription "cargo-update")
         return $false
     }
-}
-
-# Install PHP with curl extension (required by Composer)
-function Install-PHP {
-    # Check if PHP is already installed with curl extension
-    if (Get-Command php -ErrorAction SilentlyContinue) {
-        $phpModules = php -m 2>$null
-        if ($phpModules -match "curl") {
-            Track-Skipped "php" "PHP with curl extension"
-            return $true
-        }
-    }
-
-    Write-Step "Installing PHP with curl extension..."
-
-    # Try scoop first (preferred on Windows)
-    if (Get-Command scoop -ErrorAction SilentlyContinue) {
-        if ($DryRun) {
-            Write-Info "[DRY-RUN] Would scoop install php"
-            Track-Installed "php" (Get-PackageDescription "php")
-            return $true
-        }
-
-        try {
-            scoop install php *> $null
-            # Scoop PHP includes curl extension by default
-            Track-Installed "php" (Get-PackageDescription "php")
-            return $true
-        }
-        catch {
-            Write-Warning ("Failed to install PHP via scoop: {0}" -f $_.Exception.Message)
-            Track-Failed "php" (Get-PackageDescription "php")
-            return $false
-        }
-    }
-
-    # Fallback to winget
-    if (Get-Command winget -ErrorAction SilentlyContinue) {
-        if ($DryRun) {
-            Write-Info "[DRY-RUN] Would winget install PHP"
-            Track-Installed "php" (Get-PackageDescription "php")
-            return $true
-        }
-
-        try {
-            winget install --id PHP.PHP.8.4 --exact --accept-source-agreements --accept-package-agreements *> $null
-            Track-Installed "php" (Get-PackageDescription "php")
-            return $true
-        }
-        catch {
-            Write-Warning ("Failed to install PHP via winget: {0}" -f $_.Exception.Message)
-            Track-Failed "php" (Get-PackageDescription "php")
-            return $false
-        }
-    }
-
-    Write-Warning "No package manager found (scoop/winget required for PHP)"
-    Track-Failed "php" (Get-PackageDescription "php")
-    return $false
 }
 
 # ============================================================================
@@ -1035,13 +908,13 @@ function Ensure-Coursier {
             return $true
         }
         else {
-            Write-Warning "Scoop not found, cannot install Coursier"
+            Write-WarningMsg "Scoop not found, cannot install Coursier"
             Track-Failed "coursier" (Get-PackageDescription "coursier")
             return $false
         }
     }
     catch {
-        Write-Warning ("Failed to install Coursier: {0}" -f $_.Exception.Message)
+        Write-WarningMsg ("Failed to install Coursier: {0}" -f $_.Exception.Message)
         Track-Failed "coursier" (Get-PackageDescription "coursier")
         return $false
     }
@@ -1055,7 +928,7 @@ function Install-CoursierPackage {
     )
 
     if (-not (Test-CoursierInstalled)) {
-        Write-Warning "Coursier not installed, skipping $Package"
+        Write-WarningMsg "Coursier not installed, skipping $Package"
         Track-Failed $Package (Get-PackageDescription $Package)
         return $false
     }
@@ -1081,7 +954,7 @@ function Install-CoursierPackage {
             return $true
         }
         catch {
-            Write-Warning ("Failed to install {0}: {1}" -f $Package, $_.Exception.Message)
+            Write-WarningMsg ("Failed to install {0}: {1}" -f $Package, $_.Exception.Message)
             Track-Failed $Package (Get-PackageDescription $Package)
             return $false
         }
@@ -1112,7 +985,7 @@ function Install-PipGlobal {
     }
 
     if (-not $pythonCmd) {
-        Write-Warning "Python not found, skipping $Package"
+        Write-WarningMsg "Python not found, skipping $Package"
         Track-Failed $Package (Get-PackageDescription $Package)
         return $false
     }
@@ -1136,7 +1009,7 @@ function Install-PipGlobal {
             return $true
         }
         catch {
-            Write-Warning ("Failed to install {0}: {1}" -f $Package, $_.Exception.Message)
+            Write-WarningMsg ("Failed to install {0}: {1}" -f $Package, $_.Exception.Message)
             Track-Failed $Package (Get-PackageDescription $Package)
             return $false
         }
@@ -1156,7 +1029,7 @@ function Install-DotnetTool {
     )
 
     if (-not (Get-Command dotnet -ErrorAction SilentlyContinue)) {
-        Write-Warning "dotnet not found, skipping $Package"
+        Write-WarningMsg "dotnet not found, skipping $Package"
         Track-Failed $Package (Get-PackageDescription $Package)
         return $false
     }
@@ -1183,7 +1056,7 @@ function Install-DotnetTool {
                 return $true
             }
             catch {
-                Write-Warning ("Failed to install {0}: {1}" -f $Package, $_.Exception.Message)
+                Write-WarningMsg ("Failed to install {0}: {1}" -f $Package, $_.Exception.Message)
                 Track-Failed $Package (Get-PackageDescription $Package)
                 return $false
             }
@@ -1261,7 +1134,7 @@ function Install-Rustup {
         return $true
     }
     catch {
-        Write-Warning ("Failed to install Rust: {0}" -f $_.Exception.Message)
+        Write-WarningMsg ("Failed to install Rust: {0}" -f $_.Exception.Message)
         Track-Failed "rust" (Get-PackageDescription "rust")
         return $false
     }
@@ -1269,7 +1142,7 @@ function Install-Rustup {
 
 function Install-RustAnalyzerComponent {
     if (-not (Get-Command rustup -ErrorAction SilentlyContinue)) {
-        Write-Warning "rustup not found, skipping rust-analyzer"
+        Write-WarningMsg "rustup not found, skipping rust-analyzer"
         Track-Failed "rust-analyzer" (Get-PackageDescription "rust-analyzer")
         return $false
     }
@@ -1288,7 +1161,7 @@ function Install-RustAnalyzerComponent {
             return $true
         }
         catch {
-            Write-Warning ("Failed to add rust-analyzer: {0}" -f $_.Exception.Message)
+            Write-WarningMsg ("Failed to add rust-analyzer: {0}" -f $_.Exception.Message)
             Track-Failed "rust-analyzer" (Get-PackageDescription "rust-analyzer")
             return $false
         }
@@ -1354,7 +1227,7 @@ function Install-Bun {
         return $true
     }
     catch {
-        Write-Warning ("Failed to install Bun: {0}" -f $_.Exception.Message)
+        Write-WarningMsg ("Failed to install Bun: {0}" -f $_.Exception.Message)
         Track-Failed "bun" (Get-PackageDescription "bun")
         return $false
     }

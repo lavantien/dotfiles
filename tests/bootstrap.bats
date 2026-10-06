@@ -180,3 +180,27 @@ assert_absent() {
 	grep -q 'Neovim 0\.13' "$BOOTSTRAP_SH"
 	grep -q 'prefers Neovim 0\.13' "$ALIASES"
 }
+
+@test "tinymist is labeled as the typst lsp" {
+	grep -qF '"tinymist" { return "Typst LSP" }' "$WINDOWS_PS1"
+	assert_absent 'Nim LSP' "$WINDOWS_PS1"
+}
+
+@test "dead windows bootstrap code is gone" {
+	assert_absent 'function Ensure-Choco' "$WINDOWS_PS1"
+	assert_absent 'function Install-ChocoPackage' "$WINDOWS_PS1"
+	assert_absent 'function Install-PHP' "$WINDOWS_PS1"
+	[ ! -e "$REPO_ROOT/lib/git-bash.ps1" ]
+}
+
+@test "common.ps1 no longer shadows write-warning" {
+	grep -q 'function Write-WarningMsg' "$COMMON_PS1"
+	assert_absent 'function Write-Warning \{' "$COMMON_PS1"
+	assert_absent 'Write-Warning ' "$COMMON_PS1"
+	assert_absent 'Write-Warning ' "$BOOTSTRAP_PS1"
+	assert_absent 'Write-Warning ' "$WINDOWS_PS1"
+}
+
+@test "bootstrap.ps1 enforces powershell 7" {
+	head -30 "$BOOTSTRAP_PS1" | grep -q '#requires -Version 7'
+}
