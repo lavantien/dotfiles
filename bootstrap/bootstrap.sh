@@ -1043,26 +1043,31 @@ install_mcp_servers() {
 install_development_tools() {
 	print_header "Phase 5.5: Development Tools"
 
-	# Neovim 0.12 (via snap edge channel - prerelease)
+	# Neovim 0.13 (via snap edge channel, which delivers the nightlies)
 	if ! cmd_exists nvim; then
-		log_step "Installing Neovim 0.12 (prerelease via snap)..."
+		log_step "Installing Neovim 0.13 (prerelease via snap)..."
 		if [[ "$DRY_RUN" == "true" ]]; then
-			log_info "[DRY-RUN] Would install Neovim 0.12"
+			log_info "[DRY-RUN] Would install Neovim 0.13"
 			track_installed "neovim" "editor"
 		else
 			if [[ "$OS" == "linux" ]]; then
-				# Check if snap is available
 				if command -v snap >/dev/null 2>&1; then
 					if run_cmd "sudo snap install --edge nvim --classic"; then
-						log_success "Neovim 0.12 installed via snap"
+						log_success "Neovim 0.13 nightly installed via snap"
 						track_installed "neovim" "editor"
 					else
 						log_error "Failed to install Neovim via snap"
 						track_failed "neovim" "editor"
 					fi
 				else
-					log_warning "snap not found - install snapd first: sudo apt install -y snapd"
-					track_failed "neovim" "editor - snap not available"
+					# Minimal servers and containers ship without snapd; converge
+					# through brew (priority) then apt instead of failing the phase
+					log_info "snap not found, falling back to brew/apt for Neovim"
+					if install_linux_package neovim "" nvim; then
+						log_success "Neovim installed via package fallback"
+					else
+						log_error "Failed to install Neovim (no snap, package fallback failed)"
+					fi
 				fi
 			elif [[ "$OS" == "macos" ]]; then
 				# macOS: use brew for neovim

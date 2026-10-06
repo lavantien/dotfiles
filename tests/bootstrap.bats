@@ -168,3 +168,15 @@ assert_absent() {
 	[ "$status" -eq 0 ]
 	[ -z "$output" ]
 }
+
+@test "neovim converges on snapless linux hosts and comments say 0.13" {
+	# apt/brew fallback replaces the hard failure when snapd is absent
+	# (minimal servers, containers)
+	grep -q 'install_linux_package neovim "" nvim' "$BOOTSTRAP_SH"
+	# the snap edge channel stays: it delivers the 0.13 nightlies
+	grep -q 'sudo snap install --edge nvim --classic' "$BOOTSTRAP_SH"
+	assert_absent 'Neovim 0\.12' "$BOOTSTRAP_SH"
+	assert_absent 'Neovim 0\.12' "$ALIASES"
+	grep -q 'Neovim 0\.13' "$BOOTSTRAP_SH"
+	grep -q 'prefers Neovim 0\.13' "$ALIASES"
+}
