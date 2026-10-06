@@ -125,3 +125,46 @@ EOF
 	# 1000 SLOC repo cap, grandfathered ceiling while fixes land
 	[ "$(wc -l <"$REPO_ROOT/scripts/update-all.sh")" -le 1012 ]
 }
+
+@test "update_skip counts a skip exactly once per call" {
+	# shellcheck disable=SC1091
+	source "$REPO_ROOT/scripts/update-all.sh"
+	skipped=0
+	update_skip "one"
+	update_skip "two"
+	[ "$skipped" -eq 2 ]
+}
+
+@test "update-all.sh has no stray skip increments beside update_skip" {
+	if grep -q 'skipped++' "$REPO_ROOT/scripts/update-all.sh"; then
+		grep -n 'skipped++' "$REPO_ROOT/scripts/update-all.sh" >&2
+		return 1
+	fi
+}
+
+@test "allow.sh chmods every tracked .sh in its repo" {
+	# exec bits are unobservable on noacl mounts, so assert the chmod call
+	# set: stub chmod and require it to see exactly the tracked .sh files
+	sb="$BATS_TEST_TMPDIR/repo"
+	fakebin="$BATS_TEST_TMPDIR/fakebin"
+	log="$BATS_TEST_TMPDIR/chmod.log"
+	mkdir -p "$sb/scripts" "$sb/tests/e2e" "$sb/bootstrap" "$fakebin"
+	printf '#!%s\nprintf '\''%%s\\n'\'' "$*" >>"%s"\n' "$(command -v bash)" "$log" >"$fakebin/chmod"
+	git -C "$sb" init -q
+	cp "$REPO_ROOT/scripts/allow.sh" "$sb/scripts/"
+	for f in scripts/update.sh tests/e2e/run.sh bootstrap/bootstrap.sh; do
+		: >"$sb/$f"
+	done
+	git -C "$sb" add -A
+	run env PATH="$fakebin:$PATH" bash "$sb/scripts/allow.sh"
+	[ "$status" -eq 0 ]
+	sort < <(git -C "$sb" ls-files -- '*.sh' | sed "s|^|$sb/|") >"$BATS_TEST_TMPDIR/expected"
+	sort < <(sed 's/^+x //' "$log") >"$BATS_TEST_TMPDIR/actual"
+	cmp "$BATS_TEST_TMPDIR/expected" "$BATS_TEST_TMPDIR/actual"
+}
+
+@test "the pwsh wrapper scripts declare #requires -Version 7" {
+	for f in scripts/update-all.ps1 scripts/healthcheck.ps1 scripts/git-update-repos.ps1; do
+		grep -q '^#requires -Version 7' "$REPO_ROOT/$f"
+	done
+}

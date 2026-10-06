@@ -1,3 +1,4 @@
+#requires -Version 7
 # Update/Clone All GitHub Repositories (Pure PowerShell 7)
 # Transcribed from git-update-repos.sh
 # Usage: .\git-update-repos.ps1 [-Username] "user" [-BaseDir] "path" [-UseSSH]
@@ -95,8 +96,8 @@ foreach ($Repo in $Repos) {
                     $Skipped++
                 } else {
                     # sequential fetch then pull, each gated on $LASTEXITCODE:
-                    # (git fetch) -and (git pull) tested output truthiness, so
-                    # a quiet fetch success reported "Error updating"
+                    # the old chain tested output truthiness, so a quiet fetch
+                    # success reported "Error updating"
                     $null = git fetch origin 2>&1
                     if ($LASTEXITCODE -eq 0) {
                         $null = git pull 2>&1

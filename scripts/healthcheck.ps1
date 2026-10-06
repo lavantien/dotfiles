@@ -1,3 +1,4 @@
+#requires -Version 7
 # Healthcheck Script Wrapper - Invokes healthcheck.sh via Git Bash
 # Usage: .\healthcheck.ps1 [-Verbose] [-Format] "table|json"
 

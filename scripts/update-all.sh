@@ -196,12 +196,12 @@ update_section() {
 update_success() {
 	local msg="${1:-Done}"
 	echo -e "${GREEN}✓ $msg${NC}"
-	((updated++)) || true
+	updated=$((updated + 1))
 }
 
 update_skip() {
 	echo -e "${YELLOW}⊘ Skipped: $1${NC}"
-	((skipped++)) || true
+	skipped=$((skipped + 1))
 }
 
 update_fail() {
@@ -212,7 +212,7 @@ update_fail() {
 		# Show last 10 lines of error output for debugging
 		echo "$error_output" | tail -10 | sed 's/^/  /'
 	fi
-	((failed++)) || true
+	failed=$((failed + 1))
 }
 
 # ============================================================================
@@ -614,7 +614,6 @@ _main() {
 			update_and_report "npm update -g" "npm"
 		else
 			update_skip "npm not found"
-			((skipped++))
 		fi
 	fi
 
@@ -625,13 +624,11 @@ _main() {
 
 	if should_skip_package "yarn"; then
 		update_skip "yarn (in skip list)"
-		((skipped++))
 	else
 		if cmd_exists yarn; then
 			update_and_report "yarn global upgrade" "yarn"
 		else
 			update_skip "yarn not found"
-			((skipped++))
 		fi
 	fi
 
@@ -642,13 +639,11 @@ _main() {
 
 	if should_skip_package "pnpm"; then
 		update_skip "pnpm (in skip list)"
-		((skipped++))
 	else
 		if cmd_exists pnpm; then
 			update_and_report "pnpm update -g" "pnpm"
 		else
 			update_skip "pnpm not found"
-			((skipped++))
 		fi
 	fi
 
@@ -659,7 +654,6 @@ _main() {
 
 	if should_skip_package "bun"; then
 		update_skip "bun (in skip list)"
-		((skipped++))
 	else
 		if cmd_exists bun; then
 			# First upgrade bun itself
@@ -694,7 +688,6 @@ _main() {
 			fi
 		else
 			update_skip "bun not found"
-			((skipped++))
 		fi
 	fi
 
