@@ -181,8 +181,7 @@ merge_opencode_config() {
 
 # On Linux/macOS, remove cmd.exe wrappers that a marketplace.json carried
 # over from a Windows machine may contain for npm-installed LSP servers.
-# Mirrors the gh.exe cleanup in update_git_config. Idempotent: silent when
-# nothing changes.
+# Idempotent: silent when nothing changes.
 strip_windows_lsp_wrappers() {
 	case "$OS" in
 	linux | macos) ;;
