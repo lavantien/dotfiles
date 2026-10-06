@@ -85,6 +85,18 @@ function Merge-Gitconfig {
         return
     }
 
+    # A live file git itself cannot parse is never merged through: keep it
+    # and keep a timestamped backup, and warn loudly so the user fixes it
+    # before identity data is lost
+    git config --file $Dst --list 2>$null | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        $Backup = "$Dst.dotfiles-backup-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
+        Copy-Item -LiteralPath $Dst $Backup
+        Write-Host "  WARNING: $Dst is not parseable by git, left unchanged" -ForegroundColor Yellow
+        Write-Host "  Backup saved to $Backup; fix the file then redeploy" -ForegroundColor Yellow
+        return
+    }
+
     function ConvertTo-SectionId([string]$Inner) {
         $Inner = $Inner.Trim()
         $Name = $Inner

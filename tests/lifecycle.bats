@@ -317,6 +317,18 @@ EOF
 	rm -rf "$sb"
 }
 
+@test "merge_gitconfig leaves an unparsable live file untouched with a backup" {
+	local sb
+	sb="$(mktemp -d)"
+	printf '[user broken garbage\n' >"$sb/live"
+	run bash -c 'source "$1"; merge_gitconfig "$3" "$2/live"' _ "$DEPLOY" "$sb" "$REPO_ROOT/home/.gitconfig"
+	[ "$status" -eq 0 ] || { echo "exit $status: $output"; false; }
+	[ "$(cat "$sb/live")" = "[user broken garbage" ]
+	ls "$sb"/live.dotfiles-backup-* >/dev/null
+	[[ "$output" == *"not parseable"* ]]
+	rm -rf "$sb"
+}
+
 # ============================================================================
 # windows deploy ports
 # ============================================================================
@@ -341,6 +353,21 @@ if ($env:DF_DOTFILESDIR) { $DotfilesDir = $env:DF_DOTFILESDIR }
 if ($env:DF_CONFIGDIR) { $ConfigDir = $env:DF_CONFIGDIR }
 PS1
 	printf '%s\n' "$body" >>"$out"
+}
+
+@test "deploy.ps1 Merge-Gitconfig leaves an unparsable live file untouched with a backup" {
+	command -v pwsh >/dev/null 2>&1 || skip "pwsh not installed"
+	local sb
+	sb="$(cd "$(mktemp -d)" && pwd -W)"
+	printf '[user broken garbage\n' >"$sb/existing"
+	write_pwsh_harness "$sb/harness.ps1" 'Merge-Gitconfig -Src $env:DF_SRC -Dst $env:DF_DST'
+	DF_SRC="$REPO_ROOT/home/.gitconfig" DF_DST="$sb/existing" run pwsh -NoProfile -File "$sb/harness.ps1" \
+		-ScriptPath "$REPO_ROOT/scripts/deploy.ps1" -FunctionName Merge-Gitconfig
+	[ "$status" -eq 0 ] || { echo "exit $status: $output"; false; }
+	[ "$(cat "$sb/existing")" = "[user broken garbage" ]
+	ls "$sb"/existing.dotfiles-backup-* >/dev/null
+	[[ "$output" == *"not parseable"* ]]
+	rm -rf "$sb"
 }
 
 @test "deploy.ps1 requires PowerShell 7" {

@@ -142,6 +142,18 @@ merge_gitconfig() {
 		return 0
 	fi
 
+	# A live file git itself cannot parse is never merged through: keep it
+	# and keep a timestamped backup, and warn loudly so the user fixes it
+	# before identity data is lost
+	if ! git config --file "$target" --list >/dev/null 2>&1; then
+		local backup
+		backup="$target.dotfiles-backup-$(date +%Y%m%d-%H%M%S)"
+		cp "$target" "$backup"
+		echo -e "${YELLOW}Warning: $target is not parseable by git, left unchanged${NC}"
+		echo -e "${YELLOW}Backup saved to $backup, fix the file then redeploy${NC}"
+		return 0
+	fi
+
 	if ! merge_gitconfig_files "$source" "$target" >"$temp_file"; then
 		rm -f "$temp_file"
 		echo -e "${YELLOW}Warning: gitconfig merge failed, $target left unchanged${NC}"
