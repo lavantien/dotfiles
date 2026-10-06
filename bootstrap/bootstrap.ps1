@@ -86,7 +86,7 @@ function Install-Foundation {
             # Try winget first (preferred - comes with Windows, includes Git Bash)
             if (Get-Command winget -ErrorAction SilentlyContinue) {
                 try {
-                    winget install --id Git.Git --accept-source-agreements --accept-package-agreements *> $null
+                    winget install --id Git.Git --exact --accept-source-agreements --accept-package-agreements *> $null
                     if (Test-Command git) {
                         Write-Success "Git installed via winget"
                         Track-Installed "git" "version control"
@@ -176,7 +176,7 @@ function Install-SDKs {
         if (-not (Test-Command dotnet)) {
             Write-Step "Installing dotnet SDK via winget..."
             if (-not $DryRun) {
-                winget install --id Microsoft.DotNet.SDK.8 --accept-source-agreements --accept-package-agreements *> $null
+                winget install --id Microsoft.DotNet.SDK.10 --exact --accept-source-agreements --accept-package-agreements *> $null
                 Track-Installed "dotnet" ".NET SDK"
             }
             else {
@@ -202,7 +202,7 @@ function Install-SDKs {
         if (-not (Test-Command javac)) {
             Write-Step "Installing OpenJDK via winget..."
             if (-not $DryRun) {
-                winget install --id Microsoft.OpenJDK.21 --accept-source-agreements --accept-package-agreements *> $null
+                winget install --id Microsoft.OpenJDK.25 --exact --accept-source-agreements --accept-package-agreements *> $null
                 Track-Installed "OpenJDK" "Java development"
             }
             else {
@@ -962,7 +962,7 @@ function Install-DevelopmentTools {
         Write-Step "Installing VS Code (system-wide via winget)..."
         if (-not $DryRun) {
             if (Get-Command winget -ErrorAction SilentlyContinue) {
-                winget install --id Microsoft.VisualStudioCode --accept-package-agreements --accept-source-agreements *> $null
+                winget install --id Microsoft.VisualStudioCode --exact --accept-package-agreements --accept-source-agreements *> $null
                 Refresh-Path  # Refresh PATH to pick up newly installed VS Code
                 # Check winget list to verify installation (more reliable than Test-Command for PATH issues)
                 $wingetList = winget list --id Microsoft.VisualStudioCode 2>&1
@@ -1015,7 +1015,7 @@ function Install-DevelopmentTools {
                     # --add Microsoft.VisualStudio.Workload.NativeDesktop (C++)
                     # --add Microsoft.VisualStudio.Workload.NetCoreTools (modern .NET)
                     # --add Microsoft.VisualStudio.Workload.Node (Node.js development)
-                    winget install --id Microsoft.VisualStudio.Community --accept-package-agreements --accept-source-agreements --override "--wait --passive --add Microsoft.VisualStudio.Workload.ManagedDesktop --add Microsoft.VisualStudio.Workload.NativeDesktop --add Microsoft.VisualStudio.Workload.NetCoreTools" *> $null
+                    winget install --id Microsoft.VisualStudio.Community --exact --accept-package-agreements --accept-source-agreements --override "--wait --passive --add Microsoft.VisualStudio.Workload.ManagedDesktop --add Microsoft.VisualStudio.Workload.NativeDesktop --add Microsoft.VisualStudio.Workload.NetCoreTools" *> $null
 
                     # Verify installation
                     if (Test-Path $vsWherePath) {
@@ -1063,7 +1063,7 @@ function Install-DevelopmentTools {
         if (-not $DryRun) {
             if (Get-Command winget -ErrorAction SilentlyContinue) {
                 try {
-                    winget install --id LLVM.LLVM --accept-package-agreements --accept-source-agreements *> $null
+                    winget install --id LLVM.LLVM --exact --accept-package-agreements --accept-source-agreements *> $null
                     Refresh-Path  # Refresh PATH to pick up newly installed LLVM
                     if (Test-Command clang) {
                         Write-Success "LLVM installed"
@@ -1283,7 +1283,7 @@ function Install-DevelopmentTools {
             else {
                 Write-Step "Installing ComfyUI Desktop via winget..."
                 if (-not $DryRun) {
-                    winget install --id Comfy.ComfyUI-Desktop --accept-source-agreements --accept-package-agreements *> $null
+                    winget install --id Comfy.ComfyUI-Desktop --exact --accept-source-agreements --accept-package-agreements *> $null
                     Track-Installed "ComfyUI" "AI image generation"
                 }
                 else {

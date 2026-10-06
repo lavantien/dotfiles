@@ -463,7 +463,7 @@ function Install-WingetPackage {
         }
 
         try {
-            $output = winget install --id $Id --accept-source-agreements --accept-package-agreements 2>&1
+            $output = winget install --id $Id --exact --accept-source-agreements --accept-package-agreements 2>&1
             # Check if winget reported "already installed"
             if ($output -match "already installed" -or $LASTEXITCODE -eq 0) {
                 if ($output -match "already installed") {
@@ -507,7 +507,7 @@ function Install-WezTerm {
     }
 
     try {
-        $output = winget install --id wez.wezterm --accept-source-agreements --accept-package-agreements 2>&1
+        $output = winget install --id wez.wezterm --exact --accept-source-agreements --accept-package-agreements 2>&1
         if ($LASTEXITCODE -eq 0 -or $output -match "already installed") {
             Track-Installed "wezterm" "terminal emulator"
             Write-Success "WezTerm installed"
@@ -947,7 +947,7 @@ function Install-PHP {
         }
 
         try {
-            winget install --id PHP.PHP.8.4 --accept-source-agreements --accept-package-agreements *> $null
+            winget install --id PHP.PHP.8.4 --exact --accept-source-agreements --accept-package-agreements *> $null
             Track-Installed "php" (Get-PackageDescription "php")
             return $true
         }
