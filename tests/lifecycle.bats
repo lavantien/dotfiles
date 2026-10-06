@@ -583,6 +583,18 @@ EOF
 	rm -rf "$sb"
 }
 
+@test "restore --backup-dir without a value prints usage and exits 1" {
+	local sb
+	sb="$(mktemp -d)"
+	run env HOME="$sb" bash "$RESTORE" --backup-dir </dev/null
+	[ "$status" -eq 1 ] || { echo "exit $status: $output"; false; }
+	[[ "$output" == *"--backup-dir requires a path"* ]]
+	run env HOME="$sb" bash "$RESTORE" --backup-dir "" </dev/null
+	[ "$status" -eq 1 ]
+	[[ "$output" == *"--backup-dir requires a path"* ]]
+	rm -rf "$sb"
+}
+
 @test "bare restore with no backup dir exits deliberately" {
 	local sb
 	sb="$(mktemp -d)"
