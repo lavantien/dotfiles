@@ -103,6 +103,23 @@ function Merge-Gitconfig {
     Write-Host "  Git config (updated, user identity preserved)" -ForegroundColor Cyan
 }
 
+# Port of deploy_git_hooks in deploy.sh: the bash hooks are the single
+# source of truth, git for Windows runs them through its bundled sh.
+function Deploy-GitHooks {
+    param([string]$HooksDir)
+
+    if (!(Test-Path $HooksDir)) {
+        New-Item -ItemType Directory -Path $HooksDir -Force | Out-Null
+    }
+    Copy-Item "$DotfilesDir/.config/git/hooks/pre-commit" "$HooksDir/pre-commit" -Force
+    Copy-Item "$DotfilesDir/.config/git/hooks/commit-msg" "$HooksDir/commit-msg" -Force
+
+    # Configure git to use the hooks, same wiring as deploy.sh
+    git config --global init.templatedir $HooksDir
+    git config --global core.hooksPath $HooksDir
+    Write-Host "  Git hooks deployed to: $HooksDir" -ForegroundColor Green
+}
+
 function Merge-Template([PSCustomObject]$Template, [PSCustomObject]$Live) {
     foreach ($Prop in $Template.PSObject.Properties) {
         $Existing = $Live.PSObject.Properties[$Prop.Name]
@@ -402,15 +419,8 @@ if (-not $SkipConfig) {
     # Git config (merges the template, preserves the live git identity)
     Merge-Gitconfig -Src "$DotfilesDir/home/.gitconfig" -Dst "$HOME/.gitconfig"
 
-    # Git hooks
-    $HooksDir = "$ConfigDir/git/hooks"
-    if (!(Test-Path $HooksDir)) {
-        New-Item -ItemType Directory -Path $HooksDir -Force | Out-Null
-    }
-    Copy-Files @(
-        ".config/git/hooks/pre-commit.ps1"
-        ".config/git/hooks/commit-msg.ps1"
-    ) $HooksDir
+    # Git hooks (bash hooks, same source of truth as Linux)
+    Deploy-GitHooks -HooksDir "$ConfigDir/git/hooks"
 
     # Neovim config
     # Windows uses %LOCALAPPDATA%\nvim (stdpath('config'))
