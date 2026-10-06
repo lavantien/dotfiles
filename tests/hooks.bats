@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+# Hook behavior tests. Each test drives a real git commit in a throwaway
+# repo whose core.hooksPath points at this repo's .config/git/hooks, never
+# the live deployed set under ~/.config/git/hooks.
+
+REPO_ROOT="$(cd "$BATS_TEST_DIRNAME/.." && pwd)"
+HOOKS_DIR="$REPO_ROOT/.config/git/hooks"
+REPO=""
+
+setup_hook_repo() {
+	REPO="$(mktemp -d)"
+	git -C "$REPO" init -q
+	git -C "$REPO" config user.name "Hook Tester"
+	git -C "$REPO" config user.email "hook-test@example.invalid"
+	if command -v cygpath >/dev/null 2>&1; then
+		git -C "$REPO" config core.hooksPath "$(cygpath -m "$HOOKS_DIR")"
+	else
+		git -C "$REPO" config core.hooksPath "$HOOKS_DIR"
+	fi
+	echo hi >"$REPO/file.txt"
+	git -C "$REPO" add file.txt
+}
+
+teardown() {
+	[ -n "$REPO" ] && rm -rf "$REPO"
+}
+
+# Total subject length $1 chars: "fix: " plus x padding.
+subject_of_length() {
+	local pad
+	pad="$(printf '%*s' "$(( $1 - 5 ))" '' | tr ' ' x)"
+	printf 'fix: %s' "$pad"
+}
+
+@test "commit-msg rejects a garbage subject" {
+	setup_hook_repo
+	run git -C "$REPO" commit -q -m "garbage message that no convention allows"
+	[ "$status" -ne 0 ]
+}
+
+@test "commit-msg accepts a minimal fix subject" {
+	setup_hook_repo
+	run git -C "$REPO" commit -q -m "fix: ok"
+	[ "$status" -eq 0 ]
+}
+
+@test "commit-msg rejects a 101 character subject" {
+	setup_hook_repo
+	local subject
+	subject="$(subject_of_length 101)"
+	[ "${#subject}" -eq 101 ]
+	run git -C "$REPO" commit -q -m "$subject"
+	[ "$status" -ne 0 ]
+}
+
+@test "commit-msg accepts a 100 character subject" {
+	setup_hook_repo
+	local subject
+	subject="$(subject_of_length 100)"
+	[ "${#subject}" -eq 100 ]
+	run git -C "$REPO" commit -q -m "$subject"
+	[ "$status" -eq 0 ]
+}
+
+@test "commit-msg accepts break and bump types" {
+	setup_hook_repo
+	run git -C "$REPO" commit -q -m "break: remove the legacy api"
+	[ "$status" -eq 0 ]
+	setup_hook_repo
+	run git -C "$REPO" commit -q -m "bump: version 2.0.0"
+	[ "$status" -eq 0 ]
+}
+
+@test "commit-msg rejects a conventional type buried after leading noise" {
+	setup_hook_repo
+	run git -C "$REPO" commit -q -m "noise before fix: ok"
+	[ "$status" -ne 0 ]
+}
+
+@test "commit-msg strips the AI attribution trailer" {
+	setup_hook_repo
+	run git -C "$REPO" commit -q -m "fix: ok" -m "Co-Authored-By: Claude Code <noreply@anthropic.com>"
+	[ "$status" -eq 0 ]
+	run git -C "$REPO" log -1 --format=%B
+	[[ "$output" != *"Co-Authored-By"* ]]
+}
