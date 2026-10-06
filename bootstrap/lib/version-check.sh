@@ -8,88 +8,81 @@
 # ============================================================================
 # VERSION PATTERNS
 # ============================================================================
-# Regex patterns to extract version numbers from tool output
-declare -gA VERSION_PATTERNS=(
+# macOS still ships bash 3.2, which has no associative arrays, so the former
+# declare -gA tables are case-based lookups. Patterns are ERE strings consumed
+# by [[ =~ ]] in get_version. The go pattern's non-capturing group was invalid
+# ERE and never matched; it is a nested capturing group now, same capture.
+
+# Echo the version-extraction pattern for a tool, or nothing when unknown.
+get_version_pattern() {
+	local tool="$1"
+	case "$tool" in
 	# Programming Languages
-	["node"]="v?([0-9]+\.[0-9]+\.[0-9]+)"
-	["nodejs"]="v?([0-9]+\.[0-9]+\.[0-9]+)"
-	["npm"]="v?([0-9]+\.[0-9]+\.[0-9]+)"
-	["python"]="Python ([0-9]+\.[0-9]+\.[0-9]+)"
-	["python3"]="Python ([0-9]+\.[0-9]+\.[0-9]+)"
-	["python3\\.?[0-9]*"]="Python ([0-9]+\.[0-9]+\.[0-9]+)"
-	["go"]="go version go([0-9]+\.[0-9]+(?:\.[0-9]+)?)"
-	["rustc"]="rustc ([0-9]+\.[0-9]+\.[0-9]+)"
-	["cargo"]="cargo ([0-9]+\.[0-9]+\.[0-9]+)"
-	["php"]="PHP ([0-9]+\.[0-9]+\.[0-9]+)"
-	["dotnet"]="([0-9]+\.[0-9]+\.[0-9]+)"
+	node | nodejs | npm) echo 'v?([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	python | python3 | python3.*) echo 'Python ([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	go) echo 'go version go([0-9]+\.[0-9]+(\.[0-9]+)?)' ;;
+	rustc) echo 'rustc ([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	cargo) echo 'cargo ([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	php) echo 'PHP ([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	dotnet) echo '([0-9]+\.[0-9]+\.[0-9]+)' ;;
 
-	# Package Managers
-	["brew"]="Homebrew ([0-9]+\.[0-9]+\.[0-9]+)"
-	["scoop"]="Current scoop version:[[:space:]]*v?([0-9]+\.[0-9]+\.[0-9]+)"
-	["winget"]="v([0-9]+\.[0-9]+\.[0-9]+)"
-	["apt"]="([0-9]+\.[0-9]+\.[0-9]+)"
-	["dnf"]="([0-9]+\.[0-9]+\.[0-9]+)"
-	["pacman"]="pacman v([0-9]+\.[0-9]+\.[0-9]+)"
-	["zypper"]="zypper ([0-9]+\.[0-9]+\.[0-9]+)"
+		# Package Managers
+	brew) echo 'Homebrew ([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	scoop) echo 'Current scoop version:[[:space:]]*v?([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	winget) echo 'v([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	apt | dnf) echo '([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	pacman) echo 'pacman v([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	zypper) echo 'zypper ([0-9]+\.[0-9]+\.[0-9]+)' ;;
 
-	# CLI Tools
-	["fzf"]="([0-9]+\.[0-9]+\.[0-9]+)"
-	["bat"]="bat ([0-9]+\.[0-9]+\.[0-9]+)"
-	["eza"]="eza ([0-9]+\.[0-9]+\.[0-9]+)"
-	["exa"]="exa v?([0-9]+\.[0-9]+\.[0-9]+)"
-	["lazygit"]="version,? ([0-9]+\.[0-9]+\.[0-9]+)"
-	["lazygit\\.exe"]="version=([0-9]+\.[0-9]+\.[0-9]+)"
-	["gh"]="gh version ([0-9]+\.[0-9]+\.[0-9]+)"
-	["gh\\.exe"]="gh version ([0-9]+\.[0-9]+\.[0-9]+)"
-	["tokei"]="tokei ([0-9]+\.[0-9]+\.[0-9]+)"
-	["zoxide"]="zoxide v([0-9]+\.[0-9]+\.[0-9]+)"
-	["ripgrep"]="ripgrep ([0-9]+\.[0-9]+\.[0-9]+)"
-	["rg"]="ripgrep ([0-9]+\.[0-9]+\.[0-9]+)"
-	["fd"]="fd ([0-9]+\.[0-9]+\.[0-9]+)"
-	["difft"]="difft ([0-9]+\.[0-9]+\.[0-9]+)"
-	["difftastic"]="difft ([0-9]+\.[0-9]+\.[0-9]+)"
+		# CLI Tools
+	fzf) echo '([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	bat) echo 'bat ([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	eza) echo 'eza ([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	exa) echo 'exa v?([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	lazygit) echo 'version,? ([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	lazygit.exe) echo 'version=([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	gh | gh.exe) echo 'gh version ([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	tokei) echo 'tokei ([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	zoxide) echo 'zoxide v([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	ripgrep | rg) echo 'ripgrep ([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	fd) echo 'fd ([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	difft | difftastic) echo 'difft ([0-9]+\.[0-9]+\.[0-9]+)' ;;
 
-	# Language Servers
-	["gopls"]="golang.org/x/tools/gopls v([0-9]+\.[0-9]+\.[0-9]+)"
-	["gopls\\.exe"]="golang.org/x/tools/gopls v([0-9]+\.[0-9]+\.[0-9]+)"
-	["rust-analyzer"]="rust-analyzer ([0-9]+\.[0-9]+\.[0-9]+)"
-	["rust_analyzer"]="rust-analyzer ([0-9]+\.[0-9]+\.[0-9]+)"
-	["rust-analyzer\\.exe"]="rust-analyzer ([0-9]+\.[0-9]+\.[0-9]+)"
-	["pyright"]="Pyright ([0-9]+\.[0-9]+\.[0-9]+)"
-	["pyright\\.exe"]="Pyright ([0-9]+\.[0-9]+\.[0-9]+)"
-	["typescript-language-server"]="typescript-language-server version ([0-9]+\.[0-9]+\.[0-9]+)"
-	["ts_ls"]="typescript-language-server version ([0-9]+\.[0-9]+\.[0-9]+)"
-	["clangd"]="clangd version ([0-9]+\.[0-9]+\.[0-9]+)"
-	["lua-language-server"]="Lua Language Server v?([0-9]+\.[0-9]+\.[0-9]+)"
-	["lua_ls"]="([0-9]+\.[0-9]+\.[0-9]+)"
-	["jdtls"]="jdtls ([0-9]+\.[0-9]+)"
-	["csharp-ls"]="([0-9]+\.[0-9]+\.[0-9]+)"
-	["csharp_ls"]="([0-9]+\.[0-9]+\.[0-9]+)"
-	["yaml-language-server"]="yaml-language-server version ([0-9]+\.[0-9]+\.[0-9]+)"
-	["yamlls"]="([0-9]+\.[0-9]+\.[0-9]+)"
-	["docker-langserver"]="docker-langserver ([0-9]+\.[0-9]+\.[0-9]+)"
-	["docker_ls"]="([0-9]+\.[0-9]+\.[0-9]+)"
+		# Language Servers
+	gopls | gopls.exe) echo 'golang.org/x/tools/gopls v([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	rust-analyzer | rust_analyzer | rust-analyzer.exe) echo 'rust-analyzer ([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	pyright | pyright.exe) echo 'Pyright ([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	typescript-language-server | ts_ls) echo 'typescript-language-server version ([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	clangd) echo 'clangd version ([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	lua-language-server) echo 'Lua Language Server v?([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	lua_ls) echo '([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	jdtls) echo 'jdtls ([0-9]+\.[0-9]+)' ;;
+	csharp-ls | csharp_ls) echo '([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	yaml-language-server) echo 'yaml-language-server version ([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	yamlls) echo '([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	docker-langserver) echo 'docker-langserver ([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	docker_ls) echo '([0-9]+\.[0-9]+\.[0-9]+)' ;;
 
-	# Linters & Formatters
-	["scalafmt"]="scalafmt ([0-9]+\.[0-9]+\.[0-9]+)"
-	["scalafmt.exe"]="scalafmt ([0-9]+\.[0-9]+\.[0-9]+)"
-	["prettier"]="([0-9]+\.[0-9]+\.[0-9]+)"
-	["eslint"]="v([0-9]+\.[0-9]+\.[0-9]+)"
-	["ruff"]="ruff ([0-9]+\.[0-9]+\.[0-9]+)"
-	["black"]="black, ([0-9]+\.[0-9]+\.[0-9]+)"
-	["mypy"]="mypy ([0-9]+\.[0-9]+\.[0-9]+)"
-	["mypy.exe"]="mypy ([0-9]+\.[0-9]+\.[0-9]+)"
-	["goimports"]="v?([0-9]+\.[0-9]+\.[0-9]+)"
-	["golangci-lint"]="golangci-lint ([0-9]+\.[0-9]+\.[0-9]+)"
-	["clang-format"]="clang-format version ([0-9]+\.[0-9]+\.[0-9]+)"
-)
+		# Linters & Formatters
+	scalafmt | scalafmt.exe) echo 'scalafmt ([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	prettier) echo '([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	eslint) echo 'v([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	ruff) echo 'ruff ([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	black) echo 'black, ([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	mypy | mypy.exe) echo 'mypy ([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	goimports) echo 'v?([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	golangci-lint) echo 'golangci-lint ([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	clang-format) echo 'clang-format version ([0-9]+\.[0-9]+\.[0-9]+)' ;;
+	esac
+}
 
-# Version flags for tools that don't use --version
-declare -gA VERSION_FLAGS=(
-	["go"]="version"
-	["cargo"]="--version"
-	["scoop"]="--version"
-)
+# Echo the version flag for a tool; --version is the universal default.
+get_version_flag() {
+	case "$1" in
+	go) echo "version" ;;
+	*) echo "--version" ;;
+	esac
+}
 
 # ============================================================================
 # VERSION EXTRACTION
@@ -108,7 +101,7 @@ get_version() {
 
 	# Determine version flag
 	if [[ -z "$version_flag" ]]; then
-		version_flag="${VERSION_FLAGS[$tool]:---version}"
+		version_flag="$(get_version_flag "$tool")"
 	fi
 
 	# Try to get version output
@@ -116,7 +109,8 @@ get_version() {
 	version_output=$($tool "$version_flag" 2>&1) || return 1
 
 	# Get version pattern for this tool
-	local version_pattern="${VERSION_PATTERNS[$tool]}"
+	local version_pattern
+	version_pattern="$(get_version_pattern "$tool")"
 
 	# Extract version using pattern if available
 	if [[ -n "$version_pattern" ]]; then
