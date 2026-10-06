@@ -71,30 +71,6 @@ get_pwsh() {
 	return 0
 }
 
-# Check if a script-installed tool needs update by comparing with npm registry version
-# Usage: script_tool_needs_update <npm_package_name> <installed_version>
-# Returns: 0 = needs update, 1 = up to date
-script_tool_needs_update() {
-	local npm_package="$1"
-	local current_version="$2"
-
-	# Get latest version from npm registry
-	local latest_version
-	latest_version=$(npm view "$npm_package" version 2>/dev/null)
-
-	if [[ -z "$latest_version" ]]; then
-		# Couldn't determine latest version, assume update needed
-		return 0
-	fi
-
-	# Compare versions (simple string comparison should work for semantic versioning)
-	if [[ "$current_version" == "$latest_version" ]]; then
-		return 1 # Up to date
-	fi
-
-	return 0 # Needs update
-}
-
 # Run installer and verify version actually changed
 # Usage: install_and_verify_version <install_command> <binary_name> <version_command> [npm_package_name]
 # If npm_package_name is provided, verifies against npm registry as external source of truth
@@ -295,31 +271,6 @@ check_prerequisites() {
 	fi
 
 	echo ""
-}
-
-# Run command with timeout
-# Usage: run_with_timeout <timeout_seconds> <command>
-run_with_timeout() {
-	local timeout="${1:-300}" # Default 5 minutes
-	local cmd="$2"
-	local output
-
-	if ! command -v timeout >/dev/null 2>&1; then
-		# If timeout command not available, just run normally
-		eval "$cmd"
-		return $?
-	fi
-
-	output=$(timeout $timeout bash -c "$cmd" 2>&1)
-	local exit_code=$?
-
-	if [ $exit_code -eq 124 ]; then
-		echo -e "${YELLOW}Command timed out after ${timeout}s${NC}"
-		return 124
-	fi
-
-	echo "$output"
-	return $exit_code
 }
 
 # Update helper: runs command directly, showing all output
