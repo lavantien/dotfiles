@@ -96,3 +96,21 @@ EOF
 		fail "old pip has no --break-system-packages flag, it must never see it"
 	fi
 }
+
+@test "git-update-repos.ps1 runs pull only after fetch succeeds" {
+	ps1="$REPO_ROOT/scripts/git-update-repos.ps1"
+	fetch_n=$(grep -n 'git fetch origin' "$ps1" | head -1 | cut -d: -f1)
+	[ -n "$fetch_n" ]
+	# the pull call, not a comment mentioning it
+	pull_n=$(grep -n '^\s*\$null = git pull' "$ps1" | head -1 | cut -d: -f1)
+	[ -n "$pull_n" ]
+	# an exit-code gate must sit between the fetch and the pull
+	gate_n=$(awk -v s="$fetch_n" 'NR > s && /LASTEXITCODE -eq 0/ {print NR; exit}' "$ps1")
+	[ -n "$gate_n" ]
+	[ "$gate_n" -lt "$pull_n" ]
+	# the old output-truthiness chain must be gone: quiet fetch success
+	# evaluated to false and reported Error updating
+	if grep -q -- '-and (git pull' "$ps1"; then
+		fail "found the old -and fetch/pull chain"
+	fi
+}
