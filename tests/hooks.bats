@@ -207,6 +207,18 @@ STUB
 	[ "$status" -ne 0 ]
 }
 
+@test "pre-commit blocks shellcheck errors in a renamed and edited file" {
+	setup_hook_repo
+	printf '#!/usr/bin/env bash\necho hello\n' >"$REPO/old.sh"
+	git -C "$REPO" add old.sh
+	git -C "$REPO" commit -q -m "fix: add clean script"
+	git -C "$REPO" mv old.sh moved.sh
+	printf '#!/usr/bin/env bash\necho hello\ncat $@\n' >"$REPO/moved.sh"
+	git -C "$REPO" add moved.sh
+	run git -C "$REPO" commit -q -m "fix: rename and edit the script"
+	[ "$status" -ne 0 ]
+}
+
 @test "pre-commit formats staged shell files with shfmt" {
 	setup_hook_repo
 	printf '#!/usr/bin/env bash\nif true;then echo hi;fi\n' >"$REPO/good.sh"
