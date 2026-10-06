@@ -124,3 +124,19 @@ ALIASES="$REPO_ROOT/home/.bash_aliases"
 	grep -qF 'Install-PipGlobal "yamllint"' "$BOOTSTRAP_PS1"
 	grep -qF 'Install-ScoopPackage "hadolint" "" "hadolint"' "$BOOTSTRAP_PS1"
 }
+
+@test "every winget install in the bootstrap scripts passes --exact" {
+	for f in "$BOOTSTRAP_PS1" "$WINDOWS_PS1"; do
+		total="$(grep -c 'winget install --id' "$f")"
+		exact="$(grep 'winget install --id' "$f" | grep -c -- '--exact')"
+		[ "$total" -gt 0 ]
+		[ "$total" -eq "$exact" ]
+	done
+}
+
+@test "winget pins use the current dotnet 10 and jdk 25 ids" {
+	grep -q -- '--id Microsoft.DotNet.SDK.10' "$BOOTSTRAP_PS1"
+	grep -q -- '--id Microsoft.OpenJDK.25' "$BOOTSTRAP_PS1"
+	! grep -q 'DotNet\.SDK\.8\b' "$BOOTSTRAP_PS1"
+	! grep -q 'OpenJDK\.21\b' "$BOOTSTRAP_PS1"
+}
