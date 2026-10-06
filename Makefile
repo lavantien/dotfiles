@@ -62,9 +62,13 @@ test: ## run the bats suite under tests/
 check: lint test ## lint plus tests, no e2e, fast default gate
 
 e2e-linux: ## docker linux lifecycle harness, skips when the daemon is down
-	@docker info >/dev/null 2>&1 || { echo 'skip: docker daemon not running'; exit 0; }
-	@docker build -q -t $(E2E_IMAGE) tests/e2e >/dev/null
-	@FULL='$(FULL)' bash tests/e2e/run.sh '$(E2E_IMAGE)'
+	@command -v timeout >/dev/null 2>&1 && guard='timeout 10 docker info' || guard='docker info'; \
+	if $$guard >/dev/null 2>&1; then \
+		docker build -q -t $(E2E_IMAGE) tests/e2e >/dev/null; \
+		FULL='$(FULL)' bash tests/e2e/run.sh '$(E2E_IMAGE)'; \
+	else \
+		echo 'skip: docker daemon not running'; \
+	fi
 
 e2e-windows: ## bootstrap.ps1 dry run, deploy.ps1 against an isolated HOME, PSSA pass
 	@command -v pwsh >/dev/null 2>&1 || { echo 'skip: pwsh not installed'; exit 0; }
