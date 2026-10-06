@@ -22,6 +22,8 @@
 #   -VerboseMode      Show detailed output including skipped items
 #   -Help             Show this help
 
+#requires -Version 7
+
 [CmdletBinding()]
 param(
     [switch]$Y = $false,
@@ -96,7 +98,7 @@ function Install-Foundation {
                     }
                 }
                 catch {
-                    Write-Warning "winget install failed: $_"
+                    Write-WarningMsg "winget install failed: $_"
                 }
             }
 
@@ -854,7 +856,7 @@ function Install-CLITools {
                     Write-Success "GitHub authentication successful"
                 }
                 else {
-                    Write-Warning "GitHub authentication failed or was cancelled"
+                    Write-WarningMsg "GitHub authentication failed or was cancelled"
                     Write-Info "You can run 'gh auth login' later to authenticate"
                 }
             }
@@ -882,7 +884,7 @@ function Install-MCPServers {
 
     # Skip if npm is not available
     if (-not (Get-Command npm -ErrorAction SilentlyContinue)) {
-        Write-Warning "npm not found, skipping MCP server installation"
+        Write-WarningMsg "npm not found, skipping MCP server installation"
         return $true
     }
 
@@ -905,7 +907,7 @@ function Install-MCPServers {
                     Track-Installed $TrackName $Description
                 }
                 else {
-                    Write-Warning "Failed to install $DisplayName"
+                    Write-WarningMsg "Failed to install $DisplayName"
                     Write-Info "Error output: $output"
                     Track-Failed $TrackName $Description
                 }
@@ -971,12 +973,12 @@ function Install-DevelopmentTools {
                     Track-Installed "vscode" "code editor"
                 }
                 else {
-                    Write-Warning "VS Code installation may have failed - try installing from: https://code.visualstudio.com/"
+                    Write-WarningMsg "VS Code installation may have failed - try installing from: https://code.visualstudio.com/"
                     Track-Failed "vscode" "code editor"
                 }
             }
             else {
-                Write-Warning "winget not available - install VS Code from: https://code.visualstudio.com/"
+                Write-WarningMsg "winget not available - install VS Code from: https://code.visualstudio.com/"
                 Track-Failed "vscode" "code editor"
             }
         }
@@ -1025,7 +1027,7 @@ function Install-DevelopmentTools {
                             Track-Installed "visual-studio" "full IDE"
                         }
                         else {
-                            Write-Warning "Visual Studio installation may still be in progress (large download)"
+                            Write-WarningMsg "Visual Studio installation may still be in progress (large download)"
                             Track-Installed "visual-studio" "full IDE (installing)"
                         }
                     }
@@ -1035,13 +1037,13 @@ function Install-DevelopmentTools {
                     }
                 }
                 catch {
-                    Write-Warning "Visual Studio installation failed: $_"
+                    Write-WarningMsg "Visual Studio installation failed: $_"
                     Write-Info "Install manually from: https://visualstudio.microsoft.com/downloads/"
                     Track-Failed "visual-studio" "full IDE"
                 }
             }
             else {
-                Write-Warning "winget not available - install Visual Studio from: https://visualstudio.microsoft.com/downloads/"
+                Write-WarningMsg "winget not available - install Visual Studio from: https://visualstudio.microsoft.com/downloads/"
                 Track-Failed "visual-studio" "full IDE"
             }
         }
@@ -1070,18 +1072,18 @@ function Install-DevelopmentTools {
                         Track-Installed "llvm" "C/C++ toolchain"
                     }
                     else {
-                        Write-Warning "LLVM installation may have failed - try installing from: https://llvm.org/"
+                        Write-WarningMsg "LLVM installation may have failed - try installing from: https://llvm.org/"
                         Track-Failed "llvm" "C/C++ toolchain"
                     }
                 }
                 catch {
-                    Write-Warning "LLVM installation failed: $_"
+                    Write-WarningMsg "LLVM installation failed: $_"
                     Write-Info "Install manually from: https://llvm.org/"
                     Track-Failed "llvm" "C/C++ toolchain"
                 }
             }
             else {
-                Write-Warning "winget not available - install LLVM from: https://llvm.org/"
+                Write-WarningMsg "winget not available - install LLVM from: https://llvm.org/"
                 Track-Failed "llvm" "C/C++ toolchain"
             }
         }
@@ -1113,7 +1115,7 @@ function Install-DevelopmentTools {
                 }
             }
             else {
-                Write-Warning "Scoop not available - install LaTeX from: https://tug.org/texlive/"
+                Write-WarningMsg "Scoop not available - install LaTeX from: https://tug.org/texlive/"
                 Track-Failed "latex" "document preparation"
             }
         }
@@ -1185,7 +1187,7 @@ function Install-DevelopmentTools {
                 Track-Installed "claude-code" "AI CLI"
             }
             else {
-                Write-Warning "Claude Code CLI installed but not in PATH yet"
+                Write-WarningMsg "Claude Code CLI installed but not in PATH yet"
                 Track-Installed "claude-code" "AI CLI - PATH update pending"
             }
         }
@@ -1242,7 +1244,7 @@ function Install-DevelopmentTools {
                     Track-Installed "opencode" "AI CLI"
                 }
                 else {
-                    Write-Warning "OpenCode AI CLI installation failed"
+                    Write-WarningMsg "OpenCode AI CLI installation failed"
                     Track-Failed "opencode" "AI CLI"
                 }
             }
@@ -1260,14 +1262,14 @@ function Install-DevelopmentTools {
                     Track-Installed "opencode" "AI CLI"
                 }
                 else {
-                    Write-Warning "OpenCode AI CLI installation failed"
+                    Write-WarningMsg "OpenCode AI CLI installation failed"
                     Track-Failed "opencode" "AI CLI"
                 }
             }
         }
     }
     else {
-        Write-Warning "Bun not found - required for OpenCode AI CLI installation"
+        Write-WarningMsg "Bun not found - required for OpenCode AI CLI installation"
         Track-Skipped "opencode" "AI CLI"
     }
 
@@ -1310,7 +1312,7 @@ function Deploy-Configs {
     $deployScript = Join-Path $ScriptDir "..\scripts\deploy.ps1"
 
     if (-not (Test-Path $deployScript)) {
-        Write-Warning "deploy.ps1 not found at $deployScript"
+        Write-WarningMsg "deploy.ps1 not found at $deployScript"
         return $true
     }
 
@@ -1457,7 +1459,7 @@ if (Get-Command Load-DotfilesConfig -ErrorAction SilentlyContinue) {
                 $Script:Categories = $script:CONFIG_CATEGORIES
             }
         } catch {
-            Write-Warning "Failed to load config file, using defaults"
+            Write-WarningMsg "Failed to load config file, using defaults"
         }
     }
 } else {
