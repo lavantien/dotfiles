@@ -63,7 +63,7 @@
   (topic: "e getting a jump on crime: parabola reachability then bfs", chapter: "y2018", cost: "O(dx^3 dy^3)", bcl: "larger root is never spurious"),
   (topic: "f go with the flow: greedy wrap plus river dp per width", chapter: "y2018", cost: "pruned from theta(n^2 L^2)", bcl: "early stop and width jump pinned"),
   (topic: "g panda preserve: vertex voronoi by half-plane clipping", chapter: "y2018", cost: "O(n^2 log n)", bcl: "7 teams, geo helper"),
-  (topic: "h single cut of failure: boundary unrolled, two-pointer arc", chapter: "y2018", cost: "O(n log n)", bcl: "wrap-gap corner trap, six-language fix"),
+  (topic: "h single cut of failure: boundary unrolled, two-pointer arc", chapter: "y2018", cost: "O(n log n)", bcl: "wrap-gap corner trap, seven-language fix"),
   (topic: "i triangles: run lengths plus fenwick over diagonal coverage", chapter: "y2018", cost: "O(n^2 log n)", bcl: "counts to 1.1e11, int64"),
   (topic: "j uncrossed knight's tour: profile dp tables plus cycles", chapter: "y2018", cost: "O(1) table lookup", bcl: "0 teams solved, m=7 period 33"),
   (topic: "k wireless is the new fiber: degree-budget tree construction", chapter: "y2018", cost: "O(n log n + m)", bcl: "any-valid output, canonical pinned"),

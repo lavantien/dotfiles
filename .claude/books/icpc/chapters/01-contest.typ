@@ -9,13 +9,13 @@ The International Collegiate Programming Contest, the ICPC, is a
 worldwide contest for university students, run through regional
 contests that feed a world finals. The finals is a five-hour
 competition between teams of three, and this book works six of them,
-2017, 2018, 2019, 2022, 2023, and 2025, 68 problems in all, in six
+2017, 2018, 2019, 2022, 2023, and 2025, 68 problems in all, in seven
 languages built from first principles. The chapter you are reading
 is the contract for how: the shape of a finals, the anatomy of one
 problem, the content rules that govern everything this book says
 about the problem sets, the chapter template every later chapter
-follows, and the integer ground rules the six languages bring with
-them. The six toolbox chapters behind this one, one per language,
+follows, and the integer ground rules the seven languages bring with
+them. The seven toolbox chapters behind this one, one per language,
 are the shared substrate the finals chapters import and extend.
 
 == what the contest is
@@ -197,7 +197,7 @@ geometry, network flows, game trees, and reductions the shared
 modules do not carry, and the house rule for those is year-local:
 such helpers are built inside the year chapter with a one-line spec
 in the year's suite. That boundary is deliberate. The toolbox holds
-what all six languages need across all six years, and everything
+what all seven languages need across all six years, and everything
 specific to one problem lives with that problem.
 
 #diagram([the recurring problem families on the left, the toolbox that carries each on the right, year-local where no shared module exists], length: 12pt, {
@@ -275,9 +275,10 @@ built up with the solutions sketch cited. The model is then traced
 by hand on the official sample before any code is printed, as a
 figure when the run is visual and a numbered state table when it is
 tabular, ending at the byte-exact printed answer. After the trace
-the solver walks in six listings, one per language, in the fixed
-order c, c\#, go, javascript, python, lua. That order is book 9's
-order, the data structures book this series pairs with, and keeping
+the solver walks in seven listings, one per language, in the fixed
+order c, go, java, c\#, javascript, python, lua. That order is book
+9's order with java slotted after go, the data structures book this
+series pairs with, and keeping
 it means a reader moving between the two books always knows where a
 language's version of a structure lives. A helper section opens the
 chapter when year-local kits exist, and every file a printed solver
@@ -287,11 +288,11 @@ a figure or state table before the listings and one diagram of the
 method after them. Every walkthrough pins its answer: the official
 sample above and the crafted fixture beside it, the hand-computed
 expectation derived in the prose, and the suite assertion that ties
-them. A closing section compares the six languages on that set, and
+them. A closing section compares the seven languages on that set, and
 a sources paragraph carries the attribution, the urls, the access
 date, the solutions cite, and the suite counts.
 
-#diagram([the problem-chapter template: the task in our words, the contracts and bounds, an official sample pair, recognition, the worked run, six listings in the fixed order, pinned answers, the closing table], length: 12pt, {
+#diagram([the problem-chapter template: the task in our words, the contracts and bounds, an official sample pair, recognition, the worked run, seven listings in the fixed order, pinned answers, the closing table], length: 12pt, {
   let box(x, y, w, t, fill: luma(235)) = {
     cdraw.rect((x, y), (x + w, y + 1.0), fill: fill, radius: 0.02)
     cdraw.content((x + w / 2, y + 0.5), t, wrap: text.with(size: 6pt))
@@ -313,14 +314,14 @@ date, the solutions cite, and the suite counts.
   cdraw.content((11.4, 4.7), [the model traced on sample 1, figure or state table, ending byte-exact], wrap: text.with(size: 6.5pt))
   cdraw.line((11.4, 4.2), (11.4, 3.4), stroke: luma(100), mark: (end: ">"))
   cdraw.rect((0.6, 2.4), (22.2, 3.4), fill: luma(238), radius: 0.02)
-  cdraw.content((11.4, 2.9), [six listings in the fixed order: c, c\#, go, javascript, python, lua], wrap: text.with(size: 6.5pt))
+  cdraw.content((11.4, 2.9), [seven listings in the fixed order: c, go, java, c\#, javascript, python, lua], wrap: text.with(size: 6.5pt))
   box(0.6, 1.3, 8.2, [the method diagram, after the listings])
   box(9.3, 1.3, 6.2, [spec fixture, pinned answer])
-  box(16.0, 1.3, 6.2, [closing table, six languages])
+  box(16.0, 1.3, 6.2, [closing table, seven languages])
   cdraw.content((11.4, 0.3), [sample pairs print the public judge samples, secrets stay local], size: 6.5pt, fill: luma(100))
 })
 
-The fixed order is also a promise about interchangeability. The six
+The fixed order is also a promise about interchangeability. The seven
 languages do not solve each problem identically, integer semantics
 differ, container choices differ, and the walkthroughs say so out
 loud. When a cross-language anchor exists, the same hand-computed
@@ -337,10 +338,10 @@ answers are public statement data and this book prints them, checked
 byte for byte against the cache; the secret inputs and answers stay
 on the machine, so the judge data stays a private second gate.
 
-== the six languages and their integers
+== the seven languages and their integers
 
-The six languages were not chosen for this book. They are the
-series: five language manuals and C, the same six that book 9
+The seven languages were not chosen for this book. They are the
+series: six language manuals and C, the same seven that book 9
 rebuilt every data structure in, in the same order. What differs
 between them, and what every toolbox chapter has to say out loud,
 is what happens when a product outgrows the machine word, and a
@@ -354,8 +355,9 @@ book and each toolbox chapter repeats the ones it lives under.
   inset: 4pt,
   table.header([*language*], [*machine word*], [*big integers*], [*wrap-safe product*]),
   [c], [`unsigned long long`], [toolbox bigint, 12 limbs of 9 digits], [add-and-double with a remainder every step],
-  [c\#], [`long`], [`System.Numerics.BigInteger`], [checked 64-bit, checked bigint],
   [go], [`uint64` / `int64`], [`math/big` where needed], [`math/bits.Mul64` for the wide product],
+  [java], [`long`], [`BigInteger` at the c `__int128` sites], [`Math.multiplyHigh` plus the shift-subtract lane],
+  [c\#], [`long`], [`System.Numerics.BigInteger`], [checked 64-bit, checked bigint],
   [javascript], [`Number`], [`BigInt` past the safe 53-bit range], [`BigInt` at the boundary, stated in a comment],
   [python], [native `int`], [unbounded, no ceremony], [native],
   [lua], [int64, wraps silently], [toolbox bigint over tables], [doubling mulmod, boundary test pinned],
@@ -369,7 +371,7 @@ add-and-double instead, and #xref-to("icpc", "toolbox-c") shows the
 whole decision. Lua's integers wrap without a sound, and the Lua
 toolbox pins the proof in a test, `math.maxinteger * 2 == -2`, then
 builds its mulmod on doubling so no wrap can happen, and
-#xref-to("icpc", "toolbox-lua") walks it. Python and C\# sit at the
+#xref-to("icpc", "toolbox-lua") walks it. Python, C\#, and Java sit at the
 other pole, where big integers are native and the chapter's job is to
 show what the machine is doing for you. The row for javascript is the
 one that bites contest solvers most often, because `Number`
@@ -379,10 +381,11 @@ stated in a comment at every place a toolbox crosses it.
 
 == the toolbox layer
 
-The six chapters between this one and the finals chapters are toolboxes,
-one per language: #xref-to("icpc", "toolbox-c"),
-#xref-to("icpc", "toolbox-cs"), #xref-to("icpc", "toolbox-go"),
-#xref-to("icpc", "toolbox-js"), #xref-to("icpc", "toolbox-py"),
+The seven chapters between this one and the finals chapters are
+toolboxes, one per language: #xref-to("icpc", "toolbox-c"),
+#xref-to("icpc", "toolbox-go"), #xref-to("icpc", "toolbox-java"),
+#xref-to("icpc", "toolbox-cs"), #xref-to("icpc", "toolbox-js"),
+#xref-to("icpc", "toolbox-py"),
 and #xref-to("icpc", "toolbox-lua"). Each is a small from-scratch
 library covering what the problem sets keep asking for: big integers
 beyond the machine word, a string-to-value dictionary and a set, a
@@ -392,16 +395,16 @@ wrap, md5 from the RFC, and a json decoder. The finals chapters
 import and extend these. They never re-derive a container inline,
 because a chapter about a hard search problem should spend its
 length on the search, and because a container built once and tested
-once beats six private re-derivations with six private bugs.
+once beats seven private re-derivations with seven private bugs.
 
 The measured size of the layer is part of the story. The C toolbox is
 11 header files, 1125 lines, in `books/icpc/samples-c/src/Ch02/`,
 tested by 10 programs with 251 internal checks. The Lua toolbox is 9
 modules, 1088 lines, in `books/icpc/samples-lua/`, with 45 checks
-through its runner. The other four languages carry their own chapters
+through its runner. The other five languages carry their own chapters
 and their own counts. Those numbers are counted from the tree, not
 estimated, raw line totals for C and Lua and non-blank lines for the
-other four, and the chapter that owns each suite restates its own.
+other five, and the chapter that owns each suite restates its own.
 
 #diagram([the layering: finals chapters import the toolbox of their language, never re-derive containers], length: 12pt, {
   let cell(x, w, y, t, fill: luma(205)) = {
@@ -413,16 +416,16 @@ other four, and the chapter that owns each suite restates its own.
                   (4, [2023]), (5, [2025])) {
     cell(0.8 + i * 3.35, 2.9, 6.4, yr, fill: luma(225))
   }
-  cdraw.content((10.6, 7.7), [the six finals chapters, 8 through 13], size: 6.5pt, fill: luma(100))
-  for (i, l) in ([c], [c\#], [go], [js], [py], [lua]).enumerate() {
-    cell(0.8 + i * 3.35, 2.9, 2.6, l)
+  cdraw.content((10.6, 7.7), [the six finals chapters, 9 through 14], size: 6.5pt, fill: luma(100))
+  for (i, l) in ([c], [go], [java], [c\#], [js], [py], [lua]).enumerate() {
+    cell(0.8 + i * 2.95, 2.55, 2.6, l)
   }
-  cdraw.content((10.6, 1.5), [the six toolboxes, chapters 2-7], size: 6.5pt, fill: luma(100))
+  cdraw.content((10.6, 1.5), [the seven toolboxes, chapters 2-8], size: 6.5pt, fill: luma(100))
   cdraw.line((10.6, 6.4), (10.6, 3.4), stroke: luma(100), mark: (end: ">"))
   cdraw.content((11.4, 4.3), [import and extend], size: 6.5pt, fill: luma(100), anchor: "west")
 })
 
-The test discipline is the same across all six, and it is the same
+The test discipline is the same across all seven, and it is the same
 discipline book 9's suites run under. Tests are table-driven over
 crafted fixtures with hand-computed answers. No network, no clock,
 no randomness unless it is seeded deterministically. Brute-force
@@ -450,5 +453,5 @@ in `ref/icpc/INDEX.md`. The solution sketches settle the algorithm
 and complexity claims made here, and the 2025 set postdates training
 data, so everything said about it derives from the cached pdfs. This
 chapter has no sample suite. The suites begin with chapter 2, whose
-gate line is 10 files and 251 internal checks, and chapter 7, whose
+gate line is 10 files and 251 internal checks, and chapter 8, whose
 runner reports 45 checks across 9 modules.

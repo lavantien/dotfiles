@@ -9,7 +9,7 @@ chapter is about what runs when the exact tool stops scaling, under
 three house rules: keep the objective an integer, keep the search
 reproducible from a seed, and know exactly what the guarantee became.
 Every algorithm here is a seeded deterministic program with its
-accepted moves, counters, and finals pinned by test, in all six
+accepted moves, counters, and finals pinned by test, in all seven
 languages, never a coin flip. The tour runs from hill climbing through
 2-opt, simulated annealing with a rational Metropolis rule, tabu
 search with a move-expiry memory, genetic algorithms, ant colony
@@ -27,7 +27,7 @@ first strictly better move, restart the scan from the beginning after
 every accept, stop when a full scan finds nothing. The accepted-move
 sequence is then a pure function of the start state, the energy, and
 the scan order, which is what makes the exact lane assertable byte for
-byte across six languages.
+byte across seven languages.
 
 The stochastic algorithms later only swap the acceptance rule for
 draws from a seeded generator, so the generator is the chapter's meter
@@ -40,8 +40,12 @@ too. The constants split into exact 32-bit limbs, A = 0x5851F42D4C957F2D
 and C = 0x14057B7EF767814F, and JavaScript carries the state as two
 32-bit halves multiplied through 16-bit limbs, because a single
 decimal literal past 2^53 is an inexact Number and BigInt stays out.
+Java sits at the opposite pole: long is 64-bit and wraps mod 2^64, so
+the multiply-add is one statement with zero limb work, and below(k)
+masks both operands to 32 bits, multiplies into a long, and shifts
+>>> 32.
 
-The dry run: the six-way contract pins identical literals and expected
+The dry run: the seven-way contract pins identical literals and expected
 values in every suite, the lcg vectors first, then the ring fixture
 with its brute-force optimum.
 
@@ -68,11 +72,12 @@ with its brute-force optimum.
   exchanged repairs in one move, trace 20, 16, pinned in python.
 
 The frame lands its first two numbers, 16 and 5040, and the listings
-below ship the generator and the fixture in six languages.
+below ship the generator and the fixture in seven languages.
 
 #listing("dsa/samples-c/src/Ch41/localsearch.c", first: 18, last: 38, caption: [c, the wrapped multiply-add generator, its high-32 output, the bounded draw, the ring matrix as data])
-#listing("dsa/samples/src/Ch41/Localsearch.cs", first: 9, last: 37, caption: [c\#, the lcg as one unchecked multiply-add over ulong, the bounded draw metered])
 #listing("dsa/samples-go/ch41/localsearch.go", first: 9, last: 34, caption: [go, the generator struct, the high-32 next, the floor draw with its meter])
+#listing("dsa/samples-java/src/Ch41/Localsearch.java", first: 18, last: 38, caption: [java, the multiply-add generator straight on long, the >>> 32 output, the bounded draw, the ring matrix as data])
+#listing("dsa/samples/src/Ch41/Localsearch.cs", first: 9, last: 37, caption: [c\#, the lcg as one unchecked multiply-add over ulong, the bounded draw metered])
 #listing("dsa/samples-js/src/ch41-localsearch.mjs", first: 10, last: 48, caption: [javascript, the state as 32-bit halves multiplied through 16-bit limbs, no bigint])
 #listing("dsa/samples-py/src/Ch41/localsearch.py", first: 17, last: 37, caption: [python, the mask-and-multiply generator, the same 24 integers asserted first])
 #listing("dsa/samples-lua/ch41_localsearch.lua", first: 8, last: 22, caption: [lua, integer arithmetic wrapping mod 2^64, the logical shift output])
@@ -170,8 +175,8 @@ follow. Strict descent has one blind spot, the plateau: an
 equal-energy move is never taken, so a run that steps onto level
 ground stops there even when the path across it leads down.
 
-The dry run: the six-way contract pins the two swap traces and the
-plateau boundary, byte-identical energy sequences in all six suites.
+The dry run: the seven-way contract pins the two swap traces and the
+plateau boundary, byte-identical energy sequences in all seven suites.
 
 + The swap climb from \[0, 4, 1, 5, 2, 6, 3, 7\] walks 44, 36, 32, 28,
   24, 20, 16 and finishes on the ring order 0..7, the optimum.
@@ -198,11 +203,12 @@ plateau boundary, byte-identical energy sequences in all six suites.
 )
 
 The 16 against the 28 is the section's pair of numbers, and the
-listings below run both rules in six languages.
+listings below run both rules in seven languages.
 
 #listing("dsa/samples-c/src/Ch41/hill.c", first: 31, last: 62, caption: [c, the swap climb, ascending scan, restart after every accept])
-#listing("dsa/samples/src/Ch41/Hill.cs", first: 12, last: 39, caption: [c\#, first improvement with the swap applied and undone, the restart comment])
 #listing("dsa/samples-go/ch41/hill.go", first: 5, last: 36, caption: [go, the swap climb delegating to the shared driver, the best-improvement variant])
+#listing("dsa/samples-java/src/Ch41/Hill.java", first: 34, last: 58, caption: [java, the swap climb, ascending scan, restart after every accept])
+#listing("dsa/samples/src/Ch41/Hill.cs", first: 12, last: 39, caption: [c\#, first improvement with the swap applied and undone, the restart comment])
 #listing("dsa/samples-js/src/ch41-hill.mjs", first: 9, last: 30, caption: [javascript, the eager loop, the first better neighbor wins])
 #listing("dsa/samples-py/src/Ch41/hill.py", first: 36, last: 65, caption: [python, first and best improvement side by side])
 #listing("dsa/samples-lua/ch41_hill.lua", first: 28, last: 50, caption: [lua, the same pair over 1-based positions])
@@ -262,8 +268,8 @@ at j, and e the cyclic successor of j, four matrix lookups instead of
 a full rescan. The whole-tour reversal maps the cycle onto itself and
 prices at delta 0, an honest non-move.
 
-The dry run: the six-way contract pins the three 2-opt traces, one
-accepted-move sequence per start, identical in all six suites, and
+The dry run: the seven-way contract pins the three 2-opt traces, one
+accepted-move sequence per start, identical in all seven suites, and
 the delta identity, priced against full recomputation in go,
 javascript, python, lua, and c\#, with c asserting the stall half
 alone, no candidate in negative delta at its stopped tour.
@@ -287,11 +293,12 @@ alone, no candidate in negative delta at its stopped tour.
 
 The worked delta, -8 for the first accepted move, is the number to
 remember, and the listings below ship the reversal, the delta, and the
-descent in six languages.
+descent in seven languages.
 
 #listing("dsa/samples-c/src/Ch41/twoopt.c", first: 39, last: 81, caption: [c, the four-edge delta with the whole-cycle guard, the reversal in place, the descent])
-#listing("dsa/samples/src/Ch41/TwoOpt.cs", first: 24, last: 60, caption: [c\#, the delta and the first-improvement loop over the pairs])
 #listing("dsa/samples-go/ch41/twoopt.go", first: 3, last: 28, caption: [go, the reversal move over the shared driver, the same four lookups])
+#listing("dsa/samples-java/src/Ch41/Twoopt.java", first: 38, last: 76, caption: [java, the four-edge delta with the whole-cycle guard, the reversal in place, the descent])
+#listing("dsa/samples/src/Ch41/TwoOpt.cs", first: 24, last: 60, caption: [c\#, the delta and the first-improvement loop over the pairs])
 #listing("dsa/samples-js/src/ch41-twoopt.mjs", first: 19, last: 49, caption: [javascript, the delta function and the eager loop])
 #listing("dsa/samples-py/src/Ch41/twoopt.py", first: 104, last: 146, caption: [python, the delta and the fast driver that accepts the identical sequence])
 #listing("dsa/samples-lua/ch41_twoopt.lua", first: 44, last: 75, caption: [lua, the descent and the four-edge delta with cyclic wrap])
@@ -346,7 +353,7 @@ stated engineering substitution: accept with probability T / (T +
 delta), the rational sibling with the same decreasing shape in delta,
 realized exactly as the integer test below(T + delta) \< T. One draw,
 integer arithmetic, and zero cross-language libm divergence, so all
-six suites assert the same accept and reject counts. The draw happens
+seven suites assert the same accept and reject counts. The draw happens
 only on the uphill branch, which keeps the meter honest.
 
 The landscape is F4, a 12-bit QUBO: energy(x) = c + sum a_i x_i + sum
@@ -356,7 +363,7 @@ coefficient is an integer, so all 4096 states price exactly, and the
 brute-force oracle runs in-test. The contract: 200 iterations, start
 all-zero, T_i = max(1, 64 >> (i / 25)), move = flip bit below(12).
 
-The dry run: the six-way contract pins the three counter triples and
+The dry run: the seven-way contract pins the three counter triples and
 the finals, exact equality, with the best asserted against the
 brute-force optimum at ratio 1.0.
 
@@ -381,11 +388,12 @@ brute-force optimum at ratio 1.0.
 )
 
 The -91 on every seed is the pinned landing, and the listings below
-run the rule in six languages.
+run the rule in seven languages.
 
 #listing("dsa/samples-c/src/Ch41/anneal.c", first: 57, last: 81, caption: [c, the schedule, the bit flip, downhill and the rational uphill test])
-#listing("dsa/samples/src/Ch41/Anneal.cs", first: 44, last: 81, caption: [c\#, the same run, the uphill draw on the else branch])
 #listing("dsa/samples-go/ch41/anneal.go", first: 73, last: 96, caption: [go, the shared engine through the uphill accept])
+#listing("dsa/samples-java/src/Ch41/Anneal.java", first: 56, last: 80, caption: [java, the schedule, the bit flip, downhill and the rational uphill test])
+#listing("dsa/samples/src/Ch41/Anneal.cs", first: 44, last: 81, caption: [c\#, the same run, the uphill draw on the else branch])
 #listing("dsa/samples-js/src/ch41-anneal.mjs", first: 32, last: 60, caption: [javascript, coolT and the run loop, the integer rule])
 #listing("dsa/samples-py/src/Ch41/anneal.py", first: 70, last: 94, caption: [python, the metropolis comment and the sa driver])
 #listing("dsa/samples-lua/ch41_anneal.lua", first: 50, last: 77, caption: [lua, the same loop, max and floor shifts by hand])
@@ -456,8 +464,8 @@ changes counters and is pinned on purpose.
   pinned reheat logs exist to catch exactly this.
 ])
 
-The dry run: the six-way contract pins the three reheat runs with
-their logs, counters exact in all six suites, and the ladder values,
+The dry run: the seven-way contract pins the three reheat runs with
+their logs, counters exact in all seven suites, and the ladder values,
 asserted in python and lua.
 
 + The ladder reads 64 through iteration 24, 32 at 25, and 1 from
@@ -481,11 +489,12 @@ asserted in python and lua.
 )
 
 The 181 and the 193 are the section's pinned pair, and the listings
-below ship the reheat contract in six languages.
+below ship the reheat contract in seven languages.
 
 #listing("dsa/samples-c/src/Ch41/anneal.c", first: 82, last: 107, caption: [c, the rejection branch, the streak, the reheat with its log, the clock])
-#listing("dsa/samples/src/Ch41/Anneal.cs", first: 99, last: 145, caption: [c\#, the reheat driver, reset to best, double T0, restart the clock])
 #listing("dsa/samples-go/ch41/anneal.go", first: 98, last: 118, caption: [go, the reject branch and the reheat event recorded])
+#listing("dsa/samples-java/src/Ch41/Anneal.java", first: 81, last: 106, caption: [java, the rejection branch, the streak, the reheat with its log, the clock and best bank])
+#listing("dsa/samples/src/Ch41/Anneal.cs", first: 99, last: 145, caption: [c\#, the reheat driver, reset to best, double T0, restart the clock])
 #listing("dsa/samples-js/src/ch41-anneal.mjs", first: 62, last: 111, caption: [javascript, saReheat whole, the log array and the clock reset])
 #listing("dsa/samples-py/src/Ch41/anneal.py", first: 113, last: 152, caption: [python, reheat from best with the pinned tuple returned])
 #listing("dsa/samples-lua/ch41_anneal.lua", first: 79, last: 124, caption: [lua, the same loop, the reheated flag keeping the clock honest])
@@ -539,8 +548,8 @@ applies it, and stamps it tabu. The run can therefore walk across
 plateaus and climb, because the moves it just used are the ones it
 cannot immediately reuse.
 
-The dry run: the six-way contract pins the 12-iteration log move by
-move and energy by energy, identical in all six suites.
+The dry run: the seven-way contract pins the 12-iteration log move by
+move and energy by energy, identical in all seven suites.
 
 + Iterations 0, 1, 2 improve 44 to 36 to 28 to 24 with moves (1, 2),
   (2, 4), (3, 4).
@@ -573,11 +582,12 @@ move and energy by energy, identical in all six suites.
 )
 
 The 16 at iteration 7 is the pinned landing, and the listings below
-run the memory in six languages.
+run the memory in seven languages.
 
 #listing("dsa/samples-c/src/Ch41/tabu.c", first: 79, last: 117, caption: [c, the pick, the stall case, the ban store with expiry, the log])
-#listing("dsa/samples/src/Ch41/Tabu.cs", first: 37, last: 66, caption: [c\#, the scan with the expiry dictionary, aspiration inside])
 #listing("dsa/samples-go/ch41/tabu.go", first: 41, last: 87, caption: [go, the whole engine, expiry map, first-wins ties])
+#listing("dsa/samples-java/src/Ch41/Tabu.java", first: 87, last: 111, caption: [java, the stall case, the move commit, the ban store pruned by expiry and extended, the log])
+#listing("dsa/samples/src/Ch41/Tabu.cs", first: 37, last: 66, caption: [c\#, the scan with the expiry dictionary, aspiration inside])
 #listing("dsa/samples-js/src/ch41-tabu.mjs", first: 13, last: 60, caption: [javascript, the core with the expiry list pruned on commit])
 #listing("dsa/samples-py/src/Ch41/tabu.py", first: 35, last: 70, caption: [python, the engine with frozenset moves and the log])
 #listing("dsa/samples-lua/ch41_tabu.lua", first: 41, last: 83, caption: [lua, the same engine over string-keyed expiry])
@@ -641,7 +651,7 @@ code and every suite asserts lifts == 0 as a fact about this instance,
 a dormant branch is not a dead branch. The candidate list pays for its
 speed the other way.
 
-The dry run: the six-way contract pins the candidate-list log, its
+The dry run: the seven-way contract pins the candidate-list log, its
 best tour, its end state, and the zero lift counts.
 
 + lifts == 0 on both the full-scan and the candidate-list runs,
@@ -676,11 +686,12 @@ best tour, its end state, and the zero lift counts.
 )
 
 The 24 against the full scan's 16 is the closing contrast, and the
-listings below ship both refinements in six languages.
+listings below ship both refinements in seven languages.
 
 #listing("dsa/samples-c/src/Ch41/tabu.c", first: 51, last: 78, caption: [c, the city 0 position guard, the candidate filter, the ban test with aspiration and the lift counter])
-#listing("dsa/samples/src/Ch41/Tabu.cs", first: 14, last: 34, caption: [c\#, the two entry points and the expiry dictionary])
 #listing("dsa/samples-go/ch41/tabu.go", first: 23, last: 39, caption: [go, the full scan and the candidate-list wrappers])
+#listing("dsa/samples-java/src/Ch41/Tabu.java", first: 49, last: 77, caption: [java, the city 0 position guard, the candidate filter, the ban test with aspiration and the lift counter])
+#listing("dsa/samples/src/Ch41/Tabu.cs", first: 14, last: 34, caption: [c\#, the two entry points and the expiry dictionary])
 #listing("dsa/samples-js/src/ch41-tabu.mjs", first: 22, last: 42, caption: [javascript, the position guard, the expiry test, the aspiration line])
 #listing("dsa/samples-py/src/Ch41/tabu.py", first: 46, last: 61, caption: [python, the candidate guard and the aspiration inside the scan])
 #listing("dsa/samples-lua/ch41_tabu.lua", first: 49, last: 71, caption: [lua, the cand_only filter with the lift counter])
@@ -711,7 +722,7 @@ in-test oracle is the chapter 17 dynamic program, optimum 37, and the
 brute force agrees, best bitstring 288, items 5 and 8, weights 8 + 10
 and values 17 + 20.
 
-The dry run: the six-way contract pins the oracle, the tournament
+The dry run: the seven-way contract pins the oracle, the tournament
 draws, and the three run rows with exact counters.
 
 + The dynamic program lands 37 at capacity 18 and the brute force over
@@ -737,11 +748,12 @@ draws, and the three run rows with exact counters.
 )
 
 The cautionary row is seed 2, and the listings below run the whole
-contract in six languages.
+contract in seven languages.
 
 #listing("dsa/samples-c/src/Ch41/ga.c", first: 91, last: 132, caption: [c, the run whole: seeded population, insertion sort, roulette walks, children])
-#listing("dsa/samples/src/Ch41/Ga.cs", first: 47, last: 96, caption: [c\#, the run body with the roulette closure over the scored array])
 #listing("dsa/samples-go/ch41/ga.go", first: 85, last: 120, caption: [go, the metered run, the scored sort, two draws per child])
+#listing("dsa/samples-java/src/Ch41/Ga.java", first: 67, last: 118, caption: [java, the run whole: seeded population, insertion sort with the tie chain, roulette walks, children])
+#listing("dsa/samples/src/Ch41/Ga.cs", first: 47, last: 96, caption: [c\#, the run body with the roulette closure over the scored array])
 #listing("dsa/samples-js/src/ch41-ga.mjs", first: 34, last: 82, caption: [javascript, the run with the stable scored sort and the cumulative pick])
 #listing("dsa/samples-py/src/Ch41/ga.py", first: 64, last: 95, caption: [python, the generator, elitism 1, the pick closure, the child loop])
 #listing("dsa/samples-lua/ch41_ga.lua", first: 49, last: 100, caption: [lua, the contract comment, the comparator, pick, and children])
@@ -823,7 +835,7 @@ positions cycling from cut2 with the genes of parent 2 in order,
 skipping the kept ones. It is deterministic, no rng anywhere, and both
 worked examples pin.
 
-The dry run: the six-way contract pins the two OX children and the
+The dry run: the seven-way contract pins the two OX children and the
 exact mutation ledger.
 
 + The worked pair: ox(\[1, 2, 3, 4, 5\], \[3, 1, 2, 5, 4\], 1, 3)
@@ -838,11 +850,12 @@ exact mutation ledger.
   the 1400 mutation draws of a run.
 
 The fill cycling is the whole algorithm, and the listings below ship
-OX in six languages.
+OX in seven languages.
 
 #listing("dsa/samples-c/src/Ch41/ga.c", first: 134, last: 151, caption: [c, order crossover keeping the cut segment, the two-phase cycling fill])
-#listing("dsa/samples/src/Ch41/Ga.cs", first: 113, last: 137, caption: [c\#, ox with the kept set and the fill list])
 #listing("dsa/samples-go/ch41/ga.go", first: 133, last: 161, caption: [go, the kept map and the wrapped slot walk])
+#listing("dsa/samples-java/src/Ch41/Ga.java", first: 122, last: 137, caption: [java, order crossover keeping the cut segment, the two-phase cycling fill])
+#listing("dsa/samples/src/Ch41/Ga.cs", first: 113, last: 137, caption: [c\#, ox with the kept set and the fill list])
 #listing("dsa/samples-js/src/ch41-ga.mjs", first: 84, last: 98, caption: [javascript, ox through filter and the cycling slot order])
 #listing("dsa/samples-py/src/Ch41/ga.py", first: 141, last: 159, caption: [python, the fill list and the wrapped slot order, both pins beside it])
 #listing("dsa/samples-lua/ch41_ga.lua", first: 102, last: 122, caption: [lua, the 1-based cut arithmetic mirroring the contract])
@@ -899,7 +912,7 @@ ratio is the inverse distance ratio, so an edge of length 2 carries
 one. The deposit arithmetic prices an optimal tour at 625 per edge,
 10000 over 16, and evaporation floors, 137 times 9 over 10 = 123.
 
-The dry run: the six-way contract pins the three base runs, their best
+The dry run: the seven-way contract pins the three base runs, their best
 tours, and the exact draw count.
 
 + Seed 1: best 16, tour \[2, 1, 0, 7, 6, 5, 4, 3\].
@@ -920,11 +933,12 @@ tours, and the exact draw count.
 )
 
 Every seed reaches the optimum, and the listings below run the model
-in six languages.
+in seven languages.
 
 #listing("dsa/samples-c/src/Ch41/aco.c", first: 64, last: 114, caption: [c, the ant walk with integer weights, the draw and cumulative pick, the base update])
-#listing("dsa/samples/src/Ch41/Aco.cs", first: 46, last: 86, caption: [c\#, the ant build loop and the weighted choice])
 #listing("dsa/samples-go/ch41/aco.go", first: 57, last: 99, caption: [go, the ant loop, the best bank, the evaporation sweep])
+#listing("dsa/samples-java/src/Ch41/Aco.java", first: 62, last: 114, caption: [java, the ant walk with long weights, the draw and cumulative pick, the base update])
+#listing("dsa/samples/src/Ch41/Aco.cs", first: 46, last: 86, caption: [c\#, the ant build loop and the weighted choice])
 #listing("dsa/samples-js/src/ch41-aco.mjs", first: 22, last: 67, caption: [javascript, the walk, the banked best, the evaporation])
 #listing("dsa/samples-py/src/Ch41/aco.py", first: 47, last: 88, caption: [python, the model whole, weights, walk, evaporate, deposit])
 #listing("dsa/samples-lua/ch41_aco.lua", first: 55, last: 96, caption: [lua, the same loop with floor division throughout])
@@ -985,7 +999,7 @@ MMAS, max-min ant system, keeps the iteration-best deposit and clamps
 every off-diagonal tau into \[5, 200\] after the update, bounding how
 strong any trail can grow and how far an unused edge can fade.
 
-The dry run: the six-way contract pins the variant tours on seeds 1
+The dry run: the seven-way contract pins the variant tours on seeds 1
 and 2, all at best 16 and 280 draws.
 
 + Elitist: seed 1 pins \[3, 4, 5, 6, 7, 0, 1, 2\], seed 2 pins
@@ -1009,11 +1023,12 @@ and 2, all at best 16 and 280 draws.
 )
 
 Same reach, different tours: the update rule shapes the trail, and the
-listings below ship the four rules in six languages.
+listings below ship the four rules in seven languages.
 
 #listing("dsa/samples-c/src/Ch41/aco.c", first: 115, last: 158, caption: [c, the variant updates: rank, evaporate, deposits, the elitist extra, the mmas clamp])
-#listing("dsa/samples/src/Ch41/Aco.cs", first: 87, last: 136, caption: [c\#, the banked best, the evaporation, the variant branches with Math.Clamp])
 #listing("dsa/samples-go/ch41/aco.go", first: 100, last: 125, caption: [go, the variant switch and the mmas min-max clamp])
+#listing("dsa/samples-java/src/Ch41/Aco.java", first: 115, last: 159, caption: [java, the variant updates: the banked best first, evaporate, the elitist extra, iteration-best, the mmas clamp])
+#listing("dsa/samples/src/Ch41/Aco.cs", first: 87, last: 136, caption: [c\#, the banked best, the evaporation, the variant branches with Math.Clamp])
 #listing("dsa/samples-js/src/ch41-aco.mjs", first: 68, last: 109, caption: [javascript, the deposit branches and the clamp])
 #listing("dsa/samples-py/src/Ch41/aco.py", first: 89, last: 105, caption: [python, the variant branches, elitist extra, iterbest pick, clamp])
 #listing("dsa/samples-lua/ch41_aco.lua", first: 97, last: 129, caption: [lua, depositors, the elitist extra, the mmas band])
@@ -1076,7 +1091,7 @@ erases what earlier restarts banked. A stopping rule can therefore be
 an acceptance threshold on the bank, a wall-clock budget, or a fixed
 restart count, and the run answers sensibly under all three.
 
-The dry run: the six-way contract pins the five starts, traces,
+The dry run: the seven-way contract pins the five starts, traces,
 finals, and the bank after each restart.
 
 + r0 starts \[2, 1, 6, 4, 7, 3, 5, 0\], walks 36, 32, 28, 24, 20, 16,
@@ -1103,11 +1118,12 @@ finals, and the bank after each restart.
 )
 
 Four of five restarts bank the optimum and the fifth plateaus at 24,
-and the listings below run the portfolio in six languages.
+and the listings below run the portfolio in seven languages.
 
 #listing("dsa/samples-c/src/Ch41/restarts.c", first: 46, last: 89, caption: [c, the fisher-yates start generator and the restart file's own climb])
-#listing("dsa/samples/src/Ch41/Restarts.cs", first: 14, last: 43, caption: [c\#, the seeded shuffle and the portfolio rows with the bank])
 #listing("dsa/samples-go/ch41/restarts.go", first: 30, last: 56, caption: [go, the portfolio banking the best local optimum])
+#listing("dsa/samples-java/src/Ch41/Restarts.java", first: 46, last: 86, caption: [java, the fisher-yates start generator over the shared lcg, the restart file's own climb])
+#listing("dsa/samples/src/Ch41/Restarts.cs", first: 14, last: 43, caption: [c\#, the seeded shuffle and the portfolio rows with the bank])
 #listing("dsa/samples-js/src/ch41-restarts.mjs", first: 11, last: 33, caption: [javascript, shuffle and portfolio over the imported climb])
 #listing("dsa/samples-py/src/Ch41/restarts.py", first: 72, last: 100, caption: [python, the shuffle, the pinned portfolio, the bank checks])
 #listing("dsa/samples-lua/ch41_restarts.lua", first: 41, last: 78, caption: [lua, the climb and the fisher-yates over the shared lcg])
@@ -1147,25 +1163,25 @@ inside the climb it feeds.
   cdraw.content((3.4, 3.8), [r4's plateau never erases it], size: 6pt)
 })
 
-== across the six languages
+== across the seven languages
 
 Featured build size counted as non-blank, non-comment lines of the
 chapter's eight sample files per language, go test files excluded,
 the c column dropping its preprocessor lines:
 
 #table(
-  columns: (auto, auto, auto, auto, auto, auto, auto),
+  columns: (auto, auto, auto, auto, auto, auto, auto, auto),
   inset: 4pt,
-  table.header([*stem*], [*c*], [*c\#*], [*go*], [*javascript*], [*python*], [*lua*]),
-  [localsearch], [103], [61], [108], [75], [118], [127],
-  [hill], [96], [64], [26], [48], [66], [91],
-  [twoopt], [109], [51], [16], [40], [118], [126],
-  [anneal], [135], [131], [88], [108], [136], [160],
-  [tabu], [146], [69], [67], [56], [88], [107],
-  [ga], [180], [132], [132], [82], [118], [156],
-  [aco], [176], [133], [114], [105], [106], [176],
-  [restarts], [108], [33], [43], [24], [71], [109],
-  [total], [1053], [674], [594], [538], [821], [1052],
+  table.header([*stem*], [*c*], [*go*], [*java*], [*c\#*], [*javascript*], [*python*], [*lua*]),
+  [localsearch], [103], [108], [104], [61], [75], [118], [127],
+  [hill], [96], [26], [84], [64], [48], [66], [91],
+  [twoopt], [109], [16], [99], [51], [40], [118], [126],
+  [anneal], [135], [88], [136], [131], [108], [136], [160],
+  [tabu], [146], [67], [131], [69], [56], [88], [107],
+  [ga], [180], [132], [170], [132], [82], [118], [156],
+  [aco], [176], [114], [167], [133], [105], [106], [176],
+  [restarts], [108], [43], [103], [33], [24], [71], [109],
+  [total], [1053], [594], [994], [674], [538], [821], [1052],
 )
 
 The small numbers are sharing, not absence. Go's twoopt is 16 lines
@@ -1179,6 +1195,10 @@ reuses the climb instead of restating it. C and python restate the
 generator and matrix per file, 8 times each, which is why their totals
 run high, and lua restates the same way with the 1-based boundary
 shifts and the run.lua check rows added, its total one line under c.
+Java restates per stem too, the ring matrix in six files and the lcg
+in the five that draw, each generator one multiply-add on long with
+the >>> 32 output and no limb work, and java.util.Random never appears
+in the tree.
 
 The corpus placement is honest silence: the icpc book's mined finals
 problems all yielded to exact algorithms, so no chapter there cites a
@@ -1205,5 +1225,6 @@ Cybernetics, 1996, sections 10 and 11, and T. Stutzle and H. Hoos,
 clamp of section 11. The generator constants follow D. Knuth, "The
 Art of Computer Programming", volume 2, seminumerical algorithms, the
 64-bit congruential recommendations. Sample behavior verified by the
-six suite gates scoped to chapter 41, zero skipped, all pins from the
-witness ledger of the wave brief.
+seven suite gates scoped to chapter 41, zero skipped, all pins from the
+witness ledger of the wave brief. Java's gate runs the same pins under
+run-java-samples, 8 files and 359 checks.

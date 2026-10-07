@@ -72,11 +72,12 @@ the sibling suites on the same script.
 )
 
 The 500 down to 60 lazy walk with the 7 rebuilds at gate 4 are the
-pinned rows, and the listings below run them in six languages.
+pinned rows, and the listings below run them in seven languages.
 
 #listing("dsa/samples-c/src/Ch30/treap.c", first: 95, last: 143, caption: [c, split by key and merge by priority, the depth meter bumped on entry and unwound on exit])
-#listing("dsa/samples/src/Ch30/Treap.cs", first: 98, last: 149, caption: [c\#, the same pair as tuple-returning methods, pull after every relink])
 #listing("dsa/samples-go/ch30/treap.go", first: 104, last: 150, caption: [go, split and merge with the meter in the treap struct, push before each descent])
+#listing("dsa/samples-java/src/Ch30/Treap.java", first: 101, last: 150, caption: [java, split and merge over the node pool, priorities compared unsigned, the meter unwound on each return])
+#listing("dsa/samples/src/Ch30/Treap.cs", first: 98, last: 149, caption: [c\#, the same pair as tuple-returning methods, pull after every relink])
 #listing("dsa/samples-js/src/ch30-treap.mjs", first: 92, last: 134, caption: [javascript, the split and merge core, private depth fields, destructured pair returns])
 #listing("dsa/samples-py/src/Ch30/treap.py", first: 78, last: 112, caption: [python, split then merge, push on entry, pull on the way out])
 #listing("dsa/samples-lua/ch30_treap.lua", first: 60, last: 97, caption: [lua, the same pair, the meter unwound on both return paths])
@@ -96,11 +97,14 @@ guarantees worst-case logarithmic depth through rotations, the treap
 only expects it, but the treap's split and merge compose into range
 logic the rotation machinery does not give directly.
 
-The fixture families pin identical numbers in all six suites. The
+The fixture families pin identical numbers in all seven suites. The
 shape family inserts keys 5, 2, 8, 1, 4, 7, 9, 3, 6 with values ten
 times the key and reads inorder 1 through 9 with values 10 through
 90, size 9, depth 5, the preorder 9, 4, 3, 1, 2, 6, 5, 8, 7, and zero
-rebuilds. The algebra family splits at 5 into sizes 4 and 5 holding
+rebuilds. Java draws the same splitMix32 priorities as unsigned
+32-bit values, so every priority comparison routes through
+Integer.compareUnsigned, a signed compare sorts the draws past 2^31
+negative and grows a different tree. The algebra family splits at 5 into sizes 4 and 5 holding
 keys 1 through 4 and 5 through 9, splits at 0 and at 10 into 0/9 and
 9/0, and merges each back to a preorder identical to the base. The
 lazy family sums the whole key range at 450, adds 10 over keys 2
@@ -114,7 +118,7 @@ default gate 23 never trips: depth 9, zero rebuilds, sum 496. A tight
 gate trips 7 rebuilds, lands at depth 6, keeps inorder 1 through 31
 intact, and pins the rebuilt preorder 15, 8, 4, 2, 1, 3, 6, 5, 7,
 12, 10, 9, 11, 14, 13, 23, 19, 17, 16, 18, 21, 20, 22, 27, 25, 24,
-26, 29, 28, 30, 31. All six languages reach that shape with gate 4,
+26, 29, 28, 30, 31. All seven languages reach that shape with gate 4,
 every meter tracking live recursion, bumped on entry and unwound on
 each return. The edge family closes the contract: an empty treap
 sizes 0 and sums 0, inserting key 7 twice replaces the value in place
@@ -339,11 +343,13 @@ the comparison meters with the sibling suites on the same script.
 })
 
 The meter closing at 10 over the drain 1, 2, 3, 5, 8, 9 is the
-pinned pair, and the listings below meld both heaps in six languages.
+pinned pair, and the listings below meld both heaps in seven
+languages.
 
 #listing("dsa/samples-c/src/Ch30/mergeheap.c", first: 63, last: 101, caption: [c, the two melds adjacent, one coin flip against one unconditional swap])
-#listing("dsa/samples/src/Ch30/MergeHeap.cs", first: 45, last: 58, caption: [c\#, the coin meld, the skew twin below swaps unconditionally])
 #listing("dsa/samples-go/ch30/mergeheap.go", first: 19, last: 41, caption: [go, the coin draw and the randomized meld, comparison meter inside])
+#listing("dsa/samples-java/src/Ch30/Mergeheap.java", first: 68, last: 106, caption: [java, the two melds adjacent, the coin is the splitMix32 low bit, unsigned shifts])
+#listing("dsa/samples/src/Ch30/MergeHeap.cs", first: 45, last: 58, caption: [c\#, the coin meld, the skew twin below swaps unconditionally])
 #listing("dsa/samples-js/src/ch30-mergeheap.mjs", first: 39, last: 55, caption: [javascript, the randomized meld, the loser descends left after the coin])
 #listing("dsa/samples-py/src/Ch30/mergeheap.py", first: 46, last: 86, caption: [python, both melds, the whole contrast in one slice])
 #listing("dsa/samples-lua/ch30_mergeheap.lua", first: 33, last: 70, caption: [lua, the coin meld and the skew meld, table heaps])
@@ -357,9 +363,9 @@ so the skew heap posts the same 4/2/10 while its meter stays its own.
 Duplicates push 2, 2, 1 and drain 1, 2, 2 on 2 comparisons in both,
 and melding with an empty heap costs nothing and returns the other
 heap unchanged. The edges refuse politely per language house style, a
-sentinel flag in c, an exception in c\#, go, javascript, and python,
-a nil-indexing throw in lua, and the python suite pins the self-meld
-identity on a singleton.
+sentinel flag in c and java, an exception in c\#, go, javascript, and
+python, a nil-indexing throw in lua, and the python suite pins the
+self-meld identity on a singleton.
 
 #diagram([two 3-node heaps melding, the coin swapping the winner's children before the descent, the merged heap with the minimum at the root], length: 13pt, {
   // heap A: 1(5, 8); heap B: 2(3, 9)
@@ -456,11 +462,12 @@ suite pinning both with the sibling suites on the same digits.
 })
 
 The kth(4) answer of 3 beside the rope's mid-run 249 are the pinned
-pair, and the listings below walk both machines in six languages.
+pair, and the listings below walk both machines in seven languages.
 
 #listing("dsa/samples-c/src/Ch30/orderstats.c", first: 50, last: 75, caption: [c, the kth bit-jump descent, rank as a clamped prefix, freq by differencing])
-#listing("dsa/samples/src/Ch30/OrderStats.cs", first: 116, last: 135, caption: [c\#, the implicit split by index, subtree size steering the recursion])
 #listing("dsa/samples-go/ch30/orderstats.go", first: 34, last: 54, caption: [go, kth walking the powers of two down, refusal outside 1..total])
+#listing("dsa/samples-java/src/Ch30/Orderstats.java", first: 49, last: 76, caption: [java, the kth bit-jump descent, rank as a clamped prefix, freq by differencing])
+#listing("dsa/samples/src/Ch30/OrderStats.cs", first: 116, last: 135, caption: [c\#, the implicit split by index, subtree size steering the recursion])
 #listing("dsa/samples-js/src/ch30-orderstats.mjs", first: 108, last: 122, caption: [javascript, split by index, the left tree keeps the first k positions])
 #listing("dsa/samples-py/src/Ch30/orderstats.py", first: 43, last: 57, caption: [python, the kth descent over the frequency fenwick])
 #listing("dsa/samples-lua/ch30_orderstats.lua", first: 95, last: 108, caption: [lua, the implicit split, 0-based public face over 1-based tables])
@@ -477,8 +484,9 @@ erases position 4 for the value 20, and reads at(0) and at(2) as 30
 and 40. Then the interleaved script runs 40 operations off the house
 lcg with seed 30, insert_at, erase_at, and sum_range mixed, every sum
 checked against a shadow list, javascript driving the generator
-through Math.imul so its 32-bit multiplies agree with the other five,
-and the final list pins at 16, 27, 40, 1, 27. The edges: an empty
+through Math.imul so its 32-bit multiplies agree with the other six,
+java masking the unsigned state to 32 bits before the double
+widening, and the final list pins at 16, 27, 40, 1, 27. The edges: an empty
 rope sums 0, a single-element move_to_front is a no-op, kth refuses
 at 0 and past the total, and rank outside the universe clamps to 0
 and to the total.
@@ -523,7 +531,7 @@ smallest in expected linear time without any structure, and the
 fenwick here is the online upgrade that answers rank and select
 repeatedly under inserts and removals.
 
-== across the six languages
+== across the seven languages
 
 Featured build size counted as non-blank, non-comment lines of the
 chapter's three sample files per language, embedded test scripts
@@ -534,8 +542,9 @@ included:
   inset: 4pt,
   table.header([*language*], [*build sloc*], [*container dependency*], [*boundary note*]),
   [c], [865], [static pool arrays, index 0 the null node], [long long sums, uint32 priorities, the empty-pop sentinel flag],
-  [c\#], [574], [nullable node classes, tuples], [default gate from size, gate override in the constructor, exceptions at the boundaries],
   [go], [541], [struct with meters, no imports beyond fmt], [error returns on empty pops and kth out of range],
+  [java], [909], [jdk 27 stdlib], [splitMix32 priorities are uniform uint32 draws, every comparison through Integer.compareUnsigned, the shifts >>> not >>],
+  [c\#], [574], [nullable node classes, tuples], [default gate from size, gate override in the constructor, exceptions at the boundaries],
   [javascript], [451], [class fields, private methods], [Math.imul on every 32-bit multiply, splitMix32 and the lcg included],
   [python], [665], [`__slots__` nodes, check harness], [system exit on failure, ok-N print, the self-meld identity pinned],
   [lua], [630], [tables, 1-based inside], [64-bit integers keep the priority products exact],
@@ -550,7 +559,8 @@ rank/select extension is taught in our own words, and "K-th order
 statistic in O(N)", cp-algorithms.com/sequences/k-th.html, the
 quickselect kin, all accessed 2026-09-20, cc by-sa 4.0, our own words
 and code throughout. Application source: icpc world finals 2019
-problem F (book 10, chapter 10). Sample behavior verified by the six
-suite gates scoped to chapter 30: c 3 files and 82 checks, c\# 17
-facts, go 12 test functions, javascript 13 tests and 73 asserts,
+problem F (book 10, chapter 10). Sample behavior verified by the seven
+suite gates scoped to chapter 30: c 3 files and 82 checks, go 12 test
+functions, java 3 files and 82 checks under run-java-samples, c\# 17
+facts, javascript 13 tests and 73 asserts,
 python 3 files and 57 asserts, lua 14 checks, zero skipped.

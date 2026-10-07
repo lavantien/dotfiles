@@ -6,7 +6,7 @@
   meta: (
     title: "c# 15, f# 11, and .net 11",
     subtitle: "a complete c# manual with an f# tour",
-    author: "Mr. Raheliosol",
+    author: "Raeliosol",
     version: "5.0",
     volume-label: "book 5",
   ),

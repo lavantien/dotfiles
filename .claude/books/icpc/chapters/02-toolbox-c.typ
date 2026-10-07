@@ -959,12 +959,16 @@ the conversation.
   cdraw.content((10.0, 1.2), [1 + 2 + 3.5 - 4 = 2.5], size: 6.5pt, fill: luma(100))
 })
 
-== across the six languages
+== across the seven languages
 
 This chapter owns C, and the honest close is the same table every
 toolbox chapter closes with, the structure, how C builds it, how Lua
-builds it, and why they differ. The other four languages carry their
-own chapters, and their rows join the comparison there.
+builds it, and why they differ. The other five languages carry their
+own chapters, and their rows join the comparison there. Java's
+chapter 4 sits at the opposite pole and still teaches the same seam:
+BigInteger ships in its library, but its kit builds the wide product
+from `Math.multiplyHigh` plus a 128-step shift-subtract remainder
+lane beside it, add-and-double with a machine that cooperates.
 
 #table(
   columns: (1.2fr, 1.6fr, 1.6fr, 1.6fr),

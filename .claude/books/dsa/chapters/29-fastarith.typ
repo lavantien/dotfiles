@@ -14,7 +14,7 @@ inverse 416537774, the 2^14 fft cap, the per-language karatsuba cuts,
 flows from the rulings of #xref-to("icpc", "fastarith"), the measured
 contest companion whose benches this book does not repeat. The
 fixtures are fresh and didactic, the work is counted rather than
-timed, and all six languages pin the same digits.
+timed, and all seven languages pin the same digits.
 
 == the dynamic bignum core
 
@@ -62,13 +62,15 @@ sibling suites on the same digits.
 )
 
 The pinned sum 2222222211222222221122221 with the 0, 0, 0, 1 chain is
-what the listings below build in six languages.
+what the listings below build in seven languages.
 
 #listing("dsa/samples-c/src/Ch29/bigint.c", first: 31, last: 71, caption: [c, normalize then parse, chunks cut from the right, static limbs capped at 512])
 
-#listing("dsa/samples/src/Ch29/BigNum.cs", first: 32, last: 63, caption: [c\#, Parse with the three refusals, limbs least significant first])
-
 #listing("dsa/samples-go/ch29/bigint.go", first: 36, last: 83, caption: [go, normalize strips high zeros, ParseBig takes a leading minus only])
+
+#listing("dsa/samples-java/src/Ch29/Bigint.java", first: 19, last: 60, caption: [java, bigNorm then bigParse, chunks cut from the right, int limbs capped at 512])
+
+#listing("dsa/samples/src/Ch29/BigNum.cs", first: 32, last: 63, caption: [c\#, Parse with the three refusals, limbs least significant first])
 
 #listing("dsa/samples-js/src/ch29-bigint.mjs", first: 16, last: 43, caption: [javascript, normalize, parse, print, Number limbs with every exact product on BigInt])
 
@@ -79,7 +81,10 @@ what the listings below build in six languages.
 The integer roads: C keeps a static u32 limb array capped at 512
 limbs, 4608 digits, with no allocation anywhere. JavaScript stores
 limbs as Numbers but runs every exact limb product through BigInt,
-because 999999999 squared passes 2^53. Lua keeps integer tables,
+because 999999999 squared passes 2^53. Java keeps int limb arrays
+with the carry arithmetic in long, every schoolbook product 1e18
+inside 2^63, and BigInteger left out on purpose, the limbs are the
+taught mechanism. Lua keeps integer tables,
 every schoolbook product 1e18 stays under 2^63. Fixtures pin the
 round trip first: the 36-digit string
 314159265358979323846264338327950288 parses to four limbs reading
@@ -157,8 +162,8 @@ that shares a cut.
 
 The dry run: the fixture is the pattern operand, limb 123456789
 repeated k times, squared at k = 24, 48, and 96 under the 24 cut
-shared by C, C\#, JavaScript, and Python, asserted by the C\# suite,
-while Go walks its measured 48 cut and Lua its 64.
+shared by C, C\#, Java, JavaScript, and Python, asserted by the C\#
+suite, while Go walks its measured 48 cut and Lua its 64.
 
 + At k = 24 the operands sit exactly at the cut: one schoolbook leaf
   at 24 × 24 = 576, equal to the schoolbook square.
@@ -188,13 +193,15 @@ while Go walks its measured 48 cut and Lua its 64.
 )
 
 The 4941 against 9216 at 96 limbs is the counted claim, and the
-listings below tick the same counter in six languages.
+listings below tick the same counter in seven languages.
 
 #listing("dsa/samples-c/src/Ch29/karatsuba.c", first: 175, last: 215, caption: [c, the recursion over a static arena, three multiplies and the offset recombination])
 
-#listing("dsa/samples/src/Ch29/Karatsuba.cs", first: 24, last: 63, caption: [c\#, Rec with padded sums, then Combine at offsets 0, m, 2m])
-
 #listing("dsa/samples-go/ch29/karatsuba.go", first: 15, last: 57, caption: [go, the counted recursion, base case at go's measured cut of 48])
+
+#listing("dsa/samples-java/src/Ch29/Karatsuba.java", first: 162, last: 201, caption: [java, kmul over the shared arena, windows as array-offset pairs, three multiplies at offsets 0, m, 2m])
+
+#listing("dsa/samples/src/Ch29/Karatsuba.cs", first: 24, last: 63, caption: [c\#, Rec with padded sums, then Combine at offsets 0, m, 2m])
 
 #listing("dsa/samples-js/src/ch29-karatsuba.mjs", first: 76, last: 102, caption: [javascript, karaRaw and combine, the counter ticking in the base case])
 
@@ -203,9 +210,9 @@ listings below tick the same counter in six languages.
 #listing("dsa/samples-lua/ch29_karatsuba.lua", first: 85, last: 122, caption: [lua, split, pad the sums to max plus one, recurse, recombine])
 
 The cuts are the icpc book's chapter 14 measured crossovers reused
-without re-benching, 24 limbs for C, C\#, JavaScript, and Python, 48
-for Go, 64 for Lua, and each language asserts its own cut's pinned
-rows. At cut 24 the counts run (24, 576, 576), (48, 1661, 2304), and
+without re-benching, 24 limbs for C, C\#, Java, JavaScript, and
+Python, 48 for Go, 64 for Lua, and each language asserts its own
+cut's pinned rows. At cut 24 the counts run (24, 576, 576), (48, 1661, 2304), and
 (96, 4941, 9216) for limbs, karatsuba, schoolbook, go's cut 48 gives
 (48, 2304, 2304), (96, 6485, 9216), and (144, 12031, 20736), and
 lua's cut 64 gives (64, 4096, 4096) and (128, 11461, 16384). At the
@@ -248,7 +255,7 @@ applied exactly once.
   cdraw.content((15.3, 5.9), [the counted rows are pure functions], size: 6pt, anchor: "west")
   cdraw.content((15.3, 5.2), [of length and cut, the +1 limb is], size: 6pt, anchor: "west")
   cdraw.content((15.3, 4.75), [the sums' carry headroom], size: 6pt, anchor: "west")
-  cdraw.content((1.6, 3.7), [cuts: c, c\#, js, py at 24 limbs, go 48, lua 64], size: 6pt, anchor: "west")
+  cdraw.content((1.6, 3.7), [cuts: c, c\#, java, js, py at 24 limbs, go 48, lua 64], size: 6pt, anchor: "west")
   cdraw.content((1.6, 3.05), [at 96 limbs: 4941 leaf muls against 9216], size: 6pt, anchor: "west")
   cdraw.content((1.6, 2.4), [O(n^1.585) against O(n^2)], size: 6pt, anchor: "west")
   cdraw.content((1.6, 1.75), [the base case counts la \* lb leaf multiplies], size: 6pt, anchor: "west")
@@ -324,13 +331,15 @@ same rows.
 })
 
 10^96 - 49, ninety-four nines then 51, is the pinned product, and the
-listings below fold it through both primes in six languages.
+listings below fold it through both primes in seven languages.
 
 #listing("dsa/samples-c/src/Ch29/ntt.c", first: 43, last: 76, caption: [c, the iterative transform, bit reversal then doubling stages, butterflies inside u64])
 
-#listing("dsa/samples/src/Ch29/Ntt.cs", first: 52, last: 85, caption: [c\#, the crt fold per column, then one prime's convolution driver])
-
 #listing("dsa/samples-go/ch29/ntt.go", first: 37, last: 78, caption: [go, the transform, add-subtract butterflies staying inside int64])
+
+#listing("dsa/samples-java/src/Ch29/Ntt.java", first: 40, last: 72, caption: [java, the iterative transform, bit reversal then doubling stages, butterflies inside long])
+
+#listing("dsa/samples/src/Ch29/Ntt.cs", first: 52, last: 85, caption: [c\#, the crt fold per column, then one prime's convolution driver])
 
 #listing("dsa/samples-js/src/ch29-ntt.mjs", first: 31, last: 58, caption: [javascript, transform on BigInt, stated openly, one stage root by fast pow])
 
@@ -340,8 +349,8 @@ listings below fold it through both primes in six languages.
 
 The butterfly arithmetic is where the languages split, and the note is
 short: a residue product stays under (P-1)^2 < 9.97e17, inside signed
-64 bits for C, C\#, Go, and Lua, while JavaScript runs the butterflies
-on BigInt. The ceiling note: P1 times P2 is 753649251896000513,
+64 bits for C, Go, Java, C\#, and Lua, while JavaScript runs the
+butterflies on BigInt. The ceiling note: P1 times P2 is 753649251896000513,
 under 2^63, and every true column value the fold rebuilds sits below
 it. The transform length is the next power of two at or past la plus
 lb, capped at 2^16 base-1e4 limbs, 262144 decimal digits for the
@@ -454,13 +463,15 @@ sibling suites on the same digits.
 })
 
 The same 100 digits off both paths is the pinned stressor, and the
-listings below run plain and split in six languages.
+listings below run plain and split in seven languages.
 
 #listing("dsa/samples-c/src/Ch29/fft.c", first: 83, last: 119, caption: [c, the split branch, pack, one forward, spectra by conjugate reversal, one inverse])
 
-#listing("dsa/samples/src/Ch29/Fft.cs", first: 62, last: 93, caption: [c\#, plain and split side by side, both spectra from conjugate partners])
-
 #listing("dsa/samples-go/ch29/fft.go", first: 76, last: 121, caption: [go, both paths in one driver, the mirror index spelled out])
+
+#listing("dsa/samples-java/src/Ch29/Fft.java", first: 88, last: 134, caption: [java, the split branch packs a + i b, spectra by conjugate reversal, plain in the else])
+
+#listing("dsa/samples/src/Ch29/Fft.cs", first: 62, last: 93, caption: [c\#, plain and split side by side, both spectra from conjugate partners])
 
 #listing("dsa/samples-js/src/ch29-fft.mjs", first: 70, last: 112, caption: [javascript, plain then split, the two recovery formulas on doubles])
 
@@ -477,10 +488,10 @@ four sign combinations pin, and zero operands return zero. At the cap
 exactly, all-9999 base-1e4 operands of 8192 limbs each, 32768 digits
 with la plus lb equal to 2^14, square to 10^65536 - 2 \* 10^32768 + 1
 by identity, 65536 digits asserted by count and pattern, and one
-doubling past the cap refuses loudly on both paths. JavaScript and
-Lua ride plain double arrays and tables the whole way, which is the
-point, the cap and the guard are what make doubles safe here, not a
-wider type.
+doubling past the cap refuses loudly on both paths. JavaScript, Java,
+and Lua ride plain double arrays and tables the whole way, which is
+the point, the cap and the guard are what make doubles safe here, not
+a wider type.
 
 #diagram([measured fractional drift at 2^14, 2^15, 2^16 against the 0.25 guard and the 0.5 rounding cliff, the safe range shaded under the cap], length: 13pt, {
   let x = (t) => 1.4 + (calc.log(t, base: 2) - 12) * 2.5
@@ -564,13 +575,15 @@ siblings pinning the same quotients.
 )
 
 43478260869565217391304347826 with remainder 2 is the pinned pair,
-and the listings below divide in six languages.
+and the listings below divide in seven languages.
 
 #listing("dsa/samples-c/src/Ch29/divmod.c", first: 200, last: 237, caption: [c, the quotient loop, estimate, clamp, refine, mulsub, the rare add-back])
 
-#listing("dsa/samples/src/Ch29/DivMod.cs", first: 49, last: 87, caption: [c\#, the knuth D loop, rhat refinement, floor-dividing mulsub, add-back])
-
 #listing("dsa/samples-go/ch29/divmod.go", first: 65, last: 107, caption: [go, the loop with the add-back branch restoring the window])
+
+#listing("dsa/samples-java/src/Ch29/Divmod.java", first: 187, last: 222, caption: [java, the knuth D loop, estimate, clamp, refine, mulsub, the rare add-back])
+
+#listing("dsa/samples/src/Ch29/DivMod.cs", first: 49, last: 87, caption: [c\#, the knuth D loop, rhat refinement, floor-dividing mulsub, add-back])
 
 #listing("dsa/samples-js/src/ch29-divmod.mjs", first: 61, last: 104, caption: [javascript, estimate and mulsub through BigInt, add-back when the top goes negative])
 
@@ -688,13 +701,15 @@ sibling suites on the same rows.
 })
 
 The eighth row and the 214358881 are the pinned pair, and the
-listings below fold all of it over one prime in six languages.
+listings below fold all of it over one prime in seven languages.
 
 #listing("dsa/samples-c/src/Ch29/polyops.c", first: 125, last: 163, caption: [c, mul_lin builds (x - r), interp folds prefix times suffix over the denominator])
 
-#listing("dsa/samples/src/Ch29/PolyOps.cs", first: 39, last: 64, caption: [c\#, Interpolate over prefix and suffix products, the vanishing basis])
-
 #listing("dsa/samples-go/ch29/polyops.go", first: 59, last: 89, caption: [go, Interpolate with polyMulLin and the basis product])
+
+#listing("dsa/samples-java/src/Ch29/Polyops.java", first: 116, last: 153, caption: [java, mulLin builds (x - r), interp folds prefix times suffix over the denominator inverse])
+
+#listing("dsa/samples/src/Ch29/PolyOps.cs", first: 39, last: 64, caption: [c\#, Interpolate over prefix and suffix products, the vanishing basis])
 
 #listing("dsa/samples-js/src/ch29-polyops.mjs", first: 99, last: 133, caption: [javascript, linMul then the lagrange fold, residues on BigInt])
 
@@ -752,18 +767,19 @@ point.
   cdraw.content((11.0, 0.75), [n + 1 distinct points, n <= 64], size: 6pt, anchor: "west")
 })
 
-== across the six languages
+== across the seven languages
 
 Build size counts non-blank, non-comment lines over the chapter's
-six sample files per language, embedded checks included:
+seven sample files per language, embedded checks included:
 
 #table(
   columns: (auto, auto, 1.2fr, 2.9fr),
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [1603], [libc and libm], [static arrays throughout, 512-limb caps, no malloc, uint128 banned by the icpc ch14 grep rule, every divmod numerator under 1e18],
-  [c\#], [718], [bcl, System.Numerics], [long limbs with (p-1)^2 inside signed 64, Complex for the fft, BigNum shared by every later file],
   [go], [811], [stdlib only], [one package over six files, errors carry the refusals, add-subtract butterflies stay inside int64],
+  [java], [1556], [jdk 27 stdlib], [hand-rolled int limb arrays, BigInteger never invoked, karatsuba arena windows as array-offset pairs, butterflies and the under-1e18 qhat numerator inside long],
+  [c\#], [718], [bcl, System.Numerics], [long limbs with (p-1)^2 inside signed 64, Complex for the fft, BigNum shared by every later file],
   [javascript], [691], [node stdlib], [BigInt at each named boundary: exact limb products, ntt butterflies, qhat and mulsub, residue products],
   [python], [912], [stdlib only], [native ints, three-argument pow as the ground-truth cross-check, guards raise ValueError],
   [lua], [1046], [lib.lua harness], [integer tables with every product under 2^63, 1-based tables documented per file, error() carries refusals],
@@ -783,8 +799,9 @@ exactly as the icpc book's chapter 14 sources row pins them. The
 measured constants quoted in the text, the two primes, INV, the 2^14
 drift cap with its ranges, and the karatsuba cuts, come from the
 icpc book's chapter 14 benches run 2026-09-19, and icpc 2018 problem
-C is named as the application. Sample behavior verified by the six
-suite gates scoped to chapter 29: c 6 files and 123 checks, c\# 37
-facts, go 19 tests, javascript 20 tests, python 6 files and 118
-asserts, lua 24 checks, zero skipped. This chapter carries 36
+C is named as the application. Sample behavior verified by the seven
+suite gates scoped to chapter 29: c 6 files and 123 checks, go 19
+tests, java 6 files and 199 checks under run-java-samples, c\# 37
+facts, javascript 20 tests, python 6 files and 118
+asserts, lua 24 checks, zero skipped. This chapter carries 42
 listings and 9 figures.

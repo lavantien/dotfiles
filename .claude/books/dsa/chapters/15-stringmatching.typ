@@ -5,7 +5,7 @@
 Finding a pattern in text has a naive quadratic answer and a family
 of linear and near-linear machines that each precompute something
 about the pattern: borders, skip tables, rolling hashes, or a whole
-automaton. This chapter builds them in order, six languages deep,
+automaton. This chapter builds them in order, seven languages deep,
 ending with the multi-pattern machine that scans once for every
 pattern at once.
 
@@ -51,13 +51,15 @@ overlapping anchor, `abab` in `abababab` at 14.
 })
 
 The 13 with its 12 twin is the pinned meter pair, and the listings
-below count the same walk in six languages.
+below count the same walk in seven languages.
 
 #listing("dsa/samples-c/src/Ch15/naive.c", first: 20, last: 36, caption: [c, every alignment tried, comparisons counted globally])
 
-#listing("dsa/samples/src/Ch15/Naive.cs", first: 6, last: 38, caption: [c\#, the hit list, then the same walk with the comparison count exposed])
-
 #listing("dsa/samples-go/ch15/naive.go", first: 5, last: 19, caption: [go, whole-window substring compare, the ground truth list])
+
+#listing("dsa/samples-java/src/Ch15/Naive.java", first: 21, last: 51, caption: [java, charAt walk with the meter running, indexOf the referee for non-empty needles])
+
+#listing("dsa/samples/src/Ch15/Naive.cs", first: 6, last: 38, caption: [c\#, the hit list, then the same walk with the comparison count exposed])
 
 #listing("dsa/samples-js/src/ch15-naive.mjs", first: 4, last: 30, caption: [javascript, the plain walk and the counted walk side by side])
 
@@ -67,12 +69,15 @@ below count the same walk in six languages.
 
 Measured across the suites: every language pins the overlapping
 anchor, `abab` in `abababab` at 0, 2, and 4. The comparison meter
-splits three ways. C, JavaScript, and Lua pin the 14 for that fixture,
-C\# pins the same counting rule on its own fixtures, 13 for `abc` in
-`abcabcabc` and 12 for `abc` in `abababab`, and Go compares whole
-substrings so it pins positions only. Python cross-checks every hit
-list against `str.find` advanced one past each hit, the same
-ground-truth move the C\# suite makes with `IndexOf`.
+splits three ways. C, Java, JavaScript, and Lua pin the 14 for that
+fixture, C\# pins the same counting rule on its own fixtures, 13 for
+`abc` in `abcabcabc` and 12 for `abc` in `abababab`, and Go compares
+whole substrings so it pins positions only. Python cross-checks every
+hit list against `str.find` advanced one past each hit, the same
+ground-truth move the C\# suite makes with `IndexOf`, and Java does
+it with `indexOf` over non-empty needles only, because `indexOf`
+clamps an empty needle's start to the text length instead of ending
+the scan.
 
 #diagram([the naive scan over abababab for abab, matching windows shaded, the comparison ledger under each], length: 13pt, {
   let txt = ("a", "b", "a", "b", "a", "b", "a", "b")
@@ -144,13 +149,15 @@ that every suite carries.
 })
 
 The 0, 2, 4 off eight forward reads is the pinned scan, and the
-listings below build the table in six languages.
+listings below build the table in seven languages.
 
 #listing("dsa/samples-c/src/Ch15/kmp.c", first: 18, last: 49, caption: [c, the failure table, then the single-pass scan])
 
-#listing("dsa/samples/src/Ch15/Strings.cs", first: 4, last: 44, caption: [c\#, the failure table, then the linear scan])
-
 #listing("dsa/samples-go/ch15/kmp.go", first: 3, last: 43, caption: [go, the table builder and the scan that never backs up])
+
+#listing("dsa/samples-java/src/Ch15/Kmp.java", first: 20, last: 53, caption: [java, the border table, the scan, the hit slides k to the border])
+
+#listing("dsa/samples/src/Ch15/Strings.cs", first: 4, last: 44, caption: [c\#, the failure table, then the linear scan])
 
 #listing("dsa/samples-js/src/ch15-kmp.mjs", first: 5, last: 31, caption: [javascript, the border fallback chain and the scan])
 
@@ -165,9 +172,10 @@ ground-truth test cross-checks against `IndexOf` scanning.
 
 Every suite pins the same two anchors: the `ababa` table 0 0 1 2 3
 and the overlapping hits 0, 2, 4. The ground-truth partner differs
-by ecosystem, C\# and Python replay `IndexOf` and `str.find`, C and
-Lua carry a private naive counter, and Go and JavaScript hold the
-scan against table-driven window lists. After a hit every version
+by ecosystem, C\# and Python replay `IndexOf` and `str.find`, C,
+Java, and Lua carry a private naive counter, and Go and JavaScript
+hold the scan against table-driven window lists. After a hit every
+version
 sets the matched length to its own border rather than zero, which is
 what keeps the overlapping occurrences arriving.
 
@@ -270,13 +278,15 @@ Python and Lua twins carrying the same numbers.
 })
 
 The 5 comparisons with shifts 3 then 2 is the pinned ledger, and the
-listings below carry the after-hit split in six languages.
+listings below carry the after-hit split in seven languages.
 
 #listing("dsa/samples-c/src/Ch15/horspool.c", first: 20, last: 58, caption: [c, the skip table, tail-aligned compare, shifts recorded])
 
-#listing("dsa/samples/src/Ch15/Strings.cs", first: 45, last: 66, caption: [c\#, one table, one pass, first index back])
-
 #listing("dsa/samples-go/ch15/horspool.go", first: 8, last: 46, caption: [go, bad character table, then the stats-bearing scan])
+
+#listing("dsa/samples-java/src/Ch15/Horspool.java", first: 24, last: 61, caption: [java, the skip table, tail compare, every shift logged, hits keep shifting])
+
+#listing("dsa/samples/src/Ch15/Strings.cs", first: 45, last: 66, caption: [c\#, one table, one pass, first index back])
 
 #listing("dsa/samples-js/src/ch15-horspool.mjs", first: 6, last: 42, caption: [javascript, map-backed table, a match clears the whole pattern])
 
@@ -285,13 +295,15 @@ listings below carry the after-hit split in six languages.
 #listing("dsa/samples-lua/ch15_horspool.lua", first: 9, last: 45, caption: [lua, table of 256 chars, tail compare leftward])
 
 The suites disagree on purpose about what happens after a hit, and
-the disagreement is worth reading twice. C, Python, and Lua keep
-shifting by the tail character's table entry even after a full match,
-so `abab` in `abababab` reports the overlapping 0, 2, 4 at 12
-comparisons. Go and JavaScript advance the whole pattern after a
-hit, the classic textbook advance, so the same fixture yields 0 and
-4 and the skip counts pin instead. C\# returns the first hit index
-only. On the miss side all six agree: an absent tail character jumps
+the disagreement is worth reading twice. C, Java, Python, and Lua
+keep shifting by the tail character's table entry even after a full
+match, so `abab` in `abababab` reports the overlapping 0, 2, 4 at 12
+comparisons, Java through a mismatch-style exit that reuses the tail
+rule after every hit. Go and JavaScript advance the whole pattern
+after a hit, the classic textbook advance, so the same fixture
+yields 0 and 4 and the skip counts pin instead. C\# returns the
+first hit index only. On the miss side all seven agree: an absent
+tail character jumps
 the full pattern length, and the pinned skip sequences, like 3 then
 2 for `abc` in `abdbcabc`, are the whole point of the table.
 
@@ -373,14 +385,16 @@ own text, so the walk follows the C and Lua hand-computed anchor,
 })
 
 The 633837403 with three verifications and none spurious is the
-pinned ledger, and the listings below roll the same window in six
+pinned ledger, and the listings below roll the same window in seven
 languages.
 
 #listing("dsa/samples-c/src/Ch15/rabinkarp.c", first: 30, last: 65, caption: [c, modulus 1e9+7, products stay under 2^64, verify on hit])
 
-#listing("dsa/samples/src/Ch15/Strings.cs", first: 68, last: 97, caption: [c\#, the roll on long, negative sums patched back up])
-
 #listing("dsa/samples-go/ch15/rabinkarp.go", first: 13, last: 60, caption: [go, mersenne 2^61-1 modulus, mulmod through bits.Mul64])
+
+#listing("dsa/samples-java/src/Ch15/Rabinkarp.java", first: 20, last: 71, caption: [java, modulus 1e9+7 on plain long, every product under 2^63, prime added back on the roll])
+
+#listing("dsa/samples/src/Ch15/Strings.cs", first: 68, last: 97, caption: [c\#, the roll on long, negative sums patched back up])
 
 #listing("dsa/samples-js/src/ch15-rabinkarp.mjs", first: 4, last: 46, caption: [javascript, the whole hash on BigInt past the 2^53 boundary])
 
@@ -389,20 +403,21 @@ languages.
 #listing("dsa/samples-lua/ch15_rabinkarp.lua", first: 8, last: 49, caption: [lua, small modulus keeps every product below 2^62])
 
 The rolling hash is the chapter's first real integer-semantics
-checkpoint, and the six suites take four different roads through it.
-C and Lua hold the modulus at 1e9+7, where both operands of every
-product stay below about 1e9 and the product below 2^62, so a plain
-multiply and remainder is safe, in Lua specifically because its
-integers wrap silently at 64 bits. C\# runs the same modulus on
-`long`, and the subtraction can leave the window hash negative, so
-the roll adds the prime back. Go prefers the Mersenne prime 2^61-1,
-which needs a genuine 128-bit product from `math/bits.Mul64`.
-JavaScript puts the entire hash on BigInt with a comment at the
-boundary, because base 256 to the window length passes 2^53 after a
-handful of characters. Python needs no ceremony at all. C and Lua
-pin the same hand-computed hash, `abab` at 1633837410 reducing to
-633837403, and every suite reports 3 verifications and 0 spurious
-hits on the overlapping fixture.
+checkpoint, and the seven suites take four different roads through
+it. C and Lua hold the modulus at 1e9+7, where both operands of
+every product stay below about 1e9 and the product below 2^62, so a
+plain multiply and remainder is safe, in Lua specifically because
+its integers wrap silently at 64 bits. C\# and Java run the same
+modulus on a signed 64-bit long, where the subtraction can leave the
+window hash negative, so the roll adds the prime back first. Go
+prefers the Mersenne prime 2^61-1, which needs a genuine 128-bit
+product from `math/bits.Mul64`. JavaScript puts the entire hash on
+BigInt with a comment at the boundary, because base 256 to the
+window length passes 2^53 after a handful of characters. Python
+needs no ceremony at all. C, Java, and Lua pin the same
+hand-computed hash, `abab` at 1633837410 reducing to 633837403, and
+every suite reports 3 verifications and 0 spurious hits on the
+overlapping fixture.
 
 #diagram([rabin karp rolls the hash, the leaving and entering characters carry the update, every hit verified], length: 13pt, {
   cdraw.content((11.0, 7.6), [roll the hash one cell at a time], size: 6.5pt)
@@ -478,13 +493,15 @@ failure links.
 })
 
 The 8 hits with he inside she at all three of its stops is the pinned
-pass, and the listings below build the machine in six languages.
+pass, and the listings below build the machine in seven languages.
 
 #listing("dsa/samples-c/src/Ch15/aho.c", first: 41, last: 73, caption: [c, the trie, then breadth-first failure links])
 
-#listing("dsa/samples/src/Ch15/Strings.cs", first: 101, last: 152, caption: [c\#, add patterns, then the build that hangs outputs on fail chains])
-
 #listing("dsa/samples-go/ch15/aho.go", first: 21, last: 56, caption: [go, the trie build and map-carrying nodes])
+
+#listing("dsa/samples-java/src/Ch15/Aho.java", first: 37, last: 90, caption: [java, the int-array trie, breadth-first fail links, the scan walks the fail chain])
+
+#listing("dsa/samples/src/Ch15/Strings.cs", first: 101, last: 152, caption: [c\#, add patterns, then the build that hangs outputs on fail chains])
 
 #listing("dsa/samples-js/src/ch15-aho.mjs", first: 4, last: 37, caption: [javascript, node array, sorted breadth-first link pass])
 
@@ -500,15 +517,15 @@ This is the spam filter, virus scanner, and censorship library
 algorithm, and it is the last structure the capstone's key index
 could borrow from, prefix queries over a dictionary of stored keys.
 
-All six suites build `he`, `she`, `his`, `hers` and pin the same
+All seven suites build `he`, `she`, `his`, `hers` and pin the same
 eight hits over `ushershehished`. The output machinery splits two
-ways, and both are correct: C, JavaScript, and Lua walk the fail
-chain at search time looking for nodes that end patterns, while
+ways, and both are correct: C, Java, JavaScript, and Lua walk the
+fail chain at search time looking for nodes that end patterns, while
 C\#, Go, and Python fold the fail node's output list into the node
-during the build, buying a flat scan with one append per link. C and
-Lua also pin the machine itself, 10 nodes and the four named failure
-links, and Python borrows `collections.deque` for the breadth-first
-queue, the one supporting container in the chapter.
+during the build, buying a flat scan with one append per link. C,
+Java, and Lua also pin the machine itself, 10 nodes and the four
+named failure links, and Python borrows `collections.deque` for the
+breadth-first queue, the one supporting container in the chapter.
 
 #diagram([aho-corasick, a trie with failure links, one pass reports every pattern including he inside she], length: 13pt, {
   // patterns he, she, his, hers over ushershehished: eight hits
@@ -568,7 +585,7 @@ queue, the one supporting container in the chapter.
   cdraw.content((11.5, -0.75), [dashed: failure links, shaded nodes inherit their fail node's outputs], size: 6pt)
 })
 
-== across the six languages
+== across the seven languages
 
 The build sizes count non-comment source lines over this chapter's
 five featured files per language, checks included where they share
@@ -582,6 +599,7 @@ separate test project carries them:
   [c], [363], [libc only], [unsigned char casts index the 256-slot skip table, counts in long long, 83 checks ride in main],
   [c\#], [190], [bcl only], [the rolling hash runs on long and adds the prime back after a subtract, horspool returns the first index],
   [go], [199], [math/bits], [rabin karp mods the mersenne 2^61-1, mulmod through bits.Mul64, a match advances the whole pattern],
+  [java], [476], [jdk 27 stdlib], [the 1e9+7 hash stays on plain long, every product under 2^63, the indexOf referee is non-empty-needles-only because it clamps an empty needle],
   [javascript], [182], [node stdlib], [the hash is BigInt with a comment at the 2^53 boundary, horspool skips overlaps by design],
   [python], [274], [stdlib only], [native ints, str.find is the ground truth, collections.deque is the one borrowed container, for the bfs],
   [lua], [339], [lib.lua harness], [modulus 1e9+7 keeps products under 2^62 so the silent int64 wrap never fires here],
@@ -593,7 +611,8 @@ accessed 2026-09-08, go.dev/pkg/math/bits for `Mul64`, accessed
 2026-09-14, plus the KMP, Boyer-Moore, and Aho-Corasick literature
 cited in the chapter text. Sample behavior verified by
 `make verify-csharp`, 11 tests in chapter 15 of the samples suite.
-The six-language layer verifies the same way: 5 C programs with 83
-embedded checks under `make verify-c`, 17 Go tests, 20 `node --test`
+The seven-language layer verifies the same way: 5 C programs with 83
+embedded checks under `make verify-c`, 5 Ch15 java programs with 83
+checks under `run-java-samples`, 17 Go tests, 20 `node --test`
 cases, 49 Python checks across 5 files, and 21 Lua checks under
 `run.lua`.

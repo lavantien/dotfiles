@@ -19,9 +19,9 @@ copies directly, one growth policy at a time.
 
 The dry run: the fixture is doubling growth from capacity 1, the
 step-4 contrast from capacity 4, and the all-pairs loop, asserted by
-the C, JavaScript, and Lua suites with the same numbers, Python walks
-the same counters with step 1, and C\# and Go state the closed forms
-and hold counted runs to them.
+the C, Java, JavaScript, and Lua suites with the same numbers, Python
+walks the same counters with step 1, and C\# and Go state the closed
+forms and hold counted runs to them.
 
 + Nine pushes from capacity 1 grow at sizes 1, 2, 4, 8, and the
   counter folds 1 + 2 = 3, 3 + 4 = 7, 7 + 8 = 15.
@@ -29,7 +29,8 @@ and hold counted runs to them.
   copies exactly equal to pushes.
 + The closed form 2^m - 1 holds at every size: the C\# suite pins the
   doubling count at 1, 2, 10, 13 for n = 2, 3, 1024, 4097 and keeps
-  every total under 2n.
+  every total under 2n, and Java's Allocs pins the same ladder from
+  n = 1, 0 doublings, under the same 2n line.
 + The quadratic counter compares each pair once: ten items give
   10 × 9 / 2 = 45 pairs, the insertion sort worst case of chapter 13.
 + The amortized contrast, amortized meaning the average cost over the
@@ -49,16 +50,16 @@ and hold counted runs to them.
 )
 
 The 1984 against 124 is the contrast the meters pin, and the
-listings below count the same copies in six languages.
+listings below count the same copies in seven languages.
 
 #listing("dsa/samples-c/src/Ch01/countops.c", first: 17, last: 44, caption: [c, copy totals under doubling and constant-step growth])
 
 The C suite pins the contrast from its main: 128 pushes into a
 capacity 4 buffer copy 1984 elements when capacity grows by 4 each
-time, and 124 when it doubles. The C\# suite factors the same idea
-into a reusable counter plus closed-form cost models:
+time, and 124 when it doubles. Go keeps the counted doubling loop
+beside the closed form that predicts it:
 
-#listing("dsa/samples/src/Ch01/Analysis.cs", first: 3, last: 36, caption: [the counter and the closed-form cost models])
+#listing("dsa/samples-go/ch01/countops.go", first: 31, last: 45, caption: [go, the counted doubling loop and the closed form that predicts it])
 
 The doubling model is the whole amortization argument of chapter 3 in
 one formula: growing an array by doubling copies `2^m - 1` elements
@@ -67,10 +68,14 @@ average even though every m-th one is a full copy. The quadratic model
 is the number of inverted pairs, the exact worst-case comparison count
 of insertion sort in chapter 13.
 
-The other four languages count the same copies with their own
-instruments, each checked against a closed form by its suite:
+The other five languages count the same copies with their own
+instruments, each checked against a closed form by its suite. Java
+mirrors C's loops in long arithmetic straight from its main, and C\#
+factors the idea into a reusable counter plus closed-form cost models:
 
-#listing("dsa/samples-go/ch01/countops.go", first: 31, last: 45, caption: [go, the counted doubling loop and the closed form that predicts it])
+#listing("dsa/samples-java/src/Ch01/Countops.java", first: 18, last: 51, caption: [java, the three counters in long arithmetic, the same 1984 against 124 pinned from main])
+
+#listing("dsa/samples/src/Ch01/Analysis.cs", first: 3, last: 36, caption: [c\#, the counter and the closed-form cost models])
 
 #listing("dsa/samples-js/src/ch01-countops.mjs", first: 7, last: 34, caption: [javascript, both growth policies as plain functions])
 
@@ -79,14 +84,15 @@ instruments, each checked against a closed form by its suite:
 #listing("dsa/samples-lua/ch01_countops.lua", first: 7, last: 30, caption: [lua, the two counters as local functions])
 
 Measured across the suites: the counted loops cost 15 lines in Go, 28
-in C, 28 in JavaScript, 20 in Python, and 24 in Lua. The fixture
-families differ on purpose. C, JavaScript, and Lua grow from capacity
-4 with step 4, pinning 128 pushes at 1984 copied elements against
-doubling's 124. Python grows from capacity 1 and shows step 1 paying
-the triangular 45 for 10 pushes. C\# and Go state the closed forms,
-2^m - 1 and n(n-1)/2, and hold the counted runs to them. Every family
-agrees on the anchor that matters: doubling's copy total stays linear
-in n.
+in C, 34 in Java, 28 in JavaScript, 20 in Python, and 24 in Lua. The
+fixture families differ on purpose. C, Java, JavaScript, and Lua grow
+from capacity 4 with step 4, pinning 128 pushes at 1984 copied
+elements against doubling's 124. Python grows from capacity 1 and
+shows step 1 paying the triangular 45 for 10 pushes. C\# and Go state
+the closed forms, 2^m - 1 and n(n-1)/2, and hold the counted runs to
+them, and Java spans both lanes across its files, Countops in C's
+family and Allocs carrying the closed forms. Every family agrees on
+the anchor that matters: doubling's copy total stays linear in n.
 
 #diagram([the counter instruments the run, the closed forms predict it, and the three growth curves carry the shapes], length: 13pt, {
   // left panel: doubling copies zoomed against n and the 2n bound
@@ -133,7 +139,7 @@ Instrumenting the loop to count probes turns the claim into an
 inequality every index must satisfy. C hands the count back through
 an out parameter.
 
-The dry run: the fixture is 1024 sorted slots, and all six suites
+The dry run: the fixture is 1024 sorted slots, and all seven suites
 pin the same anchors, worst present key 11 probes, absence below the
 range 10, absence above it 11.
 
@@ -171,11 +177,18 @@ range 10, absence above it 11.
 })
 
 The 10 against 11 is the anchored asymmetry, and the listings below
-carry the instrument in six languages.
+carry the instrument in seven languages.
 
 #listing("dsa/samples-c/src/Ch01/probebin.c", first: 17, last: 33, caption: [c, floor-mid search with the probe count as an out parameter])
 
-#listing("dsa/samples/src/Ch01/Analysis.cs", first: 38, last: 66, caption: [probe counting search, worst case over all indices])
+#listing("dsa/samples-go/ch01/probebin.go", first: 6, last: 25, caption: [go, the probed loop and the worst-case sweep it feeds])
+
+The other five languages carry the same instrument, Java handing the
+count back as a record where C uses an out parameter:
+
+#listing("dsa/samples-java/src/Ch01/Probebin.java", first: 18, last: 34, caption: [java, floor-mid search returning a record that pairs index with probes])
+
+#listing("dsa/samples/src/Ch01/Analysis.cs", first: 38, last: 66, caption: [c\#, probe counting search, worst case over all indices])
 
 On 1024 slots every position resolves within 11 probes, the ceiling of
 the base-2 logarithm plus one, and some position needs all 11. The
@@ -189,9 +202,7 @@ suite pins a subtler fact too, one that interview answers usually miss:
   `Absent_target_costs_no_more_than_the_worst_case` pins both numbers.
 ])
 
-The other four languages carry the same instrument:
-
-#listing("dsa/samples-go/ch01/probebin.go", first: 6, last: 25, caption: [go, the probed loop and the worst-case sweep it feeds])
+The other three languages carry the same instrument:
 
 #listing("dsa/samples-js/src/ch01-probebin.mjs", first: 5, last: 19, caption: [javascript, the probe count returned in an object])
 
@@ -199,15 +210,15 @@ The other four languages carry the same instrument:
 
 #listing("dsa/samples-lua/ch01_probebin.lua", first: 7, last: 22, caption: [lua, two return values over one-based bounds])
 
-All six suites pin the same anchors on 1024 slots: the worst present
+All seven suites pin the same anchors on 1024 slots: the worst present
 key costs 11 probes, absence below the range costs 10, absence above
-costs 11. C, JavaScript, and Lua pin the path as well, first probe at
-511, second at 767. Python pins that exactly one key pays the full 11,
-and adds an 8-slot array that resolves its low extreme in 3 probes and
-an absent key in 4. Go keeps the instrument inside one function that
-reports only what the sweep needs. The return shapes differ, an out
-parameter, an object, two values, an early return, and the anchors do
-not move.
+costs 11. C, Java, JavaScript, and Lua pin the path as well, first
+probe at 511, second at 767. Python pins that exactly one key pays the
+full 11, and adds an 8-slot array that resolves its low extreme in 3
+probes and an absent key in 4. Go keeps the instrument inside one
+function that reports only what the sweep needs. The return shapes
+differ, an out parameter, a record, an object, two values, an early
+return, and the anchors do not move.
 
 #diagram([binary search on 1024 slots, each probe halves the surviving range], length: 13pt, {
   let rowy = k => 6.0 - (k - 1) * 0.52
@@ -252,11 +263,12 @@ them. `GC.GetAllocatedBytesForCurrentThread()` reports bytes
 allocated on the current thread since its start, so differencing it
 around an action measures that action's allocation with no sampling
 error. The other trees count what they can see, C its own malloc
-calls, Go AllocsPerRun, Python tracemalloc snapshots. Time has
+calls, Go AllocsPerRun, Java the substring call whose fresh string it
+cannot avoid, Python tracemalloc snapshots. Time has
 jitter, thread switches, frequency scaling. Bytes do not.
 
 The dry run: the fixtures are the headers id+721 and seq+999 plus the
-malformed id+7x2, asserted by all six suites on the same parse
+malformed id+7x2, asserted by all seven suites on the same parse
 values. Each tree meters the allocation lane its own honest way, and
 no lane fakes a count.
 
@@ -264,7 +276,7 @@ no lane fakes a count.
   the tail after the separator into fresh storage and parses the
   copy, the walk road folds the same characters in place:
   0 × 10 + 7 = 7, 7 × 10 + 2 = 72, 72 × 10 + 1 = 721.
-+ Both parsers return 721 in every suite, and the five new trees pin
++ Both parsers return 721 in every suite, and the six new trees pin
   seq+999 to 999 both ways, C\# exercises that header through its
   meter harness.
 + The walk rejects id+7x2 in every tree, as an exception, a nonzero
@@ -274,6 +286,8 @@ no lane fakes a count.
 + Go pins AllocsPerRun at exactly 1 against 0, with a documented sink
   that keeps the digit string live so the substring road honestly
   escapes to the heap instead of staying on the stack.
++ Java counts the substring road's unavoidable fresh strings, exactly
+  1 per parse, and the in-place walk leaves the counter untouched.
 + C\# differences the thread's allocated byte count around each parse,
   strictly above 0 for the substring road and exactly 0 for the walk.
 + Python compares tracemalloc snapshots and asserts the slice road
@@ -309,16 +323,18 @@ no lane fakes a count.
 })
 
 The strictly positive against exactly 0 is the pinned pair, and the
-listing below is the meter that produced it.
-
-#listing("dsa/samples/src/Ch01/Analysis.cs", first: 68, last: 108, caption: [allocation counting, the stopwatch wrapper, two parses])
-
-The other five languages carry the same two roads with the meter each
-runtime can honestly support:
+listings below are the meters that produced it, one per tree:
 
 #listing("dsa/samples-c/src/Ch01/allocs.c", first: 53, last: 85, caption: [c, counted mallocs split the substring road from the walk])
 
 #listing("dsa/samples-go/ch01/allocs.go", first: 84, last: 119, caption: [go, the sink that keeps the substring allocation observable, then both parses])
+
+The other five languages carry the same two roads with the meter each
+runtime can honestly support:
+
+#listing("dsa/samples-java/src/Ch01/Allocs.java", first: 60, last: 79, caption: [java, the substring road's one fresh string counted by hand, the walk reads in place])
+
+#listing("dsa/samples/src/Ch01/Analysis.cs", first: 68, last: 108, caption: [c\#, allocation counting, the stopwatch wrapper, two parses])
 
 #listing("dsa/samples-js/src/ch01-allocs.mjs", first: 53, last: 72, caption: [javascript, the slice road and the in-place walk, values asserted only])
 
@@ -327,14 +343,15 @@ runtime can honestly support:
 #listing("dsa/samples-lua/ch01_allocs.lua", first: 50, last: 68, caption: [lua, substring against byte walk, values and rejection only])
 
 Measured across the suites: both roads parse id+721 to 721 in all
-six languages and seq+999 to 999 in the five new trees, and every
+seven languages and seq+999 to 999 in the six new trees, and every
 walk rejects id+7x2.
 The meter lanes stay honest per tree. C counts mallocs, 1 against 0.
-Go pins AllocsPerRun at exactly 1 against 0. C\# differences the GC
-byte counter, strictly positive against exactly 0. Python's
-tracemalloc shows the slice road allocating strictly more than the
-walk. JavaScript and Lua stop at the values, nothing they carry
-exposes a countable allocation meter.
+Go pins AllocsPerRun at exactly 1 against 0. Java counts the
+substring road's fresh string as one call the walk never makes. C\#
+differences the GC byte counter, strictly positive against exactly 0.
+Python's tracemalloc shows the slice road allocating strictly more
+than the walk. JavaScript and Lua stop at the values, nothing they
+carry exposes a countable allocation meter.
 
 That contrast, allocation as a cost with an exact meter where the
 runtime offers one, recurs through this book whenever a data
@@ -438,7 +455,7 @@ array costs O(1) on average.
 The 64-copy call inside the 1.27 average is what the three questions
 expose, and chapter 3 runs the same argument on real meters.
 
-== across the six languages
+== across the seven languages
 
 The build sizes count non-comment source lines over this chapter's
 featured files. Where a language bundles its checks into the same
@@ -450,8 +467,9 @@ test project it does not, which is most of the C and Lua gap:
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [257], [libc only], [checks share the file with main, 66 of them, counters are unsigned long long],
-  [c\#], [85], [bcl only], [gc byte counting stays the finest meter of the six, each tree asserts what its runtime honestly exposes],
   [go], [151], [errors, strconv, strings], [the closed form shifts 1 << m inside int64, a documented sink keeps the substring road's one allocation observable],
+  [java], [250], [jdk 27 stdlib], [no malloc to hook and no exposed allocation byte counter, the meter hand-counts the substring road's one fresh string, long exact since every count sits far below 2^63],
+  [c\#], [85], [bcl only], [gc byte counting stays the finest meter of the seven, each tree asserts what its runtime honestly exposes],
   [javascript], [97], [node stdlib], [every count sits far below 2^53, Number is exact with no boundary in play, the parse lanes assert values only],
   [python], [173], [stdlib only], [native ints, the floor midpoint needs no overflow-safe rewrite, tracemalloc compares the parse roads by inequality],
   [lua], [248], [lib.lua harness], [1-based indexing moves the bounds, floor division has its own operator, checks ride in the module],
@@ -461,7 +479,8 @@ sources: learn.microsoft.com, `GC.GetAllocatedBytesForCurrentThread`
 and `Stopwatch` api pages, `Memory<T> and Span<T>` usage guidelines,
 benchmarkdotnet docs at benchmarkdotnet.org, accessed 2026-09-08.
 Sample behavior verified by `make verify-csharp`, 10 tests in chapter
-1 of the samples suite. The six-language layer verifies the same way:
-3 C programs with 66 embedded checks under `make verify-c`, 17 Go
-tests, 20 `node --test` cases, 51 Python checks across 3 files, and
-19 Lua checks under `run.lua`.
+1 of the samples suite. The seven-language layer verifies the same
+way: 3 C programs with 66 embedded checks under `make verify-c`, 17
+Go tests, the java runner's 66 Ch01 checks over 3 files under
+`run-java-samples`, 20 `node --test` cases, 51 Python checks across
+3 files, and 19 Lua checks under `run.lua`.

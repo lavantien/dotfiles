@@ -6,7 +6,7 @@
   meta: (
     title: "javascript es2026 and typescript 7",
     subtitle: "a complete manual for two layers",
-    author: "Mr. Raheliosol",
+    author: "Raeliosol",
     version: "6.1",
     volume-label: "book 6",
   ),

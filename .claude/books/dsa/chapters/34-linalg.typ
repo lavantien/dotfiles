@@ -9,7 +9,7 @@ hand work. The arithmetic partners are chapter 16's modpow and
 modinv, #xref-to("dsa", "numtheory") cross-named once and used
 throughout, and the exactness ruling is the same one the rest of the
 book runs on: elimination over the prime field Z~p~ with p = 1e9+7
-gives answers all six languages pin digit for digit, and integer
+gives answers all seven languages pin digit for digit, and integer
 determinants travel fraction-free so no rounding ever enters. Six
 tools make the chapter: gauss-jordan over a prime field, the
 bareiss determinant and rank, cramer on the small systems, matrix
@@ -61,13 +61,15 @@ five.
 )
 
 The 1, 1, 1 closes the walk as pinned, and the listings below run
-the same column walk in six languages.
+the same column walk in seven languages.
 
 #listing("dsa/samples-c/src/Ch34/gauss.c", first: 55, last: 80, caption: [c, the column walk, swap, inverse normalize, elimination, the column-to-row map])
 
-#listing("dsa/samples/src/Ch34/Gauss.cs", first: 37, last: 61, caption: [c\#, the same loop, modpow pulled from the chapter 16 class])
-
 #listing("dsa/samples-go/ch34/gauss.go", first: 47, last: 73, caption: [go, the loop with modinv inline, the where map read at the end])
+
+#listing("dsa/samples-java/src/Ch34/Gauss.java", first: 51, last: 78, caption: [java, the column walk, swap, inverse normalize, elimination, the column-to-row map])
+
+#listing("dsa/samples/src/Ch34/Gauss.cs", first: 37, last: 61, caption: [c\#, the same loop, modpow pulled from the chapter 16 class])
 
 #listing("dsa/samples-js/src/ch34-gauss.mjs", first: 29, last: 49, caption: [javascript, the same loop, every residue product on BigInt past the 2^53 boundary])
 
@@ -144,7 +146,7 @@ pivot count, valid over the rationals for integer matrices.
 
 The dry run: the fixtures are det of 1, 2, 3, 4 at -2 and the
 singular 1, 2, 3 by 4, 5, 6 by 7, 8, 9 at det 0, rank 2, both
-asserted by the C\# suite, identical in the other five.
+asserted by the C\# suite, identical in the other six.
 
 + The 2x2 pivots on 1 with prev = 1, so the exact division divides
   silently: det = 1 × 4 - 2 × 3 = -2 at rank 2.
@@ -183,13 +185,15 @@ asserted by the C\# suite, identical in the other five.
 })
 
 The -2 and the rank-2 zero land as pinned, and the listings below
-run bareiss in six languages.
+run bareiss in seven languages.
 
 #listing("dsa/samples-c/src/Ch34/determinant.c", first: 27, last: 67, caption: [c, the bareiss function, cross products divided by the previous pivot, det and rank out])
 
-#listing("dsa/samples/src/Ch34/Determinant.cs", first: 10, last: 47, caption: [c\#, the same function over longs, the exact division on one line])
-
 #listing("dsa/samples-go/ch34/determinant.go", first: 9, last: 50, caption: [go, bareiss with the pivot search, the permutation expansion below])
+
+#listing("dsa/samples-java/src/Ch34/Determinant.java", first: 30, last: 69, caption: [java, bareiss, cross products divided by the previous pivot, det and rank out])
+
+#listing("dsa/samples/src/Ch34/Determinant.cs", first: 10, last: 47, caption: [c\#, the same function over longs, the exact division on one line])
 
 #listing("dsa/samples-js/src/ch34-determinant.mjs", first: 10, last: 43, caption: [javascript, bareiss, the division asserted exact, an integer minor per cell])
 
@@ -262,12 +266,12 @@ expansions are three products each and the answer stays exact in
 integers. The cross-language value is the reduced fraction pair:
 each component travels as a numerator and denominator reduced by
 their gcd with the denominator kept positive, so a negative
-determinant flips both signs and all six languages assert identical
+determinant flips both signs and all seven languages assert identical
 pairs. det 0 reports no unique solution.
 
 The dry run: the fixture is the 2x2 system 2, 3, 4, 5 against 7, 9,
 whose determinant -2 and answers -4 and 5 the C\# suite asserts as
-reduced pairs, identical in the other five.
+reduced pairs, identical in the other six.
 
 + The denominator comes first: det(A) = 2 × 5 - 3 × 4 = -2.
 + Replacing column 0 by b reads 7, 3, 9, 5: det = 7 × 5 - 3 × 9 =
@@ -308,13 +312,15 @@ reduced pairs, identical in the other five.
 })
 
 The -4 and the 5 land as pinned, and the listings below solve both
-sizes in six languages.
+sizes in seven languages.
 
 #listing("dsa/samples-c/src/Ch34/cramer.c", first: 50, last: 89, caption: [c, the 2x2 and 3x3 minors, the fraction assembly with the gcd reduce])
 
-#listing("dsa/samples/src/Ch34/Cramer.cs", first: 13, last: 49, caption: [c\#, solve, the reduce keeping the denominator positive, both minor expansions])
-
 #listing("dsa/samples-go/ch34/cramer.go", first: 20, last: 64, caption: [go, the fraction pair reduce and the cramer driver over both sizes])
+
+#listing("dsa/samples-java/src/Ch34/Cramer.java", first: 53, last: 96, caption: [java, det2, det3, and cramer emitting reduced fraction pairs over a Frac class])
+
+#listing("dsa/samples/src/Ch34/Cramer.cs", first: 13, last: 49, caption: [c\#, solve, the reduce keeping the denominator positive, both minor expansions])
 
 #listing("dsa/samples-js/src/ch34-cramer.mjs", first: 27, last: 45, caption: [javascript, det2, det3, and the column replacement building each minor])
 
@@ -410,7 +416,7 @@ sum of all entries counts them everywhere.
 The dry run: the fixtures are the walk digraph 0 to 1, 0 to 2, 1 to
 2, 2 to 0 with its square and fourth power pinned entry for entry
 by the C\# suite, and fib(50) = 12586269025 off the companion
-matrix, identical in the other five.
+matrix, identical in the other six.
 
 + The adjacency matrix reads A = 0, 1, 1 over 0, 0, 1 over 1, 0, 0,
   four 1s, one per directed edge.
@@ -452,13 +458,15 @@ matrix, identical in the other five.
 })
 
 The 5, the 9, and the 12586269025 land as pinned, and the listings
-below raise matrices in six languages.
+below raise matrices in seven languages.
 
 #listing("dsa/samples-c/src/Ch34/matpow.c", first: 27, last: 62, caption: [c, the triple-loop multiply with its optional mod, the square-and-multiply power])
 
-#listing("dsa/samples/src/Ch34/Matpow.cs", first: 11, last: 49, caption: [c\#, pow skipping the last squaring, the multiply reducing per entry])
-
 #listing("dsa/samples-go/ch34/matpow.go", first: 5, last: 48, caption: [go, matmul and matpow, the top-bit squaring skip spelled out])
+
+#listing("dsa/samples-java/src/Ch34/Matpow.java", first: 23, last: 57, caption: [java, matmul with its optional mod, the square-and-multiply power])
+
+#listing("dsa/samples/src/Ch34/Matpow.cs", first: 11, last: 49, caption: [c\#, pow skipping the last squaring, the multiply reducing per entry])
 
 #listing("dsa/samples-js/src/ch34-matpow.mjs", first: 13, last: 58, caption: [javascript, the number and bigint multiplies, the same power loop over both])
 
@@ -540,7 +548,7 @@ from its own small integer determinant.
 
 The dry run: the fixture is the triangle with edge 0-1 doubled,
 whose count 5 the C\# suite asserts against brute enumeration, the
-plain triangle's 3 alongside, identical in the other five.
+plain triangle's 3 alongside, identical in the other six.
 
 + The doubled edge gives degrees 3, 3, 2, so the laplacian reads
   3, -2, -1 over -2, 3, -1 over -1, -1, 2, the doubled edge visible
@@ -583,13 +591,15 @@ plain triangle's 3 alongside, identical in the other five.
 })
 
 The 5 and the 3 land as pinned, and the listings below count
-spanning trees in six languages.
+spanning trees in seven languages.
 
 #listing("dsa/samples-c/src/Ch34/kirchhoff.c", first: 59, last: 78, caption: [c, the laplacian assembly and the minor feeding the in-file bareiss det])
 
-#listing("dsa/samples/src/Ch34/Kirchhoff.cs", first: 10, last: 31, caption: [c\#, the assembly calling the chapter's determinant class])
-
 #listing("dsa/samples-go/ch34/kirchhoff.go", first: 7, last: 31, caption: [go, the assembly over the edge list, bareiss below])
+
+#listing("dsa/samples-java/src/Ch34/Kirchhoff.java", first: 59, last: 77, caption: [java, the laplacian assembly and the minor feeding the in-file bareiss det])
+
+#listing("dsa/samples/src/Ch34/Kirchhoff.cs", first: 10, last: 31, caption: [c\#, the assembly calling the chapter's determinant class])
 
 #listing("dsa/samples-js/src/ch34-kirchhoff.mjs", first: 8, last: 47, caption: [javascript, the in-file integer det and the kirchhoff driver over it])
 
@@ -607,7 +617,7 @@ counted while the 2-cycle they form alone is rejected, the bowtie,
 two triangles sharing vertex 0, counts 3 times 3 = 9, and the
 disconnected trio counts 0, the singular minor reading exactly
 that. The counts stay small exact integers identical across all
-six languages, O(n^3):
+seven languages, O(n^3):
 
 #diagram([K4 with its laplacian grid, the 3x3 minor framed, det 16 annotated as the tree count with three of the sixteen trees drawn], length: 13pt, {
   // K4 graph
@@ -673,7 +683,7 @@ metric, and an exact integer solution simply stops moving.
 
 The dry run: the fixture is 2, 1, 1, 1 against 14, 13 over p = 3,
 whose climb 1, 0 then 1, 3 then 1, 12 the C\# suite asserts with
-its mod 27 plug-back, identical in the other five.
+its mod 27 plug-back, identical in the other six.
 
 + Mod 3 the system reads 2x + y = 2 and x + y = 1, since 14 and 13
   reduce to 2 and 1: subtracting gives x = 1, then y = 0.
@@ -700,13 +710,15 @@ its mod 27 plug-back, identical in the other five.
 )
 
 The 1, 12 closes the climb as pinned, and the listings below lift
-systems in six languages.
+systems in seven languages.
 
 #listing("dsa/samples-c/src/Ch34/zpk.c", first: 83, last: 109, caption: [c, the lift loop, residual, divided rhs, correction solve])
 
-#listing("dsa/samples/src/Ch34/Zpk.cs", first: 11, last: 40, caption: [c\#, the same loop over the gauss class, steps collected])
-
 #listing("dsa/samples-go/ch34/zpk.go", first: 10, last: 49, caption: [go, the loop with the divisibility check made loud])
+
+#listing("dsa/samples-java/src/Ch34/Zpk.java", first: 82, last: 111, caption: [java, the lift loop, residual, divided rhs, correction solve])
+
+#listing("dsa/samples/src/Ch34/Zpk.cs", first: 11, last: 40, caption: [c\#, the same loop over the gauss class, steps collected])
 
 #listing("dsa/samples-js/src/ch34-zpk.mjs", first: 50, last: 67, caption: [javascript, the lift over the small in-file solver, plain Number exact at p = 3])
 
@@ -778,7 +790,7 @@ living in the icpc book.
   cdraw.content((19.0, 2.9), [O(n^3 + k n^2) per system], size: 6pt)
 })
 
-== across the six languages
+== across the seven languages
 
 Featured build size counted as non-blank, non-comment lines of the
 chapter's six sample files per language, go test files excluded:
@@ -788,8 +800,9 @@ chapter's six sample files per language, go test files excluded:
   inset: 4pt,
   table.header([*language*], [*build sloc*], [*container dependency*], [*boundary note*]),
   [c], [843], [static matrices, u64 residues], [plain 64-bit products at 1e9+7, add p before subtracting to stay positive, kirchhoff carries its own det],
-  [c\#], [305], [jagged longs, tuples, linq], [reuses the ch16 modpow and the ch34 determinant across files, cramer pairs as value tuples],
   [go], [385], [slices, no imports beyond fmt], [hensel refuses loudly when the residual is not divisible, matrix ops as free functions],
+  [java], [832], [jdk 27 stdlib, long residues], [p added before every modular subtraction, cramer pairs as a two-field Frac class, the exact fib ladder rides long to fib(78)],
+  [c\#], [305], [jagged longs, tuples, linq], [reuses the ch16 modpow and the ch34 determinant across files, cramer pairs as value tuples],
   [javascript], [301], [nested arrays, BigInt at 1e9+7], [the zpk file stays on plain Number, p = 3 keeps every product tiny, exact ints to fib(78)],
   [python], [479], [list rows, inline asserts], [one list comprehension per row operation, permutation-sign cross-checks in-suite],
   [lua], [644], [tables, 1-based rows], [fraction pairs as two-slot tables, the kirchhoff fixtures shifting 0-based edges to 1-based],
@@ -809,7 +822,8 @@ cp-algorithms.com/graph/kirchhoff-theorem.html, all accessed
 cp-algorithms carries no cramer or hensel article; those sections
 cite the icpc world finals 2023 problem A and 2022 problem Z
 solutions as their application sources, and cramer's rule as
-standard linear algebra. Sample behavior verified by the six suite
-gates scoped to chapter 34: c 6 files and 90 checks, c\# 28 facts,
-go 24 test functions, javascript 24 tests and 69 asserts, python 6
+standard linear algebra. Sample behavior verified by the seven suite
+gates scoped to chapter 34: c 6 files and 90 checks, go 24 test
+functions, java 6 files and 90 checks under run-java-samples, c\# 28
+facts, javascript 24 tests and 69 asserts, python 6
 files and 86 asserts, lua 24 checks, zero skipped.

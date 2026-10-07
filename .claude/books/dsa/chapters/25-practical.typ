@@ -23,9 +23,10 @@ key. At n = 10,000 and p = 0.01 that is 95,851 bits, 9.6 per key,
 and 7 positions.
 
 The dry run: the fixture is that design point and its probe census,
-asserted by the C\# suite, while C bounds lies at 6 of 40, go and
-lua pair fnv-1a with djb2, javascript runs bigint words, and
-python's 8-bit arena pins its lies by name.
+asserted by the C\# suite, while C and java bound lies at 6 of 40,
+go and lua pair fnv-1a with djb2, javascript runs bigint words, and
+python's 8-bit arena pins its lies by name, java carrying that
+8-bit lane beside its own bounds.
 
 + Sizing prices the filter first: m = -n ln p / (ln 2)² rounds up
   to 95,851 bits, and k = 95,851 / 10,000 × ln 2 = 6.64, rounded up
@@ -61,11 +62,12 @@ python's 8-bit arena pins its lies by name.
 })
 
 The 59 of 10,000 inside a 95,851-bit arena is the pinned trade, and
-the listings below buy it in six languages.
+the listings below buy it in seven languages.
 
 #listing("dsa/samples-c/src/Ch25/bloom.c", first: 19, last: 61, caption: [c, fnv-1a against djb2, the second mixer chosen so the feeds stay independent])
-#listing("dsa/samples/src/Ch25/Practical.cs", first: 12, last: 60, caption: [c\#, sizing in the ctor, kirsch-mitzenmacher probes off one fnv pair, an odd stride])
 #listing("dsa/samples-go/ch25/bloom.go", first: 19, last: 47, caption: [go, bit slots by double hashing, h1 and h1 plus h2 into one word array])
+#listing("dsa/samples-java/src/Ch25/Bloom.java", first: 25, last: 79, caption: [java, fnv-1a with djb2, every hash mod through `Long.remainderUnsigned`, the offset parsed unsigned])
+#listing("dsa/samples/src/Ch25/Practical.cs", first: 12, last: 60, caption: [c\#, sizing in the ctor, kirsch-mitzenmacher probes off one fnv pair, an odd stride])
 #listing("dsa/samples-js/src/ch25-bloom.mjs", first: 9, last: 35, caption: [javascript, the 64-bit hashes imported from chapter 6 as bigint])
 #listing("dsa/samples-py/src/Ch25/bloom.py", first: 17, last: 34, caption: [python, an 8-bit filter where the false positives pin exactly])
 #listing("dsa/samples-lua/ch25_bloom.lua", first: 27, last: 42, caption: [lua, fnv-1a and djb2 over 512 bits, floor modulo with a plus one])
@@ -92,12 +94,22 @@ at 6 of 40 probes on 64 bits and 2 of 40 on 256. Go and lua pair
 the same two hashes, go combining them double-hash style into h1
 and h1 plus h2, lua spreading 64 keys over 512 bits with the bound
 at 10 of 64 and a live-bit count pinned strictly between 64 and
-128, proving the two feeds really disagree. Javascript imports both
+128, proving the two feeds really disagree. Java pairs the same two
+feeds with the same correlation comment and mirrors C's bounds, 6
+of 40 at 64 bits and 2 of 40 at 256, but the road there is its
+own: the fnv offset 14695981039346656037 sits past 2^63, so the
+constant parses through `Long.parseUnsignedLong` and every modulo
+runs through `Long.remainderUnsigned`, signed % disagreeing exactly
+where a hash crosses 2^63. Java also mirrors a C quirk frozen in
+the fixture: the query array declares 40 slots and fills 39, so
+the 40th probe is the empty string, and the java twin hashes that
+empty string too. Javascript imports both
 64-bit words from chapter 6 and runs them on bigint, dropping back
 to number at the modulo. Python shrinks the arena to 8 bits with
-key mod 8 and 3 key mod 8 so the lies pin by name, 6, 9, 10, 11.
-One invariant never bends in any of the six: members always answer
-yes, because bits only ever set.
+key mod 8 and 3 key mod 8 so the lies pin by name, 6, 9, 10, 11,
+java carrying that 8-bit lane with the same four names.
+One invariant never bends in any of the seven: members always
+answer yes, because bits only ever set.
 
 #diagram([one key through the fnv pair into k = 7 positions over a 16 slot toy, the tested filter is 95,851 bits for 10,000 keys, and the absent probe dies on one clear bit], length: 13pt, {
   // key through two seeded hashes into one combination, down into the strip
@@ -186,11 +198,12 @@ instead.
 )
 
 The 3 against truths 2 and 1 is the pinned overestimate, and the
-listings below count in six languages.
+listings below count in seven languages.
 
 #listing("dsa/samples-c/src/Ch25/countmin.c", first: 24, last: 42, caption: [c, affine hashes picked so the collisions are hand-traceable])
-#listing("dsa/samples/src/Ch25/Practical.cs", first: 70, last: 105, caption: [c\#, the seed rotates per row so the hashes disagree, the estimate is the row minimum])
 #listing("dsa/samples-go/ch25/countmin.go", first: 7, last: 38, caption: [go, rows injected with hash functions, add and estimate])
+#listing("dsa/samples-java/src/Ch25/Countmin.java", first: 22, last: 68, caption: [java, affine hashes sharing a multiplier so the mod-8 collision is hand-traceable, the py width-4 lane in the same file])
+#listing("dsa/samples/src/Ch25/Practical.cs", first: 70, last: 105, caption: [c\#, the seed rotates per row so the hashes disagree, the estimate is the row minimum])
 #listing("dsa/samples-js/src/ch25-countmin.mjs", first: 9, last: 39, caption: [javascript, rows mixed from the two bigint hashes per depth])
 #listing("dsa/samples-py/src/Ch25/countmin.py", first: 16, last: 34, caption: [python, two rows of width 4, both pinned cell by cell])
 #listing("dsa/samples-lua/ch25_countmin.lua", first: 39, last: 58, caption: [lua, the two hashes alternating across four rows, total tracked beside])
@@ -209,11 +222,14 @@ unbounded key space, and the expected inflation on that test stream
 is e over 2048 times the total, under 0.15 counts.
 
 Every build bumps one cell per row and reads the row minimum, so
-overestimate-only is structural, and the five new suites make the
+overestimate-only is structural, and the six new suites make the
 collisions legible instead of pricing them. C pins a 2 by 8 sketch
 whose affine hashes share a multiplier, so key 9, congruent to key
 1 mod 8, collides in both rows at once and reads the full 3 against
-a truth of 0. Python's 2 by 4 sketch pins both rows cell by cell,
+a truth of 0, and java runs that exact fixture, the same shared
+multiplier putting key 9 and key 17 in key 1's cells, with
+python's pinned rows in the same file. Python's 2 by 4 sketch pins
+both rows cell by cell,
 0, 3, 1, 3 and 1, 0, 6, 0, then reads 3 for keys 1 and 5 against
 truths 2 and 1. Javascript mixes its two bigint hashes per row,
 kirsch-mitzenmacher style, and lua alternates the two hashes across
@@ -260,7 +276,7 @@ it at the front, and a put into a full cache evicts from the back.
 
 The dry run: the fixtures are the three capacity 2 transcripts
 asserted by the C\# suite, two lru and one lfu, while the ring
-builders in C, go, python, and lua replay the evictions and
+builders in C, go, java, python, and lua replay the evictions and
 javascript's ordered map reads its first key.
 
 + Put a, get a, put b threads the ring b, a front to back, and put
@@ -286,21 +302,23 @@ javascript's ordered map reads its first key.
 )
 
 The eviction names a, then b, then b across the transcripts, and
-the listings below thread these rings in six languages.
+the listings below thread these rings in seven languages.
 
 #listing("dsa/samples-c/src/Ch25/lru.c", first: 40, last: 84, caption: [c, one ring threaded through a fixed slot array, keys 0 to 7])
-#listing("dsa/samples/src/Ch25/Practical.cs", first: 108, last: 177, caption: [c\#, sentinels at both ends, unlink and relink, the back hands over the victim])
 #listing("dsa/samples-go/ch25/lru.go", first: 26, last: 66, caption: [go, a map for lookup, a sentinel ring for order, both splices inline])
+#listing("dsa/samples-java/src/Ch25/Lru.java", first: 41, last: 83, caption: [java, a class node with prev and next, unlink and push front, the sentinel head handing over the victim])
+#listing("dsa/samples/src/Ch25/Practical.cs", first: 108, last: 177, caption: [c\#, sentinels at both ends, unlink and relink, the back hands over the victim])
+
+The same c\# file carries the lfu twin. Lfu orders by use count
+instead of touch order, 1 bucket per frequency, each bucket itself
+recency ordered so ties break the same way lru breaks them, and a
+minimum frequency pointer that only moves on insert or when a
+bucket empties:
+
+#listing("dsa/samples/src/Ch25/Practical.cs", first: 179, last: 255, caption: [c\#, lanes per bucket, a bump per get, the lane helpers below repeat the lru pair])
 #listing("dsa/samples-js/src/ch25-lru.mjs", first: 5, last: 36, caption: [javascript, the insertion-ordered map is the whole cache, refresh by delete and re-set])
 #listing("dsa/samples-py/src/Ch25/lru.py", first: 24, last: 59, caption: [python, dict plus ring, evictions recorded as they happen])
 #listing("dsa/samples-lua/ch25_lru.lua", first: 14, last: 56, caption: [lua, unlink and push front over a table-keyed ring])
-
-Lfu orders by use count instead of touch order, 1 bucket per
-frequency, each bucket itself recency ordered so ties break the
-same way lru breaks them, and a minimum frequency pointer that only
-moves on insert or when a bucket empties:
-
-#listing("dsa/samples/src/Ch25/Practical.cs", first: 179, last: 255, caption: [lanes per bucket, a bump per get, the lane helpers below repeat the lru pair])
 
 The eviction tests read like transcripts. Capacity 2 with put a,
 get a, put b, put c evicts a, because the get left a newer than b.
@@ -313,15 +331,17 @@ the machinery a policy sits on top of. Redis ships both policies
 for real, allkeys-lru approximated by sampling a few keys and
 allkeys-lfu over a decayed counter.
 
-Five of the six builds share the same shape, a hash map for the
+Six of the seven builds share the same shape, a hash map for the
 lookup and a doubly linked ring for the order. Javascript is the
 exception that proves the map can carry both jobs: its builtin Map
 keeps insertion order, so a get refreshes by delete and re-set and
 the first key iterator hands over the victim, no ring at all. The
 transcripts agree across the ring-builders, touching a saves it and
-c evicts b at capacity 2 in c\#, python, and lua. C threads its ring
+c evicts b at capacity 2 in c\#, java, python, and lua. C threads
+its ring
 through a fixed slot array over keys 0 to 7 and pins the longer
-eviction sequence 2 then 1, python adds the capacity 1 churn case
+eviction sequence 2 then 1, java pinning that same sequence over
+heap nodes, python and java add the capacity 1 churn case
 and the update that evicts nothing, and go exposes an order dump
 that tests read front to back.
 
@@ -386,8 +406,8 @@ and it never backtracks.
 
 The dry run: the fixture is the seeded census, a thousand shuffled
 keys, 4,096 towers, and 1,024 searches, asserted by the C\# suite,
-while the deterministic siblings state their promotion policies, go
-and python pinning the ruler ladder 1, 2, 1, 3, 1, 2, 1, 4.
+while the deterministic siblings state their promotion policies, go,
+java, and python pinning the ruler ladder 1, 2, 1, 3, 1, 2, 1, 4.
 
 + A thousand keys arrive shuffled and lane 0 enumerates them 0
   through 999 sorted, one walk down the bottom lane.
@@ -436,14 +456,15 @@ and python pinning the ruler ladder 1, 2, 1, 3, 1, 2, 1, 4.
 })
 
 The 0.498 against the half and the 16.0 under 20 are the pinned
-statistics, and the listings below flip these coins in six
+statistics, and the listings below flip these coins in seven
 languages.
 
 #listing("dsa/samples-c/src/Ch25/skiplist.c", first: 32, last: 83, caption: [c, the ruler promotion, splice points collected on the way down])
+#listing("dsa/samples-go/ch25/skiplist.go", first: 25, last: 49, caption: [go, promotion by trailing zeros of the insertion index, math slash bits])
+#listing("dsa/samples-java/src/Ch25/Skiplist.java", first: 34, last: 83, caption: [java, the ruler policy, find dropping a lane on overshoot, insert collecting its splice points on the descent])
 #listing("dsa/samples/src/Ch25/Practical.cs", first: 284, last: 362, caption: [c\#, the descent collects splice points, contains drops a lane on overshoot])
 
 #listing("dsa/samples/src/Ch25/Practical.cs", first: 364, last: 399, caption: [c\#, lane widths by count, sorted enumeration, one fresh flip per promotion])
-#listing("dsa/samples-go/ch25/skiplist.go", first: 25, last: 49, caption: [go, promotion by trailing zeros of the insertion index, math slash bits])
 #listing("dsa/samples-js/src/ch25-skiplist.mjs", first: 14, last: 54, caption: [javascript, the tower is 1 plus trailing zeros of the key's fnv hash])
 #listing("dsa/samples-py/src/Ch25/skiplist.py", first: 17, last: 50, caption: [python, the ruler sequence drives promotion, splice per level])
 #listing("dsa/samples-lua/ch25_skiplist.lua", first: 9, last: 42, caption: [lua, promotion as a pure function of the value, divisibility by 4, 8, 16])
@@ -457,17 +478,20 @@ the 2 log2 n bound of 20, the probabilistic balance the avl gets
 deterministically. LevelDB's memtable and redis sorted sets are
 this list in production.
 
-The other five builds are deterministic, and each states its
-promotion policy out loud. Go, python, and c use the ruler
+The other six builds are deterministic, and each states its
+promotion policy out loud. Go, java, python, and c use the ruler
 sequence, the i-th insert rises to 1 plus the trailing zeros of i,
-and go and python both pin the height ladder 1, 2, 1, 3, 1, 2, 1,
-4 while python reads tower heights per value off a levels map.
+and go, java, and python all pin the height ladder 1, 2, 1, 3, 1,
+2, 1,
+4 while python and java read tower heights per value off a map,
+java also dumping whole lanes, lane 1 skipping the odds and lane 3
+holding only the tallest key.
 Javascript hashes the key itself and counts trailing zero bits of
 the 64-bit word, so towers depend on the data rather than the
 insertion order, and lua makes promotion a pure function of
 divisibility, level 2 exactly when the value is divisible by 4,
 capped at 16. Whatever the policy, the search spine is identical
-in all six: descend from the top lane, walk right while smaller,
+in all seven: descend from the top lane, walk right while smaller,
 drop a lane on every overshoot, never backtrack.
 
 #callout("pitfall", "one coin per promotion, not one per tower", [
@@ -521,11 +545,11 @@ drop a lane on every overshoot, never backtrack.
   cdraw.content((11.0, 0.7), [expected 2 log2 n, measured 16.0 at n = 1024], size: 6pt)
 })
 
-== across the six languages
+== across the seven languages
 
 Featured build size counted as non-blank, non-comment lines of the
 chapter's four sample files, the c\# file also carrying the lfu
-cache section above, which has no matrix twin in the other five:
+cache section above, which has no matrix twin in the other six:
 
 #table(
   columns: (auto, auto, 1.5fr, 2.2fr),
@@ -534,6 +558,7 @@ cache section above, which has no matrix twin in the other five:
   [c], [384], [byte bit arrays, slot-backed ring], [djb2 second hash with the correlation comment, bounded lie counts],
   [c\#], [341], [`Dictionary<TKey,TValue>`, `List<T>`], [the only coin-flip skiplist, kirsch-mitzenmacher k of 7, lfu included],
   [go], [204], [`map[string]*lruNode`, slices], [double-hash bloom slots, promotion by insertion index],
+  [java], [518], [jdk 27 stdlib], [fnv offset parsed unsigned, every hash mod through `Long.remainderUnsigned`, the c fixture's empty 40th probe mirrored, both count-min fixtures in one file],
   [javascript], [125], [`Map` in insertion order, `Set`], [bigint hash words, the map doubles as the lru ring],
   [python], [229], [`dict`, list of bools], [8-bit bloom with lies pinned by name, ruler promotion],
   [lua], [338], [`table` with string splice-free keys], [fnv offset built from a hex literal, divisibility promotion],
@@ -545,6 +570,7 @@ go.dev for `math/bits.TrailingZeros`, developer.mozilla.org for the
 insertion-ordered `Map` and bigint operators, docs.python.org for
 `__slots__`, lua.org for `math.maxinteger` and floor modulo,
 accessed 2026-09-12 and 2026-09-14. Sample behavior verified by
-the six suite gates scoped to chapter 25: c 4 files and 89 checks,
-c\# 11 tests, go 12 tests, javascript 10 tests, python 4 files and
+the seven suite gates scoped to chapter 25: c 4 files and 89
+checks, c\# 11 tests, go 12 tests, java 4 files and 98 checks,
+javascript 10 tests, python 4 files and
 36 asserts, lua 16 checks, zero skipped.

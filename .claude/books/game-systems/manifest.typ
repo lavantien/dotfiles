@@ -6,7 +6,7 @@
   meta: (
     title: "game systems and architecture",
     subtitle: "an engineering handbook",
-    author: "Mr. Raheliosol",
+    author: "Raeliosol",
     version: "3.0",
     volume-label: "book 14",
   ),

@@ -4,39 +4,45 @@
 = sync primitives in depth
 
 Chapter 6 established that synchronization is the only currency the
-memory model accepts. This chapter is the price list, read in six
+memory model accepts. This chapter is the price list, read in seven
 voices: what each primitive in go's `sync` and `sync/atomic` buys in
 its home grain, and what the same guarantee costs where the language
 hands you more or less. C carries the locks of C23 `threads.h` raw and
-pays for every convenience go wraps around them. C\# finds half the
-family native in the bcl, `Lazy`, `Interlocked`,
+pays for every convenience go wraps around them. Java splits the
+family across three shelves, `synchronized` blocks, the
+`java.util.concurrent` toolbox, and `VarHandle` fences. C\# finds
+half the family native in the bcl, `Lazy`, `Interlocked`,
 `ConcurrentDictionary`. Javascript runs one thread per realm and pays
 in queue discipline where go pays in kernel waits, python threads
 under the GIL with `threading.Condition` a near 1:1 mirror of `Cond`,
 and lua schedules coroutines by hand, so its waits are parking lists
-the driver owns. One artifact per primitive, six trees, and the go
-tests stay the frozen reference the five siblings cross-check.
+the driver owns. One artifact per primitive, seven trees, and the go
+tests stay the frozen reference the six siblings cross-check.
 
 == mutex and rwmutex
 
 The mutex is the default tool because it is the tool that composes:
 it guards an invariant, not a variable. The convention that keeps
-guarded code auditable is on display in `SafeMap`, spelled six ways.
+guarded code auditable is on display in `SafeMap`, spelled seven
+ways.
 
 The dry run: 50 concurrent writers each set 100 values over 20 keys
 and the map holds exactly 20 keys afterward, never a torn row, in
 every tree that spawns real workers. The read-modify-write lane then
-demands exact totals under the guard: 400 in C, 2000 in C\#, 10 in
-javascript, 2000 in python, 5000 in lua, each tree at its own
-fan-in. The frozen go test pins the key set and the under-lock
+demands exact totals under the guard: 400 in C, 400 in java beside
+2000 more through its lock-free `ConcurrentHashMap.compute`, 2000 in
+C\#, 10 in javascript, 2000 in python, 5000 in lua, each tree at its
+own fan-in. The frozen go test pins the key set and the under-lock
 count, C\# matches that shape and pins the concurrent total, and go
 alone leaves the increment totals to the siblings.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch07/safemap.c", first: 29, last: 70, caption: [C, the mutex is a field in the struct, find runs under it, and threads.h ships one flavor so the reader-writer split collapses])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch07/Safemap.cs", first: 6, last: 39, caption: [C\#, ReaderWriterLockSlim beside the dictionary, try and finally on every path])
-
 #listing("patterns-concurrency-distributed/samples/ch07/syncdeep.go", first: 12, last: 47, caption: [Go, lock as a field beside its data, defer on every path, rwlock for reads])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch07/Safemap.java", first: 24, last: 53, caption: [Java, the lock an object field beside its map, synchronized the release, underLock the read-modify-write shape])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch07/Safemap.cs", first: 6, last: 39, caption: [C\#, ReaderWriterLockSlim beside the dictionary, try and finally on every path])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch07-safemap.mjs", first: 7, last: 32, caption: [JavaScript, one thread cannot tear the map, underLock chains a promise tail so awaiting sections run alone])
 
@@ -46,8 +52,9 @@ alone leaves the increment totals to the siblings.
 
 Three rules do most of the work and every lane keeps them. The lock
 lives in the same struct as the data, so the pairing is visible.
-Every method locks and releases on every path, go through `defer`, C\#
-through `finally`, C through paired calls because it has neither. And
+Every method locks and releases on every path, go through `defer`,
+C\# through `finally`, java through the `synchronized` block's own
+release, C through paired calls because it has neither. And
 `RWMutex` is paid for only when readers outnumber writers and hold
 the lock long enough for the read lock's bookkeeping to amortize, a
 getter on a map is usually faster under a plain `Mutex` because
@@ -58,7 +65,11 @@ acquisitions with a window between.
 
 The lanes that lack a kernel split say so instead of faking one. C
 has one mutex flavor in `threads.h`, so the whole structure rides it
-and the row reads honest. C\# has the split and a documented writer
+and the row reads honest. Java parks the sample on plain
+`synchronized` blocks, its `ReadWriteLock` left on the shelf, and
+the file's divergence lane runs the same increments through
+`ConcurrentHashMap.compute`, the atomic read-modify-write with no
+lock in sight. C\# has the split and a documented writer
 preference, chapter 9 cashes that in. Javascript cannot tear a map on
 one thread, so its real hazard is the critical section that awaits:
 control returns to the loop mid-update and other tasks interleave,
@@ -101,15 +112,17 @@ is precisely the edge double checked locking lacks.
 
 The dry run: `Lazy("a1b22c333")` folds every digit into one running
 number and returns 122333, the parse runs exactly once, and 20
-concurrent callers all read the value. The five new trees count the
+concurrent callers all read the value. The six new trees count the
 parse and pin exactly 1. The go lane's frozen file carries no counter,
 its test pins the value across the same 20 callers.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch07/once.c", first: 24, last: 54, caption: [C, call_once over a once_flag, the target pointer installed at init because call_once carries no context argument])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch07/Once.cs", first: 6, last: 33, caption: [C\#, Lazy with ExecutionAndPublication is the once family, the counter makes exactly-once observable])
-
 #listing("patterns-concurrency-distributed/samples/ch07/syncdeep.go", first: 49, last: 61, caption: [Go, one parse, concurrent callers, no flag anywhere])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch07/Once.java", first: 24, last: 58, caption: [Java, double-checked locking on a volatile flag, the value published before the flag flips])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch07/Once.cs", first: 6, last: 33, caption: [C\#, Lazy with ExecutionAndPublication is the once family, the counter makes exactly-once observable])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch07-once.mjs", first: 6, last: 36, caption: [JavaScript, the check-and-fill is one synchronous block no other task can enter, the memo closes the race by construction])
 
@@ -122,7 +135,10 @@ the edge in the standard library, pre-generics go needed a page of
 boilerplate for it. C finds the direct standard analog in `call_once`
 and `once_flag`, paying one indirection, the init function reads its
 target through a pointer installed before any concurrent caller
-exists. C\# buys the whole thing off the shelf with `Lazy<T>` in
+exists. Java writes double-checked locking out longhand, the fast
+path reading a `volatile` flag and the slow path rechecking under the
+lock, publication safe because the flag's write is the last step.
+C\# buys the whole thing off the shelf with `Lazy<T>` in
 `ExecutionAndPublication` mode, publication serialized by the lazy
 machinery itself. Javascript closes the window by construction, the
 memoizing check-and-fill never awaits, so no other task can enter it,
@@ -165,15 +181,17 @@ the predicate changed once, not that it is still true.
 The dry run: capacity 3, puts 1, 2, 3 land, a fourth producer blocks
 until a take frees a slot, two consumers drain, close unblocks both,
 and the 4 puts total survive as the multiset 1, 2, 3, 4 summing to
-10, with a take after close reporting false. C, javascript, python,
-and lua pin the drained multiset 2, 3, 4, the go and C\# lanes pin
-the sum and the closed take.
+10, with a take after close reporting false. C, java, javascript,
+python, and lua pin the drained multiset 2, 3, 4, the go and C\#
+lanes pin the sum and the closed take.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch07/cond.c", first: 47, last: 79, caption: [C, two cnd_t and one mutex, while loops around every wait, broadcast on close])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch07/Cond.cs", first: 8, last: 55, caption: [C\#, one monitor, one wait set, PulseAll everywhere because every sleeper rechecks its own predicate])
-
 #listing("patterns-concurrency-distributed/samples/ch07/syncdeep.go", first: 64, last: 111, caption: [Go, bounded queue: two conds, one mutex, while loops around every wait])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch07/Cond.java", first: 26, last: 74, caption: [Java, ReentrantLock.newCondition twice, one condition per predicate, the go layout native])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch07/Cond.cs", first: 8, last: 55, caption: [C\#, one monitor, one wait set, PulseAll everywhere because every sleeper rechecks its own predicate])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch07-cond.mjs", first: 6, last: 44, caption: [JavaScript, waiters are promise resolvers, signal wakes one, close resolves everyone on both sides])
 
@@ -190,11 +208,15 @@ producer past capacity parks until a take frees a slot, then two
 consumers drain everything and unblock on close, and the accounting
 lands on exactly the values that were ever put.
 
-The six idioms all enforce the same wake discipline, that a wake only
+The seven idioms all enforce the same wake discipline, that a wake only
 means look again. C spends `cnd_wait` with the mutex held and
 rechecks in a while loop, and the same zero-waiter forgetfulness that
 makes a naked signal a losing bet is documented for win32 condition
 variables in the systems book, #xref-to("c-os-cloud", "threads").
+Java builds the two-condition shape native,
+`ReentrantLock.newCondition` called twice, one wait set per
+predicate, so its `signalAll` reaches only the sleepers that share
+the waker's predicate.
 C\# has one wait set per monitor where go used two conds, so every
 wake is `PulseAll` and every sleeper rechecks its own predicate, the
 queue works with one wait set because the predicates share one lock.
@@ -251,15 +273,17 @@ which answer whether this caller created the entry.
 
 The dry run: one key through 1000 racing canonical calls
 creates exactly once, every caller walks away holding the same
-canonical value, and a distinct key creates a second time. All six
+canonical value, and a distinct key creates a second time. All seven
 trees pin created 1 on the 1000, the siblings also pin the
 identity of the returned handle.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch07/intern.c", first: 48, last: 68, caption: [C, find-or-insert under the mutex by hand, only the caller that performed the store counts as the creator])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch07/Intern.cs", first: 8, last: 24, caption: [C\#, ConcurrentDictionary.TryAdd is LoadOrStore, the winner is the only caller that counts as a creation])
-
 #listing("patterns-concurrency-distributed/samples/ch07/syncdeep.go", first: 114, last: 131, caption: [Go, load or store reports the winner])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch07/Intern.java", first: 26, last: 40, caption: [Java, computeIfAbsent is the native load-or-store, the mapping function runs at most once per key])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch07/Intern.cs", first: 8, last: 24, caption: [C\#, ConcurrentDictionary.TryAdd is LoadOrStore, the winner is the only caller that counts as a creation])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch07-intern.mjs", first: 6, last: 27, caption: [JavaScript, loadOrStore as one synchronous block, the loaded flag is the winner report])
 
@@ -271,7 +295,11 @@ The fused check-then-act is the whole value: the same code with a
 mutex map needs the lock held across the check, and the same code
 with a plain map is a race. C writes find-or-insert under the mutex
 and returns the canonical pointer, only the inserting caller counts a
-creation, which is `LoadOrStore` disassembled to its parts. C\#
+creation, which is `LoadOrStore` disassembled to its parts. Java's
+`computeIfAbsent` is the fused operation itself, the mapping function
+guaranteed at most one run per key, and the file pins the identity
+with `==` across 1000 concurrent callers each passing a freshly
+built string. C\#
 reaches for `ConcurrentDictionary.TryAdd`, the bcl row of the same
 contract, and the wider concurrent-collection surface it belongs to
 is the stdlib tour's territory, #xref-to("csharp-net", "stdlib2").
@@ -311,15 +339,17 @@ The dry run: 64 racers each offer their racer number times 7 and the
 shared maximum lands on the true max 448 in every tree, the loop
 terminates because every failed exchange means someone else
 installed a larger or equal candidate. The scripted lanes pin forced retries, 2 failed
-exchanges in C and in C\#, 1 scripted move in javascript, 2 lost
+exchanges in C, java, and C\#, 1 scripted move in javascript, 2 lost
 installs over 3 loads in python, 3 retries in lua. A candidate at or
 below the current value returns without ever attempting the swap.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch07/cas.c", first: 21, last: 52, caption: [C, atomic_compare_exchange_strong in the loop, the scripted interloper raises the target between load and exchange])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch07/Cas.cs", first: 4, last: 36, caption: [C\#, Interlocked.CompareExchange behind a virtual swap so a scripted test can force retries])
-
 #listing("patterns-concurrency-distributed/samples/ch07/syncdeep.go", first: 131, last: 142, caption: [Go, cas loop raising a shared maximum])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch07/Cas.java", first: 22, last: 65, caption: [Java, VarHandle.compareAndSet in the loop, the scripted interloper raising the target between load and install])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch07/Cas.cs", first: 4, last: 36, caption: [C\#, Interlocked.CompareExchange behind a virtual swap so a scripted test can force retries])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch07-cas.mjs", first: 27, last: 54, caption: [JavaScript, the scripted cell moves the value on cue so the swap fails and the caller must re-read])
 
@@ -331,7 +361,10 @@ The lanes earn the loop's atomicity differently. C and C\# hold the
 real primitive, `atomic_compare_exchange_strong` and
 `Interlocked.CompareExchange`, and pin the retry count by moving the
 target inside the window, an interloper in C, a flaky subclass in
-C\#. Go writes the same loop over `atomic.Int64`. Javascript has
+C\#. Go writes the same loop over `atomic.Int64`. Java holds the
+primitive twice over, `VarHandle.compareAndSet` over a plain field
+for the ladder lane and `AtomicLong` for the 64 racers, its scripted
+interloper built exactly like C's. Javascript has
 `Atomics.compareExchange` for shared-array-buffer cells, and this
 lane's cell is plain, atomic by event-loop construction, with a
 scripted subclass that pretends another racer installed first.
@@ -371,17 +404,19 @@ sample closes with a compact error group.
 
 The dry run: a clean task, a task failing alpha, a task failing
 beta. Waiting joins both names into one error, the first-error view
-matches, and a clean group waits out to nothing. C, C\#, python, and
-lua pin alpha as the first error through a causal edge, a
-submission-order slot, gather order, and a scripted yield, the go and
-javascript lanes accept either failure as first because their
-landing order is genuinely free.
+matches, and a clean group waits out to nothing. C, java, C\#,
+python, and lua pin alpha as the first error through a causal edge,
+a first-error latch, a submission-order slot, gather order, and a
+scripted yield, the go and javascript lanes accept either failure as
+first because their landing order is genuinely free.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch07/errgroup.c", first: 63, last: 110, caption: [C, one thread per task, the done and error condvars, and the causal edge that makes the second failure observably second])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch07/Errgroup.cs", first: 7, last: 41, caption: [C\#, a slot per task at Go time, WhenAll is the barrier, both views deterministic in submission order])
-
 #listing("patterns-concurrency-distributed/samples/ch07/syncdeep.go", first: 145, last: 177, caption: [Go, go and wait, join every error or surface the first])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch07/Errgroup.java", first: 30, last: 68, caption: [Java, tasks on the virtual-thread executor, pool.close the wait edge, a first-error latch behind the group])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch07/Errgroup.cs", first: 7, last: 41, caption: [C\#, a slot per task at Go time, WhenAll is the barrier, both views deterministic in submission order])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch07-errgroup.mjs", first: 5, last: 36, caption: [JavaScript, tasks are promises, allSettled semantics by hand, the joined error one per line])
 
@@ -393,7 +428,10 @@ Every lane builds the same 3 parts, spawn, barrier, collect, and
 differs in what makes the first error deterministic. Go and
 javascript race the landing, so their honest assertion accepts either
 failure as first. C makes the order causal, the beta task blocks
-until alpha's error has landed, an edge in place of a sleep. C\#
+until alpha's error has landed, an edge in place of a sleep. Java
+plays the same trick with a `CountDownLatch`, its beta task waiting
+for the first error to land, and its barrier is `pool.close()`, the
+virtual-thread executor waiting out every submitted task. C\#
 assigns each task its slot at submission, so the collected array is
 ordered no matter how the pool schedules. Python's `gather` preserves
 submission order in its results even with `return_exceptions`, and
@@ -422,9 +460,10 @@ to run a 5 node cluster to quiescence.
   `Put` hands out no guarantee the same object comes back. Pools
   earn their keep inside hot allocation loops measured by chapter
   9's profiling, not as a general object recycling facility. The
-  idea needs a garbage collector to be safe, so the other five
+  idea needs a garbage collector to be safe, so the other six
   lanes have nothing to pool: C would be a free list you manage,
-  the dynamic three hand allocation to their runtimes.
+  java's jdk ships no pool type of its own, and the dynamic three
+  hand allocation to their runtimes.
 ])
 
 #diagram([a pool lives between gc cycles, a cache and never a store], length: 13pt, {
@@ -444,7 +483,7 @@ to run a 5 node cluster to quiescence.
   cdraw.content((11.5, -0.9), [the pool may empty at any allocation cycle, no guarantee the same object returns], size: 6pt)
 })
 
-== across the six languages
+== across the seven languages
 
 The build sizes count non-comment source lines, the go column the
 chapter's one frozen file:
@@ -455,10 +494,12 @@ chapter's one frozen file:
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [677], [libc plus threads.h, stdatomic.h],
   [one mutex flavor so the rw split collapses, call_once reads through a pointer],
-  [c\#], [236], [bcl],
-  [Lazy in ExecutionAndPublication, TryAdd is LoadOrStore, a virtual swap for cas],
   [go], [142], [stdlib],
   [frozen reference lane, OnceValue off the shelf, errgroup keeps classic wg.Add],
+  [java], [517], [jdk 27 stdlib],
+  [double-checked locking on a volatile flag, two conditions from newCondition, computeIfAbsent as the load-or-store],
+  [c\#], [236], [bcl],
+  [Lazy in ExecutionAndPublication, TryAdd is LoadOrStore, a virtual swap for cas],
   [javascript], [179], [node stdlib],
   [one thread per realm, underLock chains a promise tail, the memo never awaits],
   [python], [341], [stdlib only],
@@ -470,8 +511,9 @@ chapter's one frozen file:
 sources: go.dev/pkg/sync for `RWMutex`, the `Once` family, `Cond`,
 `Map`, `Pool`, and `WaitGroup.Go` including its memory model note,
 go.dev/pkg/sync/atomic for CAS semantics, go.dev/ref/mem for the
-Once and mutex edges quoted, accessed 2026-09-08. Verified by the six
-chapter legs: 6 C programs with 339 embedded checks, 14 xunit
-facts, `go test` at 6 tests in `patternsbook/ch07`, node's 13 cases
-in `test/ch07.test.mjs`, 6 python modules with 43 embedded checks,
-and the lua runner's 25 ch07 rows.
+Once and mutex edges quoted, accessed 2026-09-08. Verified by the
+seven chapter legs: 6 Ch07 C programs with 339 embedded checks,
+`go test` at 6 tests in `patternsbook/ch07`, 6 Ch07 java programs
+with 42 checks under `run-java-samples`, 14 xunit facts, node's 13
+cases in `test/ch07.test.mjs`, 6 python modules with 43 embedded
+checks, and the lua runner's 25 ch07 rows.

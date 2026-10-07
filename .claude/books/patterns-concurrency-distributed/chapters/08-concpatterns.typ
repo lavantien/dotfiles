@@ -35,7 +35,7 @@ down", and `AfterFunc` registers post-cancellation work without a
 goroutine parked in select. The sample sticks to plain cancellation,
 which is the common case.
 
-The five sibling lanes thread their own carrier as the first
+The six sibling lanes thread their own carrier as the first
 parameter, each the native spelling of the same contract:
 
 #table(
@@ -43,6 +43,7 @@ parameter, each the native spelling of the same contract:
   inset: 4pt,
   table.header([*lane*], [*the stop signal*]),
   [c], [a `cancel_ctx`, an atomic done flag plus the channels registered with it, cancel broadcasts into every blocked send],
+  [java], [a `CancelCtx`, an atomic done flag plus a watch list of channels, cancel pokes every blocked send awake],
   [c\#], [`CancellationToken`, accepted by every `WriteAsync` and `ReadAllAsync`, cancellation throws out of the wait],
   [javascript], [a `CancelToken`, a canceled flag with a waiter list, checked between yields],
   [python], [a `Cancel` wrapper over an `asyncio.Event`, polled at loop heads],
@@ -52,7 +53,10 @@ parameter, each the native spelling of the same contract:
 Javascript's native carrier is `AbortSignal`, the signal fetch,
 timers, and streams already accept, #xref-to("javascript", "async")
 tours the loop it rides, and the sample's `CancelToken` hand-spells
-the same contract so the waiter list stays inspectable. Python's row
+the same contract so the waiter list stays inspectable. Java
+hand-spells its carrier too, an `AtomicBoolean` done flag whose
+cancel walks a watch list of channels and wakes every blocked send.
+Python's row
 is the flag-plus-Event carrier in these samples and asyncio task
 cancellation in production shape, #xref-to("python", "asyncio")
 covers the family. C's lane is the one that builds the whole
@@ -80,16 +84,18 @@ with a defer close:
 
 The dry run: squares of 1 through 10 sum to 385, an empty generator
 sums to 0, the first value off the chain is 1, and cancel mid-stream
-stops the producer with every stage unwound. The five new trees pin
+stops the producer with every stage unwound. The six new trees pin
 the first value 1, the go lane's frozen cancel test feeds an endless
 counter from 0 and pins first square 0, both verified against the
 same implementation.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch08/pipeline.c", first: 84, last: 124, caption: [C, the select analog as a strict rendezvous, the send completes when a receiver takes the value and cancel aborts it mid-handoff])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch08/Pipeline.cs", first: 20, last: 48, caption: [C\#, WriteAsync with the token is the select, cancellation throws out of the wait, finally completes the channel])
-
 #listing("patterns-concurrency-distributed/samples/ch08/patterns.go", first: 12, last: 45, caption: [Go, generator and square stage, identical shape, select on both directions])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch08/Pipeline.java", first: 57, last: 96, caption: [Java, the select analog a strict one-slot rendezvous over two Conditions, cancel aborts mid-handoff and the sender retracts])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch08/Pipeline.cs", first: 20, last: 48, caption: [C\#, WriteAsync with the token is the select, cancellation throws out of the wait, finally completes the channel])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch08-pipeline.mjs", first: 7, last: 57, caption: [JavaScript, async generators with a finally head count, the consumer's return propagates down the chain])
 
@@ -104,7 +110,10 @@ input and terminate when the chain empties. Go writes it as one
 select covering both directions. C builds the select by hand as a
 strict rendezvous, the send parks until a receiver takes the value,
 cancel wakes it, and a sender canceled while holding the slot retracts
-its own value. C\# writes the stages over `System.Threading.Channels`,
+its own value. Java's `XChan` is the same strict rendezvous over a
+`ReentrantLock` and two conditions, its cancel broadcast retracting
+the held slot exactly like C's. C\# writes the stages over
+`System.Threading.Channels`,
 `WriteAsync` and `ReadAllAsync` each taking the token, the channel
 pipeline idiom the stdlib tour builds, #xref-to("csharp-net",
 "stdlib2"). Javascript and python lean on async generators, where
@@ -138,9 +147,11 @@ every lane sorts before asserting.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch08/fanin.c", first: 77, last: 94, caption: [C, the closer's predicate, one open source keeps the merge alive, scripted round-robin passes replace racing forwarders])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch08/Fanin.cs", first: 8, last: 43, caption: [C\#, one forwarder task per input, a WhenAll over them, the closer task completes the output last])
-
 #listing("patterns-concurrency-distributed/samples/ch08/patterns.go", first: 47, last: 70, caption: [Go, forwarder per input, waitgroup, close after the last source closes])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch08/Fanin.java", first: 24, last: 67, caption: [Java, the scripted round-robin merge, allClosed the closer's predicate, the trace recorded instead of raced])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch08/Fanin.cs", first: 8, last: 43, caption: [C\#, one forwarder task per input, a WhenAll over them, the closer task completes the output last])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch08-fanin.mjs", first: 41, last: 68, caption: [JavaScript, one forwarder per source pushing into a merge queue, close only after every source finished])
 
@@ -153,10 +164,10 @@ merge's output must close only when every input has closed, and the
 barrier is the cheapest edge that orders "all forwarders returned"
 before close. Go and lua spend a waitgroup, C\# a `WhenAll`,
 javascript a `Promise.all` before `q.close()`, python a sentinel
-enqueued after the gather. The C lane scripts the whole interleave,
-round-robin passes with sources closing at chosen points, so its
-pinned pass order 1, 10, 100, 2, 20, 3 is a fixture, an
-interleaving the racer lanes leave free.
+enqueued after the gather. The C and java lanes script the whole
+interleave, round-robin passes with sources closing at chosen
+points, so the pinned pass order 1, 10, 100, 2, 20, 3 is a fixture,
+an interleaving the racer lanes leave free.
 
 #flow(
   [one forwarder per source, the closer waits then closes out],
@@ -180,16 +191,18 @@ share one job queue, which is a queue with no configuration:
 
 The dry run: 50 jobs through 4 workers. Every job processed exactly
 once, no more than 4 distinct worker ids ever appear, and each job
-computes a positive sum. The javascript, python, and lua lanes pin
-the sum itself, 147, the total of i modulo 7 over 50 ops, the go and
-C\# lanes assert positivity, and C checks every result against its
-own grind function.
+computes a positive sum. The java, javascript, python, and lua lanes
+pin the sum itself, 147, the total of i modulo 7 over 50 ops, the go
+and C\# lanes assert positivity, and C checks every result against
+its own grind function.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch08/workerpool.c", first: 107, last: 140, caption: [C, 4 real threads ranging one queue, worker ids taken under the results lock, every job lands exactly once])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch08/Workerpool.cs", first: 11, last: 52, caption: [C\#, n tasks ranging one channel through ReadAllAsync, the closer task completes after WhenAll])
-
 #listing("patterns-concurrency-distributed/samples/ch08/patterns.go", first: 83, last: 110, caption: [Go, n goroutines ranging one channel, results unordered])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch08/Workerpool.java", first: 44, last: 62, caption: [Java, the pool over a fixed ExecutorService, invokeAll hands futures back in submission order])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch08/Workerpool.cs", first: 11, last: 52, caption: [C\#, n tasks ranging one channel through ReadAllAsync, the closer task completes after WhenAll])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch08-workerpool.mjs", first: 8, last: 33, caption: [JavaScript, n runners sharing one job list, the synchronous shift is the exactly-once guarantee])
 
@@ -199,11 +212,15 @@ own grind function.
 
 Ordering is explicitly not among the guarantees, results arrive in
 completion order, and when the caller needs input order anyway the
-cheaper shape is the next pattern. The lanes differ only in what
+cheaper shape is the next pattern. Java is the one lane that gets
+order for free: `ExecutorService.invokeAll` hands futures back in
+submission order, so its results are ordered without any indexing, a
+real divergence from the siblings. The lanes differ only in what
 enforces exactly-once: go, C, and lua share one channel or queue that
-hands each job to one receiver, C\# ranges one channel through
-`ReadAllAsync`, javascript relies on the single-threaded `shift`,
-and python's queue plus sentinels keeps every job with one laborer.
+hands each job to one receiver, java's executor owns the queue, C\#
+ranges one channel through `ReadAllAsync`, javascript relies on the
+single-threaded `shift`, and python's queue plus sentinels keeps
+every job with one laborer.
 
 #flow(
   [n workers range one queue, exactly once each, results unordered],
@@ -230,17 +247,19 @@ The dry run: 8 inputs through a gate of 3, f maps each input to its
 letter. The output reads back a through h in input order while
 completion order scrambles by construction, and the peak in-flight
 count never exceeds 3. The scrambles differ per lane: go sleeps real
-60 minus v milliseconds, C drives a discrete-event scheduler with a
-pinned completion order, C\# releases countdown events in reverse
-input order, javascript scales the same shape to microtask turns,
-python and lua run the sleeps on virtual clocks, the only real
+60 minus v milliseconds, C and java drive a discrete-event scheduler
+with a pinned completion order, C\# releases countdown events in
+reverse input order, javascript scales the same shape to microtask
+turns, python and lua run the sleeps on virtual clocks, the only real
 milliseconds spent anywhere are the go lane's.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch08/orderedmap.c", first: 41, last: 79, caption: [C, admit in input order, always advance to the earliest finish, ties by admission order, no thread waits])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch08/Orderedmap.cs", first: 7, last: 34, caption: [C\#, a SemaphoreSlim of size parallelism, every task writes its own slot, WhenAll publishes])
-
 #listing("patterns-concurrency-distributed/samples/ch08/patterns.go", first: 112, last: 134, caption: [Go, no result channels: one slot per input, a gate for parallelism])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch08/Orderedmap.java", first: 49, last: 87, caption: [Java, C's discrete-event scheduler, admit in input order, advance to the earliest finish, ties by admission])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch08/Orderedmap.cs", first: 7, last: 34, caption: [C\#, a SemaphoreSlim of size parallelism, every task writes its own slot, WhenAll publishes])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch08-orderedmap.mjs", first: 6, last: 43, caption: [JavaScript, a promise-count gate bounds the in-flight tasks, every slot writes itself])
 
@@ -250,9 +269,13 @@ milliseconds spent anywhere are the go lane's.
 
 No mutex on the array: each worker writes exactly one distinct slot,
 and the barrier is the happens-before edge that publishes them all,
-`Wait` in go, `WhenAll` in C\#, the gather in python, the resolved
+`Wait` in go, the `join` over the virtual-thread crew in java's live
+lane, `WhenAll` in C\#, the gather in python, the resolved
 promise chain in javascript, the joined lanes in lua, the completed
-loop in C's scheduler. The test makes later inputs finish first and
+loop in C's and java's scheduler. Java runs the fan-out twice, the
+recorded scheduler beside a live `Semaphore`-gated crew whose
+slot-indexed writes keep input order whatever the landing order.
+The test makes later inputs finish first and
 the output still comes back in input order. This is the shape to
 reach for when someone reaches for an error group with an index map
 on the side.
@@ -284,15 +307,17 @@ budget and the caller receives `fast: quick`. Two sources stalled
 past 5s under a 30ms deadline produce the timeout error naming
 neither source. The mechanism split is the honesty of this section:
 the frozen go test sleeps real milliseconds with margins around 100x,
-the five new trees inject the clock, so their runs spend no wall time
-and C, javascript, python, and lua also assert where the clock lands,
-10 on the win and 30 on the timeout.
+the six new trees inject the clock, so their runs spend no wall time
+and C, java, javascript, python, and lua also assert where the clock
+lands, 10 on the win and 30 on the timeout.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch08/first.c", first: 47, last: 75, caption: [C, both producers report a ready instant, the earliest edge wins unless the deadline is earlier still])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch08/First.cs", first: 10, last: 40, caption: [C\#, WhenAny over the read and a Task.Delay on the injected TimeProvider, no real interval slept])
-
 #listing("patterns-concurrency-distributed/samples/ch08/patterns.go", first: 136, last: 154, caption: [Go, first answer wins, loser writes discarded into a buffered channel])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch08/First.java", first: 26, last: 72, caption: [Java, the sources answer with their ready instants, the earliest edge wins unless the deadline is earlier still])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch08/First.cs", first: 10, last: 40, caption: [C\#, WhenAny over the read and a Task.Delay on the injected TimeProvider, no real interval slept])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch08-first.mjs", first: 9, last: 52, caption: [JavaScript, the fake timer queue, sleep parks on a due instant, advance fires the due ones in order])
 
@@ -304,12 +329,14 @@ The answer channel is buffered to 2 in the go lane so the loser's
 send never blocks after the winner is chosen, a small instance of the
 general rule that every producer must tolerate an unread result. The
 injected-clock lanes each rebuild that tolerance their own way: C
-lets the loser's answer sit in the pick buffer unread, C\# writes
-into a bounded channel of 2, javascript's race drops the losing
+lets the loser's answer sit in the pick buffer unread, java does the
+same and parks its native shape beside the clock, `anyOf` over two
+`CompletableFuture`s answering from whichever future completed, C\#
+writes into a bounded channel of 2, javascript's race drops the losing
 branch, python cancels the losing tasks, lua aborts the pending
 sleeps through the deadline's context. The winner is whichever edge
-fires first, the names are labels, and the C and lua lanes pin the
-counter-lane where the slow source answers first and wins anyway.
+fires first, the names are labels, and the C, java, and lua lanes pin
+the counter-lane where the slow source answers first and wins anyway.
 
 #diagram([first answer wins, the loser drains into the buffer], length: 13pt, {
   cdraw.line((1, 1), (22, 1), stroke: luma(100))
@@ -330,19 +357,22 @@ times, cancels, and asks each tree's own instrument whether anything
 stayed behind:
 
 The dry run: 10 rounds of build, consume, cancel, drain. The go lane
-polls the goroutine count back to baseline after a GC. The five new
+polls the goroutine count back to baseline after a GC. The six new
 lanes read their instrument directly, C joins every thread and counts
-the live ones back to 0, C\# reads the in-flight stage counter to 0
+the live ones back to 0, java reads its live-thread counter back to 0
+each round, C\# reads the in-flight stage counter to 0
 past the merged channel's completion, javascript reads the stage and
 forwarder probes to 0, python reads the alive probe to 0, lua asserts
 no lane stays parked. Only the go lane samples a runtime counter, so
-only it needs a polling window, and none of the six asserts a timing.
+only it needs a polling window, and none of the seven asserts a timing.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch08/pipeline.c", first: 279, last: 301, caption: [C, the check region: 10 rounds of build, cancel, drain, the live-thread count returns to 0 each round])
 
-#listing("patterns-concurrency-distributed/samples-cs/tests/Ch08/PipelineTests.cs", first: 81, last: 100, caption: [C\#, xunit: completion is the edge past which every stage ran its Exit, the counter reads true, not approximately])
-
 #listing("patterns-concurrency-distributed/samples/ch08/patterns_test.go", first: 148, last: 168, caption: [Go, goroutine count as a leak detector])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch08/Pipeline.java", first: 275, last: 297, caption: [Java, the check region: ten rounds of build, consume, cancel, drain, the live-thread counter returns to 0 each round])
+
+#listing("patterns-concurrency-distributed/samples-cs/tests/Ch08/PipelineTests.cs", first: 81, last: 100, caption: [C\#, xunit: completion is the edge past which every stage ran its Exit, the counter reads true, not approximately])
 
 #listing("patterns-concurrency-distributed/samples-js/test/ch08.test.mjs", first: 152, last: 170, caption: [JavaScript, node:test: stage and forwarder probes return to baseline after 10 cycles])
 
@@ -383,7 +413,7 @@ can never wake, covered with the other detectors in chapter 9.
   is a rewrite.
 ])
 
-== across the six languages
+== across the seven languages
 
 The build sizes count non-comment source lines, the go column the
 chapter's one frozen file:
@@ -394,10 +424,12 @@ chapter's one frozen file:
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [724], [libc plus threads.h, stdatomic.h],
   [the select analog a strict rendezvous, cancel broadcasts into blocked sends],
-  [c\#], [204], [bcl],
-  [the token into every channel wait, WhenAll the barrier, WhenAny over Task.Delay],
   [go], [129], [stdlib],
   [frozen reference lane, select on both directions, goroutine count as leak probe],
+  [java], [599], [jdk 27 stdlib],
+  [the XChan rendezvous and CancelCtx rolled by hand, the scripted fan-in trace, invokeAll handing back submission order],
+  [c\#], [204], [bcl],
+  [the token into every channel wait, WhenAll the barrier, WhenAny over Task.Delay],
   [javascript], [196], [node stdlib, one sibling module],
   [a hand-spelled CancelToken, the finally head count, the fake timer queue],
   [python], [351], [stdlib only],
@@ -409,8 +441,9 @@ chapter's one frozen file:
 sources: go.dev/pkg/context for cancellation trees, `Cause`,
 `AfterFunc`, go.dev/blog/pipelines for the generator and stage
 vocabulary, go.dev/doc/go1.27 for the goroutine leak profile,
-accessed 2026-09-08. Verified by the six chapter legs: 5 C programs
-with 270 embedded checks, 11 xunit facts, `go test` at 8 tests in
-`patternsbook/ch08`, node's 8 cases in `test/ch08.test.mjs`,
-5 python modules with 33 embedded checks, and the lua runner's
-22 ch08 rows.
+accessed 2026-09-08. Verified by the seven chapter legs: 5 Ch08 C
+programs with 270 embedded checks, `go test` at 8 tests in
+`patternsbook/ch08`, 5 Ch08 java programs with 69 checks under
+`run-java-samples`, 11 xunit facts, node's 8 cases in
+`test/ch08.test.mjs`, 5 python modules with 33 embedded checks, and
+the lua runner's 22 ch08 rows.

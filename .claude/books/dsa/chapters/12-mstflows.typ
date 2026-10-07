@@ -16,7 +16,8 @@ Both keep trees effectively flat.
 
 The dry run: the fixture is the C\# four-label script a through d and
 the 50-node chain, asserted by the C\# suite; the siblings run their
-own scripts, C and Lua on 10 vertices, the rest on smaller unions.
+own scripts, C, Java, and Lua on 10 vertices, the rest on smaller
+unions.
 
 + Four Add calls stand a, b, c, and d each as its own root: SetCount
   reads 4.
@@ -45,7 +46,13 @@ own scripts, C and Lua on 10 vertices, the rest on smaller unions.
 )
 
 The 4 to 1 count and the v49 rehang are the C\# pins, and the
-listings below build the sets in six languages.
+listings below build the sets in seven languages.
+
+#listing("dsa/samples-c/src/Ch12/dsu.c", first: 28, last: 58, caption: [c, path halving in find, rank in union, the component count])
+
+#listing("dsa/samples-go/ch12/dsu.go", first: 28, last: 58, caption: [go, two-pass find with the compression rehang, rank-ordered union])
+
+#listing("dsa/samples-java/src/Ch12/Dsu.java", first: 29, last: 52, caption: [java, path halving in find, rank in union, the component count])
 
 #listing("dsa/samples/src/Ch12/Flows.cs", first: 4, last: 53, caption: [c\#, disjoint sets with compression and rank, cycle reporting unions])
 
@@ -54,26 +61,22 @@ precisely the cycle test kruskal needs, and the amortized cost with
 both optimizations is inverse Ackermann, effectively constant for
 any addressable n.
 
-#listing("dsa/samples-c/src/Ch12/dsu.c", first: 28, last: 58, caption: [c, path halving in find, rank in union, the component count])
-
-#listing("dsa/samples-go/ch12/dsu.go", first: 28, last: 58, caption: [go, two-pass find with the compression rehang, rank-ordered union])
-
 #listing("dsa/samples-js/src/ch12-dsu.mjs", first: 13, last: 36, caption: [javascript, halving find, rank union, parent exposed for the proof])
 
 #listing("dsa/samples-py/src/Ch12/dsu.py", first: 18, last: 38, caption: [python, find walks then rehangs, union by rank, component count])
 
 #listing("dsa/samples-lua/ch12_dsu.lua", first: 15, last: 36, caption: [lua, halving find over plain tables, union by rank])
 
-Measured across the suites: C and Lua share one 10-vertex script, 4
-components after six unions, a redundant union returning false and
-changing nothing, and a find that leaves 8 pointing straight at its
-root. JavaScript chains 4 into 1 to make the compression visible and
-checks the rank grew, while Go and Python pin counts through their
-own scripts with the same refusal. The accelerations differ in
-flavor: C, JavaScript, and Lua halve the path as they walk, the
-C\# and Go finds walk to the root then rehang the whole path, and
-Python ships both, a rehang in the standalone file and a halving
-copy inside its kruskal below.
+Measured across the suites: C, Java, and Lua share one 10-vertex
+script, 4 components after six unions, a redundant union returning
+false and changing nothing, and a find that leaves 8 pointing
+straight at its root. JavaScript chains 4 into 1 to make the
+compression visible and checks the rank grew, while Go and Python
+pin counts through their own scripts with the same refusal. The
+accelerations differ in flavor: C, Java, JavaScript, and Lua halve
+the path as they walk, the C\# and Go finds walk to the root then
+rehang the whole path, and Python ships both, a rehang in the
+standalone file and a halving copy inside its kruskal below.
 
 #diagram([union-find, find compresses the walked path, union by rank refuses the cycle-closing edge], length: 13pt, {
   // before: find(6) climbs 6 4 2 to the root, that path shaded
@@ -110,8 +113,8 @@ constant time.
 
 The dry run: the fixture is the C\# weighted graph, vertices a
 through d over edges a-b 1, a-c 4, b-c 2, b-d 6, c-d 3; Go,
-JavaScript, and Python run a 5-edge graph to the same total and C and
-Lua a 6-edge one at 13.
+JavaScript, and Python run a 5-edge graph to the same total and C,
+Java, and Lua a 6-edge one at 13.
 
 + OrderBy weight lines the candidates up: a-b at 1, b-c at 2, c-d at
   3, a-c at 4, b-d at 6.
@@ -136,13 +139,15 @@ Lua a 6-edge one at 13.
 )
 
 The refused 4 and 6 beside the pinned total 6 are the C\# shape, and
-the listings below sort and union in six languages.
+the listings below sort and union in seven languages.
 
 #listing("dsa/samples-c/src/Ch12/kruskal.c", first: 40, last: 69, caption: [c, sort by weight, union accepts, the spanning count])
 
-#listing("dsa/samples/src/Ch12/Flows.cs", first: 60, last: 75, caption: [c\#, kruskal over sorted edges, stop at n-1])
-
 #listing("dsa/samples-go/ch12/kruskal.go", first: 18, last: 34, caption: [go, slices sort, dsu unions, early break at spanning])
+
+#listing("dsa/samples-java/src/Ch12/Kruskal.java", first: 39, last: 56, caption: [java, sorted edges over the inline dsu, records for the chosen tree])
+
+#listing("dsa/samples/src/Ch12/Flows.cs", first: 60, last: 75, caption: [c\#, kruskal over sorted edges, stop at n-1])
 
 #listing("dsa/samples-js/src/ch12-kruskal.mjs", first: 10, last: 22, caption: [javascript, sorted copy, tree in acceptance order])
 
@@ -157,10 +162,11 @@ of the components belongs to some minimum tree.
 Measured across the suites: Go, JavaScript, and Python share a
 5-edge fixture and pin total 6 with the tree 0-1, 1-2, 2-3 in pick
 order, the heavy edges of weight 4 and 5 refused, and a disconnected
-graph left as a forest. C and Lua share a 6-edge fixture, total 13
-from picks 1 2 4 6, with the spanning property proved by transitive
-closure over the chosen edges. The frozen C\# suite pins n-1 edges
-of one total across fixed and twenty random weighted graphs.
+graph left as a forest. C, Java, and Lua share a 6-edge fixture,
+total 13 from picks 1 2 4 6, C and Lua proving the spanning property
+by transitive closure over the chosen edges. The frozen C\# suite
+pins n-1 edges of one total across fixed and twenty random weighted
+graphs.
 
 #diagram([kruskal against prim on one graph, sorted unions past cycle closers against one tree through a heap frontier], length: 13pt, {
   // kruskal: the sorted edge list, joins and one refusal
@@ -207,12 +213,12 @@ of one total across fixed and twenty random weighted graphs.
 Prim grows one tree outward from a start vertex, always absorbing
 the cheapest edge that crosses from inside to outside. The frozen
 C\# version drives a binary heap frontier of candidate edges, the
-other five scan for the smallest key, quadratic on purpose and
+other six scan for the smallest key, quadratic on purpose and
 clearer than heap machinery at teaching sizes.
 
 The dry run: the fixture is the same weighted graph grown from a
 through the C\# heap frontier, the total asserted equal to kruskal's;
-the five siblings scan for the smallest key instead, Go, JavaScript,
+the six siblings scan for the smallest key instead, Go, JavaScript,
 and Python pinning the same 6 from every start.
 
 + The heap opens with a's two crossings, a-b at 1 and a-c at 4.
@@ -251,13 +257,15 @@ and Python pinning the same 6 from every start.
 })
 
 The 6 matching kruskal on the same graph is the pinned pair, and the
-listings below grow the tree in six languages.
+listings below grow the tree in seven languages.
 
 #listing("dsa/samples-c/src/Ch12/prim.c", first: 37, last: 60, caption: [c, key array over the adjacency matrix, min-scan pick])
 
-#listing("dsa/samples/src/Ch12/Flows.cs", first: 78, last: 107, caption: [c\#, prim through the heap frontier, tie break on names])
-
 #listing("dsa/samples-go/ch12/prim.go", first: 7, last: 43, caption: [go, best-key scan over adjacency lists, forest flag])
+
+#listing("dsa/samples-java/src/Ch12/Prim.java", first: 34, last: 59, caption: [java, key, parent, and taken arrays over the matrix, min-scan pick])
+
+#listing("dsa/samples/src/Ch12/Flows.cs", first: 78, last: 107, caption: [c\#, prim through the heap frontier, tie break on names])
 
 #listing("dsa/samples-js/src/ch12-prim.mjs", first: 8, last: 35, caption: [javascript, key and parent arrays over the matrix])
 
@@ -268,10 +276,11 @@ listings below grow the tree in six languages.
 Measured across the suites: Go, JavaScript, and Python land the same
 6 as their kruskal from every start vertex, Python pinning the pick
 order and the rerouted picks from vertex 1, all three flagging a
-forest when a vertex is unreachable. C and Lua share their 6-edge
-fixture, total 13 with parents pinned from vertex 0 and the same 13
-from starts 4 and 2 under a different parent shape. The frozen C\#
-suite pins equal totals against kruskal on its random graphs.
+forest when a vertex is unreachable. C, Java, and Lua share their
+6-edge fixture, total 13 with parents pinned from vertex 0 and the
+same 13 from starts 4 and 2 under a different parent shape. The
+frozen C\# suite pins equal totals against kruskal on its random
+graphs.
 
 #diagram([prim mid-growth, the cheapest edge crossing from the tree to the outside wins], length: 13pt, {
   // the tree so far: 0-1 (1), 1-2 (2); vertex 3 outside, three crossings
@@ -319,8 +328,8 @@ permission that lets later paths reroute earlier greed.
 
 The dry run: the fixture is the C\# textbook network, s to a at 10,
 s to b at 5, a to b at 15, a to t at 10, b to t at 10; the siblings
-run smaller nets, Go, JavaScript, and Python pinning flow 5 and C and
-Lua the classic 6-vertex 23.
+run smaller nets, Go, JavaScript, and Python pinning flow 5 and C,
+Java, and Lua the classic 6-vertex 23.
 
 + The first BFS fans out from s, a and b join the wave, and t is
   reached through a: the path s, a, t runs at bottleneck
@@ -359,7 +368,13 @@ Lua the classic 6-vertex 23.
 })
 
 The 15 with the cross edge flat at 0 is the pinned read, and the
-listings below push through the residual graph in six languages.
+listings below push through the residual graph in seven languages.
+
+#listing("dsa/samples-c/src/Ch12/maxflow.c", first: 47, last: 83, caption: [c, bfs over arc pairs, bottleneck push, xor to flip an arc])
+
+#listing("dsa/samples-go/ch12/maxflow.go", first: 35, last: 71, caption: [go, matrix residual, bfs parent chain, bottleneck update])
+
+#listing("dsa/samples-java/src/Ch12/Maxflow.java", first: 44, last: 87, caption: [java, bfs over arc pairs, endpoint flips an arc by its bit, the bottleneck push])
 
 #listing("dsa/samples/src/Ch12/Flows.cs", first: 111, last: 199, caption: [c\#, residual capacities, bottleneck pushes, the bfs augmenting path])
 
@@ -368,10 +383,6 @@ named for it builds the classic trap graph where the first greedy
 path through the cross edge must later be partially undone. Flow
 conservation and capacity limits are asserted per edge on every
 test.
-
-#listing("dsa/samples-c/src/Ch12/maxflow.c", first: 47, last: 83, caption: [c, bfs over arc pairs, bottleneck push, xor to flip an arc])
-
-#listing("dsa/samples-go/ch12/maxflow.go", first: 35, last: 71, caption: [go, matrix residual, bfs parent chain, bottleneck update])
 
 #listing("dsa/samples-js/src/ch12-maxflow.mjs", first: 30, last: 70, caption: [javascript, arc pairs, private bfs, the push loop])
 
@@ -382,11 +393,12 @@ test.
 Measured across the suites: Go, JavaScript, and Python share a
 5-edge network and pin flow 5 with the min cut at the saturated
 source edges 0-1 and 0-2, plus a narrow middle edge bounding a
-second fixture at 4. C and Lua share the classic 6-vertex network,
-flow 23, per-edge flows 12 11 12 0 11 0 19 7 4, conservation checked
-at every internal vertex, and the residual-reachable set 0 1 2 4
-cutting at capacity 23. The frozen C\# suite pins the trap graph
-and asserts conservation and capacity per edge.
+second fixture at 4. C, Java, and Lua share the classic 6-vertex
+network, flow 23, per-edge flows 12 11 12 0 11 0 19 7 4,
+conservation checked at every internal vertex, and the
+residual-reachable set 0 1 2 4 cutting at capacity 23. The frozen
+C\# suite pins the trap graph and asserts conservation and capacity
+per edge.
 
 #flow(
   [the trap graph, one augmenting path, and the reverse edge it opens],
@@ -408,8 +420,9 @@ The theorem says the maximum flow equals the minimum capacity of any
 s-t cut. The reachable set in the final residual graph is one side
 of a minimum cut, saturated across the boundary.
 
-The dry run: the fixtures are identical literals in all six suites.
-The textbook net, s-a 10, s-b 5, a-b 15, a-t 10, b-t 10, lands flow
+The dry run: the fixtures are identical literals in all seven
+suites. The textbook net, s-a 10, s-b 5, a-b 15, a-t 10, b-t 10,
+lands flow
 15 with the per-edge use 10, 5, 10, 5 and the cross flat at 0, cut
 side {s}, cut capacity 15. The all-ones undo net lands flow 2 with
 every flow inside its capacity. The parallel lane is two edges (s, t,
@@ -461,7 +474,13 @@ the flow value, with conservation at every internal vertex.
 })
 
 The 15 against 15 and the two-pipe 7 are the pins, and the listings
-below are the six readers that compute them.
+below are the seven readers that compute them.
+
+#listing("dsa/samples-c/src/Ch12/mincut.c", first: 116, last: 142, caption: [c, residual reachability from s, then the cut capacity over the original edge records])
+
+#listing("dsa/samples-go/ch12/mincut.go", first: 120, last: 137, caption: [go, the min cut side rebuilt from the residual graph])
+
+#listing("dsa/samples-java/src/Ch12/Mincut.java", first: 116, last: 143, caption: [java, residual reachability from s, then the cut capacity over the original edge records])
 
 #listing("dsa/samples/src/Ch12/Flows.cs", first: 202, last: 235, caption: [c\#, residual reachability gives the min cut side])
 
@@ -469,10 +488,6 @@ The test computes the cut capacity crossing that partition and
 asserts it equals the flow value, the theorem checked by
 construction rather than quoted. Parallel edges accumulate into one
 capacity, which the two-pipe test pins.
-
-#listing("dsa/samples-c/src/Ch12/mincut.c", first: 116, last: 142, caption: [c, residual reachability from s, then the cut capacity over the original edge records])
-
-#listing("dsa/samples-go/ch12/mincut.go", first: 120, last: 137, caption: [go, the min cut side rebuilt from the residual graph])
 
 #listing("dsa/samples-js/src/ch12-mincut.mjs", first: 84, last: 112, caption: [javascript, reachability over positive residual, the cut side as a set])
 
@@ -485,10 +500,12 @@ everywhere, flow 15 with the cut side {s} of capacity 15, flow 2 on
 the all-ones undo net, and 7 on the parallel pair, the merged arc
 carrying all of it. C sums the cut capacity over the original edge
 records and proves conservation as a signed out-sum of zero per
-vertex, Python re-derives cut and conservation from the used map
-alone, Go and JavaScript return the reachable set for their tests to
-check, and Lua folds the reach walk into the max-flow function,
-returning the set beside the flow value.
+vertex, Java doing the same over string labels with parallel arcs
+accumulated into one matrix cell, Python re-derives cut and
+conservation from the used map alone, Go and JavaScript return the
+reachable set for their tests to check, and Lua folds the reach
+walk into the max-flow function, returning the set beside the flow
+value.
 
 #diagram([max-flow min-cut by construction, the residual reachable set is the source side, its boundary is saturated], length: 13pt, {
   // the trap graph at maximum flow: flow/capacity on every edge
@@ -515,26 +532,27 @@ returning the set beside the flow value.
   cdraw.content((16.6, 2.4), [cut capacity = flow value = 20], size: 6pt)
 })
 
-== across the six languages
+== across the seven languages
 
 The build sizes count non-comment source lines. The first table
 covers the chapter's four original featured files per language, the
-kruskal files folding their own DSU copy in C, Python, and Lua where
-the language has one file per topic:
+kruskal files folding their own DSU copy in C, Java, Python, and
+Lua where the language has one file per topic:
 
 #table(
   columns: (auto, auto, 1.2fr, 2.9fr),
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [335], [libc only], [static arrays and qsort, arc pairs as 2i and 2i+1, checks share the file with main, 72 of them],
-  [c\#], [201], [bcl only], [string labels, prim rides the chapter 8 heap with a name tie break, min cut in the same file, 10 tests],
   [go], [198], [slices], [slices sort and clone, one DSU type shared by the package, prim min-scan by design, 11 tests],
+  [java], [349], [jdk 27 stdlib], [one file per topic with the dsu inlined where kruskal needs it, records for the chosen tree, arcs flipped by their bit, 47 checks in 4 files],
+  [c\#], [201], [bcl only], [string labels, prim rides the chapter 8 heap with a name tie break, min cut in the same file, 10 tests],
   [javascript], [145], [node stdlib], [arc-pair FlowNet with private fields, the dsu exports its parent for the compression proof, 11 tests],
   [python], [220], [stdlib only], [two dsu flavors, rehang and halving, residual copy per run, 32 checks],
   [lua], [347], [lib.lua harness], [1-based arc ids offset by one, xor flips arcs, maxinteger as the initial bottleneck, 15 checks],
 )
 
-The min-cut section lands as its own file in the five sibling trees,
+The min-cut section lands as its own file in the six sibling trees,
 the C\# side staying the reader inside the shared flow class:
 
 #table(
@@ -542,8 +560,9 @@ the C\# side staying the reader inside the shared flow class:
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [190], [libc only], [fixed arrays, the edge records kept whole, cut capacity summed over them, conservation as a signed out-sum],
-  [c\#], [33], [bcl only], [the MinCutSides reader inside the shared flow class, the flow it reads sits above it in the same file],
   [go], [117], [slices], [pair-keyed maps, the cut side returned as a set for the tests to verify against the flow],
+  [java], [190], [jdk 27 stdlib], [string labels over a first-seen name table, parallel arcs accumulated into one capacity cell, cut capacity and conservation asserted, 21 checks],
+  [c\#], [33], [bcl only], [the MinCutSides reader inside the shared flow class, the flow it reads sits above it in the same file],
   [javascript], [95], [node stdlib], [pair keys joined on a nul byte, the used map reports positive forward entries only],
   [python], [112], [stdlib only], [deque bfs, the checks re-derive cut capacity and conservation from the used map],
   [lua], [153], [lib.lua harness], [the reach walk folded into the max-flow pass, maxinteger as the initial bottleneck, 5 check rows],
@@ -553,7 +572,8 @@ sources: learn.microsoft.com, `Dictionary<TKey,TValue>` and
 `HashSet<T>` pages used by the implementation, `Enumerable.OrderBy`
 remarks, accessed 2026-09-08. Sample behavior verified by
 `make verify-csharp`, 10 tests in chapter 12 of the samples suite.
-The six-language layer verifies the same way: 5 C programs with 93
-embedded checks under `make verify-c`, 15 Go tests, 16 `node --test`
-cases, 49 Python checks across 5 files, and 20 Lua checks under
-`run.lua`.
+The seven-language layer verifies the same way: 5 C programs with 93
+embedded checks under `make verify-c`, 15 Go tests, the java
+runner's 68 Ch12 checks over 5 files under `run-java-samples`, 16
+`node --test` cases, 49 Python checks across 5 files, and 20 Lua
+checks under `run.lua`.

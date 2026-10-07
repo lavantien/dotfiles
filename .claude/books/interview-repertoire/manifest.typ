@@ -6,7 +6,7 @@
   meta: (
     title: "the interview repertoire",
     subtitle: "working answers for frequent questions",
-    author: "Mr. Raheliosol",
+    author: "Raeliosol",
     version: "4.2",
     volume-label: "book 16",
   ),

@@ -7,12 +7,13 @@ Go is not a functional language and does not try to be: no curried
 syntax, no monadic chaining, no tail call guarantee. But functions
 are values, generics arrived in 1.18, and a surprising share of the
 classic pattern vocabulary reduces to passing and returning
-functions. The same reduction runs through all six trees, and the
+functions. The same reduction runs through all seven trees, and the
 per-language spelling is the chapter's real content: the trio is
-one generic away in go and C\#, three plain loops in C, an array
-method in javascript, a comprehension in python, a table walk in
-lua. The chapter builds that toolkit and, just as carefully, marks
-the line where the functional imitation should stop.
+one generic away in go and C\#, three plain loops in C, hand-rolled
+walks over int arrays in java, an array method in javascript, a
+comprehension in python, a table walk in lua. The chapter builds
+that toolkit and, just as carefully, marks the line where the
+functional imitation should stop.
 
 == the trio, generic
 
@@ -21,23 +22,26 @@ saying what six handwritten loops would repeat:
 
 The dry run: the fixture is 1 through 6. Map doubling lands 2 4 6 8
 10 12, Filter keeping the evens lands 2 4 6, Reduce summing from 0
-lands 21, and all six lanes assert these exact values. Map of empty
-stays a real empty container, never nil or null, and Reduce of
+lands 21, and all seven lanes assert these exact values. Map of
+empty stays a real empty container, never nil or null, and Reduce of
 empty hands back its init, pinned at 9.
 
 + Map preserves positions, Filter shrinks, Reduce collapses to one
   value carrying the init through.
 + The empty contracts: map of empty is an allocated zero-length
-  slice in go, a real buffer in C, a fresh array in javascript, a
-  list in python, a table in lua.
+  slice in go, a real buffer in C, a real zero-length array in
+  java, a fresh array in javascript, a list in python, a table in
+  lua.
 + Reduce of empty never calls the fold, so the init comes back
   untouched, the identity every lane pins at 9.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch05/trio.c", first: 20, last: 49, caption: [C, the trio over int arrays, a function pointer per element, map of empty still returns a real buffer])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch05/Trio.cs", first: 4, last: 37, caption: [C\#, generics say it once, the same shape go writes])
-
 #listing("patterns-concurrency-distributed/samples/ch05/functional.go", first: 6, last: 30, caption: [Go, map, filter, reduce over any slice])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch05/Trio.java", first: 20, last: 55, caption: [Java, the trio hand-rolled over int arrays, the shapes borrowed from java.util.function])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch05/Trio.cs", first: 4, last: 37, caption: [C\#, generics say it once, the same shape go writes])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch05-trio.mjs", first: 6, last: 24, caption: [JavaScript, the standalone functions beside the array methods])
 
@@ -55,12 +59,14 @@ instead of allocating intermediate slices. The sibling trees land
 where their grain puts them: go and C\# write the generic
 shape#xref-to("go", "generics") once and reuse it for every element
 type, C specializes to int arrays with function pointers because
-its generics are macros and the honest sample is just loops,
-javascript arrays already carry `map`, `filter`, and `reduce` as
-methods so the standalone functions exist to pin the contracts,
-python's comprehensions are the native trio with `functools.reduce`
-the fold nobody imports, and lua walks tables because that is all a
-lua sequence is.
+its generics are macros and the honest sample is just loops, java
+hand-rolls `mapInts`, `filterInts`, and `reduceInts` over `int[]`,
+borrowing `IntPredicate` and `IntUnaryOperator` from
+`java.util.function`, javascript arrays already carry `map`,
+`filter`, and `reduce` as methods so the standalone functions exist
+to pin the contracts, python's comprehensions are the native trio
+with `functools.reduce` the fold nobody imports, and lua walks
+tables because that is all a lua sequence is.
 
 #flow(
   [map keeps the shape, filter shrinks it, reduce collapses to one],
@@ -98,9 +104,11 @@ implementation.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch05/compose.c", first: 21, last: 69, caption: [C, a closure is a struct plus a function pointer, the pipe a list of them])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch05/Compose.cs", first: 3, last: 27, caption: [C\#, lambdas and a params array, the direct mirror])
-
 #listing("patterns-concurrency-distributed/samples/ch05/functional.go", first: 33, last: 56, caption: [Go, pipe left to right, partial application, a closure with private state])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch05/Compose.java", first: 22, last: 50, caption: [Java, Function composition, the counter's cell a one-element array because lambdas capture values only])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch05/Compose.cs", first: 3, last: 27, caption: [C\#, lambdas and a params array, the direct mirror])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch05-compose.mjs", first: 6, last: 24, caption: [JavaScript, rest arguments fold into arrows])
 
@@ -111,11 +119,13 @@ implementation.
 C spells the closure out loud, a function pointer plus a state
 pointer, because it has nothing to hide it behind, and the counter
 closure becomes a `counter_state` struct the caller allocates. The
-other five get the closure for free: C\# lambdas, javascript
-arrows, python nested `def`s where `nonlocal` marks the writable
-cell, lua upvalues. The pipe itself is the same fold everywhere,
-apply the list in order and return the last output, and the empty
-list folds to the identity by construction.
+other six get the closure for free, C\# lambdas, javascript arrows,
+python nested `def`s where `nonlocal` marks the writable cell, lua
+upvalues, with java one step aside: its lambdas capture values, not
+variables, so the counter's writable cell is a one-element array
+each constructor call allocates. The pipe itself is the same fold
+everywhere, apply the list in order and return the last output, and
+the empty list folds to the identity by construction.
 
 #diagram([pipe reads left to right, a closure is a private cell], length: 13pt, {
   cdraw.content((1.4, 7.6), [x], size: 6pt)
@@ -145,12 +155,14 @@ every closure capturing `i` in a loop observed the final value,
 after, each observes its own:
 
 The dry run: the fixture is 5 handlers, and the fixed lane pins
-handler k returning k in all six trees. The trap lanes are
+handler k returning k in all seven trees. The trap lanes are
 per-language truth: javascript's `var` lane returns 5 for every
 handler, python's late-binding lambdas return 4 for every handler,
-lua's deliberately shared local behind a while loop returns 6, and
-C's shared-pointer lane returns 4. The go lane's frozen test pins
-the fixed lane only.
+lua's deliberately shared local behind a while loop returns 6, C's
+shared-pointer lane returns 4, and java's smuggled static field
+answers 4 five times because capturing the reassigned local does
+not compile at all. The go lane's frozen test pins the fixed lane
+only.
 
 + `let` in javascript and the numeric for in lua create a fresh
   binding per iteration, the 1.22 semantics native and free.
@@ -162,9 +174,11 @@ the fixed lane only.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch05/loopvar.c", first: 20, last: 36, caption: [C, no closures, the per-slot copy beside the shared-pointer trap, both written out])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch05/Loopvar.cs", first: 3, last: 30, caption: [C\#, foreach per-iteration since C\# 5, a copied local fixing the for loop])
-
 #listing("patterns-concurrency-distributed/samples/ch05/functional.go", first: 59, last: 66, caption: [Go, each handler keeps the i of its own iteration])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch05/Loopvar.java", first: 25, last: 51, caption: [Java, capturing the reassigned i does not compile, the copy is forced, the trap smuggled through a field])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch05/Loopvar.cs", first: 3, last: 30, caption: [C\#, foreach per-iteration since C\# 5, a copied local fixing the for loop])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch05-loopvar.mjs", first: 7, last: 21, caption: [JavaScript, let versus var, the identical history in one file])
 
@@ -184,9 +198,12 @@ list is the same trap through late binding with the default
 argument as the museum's exit, lua's numeric for never had the bug
 so the sample builds it on purpose with a while loop over one
 local, C stores a copy per slot because a pointer to the loop
-variable dies with the iteration, and C\# fixed `foreach` captures
-in C\# 5 while the raw `for` loop still shares, so the sample shows
-the copied local beside it.
+variable dies with the iteration, java makes the bug a compile
+error, a lambda cannot capture a local the loop reassigns, so the
+effectively-final copy is the sibling's per-slot fix made mandatory
+and the trap lane has to smuggle its cell through a static field,
+and C\# fixed `foreach` captures in C\# 5 while the raw `for` loop
+still shares, so the sample shows the copied local beside it.
 
 #diagram([before 1.22 one shared i, since then one i per iteration], length: 13pt, {
   cdraw.content((5.0, 8.6), [before 1.22, one shared i], size: 6.5pt)
@@ -220,9 +237,9 @@ The dry run: the wrapper holds a squaring function, 9 answers 81
 twice and 12 answers 144 with the underlying function running
 exactly 2 times. Recursive fib lands fib(5) = 5 at exactly 9 calls,
 fib(10) = 55 at 19, and fib(40) = 102334155 at 79, the 2n-1 spine
-the five new trees pin exactly. The go lane's frozen test pins the
+the six new trees pin exactly. The go lane's frozen test pins the
 fib(40) value, bounds the calls under 2n, and checks the count is
-deterministic across instances, the 9 and 19 counts are the five
+deterministic across instances, the 9 and 19 counts are the six
 new trees' lane.
 
 + The wrapper guards only the map, the wrapped call runs outside
@@ -230,14 +247,16 @@ new trees' lane.
 + A memoized fib from an empty cache costs exactly 2n-1 calls, the
   spine down to the base cases plus one hit per level.
 + Concurrent callers hammer one wrapper and every answer is the
-  function's, 50 goroutines in go, 4 threads in C, 20 threads in
-  python, 50 coroutines in lua.
+  function's, 50 goroutines in go, 4 threads in C, 20 virtual
+  threads in java, 20 threads in python, 50 coroutines in lua.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch05/memoize.c", first: 23, last: 53, caption: [C, fixed-array cache behind one mutex, the call runs outside the lock])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch05/Memoize.cs", first: 6, last: 27, caption: [C\#, the same shape, lock over a Dictionary])
-
 #listing("patterns-concurrency-distributed/samples/ch05/functional.go", first: 68, last: 85, caption: [Go, generic memoize, lock guarded, last write wins])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch05/Memoize.java", first: 25, last: 46, caption: [Java, the synchronized cache, the wrapped call runs outside the lock])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch05/Memoize.cs", first: 6, last: 27, caption: [C\#, the same shape, lock over a Dictionary])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch05-memoize.mjs", first: 7, last: 15, caption: [JavaScript, a Map memo closure, no lock under one realm])
 
@@ -276,9 +295,11 @@ named holder whose fields are the cache and the call counter:
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch05/memoize.c", first: 73, last: 108, caption: [C, the named struct holds the cache array and the call counter])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch05/Memoize.cs", first: 30, last: 64, caption: [C\#, the Fib class, cache and counter as fields])
-
 #listing("patterns-concurrency-distributed/samples/ch05/functional.go", first: 90, last: 116, caption: [Go, fib as a type with its own cache, calls counted])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch05/Memoize.java", first: 50, last: 82, caption: [Java, fib a named class, cache array and call counter inside, counted under the lock])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch05/Memoize.cs", first: 30, last: 64, caption: [C\#, the Fib class, cache and counter as fields])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch05-memoize.mjs", first: 17, last: 34, caption: [JavaScript, private fields for the cache and the call count])
 
@@ -331,7 +352,7 @@ instances, which is what makes the test a test.
   cdraw.content((11, 0.85), [FlatMap over error, lazy evaluator frameworks], size: 6pt)
 })
 
-== across the six languages
+== across the seven languages
 
 The build sizes count non-comment source lines, the go column the
 chapter's one frozen file:
@@ -341,8 +362,9 @@ chapter's one frozen file:
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [327], [libc plus threads.h], [closures become state structs, the trio specialized to int arrays, fib's counter inside the named struct],
+  [go], [92], [stdlib], [frozen reference lane, the generic trio and wrapper, fib's under-2n bound with the 2n-1 exactness landing in the six new trees],
+  [java], [263], [jdk 27 stdlib], [one-element arrays as closure cells, the effectively-final copy made mandatory, 20 virtual threads on the memo],
   [c\#], [136], [bcl], [lambdas and generics mirror go, foreach fixed since C\# 5 with the for loop shown beside],
-  [go], [92], [stdlib], [frozen reference lane, the generic trio and wrapper, fib's under-2n bound with the 2n-1 exactness landing in the five new trees],
   [javascript], [74], [node stdlib], [var versus let in one file, Map memo with no lock under one realm, private-field fib],
   [python], [167], [stdlib only], [late binding plus the default-argument fix, nonlocal cells, a real lock over the dict cache],
   [lua], [284], [lib.lua harness], [the numeric for never had the trap, the while-loop rebuild, a scheduler lane pinning exactly-once compute],
@@ -351,7 +373,9 @@ chapter's one frozen file:
 sources: go.dev/doc/go1.22 for per-iteration loop variables and
 integer range, go.dev/ref/spec function literals and capture,
 go.dev/blog/intro-generics for the type parameter syntax, accessed
-2026-09-08. Verified by the six chapter legs: `go test -race` at 7
-tests in `patternsbook/ch05`, 4 C programs with 35 embedded checks,
-15 C\# facts over `PatternsBook.slnx`, 10 `node --test` cases, 30
-Python checks across 4 files, and 18 Lua rows under `run.lua`.
+2026-09-08. Verified by the seven chapter legs: 4 Ch05 C programs
+with 35 embedded checks, `go test -race` at 7 tests in
+`patternsbook/ch05`, 4 Ch05 java programs with 30 checks under
+`run-java-samples`, 15 C\# facts over `PatternsBook.slnx`, 10
+`node --test` cases, 30 Python checks across 4 files, and 18 Lua
+rows under `run.lua`.

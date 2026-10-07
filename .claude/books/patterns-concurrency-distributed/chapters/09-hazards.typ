@@ -7,12 +7,12 @@ Four failure modes own concurrent code: races, deadlocks,
 starvation, and leaks. Chapter 6 defined the first one and its cure
 in the large, and chapter 8 closed the leak account with one
 instrument per tree. This chapter makes the middle two concrete
-across six trees, shows the code that survives each, and equips the
-reader with the detectors each toolchain actually ships: the go race
-detector, the contention instruments of the other lanes, the
+across seven trees, shows the code that survives each, and equips
+the reader with the detectors each toolchain actually ships: the go
+race detector, the contention instruments of the other lanes, the
 goroutine leak profile new in go 1.27, and `testing/synctest`, the
 fake-clock bubble that turns time dependent concurrency tests
-deterministic, plus the five portable rebuilds of that bubble the
+deterministic, plus the six portable rebuilds of that bubble the
 sibling trees carry.
 
 == deadlock, and the cycle rule
@@ -23,7 +23,7 @@ program asleep with no possibility of waking, and reports it as
 `fatal error: all goroutines are asleep - deadlock!`. A partial
 deadlock, 2 of a thousand workers circling each other while the rest
 work, produces no message at all, just a counter that stops moving,
-and none of the six runtimes here detects that one for you.
+and none of the seven runtimes here detects that one for you.
 
 The classic generator of the partial kind is dining philosophers
 with the naive rule, everyone picks up the left fork, then the
@@ -57,13 +57,17 @@ the guard, every seat eats exactly 100, the table total is 500. The
 counter-lanes pin the bug side by hand: lua runs the same scheduler
 on the naive left-then-right rule and all 5 diners park at 0
 bites, python proves the naive rule closes a cycle in the fork graph
-and the ordered rule leaves it acyclic.
+and the ordered rule leaves it acyclic, java runs the same proof as
+a coloring DFS over the rule itself before the live table eats its
+500.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch09/dining.c", first: 70, last: 107, caption: [C, 5 mtx_t forks, first and second by fork number, the run wrapped in the guard below])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch09/Dining.cs", first: 8, last: 40, caption: [C\#, a fork is a binary SemaphoreSlim, the owned mutual exclusion shape, acquired ascending])
-
 #listing("patterns-concurrency-distributed/samples/ch09/hazards.go", first: 22, last: 39, caption: [Go, first and second by fork number, the cycle cannot form])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch09/Dining.java", first: 24, last: 67, caption: [Java, both rules as data, a coloring DFS over the wait graph proves the naive order cyclic and the ordered one acyclic])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch09/Dining.cs", first: 8, last: 40, caption: [C\#, a fork is a binary SemaphoreSlim, the owned mutual exclusion shape, acquired ascending])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch09-dining.mjs", first: 37, last: 62, caption: [JavaScript, forks are promise-queue mutexes, a naive rule would park every diner on a promise that never resolves])
 
@@ -71,9 +75,10 @@ and the ordered rule leaves it acyclic.
 
 #listing("patterns-concurrency-distributed/samples-lua/ch09_dining.lua", first: 59, last: 98, caption: [Lua, forks hand ownership to the head waiter, the ordering rule is the whole lesson, the window stands in for preemption])
 
-The six lanes all carry the same rule and differ in what a fork is.
-C, go, and python hold real kernel locks, C through `mtx_t`, go
-through `sync.Mutex`, python through `threading.Lock`, and python's
+The seven lanes all carry the same rule and differ in what a fork
+is. C, go, java, and python hold real kernel locks, C through
+`mtx_t`, go through `sync.Mutex`, java through `synchronized` on a
+plain object per fork, python through `threading.Lock`, and python's
 row is the honest one about scope: the GIL stops torn memory, it
 does nothing to a wait cycle, the graph logic is identical. C\#
 reaches for a binary `SemaphoreSlim` because C\# locks are
@@ -92,19 +97,23 @@ freezes reports nothing. `MustFinishWithin` converts a would-be hang
 into a failure with a stack.
 
 The dry run: an instant body passes everywhere. A stuck body trips
-the deadline in go, C, javascript, and python, each with a real
-timer of a few tens of milliseconds, the one real-time primitive
-those trees allow in an asserted path. C\# pins only the pass path,
-tripping its guard would demand asserting on a real timed wait,
-which the tree's determinism policy refuses. Lua runs the whole
-contract on the virtual clock, a 30ms budget against a 1000ms hang
-trips at clock 30 in zero real time.
+the deadline in go, C, java, javascript, and python, each with a
+real timer of a few tens of milliseconds, the one real-time
+primitive those trees allow in an asserted path, and java's stuck
+body announces entry on its own latch, so a fired deadline is
+provably a stuck body, never one that never started. C\# pins only
+the pass path, tripping its guard would demand asserting on a real
+timed wait, which the tree's determinism policy refuses. Lua runs
+the whole contract on the virtual clock, a 30ms budget against a
+1000ms hang trips at clock 30 in zero real time.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch09/guard.c", first: 84, last: 97, caption: [C, the body on its own thread, a timed cond wait for the deadline, true only when the body returned])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch09/Guard.cs", first: 9, last: 22, caption: [C\#, the body on the pool, WhenAny against a Task.Delay, the one sanctioned real-time wait])
-
 #listing("patterns-concurrency-distributed/samples/ch09/hazards.go", first: 114, last: 128, caption: [Go, timeout guard: deadlocks fail the test instead of freezing the suite])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch09/Guard.java", first: 24, last: 42, caption: [Java, the body on its own thread, the caller awaits a done latch with the deadline, the returned worker lets a tripped guard still release it])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch09/Guard.cs", first: 9, last: 22, caption: [C\#, the body on the pool, WhenAny against a Task.Delay, the one sanctioned real-time wait])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch09-guard.mjs", first: 9, last: 32, caption: [JavaScript, one real setTimeout races the body, a body that rejects surfaces its own error instead of the guard's false])
 
@@ -126,15 +135,19 @@ behind an unbroken stream of readers:
 
 The dry run: 8 readers in an unbroken flood, 1 writer taking the
 write side 50 times, the writer completes 50 of 50 in every tree.
-The counter-lanes pin the failure mode: lua runs the same flood
-without the pending-writer rule and the writer's single acquisition
-lands only after all 1600 reader sections.
+Java pins the policy predicates pure before the flood runs, a
+waiting writer blocks new readers while active readers keep the
+writer out. The counter-lanes pin the failure mode: lua runs the
+same flood without the pending-writer rule and the writer's single
+acquisition lands only after all 1600 reader sections.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch09/starvation.c", first: 45, last: 77, caption: [C, the hand-rolled writer-preferring rwlock, readers wait while a writer is active or pending, the policy is the while condition])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch09/Starvation.cs", first: 8, last: 43, caption: [C\#, ReaderWriterLockSlim, the documented fairness policy that favors writers])
-
 #listing("patterns-concurrency-distributed/samples/ch09/hazards.go", first: 44, last: 80, caption: [Go, 8 readers in a tight loop, one writer counting acquisitions])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch09/Starvation.java", first: 31, last: 71, caption: [Java, the rwlock hand-rolled on a monitor because ReentrantReadWriteLock documents no reader fencing, the while condition is the policy])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch09/Starvation.cs", first: 8, last: 43, caption: [C\#, ReaderWriterLockSlim, the documented fairness policy that favors writers])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch09-starvation.mjs", first: 9, last: 60, caption: [JavaScript, the rw lock as one fifo of requests, the pending-writer count is what stops read grants from cutting in line])
 
@@ -151,8 +164,10 @@ prohibited, because a reentrant reader could wedge a pending writer
 forever. Choosing `RWMutex` over `Mutex` is choosing this scheduling
 policy as much as any performance. The policy is exactly what the
 hand-rolled lanes encode in their wait conditions, C and python
-because `threads.h` and the python stdlib ship no rwlock at all, so
-fairness becomes a policy you implement and can read off the while
+because `threads.h` and the python stdlib ship no rwlock at all,
+java because `ReentrantReadWriteLock` documents no fencing of new
+readers behind a pending writer, so fairness becomes a policy you
+implement and can read off the while
 loop. C\# documents the same writer preference for
 `ReaderWriterLockSlim`. Javascript and lua have no kernel to blame,
 so their floods are coroutine choreography, and the js lane keeps
@@ -209,23 +224,28 @@ detector would be missed most.
 
 The dry run: 8 workers x 5000 increments through one lock total
 exactly 40000, and every lane's contention instrument records at
-least one event. The five new trees pin the total itself, while the
+least one event. The six new trees pin the total itself, while the
 frozen go test enables the mutex profile at rate 1 and asserts only
-a nonzero sample count. The five siblings count contention on an
+a nonzero sample count. The six siblings count contention on an
 instrumented lock because their runtimes expose nothing finer: C
-counts trylocks that found the lock held, C\# counts Monitor.TryEnter
-failures before blocking, javascript counts acquisitions that queued
-on the promise-queue mutex, python counts failed non-blocking
-acquires, lua counts parks and the waiter queue's peak depth. The
-python and C\# lanes add a forced window, a holder announces while
-holding and a waiter probes after, recording exactly 1 contended
-acquisition.
+counts trylocks that found the lock held, java counts tryLock
+failures on a ReentrantLock before blocking, C\# counts
+Monitor.TryEnter failures before blocking, javascript counts
+acquisitions that queued on the promise-queue mutex, python counts
+failed non-blocking acquires, lua counts parks and the waiter
+queue's peak depth. The python, C\#, and java lanes add a forced
+window, a holder announces while holding and a waiter probes after,
+recording exactly 1 contended acquisition, and java's window is
+airtight by construction, the release latch opens only after the
+probe latch proves the waiter already found the lock held.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch09/contention.c", first: 65, last: 79, caption: [C, the instrumented acquire, a trylock that finds the lock held counts one contention event before blocking])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch09/Contention.cs", first: 8, last: 35, caption: [C\#, TryEnter fails, count, then block, OnContended fires on the bounce itself])
-
 #listing("patterns-concurrency-distributed/samples/ch09/hazards.go", first: 83, last: 111, caption: [Go, contended section as bait, mutex profile enabled at rate 1])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch09/Contention.java", first: 26, last: 45, caption: [Java, the instrumented acquire, tryLock finds the lock held, count one contention then block, onContended reports the bounce])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch09/Contention.cs", first: 8, last: 35, caption: [C\#, TryEnter fails, count, then block, OnContended fires on the bounce itself])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch09-contention.mjs", first: 10, last: 23, caption: [JavaScript, the mutex's own contended counter, how many acquisitions arrived while the lock was held])
 
@@ -297,12 +317,16 @@ an extension of the toolchain's own testing discipline,
 The dry run: `Backoff(6, 10ms)` walks 6 tries, the ladder doubles
 10, 20, 40, 80, 160, 320, cumulative 10, 30, 70, 150, 310, 630,
 total 630ms, and the run costs zero real sleep. The contract is
-identical in all 6 trees. The bubble is go's tool and only go's: the
+identical in all 7 trees. The bubble is go's tool and only go's: the
 go lane runs inside `synctest.Test`, where the runtime refuses to
-advance the clock while any participant can still run. The five
+advance the clock while any participant can still run. The six
 siblings rebuild the same rule by construction, C's discrete-event
 scheduler jumps time to the earliest wake only once every
-participant parks, C\#'s fake TimeProvider fires the earliest due
+participant parks, java has no bubble and no coroutine to park
+mid-function, so participants run as scripts of work and sleep
+steps and a discrete scheduler sweeps one step per participant
+while anyone still has work, jumping time to the earliest wake only
+once everybody parks, C\#'s fake TimeProvider fires the earliest due
 timer while its driver holds the clock for the continuations to
 drain, javascript's timer queue fires only when nothing else can run
 and reports a deadlock when nothing can, python advances its heap
@@ -311,9 +335,11 @@ lanes on a time-ordered event queue the runner pops in order.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch09/synctest.c", first: 60, last: 102, caption: [C, the bubble runner, someone still working holds time still, everyone parked jumps to the earliest wake])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch09/Synctest.cs", first: 3, last: 29, caption: [C\#, every delay is a Task.Delay on the injected TimeProvider, the ladder is schedule and no sleep])
-
 #listing("patterns-concurrency-distributed/samples/ch09/hazards.go", first: 131, last: 140, caption: [Go, exponential backoff, 6 attempts, all schedule and no sleep])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch09/Synctest.java", first: 74, last: 124, caption: [Java, no coroutine to park mid-function, participants run as work and sleep scripts, time jumps to the earliest wake only once everybody parks])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch09/Synctest.cs", first: 3, last: 29, caption: [C\#, every delay is a Task.Delay on the injected TimeProvider, the ladder is schedule and no sleep])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch09-synctest.mjs", first: 60, last: 112, caption: [JavaScript, runInBubble is the bubble port, fire the earliest timer when nothing else can run, deadlock says so])
 
@@ -323,13 +349,16 @@ lanes on a time-ordered event queue the runner pops in order.
 
 The test side is half the fixture, and each tree answers with its
 own test artifact: the frozen go test's bubble, the xunit and node
-test files, and the check regions of the C, python, and lua modules.
+test files, and the check regions of the C, java, python, and lua
+modules.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch09/synctest.c", first: 146, last: 165, caption: [C, the check region: the ladder and cumulative arrays exact, the clock advanced by exactly 630ms in 6 jumps])
 
-#listing("patterns-concurrency-distributed/samples-cs/tests/Ch09/SynctestTests.cs", first: 6, last: 56, caption: [C\#, xunit: the ladder exact, virtual time moved 630ms and no further, no scheduling slop])
-
 #listing("patterns-concurrency-distributed/samples/ch09/hazards_test.go", first: 65, last: 81, caption: [Go, inside the bubble the full backoff ladder runs and the clock reads exactly 630ms])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch09/Synctest.java", first: 139, last: 168, caption: [Java, the check region: the two-sleeper interleaving pinned byte for byte, ladder and cumulative exact, the clock at 630 in 6 advances])
+
+#listing("patterns-concurrency-distributed/samples-cs/tests/Ch09/SynctestTests.cs", first: 6, last: 56, caption: [C\#, xunit: the ladder exact, virtual time moved 630ms and no further, no scheduling slop])
 
 #listing("patterns-concurrency-distributed/samples-js/test/ch09.test.mjs", first: 48, last: 57, caption: [JavaScript, node:test: backoff in the bubble, ladder and cumulative deep-equal, clock at 630])
 
@@ -379,7 +408,7 @@ sleep hiding anywhere breaks the equality.
   the guards convert anything that might hang into a failure.
 ])
 
-== across the six languages
+== across the seven languages
 
 The build sizes count non-comment source lines, the go column the
 chapter's one frozen file:
@@ -390,10 +419,12 @@ chapter's one frozen file:
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [707], [libc plus threads.h, stdatomic.h],
   [fork order under mtx_t, trylock failures counted, a discrete-event bubble],
-  [c\#], [147], [bcl],
-  [a binary SemaphoreSlim fork, documented writer preference, TimeProvider delays],
   [go], [110], [stdlib],
   [frozen reference lane, synctest the bubble only go has, mutex profile at rate 1],
+  [java], [575], [jdk 27 stdlib],
+  [monitor forks, the rwlock hand-rolled because ReentrantReadWriteLock documents no reader fencing, a script-swept bubble],
+  [c\#], [147], [bcl],
+  [a binary SemaphoreSlim fork, documented writer preference, TimeProvider delays],
   [javascript], [238], [node stdlib, one sibling module],
   [promise-queue mutex forks, one real setTimeout guard, a timer-queue bubble],
   [python], [382], [stdlib only],
@@ -408,8 +439,9 @@ recursive read prohibition, go.dev/pkg/runtime for
 lookup, go.dev/doc/go1.27 for the goroutine leak profile GA,
 go.dev/pkg/testing/synctest for bubble semantics and `Sleep`,
 go.dev/doc/articles/race_detector for the detector's mechanics and
-limits, accessed 2026-09-08. Verified by the six chapter legs: 5 C programs
-with 55 embedded checks, 7 xunit facts, `go test` at 5 tests in
-`patternsbook/ch09`, node's 5 cases in `test/ch09.test.mjs`,
-5 python modules with 38 embedded checks, and the lua runner's
-19 ch09 rows.
+limits, accessed 2026-09-08. Verified by the seven chapter legs: 5 C programs
+with 55 embedded checks, `go test` at 5 tests in
+`patternsbook/ch09`, 5 java programs with 42 embedded checks under
+`samples-java/src/Ch09`, 7 xunit facts, node's 5 cases in
+`test/ch09.test.mjs`, 5 python modules with 38 embedded checks, and
+the lua runner's 19 ch09 rows.

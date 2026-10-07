@@ -6,8 +6,8 @@
   meta: (
     title: "design patterns, concurrency, and distributed systems",
     subtitle: "an engineering handbook",
-    author: "Mr. Raheliosol",
-    version: "3.0",
+    author: "Raeliosol",
+    version: "4.0",
     volume-label: "book 11",
   ),
   chapters: (

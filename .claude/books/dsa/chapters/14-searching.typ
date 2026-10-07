@@ -48,7 +48,13 @@ and Go its 1 2 2 2 5 7 twin.
 )
 
 The 1 and the 4 around the count 3 are the pinned triple, and the
-listings below run the same two loops in six languages.
+listings below run the same two loops in seven languages.
+
+#listing("dsa/samples-c/src/Ch14/bounds.c", first: 18, last: 45, caption: [c, the two half-open walks, count by subtraction])
+
+#listing("dsa/samples-go/ch14/bounds.go", first: 8, last: 42, caption: [go, the same pair, insertion point as an alias])
+
+#listing("dsa/samples-java/src/Ch14/Bounds.java", first: 18, last: 44, caption: [java, the two half-open walks, count by subtraction, the linear partition sweep])
 
 #listing("dsa/samples/src/Ch14/Searching.cs", first: 4, last: 49, caption: [c\#, lower and upper bound, count and leftmost and rightmost on top])
 
@@ -57,25 +63,21 @@ upper minus lower, no scans. Both loops return `lo` when the target
 is absent, which is exactly the insertion point, so "not found"
 carries useful information instead of a bare -1.
 
-#listing("dsa/samples-c/src/Ch14/bounds.c", first: 18, last: 45, caption: [c, the two half-open walks, count by subtraction])
-
-#listing("dsa/samples-go/ch14/bounds.go", first: 8, last: 42, caption: [go, the same pair, insertion point as an alias])
-
 #listing("dsa/samples-js/src/ch14-bounds.mjs", first: 5, last: 33, caption: [javascript, floor-mid walks, count and insertion point])
 
 #listing("dsa/samples-py/src/Ch14/bounds.py", first: 13, last: 34, caption: [python, the half-open interval 0..len])
 
 #listing("dsa/samples-lua/ch14_bounds.lua", first: 6, last: 23, caption: [lua, 1-based walk, answer shifted back to 0-based])
 
-Measured across the suites: C, Lua, and Python share the fixture
-1 3 3 3 5 7 and pin the run of 3s at lower 1, upper 4, count 3, the
-absent 4 inserting at 4 and out-of-range keys at 0 and 6, C and Lua
-sweeping every target against a linear partition check. Go runs the
-same boundary story on 1 2 2 2 5 7, three copies of 2, and
-JavaScript cross-checks both bounds against linear scans target by
-target. The frozen C\# suite adds leftmost and rightmost on top of
-the same subtraction. Every loop is the same half-open walk, one
-comparison character apart.
+Measured across the suites: C, Java, Lua, and Python share the
+fixture 1 3 3 3 5 7 and pin the run of 3s at lower 1, upper 4, count
+3, the absent 4 inserting at 4 and out-of-range keys at 0 and 6, C,
+Java, and Lua sweeping every target against a linear partition
+check. Go runs the same boundary story on 1 2 2 2 5 7, three copies
+of 2, and JavaScript cross-checks both bounds against linear scans
+target by target. The frozen C\# suite adds leftmost and rightmost
+on top of the same subtraction. Every loop is the same half-open
+walk, one comparison character apart.
 
 #diagram([the boundary loops on one duplicate heavy array, lower is the first at least, upper the first greater, count is the difference], length: 13pt, {
   // 2 4 4 4 7 9 9 12 against t = 4: lower 1, upper 4, count 3; t = 8 absent: lo 5
@@ -162,13 +164,15 @@ the same rule on 4 5 6 7 0 1 2.
 })
 
 The 3 for the 1 with the 4 one probe behind is the pinned pair, and
-the listings below cover both halves in six languages.
+the listings below cover both halves in seven languages.
 
 #listing("dsa/samples-c/src/Ch14/rotated.c", first: 18, last: 42, caption: [c, which half is sorted, the target inside it or the other])
 
-#listing("dsa/samples/src/Ch14/Searching.cs", first: 52, last: 76, caption: [c\#, the rotated walk, both halves covered])
-
 #listing("dsa/samples-go/ch14/rotated.go", first: 6, last: 27, caption: [go, endpoint comparison picks the sorted half])
+
+#listing("dsa/samples-java/src/Ch14/Rotated.java", first: 18, last: 37, caption: [java, which half is sorted, the target inside it or the other])
+
+#listing("dsa/samples/src/Ch14/Searching.cs", first: 52, last: 76, caption: [c\#, the rotated walk, both halves covered])
 
 #listing("dsa/samples-js/src/ch14-rotated.mjs", first: 5, last: 23, caption: [javascript, the same rule, strict tests on both sides])
 
@@ -176,9 +180,9 @@ the listings below cover both halves in six languages.
 
 #listing("dsa/samples-lua/ch14_rotated.lua", first: 5, last: 28, caption: [lua, 1-based indices, answer shifted back])
 
-Measured across the suites: C, Go, JavaScript, Lua, and Python all
-pin indices on 4 5 6 7 0 1 2, every member at its slot, 0 at index
-4, the absent 3, 8, and -1 refused, then sweep rotation zero,
+Measured across the suites: C, Go, Java, JavaScript, Lua, and Python
+all pin indices on 4 5 6 7 0 1 2, every member at its slot, 0 at
+index 4, the absent 3, 8, and -1 refused, then sweep rotation zero,
 rotated by one, rotated by four, and the single element. The frozen
 C\# suite pins its own fixture under the same rule. The discipline
 is one line everywhere: a[lo] <= a[mid] names the sorted half, and
@@ -277,13 +281,15 @@ chapter's cross-language anchor, 1 8 2 4 3 in 3 days landing 9.
 })
 
 The 15 as the first feasible capacity is the pinned landing, and the
-listings below bisect the same predicate in six languages.
+listings below bisect the same predicate in seven languages.
 
 #listing("dsa/samples-c/src/Ch14/answerspace.c", first: 20, last: 47, caption: [c, the greedy day count, the feasibility test, the bisect])
 
-#listing("dsa/samples/src/Ch14/Searching.cs", first: 79, last: 106, caption: [c\#, the bracket max-to-total, the bisect on feasibility])
-
 #listing("dsa/samples-go/ch14/answerspace.go", first: 9, last: 41, caption: [go, days needed, min capacity over the bracket])
+
+#listing("dsa/samples-java/src/Ch14/Answerspace.java", first: 20, last: 50, caption: [java, the greedy day count, the feasibility test, the bisect, 1000 as the overflow sentinel])
+
+#listing("dsa/samples/src/Ch14/Searching.cs", first: 79, last: 106, caption: [c\#, the bracket max-to-total, the bisect on feasibility])
 
 #listing("dsa/samples-js/src/ch14-answerspace.mjs", first: 9, last: 40, caption: [javascript, infinity marks an overflowing weight, the bisect])
 
@@ -342,8 +348,8 @@ advanced with the sums, so the winning span falls out of the same
 pass.
 
 The dry run: the fixture is -2, 1, -3, 4, -1, 2, 1, -5, 4, asserted
-by every suite against a double-loop brute, the one fixture all six
-share.
+by every suite against a double-loop brute, the one fixture all
+seven share.
 
 + The scan seeds on -2, and the first arrival already restarts:
   -2 + 1 = -1 loses to the 1 alone, so the span reopens at index 1
@@ -375,11 +381,13 @@ share.
 )
 
 The 6 over 3 through 6 with the brute agreeing is the pinned
-champion, and the listings below run the same scan in six languages.
+champion, and the listings below run the same scan in seven
+languages.
 
 #listing("dsa/samples-c/src/Ch14/kadane.c", first: 21, last: 38, caption: [c, the loop, restart beats extend, the champion span tracked])
-#listing("dsa/samples/src/Ch14/Searching.cs", first: 116, last: 143, caption: [c\#, the same loop, the empty-allowed variant one max away])
 #listing("dsa/samples-go/ch14/kadane.go", first: 6, last: 35, caption: [go, the scan and the empty-allowed wrapper])
+#listing("dsa/samples-java/src/Ch14/Kadane.java", first: 20, last: 39, caption: [java, the loop, restart beats extend, the champion span tracked in statics])
+#listing("dsa/samples/src/Ch14/Searching.cs", first: 116, last: 143, caption: [c\#, the same loop, the empty-allowed variant one max away])
 #listing("dsa/samples-js/src/ch14-kadane.mjs", first: 6, last: 26, caption: [javascript, the whole scan, best, start, end out])
 #listing("dsa/samples-py/src/Ch14/kadane.py", first: 15, last: 47, caption: [python, the scan, the brute oracle, the empty-allowed wrapper])
 #listing("dsa/samples-lua/ch14_kadane.lua", first: 8, last: 23, caption: [lua, the same loop over 1-based indices])
@@ -472,11 +480,12 @@ carried by the integer suites.
 })
 
 The 3 beside the off-the-end 6 is the pinned pair, and the listings
-below run both forms in six languages.
+below run both forms in seven languages.
 
 #listing("dsa/samples-c/src/Ch14/mex.c", first: 24, last: 46, caption: [c, the seen array and first-false scan, the prefix table below])
-#listing("dsa/samples/src/Ch14/Searching.cs", first: 153, last: 181, caption: [c\#, both forms, the marker advancing inside the stream loop])
 #listing("dsa/samples-go/ch14/mex.go", first: 7, last: 38, caption: [go, the scan, the prefix table over a presence map])
+#listing("dsa/samples-java/src/Ch14/Mex.java", first: 24, last: 50, caption: [java, the seen array and first-false scan, the advancing-marker prefix table])
+#listing("dsa/samples/src/Ch14/Searching.cs", first: 153, last: 181, caption: [c\#, both forms, the marker advancing inside the stream loop])
 #listing("dsa/samples-js/src/ch14-mex.mjs", first: 7, last: 27, caption: [javascript, both forms, the set-backed prefix table])
 #listing("dsa/samples-py/src/Ch14/mex.py", first: 15, last: 36, caption: [python, the seen scan, the prefix table with its moving marker])
 #listing("dsa/samples-lua/ch14_mex.lua", first: 8, last: 31, caption: [lua, slot v + 1 holds value v, both forms])
@@ -520,7 +529,7 @@ The application is general technique, and the grundy numbers of
 #xref-to("dsa", "games") are the named kin: a game position's value is
 the mex of its options, computed by this scan.
 
-== across the six languages
+== across the seven languages
 
 The build sizes count non-comment source lines over this chapter's
 five featured files per language, the three search topics plus the
@@ -532,8 +541,9 @@ file:
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [319], [libc only], [overflow sentinels 1000 for days, the kadane brute rides along, checks share the file with main, 70 of them],
-  [c\#], [153], [bcl only], [leftmost and rightmost ride the bounds, kadane and mex as static classes, 10 tests],
   [go], [143], [none], [insertion point as a named alias, degenerate rotations swept, the empty-allowed kadane wrapper, tests in separate files, 14 tests],
+  [java], [338], [jdk 27 stdlib], [one file per topic, the bounds partition-swept linearly, 1000 as the overflow sentinel, the kadane brute a record pair, 63 checks in 5 files],
+  [c\#], [153], [bcl only], [leftmost and rightmost ride the bounds, kadane and mex as static classes, 10 tests],
   [javascript], [113], [node stdlib], [Infinity marks an overflowing weight, floor midpoints, the two scans as small modules, 14 tests],
   [python], [224], [stdlib only], [chained comparisons in the rotated walk, the double-loop kadane oracle, 50 checks],
   [lua], [284], [lib.lua harness], [1-based walks shifted back to 0-based answers, slot v + 1 holds value v in mex, checks ride in the module, 18 of them],
@@ -547,7 +557,8 @@ cp-algorithms.com/others/maximum_average_segment.html, and "MEX task
 cp-algorithms.com/sequences/mex.html, both accessed 2026-09-20, cc
 by-sa 4.0, our own words and code throughout. Sample behavior
 verified by `make verify-csharp`, 10 tests in chapter 14 of the
-samples suite. The six-language layer verifies the same way: 5 C
+samples suite. The seven-language layer verifies the same way: 5 C
 programs with 70 embedded checks under `make verify-c`, 14 Go tests,
-14 `node --test` cases, 50 Python checks across 5 files, and 18 Lua
-checks under `run.lua`.
+the java runner's 63 Ch14 checks over 5 files under
+`run-java-samples`, 14 `node --test` cases, 50 Python checks across
+5 files, and 18 Lua checks under `run.lua`.

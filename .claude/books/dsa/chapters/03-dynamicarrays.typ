@@ -16,9 +16,9 @@ copies. C keeps the whole anatomy in one struct and grows with a hand
 copy loop.
 
 The dry run: the fixture is 33 pushes into a vector born at capacity
-4, snapshotted at every growth, asserted by the C, JavaScript, and
-Lua suites. Go stops the ladder at 32 pushes and 28 copies, Python
-at 16 and 12.
+4, snapshotted at every growth, asserted by the C, Java, JavaScript,
+and Lua suites. Go stops the ladder at 32 pushes and 28 copies,
+Python at 16 and 12.
 
 + Pushes 1 through 4 fill the first block: size 4, capacity 4, no
   copies.
@@ -51,20 +51,28 @@ at 16 and 12.
 })
 
 The 60 copies over 33 pushes and the 2^5 - 1 case are pinned, and
-the listings below build the vector six ways.
+the listings below build the vector seven ways.
 
 #listing("dsa/samples-c/src/Ch03/vector.c", first: 18, last: 41, caption: [c, the struct, the init, and the push with its grow path])
 
+#listing("dsa/samples-go/ch03/vector.go", first: 23, last: 39, caption: [go, grow doubles and records, push rides on append])
+
+Six more languages build the same structure, Java hand-rolling the
+vec class because `ArrayList` would hide the growth this chapter
+teaches:
+
+#listing("dsa/samples-java/src/Ch03/Vector.java", first: 19, last: 52, caption: [java, a hand-rolled vec class, push, pop, insert-at with the counted grow])
+
 The C\# version is generic and bounds checked:
 
-#listing("dsa/samples/src/Ch03/Dynamic.cs", first: 4, last: 45, caption: [the vector, counted growth, bounds checked indexer, add with grow on demand])
+#listing("dsa/samples/src/Ch03/Dynamic.cs", first: 4, last: 45, caption: [c\#, the vector, counted growth, bounds checked indexer, add with grow on demand])
 
 Insertion and removal at an interior index shift the tail one way or
 the other, so they cost proportional to the distance to the end. The
 version in the listing keeps that visible with `Array.Copy` doing the
 shift, exactly what `List<T>.Insert` does internally:
 
-#listing("dsa/samples/src/Ch03/Dynamic.cs", first: 46, last: 69, caption: [interior insert and remove shift the tail, trim shrinks storage])
+#listing("dsa/samples/src/Ch03/Dynamic.cs", first: 46, last: 69, caption: [c\#, interior insert and remove shift the tail, trim shrinks storage])
 
 #diagram([the vector, a fixed array plus count plus capacity, and the tail shifts interior edits cost], length: 13pt, {
   // anatomy: 8 slots, 5 live
@@ -116,9 +124,7 @@ shift, exactly what `List<T>.Insert` does internally:
   txt(15.4, -0.1, [c d e shifted left one], size: 6pt)
 })
 
-Four more languages build the same structure:
-
-#listing("dsa/samples-go/ch03/vector.go", first: 23, last: 39, caption: [go, grow doubles and records, push rides on append])
+Three more languages build the same structure:
 
 #listing("dsa/samples-js/src/ch03-vector.mjs", first: 24, last: 35, caption: [javascript, the push method and its grow path])
 
@@ -126,16 +132,16 @@ Four more languages build the same structure:
 
 #listing("dsa/samples-lua/ch03_vector.lua", first: 6, last: 21, caption: [lua, init and push over a table that copies anyway])
 
-The capacity ladder is the shared anchor. C, JavaScript, and Lua
-snapshot every growth, capacity 4, 8, 16, 32, 64 at sizes 4, 5, 9,
-17, 33 with cumulative copies 0, 4, 12, 28, 60, and all three pin
+The capacity ladder is the shared anchor. C, Java, JavaScript, and
+Lua snapshot every growth, capacity 4, 8, 16, 32, 64 at sizes 4, 5,
+9, 17, 33 with cumulative copies 0, 4, 12, 28, 60, and all four pin
 the first-capacity-1 case where 31 pushes copy exactly 2^5 - 1.
 Go pins capacities 4, 8, 16, 32 with 28 copies over 32 pushes.
 Python pins caps 4, 8, 16 with 12 copies at 9 pushes, its insert
 riding spare capacity with no growth. Interior insert differs in
-mechanism, C, JavaScript, and Lua push then bubble back, Go, Python,
-and C\# shift the tail, and every suite pins the same resulting
-order.
+mechanism, C, Java, JavaScript, and Lua push then bubble back, Go,
+Python, and C\# shift the tail, and every suite pins the same
+resulting order.
 
 == the doubling argument
 
@@ -143,7 +149,7 @@ Chapter 1 stated the identity, this chapter runs it. C runs the two
 policies side by side, one counter each.
 
 The dry run: the fixture is the side-by-side table from capacity 4,
-row by row, asserted by the C, JavaScript, and Lua suites. C\#
+row by row, asserted by the C, Java, JavaScript, and Lua suites. C\#
 exhibits 4096 appends, Python records a cost per append, Go
 cross-checks both totals.
 
@@ -173,18 +179,25 @@ cross-checks both totals.
 )
 
 The 4095 copies under one per append is the exhibit the tests pin
-exactly, and the listings below run the race in six languages.
+exactly, and the listings below run the race in seven languages.
 
 #listing("dsa/samples-c/src/Ch03/growth.c", first: 17, last: 42, caption: [c, both counters, doubling against constant step])
 
+#listing("dsa/samples-go/ch03/growth.go", first: 9, last: 34, caption: [go, both policies as plain counted loops])
+
+The other five languages run the same race, Java as two plain static
+loops over long:
+
+#listing("dsa/samples-java/src/Ch03/Growth.java", first: 18, last: 40, caption: [java, both counters as plain static loops over long])
+
 The C\# growth routine is two counters and a resize:
 
-#listing("dsa/samples/src/Ch03/Dynamic.cs", first: 71, last: 78, caption: [grow doubles and records the copy cost])
+#listing("dsa/samples/src/Ch03/Dynamic.cs", first: 71, last: 78, caption: [c\#, grow doubles and records the copy cost])
 
 The exhibit is the head to head: doubling against growing by a
 constant step, same appends, counted copies:
 
-#listing("dsa/samples/src/Ch03/Dynamic.cs", first: 80, last: 113, caption: [the two growth policies compared on the meter])
+#listing("dsa/samples/src/Ch03/Dynamic.cs", first: 80, last: 113, caption: [c\#, the two growth policies compared on the meter])
 
 For 4096 appends doubling grows 12 times and copies 4095 elements,
 under one copy per append on average. Growing by a fixed step copies
@@ -220,9 +233,7 @@ actually experiences.
   cdraw.content((11.0, 6.7), [4096 appends: 4095 copies versus the triangular number], size: 6.5pt)
 })
 
-The other four languages run the same race:
-
-#listing("dsa/samples-go/ch03/growth.go", first: 9, last: 34, caption: [go, both policies as plain counted loops])
+Three more languages run the same race:
 
 #listing("dsa/samples-js/src/ch03-growth.mjs", first: 17, last: 39, caption: [javascript, the two copy counters behind the table])
 
@@ -230,15 +241,15 @@ The other four languages run the same race:
 
 #listing("dsa/samples-lua/ch03_growth.lua", first: 6, last: 28, caption: [lua, both counters in while loops])
 
-The numbers line up wherever the topic runs. C, JavaScript, and Lua
-pin the side-by-side table, 28 against 40 copies at 17 appends, 124
-against 544 at 65, and the bound, doubling never above 4 copies per
-append up to 200 while step growth pays 1984 for 128 appends. Python
-records a cost per append, 4 then 8 on the doubling ladder, 144
-total for 36 step appends, and 612 at 72. Go runs both policies as
-plain loops with the totals cross-checked in its tests. C\# exhibits
-4096 appends, 12 grow calls, 4095 copied elements against a step
-policy past 500 copies per append.
+The numbers line up wherever the topic runs. C, Java, JavaScript,
+and Lua pin the side-by-side table, 28 against 40 copies at 17
+appends, 124 against 544 at 65, and the bound, doubling never above
+4 copies per append up to 200 while step growth pays 1984 for 128
+appends. Python records a cost per append, 4 then 8 on the doubling
+ladder, 144 total for 36 step appends, and 612 at 72. Go runs both
+policies as plain loops with the totals cross-checked in its tests.
+C\# exhibits 4096 appends, 12 grow calls, 4095 copied elements
+against a step policy past 500 copies per append.
 
 #callout("note", "when the average is a lie", [
   Amortization is honest only when the caller cannot observe the
@@ -328,7 +339,7 @@ pins its final order.
 The 124750 against 500 is the trade at the test's scale, arrays
 first until elements move by reference.
 
-== across the six languages
+== across the seven languages
 
 Build sizes count non-comment source lines over the featured files;
 bundled checks count where the language puts them in the same file:
@@ -338,8 +349,9 @@ bundled checks count where the language puts them in the same file:
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [138], [libc + malloc], [the grow path hand copies and frees, copy totals in unsigned long long],
-  [c\#], [92], [bcl only], [generic vector, the (uint) cast folds the negative check into the bound],
   [go], [76], [fmt for errors], [append does the copy, the count still records len at each grow],
+  [java], [127], [jdk 27 stdlib], [ArrayList left out because it hides the taught growth, the vec is a static class with long counters, insert rides push then bubble],
+  [c\#], [92], [bcl only], [generic vector, the (uint) cast folds the negative check into the bound],
   [javascript], [79], [node stdlib], [private fields hold the state, push returns this for chaining],
   [python], [103], [stdlib only], [dead slots hold None, pop clears the slot it releases],
   [lua], [125], [lib.lua harness], [tables grow natively, this build copies anyway to keep the count honest],
@@ -349,6 +361,7 @@ sources: learn.microsoft.com, `List<T>` api page including the growth
 remarks, `ArrayPool<T>`, `Array.Resize`, capacity management guidance
 in the performance docs, accessed 2026-09-08. Sample behavior
 verified by `make verify-csharp`, 9 tests in chapter 3 of the samples
-suite. The six-language layer verifies the same way: 2 C programs
-under `make verify-c`, 8 Go tests, 6 `node --test` cases, 20 Python
-checks across 2 files, and 8 Lua checks under `run.lua`.
+suite. The seven-language layer verifies the same way: 2 C programs
+under `make verify-c`, 8 Go tests, the java runner's 31 Ch03 checks
+over 2 files under `run-java-samples`, 6 `node --test` cases, 20
+Python checks across 2 files, and 8 Lua checks under `run.lua`.

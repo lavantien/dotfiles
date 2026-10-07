@@ -6,16 +6,16 @@ Array algorithms want dense indices and the world hands out sparse
 coordinates. Two ideas close the gap: compress the coordinates to
 their ranks so a billion-wide domain fits a small array, and do
 interval algebra on endpoints instead of on the cells between them.
-This chapter builds both in six languages, and one convention is
+This chapter builds both in seven languages, and one convention is
 pinned before anything else. Intervals here are half-open, start
 inclusive and end exclusive, so an interval ending at t and one
 starting at t share the single point t and never merge or stack. The
-c\# and lua suites pin exactly that. The c, go, javascript, and
-python suites pin the touching-fuses reading for merging, go even
-names the type Closed, so a touching pair becomes one interval there.
-Every section below names which reading its listings use, and the
-matrix anchor, (1,3), (2,6), (8,10) merging to two intervals, agrees
-in all six languages.
+c\# and lua suites pin exactly that. The c, go, java, javascript,
+and python suites pin the touching-fuses reading for merging, go
+even names the type Closed, so a touching pair becomes one interval
+there. Every section below names which reading its listings use,
+and the matrix anchor, (1,3), (2,6), (8,10) merging to two
+intervals, agrees in all seven languages.
 
 == coordinate compression
 
@@ -30,8 +30,8 @@ costs log k. It wins whenever coordinates are huge but few, chapter
 arrays in chapter 24 all want indices, not values.
 
 The dry run: the fixture is 100, 10, 100, 40, 10, asserted by the
-C\# suite with lua on the same numbers, while C ranks 100, -50, 100,
-7, -50, 30 to 3, 0, 3, 1, 0, 2.
+C\# suite with lua on the same numbers, while C and java rank 100,
+-50, 100, 7, -50, 30 to 3, 0, 3, 1, 0, 2.
 
 + Distinct then order builds the domain: 10, 40, 100, three slots
   carrying ranks 0, 1, 2.
@@ -72,26 +72,29 @@ C\# suite with lua on the same numbers, while C ranks 100, -50, 100,
 })
 
 2, 0, 2, 1, 0 over 10, 40, 100 is the pinned pair and the listings
-below sort, dedupe, and rank in six languages.
+below sort, dedupe, and rank in seven languages.
 
 #listing("dsa/samples-c/src/Ch22/coordcompress.c", first: 26, last: 49, caption: [c, qsort then an in-place unique scan, lower bound ranks each value])
-#listing("dsa/samples/src/Ch22/Compression.cs", first: 13, last: 23, caption: [c\#, a distinct ordered domain plus a dictionary from value to rank])
 #listing("dsa/samples-go/ch22/coordcompress.go", first: 10, last: 19, caption: [go, slices.sort, slices.compact, and slices.binarysearch are the whole build])
+#listing("dsa/samples-java/src/Ch22/Coordcompress.java", first: 19, last: 67, caption: [java, arrays.sort then a dedupe scan, a hand lower bound, a stream-distinct lane beside])
+#listing("dsa/samples/src/Ch22/Compression.cs", first: 13, last: 23, caption: [c\#, a distinct ordered domain plus a dictionary from value to rank])
 #listing("dsa/samples-js/src/ch22-coordcompress.mjs", first: 5, last: 22, caption: [javascript, a set for the uniques, a hand lower bound for the ranks])
 #listing("dsa/samples-py/src/Ch22/coordcompress.py", first: 14, last: 30, caption: [python, sorted(set(...)) builds the domain, a closure ranks each value])
 #listing("dsa/samples-lua/ch22_coordcompress.lua", first: 8, last: 26, caption: [lua, table.sort, a dedupe scan, a 1-based lower bound shifted back to rank 0])
 
-All six suites pin the same three invariants on their own fixtures.
-C compresses 100, -50, 100, 7, -50, 30 into ranks 3, 0, 3, 1, 0, 2 over
-the domain -50, 7, 30, 100. C\# and lua share the fixture 100, 10,
-100, 40, 10 landing at 2, 0, 2, 1, 0 over 10, 40, 100, and C\#
-asserts the lossless round trip on negatives -5 through 12. Go uses
-coordinates up to 100000000, python proves negatives compress too,
-and javascript's lowerBound also answers for absent values, the
-insertion point, which is the same search chapter 14 built. Python's
-sorted(set(values)) is the whole trick in one expression, and the
-domain lookup beside it is a dictionary in C\#, a rank closure in
-python, a linear-indexed array in C.
+All seven suites pin the same three invariants on their own
+fixtures. C and java compress 100, -50, 100, 7, -50, 30 into ranks
+3, 0, 3, 1, 0, 2 over the domain -50, 7, 30, 100. C\# and lua share
+the fixture 100, 10, 100, 40, 10 landing at 2, 0, 2, 1, 0 over 10,
+40, 100, and C\# asserts the lossless round trip on negatives -5
+through 12. Go uses coordinates up to 100000000, python proves
+negatives compress too, java's second lane reaches a 1000000
+coordinate through `distinct().sorted()` on a stream, and
+javascript's lowerBound also answers for absent values, the
+insertion point, which is the same search chapter 14 built.
+Python's sorted(set(values)) is the whole trick in one expression,
+and the domain lookup beside it is a dictionary in C\#, a rank
+closure in python, a linear-indexed array in C and java.
 
 #diagram([compression on the c fixture, six raw values ranked into a four slot domain, duplicates share a rank], length: 13pt, {
   // raw 100 -50 100 7 -50 30 -> domain -50 7 30 100, ranks 3 0 3 1 0 2
@@ -144,7 +147,7 @@ pinned as two intervals.
   opens anew: two intervals out, the pinned count.
 + The touching pair turns on the same comparison, 3 < 3 is false,
   no overlap, two intervals stay two under the half-open reading
-  while C, go, javascript, and python fuse them.
+  while C, go, java, javascript, and python fuse them.
 + Insert (4,9) into (1,3), (8,10), (15,18): (1,3) ends 3 <= 4 and
   passes through, (8,10) strictly overlaps and widens the item to
   (4,10), and (15,18) starts past 10, emitting (1,3), (4,10),
@@ -161,26 +164,28 @@ pinned as two intervals.
 )
 
 Two intervals out of three is the pinned merge and the listings
-below fold in six languages.
+below fold in seven languages.
 
 #listing("dsa/samples-c/src/Ch22/mergeintervals.c", first: 27, last: 45, caption: [c, the fold after qsort, insert appends one interval and remerges])
-#listing("dsa/samples/src/Ch22/Compression.cs", first: 26, last: 39, caption: [c\#, a strict start < end fold, touching pairs stay separate])
 #listing("dsa/samples-go/ch22/mergeintervals.go", first: 13, last: 31, caption: [go, closed intervals, touching or overlapping absorbs])
+#listing("dsa/samples-java/src/Ch22/Mergeintervals.java", first: 18, last: 42, caption: [java, a record interval, sort by start then fold, insert appends and remerges])
+#listing("dsa/samples/src/Ch22/Compression.cs", first: 26, last: 39, caption: [c\#, a strict start < end fold, touching pairs stay separate])
 #listing("dsa/samples-js/src/ch22-mergeintervals.mjs", first: 4, last: 13, caption: [javascript, sort by start then fold pairs in place])
 #listing("dsa/samples-py/src/Ch22/mergeintervals.py", first: 13, last: 26, caption: [python, sorted tuples feed the fold, insert is one re-merge])
 #listing("dsa/samples-lua/ch22_mergeintervals.lua", first: 15, last: 27, caption: [lua, the strict fold, the half-open reading stated in the header])
 
 The anchor fixture agrees everywhere, (1,3), (2,6), (8,10) becomes
-(1,6) and (8,10) in all six suites. The touching pair splits them,
-C, go, javascript, and python fuse (1,2) and (2,3) into (1,3) while
-C\# and lua keep two, and go and lua each document the choice at the
-type or file level. Inserting into an already merged list shows
-three shapes: C appends the newcomer and reruns the merge, python
-and lua rebuild the combined list the same way, and C\#, go, and
-javascript walk the sorted list once, widening the carried interval
-across every overlap and emitting it before the first interval that
-starts past it. Go's insert test pins (4,9) into (1,3),(8,10) giving
-(1,3),(4,10), and C\# pins the same seam with a 15,18 tail.
+(1,6) and (8,10) in all seven suites. The touching pair splits
+them, C, go, java, javascript, and python fuse (1,2) and (2,3) into
+(1,3) while C\# and lua keep two, and go and lua each document the
+choice at the type or file level. Inserting into an already merged
+list shows three shapes: C and java append the newcomer and rerun
+the merge, python and lua rebuild the combined list the same way,
+and C\#, go, and javascript walk the sorted list once, widening the
+carried interval across every overlap and emitting it before the
+first interval that starts past it. Go's insert test pins (4,9)
+into (1,3),(8,10) giving (1,3),(4,10), and C\# pins the same seam
+with a 15,18 tail.
 
 #diagram([the anchor fixture fusing to two intervals, then one touching pair with both readings, fused or separate], length: 13pt, {
   // axis 0..10, bars (1,3) (2,6) (8,10) -> (1,6) (8,10), and the touching pair below
@@ -231,8 +236,8 @@ coordinates is again the whole convention: ends before starts means
 touching intervals never stack, starts before ends means they do.
 
 The dry run: the fixtures are the point probes and the sweep counts
-pinned by the C\# suite, while C traces its own four intervals live
-at 1, 2, 1, 3, 2, 1, 0.
+pinned by the C\# suite, while C and java trace their own four
+intervals live at 1, 2, 1, 3, 2, 1, 0.
 
 + The probe at point 3 over (1,4), (2,6), (5,8), (3,7) counts three
   covers, 1 <= 3 < 4, 2 <= 3 < 6, 3 <= 3 < 7, and (5,8) has not
@@ -270,25 +275,28 @@ at 1, 2, 1, 3, 2, 1, 0.
 })
 
 Peak 3 by probe and by sweep, and the listings below count both
-questions in six languages.
+questions in seven languages.
 
 #listing("dsa/samples-c/src/Ch22/overlaps.c", first: 28, last: 64, caption: [c, the point probe, then events insertion-sorted with ends first])
-#listing("dsa/samples/src/Ch22/Compression.cs", first: 64, last: 88, caption: [c\#, countat under half-open, the sweep orders ties by delta])
 #listing("dsa/samples-go/ch22/overlaps.go", first: 12, last: 48, caption: [go, a halfopen type, point count and sweep, ends before starts])
+#listing("dsa/samples-java/src/Ch22/Overlaps.java", first: 19, last: 58, caption: [java, the half-open point probe, a record event, the comparator ends first, the peak time kept])
+#listing("dsa/samples/src/Ch22/Compression.cs", first: 64, last: 88, caption: [c\#, countat under half-open, the sweep orders ties by delta])
 #listing("dsa/samples-js/src/ch22-overlaps.mjs", first: 5, last: 30, caption: [javascript, closed point probe, two sorted arrays merged start-first])
 #listing("dsa/samples-py/src/Ch22/overlaps.py", first: 16, last: 30, caption: [python, sorted event tuples put -1 ahead of +1 at a tie])
 #listing("dsa/samples-lua/ch22_overlaps.lua", first: 6, last: 33, caption: [lua, both passes over half-open pairs, the comparator ends first])
 
-The c suite pins the sweep's full trace on its fixture, (1,4), (2,6),
-(5,8), (5,7) all half-open: the live count runs 1, 2, 1, 3, 2, 1, 0
-and peaks at 3 at time 5, with a brute-force max over point probes
-agreeing. Go peaks at 3 on (1,4), (2,5), (3,7), (6,8) and lua pins
-that touching (1,3) and (3,5) never stack. Python and javascript are
-the closed-reading outliers in this section, python counts the last
-closing point 9 as covered while its sweep still ties ends first,
-and javascript ties starts first, so its (1,3) and (3,5) count as
-simultaneous. Same code shape, opposite answer, entirely decided by
-one comparator line.
+The c and java suites pin the sweep on the same fixture, (1,4),
+(2,6), (5,8), (5,7) all half-open: the live count runs 1, 2, 1, 3,
+2, 1, 0 and peaks at 3, java naming time 5 as the peak, with a
+brute-force max over point probes agreeing. Go peaks at 3 on
+(1,4), (2,5), (3,7), (6,8) and lua pins that touching (1,3) and
+(3,5) never stack. Python and javascript are the closed-reading
+outliers in this section, python counts the last closing point 9
+as covered while its sweep still ties ends first, and javascript
+ties starts first, so its (1,3) and (3,5) count as simultaneous,
+java carrying the closed reading as a second lane beside its
+half-open one. Same code shape, opposite answer, entirely decided
+by one comparator line.
 
 #diagram([the sweep over the c fixture, four half-open bars, the event trace with the peak of 3 at time 5], length: 13pt, {
   // fixture (1,4) (2,6) (5,8) (5,7), trace 1 2 1 3 2 1 0
@@ -363,26 +371,27 @@ asserted by the C\# suite at 2, 5, 5, 2, 2, -1.
 )
 
 2, 5, 5, 2, 2, -1 out of six writes and one pass, and the listings
-below range-add in six languages.
+below range-add in seven languages.
 
 #listing("dsa/samples-c/src/Ch22/diffarray.c", first: 20, last: 32, caption: [c, two writes per range add, one running sum, inclusive bounds])
-#listing("dsa/samples/src/Ch22/Compression.cs", first: 107, last: 125, caption: [c\#, bounds checks throw, a plus-one backing array])
 #listing("dsa/samples-go/ch22/diffarray.go", first: 15, last: 30, caption: [go, add takes the half-open \[lo, hi), one prefix pass])
+#listing("dsa/samples-java/src/Ch22/Diffarray.java", first: 15, last: 58, caption: [java, two writes per add with the hi-plus-one guarded, one prefix pass, a naive-sweep lane])
+#listing("dsa/samples/src/Ch22/Compression.cs", first: 107, last: 125, caption: [c\#, bounds checks throw, a plus-one backing array])
 #listing("dsa/samples-js/src/ch22-diffarray.mjs", first: 5, last: 18, caption: [javascript, one function from ops to the materialized array])
 #listing("dsa/samples-py/src/Ch22/diffarray.py", first: 13, last: 27, caption: [python, inclusive bounds, hi plus one, class and helper])
 #listing("dsa/samples-lua/ch22_diffarray.lua", first: 13, last: 30, caption: [lua, 1-based cells shift both writes, nil-safe reads in the fold])
 
-The c suite pins the whole pipeline, plus 5 over 0 to 2, plus 3 over
-1 to 4, minus 2 over 3 to 6 leaves the difference array 5, 3, 0, -7,
-0, -3, 0, 2 and materializes to 5, 8, 8, 1, 1, -2, -2, 0. Python
-cross-checks every single range against a naive cell-by-cell sweep
-and lua checks a six-op script the same way, which is the discipline
+The c and java suites pin the whole pipeline, plus 5 over 0 to 2,
+plus 3 over 1 to 4, minus 2 over 3 to 6 leaves the difference array
+5, 3, 0, -7, 0, -3, 0, 2 and materializes to 5, 8, 8, 1, 1, -2,
+-2, 0. Python, java, and lua cross-check every single range against
+a naive cell-by-cell sweep, which is the discipline
 that catches an off-by-one at either endpoint. The range convention
-splits by language here, C, C\#, javascript, python, and lua take
-inclusive bounds and write at hi plus one, go alone takes the
+splits by language here, C, C\#, java, javascript, python, and lua
+take inclusive bounds and write at hi plus one, go alone takes the
 half-open [lo, hi) and writes at hi. Lua refuses reversed or
 out-of-bounds ranges with error and C\# with an exception, the
-other four trust the caller.
+other five trust the caller.
 
 #diagram([three range adds as brackets, the difference array they leave, and the prefix pass that materializes the answer], length: 13pt, {
   // +5 [0,2] +3 [1,4] -2 [3,6], diff 5 3 0 -7 0 -3 0 2, out 5 8 8 1 1 -2 -2 0
@@ -419,7 +428,7 @@ other four trust the caller.
   cdraw.content((16.6, 1.5), [no updates, all zeros], size: 6pt)
 })
 
-== across the six languages
+== across the seven languages
 
 Featured build size counted as non-blank, non-comment lines of the
 chapter's four sample files, test scripts included where the language
@@ -432,6 +441,7 @@ embeds them in the same file:
   [c], [254], [`qsort` + fixed arrays], [int coordinates, buffers sized to the fixture, inclusive ranges],
   [c\#], [99], [`List<(long,long)>`, `Dictionary<long,int>`], [tests live in a separate project, bounds checks throw],
   [go], [123], [the `slices` package], [`add` takes the half-open \[lo, hi), the one range convention that differs],
+  [java], [397], [jdk 27 stdlib], [records carry the interval and event, the touching-fuses reading, the sweep keeps its peak time, both overlap readings in one file],
   [javascript], [81], [`Array` + `Set`], [number coordinates, closed overlap reading, starts tie first],
   [python], [174], [`list`, `set`, `dict`], [native ints, inclusive ranges, brute-force cross-checks],
   [lua], [215], [`table` + `table.sort`], [1-based cells shift every write, `error()` refuses bad ranges],
@@ -442,6 +452,7 @@ go.dev for `slices.Sort`, `slices.Compact`, `slices.BinarySearch`,
 developer.mozilla.org for `Set` and `Array.prototype.sort`,
 docs.python.org for `sorted` and `set`, lua.org for `table.sort` and
 `table.unpack`, accessed 2026-09-14. Sample behavior verified by the
-six suite gates scoped to chapter 22: c 4 files and 44 checks, c\#
-11 tests, go 14 tests, javascript 12 tests, python 4 files and 43
-asserts, lua 16 checks, zero skipped.
+seven suite gates scoped to chapter 22: c 4 files and 44 checks,
+c\# 11 tests, go 14 tests, java 4 files and 76 checks, javascript
+12 tests, python 4 files and 43 asserts, lua 16 checks, zero
+skipped.

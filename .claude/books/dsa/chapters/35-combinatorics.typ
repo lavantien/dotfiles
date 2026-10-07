@@ -33,8 +33,8 @@ road reads the exponent of a prime in the answer off legendre's sum,
 the difference of three floor-sums.
 
 The dry run: the fixture is the four-road anchor set of the C\# suite,
-with C pinning the same modular digits and javascript riding BigInt
-past its 2^53 ceiling.
+with C and Java pinning the same modular digits and javascript riding
+BigInt past its 2^53 ceiling.
 
 + The exact ladder walks C(10, 3) one dividing step at a time:
   1 × 10 / 1 = 10, then 10 × 9 / 2 = 45, then 45 × 8 / 3 = 120.
@@ -61,13 +61,15 @@ past its 2^53 ceiling.
 )
 
 The 120, the 159835829, and the 3 are the asserted landings, and the
-listings below build all four roads in six languages.
+listings below build all four roads in seven languages.
 
 #listing("dsa/samples-c/src/Ch35/binom.c", first: 43, last: 78, caption: [c, both table builds, the O(1) query, the legendre sum])
 
-#listing("dsa/samples/src/Ch35/Binom.cs", first: 18, last: 60, caption: [c\#, the tables and ln table in one constructor, the exact ladder through UInt128])
-
 #listing("dsa/samples-go/ch35/binom.go", first: 28, last: 54, caption: [go, the cached table pair, the query, the 128-bit exact ladder below])
+
+#listing("dsa/samples-java/src/Ch35/Binom.java", first: 42, last: 77, caption: [java, both prime-pair table builds, the O(1) query, the legendre sum])
+
+#listing("dsa/samples/src/Ch35/Binom.cs", first: 18, last: 60, caption: [c\#, the tables and ln table in one constructor, the exact ladder through UInt128])
 
 #listing("dsa/samples-js/src/ch35-binom.mjs", first: 22, last: 56, caption: [javascript, BigInt tables, the fermat inverse from the top, the ladder on BigInt past C(56,28)])
 
@@ -84,11 +86,15 @@ suites pin; the row sanity sum over k of C(30,k) = 2^30 with
 C(30,15) = 155117520. Exact and boundary: C(62,31) =
 465428353255261088; C(66,33) = 7219428434016265740 is the last
 central binomial under 2^63 and C(67,33) = 14226520737620288370
-crosses, with javascript's own ceiling at n = 56, C(56,28) =
+crosses, java pinning it through Long.parseUnsignedLong with the
+identical decimal string and comparing unsigned, with javascript's
+own ceiling at n = 56, C(56,28) =
 7648690600760440, the last under 2^53, its ladder riding BigInt from
 there. Log and p-adic: ln C(1000,500) = 689.467261567851 within
 1e-9, the cumulative table and the lgamma road agreeing to 9e-13
-where the language has lgamma; v2 of C(100,50) = 3, read as 97 - 2
+where the language has lgamma, java's stdlib shipping none so its
+twin runs a nine-coefficient lanczos series and agrees with the
+summed table to 1e-9; v2 of C(100,50) = 3, read as 97 - 2
 times 47 by legendre, and the exact 30-digit value 1008913445455641
 93334812497256 pins as 2^3 times an odd number with residue
 538992043 mod 1e9+7.
@@ -170,13 +176,15 @@ own exact ladder, C(40, 20) = 137846528820 over 21.
 })
 
 The 14, the 42, and the 6564120420 are the pinned landings, and the
-listings below build both roads in six languages.
+listings below build both roads in seven languages.
 
 #listing("dsa/samples-c/src/Ch35/catalan.c", first: 50, last: 81, caption: [c, the closed form, the table anchors, the recurrence sweep and agreement check])
 
-#listing("dsa/samples/src/Ch35/Catalan.cs", first: 18, last: 31, caption: [c\#, the closed form from the binomial class, the recurrence below it])
-
 #listing("dsa/samples-go/ch35/catalan.go", first: 6, last: 32, caption: [go, closed form, exact form, the recurrence])
+
+#listing("dsa/samples-java/src/Ch35/Catalan.java", first: 43, last: 53, caption: [java, binom and the closed form, the recurrence array swept in main])
+
+#listing("dsa/samples/src/Ch35/Catalan.cs", first: 18, last: 31, caption: [c\#, the closed form from the binomial class, the recurrence below it])
 
 #listing("dsa/samples-js/src/ch35-catalan.mjs", first: 12, last: 30, caption: [javascript, the closed form as C(2n,n) - C(2n,n+1), no inverse needed, and the recurrence])
 
@@ -268,13 +276,15 @@ counting the same tuples.
 )
 
 Both bounded answers, 66 and 286, survive their brute twins, and the
-listings below build the three counters in six languages.
+listings below build the three counters in seven languages.
 
 #listing("dsa/samples-c/src/Ch35/starsbars.c", first: 51, last: 80, caption: [c, the two identities, the bounded IE loop in modular arithmetic])
 
-#listing("dsa/samples/src/Ch35/StarsBars.cs", first: 13, last: 32, caption: [c\#, the three counters over the binomial class, the IE loop breaking on negative remainder])
-
 #listing("dsa/samples-go/ch35/starsbars.go", first: 5, last: 33, caption: [go, the same three over the cached tables])
+
+#listing("dsa/samples-java/src/Ch35/Starsbars.java", first: 50, last: 75, caption: [java, the two identities, the bounded IE loop with p added before the subtraction])
+
+#listing("dsa/samples/src/Ch35/StarsBars.cs", first: 13, last: 32, caption: [c\#, the three counters over the binomial class, the IE loop breaking on negative remainder])
 
 #listing("dsa/samples-js/src/ch35-starsbars.mjs", first: 7, last: 27, caption: [javascript, the small exact ladder and the three counters on it])
 
@@ -369,13 +379,15 @@ out term by term as its own check.
 })
 
 The 44, the 26, and the 61 are the pinned landings, and the listings
-below run these families in six languages.
+below run these families in seven languages.
 
 #listing("dsa/samples-c/src/Ch35/incexc.c", first: 46, last: 72, caption: [c, the subfactorial sum and recurrence, the recurrence's agreement loop in main])
 
-#listing("dsa/samples/src/Ch35/IncExc.cs", first: 12, last: 46, caption: [c\#, the derangement recurrence and the coprime mask sum over the ch28 mu])
-
 #listing("dsa/samples-go/ch35/incexc.go", first: 26, last: 67, caption: [go, the derangement recurrence and the subset-sum coprime count with overflow skip])
+
+#listing("dsa/samples-java/src/Ch35/Incexc.java", first: 45, last: 71, caption: [java, the subfactorial sum and recurrence, the falling-product terms])
+
+#listing("dsa/samples/src/Ch35/IncExc.cs", first: 12, last: 46, caption: [c\#, the derangement recurrence and the coprime mask sum over the ch28 mu])
 
 #listing("dsa/samples-js/src/ch35-incexc.mjs", first: 30, last: 54, caption: [javascript, the recurrence array and the mask walk, mu imported from the ch28 sieve])
 
@@ -437,8 +449,8 @@ divided by 2n. The cube face colorings ride a pinned cycle-index
 table of the 24 rotations.
 
 The dry run: the fixtures are the necklace and bracelet anchors,
-asserted by the C\# suite with brute canonical forms agreeing; the six
-languages share the counts, lua by generating the rotation group
+asserted by the C\# suite with brute canonical forms agreeing; the
+seven languages share the counts, lua by generating the rotation group
 itself.
 
 + The bracelet fork on (6, 2) starts from the rotation half, six
@@ -481,13 +493,15 @@ itself.
 })
 
 The 13 and the 57 land with their brute twins agreeing, and the
-listings below average the group in six languages.
+listings below average the group in seven languages.
 
 #listing("dsa/samples-c/src/Ch35/burnside.c", first: 37, last: 53, caption: [c, the necklace sum by gcd classes, the bracelet reflection families])
 
-#listing("dsa/samples/src/Ch35/Burnside.cs", first: 13, last: 31, caption: [c\#, the necklace sum folded by gcd counts, the bracelet fork])
-
 #listing("dsa/samples-go/ch35/burnside.go", first: 3, last: 29, caption: [go, both sums in modular arithmetic through the chapter tables])
+
+#listing("dsa/samples-java/src/Ch35/Burnside.java", first: 36, last: 52, caption: [java, the necklace sum by gcd classes, the bracelet reflection families])
+
+#listing("dsa/samples/src/Ch35/Burnside.cs", first: 13, last: 31, caption: [c\#, the necklace sum folded by gcd counts, the bracelet fork])
 
 #listing("dsa/samples-js/src/ch35-burnside.mjs", first: 18, last: 35, caption: [javascript, both sums over plain integer powers])
 
@@ -572,13 +586,15 @@ the k = 6 office strings, asserted by the C\# suite.
 )
 
 The 20, the reset, and the ten strings are the pinned landings, and
-the listings below run the walk in six languages.
+the listings below run the walk in seven languages.
 
 #listing("dsa/samples-c/src/Ch35/ksubset.c", first: 55, last: 78, caption: [c, next-combination, the emit turning a tuple into the office string])
 
-#listing("dsa/samples/src/Ch35/KSubset.cs", first: 13, last: 48, caption: [c\#, next, and the office string generator yielding largest-first])
-
 #listing("dsa/samples-go/ch35/ksubset.go", first: 9, last: 52, caption: [go, the advance and the string walk over it])
+
+#listing("dsa/samples-java/src/Ch35/Ksubset.java", first: 52, last: 77, caption: [java, nextComb, the emit turning a tuple into the office string])
+
+#listing("dsa/samples/src/Ch35/KSubset.cs", first: 13, last: 48, caption: [c\#, next, and the office string generator yielding largest-first])
 
 #listing("dsa/samples-js/src/ch35-ksubset.mjs", first: 16, last: 40, caption: [javascript, the advance, the 2023/B string family, no backwards walk])
 
@@ -687,13 +703,15 @@ n = 2 walk below are hand-derived off the pinned 6.
 })
 
 The 6, the row 2, 3, 6, 20, 168, and the 6-set layer are the pinned
-landings, and the listings below run the brute in six languages.
+landings, and the listings below run the brute in seven languages.
 
 #listing("dsa/samples-c/src/Ch35/sperner.c", first: 32, last: 68, caption: [c, the dedekind brute over family bitmasks, the middle layer, the antichain test])
 
-#listing("dsa/samples/src/Ch35/Sperner.cs", first: 11, last: 57, caption: [c\#, the layer walk reusing the k-subset iterator, the dedekind brute refusing past n = 4])
-
 #listing("dsa/samples-go/ch35/sperner.go", first: 36, last: 72, caption: [go, the antichain test and the dedekind brute over set maps])
+
+#listing("dsa/samples-java/src/Ch35/Sperner.java", first: 24, last: 62, caption: [java, the dedekind brute over family bitmasks, the middle layer, the antichain test])
+
+#listing("dsa/samples/src/Ch35/Sperner.cs", first: 11, last: 57, caption: [c\#, the layer walk reusing the k-subset iterator, the dedekind brute refusing past n = 4])
 
 #listing("dsa/samples-js/src/ch35-sperner.mjs", first: 13, last: 34, caption: [javascript, the bitwise antichain test and the dedekind brute])
 
@@ -785,13 +803,15 @@ with the pair formula cross-checked against the sieve.
 )
 
 The 7, the four gaps, and the conductor 8 are the pinned landings,
-and the listings below run the sieve in six languages.
+and the listings below run the sieve in seven languages.
 
 #listing("dsa/samples-c/src/Ch35/frobenius.c", first: 37, last: 72, caption: [c, the sieve with the cap, the gap scan, the conductor])
 
-#listing("dsa/samples/src/Ch35/Frobenius.cs", first: 14, last: 36, caption: [c\#, the same sieve returning the record])
-
 #listing("dsa/samples-go/ch35/frobenius.go", first: 14, last: 53, caption: [go, the closed form, the sieve, the gap list])
+
+#listing("dsa/samples-java/src/Ch35/Frobenius.java", first: 36, last: 71, caption: [java, the sieve with the cap, the gap scan, the conductor])
+
+#listing("dsa/samples/src/Ch35/Frobenius.cs", first: 14, last: 36, caption: [c\#, the same sieve returning the record])
 
 #listing("dsa/samples-js/src/ch35-frobenius.mjs", first: 15, last: 47, caption: [javascript, the sieve with the refuses and the -1 convention])
 
@@ -879,13 +899,15 @@ pinning the 10^9 anchor on both fast roads.
 )
 
 The standing 3 and the 926258176 are the pinned landings, and the
-listings below run all three roads in six languages.
+listings below run all three roads in seven languages.
 
 #listing("dsa/samples-c/src/Ch35/josephus.c", first: 19, last: 31, caption: [c, the recurrence loop, the closed form by top-bit scan])
 
-#listing("dsa/samples/src/Ch35/Josephus.cs", first: 9, last: 24, caption: [c\#, the recurrence, the closed form from bit 62 down])
-
 #listing("dsa/samples-go/ch35/josephus.go", first: 5, last: 21, caption: [go, the recurrence, the closed form from the top bit])
+
+#listing("dsa/samples-java/src/Ch35/Josephus.java", first: 18, last: 30, caption: [java, the recurrence loop, the closed form by top-bit scan])
+
+#listing("dsa/samples/src/Ch35/Josephus.cs", first: 9, last: 24, caption: [c\#, the recurrence, the closed form from bit 62 down])
 
 #listing("dsa/samples-js/src/ch35-josephus.mjs", first: 6, last: 26, caption: [javascript, recurrence, closed form, the elimination simulation])
 
@@ -1083,13 +1105,15 @@ walk are hand-derived off the recurrence.
 )
 
 The full row 1, 16, 92, 232, 260, 112, 16 is the pinned landing, and
-the listings below run the dp in six languages.
+the listings below run the dp in seven languages.
 
 #listing("dsa/samples-c/src/Ch35/bishops.c", first: 46, last: 71, caption: [c, the rolling dp over the length staircase, the color combine])
 
-#listing("dsa/samples/src/Ch35/Bishops.cs", first: 31, last: 66, caption: [c\#, the per-color length table and the dp, combined in Count])
-
 #listing("dsa/samples-go/ch35/bishops.go", first: 5, last: 44, caption: [go, the dp over the sorted lengths, the diagonal length frame])
+
+#listing("dsa/samples-java/src/Ch35/Bishops.java", first: 43, last: 69, caption: [java, the rolling dp over the length staircase, the color combine])
+
+#listing("dsa/samples/src/Ch35/Bishops.cs", first: 31, last: 66, caption: [c\#, the per-color length table and the dp, combined in Count])
 
 #listing("dsa/samples-js/src/ch35-bishops.mjs", first: 9, last: 41, caption: [javascript, the diagonal lengths, the dp, the split sum])
 
@@ -1181,13 +1205,15 @@ four-pair strings, asserted by the C\# suite.
 )
 
 The ()((())) and the 6 are the pinned landings, and the listings
-below price the order in six languages.
+below price the order in seven languages.
 
 #listing("dsa/samples-c/src/Ch35/brackets.c", first: 55, last: 95, caption: [c, the ballot difference, rank, unrank over the same ledger])
 
-#listing("dsa/samples/src/Ch35/Brackets.cs", first: 67, last: 110, caption: [c\#, rank, unrank, and the ballot helper beneath them])
-
 #listing("dsa/samples-go/ch35/brackets.go", first: 5, last: 50, caption: [go, ballot, the generator, and the rank walk])
+
+#listing("dsa/samples-java/src/Ch35/Brackets.java", first: 53, last: 94, caption: [java, the ballot difference, rank, unrank over the same ledger])
+
+#listing("dsa/samples/src/Ch35/Brackets.cs", first: 67, last: 110, caption: [c\#, rank, unrank, and the ballot helper beneath them])
 
 #listing("dsa/samples-js/src/ch35-brackets.mjs", first: 38, last: 69, caption: [javascript, rank and unrank over the ballot ledger])
 
@@ -1283,13 +1309,15 @@ brute, asserted by the C\# suite; C carries the same row.
 })
 
 The 728 rung and the 686310291 are the pinned landings, and the
-listings below run the recurrence in six languages.
+listings below run the recurrence in seven languages.
 
 #listing("dsa/samples-c/src/Ch35/labeled.c", first: 54, last: 74, caption: [c, the power of two over pairs, the recurrence loop modular])
 
-#listing("dsa/samples/src/Ch35/Labeled.cs", first: 14, last: 51, caption: [c\#, the exact recurrence in longs, the modular twin])
-
 #listing("dsa/samples-go/ch35/labeled.go", first: 13, last: 44, caption: [go, one recurrence parameterized by modulus, zero meaning exact])
+
+#listing("dsa/samples-java/src/Ch35/Labeled.java", first: 53, last: 73, caption: [java, the power of two over pairs, the recurrence loop modular])
+
+#listing("dsa/samples/src/Ch35/Labeled.cs", first: 14, last: 51, caption: [c\#, the exact recurrence in longs, the modular twin])
 
 #listing("dsa/samples-js/src/ch35-labeled.mjs", first: 20, last: 31, caption: [javascript, the exact recurrence, the BigInt modular twin below])
 
@@ -1331,7 +1359,7 @@ the native integer, O(n^2) modular beyond.
   cdraw.content((14.6, 3.3), [O(n^2) modular], size: 6pt)
 })
 
-== across the six languages
+== across the seven languages
 
 Featured build size counted as non-blank, non-comment lines of the
 chapter's twelve sample files per language, go test files excluded:
@@ -1341,8 +1369,9 @@ chapter's twelve sample files per language, go test files excluded:
   inset: 4pt,
   table.header([*language*], [*build sloc*], [*container dependency*], [*boundary note*]),
   [c], [1296], [static tables, family bitmasks], [modular binomials everywhere, dedekind over family bitmasks with long long, exact catalan through u64],
-  [c\#], [526], [linq, value tuples, class reuse], [binom, ksubset, and the ch16 and ch28 classes composed across files, dedekind refusing past n = 4],
   [go], [621], [slices, cached table maps], [one recurrence parameterized by modulus for labeled graphs, exact binomials through bits.Div64],
+  [java], [1289], [jdk 27 stdlib], [C(67,33) pinned through Long.parseUnsignedLong compared unsigned, the lgamma twin as a nine-coefficient lanczos series, sperner's dedekind over long family bitmasks],
+  [c\#], [526], [linq, value tuples, class reuse], [binom, ksubset, and the ch16 and ch28 classes composed across files, dedekind refusing past n = 4],
   [javascript], [450], [BigInt tables, plain Number where small], [catalan as C(2n,n) - C(2n,n+1) with no division, two test files at the 400 sloc house split],
   [python], [853], [lists, inline asserts], [exact ladders with lgamma cross-checks, brute twins inside every family],
   [lua], [1079], [tables, 1-based masks], [the burnside suite generating the 24-rotation group itself and counting fixed colorings directly, decimal-string binomials past 2^63],
@@ -1377,8 +1406,10 @@ frobenius conductor bound is stated as the classical schur-type
 result. Application sources: icpc world finals 2018 problem D (book
 9, chapter 9), 2023 problem B (book 10, chapter 12), 2017 problem K
 (book 10, chapter 8), 2025 problem H (book 10, chapter 13), and 2019
-problem D (book 10, chapter 10). Sample behavior verified by the six
-suite gates scoped to chapter 35: c 12 files and 216 checks, c\# 57
-facts, go 39 test functions, javascript 36 tests and 150 asserts
+problem D (book 10, chapter 10). Sample behavior verified by the seven
+suite gates scoped to chapter 35: c 12 files and 216 checks, go 39
+test functions, java 12 files and 216 checks under run-java-samples,
+c\# 57
+facts, javascript 36 tests and 150 asserts
 across the two-file split, python 12 files and 148 asserts, lua 42
 checks, zero skipped.

@@ -67,13 +67,15 @@ calls against 9 memoized on the 3 by 3.
 })
 
 The corner lands 6 both ways and the listings below build the memo,
-the pruned walk, and the simple-path count in six languages.
+the pruned walk, and the simple-path count in seven languages.
 
 #listing("dsa/samples-c/src/Ch20/memo_vs_prune.c", first: 25, last: 50, caption: [c, naive with a call meter against the memoized walk])
 
-#listing("dsa/samples/src/Ch20/Pruning.cs", first: 10, last: 48, caption: [c\#, the memo table, then the same count pruned with a visited set])
-
 #listing("dsa/samples-go/ch20/memo_vs_prune.go", first: 38, last: 73, caption: [go, the pruned dfs, unmark on the way out is the whole trick])
+
+#listing("dsa/samples-java/src/Ch20/MemoVsPrune.java", first: 20, last: 52, caption: [java, naive with the meter, the seen-flag memo, guards run before the count])
+
+#listing("dsa/samples/src/Ch20/Pruning.cs", first: 10, last: 48, caption: [c\#, the memo table, then the same count pruned with a visited set])
 
 #listing("dsa/samples-js/src/ch20-memo_vs_prune.mjs", first: 6, last: 35, caption: [javascript, memo rows of minus one, dfs with the cycle guard])
 
@@ -81,11 +83,14 @@ the pruned walk, and the simple-path count in six languages.
 
 #listing("dsa/samples-lua/ch20_memo_vs_prune.lua", first: 7, last: 44, caption: [lua, the memo table, then the dfs with its guard])
 
-The open 3 by 3 grid pins the anchor everywhere: 6 paths. C carries
-the meter that makes the map a table of numbers, 19 naive calls
-against 9 memoized on the 3 by 3, and on the 10 by 10 the split is
-184755 against exactly 100, one call per cell, for the same 48620
-paths. With the center blocked every suite still agrees on 2, and
+The open 3 by 3 grid pins the anchor everywhere: 6 paths. C and
+Java carry the meter that makes the map a table of numbers, 19
+naive calls against 9 memoized on the 3 by 3, and on the 10 by 10
+the split is 184755 against exactly 100, one call per cell, for the
+same 48620 paths, Java adding the walled 3 by 3 to the meter table,
+9 naive calls against 8 memoized, the blocked cell returning before
+the count. With the center blocked every suite still agrees on 2,
+and
 the C\# suite adds the case the memo cannot serve, four-direction
 simple paths between two cells, where the visited set is
 load-bearing because the walk can turn back into itself: 12 simple
@@ -173,13 +178,15 @@ first placement at columns 1, 3, 0, 2.
 })
 
 Two at n = 4 is the pinned count and the listings below place,
-check, and undo in six languages.
+check, and undo in seven languages.
 
 #listing("dsa/samples-c/src/Ch20/nqueens.c", first: 24, last: 54, caption: [c, the three flag arrays, the raw permutation tree for contrast])
 
-#listing("dsa/samples/src/Ch20/Pruning.cs", first: 70, last: 96, caption: [c\#, place row by row, constant-time attack checks])
-
 #listing("dsa/samples-go/ch20/nqueens.go", first: 8, last: 31, caption: [go, col, diag, antidiag slices, mark and unmark])
+
+#listing("dsa/samples-java/src/Ch20/Nqueens.java", first: 21, last: 58, caption: [java, int flag arrays, the first solution captured, the raw permutation tree beside it])
+
+#listing("dsa/samples/src/Ch20/Pruning.cs", first: 70, last: 96, caption: [c\#, place row by row, constant-time attack checks])
 
 #listing("dsa/samples-js/src/ch20-nqueens.mjs", first: 5, last: 28, caption: [javascript, three Sets keyed by column and both diagonals])
 
@@ -190,11 +197,12 @@ check, and undo in six languages.
 The 92 anchor holds in every suite: eight queens have exactly 92
 solutions, with the small boards pinned alongside, 1, 0, 0, 2, 10,
 4 for n = 1 through 6. Lua reaches past the headline and pins 7 at
-40 and 9 at 352, Python returns the actual solutions and checks
-every one peaceful plus duplicate-free, with the lexicographically
-first pinned, and C keeps the first 4-queens placement, columns 1,
-3, 0, 2, and measures the prune against the raw permutation tree,
-1957 nodes at n = 6 against far fewer pruned.
+40 and 9 at 352, Java pins 7 at 40 too, Python and Java return the
+actual solutions and check every one peaceful plus duplicate-free,
+with the lexicographically first pinned, and C and Java keep the
+first 4-queens placement, columns 1, 3, 0, 2, and measure the prune
+against the raw permutation tree, 1957 nodes at n = 6 against far
+fewer pruned.
 
 #diagram([n-queens prunes on three arrays, column, diagonal, antidiagonal, all constant time], length: 13pt, {
   cdraw.content((9.5, 7.9), [the first 4-queens solution, columns 1, 3, 0, 2], size: 6.5pt)
@@ -274,13 +282,15 @@ The dry run: the fixture is weights 2, 3, 4, 5 against values 3, 4,
 })
 
 Best 7 in 5 nodes against 16 brute-force subsets, and the listings
-below sort, bound, and prune in six languages.
+below sort, bound, and prune in seven languages.
 
 #listing("dsa/samples-c/src/Ch20/bandb.c", first: 38, last: 75, caption: [c, the fractional relaxation, the dfs it gates, the dp oracle])
 
-#listing("dsa/samples/src/Ch20/Pruning.cs", first: 103, last: 147, caption: [c\#, density sort, fractional bound, incumbent pruning])
-
 #listing("dsa/samples-go/ch20/bandb.go", first: 17, last: 67, caption: [go, slice the item that does not fit, nodes counted])
+
+#listing("dsa/samples-java/src/Ch20/Bandb.java", first: 26, last: 78, caption: [java, insertion sort by density, the fractional bound gating the dfs, nodes counted])
+
+#listing("dsa/samples/src/Ch20/Pruning.cs", first: 103, last: 147, caption: [c\#, density sort, fractional bound, incumbent pruning])
 
 #listing("dsa/samples-js/src/ch20-bandb.mjs", first: 7, last: 40, caption: [javascript, the bound and the walk, node counts returned])
 
@@ -288,16 +298,19 @@ below sort, bound, and prune in six languages.
 
 #listing("dsa/samples-lua/ch20_bandb.lua", first: 8, last: 47, caption: [lua, the same walk, hand-traced node counts pinned])
 
-The optimums pin exactly where the suite traces them by hand. C\#
-and C hold the classic capacity-50 fixture at 220 with the chapter
-17 dynamic program as the cross-check, and C's second fixture, four
-items at capacity 29, lands 135. Lua hand-traces its trees: weights
-2, 3, 4, 5 at capacity 5 answers 7 in exactly 5 nodes, root, two
-takes, two bound-pruned rejections, and the capacity-50 fixture in
-12. JavaScript pins the same shape, optimum 7 in 5 nodes against 16
-brute-force leaves, and Python pins 90 in 6 nodes with the bound
-arithmetic exposed, the root bound exact at 90.0 and the one below
-it at 88.75. Node counts beyond the hand-traced ones are asserted by
+The optimums pin exactly where the suite traces them by hand. C\#,
+C, and Java hold the classic capacity-50 fixture at 220 with the
+chapter 17 dynamic program as the cross-check, C's and Java's
+second fixture, four items at capacity 29, landing 135. Lua
+hand-traces its trees: weights 2, 3, 4, 5 at capacity 5 answers 7
+in exactly 5 nodes, root, two takes, two bound-pruned rejections,
+and the capacity-50 fixture in 12. JavaScript pins the same shape,
+optimum 7 in 5 nodes against 16 brute-force leaves, and Python and
+Java pin 90 in 6 nodes with the bound arithmetic exposed, the root
+bound exact at 90.0 and the one below it at 88.75. Java also runs
+its own raw twin with the bound switched off, asserting the pruned
+tree never costs a node against it. Node counts beyond the
+hand-traced ones are asserted by
 inequality only, pruned below raw and raw below the full tree,
 because capacity trimming makes hand-counts brittle, and every suite
 keeps the brute-force enumeration as the oracle. When the tree stops
@@ -380,9 +393,11 @@ run both walks with the leaf meter.
 
 #listing("dsa/samples-c/src/Ch20/alphabeta.c", first: 27, last: 71, caption: [c, plain minimax, then the min side stopping at alpha])
 
-#listing("dsa/samples/src/Ch20/Pruning.cs", first: 194, last: 228, caption: [c\#, the window carried down, leaf visits counted])
-
 #listing("dsa/samples-go/ch20/alphabeta.go", first: 26, last: 61, caption: [go, fail-low breaks the row scan, the value unchanged])
+
+#listing("dsa/samples-java/src/Ch20/Alphabeta.java", first: 19, last: 73, caption: [java, plain minimax, then the min side stopping at alpha, every leaf metered])
+
+#listing("dsa/samples/src/Ch20/Pruning.cs", first: 194, last: 228, caption: [c\#, the window carried down, leaf visits counted])
 
 #listing("dsa/samples-js/src/ch20-alphabeta.mjs", first: 5, last: 28, caption: [javascript, minimax and alpha-beta over one node tree])
 
@@ -394,7 +409,10 @@ The pinned tree is three groups of three leaves, 3, 12, 8, 2, 4, 6,
 14, 5, 2, with root value 3, and the meter is the lesson: plain
 minimax reads all 9 leaves, alpha-beta reads 7, the second group
 dies after its first leaf because 2 already fails low against the
-root's alpha of 3. The deeper fixture agrees everywhere it pins: 27
+root's alpha of 3. Java adds two orderings beside the pinned tree,
+a rising one where the window prunes nothing at all and a tied one
+where five leaf reads suffice, the child-order sensitivity stated
+as numbers. The deeper fixture agrees everywhere it pins: 27
 leaves at arity 3 read 27 plain against 21 with the window, C\# and
 Lua hand-trace it as 9 plus 3 plus 9, and every suite asserts the
 two algorithms return the same value whatever the tree.
@@ -427,7 +445,7 @@ two algorithms return the same value whatever the tree.
   cdraw.content((18.2, 0.3), [only the work shrinks], size: 6pt)
 })
 
-== across the six languages
+== across the seven languages
 
 The build sizes count non-comment source lines over this chapter's
 four featured files per language, checks included where they share
@@ -440,6 +458,7 @@ the file:
   [c], [325], [libc only], [flag arrays sized by constants, the raw permutation tree kept as the contrast, node counts by inequality],
   [c\#], [199], [bcl only], [HashSet for the visited set, the simple-paths case the memo cannot serve, 27 and 21 hand traced],
   [go], [198], [slices], [slices.SortFunc orders by density, closures carry the dfs, the brute enumerates 2^n leaves],
+  [java], [585], [jdk 27 stdlib], [the raw tree beside every prune, first solutions captured, the set-based queens solver with a local Walker class, two extra alpha-beta orderings],
   [javascript], [109], [node stdlib], [three Sets for the queens flags, minus-one memo sentinel, the node tree walked recursively],
   [python], [198], [stdlib only], [the solver returns solutions checked peaceful and duplicate-free, set for the visited guard],
   [lua], [276], [lib.lua harness], [maxinteger infinities, hand-traced node counts 5 and 12, 40 and 352 beyond the 92 anchor],
@@ -449,7 +468,8 @@ sources: learn.microsoft.com, `HashSet<T>` for the visited set,
 `Array.Sort` comparison overloads, accessed 2026-09-08, plus the
 CLRS branch-and-bound and the Knuth alpha-beta treatment cited in
 the chapter text. Sample behavior verified by `make verify-csharp`,
-9 tests in chapter 20 of the samples suite. The six-language layer
-verifies the same way: 4 C programs with 51 embedded checks under
-`make verify-c`, 9 Go tests, 8 `node --test` cases, 33 Python checks
-across 4 files, and 14 Lua checks under `run.lua`.
+9 tests in chapter 20 of the samples suite. The seven-language
+layer verifies the same way: 4 C programs with 51 embedded checks
+under `make verify-c`, 4 Ch20 java programs with 81 checks under
+`run-java-samples`, 9 Go tests, 8 `node --test` cases, 33 Python
+checks across 4 files, and 14 Lua checks under `run.lua`.

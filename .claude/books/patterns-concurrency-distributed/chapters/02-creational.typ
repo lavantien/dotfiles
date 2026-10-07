@@ -5,9 +5,10 @@
 
 Creation gravitates toward the plain in every tree this book runs. Go
 builds a struct literal with named fields, C an aggregate initializer,
-C\# an object initializer, javascript and lua a literal object or
-table, python a call with keyword arguments, and each form is
-constructor, builder, and configuration file in one. The creational
+java a constructor over plain fields, C\# an object initializer,
+javascript and lua a literal object or table, python a call with
+keyword arguments, and each form is constructor, builder, and
+configuration file in one. The creational
 patterns that earn their keep are the ones solving a problem the plain
 form cannot express, validating before the value exists, assembling
 over several fallible steps, deferring work to first use, or
@@ -19,8 +20,8 @@ The `New` prefix convention is the whole factory story for most go
 types. A function, unlike a constructor in a class language, can
 refuse, and every tree refuses in its own grain, a `(T, error)` pair
 in go, a reason string beside an untouched out struct in C, a thrown
-exception in C\#, javascript, and python, nil with a message in lua.
-Nothing stops a type from having several:
+exception in java, C\#, javascript, and python, nil with a message in
+lua. Nothing stops a type from having several:
 
 #snippet(
   "func NewServer(name string, opts ...Option) (*Server, error)\n"
@@ -69,11 +70,13 @@ both verified against the same implementation.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch02/options.c", first: 27, last: 73, caption: [C, no closures, an option is an apply function pointer beside its captured argument])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch02/Options.cs", first: 13, last: 58, caption: [C\#, the delegate list mirrors go one to one, each lambda capturing its argument])
-
 #listing("patterns-concurrency-distributed/samples/ch02/creational.go", first: 20, last: 30, caption: [Go, an option is a closure over one field])
 
 #listing("patterns-concurrency-distributed/samples/ch02/creational.go", first: 46, last: 56, caption: [Go, defaults in one place, options applied in order])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch02/Options.java", first: 38, last: 83, caption: [Java, an option is a lambda over the half-built server, null when applied or its rejection reason])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch02/Options.cs", first: 13, last: 58, caption: [C\#, the delegate list mirrors go one to one, each lambda capturing its argument])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch02-options.mjs", first: 5, last: 35, caption: [JavaScript, arrow closures over one object, the constructor throws on the first refusal])
 
@@ -87,8 +90,11 @@ the options in, so partial application is impossible to get wrong. C
 has no closures, so its option is an apply function pointer beside a
 pointer to the caller-owned argument, the captured state a closure
 would hide written out by hand. C\# mirrors go one to one because a
-lambda over the parameter is the same closure. The dynamic three
-already own cheap named construction, keyword arguments and object
+lambda over the parameter is the same closure, and java is one lane
+over: its `Option` is a single-method interface, so the lambda is the
+option, returning null when applied or the reason when refusing. The
+dynamic three already own cheap named construction, keyword arguments
+and object
 literals, so what the closure list buys them is the refusal row, one
 checked rejection per knob. The alternatives each fail differently,
 and knowing how is the tradeoff: config structs accept anything and
@@ -123,7 +129,7 @@ The dry run: the fixture walks `Method("")` then `URL("ftp://x")`
 into one build that fails with a single error naming both the empty
 method and the refused url, while a good build lands its method and
 url with the unset header and body fields left at zero. The
-both-names reading is pinned by the five new trees, the frozen go
+both-names reading is pinned by the six new trees, the frozen go
 test pins that the join exists and that the url reason rides it,
 both verified against the same implementation.
 
@@ -134,9 +140,11 @@ both verified against the same implementation.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch02/builder.c", first: 48, last: 91, caption: [C, issues collect in a fixed array, build joins them into one message])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch02/Builder.cs", first: 21, last: 63, caption: [C\#, the fluent chain records strings, build joins them and returns the tuple])
-
 #listing("patterns-concurrency-distributed/samples/ch02/creational.go", first: 90, last: 109, caption: [Go, collect issues, validate once at build])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch02/Builder.java", first: 34, last: 66, caption: [Java, the fluent chain collects issues, build joins them with String.join and throws BuildError])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch02/Builder.cs", first: 21, last: 63, caption: [C\#, the fluent chain records strings, build joins them and returns the tuple])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch02-builder.mjs", first: 5, last: 44, caption: [JavaScript, each step records its Error, build joins the messages and throws])
 
@@ -146,11 +154,11 @@ both verified against the same implementation.
 
 `errors.Join` from go 1.20 bundles every complaint into one error.
 The siblings spell the same join in their own error idioms,
-`string.Join` over the issue list in C\#, `table.concat` in lua, a
-`BuildError` carrying every issue in python, arrays of strings in C
-and message arrays joined with a newline in javascript. What never
-varies is the round trip: all the mistakes, one error, one fix
-cycle.
+`String.join` inside a thrown `BuildError` in java, `string.Join`
+over the issue list in C\#, `table.concat` in lua, a `BuildError`
+carrying every issue in python, arrays of strings in C and message
+arrays joined with a newline in javascript. What never varies is the
+round trip: all the mistakes, one error, one fix cycle.
 
 #flow(
   [issues accumulate across the steps, build joins them into one round trip],
@@ -172,20 +180,22 @@ Lazy creation is `sync.OnceValue` since go 1.21, and it replaced a
 page of double checked locking boilerplate with one call. Every tree
 has a native once or builds one from a lock: C's `call_once` over a
 `once_flag` is the standard's own, the same C23 threads.h discipline
-#xref-to("c-os-cloud", "threads") teaches, C\# wraps `Lazy<T>` in
-`ExecutionAndPublication` mode, javascript's memo closure needs no
-lock because one realm runs one thread, python writes the lock and
-done flag by hand, and lua drives an idle, running, done state
-machine whose overlapping callers park until the value exists:
+#xref-to("c-os-cloud", "threads") teaches, java ships no
+`OnceValue`, so its `Once<T>` is one synchronized method over a done
+flag, C\# wraps `Lazy<T>` in `ExecutionAndPublication` mode,
+javascript's memo closure needs no lock because one realm runs one
+thread, python writes the lock and done flag by hand, and lua drives
+an idle, running, done state machine whose overlapping callers park
+until the value exists:
 
 The dry run: the parse runs on the first call and never again, and
 every later caller reads the same payload, alpha 0, beta 1, gamma 2.
 The concurrent half is pinned by the threaded lanes and lua's
-scripted overlap, 8 callers in C, 20 racing tasks in C\#, 20 behind
-a barrier in python, 20 overlapping coroutines in lua, all at
-exactly one parse.
+scripted overlap, 8 callers in C, 8 more behind a `CyclicBarrier` in
+java, 20 racing tasks in C\#, 20 behind a barrier in python, 20
+overlapping coroutines in lua, all at exactly one parse.
 The frozen go test pins the sequential once-only property, the
-concurrent walks and their counting are pinned by the five new
+concurrent walks and their counting are pinned by the six new
 trees.
 
 + Calls 2 through N replay the identical value, identity pinned
@@ -196,9 +206,11 @@ trees.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch02/lazy.c", first: 27, last: 46, caption: [C, call_once over a once_flag, the payload built under the flag, every caller reads it])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch02/Lazy.cs", first: 3, last: 40, caption: [C\#, Lazy in ExecutionAndPublication mode is the bcl once, the counter makes it observable])
-
 #listing("patterns-concurrency-distributed/samples/ch02/creational.go", first: 111, last: 119, caption: [Go, parse happens on first call, never again, concurrent callers safe])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch02/Lazy.java", first: 20, last: 50, caption: [Java, no OnceValue in the jdk, a generic Once whose synchronized call holds a done flag and the value])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch02/Lazy.cs", first: 3, last: 40, caption: [C\#, Lazy in ExecutionAndPublication mode is the bcl once, the counter makes it observable])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch02-lazy.mjs", first: 5, last: 32, caption: [JavaScript, the memo closure, one thread means a done flag is the whole lock])
 
@@ -206,9 +218,10 @@ trees.
 
 #listing("patterns-concurrency-distributed/samples-lua/ch02_lazy.lua", first: 61, last: 87, caption: [Lua, idle, running, done, overlapping callers park and wake holding the value])
 
-The six spellings differ in who owns the hard part: go and C\#
+The seven spellings differ in who owns the hard part: go and C\#
 delegate it to the runtime, `OnceValue` and `Lazy<T>`, C carries
-`call_once` out of threads.h, python pays a lock it writes itself,
+`call_once` out of threads.h, java pays a monitor it writes itself,
+one `synchronized` on the call, python pays a lock it writes itself,
 javascript gets correctness free from the single thread, and lua's
 scheduler turns once into a state machine. The replay contract is
 identical everywhere, one evaluation, every caller the same value,
@@ -236,7 +249,7 @@ holds it.
 == prototype as an explicit clone
 
 There is no clone protocol in go, no `MemberwiseClone`, no copy
-constructor, and none of the five sibling trees ships one either.
+constructor, and none of the six sibling trees ships one either.
 The prototype pattern survives as a hand written method, and the
 only interesting part is depth:
 
@@ -250,14 +263,16 @@ every lane re-copies by hand.
 + Scalar fields copy with the struct and reference fields share their
   storage, so `Clone` must re-copy each of those or hand out aliased
   state.
-+ Python and lua keep the villain on stage, a shallow copy whose
-  writes do leak through the shared list or array.
++ Java, python, and lua keep the villain on stage, a shallow copy
+  whose writes do leak through the shared list or array.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch02/prototype.c", first: 26, last: 53, caption: [C, the value struct clones by assignment, the pointer array by hand])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch02/Prototype.cs", first: 3, last: 39, caption: [C\#, hand written clones, the list field re-copied into a fresh one])
-
 #listing("patterns-concurrency-distributed/samples/ch02/creational.go", first: 158, last: 172, caption: [Go, copy the struct, then fix every reference field by hand])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch02/Prototype.java", first: 19, last: 46, caption: [Java, the value class copies field by field, the pool re-copies its list or the two alias it])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch02/Prototype.cs", first: 3, last: 39, caption: [C\#, hand written clones, the list field re-copied into a fresh one])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch02-prototype.mjs", first: 6, last: 28, caption: [JavaScript, the clone re-creates the object, slice copies the array one level deep])
 
@@ -266,10 +281,11 @@ every lane re-copies by hand.
 #listing("patterns-concurrency-distributed/samples-lua/ch02_prototype.lua", first: 17, last: 45, caption: [Lua, the field loop copies, backends gets its own array, ShallowClone is the villain])
 
 A struct assignment copies the scalar fields and shares the
-reference ones, slices, maps, pointers, and the dynamic three meet
-the same rule one level down: javascript's spread and slice copy
-exactly one level, python's assignment shares every mutable field,
-and lua's tables are references. For value shaped types with no
+reference ones, slices, maps, pointers, and the other class trees
+meet the same rule one level down: a field-by-field java copy would
+alias the same `List`, javascript's spread and slice copy exactly
+one level, python's assignment shares every mutable field, and lua's
+tables are references. For value shaped types with no
 reference fields, plain assignment is the clone and a method is
 ceremony, which is why the C lane's server clone is `return *s`.
 
@@ -301,6 +317,7 @@ implementation since go 1.24: the `unique` package interns comparable
 values behind handles that are cheap to compare and safe as map
 keys. Every runtime already canonicalizes something, and each lane
 picks its own native door, C keeps a canonical pointer per word,
+java keeps the first-seen reference in a map so `==` is the handle,
 C\# reaches for `string.Intern`, javascript leans on the engine's
 own interning with the map value as the handle, python calls
 `sys.intern`, and lua's VM interns strings already, so the sample
@@ -318,9 +335,11 @@ value equality everywhere.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch02/flyweight.c", first: 21, last: 52, caption: [C, the canonical pointer is the handle, one allocation per distinct word])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch02/Flyweight.cs", first: 3, last: 24, caption: [C\#, string.Intern makes the handle, ReferenceEquals is its equality])
-
 #listing("patterns-concurrency-distributed/samples/ch02/creational.go", first: 137, last: 152, caption: [Go, interning strings through globally unique handles])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch02/Flyweight.java", first: 18, last: 41, caption: [Java, add returns the first-seen reference, so equal words compare true under ==])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch02/Flyweight.cs", first: 3, last: 24, caption: [C\#, string.Intern makes the handle, ReferenceEquals is its equality])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch02-flyweight.mjs", first: 5, last: 27, caption: [JavaScript, the string is already the handle, the map counts per value])
 
@@ -330,10 +349,11 @@ value equality everywhere.
 
 `unique.Make` returns the same `Handle[string]` for equal strings,
 and the handle comparison is pointer shaped, not string shaped: C
-compares canonical pointers, C\# `ReferenceEquals` over
-interned strings, python the `is` operator over interned objects,
-javascript value equality because the string already is the handle,
-lua identity of the one handle object per word. The cost model
+compares canonical pointers, java `==` over the first-seen
+references, C\# `ReferenceEquals` over interned strings, python the
+`is` operator over interned objects, javascript value equality
+because the string already is the handle, lua identity of the one
+handle object per word. The cost model
 matters: `Make` with a fresh value interns it forever, since the
 runtime cannot know when the last handle dies, so this is for long
 lived duplicates, plugin names, cache keys, tag sets, not for
@@ -381,7 +401,7 @@ Chapter 14's metrics dedup uses the same trick for label values.
   cdraw.content((16.75, 1.3), [only documents this], size: 6pt)
 })
 
-== across the six languages
+== across the seven languages
 
 The build sizes count non-comment source lines, the go column the
 chapter's one frozen file:
@@ -392,10 +412,12 @@ chapter's one frozen file:
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [444], [libc plus threads.h],
   [call_once over once_flag, clones by assignment, references re-copied by hand],
-  [c\#], [178], [bcl],
-  [delegates returning string?, Lazy at ExecutionAndPublication, Intern handles],
   [go], [132], [stdlib],
   [Option closures, OnceValue lazy, unique.Make hands the flyweight its handle],
+  [java], [354], [jdk 27 stdlib],
+  [Option lambdas returning null or the reason, a hand-written synchronized Once, first-seen references as handles],
+  [c\#], [178], [bcl],
+  [delegates returning string?, Lazy at ExecutionAndPublication, Intern handles],
   [javascript], [128], [node stdlib],
   [options mutate and return error or null, the string itself the handle],
   [python], [264], [stdlib only],
@@ -407,8 +429,9 @@ chapter's one frozen file:
 sources: go.dev/pkg/sync for the `Once` family, go.dev/pkg/unique for
 handle semantics and the interning cost note, go.dev/pkg/errors for
 `Join`, go.dev/doc/effective_go composite literals, accessed
-2026-09-08. Verified by the six chapter legs: 5 Ch02 C programs with
-64 embedded checks, 16 xunit facts, `go test` at 7 tests in
-`patternsbook/ch02`, node's 12 cases in `test/ch02.test.mjs`, 5
-python modules with 40 embedded checks, and the lua runner's 21
-ch02 rows.
+2026-09-08. Verified by the seven chapter legs: 5 Ch02 C programs
+with 64 embedded checks, `go test` at 7 tests in
+`patternsbook/ch02`, 5 Ch02 java programs with 35 checks under
+`run-java-samples`, 16 xunit facts, node's 12 cases in
+`test/ch02.test.mjs`, 5 python modules with 40 embedded checks, and
+the lua runner's 21 ch02 rows.

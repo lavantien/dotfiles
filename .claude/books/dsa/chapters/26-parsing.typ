@@ -24,8 +24,9 @@ relies on running out of tokens, and the token stream for one fixed
 fixture pins the whole behavior.
 
 The dry run: the fixture is the C\# string 12 + foo \* (bar - 3),
-asserted token by token by the C\# suite, lua pinning the same string
-and c running x1 + 42 \* (bar - 3) in the same shape.
+asserted token by token by the C\# suite, lua pinning the same
+string, c and java running x1 + 42 shapes of their own in the same
+nine-token form.
 
 + The digit run consumes both characters as one token and carries its
   parsed value beside its text, 12 with value 12.
@@ -75,11 +76,12 @@ and c running x1 + 42 \* (bar - 3) in the same shape.
 })
 
 The ten-token stream is the pinned assert, and the listings below
-lex it in six languages.
+lex it in seven languages.
 
 #listing("dsa/samples-c/src/Ch26/tokens.c", first: 29, last: 79, caption: [c, the cursor loop, digit and letter runs, an err token for strangers])
-#listing("dsa/samples/src/Ch26/Parsing.cs", first: 19, last: 65, caption: [c\#, whitespace skip, digit and letter runs, a switch over the operators])
 #listing("dsa/samples-go/ch26/tokens.go", first: 32, last: 68, caption: [go, digits buffer into a run, one letter per identifier, errors as values])
+#listing("dsa/samples-java/src/Ch26/Tokens.java", first: 22, last: 75, caption: [java, the cursor loop writing into a pre-allocated token array, digit and letter runs, strangers become err tokens])
+#listing("dsa/samples/src/Ch26/Parsing.cs", first: 19, last: 65, caption: [c\#, whitespace skip, digit and letter runs, a switch over the operators])
 #listing("dsa/samples-js/src/ch26-tokens.mjs", first: 5, last: 38, caption: [javascript, every token carries its source position])
 #listing("dsa/samples-py/src/Ch26/tokens.py", first: 17, last: 44, caption: [python, str methods classify, syntaxerror carries the position])
 #listing("dsa/samples-lua/ch26_tokens.lua", first: 6, last: 41, caption: [lua, sub and match over bytes, an end token appended last])
@@ -87,13 +89,14 @@ lex it in six languages.
 The stream shape agrees everywhere: identifier, plus, number, star,
 left paren, identifier, minus, number, right paren, on fixtures like
 c's x1 + 42 times (foo - 3) and lua's 12 + foo times (bar - 3), and
-multi-digit numbers lex as one token in all six. The identifier
+multi-digit numbers lex as one token in all seven. The identifier
 rule splits by language, and the go listing is the outlier on
 purpose: it emits one letter per identifier, so ab reads as two
-names, a choice its tests document. The other five accumulate
-letters, digits, and underscores, python pinning a underscore 9 b as
-a single name. Error handling splits the same way, c keeps lexing
-and returns an err token, go returns an error value, javascript,
+names, a choice its tests document. The other six accumulate
+letters, digits, and underscores, python and java pinning a
+underscore 9 b as a single name. Error handling splits the same
+way, c and java keep lexing
+and return an err token, go returns an error value, javascript,
 python, and lua raise, and c\# throws with the offending character
 and index in the message.
 
@@ -142,7 +145,7 @@ the whole climb at the top.
 
 The dry run: the fixture is 2 + 3 \* 4 with its parenthesized twin,
 both trees asserted node for node by the C\# suite, the same shapes
-pinning in the other five.
+pinning in the other six.
 
 + Expr calls Term calls Factor, and the first factor takes the 2, the
   cursor resting on the +.
@@ -193,11 +196,12 @@ pinning in the other five.
 })
 
 The pinned trees land the chain at 3, and the listings below parse
-them in six languages.
+them in seven languages.
 
 #listing("dsa/samples-c/src/Ch26/rdparse.c", first: 118, last: 142, caption: [c, term and expr loops over a shared token cursor, factor below adds unary minus])
-#listing("dsa/samples/src/Ch26/Parsing.cs", first: 125, last: 158, caption: [c\#, expr, term, factor over a peek and take cursor])
 #listing("dsa/samples-go/ch26/rdparse.go", first: 33, last: 75, caption: [go, parse and expr, errors returned not thrown, factor below])
+#listing("dsa/samples-java/src/Ch26/Rdparse.java", first: 105, last: 139, caption: [java, term and expr loops over the shared cursor, factor below adds unary minus as 0 - x, trees pinned as s-expressions])
+#listing("dsa/samples/src/Ch26/Parsing.cs", first: 125, last: 158, caption: [c\#, expr, term, factor over a peek and take cursor])
 #listing("dsa/samples-js/src/ch26-rdparse.mjs", first: 10, last: 51, caption: [javascript, closures for factor, term, expr, trailing input refused])
 #listing("dsa/samples-py/src/Ch26/rdparse.py", first: 38, last: 76, caption: [python, nested closures over a one-slot cursor list])
 #listing("dsa/samples-lua/ch26_rdparse.lua", first: 39, last: 81, caption: [lua, locals declared up front so the mutual recursion binds])
@@ -208,9 +212,10 @@ chain 8-3-2 parses left associative as (8-3)-2, which is the same
 fixture chapter 5's shunting-yard settled. Failure modes are where
 the languages part ways. Go threads errors as values through every
 level, javascript and python raise SyntaxError, lua and c\# throw
-with the token in the message, and c sets a parse-ok flag and
-returns a best-effort tree, its parser also accepting a unary minus
-by rewriting x as 0-x. C's parse files keep single-letter names
+with the token in the message, and c and java set a parse-ok flag
+and return a best-effort tree, both parsers accepting a unary minus
+by rewriting x as 0-x. C's and java's parse files keep single-letter
+names
 against a 26-slot symbol table, and go's one-letter identifiers from
 the previous section flow straight into its factor rule.
 
@@ -309,25 +314,30 @@ pinning in every suite that carries them.
 })
 
 The 14 closes the pinned fold, and the listings below evaluate the
-same trees in six languages.
+same trees in seven languages.
 
 #listing("dsa/samples-c/src/Ch26/asteval.c", first: 147, last: 187, caption: [c, the fold over node tags, a 26-slot symbol table, print into a char buffer])
-#listing("dsa/samples/src/Ch26/Parsing.cs", first: 162, last: 197, caption: [c\#, pattern-switch eval, minimal parentheses by parent precedence])
 #listing("dsa/samples-go/ch26/asteval.go", first: 8, last: 59, caption: [go, eval with a vars map, a fully parenthesized printer, roundtrip helper])
+#listing("dsa/samples-java/src/Ch26/Asteval.java", first: 131, last: 165, caption: [java, the switch fold, a 26-slot symbol table, fully parenthesized printing])
+#listing("dsa/samples/src/Ch26/Parsing.cs", first: 162, last: 197, caption: [c\#, pattern-switch eval, minimal parentheses by parent precedence])
 #listing("dsa/samples-js/src/ch26-asteval.mjs", first: 4, last: 30, caption: [javascript, truncating division, unbound names raise])
 #listing("dsa/samples-py/src/Ch26/asteval.py", first: 77, last: 98, caption: [python, the fold, a fully parenthesized render, the round trip])
 #listing("dsa/samples-lua/ch26_asteval.lua", first: 76, last: 101, caption: [lua, env lookup with a named error, precedence-aware parens])
 
 The values agree where the fixtures overlap: 2+3 times 4 evaluates
 to 14 and (2+3) times 4 to 20 in every suite that pins them, and
-the printers split into two honest camps. C, go, javascript, and
+the printers split into two honest camps. C, go, java, javascript,
+and
 python print fully parenthesized, every binary node wrapped, which
 loses nothing. C\# and lua print minimal parentheses, wrapping a
 child only when its precedence is lower than its parent's, so
 2+3 times 4 prints back as itself. Python pins the strongest
 property of the section, printing and reparsing its own render
-yields a tree structurally equal to the original. Division semantics
-get one sentence each: c\# and javascript truncate toward zero,
+yields a tree structurally equal to the original, and java pins the
+value round trip over five fixtures plus the print fixed point,
+reprinting the reparsed tree char for char. Division semantics
+get one sentence each: c\#, java, and javascript truncate toward
+zero,
 python and lua floor, go and c use integer division on ints, and
 the fixtures are chosen so the distinction never changes an answer.
 
@@ -357,7 +367,7 @@ the fixtures are chosen so the distinction never changes an answer.
   cdraw.content((2.7, 7.6), [print loses nothing, parse restores everything], size: 6pt)
 })
 
-== across the six languages
+== across the seven languages
 
 Featured build size counted as non-blank, non-comment lines of the
 chapter's three sample files, test scripts included where the
@@ -370,6 +380,7 @@ language embeds them:
   [c], [507], [fixed token and node pools], [err tokens instead of exceptions, unary minus rewrite, single-letter names in the parser],
   [c\#], [166], [records, pattern switches], [minimal-parens printer by parent precedence, positions in errors],
   [go], [226], [interfaces for node kinds], [single-letter identifiers, errors as values through every level],
+  [java], [512], [jdk 27 stdlib], [err tokens in the lexer, the parse-ok flag with a best-effort tree, unary minus rewritten as 0 - x, the print fixed point pinned],
   [javascript], [96], [plain objects, closures], [source position on every token, truncating division],
   [python], [249], [tuples as nodes], [floor division on exact fixtures, round-trip equality pinned],
   [lua], [291], [tables tagged by kind], [locals declared ahead for mutual recursion, floor division],
@@ -380,6 +391,7 @@ them, go.dev for `fmt.Errorf` and interface satisfaction,
 developer.mozilla.org for `SyntaxError` and `Math.trunc`,
 docs.python.org for `str.isdigit` and friends, lua.org for
 `string.match` patterns, accessed 2026-09-14. Sample behavior
-verified by the six suite gates scoped to chapter 26: c 3 files and
-47 checks, c\# 9 tests, go 14 tests, javascript 11 tests, python 3
+verified by the seven suite gates scoped to chapter 26: c 3 files
+and 47 checks, c\# 9 tests, go 14 tests, java 3 files and 47 checks,
+javascript 11 tests, python 3
 files and 27 asserts, lua 12 checks, zero skipped.

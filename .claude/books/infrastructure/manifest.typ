@@ -6,7 +6,7 @@
   meta: (
     title: "infrastructure: docker, databases, and testing",
     subtitle: "an engineering handbook",
-    author: "Mr. Raheliosol",
+    author: "Raeliosol",
     version: "2.0",
     volume-label: "book 12",
   ),

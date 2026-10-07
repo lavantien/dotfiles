@@ -10,7 +10,7 @@ takes those as read and adds the layer above them: circles as
 first-class objects with tangent lines and radical axes, region
 algebra over half-planes, polygons summed and measured, and the
 reporting sweep that lists every crossing instead of stopping at
-the first one. Everything runs in float64 across the six languages,
+the first one. Everything runs in float64 across the seven languages,
 decision predicates at eps 1e-9, pinned outputs rounded to six
 decimals and asserted within 1e-6, negative zero normalized to
 zero. The anchor application is icpc 2018 problem G (book 10,
@@ -32,7 +32,7 @@ at acos((r1 - r2) / d) off the axis, the inner pair at
 acos((r1 + r2) / d), and the count reads off the geometry, 0 when
 one circle nests inside the other, 1 at the internal touch, 2
 while they overlap, 3 at the outer touch, 4 when separate. Tangent
-lines report normalized so the six languages pin identical lists:
+lines report normalized so the seven languages pin identical lists:
 unit normal (a, b), constant c with a times x plus b times y
 equal to c, the first nonzero of (a, b) positive, the list sorted
 by (a, b, c). Identical centers report the sentinel -1.
@@ -40,7 +40,9 @@ by (a, b, c). Identical centers report the sentinel -1.
 The dry run: the fixtures are the discriminant family on line
 (0,0)-(4,0), the radical-line pairs around (0,0) r 2, and the
 tangent quartet at distance 6, asserted by the C\# suite and
-pinned to the same six-decimal values by the five sibling suites.
+pinned to the same six-decimal values by the six sibling suites,
+java rounding through a sign-split r6 because Math.round is
+half-up where c's round is half-away-from-zero.
 
 + The discriminant classifies before any sqrt runs: center (2,2)
   r 1 sits 2 away from the line, miss, and (2,1) r 1 sits exactly
@@ -77,11 +79,12 @@ pinned to the same six-decimal values by the five sibling suites.
 )
 
 The quartet of four normalized lines is the pinned landing, and
-the listings below build all three constructions in six languages.
+the listings below build all three constructions in seven languages.
 
 #listing("dsa/samples-c/src/Ch37/circles.c", first: 90, last: 131, caption: [c, the tangent count classifier plus the two angle loops])
-#listing("dsa/samples/src/Ch37/Geometry2.cs", first: 82, last: 128, caption: [c\#, local functions emit the pair, the normalization a linq pass])
 #listing("dsa/samples-go/ch37/circles.go", first: 63, last: 108, caption: [go, the add closure, normalized and sorted in place])
+#listing("dsa/samples-java/src/Ch37/Circles.java", first: 86, last: 126, caption: [java, the tangent count classifier plus the two angle loops, the (a, b, c) order an insertion pass])
+#listing("dsa/samples/src/Ch37/Geometry2.cs", first: 82, last: 128, caption: [c\#, local functions emit the pair, the normalization a linq pass])
 #listing("dsa/samples-js/src/ch37-circles.mjs", first: 64, last: 102, caption: [javascript, the map over emitted lines normalizes, the sort chain orders])
 #listing("dsa/samples-py/src/Ch37/circles.py", first: 60, last: 93, caption: [python, the four branches with their tangency singles])
 #listing("dsa/samples-lua/ch37_circles.lua", first: 60, last: 100, caption: [lua, emit closure, sign fix, three-key sort])
@@ -184,11 +187,12 @@ the five sibling suites.
 )
 
 The 7 over two covered spans and one gap is the pinned landing,
-and the listings below run the sweep in six languages.
+and the listings below run the sweep in seven languages.
 
 #listing("dsa/samples-c/src/Ch37/segunion.c", first: 25, last: 57, caption: [c, the composite qsort comparator and the coverage sweep])
-#listing("dsa/samples/src/Ch37/Geometry2.cs", first: 131, last: 151, caption: [c\#, tuple events, the tie rule inside the sort lambda])
 #listing("dsa/samples-go/ch37/segunion.go", first: 9, last: 37, caption: [go, the event struct and one sort call])
+#listing("dsa/samples-java/src/Ch37/Segunion.java", first: 19, last: 52, caption: [java, the endpoint sweep, Arrays.sort over boxed indices the one stdlib sort in the chapter])
+#listing("dsa/samples/src/Ch37/Geometry2.cs", first: 131, last: 151, caption: [c\#, tuple events, the tie rule inside the sort lambda])
 #listing("dsa/samples-js/src/ch37-segunion.mjs", first: 7, last: 25, caption: [javascript, the comparator chain by subtraction])
 #listing("dsa/samples-py/src/Ch37/segunion.py", first: 14, last: 29, caption: [python, tuple sort gives the tie rule for free])
 #listing("dsa/samples-lua/ch37_segunion.lua", first: 8, last: 27, caption: [lua, table.sort with the two-key closure])
@@ -294,12 +298,13 @@ asserted by the C\# suite and by the five sibling suites.
 )
 
 The inside, boundary, outside split over both polygons is the
-pinned landing, and the listings below run the fan in six
+pinned landing, and the listings below run the fan in seven
 languages.
 
 #listing("dsa/samples-c/src/Ch37/pinconvex.c", first: 46, last: 76, caption: [c, the fan edges checked first, then the wedge search and the one-triangle verdict])
-#listing("dsa/samples/src/Ch37/Geometry2.cs", first: 154, last: 186, caption: [c\#, locate as the enum answer, on-segment a boolean expression])
 #listing("dsa/samples-go/ch37/pinconvex.go", first: 33, last: 67, caption: [go, the on-seg closure and the binary search])
+#listing("dsa/samples-java/src/Ch37/Pinconvex.java", first: 39, last: 69, caption: [java, the fan test, the wedge binary search, one triangle orientation deciding])
+#listing("dsa/samples/src/Ch37/Geometry2.cs", first: 154, last: 186, caption: [c\#, locate as the enum answer, on-segment a boolean expression])
 #listing("dsa/samples-js/src/ch37-pinconvex.mjs", first: 22, last: 45, caption: [javascript, string answers, the shift-divide midpoint])
 #listing("dsa/samples-py/src/Ch37/pinconvex.py", first: 29, last: 54, caption: [python, the degenerate family up front, the wedge loop after])
 #listing("dsa/samples-lua/ch37_pinconvex.lua", first: 34, last: 74, caption: [lua, the two fan edges explicit, the bounding box spelled out])
@@ -403,12 +408,13 @@ sibling suites.
 )
 
 The pentagon with its folded pair and the 10.828427 perimeter are
-the pinned landing, and the listings below merge the cycles in six
+the pinned landing, and the listings below merge the cycles in seven
 languages.
 
 #listing("dsa/samples-c/src/Ch37/minkowski.c", first: 87, last: 132, caption: [c, normalize, the edge lists, the two-pointer merge with the fold])
-#listing("dsa/samples/src/Ch37/Geometry2.cs", first: 196, last: 229, caption: [c\#, the turn cross steering i and j, collinear advancing both])
 #listing("dsa/samples-go/ch37/minkowski.go", first: 64, last: 107, caption: [go, unwrapped edge angles for the merge, a strict hull to finish])
+#listing("dsa/samples-java/src/Ch37/Minkowski.java", first: 86, last: 133, caption: [java, the edge lists, the two-pointer merge with the fold, exact longs throughout])
+#listing("dsa/samples/src/Ch37/Geometry2.cs", first: 196, last: 229, caption: [c\#, the turn cross steering i and j, collinear advancing both])
 #listing("dsa/samples-js/src/ch37-minkowski.mjs", first: 31, last: 66, caption: [javascript, the reorder helper then the cross-steered walk])
 #listing("dsa/samples-py/src/Ch37/minkowski.py", first: 54, last: 87, caption: [python, the merge with the fold branch, a strict hull to drop carriers])
 #listing("dsa/samples-lua/ch37_minkowski.lua", first: 61, last: 110, caption: [lua, the merge walk dropping collinear carriers as they form])
@@ -518,11 +524,12 @@ suites.
 })
 
 The 6.0 and the twice-hit 4.949747 are the pinned landing, and the
-listings below walk the antipodal loop in six languages.
+listings below walk the antipodal loop in seven languages.
 
 #listing("dsa/samples-c/src/Ch37/calipers.c", first: 104, last: 146, caption: [c, the antipodal walk, the candidate pairs, the width loop])
-#listing("dsa/samples/src/Ch37/Calipers.cs", first: 14, last: 35, caption: [c\#, the walk and both measurements in one loop])
 #listing("dsa/samples-go/ch37/calipers.go", first: 52, last: 96, caption: [go, the triangle-area advance and the two-candidate diameter update])
+#listing("dsa/samples-java/src/Ch37/Calipers.java", first: 93, last: 144, caption: [java, the antipodal walk, the candidate pairs, the width loop])
+#listing("dsa/samples/src/Ch37/Calipers.cs", first: 14, last: 35, caption: [c\#, the walk and both measurements in one loop])
 #listing("dsa/samples-js/src/ch37-calipers.mjs", first: 30, last: 81, caption: [javascript, the edge-cross advance, the width scan tracked forward])
 #listing("dsa/samples-py/src/Ch37/calipers.py", first: 39, last: 81, caption: [python, antipodal-events as a list, diameter and width read off it])
 #listing("dsa/samples-lua/ch37_calipers.lua", first: 53, last: 98, caption: [lua, the area-advance loop, then the width function])
@@ -628,11 +635,12 @@ five sibling suites.
 })
 
 The area 15 cell is the pinned landing, and the listings below run
-the deque sweep in six languages.
+the deque sweep in seven languages.
 
 #listing("dsa/samples-c/src/Ch37/halfplane.c", first: 109, last: 153, caption: [c, the deque sweep, the two final cleanups, the corner sweep])
-#listing("dsa/samples/src/Ch37/Calipers.cs", first: 93, last: 128, caption: [c\#, opposite-pair rejection, the linked-list deque, the unbounded flag])
 #listing("dsa/samples-go/ch37/halfplane.go", first: 75, last: 124, caption: [go, slice deque popping front and back, the violation sweep at the end])
+#listing("dsa/samples-java/src/Ch37/Halfplane.java", first: 103, last: 157, caption: [java, the sort-and-incremental deque, the corner sweep with its violation check])
+#listing("dsa/samples/src/Ch37/Calipers.cs", first: 93, last: 128, caption: [c\#, opposite-pair rejection, the linked-list deque, the unbounded flag])
 #listing("dsa/samples-js/src/ch37-halfplane.mjs", first: 52, last: 81, caption: [javascript, opposite pairs grouped by direction, the shift-and-pop deque])
 #listing("dsa/samples-py/src/Ch37/halfplane.py", first: 84, last: 118, caption: [python, the slab test, the deque, the ccw fix and the box flag])
 #listing("dsa/samples-lua/ch37_halfplane.lua", first: 46, last: 96, caption: [lua, table.remove at both ends, the orientation sum])
@@ -763,11 +771,12 @@ the C\# suite and by the five sibling suites.
 })
 
 The (2, 1.5) radius 2.5 circle is the pinned landing, and the
-listings below run the triple loop in six languages.
+listings below run the triple loop in seven languages.
 
 #listing("dsa/samples-c/src/Ch37/mincircle.c", first: 44, last: 76, caption: [c, circle2 by the bisector, circle3 by the determinant, the welzl triple loop])
-#listing("dsa/samples/src/Ch37/Calipers.cs", first: 186, last: 212, caption: [c\#, the enclosing local function, the nested resets])
 #listing("dsa/samples-go/ch37/mincircle.go", first: 10, last: 55, caption: [go, the three closures and the triple loop])
+#listing("dsa/samples-java/src/Ch37/Mincircle.java", first: 39, last: 70, caption: [java, circle2 by the bisector, circle3 by the determinant, the welzl triple loop])
+#listing("dsa/samples/src/Ch37/Calipers.cs", first: 186, last: 212, caption: [c\#, the enclosing local function, the nested resets])
 #listing("dsa/samples-js/src/ch37-mincircle.mjs", first: 13, last: 50, caption: [javascript, destructured reassignments carrying the current circle])
 #listing("dsa/samples-py/src/Ch37/mincircle.py", first: 22, last: 55, caption: [python, the determinant with its degeneracy guard])
 #listing("dsa/samples-lua/ch37_mincircle.lua", first: 9, last: 53, caption: [lua, circle2 and circle3 above the same triple loop])
@@ -873,11 +882,12 @@ by the C\# suite and by the five sibling suites.
 })
 
 The 225, 625, 50, and 212.5 areas are the pinned landing, and the
-listings below clip the cells in six languages.
+listings below clip the cells in seven languages.
 
 #listing("dsa/samples-c/src/Ch37/voronoi.c", first: 47, last: 92, caption: [c, the sutherland-hodgman clip and the cell-of loop])
-#listing("dsa/samples/src/Ch37/Voronoi.cs", first: 10, last: 59, caption: [c\#, cells over the box list, the clip with its eps guards])
 #listing("dsa/samples-go/ch37/voronoi.go", first: 8, last: 59, caption: [go, clip-half and the cells loop, duplicates emptying out])
+#listing("dsa/samples-java/src/Ch37/Voronoi.java", first: 39, last: 86, caption: [java, the sutherland-hodgman clip and the cell-of loop over the world box])
+#listing("dsa/samples/src/Ch37/Voronoi.cs", first: 10, last: 59, caption: [c\#, cells over the box list, the clip with its eps guards])
 #listing("dsa/samples-js/src/ch37-voronoi.mjs", first: 45, last: 87, caption: [javascript, the clip keeping the inside and cutting the crossing])
 #listing("dsa/samples-py/src/Ch37/voronoi.py", first: 47, last: 82, caption: [python, the same pair, the canonical form beside])
 #listing("dsa/samples-lua/ch37_voronoi.lua", first: 13, last: 52, caption: [lua, the clip and cells over the world box table])
@@ -997,11 +1007,12 @@ five sibling suites.
 })
 
 The three pinned crossings in heap order are the landing, and the
-listings below run the sweep in six languages.
+listings below run the sweep in seven languages.
 
 #listing("dsa/samples-c/src/Ch37/ottmann.c", first: 197, last: 226, caption: [c, the crossing event: find, adjacency check, swap, both new pairs])
-#listing("dsa/samples/src/Ch37/Voronoi.cs", first: 129, last: 160, caption: [c\#, the event loop over the sorted set, insert, remove, swap])
 #listing("dsa/samples-go/ch37/ottmann.go", first: 148, last: 174, caption: [go, the stale-event guard, the swap, the two schedules])
+#listing("dsa/samples-java/src/Ch37/Ottmann.java", first: 191, last: 219, caption: [java, the crossing event: find, adjacency check, swap, both new pairs])
+#listing("dsa/samples/src/Ch37/Voronoi.cs", first: 129, last: 160, caption: [c\#, the event loop over the sorted set, insert, remove, swap])
 #listing("dsa/samples-js/src/ch37-ottmann.mjs", first: 125, last: 158, caption: [javascript, the three kinds over the heap, results sorted at the end])
 #listing("dsa/samples-py/src/Ch37/ottmann.py", first: 82, last: 118, caption: [python, check-pair guards the schedule, the crossing branch last])
 #listing("dsa/samples-lua/ch37_ottmann.lua", first: 145, last: 186, caption: [lua, the run loop with all three event kinds])
@@ -1162,7 +1173,7 @@ is the square it rotates into. The L1 diameter of a point set is
 then read off the four extreme images, minimum u, maximum u,
 minimum v, maximum v, a linear scan after the transformation,
 with the O(n^2) pairwise scan kept in every suite as the oracle.
-Integer inputs keep everything exact in all six languages.
+Integer inputs keep everything exact in all seven languages.
 
 The dry run: the fixture is (0,0), (1,5), (4,2), (6,6), asserted
 by the C\# suite and by the five sibling suites.
@@ -1201,11 +1212,12 @@ by the C\# suite and by the five sibling suites.
 })
 
 The 12, the same number in both frames, is the pinned landing, and
-the listings below transform and scan in six languages.
+the listings below transform and scan in seven languages.
 
 #listing("dsa/samples-c/src/Ch37/manhattan.c", first: 36, last: 71, caption: [c, the transform inline, the four extremes, the candidate pairs])
-#listing("dsa/samples/src/Ch37/Calipers.cs", first: 230, last: 246, caption: [c\#, transform as a tuple, the diameter over image pairs])
 #listing("dsa/samples-go/ch37/manhattan.go", first: 9, last: 44, caption: [go, the pick helper scanning for each extreme])
+#listing("dsa/samples-java/src/Ch37/Manhattan.java", first: 34, last: 69, caption: [java, the transform inline, the four extremes, the candidate pairs])
+#listing("dsa/samples/src/Ch37/Calipers.cs", first: 230, last: 246, caption: [c\#, transform as a tuple, the diameter over image pairs])
 #listing("dsa/samples-js/src/ch37-manhattan.mjs", first: 8, last: 30, caption: [javascript, the index extremes, the u or v decision])
 #listing("dsa/samples-py/src/Ch37/manhattan.py", first: 39, last: 65, caption: [python, the brute oracle and the four-corners scan side by side])
 #listing("dsa/samples-lua/ch37_manhattan.lua", first: 8, last: 38, caption: [lua, to-uv and the four-extremes candidates])
@@ -1252,7 +1264,7 @@ family.
   cdraw.content((16.8, 2.3), [x = y maps to v = 0], size: 6pt)
 })
 
-== across the six languages
+== across the seven languages
 
 Featured build size counted as non-blank, non-comment lines of the
 chapter's sample files per language, the c\# family files carrying
@@ -1263,8 +1275,9 @@ their whole facet groups:
   inset: 4pt,
   table.header([*language*], [*build sloc*], [*container dependency*], [*boundary note*]),
   [c], [1601], [static arrays, one file per facet], [qsort with composite comparators, memmove deque pops, all pins rounded 6 and asserted at 1e-6],
-  [c\#], [662], [records, tuples, linq], [three family files, geometry2, calipers, voronoi, nullable tangents carry the sentinel],
   [go], [908], [math and sort only], [errors returned from halfplane, geo.go holds the shared point helpers],
+  [java], [1543], [jdk 27 stdlib], [r6 hand-rolled by sign, Math.round is half-up where c rounds half-away-from-zero, angle orders as insertion sorts, segunion's boxed Arrays.sort the one stdlib sort],
+  [c\#], [662], [records, tuples, linq], [three family files, geometry2, calipers, voronoi, nullable tangents carry the sentinel],
   [javascript], [637], [node stdlib], [all trig in number with the safety comment, two per-chapter test files at 101 asserts],
   [python], [956], [stdlib math], [check harness with the ok-n print, brute oracles beside every construction],
   [lua], [1249], [lib.lua harness], [1-based tables throughout, string keys for delaunay segments, negative zero normalized in r6],
@@ -1305,8 +1318,9 @@ neighbor-ordering groundwork plus the same clrs chapter for the
 full sweep. Application sources: icpc 2018 problem G (book 10,
 chapter 9) for the half-plane, voronoi, and planar-faces sections,
 and icpc 2017 problem A (book 10, chapter 8) cross-named as the
-calipers kin. Sample behavior verified by the six suite gates
-scoped to chapter 37: c 10 files and 113 checks, c\# 25 facts, go
-31 test functions, javascript 35 tests and 101 asserts across the
+calipers kin. Sample behavior verified by the seven suite gates
+scoped to chapter 37: c 10 files and 113 checks, go 31 test
+functions, java 10 files and 113 checks under run-java-samples,
+c\# 25 facts, javascript 35 tests and 101 asserts across the
 two per-chapter files, python 10 files and 108 asserts, lua 38
 checks, zero skipped.

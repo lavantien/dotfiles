@@ -5,9 +5,9 @@
   title: "practical data structures and algorithms",
   meta: (
     title: "practical data structures and algorithms",
-    subtitle: "an engineering handbook in six languages",
-    author: "Mr. Raheliosol",
-    version: "6.0",
+    subtitle: "an engineering handbook in seven languages",
+    author: "Raeliosol",
+    version: "7.0",
     volume-label: "book 9",
   ),
   chapters: (
