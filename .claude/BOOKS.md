@@ -358,7 +358,7 @@ toc:
 - 32 capstone: auto chess, human versus bot (lua/chapters/32-capstone.typ)
 - 33 appendices: coverage and sources (lua/chapters/33-appendices.typ)
 
-## practical data structures and algorithms (book 9, v6.0, dsa, 44 chapters)
+## practical data structures and algorithms (book 9, v7.0, dsa, 44 chapters)
 
 summary: a data structures and algorithms handbook in 7 languages, from complexity analysis and arrays through hashing, trees, graphs, dynamic programming, geometry, flows, and game theory, pairing each structure with cost and library counterpart. the appendix tracks each topic with cost and library columns.
 capstone: storage engine toolkit: a log-structured storage engine with a crc-32 framed write-ahead log, bloom filters, crash recovery, prefix scans, and compaction, plus an htmx 4 web dashboard, every file under 260 lines.
@@ -410,7 +410,7 @@ toc:
 - 43 capstone: storage engine toolkit (dsa/chapters/43-capstone.typ)
 - 44 appendices: topic matrix and sources (dsa/chapters/44-appendices.typ)
 
-## the icpc world finals (book 10, v4.0, icpc, 14 chapters)
+## the icpc world finals (book 10, v5.0, icpc, 15 chapters)
 
 summary: walks six icpc world finals (2017 to 2025), every problem solved in c, go, java, c#, javascript, python, and lua. chapters 2 to 8 build the language toolboxes, 9 to 14 the finals, 15 fast big arithmetic. the coverage matrix tracks all 68 problems.
 capstone: none: chapters 9 to 14 walk six world finals (2017 to 2025), every problem solved in all seven languages with year-local helper kits, chapter 15 closes on fast big arithmetic.
@@ -419,18 +419,19 @@ toc:
 
 - 01 the contest and the house rules (icpc/chapters/01-contest.typ)
 - 02 the c toolbox (icpc/chapters/02-toolbox-c.typ)
-- 03 the c# toolbox (icpc/chapters/03-toolbox-cs.typ)
-- 04 the go toolbox (icpc/chapters/04-toolbox-go.typ)
-- 05 the javascript toolbox (icpc/chapters/05-toolbox-js.typ)
-- 06 the python toolbox (icpc/chapters/06-toolbox-py.typ)
-- 07 the lua toolbox (icpc/chapters/07-toolbox-lua.typ)
-- 08 icpc world finals 2017 (icpc/chapters/08-y2017.typ)
-- 09 icpc world finals 2018 (icpc/chapters/09-y2018.typ)
-- 10 icpc world finals 2019 (icpc/chapters/10-y2019.typ)
-- 11 icpc world finals 2022 (icpc/chapters/11-y2022.typ)
-- 12 icpc world finals 2023 (icpc/chapters/12-y2023.typ)
-- 13 icpc world finals 2025 (icpc/chapters/13-y2025.typ)
-- 14 fast big arithmetic (icpc/chapters/14-fastarith.typ)
+- 03 the go toolbox (icpc/chapters/03-toolbox-go.typ)
+- 04 the java toolbox (icpc/chapters/04-toolbox-java.typ)
+- 05 the c# toolbox (icpc/chapters/05-toolbox-cs.typ)
+- 06 the javascript toolbox (icpc/chapters/06-toolbox-js.typ)
+- 07 the python toolbox (icpc/chapters/07-toolbox-py.typ)
+- 08 the lua toolbox (icpc/chapters/08-toolbox-lua.typ)
+- 09 icpc world finals 2017 (icpc/chapters/09-y2017.typ)
+- 10 icpc world finals 2018 (icpc/chapters/10-y2018.typ)
+- 11 icpc world finals 2019 (icpc/chapters/11-y2019.typ)
+- 12 icpc world finals 2022 (icpc/chapters/12-y2022.typ)
+- 13 icpc world finals 2023 (icpc/chapters/13-y2023.typ)
+- 14 icpc world finals 2025 (icpc/chapters/14-y2025.typ)
+- 15 fast big arithmetic (icpc/chapters/15-fastarith.typ)
 
 ## design patterns, concurrency, and distributed systems (book 11, v4.0, patterns-concurrency-distributed, 17 chapters)
 
