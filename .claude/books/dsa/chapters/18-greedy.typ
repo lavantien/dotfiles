@@ -7,7 +7,7 @@ Greedy algorithms commit to the locally best choice and never look
 back. Sometimes that is provably optimal, and the proof shape is the
 interesting part. When no such proof exists, backtracking searches
 everything with pruning, the honest fallback. This chapter builds
-both with their meters on, six languages deep on the greedy side.
+both with their meters on, seven languages deep on the greedy side.
 
 == activity selection and rooms
 
@@ -69,14 +69,16 @@ six intervals.
 })
 
 The four picks and the three-room pile are the pinned landings, and
-the listings below run the scan in six languages, rooms in the C\#
+the listings below run the scan in seven languages, rooms in the C\#
 one.
 
 #listing("dsa/samples-c/src/Ch18/intervals.c", first: 21, last: 36, caption: [c, qsort by finish, keep what starts after the last pick])
 
-#listing("dsa/samples/src/Ch18/Greedy.cs", first: 6, last: 40, caption: [c\#, activity selection, then interval partitioning through a room heap])
-
 #listing("dsa/samples-go/ch18/intervals.go", first: 14, last: 30, caption: [go, half-open intervals, sort a clone, keep the compatible])
+
+#listing("dsa/samples-java/src/Ch18/Intervals.java", first: 20, last: 54, caption: [java, a record per interval, sort by finish, a bitmask brute cross-check])
+
+#listing("dsa/samples/src/Ch18/Greedy.cs", first: 6, last: 40, caption: [c\#, activity selection, then interval partitioning through a room heap])
 
 #listing("dsa/samples-js/src/ch18-intervals.mjs", first: 4, last: 15, caption: [javascript, stable sort by finish, minus infinity start])
 
@@ -91,11 +93,12 @@ which selects exactly four, and the boundary cases: back-to-back
 meetings share one room, three overlapping meetings need three.
 
 The eleven-interval CLRS fixture and its answer, four picks at 1-4,
-5-7, 8-11, 12-16, pin in C, C\#, Go, JavaScript, and Lua. Python
-runs its own six-interval set with the pinned choice of three and
-then does what only Python does cheaply, an exhaustive
-`itertools.combinations` sweep proving no larger compatible subset
-exists. Lua checks maximality too, by hand: every discarded interval
+5-7, 8-11, 12-16, pin in C, Go, Java, C\#, JavaScript, and Lua.
+Python and Java run their own six-interval set with the pinned
+choice of three, Python then doing what only it does cheaply, an
+exhaustive `itertools.combinations` sweep, Java proving no larger
+compatible subset exists by enumerating every subset mask. Lua
+checks maximality too, by hand: every discarded interval
 must overlap an accepted one. Back-to-back compatibility, a start
 equal to the last finish, is asserted everywhere, and the all-stack
 fixture pins the earliest finisher surviving alone.
@@ -148,9 +151,9 @@ lightest symbols, and the resulting prefix-free code minimizes
 weighted code length. The heap from chapter 8 does the selecting.
 
 The dry run: the fixture is the CLRS weights 45, 13, 12, 16, 9, 5,
-pinned by the C, Go, JavaScript, and Lua suites at cost 224, while
-C\# asserts the round trip and the one-bit lone symbol and Python
-runs 5, 2, 1, 1 at cost 15.
+pinned by the C, Go, Java, JavaScript, and Lua suites at cost 224,
+while C\# asserts the round trip and the one-bit lone symbol and
+Python and Java run 5, 2, 1, 1 at cost 15.
 
 + Round 1 marries the two lightest, 5 and 9: 5 + 9 = 14.
 + Round 2: the next pair is 12 and 13: 12 + 13 = 25.
@@ -186,15 +189,17 @@ runs 5, 2, 1, 1 at cost 15.
 })
 
 The 224 lands as both the merge sum and the weighted length, and
-the listings below build this tree in six languages.
+the listings below build this tree in seven languages.
 
 #listing("dsa/samples-c/src/Ch18/huffman.c", first: 29, last: 80, caption: [c, marry the two lightest, depths by parent walks, the identity])
+
+#listing("dsa/samples-go/ch18/huffman.go", first: 11, last: 60, caption: [go, two min scans marry the lightest, lengths by depth walk])
+
+#listing("dsa/samples-java/src/Ch18/Huffman.java", first: 26, last: 74, caption: [java, one scan holds both lightest nodes, depths by parent walks, the identity])
 
 #listing("dsa/samples/src/Ch18/Greedy.cs", first: 42, last: 113, caption: [c\#, the huffman machine, heap merging, code walking, encode])
 
 #listing("dsa/samples/src/Ch18/Greedy.cs", first: 114, last: 168, caption: [c\#, decode with the reverse table, weighted cost, the fractional knapsack contrast])
-
-#listing("dsa/samples-go/ch18/huffman.go", first: 11, last: 60, caption: [go, two min scans marry the lightest, lengths by depth walk])
 
 #listing("dsa/samples-js/src/ch18-huffman.mjs", first: 16, last: 56, caption: [javascript, a hand-built heap keyed by weight then insertion order])
 
@@ -211,17 +216,19 @@ precisely because splitting is allowed, and its 240 beats the
 zero-one table's 220 on the same items.
 
 The CLRS six-symbol fixture, weights 45, 13, 12, 16, 9, 5, pins the
-same tree in C, Go, JavaScript, and Lua: code lengths 1, 3, 3, 3,
-4, 4 and total cost 224, which is also the sum of the merge weights,
-14 plus 25 plus 30 plus 55 plus 100, an identity every one of those
-suites asserts. Python and C\# run the four-symbol 5, 2, 1, 1
-fixture with lengths 1, 2, 3, 3 and cost 15, and Python adds the
-Kraft equality, the code lengths summing to exactly 1 as negative
-powers of two. The selector is the per-language story: C scans for
-the two smallest, Go does two min scans, Lua sorts the whole forest
-each round with an insertion-order tie-break, JavaScript hand-builds
-a binary heap with the same tie-break, and Python lets `sort` stand
-in for the priority queue because the fixture is tiny.
+same tree in C, Go, Java, JavaScript, and Lua: code lengths 1, 3, 3,
+3, 4, 4 and total cost 224, which is also the sum of the merge
+weights, 14 plus 25 plus 30 plus 55 plus 100, an identity every one
+of those suites asserts. Python, C\#, and Java run the four-symbol
+5, 2, 1, 1 fixture with lengths 1, 2, 3, 3 and cost 15, and Python
+and Java add the Kraft equality, the code lengths summing to exactly
+1 as negative powers of two. The selector is the per-language story:
+C scans for the two smallest, Go does two min scans, Java finds both
+lightest nodes in one pass, keeping the two smallest seen so far
+with the node index as tie-break, Lua sorts the whole forest each
+round with an insertion-order tie-break, JavaScript hand-builds a
+binary heap with the same tie-break, and Python lets `sort` stand in
+for the priority queue because the fixture is tiny.
 
 #diagram([huffman, the two lightest merge each round, codes lengthen with depth, prefix freedom holds by construction], length: 13pt, {
   // a5 b2 c1 d1: merge c+d, then b+that, then a+that; cost 15 vs fixed 18
@@ -296,7 +303,7 @@ window walk is a breadth-first layering in disguise.
 
 The dry run: the fixtures are 2, 3, 1, 1, 4 at 2 jumps and the
 trapped 3, 2, 1, 0, 4, asserted by the C\# suite and pinned the same
-way in all five sibling suites.
+way in all six sibling suites.
 
 + The reach scan over 2, 3, 1, 1, 4 lifts the frontier twice:
   0 + 2 = 2, then 1 + 3 = 4, and the frontier already covers the
@@ -333,13 +340,15 @@ way in all five sibling suites.
 })
 
 The pair of 2 and minus 1 is the pinned landing, and the listings
-below run both scans in six languages.
+below run both scans in seven languages.
 
 #listing("dsa/samples-c/src/Ch18/jumpgame.c", first: 19, last: 49, caption: [c, the running frontier, then the level windows])
 
-#listing("dsa/samples/src/Ch18/JumpGame.cs", first: 13, last: 44, caption: [c\#, the running frontier, then the level windows, spans over the array])
-
 #listing("dsa/samples-go/ch18/jumpgame.go", first: 6, last: 43, caption: [go, reach by sweep, jumps by window boundary])
+
+#listing("dsa/samples-java/src/Ch18/Jumpgame.java", first: 16, last: 47, caption: [java, the frontier scan, then the level windows, minus one when stuck])
+
+#listing("dsa/samples/src/Ch18/JumpGame.cs", first: 13, last: 44, caption: [c\#, the running frontier, then the level windows, spans over the array])
 
 #listing("dsa/samples-js/src/ch18-jumpgame.mjs", first: 4, last: 29, caption: [javascript, the frontier, then the window commit])
 
@@ -350,7 +359,7 @@ below run both scans in six languages.
 The classic anchors hold in every suite that carries the topic: 2,
 3, 1, 1, 4 is reachable in 2 jumps, 3, 2, 1, 0, 4 is trapped by the
 zero, one step at a time over four cells costs 3, and a single big
-first hop costs 1. Python returns None when stuck, the other five
+first hop costs 1. Python returns None when stuck, the other six
 return minus one. Lua's consistency check is worth copying: whenever
 the minimum is finite,
 the reachability scan must say yes, one fixture set answering both
@@ -385,7 +394,7 @@ N-queens is the canonical backtrack: place row by row, prune on
 column and both diagonals, recurse, undo. The meter counts
 placements and prunes.
 
-The dry run: the fixtures are identical literals in all six suites.
+The dry run: the fixtures are identical literals in all seven suites.
 Queens pins the triples (solutions, placements, prunes) at n = 1
 through 5 and 8: (1, 1, 0), (0, 6, 4), (0, 18, 13), (2, 60, 44),
 (10, 220, 167), and (92, 15720, 13664), a placement counted per
@@ -438,7 +447,7 @@ the single 7 against 7 true, the empty set against 1 false, and 8,
 
 The count rests at 92 for under a hundred thousand placements, and
 the listings below carry the whole machine, queens to permutations,
-six ways.
+seven ways.
 
 #listing("dsa/samples/src/Ch18/Greedy.cs", first: 170, last: 254, caption: [c\#, n-queens with diagonal pruning, subset sum, next permutation])
 
@@ -456,21 +465,24 @@ the pruning map around it.
 
 #listing("dsa/samples-go/ch18/backtrack.go", first: 11, last: 46, caption: [go, closure recursion, the meter behind a pointer])
 
+#listing("dsa/samples-java/src/Ch18/Backtrack.java", first: 28, last: 65, caption: [java, static flag arrays and meters, the try counted before the test, include-or-exclude subset sum])
+
 #listing("dsa/samples-js/src/ch18-backtrack.mjs", first: 1, last: 31, caption: [javascript, an optional meter object, destructured flag writes])
 
 #listing("dsa/samples-py/src/Ch18/backtrack.py", first: 14, last: 34, caption: [python, the stats triple closed over by the recursion])
 
 #listing("dsa/samples-lua/ch18_backtrack.lua", first: 7, last: 30, caption: [lua, 1-based diagonal slots, nil clears the flags])
 
-Measured across the suites: all six pin the same meter triples, from
-(1, 1, 0) at n = 1 to (92, 15720, 13664) at n = 8, the bump landing
-the moment a column is tried so the counts stay comparable. Subset
-sum answers true on 9 and false on 30 with the same take-then-skip
-branch order, and the permutation enumerators emit the same 24
-lexicographic orders with first, second, third, and last pinned. The
-meter rides a pointer struct in Go, a stats triple in Python, an
-optional object in JavaScript, a plain struct in C, a keyed table in
-Lua, and a class in C\#, six shapes for one contract.
+Measured across the suites: all seven pin the same meter triples,
+from (1, 1, 0) at n = 1 to (92, 15720, 13664) at n = 8, the bump
+landing the moment a column is tried so the counts stay comparable.
+Subset sum answers true on 9 and false on 30 with the same
+take-then-skip branch order, and the permutation enumerators emit
+the same 24 lexicographic orders with first, second, third, and last
+pinned. The meter rides a pointer struct in Go, a stats triple in
+Python, an optional object in JavaScript, a plain struct in C, a
+keyed table in Lua, static fields on the class in Java, and a class
+in C\#, seven shapes for one contract.
 
 #diagram([the n-queens tree twice, every row against every column unpruned, three flat boolean arrays cut it to under a hundred thousand], length: 13pt, {
   // left: raw branching, right: the same tree with cut branches
@@ -550,7 +562,7 @@ Four more chapters push the table, the range query, the plane, and
 the probabilistic structure further, then the capstone puts all of
 it into one running system.
 
-== across the six languages
+== across the seven languages
 
 The build sizes count non-comment source lines. The first table
 covers the chapter's original featured files, the C\# row carrying
@@ -564,12 +576,13 @@ section counted again in the second table:
   [c], [174], [libc only], [qsort with a comparator function, huffman weights in unsigned long long, jumps return minus one],
   [c\#], [248], [bcl only], [rooms ride the chapter 8 heap, fractional knapsack at 240 against the table's 220, ReadOnlySpan jump scans],
   [go], [104], [slices], [slices.SortFunc orders intervals, two min scans select the huffman pair, single-symbol codes forced to length 1],
+  [java], [272], [jdk 27 stdlib], [a record per interval with a comparator lambda, the subset brute by mask where python uses itertools, huffman finds both lightest nodes in one scan],
   [javascript], [110], [node stdlib], [a hand-built heap keyed by weight then insertion order keeps the fixture tree deterministic],
   [python], [115], [stdlib only], [sort stands in for the priority queue, itertools.combinations brute-checks the schedule, stuck jumps read None],
   [lua], [217], [lib.lua harness], [insertion-order tie-break in every sort, encode and decode round trip abcdef, maximality checked by hand],
 )
 
-The backtracking section lands as its own file in the five sibling
+The backtracking section lands as its own file in the six sibling
 trees, the C\# build staying the Backtrack class inside `Greedy.cs`:
 
 #table(
@@ -579,6 +592,7 @@ trees, the C\# build staying the Backtrack class inside `Greedy.cs`:
   [c], [128], [libc only], [a meter struct by pointer, three flag arrays, lexicographic order proved by a comparator walk],
   [c\#], [72], [bcl only], [the Backtrack class inside Greedy.cs, iterator permutations, a nullable Meter class],
   [go], [82], [slices], [closure recursion, the meter behind a pointer, Permutations materialized as copies],
+  [java], [137], [jdk 27 stdlib], [static meter fields and flag arrays, the diagonal shift r - c + n - 1, lexicographic order proved pairwise],
   [javascript], [51], [node stdlib], [generator permutations, an optional meter object, destructured flag writes],
   [python], [82], [stdlib only], [a stats triple closed over by the recursion, slice reversal flips the tail],
   [lua], [111], [lib.lua harness], [1-based diagonal slots, nil clears the flags, table.concat keys prove distinctness],
@@ -589,7 +603,8 @@ chapter 8 implementation, `OrderBy` remarks, `StringBuilder`,
 accessed 2026-09-08, plus the CLRS activity selection and huffman
 treatments cited in the chapter text. Sample behavior verified by
 `make verify-csharp`, 13 tests in chapter 18 of the samples suite.
-The six-language layer verifies the same way: 4 C programs with 61
-embedded checks under `make verify-c`, 14 Go tests, 13 `node --test`
+The seven-language layer verifies the same way: 4 C programs with 61
+embedded checks under `make verify-c`, 4 Ch18 java programs with 81
+checks under `run-java-samples`, 14 Go tests, 13 `node --test`
 cases, 49 Python checks across 4 files, and 18 Lua checks under
 `run.lua`.

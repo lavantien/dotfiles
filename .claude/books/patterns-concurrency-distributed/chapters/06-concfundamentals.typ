@@ -8,14 +8,14 @@ about what the language actually promises when two goroutines touch
 the same memory, because the promise is narrower than most
 programmers assume and everything later in this book, the sync
 primitives, the hazards chapter, the raft capstone, is built on its
-edges. The question now runs in six voices, and the voices disagree
+edges. The question now runs in seven voices, and the voices disagree
 about the substrate before they agree about anything else: real
-operating system threads in C, pool tasks in C\#, goroutines in go,
-one event loop plus message-passing workers in javascript, threads
-under the GIL plus asyncio in python, coroutines in lua. The
-fixtures stay identical anyway, exact totals, exact counts, bounds
-forced by gates, because those are the claims a memory model can
-actually keep.
+operating system threads in C, goroutines in go, virtual threads on
+the jvm in java, pool tasks in C\#, one event loop plus
+message-passing workers in javascript, threads under the GIL plus
+asyncio in python, coroutines in lua. The fixtures stay identical
+anyway, exact totals, exact counts, bounds forced by gates, because
+those are the claims a memory model can actually keep.
 
 == the model in one rule
 
@@ -41,9 +41,11 @@ Each sibling tree faces its own model instead. C's is the C11 one:
 plain racy accesses are undefined, and the doors are thread
 creation, join, mutex and condition variables, and the stdatomic
 ordering ladder. #xref-to("c-os-cloud", "threads") puts C23
-`<threads.h>` and the win32 layer beneath it side by side. C\# and
-go promise the
-same DRF-SC shape over tasks and goroutines. Javascript runs one
+`<threads.h>` and the win32 layer beneath it side by side. C\#, go,
+and java promise the
+same DRF-SC shape over tasks, goroutines, and virtual threads, and
+java names the same ordering ladder stdatomic.h walks through
+`VarHandle` access modes. Javascript runs one
 thread per realm, so its model question is queue ordering, not
 memory tearing, until `worker_threads` or a `SharedArrayBuffer`
 enters. Python's GIL keeps bytecode-granular atomicity but switches
@@ -169,7 +171,7 @@ makes every unlocked partial write visible:
 The dry run: 1 through 10001 totals 50015001 under all 5
 partitionings, parts 1, 2, 7, 100, and 5000, and the empty input
 totals 0. The chunk ladder pins at 10001, 5001, 1429, 101, and 3,
-asserted by the five new trees, the go lane's frozen test pins the
+asserted by the six new trees, the go lane's frozen test pins the
 totals and the nil case without the ladder.
 
 + Each partial slot has exactly one writer, and the wait is ordered
@@ -178,14 +180,17 @@ totals and the nil case without the ladder.
 + The partitioning is ceil-div chunks with trailing empties skipped,
   every element in exactly one part across all 5 shapes.
 + The wait is a join in every substrate: the zero-count condition
-  broadcast in C and python, `WhenAll` in C\#, the drained promise
-  in javascript, the last done waking the parked total lane in lua.
+  broadcast in C and python, the 15-line synchronized waitgroup in
+  java, `WhenAll` in C\#, the drained promise in javascript, the
+  last done waking the parked total lane in lua.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch06/waitgroup.c", first: 20, last: 52, caption: [C, the waitgroup by hand, one mutex and one condition, the wait loop rechecking the count])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch06/Waitgroup.cs", first: 3, last: 39, caption: [C\#, Task.Run per part, Task.WhenAll is the wait edge])
-
 #listing("patterns-concurrency-distributed/samples/ch06/memorymodel.go", first: 11, last: 46, caption: [Go, waitgroup parallel sum: partial writes become visible at wait])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch06/Waitgroup.java", first: 23, last: 74, caption: [Java, the waitgroup hand-rolled on synchronized and notifyAll, CountDownLatch being one-shot only, the parts on virtual threads])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch06/Waitgroup.cs", first: 3, last: 39, caption: [C\#, Task.Run per part, Task.WhenAll is the wait edge])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch06-waitgroup.mjs", first: 7, last: 28, caption: [JavaScript, the waitgroup as a pending counter that wakes parked promise resolvers])
 
@@ -200,9 +205,10 @@ and demands the exact total every time. That determinism is DRF-SC
 paying off: under a race the same code is wrong in unbounded ways.
 The sibling trees build the wait
 out of their own substrate, mutex plus condition in C and python,
-task completion in C\#, a promise registry in javascript, and a
-parked-coroutine list in lua, the same 20-line scheduler shape
-every lua lane in this chapter carries.
+`synchronized` plus `notifyAll` in java, task completion in C\#, a
+promise registry in javascript, and a parked-coroutine list in lua,
+the same 20-line scheduler shape every lua lane in this chapter
+carries.
 
 == the rendezvous edge
 
@@ -211,24 +217,27 @@ bounce is causally ordered, the count can be neither lost nor
 doubled:
 
 The dry run: 1000 round trips count exactly 1000 and a single
-round trip counts 1, all six lanes pinning both counts. The
+round trip counts 1, all seven lanes pinning both counts. The
 degenerate shapes are per-tree lanes, zero rounds counting zero and
-an odd 17 holding in python, and the logged walk strictly
+an odd 17 holding in java and python, and the logged walk strictly
 alternating sent and received, 16 entries for 8 trips, in lua.
 
 + Each exchange costs 2 synchronization edges, the receive completing
   before the send returns, the unbuffered rule made visible.
 + The pinger only counts a trip after its pong came back, so no
   interleaving can lose or double one.
-+ The lane shapes differ, two threads in C and go, two tasks in
-  C\#, two async closures in javascript, two asyncio tasks in
-  python, two coroutines in lua, and the counts agree anyway.
++ The lane shapes differ, two threads in C and go, two virtual
+  threads in java, two tasks in C\#, two async closures in
+  javascript, two asyncio tasks in python, two coroutines in lua,
+  and the counts agree anyway.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch06/rendezvous.c", first: 20, last: 70, caption: [C, two threads over one mutex and two condition variables, every wait guaranteed a partner])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch06/Rendezvous.cs", first: 3, last: 37, caption: [C\#, a pair of binary SemaphoreSlims, no unbuffered channel exists])
-
 #listing("patterns-concurrency-distributed/samples/ch06/memorymodel.go", first: 49, last: 73, caption: [Go, strict alternation through two unbuffered channels])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch06/Rendezvous.java", first: 21, last: 58, caption: [Java, SynchronousQueue is the unbuffered channel native, put returns only when a take takes the value])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch06/Rendezvous.cs", first: 3, last: 37, caption: [C\#, a pair of binary SemaphoreSlims, no unbuffered channel exists])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch06-rendezvous.mjs", first: 7, last: 34, caption: [JavaScript, the Handoff class, send parks until a receiver takes])
 
@@ -238,7 +247,10 @@ alternating sent and received, 16 entries for 8 trips, in lua.
 
 Go's unbuffered channel is the native shape and C\#'s channels have
 no unbuffered mode, so its rendezvous is two binary semaphores, the
-waiter blocking until the releaser acts. C builds the same binary
+waiter blocking until the releaser acts. Java's `SynchronousQueue`
+is the unbuffered channel native, `put` returning only when a
+`take` takes the value, the one stdlib in this chapter that needs
+no rebuilding. C builds the same binary
 handoff from a mutex and two condition variables, where the
 zero-waiter forgetfulness trap from chapter 15 of the C book cannot
 bite because every wait is guaranteed a partner. The dynamic three
@@ -254,8 +266,9 @@ it:
 
 The dry run: the exact 100000 total pins in every lane with real
 shared memory, go's goroutines, C's threads over an `_Atomic` cell,
-C\#'s workers over `Interlocked`, javascript's workers over one
-`SharedArrayBuffer` cell. The two coroutine lanes state their
+java's threads over an `AtomicLong`, C\#'s workers over
+`Interlocked`, javascript's workers over one `SharedArrayBuffer`
+cell. The two coroutine lanes state their
 boundary the honest way: a scripted 2 by 5 read, pause, write walk
 loses 5 of 10 updates in python and lua alike, and the locked or
 non-yielding versions reach 10, the same code reaching 100000 when
@@ -272,9 +285,11 @@ the whole section is atomic.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch06/atomics.c", first: 20, last: 42, caption: [C, an atomic long long with fetch_add, the relaxed ordering stated where it is chosen])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch06/Atomics.cs", first: 3, last: 24, caption: [C\#, Interlocked.Add, with the plain += control group beside it])
-
 #listing("patterns-concurrency-distributed/samples/ch06/memorymodel.go", first: 76, last: 85, caption: [Go, atomic adds are linearizable, lost updates impossible])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch06/Atomics.java", first: 25, last: 59, caption: [Java, VarHandle aims every access mode at one field, the plain payload published by a release flag])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch06/Atomics.cs", first: 3, last: 24, caption: [C\#, Interlocked.Add, with the plain += control group beside it])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch06-atomics.mjs", first: 9, last: 38, caption: [JavaScript, worker_threads over one SharedArrayBuffer, Atomics.add into the shared cell])
 
@@ -284,7 +299,10 @@ the whole section is atomic.
 
 C names the ordering it wants, `memory_order_relaxed` for the count
 where only the arithmetic needs to be atomic, the ladder chapter 16
-of the C book walks in full. C\#'s `Interlocked` is the same
+of the C book walks in full. Java walks the same ladder through
+`VarHandle` access modes, plain, opaque, release and acquire,
+volatile, with `AtomicLong` as the counter and `Thread.onSpinWait`
+the hint the acquire spin rides. C\#'s `Interlocked` is the same
 facility with one default. The javascript lane is the corpus's one
 real shared-memory lane, a worker pool inside an inline-eval module
 adding into the same `Int32Array` cell, joined on exit messages,
@@ -333,9 +351,11 @@ the observed peak never passes 3.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch06/channels.c", first: 24, last: 63, caption: [C, the bounded channel over one mutex and one condition, close broadcasts])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch06/Channels.cs", first: 5, last: 50, caption: [C\#, Complete before ReadAllAsync, the bounded channel doubling as the gate])
-
 #listing("patterns-concurrency-distributed/samples/ch06/memorymodel.go", first: 87, last: 117, caption: [Go, close orders the terminal receive, capacity C bounds C workers])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch06/Channels.java", first: 32, last: 77, caption: [Java, the channel hand-rolled over ReentrantLock and one Condition, close broadcasts, recv answers false once drained])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch06/Channels.cs", first: 5, last: 50, caption: [C\#, Complete before ReadAllAsync, the bounded channel doubling as the gate])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch06-channels.mjs", first: 7, last: 54, caption: [JavaScript, the Chan class, send waits when full, close wakes every parked side])
 
@@ -345,9 +365,12 @@ the observed peak never passes 3.
 
 C's channel is one mutex, one condition, a ring of integers, and a
 closed flag, the chapter 7 bounded queue arriving one chapter early
-in miniature. C\# gets both edges from the BCL channel,
-`Writer.Complete` is the close and bounded capacity is the gate.
-The dynamic three park continuations, javascript on promise
+in miniature. Java rolls the same channel by hand on
+`ReentrantLock` and one `Condition`, and parks its stdlib lanes
+beside it: `Semaphore` is the gate and `ArrayBlockingQueue` the
+buffered channel minus the close. C\# gets both edges from the BCL
+channel, `Writer.Complete` is the close and bounded capacity is the
+gate. The dynamic three park continuations, javascript on promise
 resolvers, python on the condition, lua on the scheduler's parked
 list, and go's semaphore is the idiom the memory model document
 itself suggests, a buffered channel of capacity C where sending
@@ -381,7 +404,7 @@ is the strongest argument for never shipping it.
   cdraw.content((11, 1.05), [a non-nil pointer with stale contents can surface], size: 6pt)
 })
 
-== across the six languages
+== across the seven languages
 
 The build sizes count non-comment source lines, the go column the
 chapter's one frozen file:
@@ -391,8 +414,9 @@ chapter's one frozen file:
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [411], [libc plus threads.h, stdatomic.h], [waitgroup, channel, and semaphore by hand over mtx and cnd, relaxed ordering named at the add],
-  [c\#], [134], [bcl], [WhenAll waits, SemaphoreSlim rendezvous, Interlocked counters, Channels for close and capacity],
   [go], [91], [stdlib], [frozen reference lane, the five fixtures this chapter's contracts derive from],
+  [java], [354], [jdk 27 stdlib], [the VarHandle ladder named rung by rung, SynchronousQueue the native rendezvous, waitgroup and channel rolled by hand],
+  [c\#], [134], [bcl], [WhenAll waits, SemaphoreSlim rendezvous, Interlocked counters, Channels for close and capacity],
   [javascript], [217], [node stdlib], [promise-resolver waits, Handoff rendezvous, the corpus's one SharedArrayBuffer lane],
   [python], [269], [stdlib only], [Condition waitgroup, asyncio queues, the scripted tear where atomics do not exist],
   [lua], [529], [lib.lua harness], [one 20-line scheduler under every lane, races built on purpose with yields, the torn 5 beside the serialized 10],
@@ -400,8 +424,9 @@ chapter's one frozen file:
 
 sources: go.dev/ref/mem for the definition of data race, every
 synchronization edge quoted above, DRF-SC, and the broken idioms,
-accessed 2026-09-08. Verified by the six chapter legs: `go test
--race` at 6 tests in `patternsbook/ch06`, 4 C programs with 327
-embedded checks, 10 C\# facts over `PatternsBook.slnx`, 9
+accessed 2026-09-08. Verified by the seven chapter legs: 4 Ch06 C
+programs with 327 embedded checks, `go test -race` at 6 tests in
+`patternsbook/ch06`, 4 Ch06 java programs with 37 checks under
+`run-java-samples`, 10 C\# facts over `PatternsBook.slnx`, 9
 `node --test` cases, 23 Python checks across 4 files, and 17 Lua
 rows under `run.lua`.

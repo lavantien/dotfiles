@@ -51,7 +51,26 @@ their own fixtures, 0 3 1 4 7 and 0 7 9 20 20 11.
 })
 
 The 9 through c and e against the 14 direct is the trap the suite
-pins, and the listings below settle it in six languages.
+pins, and the listings below settle it in seven languages.
+
+#listing("dsa/samples-c/src/Ch11/dijkstra.c", first: 49, last: 75, caption: [c, the (dist, vertex) min-heap, push and pop])
+
+#listing("dsa/samples-c/src/Ch11/dijkstra.c", first: 79, last: 101, caption: [c, dijkstra over the heap, stale entries skipped])
+
+#listing("dsa/samples-go/ch11/dijkstra.go", first: 16, last: 64, caption: [go, the container/heap adapter and the relax loop])
+
+This chapter is the one place the matrix lets the shipped queue in:
+the heap is a supporting container here, not the lesson. C and Lua
+hand-build one in the same file, and Java does too even though its
+`PriorityQueue` sits one import away, the heap entries and the
+stale-entry skip are the taught mechanism, so it stays hand-rolled.
+JavaScript carries a private heap class, Go wires container/heap
+through a five-method adapter, Python rides heapq, and the C\# code
+keeps its indexed heap with a true decrease-key while the BCL
+PriorityQueue plus its O(n) Remove stands as the shipped
+counterpart, chapter 8's callout:
+
+#listing("dsa/samples-java/src/Ch11/Dijkstra.java", first: 78, last: 104, caption: [java, dijkstra over the hand-built heap, stale entries skipped, PriorityQueue left out on purpose])
 
 #listing("dsa/samples/src/Ch11/Paths.cs", first: 25, last: 56, caption: [c\#, dijkstra with an indexed heap, stale entry skipping])
 
@@ -86,19 +105,7 @@ the reconstruction walks the predecessor chain backwards.
   exists.
 ])
 
-This chapter is the one place the matrix lets the shipped queue in:
-the heap is a supporting container here, not the lesson. C and Lua
-hand-build one in the same file, JavaScript carries a private heap
-class, Go wires container/heap through a five-method adapter,
-Python rides heapq, and the C\# code below keeps its indexed heap
-with a true decrease-key while the BCL PriorityQueue plus its O(n)
-Remove stands as the shipped counterpart, chapter 8's callout:
-
-#listing("dsa/samples-c/src/Ch11/dijkstra.c", first: 49, last: 75, caption: [c, the (dist, vertex) min-heap, push and pop])
-
-#listing("dsa/samples-c/src/Ch11/dijkstra.c", first: 79, last: 101, caption: [c, dijkstra over the heap, stale entries skipped])
-
-#listing("dsa/samples-go/ch11/dijkstra.go", first: 16, last: 64, caption: [go, the container/heap adapter and the relax loop])
+Four more languages settle their own fixtures:
 
 #listing("dsa/samples-js/src/ch11-dijkstra.mjs", first: 5, last: 41, caption: [javascript, the local min-heap kept inline on purpose])
 
@@ -113,7 +120,7 @@ Remove stands as the shipped counterpart, chapter 8's callout:
 Measured across the suites: Go, JavaScript, and Python share one
 fixture where the direct 0 to 1 edge of weight 4 loses to the
 two-hop route of 3, pinning 0 3 1 4 7 from the source and
--1 2 0 3 6 from vertex 2. C and Lua share the classic 6-vertex
+-1 2 0 3 6 from vertex 2. C, Java, and Lua share the classic 6-vertex
 undirected fixture, pinning 0 7 9 20 20 11 from vertex 0, the whole
 predecessor chain, 11 12 13 for vertices 0 1 3 from source 5, and a
 bellman-ford cross-check over the same edges. The frozen C\# suite
@@ -169,7 +176,13 @@ and Python.
 })
 
 The 4 and the 1 beside the refused tie are the pinned triple, and
-the listings below run the rounds in six languages.
+the listings below run the rounds in seven languages.
+
+#listing("dsa/samples-c/src/Ch11/bellman.c", first: 22, last: 44, caption: [c, the rounds, the quiet-round exit, the V-th pass verdict])
+
+#listing("dsa/samples-go/ch11/bellman.go", first: 15, last: 51, caption: [go, negative weights in, negative cycles reported, -1 for unreachable])
+
+#listing("dsa/samples-java/src/Ch11/Bellman.java", first: 22, last: 44, caption: [java, the rounds, the quiet-round exit, the V-th pass verdict])
 
 #listing("dsa/samples/src/Ch11/Paths.cs", first: 58, last: 96, caption: [c\#, relaxation rounds, early exit on convergence, the negative cycle check])
 
@@ -178,10 +191,6 @@ simple chain, and the early exit means nice graphs finish in a few
 rounds. The equality test runs dijkstra and bellman-ford on the same
 positive graph and asserts identical distances everywhere, two
 independent implementations agreeing.
-
-#listing("dsa/samples-c/src/Ch11/bellman.c", first: 22, last: 44, caption: [c, the rounds, the quiet-round exit, the V-th pass verdict])
-
-#listing("dsa/samples-go/ch11/bellman.go", first: 15, last: 51, caption: [go, negative weights in, negative cycles reported, -1 for unreachable])
 
 #listing("dsa/samples-js/src/ch11-bellman.mjs", first: 8, last: 27, caption: [javascript, infinity internally so a real -1 distance survives])
 
@@ -192,10 +201,11 @@ independent implementations agreeing.
 Measured across the suites: Go, JavaScript, and Python share the
 negative-edge fixture and pin 0 1 -1 0, the -2 edge making vertex 2
 cheaper through 1, refuse the 1 2 1 cycle, and ignore a cycle the
-source cannot reach, 0 5 -1 -1 -1 in Go and JavaScript. C and Lua
-share their own fixture, distances 0 1 2 3 with vertex 4 stranded,
-the -3 cycle detected, and the same cycle invisible when only an
-unreachable vertex can see it. Zero-weight edges relax everywhere.
+source cannot reach, 0 5 -1 -1 -1 in Go and JavaScript. C, Java, and
+Lua share their own fixture, distances 0 1 2 3 with vertex 4
+stranded, the -3 cycle detected, and the same cycle invisible when
+only an unreachable vertex can see it. Zero-weight edges relax
+everywhere.
 
 #diagram([bellman-ford, every edge relaxes each round, a quiet round exits early, one more improving pass proves a negative cycle], length: 13pt, {
   // s to a is 4, a to b is -3, s to b is 5: the long way wins
@@ -471,7 +481,13 @@ and C and Lua pin a 7-arc digraph whose row 0 reads 0 3 5 6.
 )
 
 The 9 and the 20 in the finished row are the cells the suite pins,
-and the listings below close the loop in six languages.
+and the listings below close the loop in seven languages.
+
+#listing("dsa/samples-c/src/Ch11/floyd.c", first: 21, last: 35, caption: [c, matrix load, the k-outermost triple loop])
+
+#listing("dsa/samples-go/ch11/floyd.go", first: 5, last: 27, caption: [go, closure over a copied matrix, 2^61 as infinity])
+
+#listing("dsa/samples-java/src/Ch11/Floyd.java", first: 21, last: 35, caption: [java, matrix load, the k-outermost triple loop])
 
 #listing("dsa/samples/src/Ch11/Paths.cs", first: 99, last: 114, caption: [c\#, three nested loops, the k in the middle of the recurrence outside])
 
@@ -479,10 +495,6 @@ Cubic time and quadratic space buys every pair's distance at once,
 which wins over n dijkstra runs when the graph is dense and small.
 The test cross-checks the first row against dijkstra's single source
 answers.
-
-#listing("dsa/samples-c/src/Ch11/floyd.c", first: 21, last: 35, caption: [c, matrix load, the k-outermost triple loop])
-
-#listing("dsa/samples-go/ch11/floyd.go", first: 5, last: 27, caption: [go, closure over a copied matrix, 2^61 as infinity])
 
 #listing("dsa/samples-js/src/ch11-floyd.mjs", first: 4, last: 14, caption: [javascript, copy in, relax, return])
 
@@ -493,11 +505,11 @@ answers.
 Measured across the suites: Go, JavaScript, and Python pin the full
 closure of a 4-node matrix where 0 to 3 improves 10 to 9 through
 1 and 2, Python adding a dense triangle whose 6 relaxes to 5 and a
-dijkstra sweep that agrees with every cell. C and Lua share a
+dijkstra sweep that agrees with every cell. C, Java, and Lua share a
 7-edge digraph, pin all 16 cells, row 0 reading 0 3 5 6, check the
 triangle inequality over the finished closure, and keep an
-unreachable pair at infinity. Six listings, one loop nest, k on the
-outside in every one.
+unreachable pair at infinity. Seven listings, one loop nest, k on
+the outside in every one.
 
 #diagram([floyd-warshall, k grows in the outermost loop, every pair's distance at cubic total], length: 13pt, {
   // two distance matrices over a b c, way points limited to the first k
@@ -567,7 +579,13 @@ counts under documented tie-breaks.
 })
 
 The 12 around the wall and the 14 across the open grid are the
-pinned pair, and the listings below search in six languages.
+pinned pair, and the listings below search in seven languages.
+
+#listing("dsa/samples-c/src/Ch11/astar.c", first: 90, last: 125, caption: [c, the search loop, closed set, tie-broken heap pushes])
+
+#listing("dsa/samples-go/ch11/astar.go", first: 54, last: 100, caption: [go, open queue by f then insertion order, parent rebuild])
+
+#listing("dsa/samples-java/src/Ch11/Astar.java", first: 88, last: 124, caption: [java, the search loop, closed set, tie-broken heap pushes over the hand-built heap])
 
 #listing("dsa/samples/src/Ch11/Paths.cs", first: 117, last: 161, caption: [c\#, a star on a grid with the manhattan heuristic])
 
@@ -580,18 +598,14 @@ set to zero is dijkstra, and a heuristic that overestimates trades
 optimality for speed, which is exactly the dial game developers
 turn.
 
-#listing("dsa/samples-c/src/Ch11/astar.c", first: 90, last: 125, caption: [c, the search loop, closed set, tie-broken heap pushes])
-
-#listing("dsa/samples-go/ch11/astar.go", first: 54, last: 100, caption: [go, open queue by f then insertion order, parent rebuild])
-
 #listing("dsa/samples-js/src/ch11-astar.mjs", first: 55, last: 97, caption: [javascript, the grid walk over the private heap])
 
 #listing("dsa/samples-py/src/Ch11/astar.py", first: 15, last: 48, caption: [python, heapq with a tick counter for fifo ties])
 
 #listing("dsa/samples-lua/ch11_astar.lua", first: 46, last: 82, caption: [lua, cells keyed r*cols+c, (f, h, seq) heap])
 
-Measured across the suites: C and Lua pin 7 expansions on an open
-4 by 4 and 5 around a center-walled 3 by 3, under a documented
+Measured across the suites: C, Java, and Lua pin 7 expansions on an
+open 4 by 4 and 5 around a center-walled 3 by 3, under a documented
 tie-break, f first, then smaller h, then insertion order, with
 neighbors offered right down left up. Go, JavaScript, and Python
 use a 3 by 3 where every f ties at 4, so all 9 cells expand before
@@ -631,7 +645,7 @@ lengths do not.
   cdraw.content((14.8, 1.9), [h = 0 degenerates to dijkstra], size: 6pt)
 })
 
-== across the six languages
+== across the seven languages
 
 The build sizes count non-comment source lines over this chapter's
 four featured files per language. This is the matrix's one
@@ -644,8 +658,9 @@ not:
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [380], [libc only], [hand heaps in the dijkstra and astar files, 64 and 128 slot arrays, checks share the file with main, 55 of them],
-  [c\#], [218], [bcl only], [frozen suite, indexed heap with decrease-key in the same file, PriorityQueue named as the shipped twin, 10 tests],
   [go], [199], [container/heap], [the chapter exception in force, adapters per file, -1 marks unreachable, 11 tests],
+  [java], [390], [jdk 27 stdlib], [PriorityQueue left unused, the exception declined because the heap entries and the stale-entry skip are the taught mechanism, hand heaps of record pairs, INF a billion],
+  [c\#], [218], [bcl only], [frozen suite, indexed heap with decrease-key in the same file, PriorityQueue named as the shipped twin, 10 tests],
   [javascript], [165], [node stdlib], [private local heaps inline by design, Infinity internally in bellman-ford so -1 distances survive, 12 tests],
   [python], [213], [heapq], [heapq as the supporting container, tick counters pin tie order, 26 checks],
   [lua], [350], [lib.lua harness], [hand heaps with 1-based index math, maxinteger as infinity, checks ride in the module, 16 of them],
@@ -660,7 +675,8 @@ algorithm at https://cp-algorithms.com/graph/desopo_pape.html, both
 accessed 2026-09-20 under cc by-sa 4.0, taught here in our own
 words. Sample behavior verified by
 `make verify-csharp`, 10 tests in chapter 11 of the samples suite.
-The six-language layer verifies the same way: 4 C programs with 55
-embedded checks under `make verify-c`, 11 Go tests, 12 `node --test`
-cases, 26 Python checks across 4 files, and 16 Lua checks under
-`run.lua`.
+The seven-language layer verifies the same way: 4 C programs with 55
+embedded checks under `make verify-c`, 11 Go tests, the java
+runner's 52 Ch11 checks over 4 files under `run-java-samples`, 12
+`node --test` cases, 26 Python checks across 4 files, and 16 Lua
+checks under `run.lua`.

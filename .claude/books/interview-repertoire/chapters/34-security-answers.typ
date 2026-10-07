@@ -237,7 +237,7 @@ the pedigree and the cap both worth saying out loud. Memory-hardness
 is why argon2id won the recommendation, it prices gpu attack the way
 bcrypt could not.
 
-The authz half is one set of answers across all six lanes. 401 versus
+The authz half is one set of answers across all seven lanes. 401 versus
 403: unauthenticated versus authenticated and still refused. IDOR,
 insecure direct object reference, is authorization missing at the
 object level, the route checked the session but never asked whether

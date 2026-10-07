@@ -27,7 +27,7 @@ the plateau rule, because equal probes say nothing about where a
 flat stretch ends. A short linear scan closes whatever window of
 3 or fewer cells survives. On doubles the same two probes run a
 fixed 200 iterations and return the midpoint. The fixed count is
-the whole trick for a six-language book: no float comparison ever
+the whole trick for a seven-language book: no float comparison ever
 decides control flow differently in c than in lua, so the orbit
 of intervals is identical everywhere and the pinned outputs hold
 without any tolerance negotiation. The contract is strictly
@@ -37,7 +37,7 @@ documented as the safety net.
 
 The dry run: the fixtures are the valley 12, 9, 7, 3, 2, 5, 8, 11
 with its rising, falling, and plateau kin, asserted by the C\# suite
-and pinned at identical counts in all six.
+and pinned at identical counts in all seven.
 
 + Round 1 on the valley, window 0 through 7: m1 = 0 + 7 / 3 = 2 and
   m2 = 7 - 7 / 3 = 5, the probes read 7 and 5, 7 > 5 keeps the right
@@ -67,18 +67,19 @@ and pinned at identical counts in all six.
 )
 
 The 6 is the meter every suite pins on the valley, and the listings
-below run the integer loop and the 200-iteration real driver in six
+below run the integer loop and the 200-iteration real driver in seven
 languages.
 
 #listing("dsa/samples-c/src/Ch36/ternary.c", first: 24, last: 59, caption: [c, the integer loop with the tie rule, then the fixed-count real driver])
-#listing("dsa/samples/src/Ch36/Ternary.cs", first: 11, last: 54, caption: [c\#, the same pair, tuple return carrying the probe meter])
 #listing("dsa/samples-go/ch36/ternary.go", first: 7, last: 48, caption: [go, the switch form of the three-way probe outcome])
+#listing("dsa/samples-java/src/Ch36/Ternary.java", first: 21, last: 56, caption: [java, the integer loop with the tie rule, then the fixed-count real driver over DoubleUnaryOperator])
+#listing("dsa/samples/src/Ch36/Ternary.cs", first: 11, last: 54, caption: [c\#, the same pair, tuple return carrying the probe meter])
 #listing("dsa/samples-js/src/ch36-ternary.mjs", first: 10, last: 46, caption: [javascript, floor division by hand, the object return])
 #listing("dsa/samples-py/src/Ch36/ternary.py", first: 15, last: 45, caption: [python, the plateau comment marks the tie rule])
 #listing("dsa/samples-lua/ch36_ternary.lua", first: 8, last: 44, caption: [lua, the 0-based public face over 1-based tables])
 
 The probe meter is deterministic, so the integer fixtures pin
-identical counts in all six suites. The valley 12, 9, 7, 3, 2, 5,
+identical counts in all seven suites. The valley 12, 9, 7, 3, 2, 5,
 8, 11 lands its argmin at index 4 on 6 probes, the rising array
 1, 2, 3, 4, 5 puts the minimum at the left edge index 0 on 4
 probes, and the falling array 9, 7, 5, 3 hits the right edge
@@ -146,7 +147,7 @@ the new one, and every step after the warm-up pair costs exactly
 one evaluation. The iteration count is pinned at 100, which
 shrinks the interval below 1e-19 of its width, far past any useful
 epsilon, so evaluation counts and final widths are identical
-doubles in all six languages. The budget arithmetic is the
+doubles in all seven languages. The budget arithmetic is the
 selling point: 102 total evaluations against 400 for 200 ternary
 iterations.
 
@@ -183,12 +184,13 @@ evaluations, the width gate, and the phi constants.
 )
 
 The 102 is what every suite pins, half of ternary's 400 for the same
-job, and the listings below run the keep-and-replace loop in six
+job, and the listings below run the keep-and-replace loop in seven
 languages.
 
 #listing("dsa/samples-c/src/Ch36/golden.c", first: 26, last: 50, caption: [c, the keep-and-replace loop, one new evaluation per step])
-#listing("dsa/samples/src/Ch36/Golden.cs", first: 11, last: 36, caption: [c\#, the tuple swap keeps the interior point in one statement])
 #listing("dsa/samples-go/ch36/golden.go", first: 12, last: 31, caption: [go, the same multi-assign, evals and width returned])
+#listing("dsa/samples-java/src/Ch36/Golden.java", first: 24, last: 47, caption: [java, the keep-and-replace loop, one new evaluation per step])
+#listing("dsa/samples/src/Ch36/Golden.cs", first: 11, last: 36, caption: [c\#, the tuple swap keeps the interior point in one statement])
 #listing("dsa/samples-js/src/ch36-golden.mjs", first: 12, last: 35, caption: [javascript, the one new evaluation commented where it happens])
 #listing("dsa/samples-py/src/Ch36/golden.py", first: 16, last: 34, caption: [python, phi defined from sqrt, the warm-up pair at 2])
 #listing("dsa/samples-lua/ch36_golden.lua", first: 12, last: 31, caption: [lua, the same loop over the shared phi constant])
@@ -205,7 +207,7 @@ That tolerance is itself a taught decision: 1e-30 relative would
 demand bit-identical libm pow across languages, below one ulp of
 a double, and lua's pow genuinely differs from the reference in
 the fifteenth significant digit, around 1e-15 relative. The
-python, c\#, and c suites passed at tighter tolerances locally
+python, c\#, c, and java suites passed at tighter tolerances locally
 and stay as committed, the others assert the honest band.
 
 #diagram([the (0, 100) interval cascade, each row a step, the reused interior point shaded, one new probe per line], length: 13pt, {
@@ -253,7 +255,7 @@ half the evaluations.
 
 Root finding by tangent lines. For f(x) = x^2 - 2 the update x
 \<- x - (x^2 - 2) / (2x) divides by the derivative, and from 1.0
-the iterates pin in all six languages: 1, 1.5, 1.416666666666667,
+the iterates pin in all seven languages: 1, 1.5, 1.416666666666667,
 1.414215686274510, 1.414213562374690, 1.414213562373095, five
 updates to the residual bound 1e-12. The pinned error column shows
 quadratic convergence, each error roughly the square of the
@@ -266,7 +268,7 @@ updates to a measured final error of 2.6e-14.
 
 The dry run: the fixtures are the sqrt 2 ladder from 1.0 and the
 reciprocal of 7 from 0.2, iterates pinned by the C\# suite at 9
-decimals with the same ladders in all six.
+decimals with the same ladders in all seven.
 
 + The first update is one fraction: at x = 1 the residual is -1 on a
   slope of 2, and 1 - (-1) / 2 = 1.5.
@@ -296,11 +298,12 @@ decimals with the same ladders in all six.
 )
 
 Five updates close both ladders, and the listings below run the two
-loops in six languages.
+loops in seven languages.
 
 #listing("dsa/samples-c/src/Ch36/newton.c", first: 24, last: 48, caption: [c, the two update loops, residual checked before each step])
-#listing("dsa/samples/src/Ch36/Newton.cs", first: 10, last: 42, caption: [c\#, both loops as iterate enumerables, the meter outside])
 #listing("dsa/samples-go/ch36/newton.go", first: 8, last: 39, caption: [go, the iterate slice returned whole for the ladder asserts])
+#listing("dsa/samples-java/src/Ch36/Newton.java", first: 21, last: 43, caption: [java, the two update loops, residual checked before each step])
+#listing("dsa/samples/src/Ch36/Newton.cs", first: 10, last: 42, caption: [c\#, both loops as iterate enumerables, the meter outside])
 #listing("dsa/samples-js/src/ch36-newton.mjs", first: 9, last: 33, caption: [javascript, iterates collected, updates counted])
 #listing("dsa/samples-py/src/Ch36/newton.py", first: 19, last: 43, caption: [python, the division-free comment sits on the reciprocal loop])
 #listing("dsa/samples-lua/ch36_newton.lua", first: 6, last: 29, caption: [lua, the same pair, prints pinned to 12 decimals])
@@ -376,7 +379,8 @@ adaptive lands 0.7468241328124992 and composite n = 1000 lands
 
 The dry run: the fixtures are the exact-through-cubics family, sin
 over (0, pi), and the e^-x^2 bump against the erf constant, asserted
-by the C\# suite with the printed forms pinned as strings in Python.
+by the C\# suite with the printed forms pinned as strings in Python
+and Java.
 
 + One panel is the whole kernel: x^2 over (0, 1) at n = 2 reads
   h / 3 × (0 + 4 × 0.25 + 1) = 0.5 / 3 × 2 = 1 / 3 exactly, the edge
@@ -412,11 +416,12 @@ by the C\# suite with the printed forms pinned as strings in Python.
 
 The erf reference holds both roads inside 1e-9, and the listings
 below ship the kernel, the composite weights, and the recursion in
-six languages.
+seven languages.
 
 #listing("dsa/samples-c/src/Ch36/simpson.c", first: 26, last: 49, caption: [c, the 1/6 kernel, the composite weights, the adaptive accept-or-recurse])
-#listing("dsa/samples/src/Ch36/Simpson.cs", first: 9, last: 43, caption: [c\#, odd panel counts refused by exception, the recursive accept with correction])
 #listing("dsa/samples-go/ch36/simpson.go", first: 18, last: 64, caption: [go, the closure recursion passing cached endpoint values down])
+#listing("dsa/samples-java/src/Ch36/Simpson.java", first: 31, last: 53, caption: [java, the 1/6 kernel, the composite weights, the adaptive accept-or-recurse])
+#listing("dsa/samples/src/Ch36/Simpson.cs", first: 9, last: 43, caption: [c\#, odd panel counts refused by exception, the recursive accept with correction])
 #listing("dsa/samples-js/src/ch36-simpson.mjs", first: 8, last: 36, caption: [javascript, the kernel as a local arrow function, depth default 24])
 #listing("dsa/samples-py/src/Ch36/simpson.py", first: 16, last: 41, caption: [python, the even-n assert and the richardson-corrected return])
 #listing("dsa/samples-lua/ch36_simpson.lua", first: 7, last: 35, caption: [lua, the same recursion, odd panels refused by assert])
@@ -427,7 +432,11 @@ printed nine-decimal forms are pinned as strings, 0.333333333,
 4.000000000, 2.000000000, 0.746824133. The printed-form pin is
 deliberate: it freezes the rounding behavior the prose quotes, so
 a language whose adaptive path lands one ulp off the composite
-path still prints the pinned digits.
+path still prints the pinned digits. Java formats under
+Locale.ROOT so the decimal separator never goes locale-dependent,
+and Math ships no erf, so its reference constant comes from a
+60-term Maclaurin series asserted against the adaptive landing to
+1e-12.
 
 #diagram([e^-x^2 over (0, 1) with the first adaptive parabolas, split points accumulating where the curve bends], length: 13pt, {
   let m = (x, y) => (1.8 + x * 11.5, 0.8 + y * 5.2)
@@ -474,7 +483,7 @@ path still prints the pinned digits.
 
 No samples ship for this section, on purpose: annealing is a
 randomized heuristic whose every interesting claim is probabilistic,
-and a deterministic six-language pin of a float walk would teach the
+and a deterministic seven-language pin of a float walk would teach the
 wrong lesson. The idea earns the page. Model the problem as an energy
 landscape, current solution plus a neighbor move, and walk with the
 Metropolis rule: a move that lowers energy is always taken, a move
@@ -487,7 +496,7 @@ exploit.
 The full treatment lives in #xref-to("dsa", "metaheuristics"), where
 the rule runs in an integer form a seeded generator can pin exactly,
 with counter-exact runs, cooling and reheat schedules, and restart
-budgets, all asserted by the six language suites.
+budgets, all asserted by the seven language suites.
 
 == LP duality and dual weights
 
@@ -563,11 +572,12 @@ suite and cross-checked by Python's dense grid of 2000001 points.
 
 F1's 40.0000000000 with both ducts binding is the pinned landing,
 and the listings below run the bottom-up pass and the drivers in
-six languages.
+seven languages.
 
 #listing("dsa/samples-c/src/Ch36/lpdual.c", first: 38, last: 75, caption: [c, the bottom-up dual evaluation feeding the ternary driver])
-#listing("dsa/samples/src/Ch36/LpDual.cs", first: 14, last: 63, caption: [c\#, solve-dual over duct tuples, the optimum returning weights and t])
 #listing("dsa/samples-go/ch36/lpdual.go", first: 22, last: 66, caption: [go, dual-eval on the duct structs, r = 1 shortcut at t = 1])
+#listing("dsa/samples-java/src/Ch36/Lpdual.java", first: 23, last: 58, caption: [java, the bottom-up dual evaluation over record ducts feeding the ternary driver])
+#listing("dsa/samples/src/Ch36/LpDual.cs", first: 14, last: 63, caption: [c\#, solve-dual over duct tuples, the optimum returning weights and t])
 #listing("dsa/samples-js/src/ch36-lpdual.mjs", first: 12, last: 47, caption: [javascript, weights in a flat array, ducts as pairs])
 #listing("dsa/samples-py/src/Ch36/lpdual.py", first: 15, last: 43, caption: [python, the descending station pass with the max over ducts])
 #listing("dsa/samples-lua/ch36_lpdual.lua", first: 11, last: 47, caption: [lua, ducts as nested tables, the same two functions])
@@ -629,7 +639,7 @@ dual collapse to bottom-up max propagation on this dag, and the
 final one-dimensional search are all its solution's shape, and
 the icpc chapter carries the full recovery algorithm.
 
-== across the six languages
+== across the seven languages
 
 Featured build size counted as non-blank, non-comment lines of
 the chapter's five sample files per language, embedded test
@@ -640,8 +650,9 @@ scripts included where the language embeds them:
   inset: 4pt,
   table.header([*language*], [*build sloc*], [*container dependency*], [*boundary note*]),
   [c], [422], [libc math only], [function pointers for the drivers, the golden pow pin asserted at tighter than 1e-12 relative],
-  [c\#], [205], [bcl only, tuples], [iterates as enumerables in newton, exceptions refuse odd simpson panels, long eval meter],
   [go], [191], [fmt and math], [dual-eval errors returned not thrown, ternary real exported for the lpdual driver],
+  [java], [402], [jdk 27 stdlib, java.util.function], [DoubleUnaryOperator where c takes function pointers, Math ships no erf so the reference runs a 60-term Maclaurin series, nine-decimal prints under Locale.ROOT, the golden width pinned at the double-ulp floor],
+  [c\#], [205], [bcl only, tuples], [iterates as enumerables in newton, exceptions refuse odd simpson panels, long eval meter],
   [javascript], [146], [node stdlib], [object returns carry the meters, floor division written by hand],
   [python], [311], [stdlib math], [printed forms pinned as strings, the dense grid cross-check runs 2000001 points in-suite],
   [lua], [309], [lib.lua harness], [in-file approx helper, the pow pin documented at 1e-12 relative with the libm caveat],
@@ -661,7 +672,8 @@ is derived here from the ternary article, cited as such. LP
 duality likewise has no cp-algorithms article. Application
 sources: icpc 2025 problem C (book 10, chapter 13) and icpc 2022
 problem T (book 10, chapter 11). Sample behavior verified by the
-six suite gates scoped to chapter 36: c 5 files and 74 checks,
-c\# 21 facts, go 15 test functions, javascript 19 tests and 56
+seven suite gates scoped to chapter 36: c 5 files and 74 checks,
+go 15 test functions, java 5 files and 74 checks under
+run-java-samples, c\# 21 facts, javascript 19 tests and 56
 asserts, python 5 files and 59 asserts, lua 18 checks, zero
 skipped.

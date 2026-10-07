@@ -8,7 +8,7 @@ a recursive solution recomputes the same subproblems, storing them
 turns exponential into polynomial. This chapter runs the same
 recurrences three ways, naive, memoized, tabulated, with call
 counters making the difference a number, then builds the canonical
-tables with reconstruction, six languages deep.
+tables with reconstruction, seven languages deep.
 
 == the three fibonaccis
 
@@ -50,14 +50,16 @@ evaluations at 9, and Lua's memo meter reads 19.
 )
 
 The 177 calls against the pair's ten folds is the recognition in
-two numbers, and the listings below run all three roads in six
+two numbers, and the listings below run all three roads in seven
 languages.
 
 #listing("dsa/samples-c/src/Ch17/memo.c", first: 19, last: 57, caption: [c, naive with a call meter, memo arrays, the table, the ladder])
 
-#listing("dsa/samples/src/Ch17/Dp.cs", first: 4, last: 43, caption: [c\#, naive with a call meter, memoized, tabulated])
-
 #listing("dsa/samples-go/ch17/memo.go", first: 6, last: 46, caption: [go, the meter as a pointer, the memo as a map, real evaluations counted])
+
+#listing("dsa/samples-java/src/Ch17/Memo.java", first: 16, last: 56, caption: [java, the static meter, seen-flag memo arrays, the table, the ladder])
+
+#listing("dsa/samples/src/Ch17/Dp.cs", first: 4, last: 43, caption: [c\#, naive with a call meter, memoized, tabulated])
 
 #listing("dsa/samples-js/src/ch17-memo.mjs", first: 7, last: 36, caption: [javascript, meter object, Map memo, fib 78 is the exact ceiling])
 
@@ -77,13 +79,13 @@ the memo is just a cache on wrong math.
 The call-count anchors line up with one deliberate split in what the
 meter counts. At n = 10 the naive tree is 177 calls in C\#,
 JavaScript, Go, and Lua, and the memoized run is 19 calls in Lua,
-every argument touched once. C and Python pin the bigger instance
-instead, fib of 20 at 21891 naive calls against 39 memoized, and C
-adds the warm-cache fact, a second memoized run costs exactly 1
-call. Go counts only real evaluations, the cache probe is free, so
-its memo meter reads 9 at n = 10. The ladder recurrence, one or two
-rungs at a time, is fibonacci shifted by one, and ladder of 10 is 89
-wherever it is pinned.
+every argument touched once. C, Java, and Python pin the bigger
+instance instead, fib of 20 at 21891 naive calls against 39
+memoized, and C and Java add the warm-cache fact, a second memoized
+run costs exactly 1 call. Go counts only real evaluations, the cache
+probe is free, so its memo meter reads 9 at n = 10. The ladder
+recurrence, one or two rungs at a time, is fibonacci shifted by one,
+and ladder of 10 is 89 wherever it is pinned.
 
 #diagram([the same recurrence three ways, the naive tree recomputes, the memo keeps one call per argument, the table keeps a running pair], length: 13pt, {
   // naive fib tree to depth two, repeats shaded; then chain and pair
@@ -200,13 +202,15 @@ open 4 by 4 at 20, and Python reruns the count through a memo.
 })
 
 The 6 against the walled 2 is the pinned pair, and the listings
-below sweep the grid in six languages.
+below sweep the grid in seven languages.
 
 #listing("dsa/samples-c/src/Ch17/gridpaths.c", first: 19, last: 41, caption: [c, one line per cell, the 4x4 double block table pinned])
 
-#listing("dsa/samples/src/Ch17/Dp.cs", first: 45, last: 63, caption: [c\#, grid paths, one line per cell, walls as zeros])
-
 #listing("dsa/samples-go/ch17/gridpaths.go", first: 3, last: 31, caption: [go, first row and column seeded, then the sweep])
+
+#listing("dsa/samples-java/src/Ch17/Gridpaths.java", first: 22, last: 74, caption: [java, the sweep, then the same count through a HashMap memo keyed on packed r,c])
+
+#listing("dsa/samples/src/Ch17/Dp.cs", first: 45, last: 63, caption: [c\#, grid paths, one line per cell, walls as zeros])
 
 #listing("dsa/samples-js/src/ch17-gridpaths.mjs", first: 4, last: 16, caption: [javascript, the add-from-above-and-left loop])
 
@@ -214,13 +218,15 @@ below sweep the grid in six languages.
 
 #listing("dsa/samples-lua/ch17_gridpaths.lua", first: 5, last: 22, caption: [lua, the grid read as strings, a hash walls the cell])
 
-The anchors hold across all six: the open 3 by 3 counts 6, the
+The anchors hold across all seven: the open 3 by 3 counts 6, the
 choose 4 pick 2 of monotone paths, and blocking the center leaves
-exactly 2, the two border routes. C pins a full 4 by 4 table with
-two interior walls and the answer 4, Lua adds the open 4 by 4 at 20
-and the sealed corner at 0, and Python runs the same count a second
-way through a recursive memo, the table and the cache agreeing, which
-is the whole chapter in one fixture.
+exactly 2, the two border routes. C and Java pin a full 4 by 4 table
+with two interior walls and the answer 4, cell for cell, Lua adds
+the open 4 by 4 at 20 and the sealed corner at 0, and Python and
+Java run the same count a second way through a recursive memo, the
+table and the cache agreeing, which is the whole chapter in one
+fixture, Java's memo a `HashMap` keyed on the two coordinates
+packed into one long.
 
 #diagram([grid paths as a table, one line per cell, walls as zeros, the answer in the far corner], length: 13pt, {
   // 3x4 grid, wall at r1c2, answer corner shaded
@@ -295,13 +301,15 @@ fixture.
 })
 
 The 7 rebuilt as items 0 and 1 is the pinned pair, and the
-listings below pack six ways.
+listings below pack seven ways.
 
 #listing("dsa/samples-c/src/Ch17/knapsack.c", first: 23, last: 43, caption: [c, the full table, then the row rolled right to left])
 
-#listing("dsa/samples/src/Ch17/Dp.cs", first: 65, last: 96, caption: [c\#, zero one knapsack with item reconstruction])
-
 #listing("dsa/samples-go/ch17/knapsack.go", first: 9, last: 54, caption: [go, the table with backwalk, the rolled row beside it])
+
+#listing("dsa/samples-java/src/Ch17/Knapsack.java", first: 24, last: 78, caption: [java, the table with its final row pinned, the rolled row, the backwalk])
+
+#listing("dsa/samples/src/Ch17/Dp.cs", first: 65, last: 96, caption: [c\#, zero one knapsack with item reconstruction])
 
 #listing("dsa/samples-js/src/ch17-knapsack.mjs", first: 5, last: 33, caption: [javascript, the table, the backwalk, the rolled row])
 
@@ -317,13 +325,15 @@ differing.
 
 The shared fixture is weights 2, 3, 4, 5 against values 3, 4, 5, 6
 at capacity 5, and the answer 7 with items 0 and 1 taken pins in C,
-Python, and Lua, with Python's second fixture, weights 1, 2, 3
-against values 6, 10, 12, landing the classic 22 with items 1 and 2.
-The rolled row agrees with the full table everywhere it exists, and
-the downward capacity walk is why: sweeping right to left means an
-item can never feed its own cell, which is the one-use rule stated
-as a loop direction. C\# keeps its own fixtures and the fractional
-contrast, Lua brute-forces every mask as a cross-check.
+Java, Python, and Lua, Java pinning the whole final table row 0 0 3
+4 5 7 and interior cells beside, with Python and Java carrying the
+second fixture, weights 1, 2, 3 against values 6, 10, 12, landing
+the classic 22 with items 1 and 2. The rolled row agrees with the
+full table everywhere it exists, and the downward capacity walk is
+why: sweeping right to left means an item can never feed its own
+cell, which is the one-use rule stated as a loop direction. C\#
+keeps its own fixtures and the fractional contrast, Lua brute-forces
+every mask as a cross-check.
 
 #diagram([the knapsack table as memory, cells choosing skip or take, rebuild from the corner], length: 13pt, {
   // three weight 4 items, capacity 8, taken cells shaded
@@ -412,9 +422,11 @@ textbook cases plus symmetry:
 
 #listing("dsa/samples-c/src/Ch17/editdist.c", first: 21, last: 36, caption: [c, the full table, substitution priced 1 or 2])
 
-#listing("dsa/samples/src/Ch17/Dp.cs", first: 130, last: 150, caption: [c\#, unit costs, the min of three neighbors])
-
 #listing("dsa/samples-go/ch17/editdist.go", first: 3, last: 26, caption: [go, borders seeded, the built-in min of three])
+
+#listing("dsa/samples-java/src/Ch17/Editdist.java", first: 16, last: 47, caption: [java, the full table with its final row pinned, subCost a parameter, a recursive brute as oracle])
+
+#listing("dsa/samples/src/Ch17/Dp.cs", first: 130, last: 150, caption: [c\#, unit costs, the min of three neighbors])
 
 #listing("dsa/samples-js/src/ch17-editdist.mjs", first: 4, last: 20, caption: [javascript, the whole table, match free])
 
@@ -424,11 +436,14 @@ textbook cases plus symmetry:
 
 The kitten to sitting anchor, distance 3, holds in every suite. The
 variants split by memory and by price: Lua keeps two rows and swaps
-them, the whole table never exists, C and Python price substitution
-at 2 as a parameter and watch the answer rise to 5, insert plus
-delete arithmetic, and C pins interior cells of the table plus the
-abcdef to azced case at 3. Lua adds the symmetry check on a long
-pair and the bound by the longer side.
+them, the whole table never exists, C, Java, and Python price
+substitution at 2 as a parameter and watch the answer rise to 5,
+insert plus delete arithmetic, and C and Java pin interior cells of
+the table plus the abcdef to azced case at 3, Java holding the whole
+final row 6 6 5 4 3 3 2 3 beside. Lua adds the symmetry check on a
+long pair and the bound by the longer side, and Python and Java
+cross-check the table against the recursive definition on a sweep
+of small pairs.
 
 #diagram([the same table shape under two recurrences, lcs extends the diagonal, edit distance prices three moves], length: 13pt, {
   // lcs of abc against ac; edit distance of ab against its reverse
@@ -513,13 +528,15 @@ Python run the 1, 5, 12 family, where 15 costs 3 against greedy's
 })
 
 The 3 against greedy's 5 is the pinned kill, and the listings
-below count coins six ways.
+below count coins seven ways.
 
 #listing("dsa/samples-c/src/Ch17/coins.c", first: 20, last: 51, caption: [c, minimum coins, combinations, greedy for contrast])
 
-#listing("dsa/samples/src/Ch17/Dp.cs", first: 152, last: 168, caption: [c\#, fewest coins, unreachable marked])
-
 #listing("dsa/samples-go/ch17/coins.go", first: 5, last: 38, caption: [go, min coins with an error, combinations one loop per coin])
+
+#listing("dsa/samples-java/src/Ch17/Coins.java", first: 16, last: 49, caption: [java, the one-million sentinel for impossible, the coin-outer count, greedy for contrast])
+
+#listing("dsa/samples/src/Ch17/Dp.cs", first: 152, last: 168, caption: [c\#, fewest coins, unreachable marked])
 
 #listing("dsa/samples-js/src/ch17-coins.mjs", first: 5, last: 23, caption: [javascript, Infinity for impossible, the coin-outer count])
 
@@ -527,16 +544,18 @@ below count coins six ways.
 
 #listing("dsa/samples-lua/ch17_coins.lua", first: 7, last: 35, caption: [lua, maxinteger for impossible, -1 back out])
 
-The awkward coinage splits into two families, both real: C and
-Python use 1, 5, 12, where amount 15 costs 3 against greedy's 4 and
-amount 16 costs 4 as 5+5+5+1 against 12+1+1+1+1, and C\#,
+The awkward coinage splits into two families, both real: C, Java,
+and Python use 1, 5, 12, where amount 15 costs 3 against greedy's 4
+and amount 16 costs 4 as 5+5+5+1 against 12+1+1+1+1, and C\#,
 JavaScript, and Lua use 1, 5, 11, where 15 costs 3 against greedy's
 5. The canonical trap, coins 1, 3, 4 at amount 6, dp says 3+3 while
-greedy says 4+1+1, pins in C and Python. The combination counter
-puts its coin loop on the outside so order never double counts, and
-its anchors are 4 ways for 1, 2, 3 at 4 and 5 ways for 1, 5, 12 at
-15. The unreachable channel is per language again, minus one in C\#
-and Lua, null in JavaScript, None in Python, an error in Go.
+greedy says 4+1+1, pins in C, Java, and Python. The combination
+counter puts its coin loop on the outside so order never double
+counts, and its anchors are 4 ways for 1, 2, 3 at 4 and 5 ways for
+1, 5, 12 at 15. The unreachable channel is per language again,
+minus one in C\# and Lua, null in JavaScript, None in Python, an
+error in Go, and the shared one-million sentinel in C and Java,
+large enough that no book-size arithmetic ever crosses it.
 
 #callout("note", "when greedy fails, this is why", [
   Greedy makes one irreversible choice per step. It is optimal when
@@ -628,9 +647,11 @@ listings below climb both roads.
 
 #listing("dsa/samples-c/src/Ch17/lis.c", first: 18, last: 54, caption: [c, the n^2 table with reconstruction, the patience tails])
 
-#listing("dsa/samples/src/Ch19/AdvDp.cs", first: 239, last: 275, caption: [c\#, the tails ladder with parent links, the advanced chapter's build])
-
 #listing("dsa/samples-go/ch17/lis.go", first: 5, last: 55, caption: [go, the quadratic dp, then tails over slices.BinarySearch])
+
+#listing("dsa/samples-java/src/Ch17/Lis.java", first: 22, last: 75, caption: [java, the quadratic dp with parents, the patience tails by a hand-rolled lower bound])
+
+#listing("dsa/samples/src/Ch19/AdvDp.cs", first: 239, last: 275, caption: [c\#, the tails ladder with parent links, the advanced chapter's build])
 
 #listing("dsa/samples-js/src/ch17-lis.mjs", first: 7, last: 45, caption: [javascript, both roads return a subsequence, different valid ones])
 
@@ -639,16 +660,18 @@ listings below climb both roads.
 #listing("dsa/samples-lua/ch17_lis.lua", first: 7, last: 48, caption: [lua, the parent walk reversed, tails by integer midpoint])
 
 Two fixtures cover the field and every suite pins length 4 on both:
-3, 1, 4, 1, 5, 9, 2, 6, where C rebuilds 3, 4, 5, 9 from the
-parents, and 10, 9, 2, 5, 3, 7, 101, 18, where Python and Lua pin
-the run 2, 5, 7, 101 and the C\# suite of chapter 19 does its parent
-walk on the same array. JavaScript's file says the interesting part
-out loud: its two roads return different subsequences, and both are
-valid answers, which is why reconstruction is checked as a property,
-strictly increasing, correct length, drawn from the input. The
-all-equal array gives length 1 everywhere, strictness is one
-comparison, and the falling array gives 1 with the first element as
-the witness.
+3, 1, 4, 1, 5, 9, 2, 6, where C and Java rebuild 3, 4, 5, 9 from
+the parents, and 10, 9, 2, 5, 3, 7, 101, 18, where Python, Java,
+and Lua pin the run 2, 5, 7, 101 and the C\# suite of chapter 19
+does its parent walk on the same array. JavaScript's file says the
+interesting part out loud: its two roads return different
+subsequences, and both are valid answers, which is why
+reconstruction is checked as a property, strictly increasing,
+correct length, drawn from the input. Java runs the two roads
+against each other over a sweep of arrays, the agreement the
+property stands on. The all-equal array gives length 1 everywhere,
+strictness is one comparison, and the falling array gives 1 with the
+first element as the witness.
 
 #diagram([two roads to length 4 on the same array, the quadratic parents chain 3 4 5 9, the patience tails settle at 1 2 5 6], length: 13pt, {
   cdraw.content((5.6, 7.6), [the quadratic dp on 3 1 4 1 5 9 2 6], size: 6.5pt)
@@ -693,7 +716,7 @@ When the state is a set of at most about twenty things, the subset
 becomes an integer bitmask and the table is two to the n. The
 assignment problem, one worker per task, is the canonical case.
 
-The dry run: the fixtures are identical literals in all six suites.
+The dry run: the fixtures are identical literals in all seven suites.
 The 3 by 3 cost matrix reads 1, 100, 100, then 2, 50, 60, then 3,
 40, 80, pinned at 101 against the greedy row walk's 131, and the 4
 by 4 reads 7, 3, 9, 2, then 4, 8, 3, 6, then 6, 7, 2, 5, then 9,
@@ -744,7 +767,7 @@ the lone worker at 5 and the 2 by 2 diagonal at 2, Lua its own 2 by
 })
 
 The 101 against greedy's 131 is the pinned spread, and the listings
-below sweep the subsets six ways.
+below sweep the subsets seven ways.
 
 #listing("dsa/samples/src/Ch17/Dp.cs", first: 170, last: 197, caption: [assignment over subsets, popcount picks the worker])
 
@@ -761,6 +784,8 @@ provable ratios in place of exact answers.
 
 #listing("dsa/samples-go/ch17/assignment.go", first: 10, last: 60, caption: [go, popcount and the sweep, relaxations counted before the bit test])
 
+#listing("dsa/samples-java/src/Ch17/Assignment.java", first: 21, last: 49, caption: [java, Integer.bitCount names the worker, rows and attempts returned in a record])
+
 #listing("dsa/samples-js/src/ch17-assignment.mjs", first: 1, last: 26, caption: [javascript, the worker counted by a bit loop, Infinity for unreachable])
 
 #listing("dsa/samples-py/src/Ch17/assignment.py", first: 16, last: 38, caption: [python, bit_count names the worker, None for unreachable masks])
@@ -768,13 +793,14 @@ provable ratios in place of exact answers.
 #listing("dsa/samples-lua/ch17_assignment.lua", first: 6, last: 41, caption: [lua, popcount by hand, nil marks the unreachable masks])
 
 Measured across the suites: the optimum 101 with greedy at 131 and
-the 4 by 4 at 10 pin in all six, every sibling cross-checking the
+the 4 by 4 at 10 pin in all seven, every sibling cross-checking the
 table against a brute-force walk over permutations. The meters agree
 on the rows, every reachable mask touched, and on the attempts, 24
-at n = 3 in C, Go, JavaScript, and Python where the bump lands once
-per (mask, task) pair, Lua counting only evaluated free bits for 12.
-Popcount comes from BitOperations in C\#, bit_count in Python, and a
-hand-rolled bit loop in the other four.
+at n = 3 in C, Go, Java, JavaScript, and Python where the bump lands
+once per (mask, task) pair, Lua counting only evaluated free bits
+for 12. Popcount comes from BitOperations in C\#, `Integer.bitCount`
+in Java, bit_count in Python, and a hand-rolled bit loop in the
+other three.
 
 #diagram([the subset lattice as the state space, the mask is which tasks are done, popcount picks the next worker], length: 13pt, {
   // the n = 3 lattice, every edge adds one task bit
@@ -819,7 +845,7 @@ hand-rolled bit loop in the other four.
   cdraw.content((17.5, 0.6), [exact agreement brute forced at n = 3], size: 6pt)
 })
 
-== across the six languages
+== across the seven languages
 
 The build sizes count non-comment source lines. The first table
 covers the chapter's original featured files, the C\# row counting
@@ -833,12 +859,13 @@ build lives:
   [c], [343], [libc only], [memo arrays sized 64, fib(50) in long long, ladder and fib cross-tied],
   [c\#], [231], [bcl only], [Dictionary memo, BitOperations.PopCount for the subset dp, unreachable coins read minus one],
   [go], [232], [slices], [slices.BinarySearch inside lis tails, map memo counting real evaluations only],
+  [java], [517], [jdk 27 stdlib], [seen-flag long arrays mirror C's memo, the gridpaths memo a HashMap keyed on r and c packed into one long, the coins sentinel shared with C],
   [javascript], [132], [node stdlib], [fib(78) = 8944394323798636 is the last exact Number, stated at the top of the memo file],
   [python], [299], [stdlib only], [dict memo by hand, functools.cache named as the counterpart, brute cross-checks in three files],
   [lua], [346], [lib.lua harness], [two-row edit distance never builds the table, integer midpoint search, mask brute force],
 )
 
-The assignment sweep lands as its own file in the five sibling
+The assignment sweep lands as its own file in the six sibling
 trees, the C\# build staying inside the chapter's one Dp.cs:
 
 #table(
@@ -848,6 +875,7 @@ trees, the C\# build staying inside the chapter's one Dp.cs:
   [c], [115], [libc only], [popcount by hand, rows and attempts through out parameters, a next-permutation oracle and greedy contrast in the same file],
   [c\#], [26], [bcl only], [AssignmentCost inside Dp.cs, BitOperations.PopCount, the MaxValue guard skips dead masks],
   [go], [62], [slices], [the meter behind a pointer, relaxations counted before the bit test, greedy rows beside it],
+  [java], [113], [jdk 27 stdlib], [Integer.bitCount names the worker, the unreachable guard skips dead masks, rows and attempts ride a record back],
   [javascript], [21], [node stdlib], [the worker counted by a bit loop, Infinity for unreachable, an optional meter object],
   [python], [73], [stdlib only], [None for unreachable masks, bit_count names the worker, permutation oracle and greedy rows in the checks],
   [lua], [111], [lib.lua harness], [nil marks unreachable, the relax meter bumps on free bits only, a factorial-walk oracle],
@@ -857,7 +885,8 @@ sources: learn.microsoft.com, `Dictionary<TKey,TValue>` used by the
 memo, `BitOperations.PopCount`, `Array.Fill`, accessed 2026-09-08,
 go.dev/pkg/slices for `BinarySearch`, accessed 2026-09-14. Sample
 behavior verified by `make verify-csharp`, 12 tests in chapter 17 of
-the samples suite. The six-language layer verifies the same way: 7 C
-programs with 97 embedded checks under `make verify-c`, 26 Go tests,
-22 `node --test` cases, 76 Python checks across 7 files, and 32 Lua
-checks under `run.lua`.
+the samples suite. The seven-language layer verifies the same way:
+7 C programs with 97 embedded checks under `make verify-c`, 7 Ch17
+java programs with 118 checks under `run-java-samples`, 26 Go
+tests, 22 `node --test` cases, 76 Python checks across 7 files, and
+32 Lua checks under `run.lua`.

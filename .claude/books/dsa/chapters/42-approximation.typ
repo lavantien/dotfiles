@@ -56,11 +56,12 @@ built in-test.
   the algorithm under test.
 
 The oracles pin the denominators, cover 3 and knapsack 1300, and the
-listings below build the cover lane in 6 languages.
+listings below build the cover lane in 7 languages.
 
 #listing("dsa/samples-c/src/Ch42/ratio.c", first: 35, last: 61, caption: [c, the 3 disjoint edges, the cover test, subsets in size order])
-#listing("dsa/samples/src/Ch42/Ratio.cs", first: 56, last: 80, caption: [c\#, the subset search, size then lexicographic, first cover wins])
 #listing("dsa/samples-go/ch42/ratio.go", first: 17, last: 42, caption: [go, the mask oracle, k ascending, ones count filtering each size])
+#listing("dsa/samples-java/src/Ch42/Ratio.java", first: 35, last: 62, caption: [java, the 3 disjoint edges, the cover test, subsets in size order])
+#listing("dsa/samples/src/Ch42/Ratio.cs", first: 56, last: 80, caption: [c\#, the subset search, size then lexicographic, first cover wins])
 #listing("dsa/samples-js/src/ch42-ratio.mjs", first: 10, last: 35, caption: [javascript, the recursive subset walk with the cover test inside])
 #listing("dsa/samples-py/src/Ch42/ratio.py", first: 32, last: 53, caption: [python, combinations as the oracle, the pinned cover 3 beside it])
 #listing("dsa/samples-lua/ch42_ratio.lua", first: 11, last: 40, caption: [lua, the same combinations recursion over 1-based nodes])
@@ -136,11 +137,12 @@ asserted by all 6 suites as feasibility first and ratio second.
 
 The 6 over 3 and the 1290 under 1300 are the 2 pinned shapes, and
 the listings below carry the exact lanes and the contract checks in
-6 languages.
+7 languages.
 
 #listing("dsa/samples-c/src/Ch42/ratio.c", first: 63, last: 90, caption: [c, the matching cover, feasibility, then 6 against 2 x 3 exactly])
-#listing("dsa/samples/src/Ch42/Ratio.cs", first: 27, last: 54, caption: [c\#, the mask knapsack oracle, withinMin, the cross-multiplied withinMax])
 #listing("dsa/samples-go/ch42/ratio.go", first: 44, last: 56, caption: [go, the dp knapsack lane, 1300 in 13 lines])
+#listing("dsa/samples-java/src/Ch42/Ratio.java", first: 63, last: 95, caption: [java, the matching cover, feasibility, then 6 against 2 x 3 exactly])
+#listing("dsa/samples/src/Ch42/Ratio.cs", first: 27, last: 54, caption: [c\#, the mask knapsack oracle, withinMin, the cross-multiplied withinMax])
 #listing("dsa/samples-js/src/ch42-ratio.mjs", first: 37, last: 61, caption: [javascript, the mask oracle with the 2 contract predicates])
 #listing("dsa/samples-py/src/Ch42/ratio.py", first: 55, last: 79, caption: [python, dp and mask oracles side by side, both landing 1300])
 #listing("dsa/samples-lua/ch42_ratio.lua", first: 42, last: 83, caption: [lua, the dp optimum then the density greedy at 1290, cross-multiplied])
@@ -232,11 +234,12 @@ checks.
 })
 
 The table and the figure agree with every suite, and the listings
-below run the scan in 6 languages.
+below run the scan in 7 languages.
 
 #listing("dsa/samples-c/src/Ch42/vc.c", first: 68, last: 90, caption: [c, the scan over the 4 pinned cases, feasibility, oracle, ratio])
-#listing("dsa/samples/src/Ch42/Vc.cs", first: 14, last: 34, caption: [c\#, the greedy maximal matching returning cover and matching])
 #listing("dsa/samples-go/ch42/vc.go", first: 3, last: 21, caption: [go, the whole engine, cover as a bool slice, matched edges beside it])
+#listing("dsa/samples-java/src/Ch42/Vc.java", first: 66, last: 90, caption: [java, the scan over the 4 pinned cases, feasibility, oracle, ratio])
+#listing("dsa/samples/src/Ch42/Vc.cs", first: 14, last: 34, caption: [c\#, the greedy maximal matching returning cover and matching])
 #listing("dsa/samples-js/src/ch42-vc.mjs", first: 8, last: 28, caption: [javascript, the scan and the cover test, first-fit edge order])
 #listing("dsa/samples-py/src/Ch42/vc.py", first: 18, last: 41, caption: [python, the matching, the cover test, the combinations oracle])
 #listing("dsa/samples-lua/ch42_vc.lua", first: 15, last: 49, caption: [lua, the scan and the brute oracle, plus the maximum-matching contrast])
@@ -332,11 +335,12 @@ feasibility, and the brute-force optimum over family subsets.
 })
 
 The 4 against 2 is the pinned landing, and the listings below run
-the greedy loop and the subset oracle in 6 languages.
+the greedy loop and the subset oracle in 7 languages.
 
 #listing("dsa/samples-c/src/Ch42/setcover.c", first: 82, last: 104, caption: [c, the greedy loop over bitmasks, the pinned coverages 8, 4, 2, 1])
-#listing("dsa/samples/src/Ch42/Setcover.cs", first: 13, last: 56, caption: [c\#, greedy with the per-step coverage table recorded beside the picks])
 #listing("dsa/samples-go/ch42/setcover.go", first: 24, last: 42, caption: [go, coverage counts as popcounts over the uncovered mask])
+#listing("dsa/samples-java/src/Ch42/Setcover.java", first: 76, last: 99, caption: [java, the greedy loop over bitmasks, the pinned coverages 8, 4, 2, 1])
+#listing("dsa/samples/src/Ch42/Setcover.cs", first: 13, last: 56, caption: [c\#, greedy with the per-step coverage table recorded beside the picks])
 #listing("dsa/samples-js/src/ch42-setcover.mjs", first: 8, last: 33, caption: [javascript, the same greedy, steps and counts returned together])
 #listing("dsa/samples-py/src/Ch42/setcover.py", first: 29, last: 54, caption: [python, the greedy and the combinations oracle landing 4 against 2])
 #listing("dsa/samples-lua/ch42_setcover.lua", first: 26, last: 48, caption: [lua, the same loop, ties to the earliest set in family order])
@@ -448,11 +452,12 @@ and c carries them as comments beside the pinned lengths.
 })
 
 The ring collapses to its own optimum, the hex pays 1.2, and the
-listings below double the tree and walk it in 6 languages.
+listings below double the tree and walk it in 7 languages.
 
 #listing("dsa/samples-c/src/Ch42/tsp2x.c", first: 111, last: 157, caption: [c, the doubled multigraph with parallel edge ids, hierholzer, the shortcut])
-#listing("dsa/samples/src/Ch42/Tsp2x.cs", first: 123, last: 166, caption: [c\#, the euler walk on a stack of arcs, the shortcut keeping first visits])
 #listing("dsa/samples-go/ch42/tsp2x.go", first: 55, last: 103, caption: [go, the arc list euler tour and the shortcut over first visits])
+#listing("dsa/samples-java/src/Ch42/Tsp2x.java", first: 111, last: 153, caption: [java, the doubled multigraph with parallel edge ids, hierholzer, the shortcut])
+#listing("dsa/samples/src/Ch42/Tsp2x.cs", first: 123, last: 166, caption: [c\#, the euler walk on a stack of arcs, the shortcut keeping first visits])
 #listing("dsa/samples-js/src/ch42-tsp2x.mjs", first: 80, last: 123, caption: [javascript, the walk, the shortcut, the adjacency build with doubled ids])
 #listing("dsa/samples-py/src/Ch42/tsp2x.py", first: 59, last: 101, caption: [python, euler by stack, shortcut, the double tree assembly])
 #listing("dsa/samples-lua/ch42_tsp2x.lua", first: 66, last: 117, caption: [lua, the same walk and shortcut, the tour length recomputed])
@@ -570,11 +575,12 @@ the ratio as 2 x length less than or equal 3 x opt.
 
 All 3 fixtures land on their optima here, which is the honest
 reading of 1.5 at these sizes, and the listings below build the
-matching and the union in 6 languages.
+matching and the union in 7 languages.
 
 #listing("dsa/samples-c/src/Ch42/christofides.c", first: 109, last: 130, caption: [c, the minimum perfect matching over odd-set permutations])
-#listing("dsa/samples/src/Ch42/Christofides.cs", first: 16, last: 55, caption: [c\#, the matching recursion, pairs off consecutive elements of the permutation])
 #listing("dsa/samples-go/ch42/christofides.go", first: 12, last: 41, caption: [go, fix the smallest odd vertex, try every partner ascending])
+#listing("dsa/samples-java/src/Ch42/Christofides.java", first: 109, last: 130, caption: [java, the minimum perfect matching over odd-set permutations])
+#listing("dsa/samples/src/Ch42/Christofides.cs", first: 16, last: 55, caption: [c\#, the matching recursion, pairs off consecutive elements of the permutation])
 #listing("dsa/samples-js/src/ch42-christofides.mjs", first: 11, last: 38, caption: [javascript, the same permutation minimum, first strict winner])
 #listing("dsa/samples-py/src/Ch42/christofides.py", first: 39, last: 66, caption: [python, prim again, the itertools permutations matching])
 #listing("dsa/samples-lua/ch42_christofides.lua", first: 66, last: 94, caption: [lua, the matching recursion over the odd set, its own euler walk and shortcut])
@@ -636,11 +642,12 @@ the k = 2 seed mask.
 
 The 1290 under 1300 and the k = 2 recovery are pinned in every
 tree, and the listings below build the density order, the fill, and
-the enumeration in 6 languages.
+the enumeration in 7 languages.
 
 #listing("dsa/samples-c/src/Ch42/ptas.c", first: 44, last: 77, caption: [c, the cross-multiplied insertion sort, the fill from a seeded subset])
-#listing("dsa/samples/src/Ch42/Ptas.cs", first: 19, last: 69, caption: [c\#, density order by insertion, the fill, the best-single refinement])
 #listing("dsa/samples-go/ch42/ptas.go", first: 12, last: 57, caption: [go, the exact comparator and the greedy with its refinement])
+#listing("dsa/samples-java/src/Ch42/Ptas.java", first: 44, last: 80, caption: [java, the cross-multiplied insertion sort in long, the fill from a seeded subset])
+#listing("dsa/samples/src/Ch42/Ptas.cs", first: 19, last: 69, caption: [c\#, density order by insertion, the fill, the best-single refinement])
 #listing("dsa/samples-js/src/ch42-ptas.mjs", first: 13, last: 42, caption: [javascript, the comparator as cross-multiplied products, the fill])
 #listing("dsa/samples-py/src/Ch42/ptas.py", first: 36, last: 75, caption: [python, the selection-order density walk, the fill, the pinned 1290])
 #listing("dsa/samples-lua/ch42_ptas.lua", first: 26, last: 52, caption: [lua, the sort comparator and the greedy, picks as 1-based indices])
@@ -734,11 +741,12 @@ k, the value, feasibility, and the bound per eps.
 })
 
 The ladders are the pinned values of both instances, and the
-listings below run the scaled table in 6 languages.
+listings below run the scaled table in 7 languages.
 
 #listing("dsa/samples-c/src/Ch42/ptas.c", first: 110, last: 157, caption: [c, the fptas whole: k from the eps pair, scaled profits, dp2, rebuild])
-#listing("dsa/samples/src/Ch42/Ptas.cs", first: 144, last: 190, caption: [c\#, the min-weight table over scaled profit, the backward rebuild])
 #listing("dsa/samples-go/ch42/ptas.go", first: 125, last: 160, caption: [go, the scale factor, the fill, the largest feasible s])
+#listing("dsa/samples-java/src/Ch42/Ptas.java", first: 118, last: 164, caption: [java, the fptas whole: k from the eps pair as num over den, scaled profits, dp2, the rebuild])
+#listing("dsa/samples/src/Ch42/Ptas.cs", first: 144, last: 190, caption: [c\#, the min-weight table over scaled profit, the backward rebuild])
 #listing("dsa/samples-js/src/ch42-ptas.mjs", first: 85, last: 130, caption: [javascript, scaled dp with the take table, value recomputed at the end])
 #listing("dsa/samples-py/src/Ch42/ptas.py", first: 107, last: 136, caption: [python, the same table, integer division on profits, both instances pinned])
 #listing("dsa/samples-lua/ch42_ptas.lua", first: 103, last: 148, caption: [lua, the scaled dp, 1 << 30 as the sentinel, k pinned per eps])
@@ -821,11 +829,12 @@ the items and stay under the cap on every bin.
 })
 
 The 6 against 5 and the pinned loads carry the section, and the
-listings below ship the 3 heuristics and the oracle in 6 languages.
+listings below ship the 3 heuristics and the oracle in 7 languages.
 
 #listing("dsa/samples-c/src/Ch42/binpack.c", first: 30, last: 75, caption: [c, first fit, the stable decreasing sort, next fit])
-#listing("dsa/samples/src/Ch42/Binpack.cs", first: 15, last: 54, caption: [c\#, the 3 scans over a growing bin list])
 #listing("dsa/samples-go/ch42/binpack.go", first: 7, last: 43, caption: [go, the scans and the stable non-increasing sort])
+#listing("dsa/samples-java/src/Ch42/Binpack.java", first: 27, last: 77, caption: [java, first fit, the stable decreasing sort, next fit])
+#listing("dsa/samples/src/Ch42/Binpack.cs", first: 15, last: 54, caption: [c\#, the 3 scans over a growing bin list])
 #listing("dsa/samples-js/src/ch42-binpack.mjs", first: 9, last: 39, caption: [javascript, the same 3 rules over plain arrays])
 #listing("dsa/samples-py/src/Ch42/binpack.py", first: 14, last: 37, caption: [python, the fill with the for-else open, next fit, one flag for ffd])
 #listing("dsa/samples-lua/ch42_binpack.lua", first: 10, last: 48, caption: [lua, the insertion-sorted decreasing pass, the 2 scans])
@@ -903,11 +912,12 @@ the side, the oracle over all 32 assignments, and the bound.
 })
 
 The 5 against 6 with the bound intact is the pinned landing, and the
-listings below run the flip driver in 6 languages.
+listings below run the flip driver in 7 languages.
 
 #listing("dsa/samples-c/src/Ch42/maxcut.c", first: 30, last: 73, caption: [c, the oracle over 32 sides, the flip loop with its guard, the checks])
-#listing("dsa/samples/src/Ch42/Maxcut.cs", first: 25, last: 47, caption: [c\#, the pass over the fixed order, keep the flip only when it gains])
 #listing("dsa/samples-go/ch42/maxcut.go", first: 7, last: 33, caption: [go, the same driver, the order a parameter, the brute beside it])
+#listing("dsa/samples-java/src/Ch42/Maxcut.java", first: 28, last: 70, caption: [java, the oracle over 32 sides, the flip loop with its guard, the checks])
+#listing("dsa/samples/src/Ch42/Maxcut.cs", first: 25, last: 47, caption: [c\#, the pass over the fixed order, keep the flip only when it gains])
 #listing("dsa/samples-js/src/ch42-maxcut.mjs", first: 16, last: 34, caption: [javascript, the flip pass and the reverted probe])
 #listing("dsa/samples-py/src/Ch42/maxcut.py", first: 30, last: 50, caption: [python, the cut, the local search, the flip-stability check below])
 #listing("dsa/samples-lua/ch42_maxcut.lua", first: 25, last: 44, caption: [lua, the driver mirrored from chapter 41, the revert path])
@@ -1021,25 +1031,25 @@ against an oracle in the same test, and a result that cannot say
 both of those things about itself is not an approximation, it is a
 guess.
 
-== across the six languages
+== across the seven languages
 
 Featured build size counted as non-blank, non-comment source lines
-of the chapter's 8 sample files per language in the c, go,
+of the chapter's 8 sample files per language in the c, go, java,
 javascript, python, and lua trees, the c\# row counting non-blank
 lines of its 8 files, go test files excluded:
 
 #table(
-  columns: (auto, auto, auto, auto, auto, auto, 1.6fr),
+  columns: (auto, auto, auto, auto, auto, auto, auto, auto, 1.6fr),
   inset: 4pt,
-  table.header([*stem*], [*c*], [*c\#*], [*go*], [*js*], [*py*], [*lua*], [*note*]),
-  [ratio], [109], [76], [44], [48], [55], [90], [serves sections 1 and 2, oracle half and contract half],
-  [vc], [80], [46], [15], [20], [59], [105], [go leans on ratio.go for the oracle and feasibility],
-  [setcover], [102], [89], [62], [43], [57], [113], [bitmask ground in c and go, sets elsewhere],
-  [tsp2x], [182], [172], [97], [121], [106], [181], [matrices restated per file in c, python, lua],
-  [christofides], [218], [92], [54], [56], [115], [218], [c\# and js import the tsp2x and ch41 helpers],
-  [ptas], [182], [187], [152], [115], [127], [183], [serves sections 7 and 8, greedy and both tables],
-  [binpack], [115], [85], [63], [56], [72], [121], [the oracle is branch and bound at n up to 9],
-  [maxcut], [58], [64], [43], [39], [57], [73], [the thinnest stem, one driver and one oracle],
+  table.header([*stem*], [*c*], [*go*], [*java*], [*c\#*], [*javascript*], [*python*], [*lua*], [*note*]),
+  [ratio], [109], [44], [112], [76], [48], [55], [90], [serves sections 1 and 2, oracle half and contract half],
+  [vc], [80], [15], [80], [46], [20], [59], [105], [go leans on ratio.go for the oracle and feasibility],
+  [setcover], [102], [62], [94], [89], [43], [57], [113], [bitmask ground in c and go, sets elsewhere],
+  [tsp2x], [182], [97], [174], [172], [121], [106], [181], [matrices restated per file in c, python, lua],
+  [christofides], [218], [54], [208], [92], [56], [115], [218], [c\# and js import the tsp2x and ch41 helpers],
+  [ptas], [182], [152], [183], [187], [115], [127], [183], [serves sections 7 and 8, greedy and both tables],
+  [binpack], [115], [63], [119], [85], [56], [72], [121], [the oracle is branch and bound at n up to 9],
+  [maxcut], [58], [43], [56], [64], [39], [57], [73], [the thinnest stem, one driver and one oracle],
 )
 
 The small numbers are sharing. Go's vc is 15 source lines because
@@ -1053,7 +1063,10 @@ javascript imports eulerWalk, mstPrim, and shortcut across the
 stem boundary the same way. C, python, and lua restate the
 matrices and the walkers per file, 3 trees times 8 files, which is
 why their columns run high, lua adding the 1-based index adjustments
-and the run.lua check rows on top.
+and the run.lua check rows on top. Java restates the same way, every
+stem standalone, prim and the euler walk rebuilt inside tsp2x and
+christofides rather than imported, and its density and ratio
+comparisons ride long products cross-multiplied, never doubles.
 
 The corpus placement is honest silence: the icpc book's mined
 finals problems all yielded to exact algorithms, so no chapter
@@ -1080,7 +1093,8 @@ treatments. P. Slavik, "A tight analysis of the greedy algorithm
 for set cover", Journal of Algorithms 25, 1997, the exact greedy
 worst case named in section 4. The bin packing bounds follow
 D. S. Johnson's 1973 thesis and G. Dosa's 2007 tightening of the
-additive constant. Sample behavior verified by the 6 suite gates
-scoped to chapter 42: c 8 files and 8 checks, c\# 24 facts, go 17
-test functions, javascript 24 tests across 8 suites, python 8 files
-and 8 checks, lua 37 checks, zero skipped.
+additive constant. Sample behavior verified by the 7 suite gates
+scoped to chapter 42: c 8 files and 8 checks, go 17 test functions,
+java 8 files and 224 checks under run-java-samples, c\# 24 facts,
+javascript 24 tests across 8 suites, python 8 files and 8 checks, lua
+37 checks, zero skipped.

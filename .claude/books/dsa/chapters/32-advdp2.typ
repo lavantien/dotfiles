@@ -30,7 +30,7 @@ then hands each half its narrowed window.
 
 The dry run: the fixture is the cut weights 4, 2, 7, 1, 5, 3 at 20
 per segment, asserted by the C\# suite with the same layers and
-optima pinned in the C and Python suites.
+optima pinned in the C, Java, and Python suites.
 
 + The prefix sums fold 4, 4 + 2 = 6, 6 + 7 = 13, 13 + 1 = 14,
   14 + 5 = 19, 19 + 3 = 22.
@@ -75,11 +75,12 @@ optima pinned in the C and Python suites.
 })
 
 The 224 closes the ladder at 39 evaluations against 45, and the
-listings below fill the layers in six languages.
+listings below fill the layers in seven languages.
 
 #listing("dsa/samples-c/src/Ch32/dncdp.c", first: 34, last: 55, caption: [c, the recursion: midpoint scan inside the inherited window, halves narrowed by bestj])
-#listing("dsa/samples/src/Ch32/DncDp.cs", first: 37, last: 61, caption: [c\#, the recursion as a local function over the two layer arrays])
 #listing("dsa/samples-go/ch32/dncdp.go", first: 42, last: 68, caption: [go, the closure recursion, infeasible candidates skipped])
+#listing("dsa/samples-java/src/Ch32/Dncdp.java", first: 32, last: 51, caption: [java, the recursion: midpoint scan inside the inherited window, halves narrowed by bestj])
+#listing("dsa/samples/src/Ch32/DncDp.cs", first: 37, last: 61, caption: [c\#, the recursion as a local function over the two layer arrays])
 #listing("dsa/samples-js/src/ch32-dncdp.mjs", first: 67, last: 90, caption: [javascript, the recursion, the last segment j to mid-1])
 #listing("dsa/samples-py/src/Ch32/dncdp.py", first: 32, last: 53, caption: [python, the recursion and the per-layer entry call])
 #listing("dsa/samples-lua/ch32_dncdp.lua", first: 56, last: 73, caption: [lua, the recursion, 1-based elements threaded through the window])
@@ -150,7 +151,7 @@ of the same shape. The windows shrink the root search so hard that
 each of the O(n^2) states pays O(1) amortized consultation.
 
 The dry run: the fixture is the access weights 4, 2, 6, 3, 5,
-asserted by the C\# suite with the same 39 and 18 in the C and
+asserted by the C\# suite with the same 39 and 18 in the C, Java, and
 Python suites.
 
 + The length-1 spans root themselves, costs 4, 2, 6, 3, 5 on the
@@ -180,11 +181,12 @@ Python suites.
 )
 
 The full span pays one candidate for the pinned 39, and the
-listings below fill the windows in six languages.
+listings below fill the windows in seven languages.
 
 #listing("dsa/samples-c/src/Ch32/knuth.c", first: 38, last: 65, caption: [c, the length loop with the root window, candidates metered])
-#listing("dsa/samples/src/Ch32/Knuth.cs", first: 32, last: 50, caption: [c\#, the window loop, the root table filled beside the cost])
 #listing("dsa/samples-go/ch32/knuth.go", first: 21, last: 42, caption: [go, the diagonal and length loops, window from the root table])
+#listing("dsa/samples-java/src/Ch32/Knuth.java", first: 38, last: 62, caption: [java, the length loop with the root window, candidates metered])
+#listing("dsa/samples/src/Ch32/Knuth.cs", first: 32, last: 50, caption: [c\#, the window loop, the root table filled beside the cost])
 #listing("dsa/samples-js/src/ch32-knuth.mjs", first: 19, last: 47, caption: [javascript, diagonal init then the length loop, r bounded by the two roots])
 #listing("dsa/samples-py/src/Ch32/knuth.py", first: 26, last: 43, caption: [python, the length loop, the window range from the root table])
 #listing("dsa/samples-lua/ch32_knuth.lua", first: 34, last: 53, caption: [lua, the length loop, the monotone window in one range])
@@ -287,11 +289,12 @@ the domino ladder 2, 3, 5, 8 pinned beside it.
 })
 
 The sweep closes at the pinned 8 over all four rows, and the
-listings below carry both machines in six languages.
+listings below carry both machines in seven languages.
 
 #listing("dsa/samples-c/src/Ch32/brokenprofile.c", first: 27, last: 55, caption: [c, the fill recursion, vertical pairs or horizontal protrusions])
-#listing("dsa/samples/src/Ch32/BrokenProfile.cs", first: 44, last: 77, caption: [c\#, the histogram stack half, the fill recursion above it])
 #listing("dsa/samples-go/ch32/brokenprofile.go", first: 7, last: 37, caption: [go, the fill recursion inside the column loop])
+#listing("dsa/samples-java/src/Ch32/Brokenprofile.java", first: 25, last: 53, caption: [java, the fill recursion over array masks, vertical pairs or horizontal protrusions])
+#listing("dsa/samples/src/Ch32/BrokenProfile.cs", first: 44, last: 77, caption: [c\#, the histogram stack half, the fill recursion above it])
 #listing("dsa/samples-js/src/ch32-brokenprofile.mjs", first: 9, last: 34, caption: [javascript, the fill over map-keyed mask counts])
 #listing("dsa/samples-py/src/Ch32/brokenprofile.py", first: 14, last: 35, caption: [python, the fill recursion, dict masks])
 #listing("dsa/samples-lua/ch32_brokenprofile.lua", first: 8, last: 32, caption: [lua, the fill, protrusions carried as bits])
@@ -416,11 +419,12 @@ at cost 5 with the final multiset 2, 2, 1, 1 and the shift trace
 })
 
 The trace closes at the pinned pair, cost 5 and heap 2, 2, 1, 1,
-and the listings below pay the crossings in six languages.
+and the listings below pay the crossings in seven languages.
 
 #listing("dsa/samples-c/src/Ch32/slopetrick.c", first: 84, last: 105, caption: [c, the one-heap loop, the payment and the lazy repush])
-#listing("dsa/samples/src/Ch32/SlopeTrick.cs", first: 23, last: 41, caption: [c\#, the payment loop over a PriorityQueue as a negated max-heap])
 #listing("dsa/samples-go/ch32/slopetrick.go", first: 80, last: 92, caption: [go, slopeRun, the heap.Push and Pop pair at the crossing])
+#listing("dsa/samples-java/src/Ch32/Slopetrick.java", first: 87, last: 107, caption: [java, the one-heap loop over the hand-rolled long max-heap, payment and lazy repush])
+#listing("dsa/samples/src/Ch32/SlopeTrick.cs", first: 23, last: 41, caption: [c\#, the payment loop over a PriorityQueue as a negated max-heap])
 #listing("dsa/samples-js/src/ch32-slopetrick.mjs", first: 71, last: 85, caption: [javascript, the loop over the MaxHeap class])
 #listing("dsa/samples-py/src/Ch32/slopetrick.py", first: 23, last: 35, caption: [python, the max-heap by negation, the repush after the payment])
 #listing("dsa/samples-lua/ch32_slopetrick.lua", first: 58, last: 76, caption: [lua, the loop with the trace table, the shift recorded per element])
@@ -508,12 +512,13 @@ asserted by the C\# suite at V = 4.5, 4, 3, 2, 1.
 )
 
 The fifth sweep lands the pinned 4.5, 4, 3, 2, 1 and the sixth
-changes nothing, and the listings below sweep the ladder in six
+changes nothing, and the listings below sweep the ladder in seven
 languages.
 
 #listing("dsa/samples-c/src/Ch32/valueiter.c", first: 24, last: 40, caption: [c, one gauss-seidel sweep ascending, the max delta returned])
-#listing("dsa/samples/src/Ch32/ValueIter.cs", first: 15, last: 44, caption: [c\#, the generic sweep over an action table, walk and gamble supplied as data])
 #listing("dsa/samples-go/ch32/valueiter.go", first: 12, last: 37, caption: [go, the ladder sweep, gamble falling to state 2])
+#listing("dsa/samples-java/src/Ch32/Valueiter.java", first: 22, last: 35, caption: [java, one gauss-seidel sweep ascending, the max delta returned])
+#listing("dsa/samples/src/Ch32/ValueIter.cs", first: 15, last: 44, caption: [c\#, the generic sweep over an action table, walk and gamble supplied as data])
 #listing("dsa/samples-js/src/ch32-valueiter.mjs", first: 57, last: 89, caption: [javascript, the table-driven sweep returning values and actions])
 #listing("dsa/samples-py/src/Ch32/valueiter.py", first: 18, last: 36, caption: [python, the sweep and its delta, states ascending])
 #listing("dsa/samples-lua/ch32_valueiter.lua", first: 9, last: 28, caption: [lua, the sweep, values kept in a 1-based table])
@@ -675,7 +680,7 @@ below draws the per-element view.
   cdraw.content((13.5, 0.1), [the dynamic array's doubling, on members], size: 6pt)
 })
 
-== across the six languages
+== across the seven languages
 
 Featured build size counted as non-blank, non-comment lines of the
 chapter's five sample files per language, embedded test scripts
@@ -686,8 +691,9 @@ included:
   inset: 4pt,
   table.header([*language*], [*build sloc*], [*container dependency*], [*boundary note*]),
   [c], [605], [static tables, hand heaps], [double and fraction-free paths, fabs for the delta, pop order recorded from the selection loop],
-  [c\#], [301], [priorityqueue, tuples, records], [the value iterator generic over an action table, walk and gamble supplied as data],
   [go], [416], [container/heap, math], [two heap types over one item shape, the die mini converging under 1e-13],
+  [java], [630], [jdk 27 stdlib], [the slope trick max-heap hand-rolled over a long array, PriorityQueue ships min-order only, infeasible cells marked by the 1L << 60 sentinel],
+  [c\#], [301], [priorityqueue, tuples, records], [the value iterator generic over an action table, walk and gamble supplied as data],
   [javascript], [367], [map tables, class heaps], [actions as plain objects, the sweep returning values and actions together],
   [python], [413], [heapq by negation, fractions in tests], [exact fixed point asserted from fraction iteration, ok-N print],
   [lua], [504], [tables, MaxHeap class], [1-based states, the trace tables returned for run.lua],
@@ -707,7 +713,9 @@ article and stand as general techniques with their icpc applications
 as sources: icpc world finals 2017 problem D (book 10, chapter 8),
 2022 problem S (book 10, chapter 11), 2023 problem K (book 10,
 chapter 12), and 2025 problem E (book 10, chapter 13) as the kin
-clause of the last section. Sample behavior verified by the six
-suite gates scoped to chapter 32: c 5 files and 129 checks, c\# 23
-facts, go 19 test functions, javascript 18 tests and 66 asserts,
+clause of the last section. Sample behavior verified by the seven
+suite gates scoped to chapter 32: c 5 files and 129 checks, go 19
+test functions, java 5 files and 129 checks under run-java-samples,
+c\# 23
+facts, javascript 18 tests and 66 asserts,
 python 5 files and 72 asserts, lua 20 checks, zero skipped.

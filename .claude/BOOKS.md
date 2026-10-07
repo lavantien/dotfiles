@@ -360,7 +360,7 @@ toc:
 
 ## practical data structures and algorithms (book 9, v6.0, dsa, 44 chapters)
 
-summary: a data structures and algorithms handbook in 6 languages, from complexity analysis and arrays through hashing, trees, graphs, dynamic programming, geometry, flows, and game theory, pairing each structure with cost and library counterpart. the appendix tracks each topic with cost and library columns.
+summary: a data structures and algorithms handbook in 7 languages, from complexity analysis and arrays through hashing, trees, graphs, dynamic programming, geometry, flows, and game theory, pairing each structure with cost and library counterpart. the appendix tracks each topic with cost and library columns.
 capstone: storage engine toolkit: a log-structured storage engine with a crc-32 framed write-ahead log, bloom filters, crash recovery, prefix scans, and compaction, plus an htmx 4 web dashboard, every file under 260 lines.
 walkthroughs: geometry and lattices (ch 23 to 24), interpreter build (ch 26 to 27), big arithmetic (ch 28 to 29)
 toc:
@@ -412,9 +412,9 @@ toc:
 
 ## the icpc world finals (book 10, v4.0, icpc, 14 chapters)
 
-summary: walks six icpc world finals (2017 to 2025), every problem solved in c, c#, go, javascript, python, and lua. chapters 2 to 7 build the language toolboxes, 8 to 13 the finals, 14 fast big arithmetic. the coverage matrix tracks all 68 problems.
-capstone: none: chapters 8 to 13 walk six world finals (2017 to 2025), every problem solved in all six languages with year-local helper kits, chapter 14 closes on fast big arithmetic.
-walkthroughs: language toolboxes (ch 2 to 7), six world finals walkthroughs (ch 8 to 13)
+summary: walks six icpc world finals (2017 to 2025), every problem solved in c, go, java, c#, javascript, python, and lua. chapters 2 to 8 build the language toolboxes, 9 to 14 the finals, 15 fast big arithmetic. the coverage matrix tracks all 68 problems.
+capstone: none: chapters 9 to 14 walk six world finals (2017 to 2025), every problem solved in all seven languages with year-local helper kits, chapter 15 closes on fast big arithmetic.
+walkthroughs: language toolboxes (ch 2 to 8), six world finals walkthroughs (ch 9 to 14)
 toc:
 
 - 01 the contest and the house rules (icpc/chapters/01-contest.typ)
@@ -432,7 +432,7 @@ toc:
 - 13 icpc world finals 2025 (icpc/chapters/13-y2025.typ)
 - 14 fast big arithmetic (icpc/chapters/14-fastarith.typ)
 
-## design patterns, concurrency, and distributed systems (book 11, v3.0, patterns-concurrency-distributed, 17 chapters)
+## design patterns, concurrency, and distributed systems (book 11, v4.0, patterns-concurrency-distributed, 17 chapters)
 
 summary: an engineering handbook: go pattern discipline, the creational, structural, behavioral, and functional catalogs, then concurrency fundamentals, primitives, patterns, and hazards, then distributed systems from raft to resilience. a topic matrix maps every mechanism to its chapter, cost, and stdlib counterpart.
 capstone: raft replicated configuration service: a small complete raft in go (randomized elections, log replication, persistence) plus a config service hiding leadership behind retries, 19 tests, tick-driven determinism.

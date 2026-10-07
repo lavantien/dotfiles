@@ -156,7 +156,7 @@ insert 1, delete 1, substitute 1, no transposition, and the sample keeps
 only the mining framing: strings are attributes too, product codes and
 names and addresses, and record linkage scores their pairs exactly this
 way. The full dynamic programming treatment, recurrence proofs and
-space-rolling and six languages of implementation, belongs to
+space-rolling and seven languages of implementation, belongs to
 #xref-to("dsa", "dp"); here the three canonical pairs are the payload.
 
 The dry run: kitten to sitting takes 3, substitute k to s, substitute e

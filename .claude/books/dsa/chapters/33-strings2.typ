@@ -35,7 +35,7 @@ build is O(n).
 
 The dry run: the fixture is abacaba, whose z array 7, 0, 1, 0, 3,
 0, 1 is asserted by the C\# suite alongside its brute twin, and the
-other five suites pin the same array.
+other six suites pin the same array.
 
 + z\[0\] = 7 is the convention, and i = 1 dies on the first
   compare, b against a: z\[1\] = 0 with the box still empty.
@@ -77,13 +77,15 @@ other five suites pin the same array.
 })
 
 The array lands 7, 0, 1, 0, 3, 0, 1 exactly as pinned, and the
-listings below build it in six languages.
+listings below build it in seven languages.
 
 #listing("dsa/samples-c/src/Ch33/zfunc.c", first: 26, last: 66, caption: [c, the z-box build loop, the brute twin, and the separator search])
 
-#listing("dsa/samples/src/Ch33/Zfunc.cs", first: 11, last: 58, caption: [c\#, the build, the brute cross-check, and the search reading z against the pattern length])
-
 #listing("dsa/samples-go/ch33/zfunc.go", first: 7, last: 45, caption: [go, the build with the min cap spelled out, the search, the rotation test below])
+
+#listing("dsa/samples-java/src/Ch33/Zfunc.java", first: 26, last: 61, caption: [java, the z-box build, the brute twin, and the separator search over the \\x01 join])
+
+#listing("dsa/samples/src/Ch33/Zfunc.cs", first: 11, last: 58, caption: [c\#, the build, the brute cross-check, and the search reading z against the pattern length])
 
 #listing("dsa/samples-js/src/ch33-zfunc.mjs", first: 9, last: 35, caption: [javascript, the build and the search, the same two functions])
 
@@ -100,7 +102,7 @@ kmp of #xref-to("dsa", "stringmatching") fills with borders. The
 rotation test follows: t is a rotation of s exactly when s occurs in
 t + t, so one separator search over the doubled text decides it.
 
-The fixtures pin the same arrays in all six languages: z(aaaaa) =
+The fixtures pin the same arrays in all seven languages: z(aaaaa) =
 5, 4, 3, 2, 1; z(abacaba) = 7, 0, 1, 0, 3, 0, 1; z(aabaa) = 5, 1, 0,
 2, 1; z(ababab) = 6, 0, 4, 0, 2, 0; z(abab) = 4, 0, 2, 0;
 z(acacacb) = 7, 0, 4, 0, 2, 0, 0. The search family pins ab in
@@ -176,7 +178,7 @@ r, the interval re-anchors.
 
 The dry run: the fixture is aabbaa, whose even array 0, 1, 0, 3, 0,
 1 and total 11 are asserted by the C\# suite, identical in the
-other five.
+other six.
 
 + Center 0 has no left neighbor: d2\[0\] = 0 without a compare.
 + Center 1 matches the pair a, a and runs out of string: d2\[1\] =
@@ -221,13 +223,15 @@ other five.
 })
 
 The 0, 1, 0, 3, 0, 1 array and the 11 are pinned across the suites,
-and the listings below run both passes in six languages.
+and the listings below run both passes in seven languages.
 
 #listing("dsa/samples-c/src/Ch33/manacher.c", first: 26, last: 52, caption: [c, the odd pass and the even pass side by side over the same string])
 
-#listing("dsa/samples/src/Ch33/Manacher.cs", first: 10, last: 50, caption: [c\#, odd and even as twin methods, totals by sum, longest by max])
-
 #listing("dsa/samples-go/ch33/manacher.go", first: 9, last: 48, caption: [go, both passes inside one function, total and longest computed after])
+
+#listing("dsa/samples-java/src/Ch33/Manacher.java", first: 24, last: 48, caption: [java, the odd pass and the even pass side by side, charAt reads throughout])
+
+#listing("dsa/samples/src/Ch33/Manacher.cs", first: 10, last: 50, caption: [c\#, odd and even as twin methods, totals by sum, longest by max])
 
 #listing("dsa/samples-js/src/ch33-manacher.mjs", first: 17, last: 41, caption: [javascript, the two loops with their own l and r, the queries after])
 
@@ -309,7 +313,7 @@ and never creates more than 2n - 1 states.
 The dry run: the fixture is abab, whose 5 states, 7 distinct
 substrings, and occurrence counts a 2, b 2, ab 2 and its reversal 1,
 aba 1, bab 1, abab 1 are asserted by the C\# suite, identical in the
-other five.
+other six.
 
 + The first a creates state 1, longest a at len 1, linked to the root.
 + The first b walks state 1 to the root adding the missing
@@ -354,13 +358,15 @@ other five.
 })
 
 The 5 states and the 7 close the build exactly as pinned, and the
-listings below extend the automaton in six languages.
+listings below extend the automaton in seven languages.
 
 #listing("dsa/samples-c/src/Ch33/suffixautomaton.c", first: 38, last: 67, caption: [c, the build with the clone split, the per-character loop])
 
-#listing("dsa/samples/src/Ch33/SuffixAutomaton.cs", first: 29, last: 65, caption: [c\#, the same loop in the constructor, the clone copying q's transitions])
-
 #listing("dsa/samples-go/ch33/suffixautomaton.go", first: 26, last: 67, caption: [go, the loop with the clone branch inside])
+
+#listing("dsa/samples-java/src/Ch33/Suffixautomaton.java", first: 39, last: 70, caption: [java, the build with the clone split, the clone copying q's 26-way transition array])
+
+#listing("dsa/samples/src/Ch33/SuffixAutomaton.cs", first: 29, last: 65, caption: [c\#, the same loop in the constructor, the clone copying q's transitions])
 
 #listing("dsa/samples-js/src/ch33-suffixautomaton.mjs", first: 26, last: 58, caption: [javascript, the extend method with the clone split])
 
@@ -378,7 +384,7 @@ processing states in decreasing len order pushes every count into its
 link parent, after which walking the transitions for any t lands on
 the state whose count is the number of occurrences, with membership
 as count above zero. The fixtures pin the canonical machine, identical
-in all six languages: abab builds 5 states and 7 distinct substrings
+in all seven languages: abab builds 5 states and 7 distinct substrings
 with occurrences a 2, b 2, ab 2 and its reversal 1, aba 1, bab 1,
 abab 1, and abc 0; aab builds 4 states, 5 distinct; banana builds 10 states, 15
 distinct, with a 3, an 2, ana 2, na 2, nan 1, ban 1, banana 1, nab 0;
@@ -440,7 +446,7 @@ suffix of s + '\$' in order, and whenever a walk stops in the middle
 of an edge label, split the edge at that character and hang both
 tails off the new node. Nodes hold a child map keyed by the first
 character of each edge, edges hold (l, r) index pairs into s, and no
-substring is ever copied, which is what keeps six implementations of
+substring is ever copied, which is what keeps seven implementations of
 the same insertion order byte-identical in their node counts. The
 terminal character makes the tree explicit, no suffix is a prefix of
 another, so every leaf ends a full suffix and the tree has exactly
@@ -452,7 +458,7 @@ the construction, are the teaching point.
 
 The dry run: the fixture is abab\$, whose 8 nodes, edge sum 12, 5
 leaves, and 7 distinct substrings are asserted by the C\# suite,
-identical in the other five.
+identical in the other six.
 
 + The suffix abab\$ hangs whole off the root, one edge of length 5,
   and bab\$ keys on b as a fresh root child: three nodes.
@@ -498,13 +504,15 @@ identical in the other five.
 })
 
 The 8 nodes, the 12, and the depth-2 ab close the run as pinned,
-and the listings below insert the suffixes in six languages.
+and the listings below insert the suffixes in seven languages.
 
 #listing("dsa/samples-c/src/Ch33/suffixtree.c", first: 52, last: 77, caption: [c, the suffix insertion walk with the mid-edge split])
 
-#listing("dsa/samples/src/Ch33/SuffixTree.cs", first: 18, last: 55, caption: [c\#, the constructor loop, the split allocating the mid node and two edges])
-
 #listing("dsa/samples-go/ch33/suffixtree.go", first: 36, last: 65, caption: [go, insertSuffix with the edge relabel on split])
+
+#listing("dsa/samples-java/src/Ch33/Suffixtree.java", first: 56, last: 80, caption: [java, insertSuffix with the mid-edge split, child arrays keyed by first character])
+
+#listing("dsa/samples/src/Ch33/SuffixTree.cs", first: 18, last: 55, caption: [c\#, the constructor loop, the split allocating the mid node and two edges])
 
 #listing("dsa/samples-js/src/ch33-suffixtree.mjs", first: 13, last: 44, caption: [javascript, the build loop, edges as index pairs, mid node wired in place])
 
@@ -596,7 +604,7 @@ the factor closes with length j - k.
 
 The dry run: the fixture is banana, whose least rotation abanan at
 start 5 is asserted by the C\# suite against the brute minimum over
-all rotations, identical in the other five. Duval's own walk over
+all rotations, identical in the other six. Duval's own walk over
 abacaba stays with the figure below, this run takes the duel.
 
 + The duel opens at i = 0, j = 1 over the doubled banana: offset 0
@@ -636,13 +644,15 @@ abacaba stays with the figure below, this run takes the duel.
 })
 
 The survivor 5 and its abanan are pinned by every suite, and the
-listings below carry all three tools in six languages.
+listings below carry all three tools in seven languages.
 
 #listing("dsa/samples-c/src/Ch33/lyndon.c", first: 28, last: 47, caption: [c, duval's three-pointer loop, the factor closing at the fall])
 
-#listing("dsa/samples/src/Ch33/Lyndon.cs", first: 11, last: 33, caption: [c\#, the same scan, the reset and the equal-run walk commented])
-
 #listing("dsa/samples-go/ch33/lyndon.go", first: 8, last: 26, caption: [go, duval, reset k to i on a strict rise])
+
+#listing("dsa/samples-java/src/Ch33/Lyndon.java", first: 26, last: 43, caption: [java, duval's three-pointer loop, charAt reads, the factor closing at the fall])
+
+#listing("dsa/samples/src/Ch33/Lyndon.cs", first: 11, last: 33, caption: [c\#, the same scan, the reset and the equal-run walk commented])
 
 #listing("dsa/samples-js/src/ch33-lyndon.mjs", first: 11, last: 31, caption: [javascript, the duval loop])
 
@@ -673,10 +683,13 @@ The repetitions read banana as (1, 5, 2), the run anana; abab as
 abcabcabc as (0, 9, 3). The cross-checks are the strictest in the
 chapter: every emitted factor is verified lyndon against its own
 rotations, the factor sequence non-increasing, the duel against the
-brute minimum over all rotations on a 407-case randomized reference
-batch, and the repetition scan against an independent brute
+brute minimum over all rotations, and the repetition scan against an
+independent brute
 enumerator, with the javascript suite adding its own 150 seeded
-random strings on top.
+random strings on top. Java runs the brute twins over its named
+families: every duel checked inside checkRotation against the
+minimum over all rotations, every repetition table against the
+independent enumerator.
 
 The application is icpc world finals 2022 problem Y (book 10,
 chapter 11), compression, where a square-free reachability argument is the contest
@@ -725,7 +738,7 @@ with the icpc book.
   cdraw.content((16.2, 1.85), [length >= 2p per repetition], size: 6pt)
 })
 
-== across the six languages
+== across the seven languages
 
 Featured build size counted as non-blank, non-comment lines of the
 chapter's five sample files per language, go test files excluded:
@@ -735,8 +748,9 @@ chapter's five sample files per language, go test files excluded:
   inset: 4pt,
   table.header([*language*], [*build sloc*], [*container dependency*], [*boundary note*]),
   [c], [848], [static arrays, 26-way transition table], [z and manacher over fixed buffers, the sam child array per state, insertion-order suffix tree],
-  [c\#], [397], [`List<Dictionary<char,int>>`, linq], [long z arrays, occurrence counts precomputed in the constructor],
   [go], [404], [slices, `sort.Slice`], [sam link-tree order sorted by len, the duel and scan as free functions],
+  [java], [805], [jdk 27 stdlib, String.charAt walks], [per-state int[26] sam transitions cloned by array copy, the \\x01 separator as a char constant, insertion-order suffix tree over child arrays],
+  [c\#], [397], [`List<Dictionary<char,int>>`, linq], [long z arrays, occurrence counts precomputed in the constructor],
   [javascript], [304], [`Map` transitions, private class fields], [plain string compare throughout, the randomized cross-check family seeded by an lcg],
   [python], [564], [dict transitions, inline asserts], [the extend method split out, brute twins per family],
   [lua], [654], [tables, string.byte keys], [1-based storage over 0-based reported positions, the shift documented at the boundary],
@@ -756,7 +770,8 @@ cp-algorithms.com/string/main_lorentz.html, the O(n log n) reference
 for the period scan, all accessed 2026-09-20, cc by-sa 4.0, our own
 words and code throughout. Application sources: icpc world finals
 2023 problem F and 2022 problem Y (book 10). Sample behavior verified
-by the six suite gates scoped to chapter 33: c 5 files and 147
-checks, c\# 24 facts, go 16 test functions, javascript 19 tests and
+by the seven suite gates scoped to chapter 33: c 5 files and 147
+checks, go 16 test functions, java 5 files and 147 checks under
+run-java-samples, c\# 24 facts, javascript 19 tests and
 119 asserts, python 5 files and 333 asserts, lua 19 checks, zero
 skipped.

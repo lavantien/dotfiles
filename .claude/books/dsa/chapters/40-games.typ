@@ -67,11 +67,12 @@ with the same values pinned in C.
 
 The period-7 block and the xor verdicts land identically in every
 suite, and the listings below build the mex table and the nim
-analysis in six languages.
+analysis in seven languages.
 
 #listing("dsa/samples-c/src/Ch40/grundy.c", first: 24, last: 59, caption: [c, the mex table build and the nim verdict with its winning move])
-#listing("dsa/samples/src/Ch40/Grundy.cs", first: 9, last: 37, caption: [c\#, the option set and its mex, the move from the pile that drops])
 #listing("dsa/samples-go/ch40/grundy.go", first: 5, last: 45, caption: [go, the table over sorted moves, the nim analysis])
+#listing("dsa/samples-java/src/Ch40/Grundy.java", first: 21, last: 58, caption: [java, the mex table build over a seen array, the nim verdict with its winning move])
+#listing("dsa/samples/src/Ch40/Grundy.cs", first: 9, last: 37, caption: [c\#, the option set and its mex, the move from the pile that drops])
 #listing("dsa/samples-js/src/ch40-grundy.mjs", first: 8, last: 35, caption: [javascript, the mex loop and the nim analysis, xor on number])
 #listing("dsa/samples-py/src/Ch40/grundy.py", first: 14, last: 38, caption: [python, mex as a helper, the table, the move])
 #listing("dsa/samples-lua/ch40_grundy.lua", first: 8, last: 35, caption: [lua, the same pair, xor as the ~ operator])
@@ -82,7 +83,7 @@ flips, and for nim specifically the strategy changes exactly when
 every pile is of size 1, where the parity of the pile count decides.
 Everything before that point plays identically.
 
-The fixture families pin identical values in all six languages. The
+The fixture families pin identical values in all seven languages. The
 table above and its period. The nim positions: (3, 4, 5) xors to 2,
 first wins by cutting the pile of 3 down to 1, (1, 2, 3) xors to 0 and
 the second player wins, a lone pile of 7 moves to 0, the twin piles
@@ -92,7 +93,9 @@ g(5) xor g(5) = 0, g(5) xor g(6) = 1, g(5) xor g(10) = 2, g(7) xor
 g(9) = 0, both grundy numbers being 0 there, and g(9) xor g(9) = 0,
 first exactly when the cell is nonzero. The edges close it: the empty
 position xors to 0 and loses by convention, and a single pile of 1
-moves to 0.
+moves to 0. The c suite asserts the 3, 4, 5 verdict twice in a row, a
+literal duplicate, and the java port drops the second copy, 33 grundy
+checks where c counts 34.
 
 #diagram([the subtraction grundy ladder with the period-7 block boxed, beside the 3, 4, 5 nim piles and the 3 to 1 winning move], length: 13pt, {
   // left: the grundy ladder n = 0..15
@@ -169,11 +172,12 @@ mutations, asserted by the C\# suite and pinned the same way in C.
 )
 
 D, D, D, W, L, L, D, D is the pinned string, and the listings below
-run the sweep in six languages.
+run the sweep in seven languages.
 
 #listing("dsa/samples-c/src/Ch40/graphgames.c", first: 47, last: 75, caption: [c, the retrograde loop, reverse arcs, degree counting])
-#listing("dsa/samples/src/Ch40/GraphGames.cs", first: 9, last: 53, caption: [c\#, the same sweep, the draw assignment at the end])
 #listing("dsa/samples-go/ch40/graphgames.go", first: 20, last: 52, caption: [go, the outcome enum, terminals seeded, predecessors decided])
+#listing("dsa/samples-java/src/Ch40/Graphgames.java", first: 46, last: 75, caption: [java, the retrograde loop, reverse arcs, degree counting])
+#listing("dsa/samples/src/Ch40/GraphGames.cs", first: 9, last: 53, caption: [c\#, the same sweep, the draw assignment at the end])
 #listing("dsa/samples-js/src/ch40-graphgames.mjs", first: 9, last: 47, caption: [javascript, the wave off the terminals, the undecided stay draws])
 #listing("dsa/samples-py/src/Ch40/graphgames.py", first: 17, last: 50, caption: [python, the sweep and the draw default])
 #listing("dsa/samples-lua/ch40_graphgames.lua", first: 10, last: 53, caption: [lua, the same loop over reverse adjacency])
@@ -295,11 +299,12 @@ answers.
 
 The 19 equals the brute optimum and the window verdicts reproduce
 2017 problem H, and the listings below ship the four machines in
-six languages.
+seven languages.
 
 #listing("dsa/samples-c/src/Ch40/scheduling.c", first: 149, last: 195, caption: [c, the phase 1 sweep, the as-late chain pushed out of regions, the forbidden marking])
-#listing("dsa/samples/src/Ch40/Scheduling.cs", first: 83, last: 120, caption: [c\#, the same sweep, adjust down, the region merge, the greedy below])
 #listing("dsa/samples-go/ch40/scheduling.go", first: 163, last: 209, caption: [go, the release sweep, the tightest-deadline batch, the marking])
+#listing("dsa/samples-java/src/Ch40/Scheduling.java", first: 139, last: 185, caption: [java, the phase 1 sweep, the as-late chain pushed out of regions, the forbidden marking, a byte-for-byte port of the c loop])
+#listing("dsa/samples/src/Ch40/Scheduling.cs", first: 83, last: 120, caption: [c\#, the same sweep, adjust down, the region merge, the greedy below])
 #listing("dsa/samples-js/src/ch40-scheduling.mjs", first: 76, last: 105, caption: [javascript, phase 1 whole, the region bookkeeping])
 #listing("dsa/samples-py/src/Ch40/scheduling.py", first: 90, last: 113, caption: [python, releases descending, the chain, the too-tight region])
 #listing("dsa/samples-lua/ch40_scheduling.lua", first: 98, last: 136, caption: [lua, the same sweep and marking, phase 2 below])
@@ -321,7 +326,9 @@ deadlines 1, 2, 3 feasible in order, 3, 3, 3, 7, 7, 7 feasible, 3, 1,
 infeasible outright. The window machine: the six judge-verified cases
 of 2017 problem H answer yes, no, yes, yes, no, yes, and the crafted
 pair, a single photo in a generous window and four photos fighting for
-overlapping windows, answer yes and no. The edges: a single photo is
+overlapping windows, answer yes and no. Java's window machine ports
+the c phase 1 loop statement for statement, adjust-down and the region
+merge identical, so the six verdicts land on the same orbit. The edges: a single photo is
 feasible whenever its window fits t, and two identical windows decide
 by 2t against the span, both fitting at a span of 4 with t = 2,
 neither at a span of 3.
@@ -380,13 +387,13 @@ neither at a span of 3.
 
 The application is icpc world finals 2017 problem H (book 10, chapter
 8), scenery, where the garey-johnson-simons-tarjan two-phase machine
-is exactly the fourth solver, and the shipped six-language solvers of
+is exactly the fourth solver, and the shipped seven-language solvers of
 the icpc book are its contest-grade siblings. When an instance
 outruns every exact solver, the next tier over surrenders on purpose
 and keeps a number: #xref-to("dsa", "approximation") and its proven
 ratios.
 
-== across the six languages
+== across the seven languages
 
 Featured build size counted as non-blank, non-comment lines of the
 chapter's three sample files per language, go test files excluded:
@@ -396,8 +403,9 @@ chapter's three sample files per language, go test files excluded:
   inset: 4pt,
   table.header([*language*], [*build sloc*], [*container dependency*], [*boundary note*]),
   [c], [440], [static arrays, insertion sorts], [all four machines in one file, the judge-verified windows answers pinned, 65 checks],
-  [c\#], [225], [linq ordering throughout], [the window machine as one method, phase comments mirroring the shipped solver],
   [go], [328], [slices, sort], [the johnson brute as ground truth, the outcome enum for retrograde],
+  [java], [447], [jdk 27 stdlib], [the phase 1 window machine a byte-for-byte port of the c loop, the grundy port drops the c suite's one duplicated verdict check, insertion sorts hand-rolled],
+  [c\#], [225], [linq ordering throughout], [the window machine as one method, phase comments mirroring the shipped solver],
   [javascript], [179], [node stdlib], [tightest file of the wave, the window machine under 70 lines],
   [python], [263], [stdlib only, inline asserts], [itertools permutations as the johnson oracle, four families pinned],
   [lua], [338], [tables, lib.lua harness], [1-based jobs and deadlines shifted at the boundary, check tables for run.lua],
@@ -414,6 +422,7 @@ cp-algorithms.com/schedules/schedule-with-completion-duration.html,
 all accessed 2026-09-20, cc by-sa 4.0, our own words and code
 throughout. Application sources: icpc world finals 2025 problem B and
 2017 problem H (book 10, chapters 13 and 8). Sample behavior verified
-by the six suite gates scoped to chapter 40: c 3 files and 65 checks,
-c\# 12 facts, go 12 test functions, javascript 12 tests and 47
-asserts, python 3 files and 41 asserts, lua 12 checks, zero skipped.
+by the seven suite gates scoped to chapter 40: c 3 files and 65 checks, go 12 test
+functions, java 3 files and 64 checks under run-java-samples, c\# 12
+facts, javascript 12 tests and 47 asserts, python 3 files and 41
+asserts, lua 12 checks, zero skipped.

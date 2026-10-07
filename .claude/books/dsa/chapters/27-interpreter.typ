@@ -29,8 +29,8 @@ the program itself, and cells past the halt are fair storage.
 
 The dry run: the fixture is the C\# add program 1,5,6,7,99 with 10
 and 20 in its data cells, asserted with its step count by the C\#
-suite, the chained 1,1,1,4,99,5,6,0,99 pinning its 30 in the C and
-Python suites.
+suite, the chained 1,1,1,4,99,5,6,0,99 pinning its 30 in the C,
+Java, and Python suites.
 
 + The pointer opens at 0, reads opcode 1, add, and the operand
   fields 5 and 6 are addresses: the machine reads 10 out of slot 5
@@ -90,24 +90,27 @@ Python suites.
 })
 
 Both fixtures close at the classic 30, and the listings below run
-the loop in six languages.
+the loop in seven languages.
 
 #listing("dsa/samples-c/src/Ch27/opcodes.c", first: 33, last: 62, caption: [c, run to halt or fault, positional addressing, error flags over exceptions])
-#listing("dsa/samples/src/Ch27/Machine.cs", first: 21, last: 74, caption: [c\#, one switch, mode closures below, long memory, a step counter])
 #listing("dsa/samples-go/ch27/opcodes.go", first: 39, last: 92, caption: [go, run drives a machine struct, errors returned at every exit])
+#listing("dsa/samples-java/src/Ch27/Opcodes.java", first: 13, last: 50, caption: [java, static long memory, halted and error flags, input exhaustion faults instead of spinning])
+#listing("dsa/samples/src/Ch27/Machine.cs", first: 21, last: 74, caption: [c\#, one switch, mode closures below, long memory, a step counter])
 #listing("dsa/samples-js/src/ch27-opcodes.mjs", first: 6, last: 30, caption: [javascript, the base loop, every operand in position mode])
 #listing("dsa/samples-py/src/Ch27/opcodes.py", first: 14, last: 40, caption: [python, slices pull whole instructions, unknown opcodes raise])
 #listing("dsa/samples-lua/ch27_opcodes.lua", first: 7, last: 32, caption: [lua, 1-based cells shift every index, steps counted per instruction])
 
-The day-2 style fixtures agree across all six suites: 1,0,0,0,99
+The day-2 style fixtures agree across all seven suites: 1,0,0,0,99
 writes 1+1 into slot 0, and the chained program 1,1,1,4,99,5,6,0,99
 pins the classic 30, the add at slot 0 overwriting the halt that
 then moves execution forward. Python squares its own input by
-writing it past the code, javascript echoes an input back out, and
+writing it past the code, java doubling its input the same way with
+its register past the halt, javascript and java echo an input back
+out, and
 the lua suite counts steps, hand-traced instruction executions,
 alongside every run. Every language refuses unknown opcodes, by
-exception or error flag, and the c loop also stops on exhausted
-input instead of spinning.
+exception or error flag, and the c and java loops also stop on
+exhausted input instead of spinning.
 
 #diagram([the chained fixture executing, the add at slot 0 reading slots 1 and 1, writing 30 over the halt at slot 4], length: 13pt, {
   // 1,1,1,4,99,5,6,0,99 -> 30,1,1,4,2,5,6,0,99
@@ -144,8 +147,9 @@ through an address, modes never apply to them.
 
 The dry run: the fixture is the C\# triplet over one memory shape
 with 99 and 2 in the data cells, 101, 9, and 104 asserted by the
-C\# suite, go pinning the decoder split of 1002 and python the same
-word storing 99.
+C\# suite, go pinning the decoder split of 1002, java the three
+multiply readings 132, 99, and 12, and python the same word storing
+99.
 
 + One memory, three instruction words: 1, 1101, and 1001 all point
   their operand fields at 4, 5, 6 with destination 6, and slot 4
@@ -206,11 +210,12 @@ word storing 99.
 })
 
 The triplet 101, 9, 104 closes the reads, and the listings below
-decode them in six languages.
+decode them in seven languages.
 
 #listing("dsa/samples-c/src/Ch27/modes.c", first: 30, last: 60, caption: [c, operand walks the mode digits one divide and mod per parameter])
-#listing("dsa/samples/src/Ch27/Machine.cs", first: 22, last: 30, caption: [c\#, the mode and read closures inside the loop, tenpow beside])
 #listing("dsa/samples-go/ch27/modes.go", first: 3, last: 13, caption: [go, the decoder exposed for teaching, modes packed as a bitmask])
+#listing("dsa/samples-java/src/Ch27/Modes.java", first: 19, last: 49, caption: [java, the operand helper peeling mode digits one divide and mod per parameter, writes always positional])
+#listing("dsa/samples/src/Ch27/Machine.cs", first: 22, last: 30, caption: [c\#, the mode and read closures inside the loop, tenpow beside])
 #listing("dsa/samples-js/src/ch27-modes.mjs", first: 8, last: 17, caption: [javascript, decodeword returns opcode plus a modes array])
 #listing("dsa/samples-py/src/Ch27/modes.py", first: 14, last: 51, caption: [python, decode peels two digits, a param closure reads either way])
 #listing("dsa/samples-lua/ch27_modes.lua", first: 7, last: 37, caption: [lua, floor div and mod peel the digits, target always positional])
@@ -222,7 +227,10 @@ cell values, 1101 immediate gives 9, the sum of two literals, and
 a unit, 1002 splits into multiply with modes position then
 immediate and 11107 into a fully immediate comparison, and python
 pins the same 1002 storing 99, the 33 in slot 4 times the literal
-3. Javascript and lua run the same mixed multiply, and the
+3. Java runs the three multiply readings on one memory shape, 132
+all positional, 99 mixed, 12 both immediate, and pins the output
+modes too, 104 emitting the literal 42 while plain 4 reads through
+memory. Javascript and lua run the same mixed multiply, and the
 all-position twin in go and python proves the two readings of one
 program agree only when the data is arranged for it, which is the
 whole point of the modes existing.
@@ -299,11 +307,12 @@ suite, lua pinning the same trace.
 )
 
 The 15 steps close at the pinned 3, and the listings below build
-the loop in six languages.
+the loop in seven languages.
 
 #listing("dsa/samples-c/src/Ch27/jumps.c", first: 87, last: 100, caption: [c, the sum program, data registers past the 29 cells of code])
-#listing("dsa/samples/src/Ch27/Machine.cs", first: 49, last: 68, caption: [c\#, cases 5 through 8, the pointer moves or advances, never both])
 #listing("dsa/samples-go/ch27/jumps.go", first: 3, last: 30, caption: [go, the countdown program as data, the cell map in its comment])
+#listing("dsa/samples-java/src/Ch27/Jumps.java", first: 36, last: 74, caption: [java, cases 5 through 8, the pointer moves or advances, never both])
+#listing("dsa/samples/src/Ch27/Machine.cs", first: 49, last: 68, caption: [c\#, cases 5 through 8, the pointer moves or advances, never both])
 #listing("dsa/samples-js/src/ch27-jumps.mjs", first: 8, last: 43, caption: [javascript, both jump kinds read condition and target under modes])
 #listing("dsa/samples-py/src/Ch27/jumps.py", first: 55, last: 87, caption: [python, the loop with its jump target read through slot 27])
 #listing("dsa/samples-lua/ch27_jumps.lua", first: 62, last: 78, caption: [lua, the countdown table, 15 hand-traced steps at n equal to 3])
@@ -312,14 +321,18 @@ The countdown shape is shared by c\#, go, and lua, identical cell
 layouts with the two data cells past the code, and the answers pin
 across the family: input 3 outputs 3, input 0 jumps straight out
 with 0, input 7 outputs 7, lua also pinning the full final memory
-and the hand-traced 15 instructions. The c suite sums 1 to n
-forward instead, registers at cells 28 through 31 past the code,
-its backwards jump coded as 1006, flag positional and target
-immediate. Python is the deliberate outlier: its loop reads the
+and the hand-traced 15 instructions. The c and java suites sum 1 to
+n forward instead, registers at cells 28 through 31 past the code,
+backwards jumps coded as 1006, flag positional and target
+immediate, java pinning 1, 15, and 55 for n = 1, 5, and 10 and its
+registers after the run. Python is the deliberate outlier: its loop
+reads the
 jump target positionally through slot 27, so the loop-start address
 is itself data in a cell, and that difference is stated in its
 comment. Go adds the comparison programs, equals-7 and below-10, as
-two more data tables.
+two more data tables, java pinning its comparisons straight as
+data too, 1107 storing 1 and 1108 storing 0, beside a taken and an
+untaken 1105.
 
 #diagram([the countdown loop as code cells and data cells, the two jumps drawn as arcs, forward exit and backward loop], length: 13pt, {
   // cells: 0 read n, 2 test, 5 dec, 9 inc, 13 back-jump, 16 output, 18 halt; data 20, 21
@@ -359,7 +372,7 @@ two more data tables.
   cdraw.content((14.6, 4.6), [outputs 0], size: 6pt)
 })
 
-== across the six languages
+== across the seven languages
 
 Featured build size counted as non-blank, non-comment lines of the
 chapter's three sample files, test scripts included where the
@@ -372,6 +385,7 @@ language embeds them:
   [c], [302], [static arrays], [error flags over exceptions, sum program with registers past the code],
   [c\#], [72], [one file, closures for modes], [long memory, step counter, the 101, 9, 104 triplet pinned],
   [go], [131], [machine struct, int64 slices], [decoder exposed as a bitmask, countdown as returned data],
+  [java], [309], [jdk 27 stdlib], [halted and error flags, input exhaustion faults, the sum program with registers past the code and its 1006 back-jump],
   [javascript], [97], [array spread copies], [modes as an array, jump targets under full modes],
   [python], [230], [lists, slices per instruction], [jump target read positionally through a cell, the stated outlier],
   [lua], [194], [tables, 1-based cells], [steps counted and hand traced, errors carry level 2],
@@ -381,6 +395,7 @@ sources: learn.microsoft.com for pattern-switch dispatch, go.dev
 for multiple return values and `fmt.Errorf`, developer.mozilla.org
 for spread copies, docs.python.org for slice assignment, lua.org
 for integer floor division and modulo, accessed 2026-09-14. Sample
-behavior verified by the six suite gates scoped to chapter 27: c 3
-files and 49 checks, c\# 7 tests, go 14 tests, javascript 12 tests,
+behavior verified by the seven suite gates scoped to chapter 27: c 3
+files and 49 checks, c\# 7 tests, go 14 tests, java 3 files and 49
+checks, javascript 12 tests,
 python 3 files and 28 asserts, lua 11 checks, zero skipped.

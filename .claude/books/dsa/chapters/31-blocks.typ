@@ -73,11 +73,12 @@ same sums in the C, Go, and Python suites.
 })
 
 The 28 at 3 blocks touched closes the walk, and the listings below
-run it in six languages.
+run it in seven languages.
 
 #listing("dsa/samples-c/src/Ch31/sqrtblocks.c", first: 45, last: 62, caption: [c, the three-way sum walk and the touched meter, static arrays])
-#listing("dsa/samples/src/Ch31/SqrtBlocks.cs", first: 38, last: 58, caption: [c\#, the same walk, partial edges commented, whole blocks from the sum array])
 #listing("dsa/samples-go/ch31/sqrtblocks.go", first: 48, last: 73, caption: [go, sum folds edges then blocks, touched beside])
+#listing("dsa/samples-java/src/Ch31/Sqrtblocks.java", first: 44, last: 63, caption: [java, the three-way sum walk and the touched meter, block ids by integer division])
+#listing("dsa/samples/src/Ch31/SqrtBlocks.cs", first: 38, last: 58, caption: [c\#, the same walk, partial edges commented, whole blocks from the sum array])
 #listing("dsa/samples-js/src/ch31-sqrtblocks.mjs", first: 31, last: 48, caption: [javascript, the block or edge split, floor division for block ids])
 #listing("dsa/samples-py/src/Ch31/sqrtblocks.py", first: 32, last: 49, caption: [python, the left edge, whole blocks, right edge])
 #listing("dsa/samples-lua/ch31_sqrtblocks.lua", first: 37, last: 52, caption: [lua, 1-based block table behind a 0-based face])
@@ -132,9 +133,9 @@ left block the right pointer only moves forward, so it travels O(n)
 per block for O(q) blocks total in one direction, and the left
 pointer wanders at most b per query: O((n + q) sqrt n) all in, with
 the travel meter as the evidence. The sort must be a total order
-stable in the query index, c and go break ties on the index
-explicitly, javascript leans on its stable sort, so all six languages
-process the same order and pin the same meter.
+stable in the query index, c, go, and java break ties on the index
+explicitly, javascript leans on its stable sort, so all seven
+languages process the same order and pin the same meter.
 
 The dry run: the fixture is 1, 2, 1, 3, 2, 1, 4, 1 with b = 3 and
 the six queries (0,7), (0,3), (2,5), (1,1), (4,7), (2,2), asserted
@@ -169,11 +170,12 @@ by the C\# suite at 20 total pointer moves.
 )
 
 The six answers land 4, 3, 3, 1, 3, 1 in input order for the 20
-moves, and the listings below run the walk in six languages.
+moves, and the listings below run the walk in seven languages.
 
 #listing("dsa/samples-c/src/Ch31/mos.c", first: 91, last: 115, caption: [c, the four while loops, travel counted per pointer move])
-#listing("dsa/samples/src/Ch31/Mos.cs", first: 43, last: 73, caption: [c\#, the same walk over the sorted order, closure add and remove])
 #listing("dsa/samples-go/ch31/mos.go", first: 51, last: 77, caption: [go, the walk with the add and remove closures above])
+#listing("dsa/samples-java/src/Ch31/Mos.java", first: 78, last: 103, caption: [java, the four while loops over the comparator-sorted order, travel per move])
+#listing("dsa/samples/src/Ch31/Mos.cs", first: 43, last: 73, caption: [c\#, the same walk over the sorted order, closure add and remove])
 #listing("dsa/samples-js/src/ch31-mos.mjs", first: 35, last: 68, caption: [javascript, the four loops over the stably sorted indices])
 #listing("dsa/samples-py/src/Ch31/mos.py", first: 42, last: 61, caption: [python, the walk, answers written in input order])
 #listing("dsa/samples-lua/ch31_mos.lua", first: 41, last: 65, caption: [lua, the walk, 0-based face over 1-based tables])
@@ -281,11 +283,12 @@ the C\# suite, the same family in the other five suites.
 })
 
 The recovered pair 2 then 5 is the pinned landing, and the listings
-below build stack and queue in six languages.
+below build stack and queue in seven languages.
 
 #listing("dsa/samples-c/src/Ch31/minstack.c", first: 60, last: 83, caption: [c, the dequeue-with-transfer and the two-stack minimum])
-#listing("dsa/samples/src/Ch31/MinStack.cs", first: 46, last: 73, caption: [c\#, dequeue refills from the inbox, min combines the two stack minima])
 #listing("dsa/samples-go/ch31/minstack.go", first: 63, last: 98, caption: [go, the transfer loop and the min switch over both tops])
+#listing("dsa/samples-java/src/Ch31/Minstack.java", first: 53, last: 76, caption: [java, the dequeue-with-transfer, min over both tops, the empty refusal by out-flag])
+#listing("dsa/samples/src/Ch31/MinStack.cs", first: 46, last: 73, caption: [c\#, dequeue refills from the inbox, min combines the two stack minima])
 #listing("dsa/samples-js/src/ch31-minstack.mjs", first: 44, last: 62, caption: [javascript, shift transfers then pops, min reads either side])
 #listing("dsa/samples-py/src/Ch31/minstack.py", first: 41, last: 61, caption: [python, refill counted as transfers, dequeue and min])
 #listing("dsa/samples-lua/ch31_minstack.lua", first: 44, last: 67, caption: [lua, the seam refill reversing the inbox, nil-aware min])
@@ -351,7 +354,7 @@ taking the max over the root-to-leaf path.
 
 The dry run: the fixture is the domain x in \[0, 8) with the four
 lines (1, 0), (0, 3), (-1, 5), (2, -4), asserted by the C\# suite,
-the domain and lines shared by all six suites.
+the domain and lines shared by all seven suites.
 
 + y = x enters first and the empty root keeps it: the node over
   0..8 holds it.
@@ -406,11 +409,12 @@ the domain and lines shared by all six suites.
 })
 
 The envelope 5, 4, 3, 3, 4, 6, 8, 10 is the pinned landing, and the
-listings below insert these four lines in six languages.
+listings below insert these four lines in seven languages.
 
 #listing("dsa/samples-c/src/Ch31/lichao.c", first: 28, last: 52, caption: [c, the insert descent, midpoint winner kept, loser recursed one side])
-#listing("dsa/samples/src/Ch31/LiChao.cs", first: 26, last: 54, caption: [c\#, the same descent with tuple swaps, nullable query sentinel])
 #listing("dsa/samples-go/ch31/lichao.go", first: 22, last: 46, caption: [go, insert keeps the midpoint winner and follows the loser])
+#listing("dsa/samples-java/src/Ch31/Lichao.java", first: 29, last: 53, caption: [java, the insert descent, midpoint winner kept, loser recursed one side])
+#listing("dsa/samples/src/Ch31/LiChao.cs", first: 26, last: 54, caption: [c\#, the same descent with tuple swaps, nullable query sentinel])
 #listing("dsa/samples-js/src/ch31-lichao.mjs", first: 20, last: 42, caption: [javascript, the descent over a map of segment nodes])
 #listing("dsa/samples-py/src/Ch31/lichao.py", first: 25, last: 41, caption: [python, midpoint swap, left-or-right recursion])
 #listing("dsa/samples-lua/ch31_lichao.lua", first: 20, last: 38, caption: [lua, optional-argument defaults thread the segment bounds])
@@ -421,7 +425,8 @@ whole domain, brute max-over-lines agreeing at every integer. With
 only the first two lines the answers are 3, 3, 3, 3, 4, 5, 6, 7, and
 re-inserting a duplicate line changes nothing, query(0) stays 3. The
 empty container's query returns the sentinel, null in c\# and
-javascript, a found flag in c, a bool beside the value in go, and the
+javascript, a found flag in c and java, a bool beside the value in
+go, and the
 edges query at x = 0 and x = 7 once populated, -4 and 10 under the
 surviving (2, -4) line. The consumer is the dp transition machinery
 of #xref-to("dsa", "advdp"), which needs exactly this online
@@ -473,7 +478,7 @@ prefix(r), two cells, no overlap.
 
 The dry run: the fixture is the array 3, 1, 4, 1, 5, 9, 2, 6, 5, 3
 at n = 10 and 4 levels, asserted by the C\# suite, the same eight
-sums in all six suites.
+sums in all seven suites.
 
 + Query 2 to 7 picks its level first: 2 and 7 differ first at bit 2,
   so level 2, whose aligned blocks run 4 cells with this block's
@@ -522,11 +527,12 @@ sums in all six suites.
 })
 
 The 27 from two cells is the pinned landing, and the listings below
-build the levels in six languages.
+build the levels in seven languages.
 
 #listing("dsa/samples-c/src/Ch31/disjointsparse.c", first: 28, last: 61, caption: [c, the level build's two half-scans and the two-cell query])
-#listing("dsa/samples/src/Ch31/DisjointSparse.cs", first: 24, last: 60, caption: [c\#, the build loop per level, sum by first differing bit])
 #listing("dsa/samples-go/ch31/disjoint_sparse.go", first: 33, last: 66, caption: [go, buildLevel's half-scans, sum via bits.len])
+#listing("dsa/samples-java/src/Ch31/Disjointsparse.java", first: 27, last: 60, caption: [java, the build's two half-scans, the query level by first differing bit])
+#listing("dsa/samples/src/Ch31/DisjointSparse.cs", first: 24, last: 60, caption: [c\#, the build loop per level, sum by first differing bit])
 #listing("dsa/samples-js/src/ch31-disjointsparse.mjs", first: 27, last: 57, caption: [javascript, the build and the clz32 level pick])
 #listing("dsa/samples-py/src/Ch31/disjointsparse.py", first: 25, last: 50, caption: [python, prefix and suffix folds per midpoint, the query])
 #listing("dsa/samples-lua/ch31_disjointsparse.lua", first: 23, last: 50, caption: [lua, the build and a hand-rolled bit length])
@@ -624,11 +630,12 @@ labels over the suite's 0-based calls.
 )
 
 The count returns to 6 with the stack empty, and the listings below
-union and unwind in six languages.
+union and unwind in seven languages.
 
 #listing("dsa/samples-c/src/Ch31/rollbackdsu.c", first: 45, last: 72, caption: [c, union pushes the pair, rollback unwinds it, snapshot is the depth])
-#listing("dsa/samples/src/Ch31/RollbackDsu.cs", first: 43, last: 67, caption: [c\#, union and rollback over the pair stack])
 #listing("dsa/samples-go/ch31/rollbackdsu.go", first: 42, last: 70, caption: [go, union by size, rollback slicing the stack])
+#listing("dsa/samples-java/src/Ch31/Rollbackdsu.java", first: 44, last: 73, caption: [java, union pushes the pair, rollback unwinds it, snapshot is the depth])
+#listing("dsa/samples/src/Ch31/RollbackDsu.cs", first: 43, last: 67, caption: [c\#, union and rollback over the pair stack])
 #listing("dsa/samples-js/src/ch31-rollbackdsu.mjs", first: 28, last: 53, caption: [javascript, union, rollback, snapshot])
 #listing("dsa/samples-py/src/Ch31/rollbackdsu.py", first: 27, last: 45, caption: [python, the pair stack and the unwind])
 #listing("dsa/samples-lua/ch31_rollbackdsu.lua", first: 29, last: 47, caption: [lua, 1-based tables behind 0-based vertices])
@@ -747,11 +754,12 @@ dsu agreeing cell by cell.
 })
 
 The sweep answers all eight times for the pinned 9 unions, and the
-listings below run the dfs in six languages.
+listings below run the dfs in seven languages.
 
 #listing("dsa/samples-c/src/Ch31/offlinedynconn.c", first: 103, last: 123, caption: [c, the dfs: union on entry, answer at the leaf, unwind on exit])
-#listing("dsa/samples/src/Ch31/OfflineDynConn.cs", first: 33, last: 54, caption: [c\#, the same dfs as a local function over the node lists])
 #listing("dsa/samples-go/ch31/offlinedynconn.go", first: 50, last: 72, caption: [go, the dfs closure, components as vertices minus unions])
+#listing("dsa/samples-java/src/Ch31/Offlinedynconn.java", first: 107, last: 127, caption: [java, the dfs over intrusive per-node edge lists, union on entry, unwind on exit])
+#listing("dsa/samples/src/Ch31/OfflineDynConn.cs", first: 33, last: 54, caption: [c\#, the same dfs as a local function over the node lists])
 #listing("dsa/samples-js/src/ch31-offlinedynconn.mjs", first: 26, last: 47, caption: [javascript, the dfs over a node-to-edges map])
 #listing("dsa/samples-py/src/Ch31/offlinedynconn.py", first: 66, last: 84, caption: [python, the dfs with the snapshot mark and rollback])
 #listing("dsa/samples-lua/ch31_offlinedynconn.lua", first: 69, last: 88, caption: [lua, the dfs, answers appended leaf by leaf])
@@ -764,7 +772,10 @@ performs 9 unions total, and a brute per-time dsu agrees on every
 cell. The negative family holds: 1 and 5 are never connected, vertex
 5 joins only at t = 7 when 1 is already isolated. The edges cover the
 whole horizon, an empty interval, and a query at t = 0 before any
-edge. This engine is icpc world finals 2025 problem G (book 10,
+edge. Java keeps the timeline tree's per-node edge lists as an
+intrusive singly linked list over int arrays, slot 0 the terminator,
+the c arrangement rather than the map the dynamic languages reach
+for. This engine is icpc world finals 2025 problem G (book 10,
 chapter 13), lava moat: the level sweep runs exactly this machine
 over edge lifetimes with per-component length and border flags, at
 O(n log^2 n).
@@ -820,7 +831,7 @@ O(n log^2 n).
   cdraw.content((17.2, 1.8), [O(E log T log V)], size: 6pt)
 })
 
-== across the six languages
+== across the seven languages
 
 Featured build size counted as non-blank, non-comment lines of the
 chapter's seven sample files per language, embedded test scripts
@@ -831,8 +842,9 @@ included:
   inset: 4pt,
   table.header([*language*], [*build sloc*], [*container dependency*], [*boundary note*]),
   [c], [792], [static arrays, qsort for mo], [block ids by integer division, the empty-pop and empty-min sentinel flags],
-  [c\#], [396], [arrays, tuples, dictionaries], [nullable long for the li chao sentinel, bitlength by hand and by clz],
   [go], [419], [slices, maps, no imports beyond fmt and bits], [components computed as vertices minus unions, snake_case file for the sparse table],
+  [java], [839], [jdk 27 stdlib, Arrays.sort comparator for mo], [the mo comparator breaks the index tie explicitly, intrusive int-array edge lists for the timeline tree, found-flag li chao sentinel],
+  [c\#], [396], [arrays, tuples, dictionaries], [nullable long for the li chao sentinel, bitlength by hand and by clz],
   [javascript], [324], [map-keyed segment stores], [stable sort carries the mo tie order, private methods throughout],
   [python], [554], [lists, dicts, check harness], [system exit on failure, ok-N print per file],
   [lua], [632], [tables, 1-based inside], [0-based public faces per the ch21 precedent, hand-rolled bit length],
@@ -854,7 +866,8 @@ substrate of 31.6 whose rollback variant is likewise ours, all
 accessed 2026-09-20, cc by-sa 4.0, our own words and code throughout.
 The offline connectivity engine of 31.7 has no dedicated article
 there and cites icpc world finals 2025 problem G (book 10, chapter 13)
-as its application source. Sample behavior verified by the six suite
-gates scoped to chapter 31: c 7 files and 136 checks, c\# 23 facts,
-go 21 test functions, javascript 21 tests and 68 asserts, python 7
+as its application source. Sample behavior verified by the seven suite
+gates scoped to chapter 31: c 7 files and 136 checks, go 21 test
+functions, java 7 files and 136 checks under run-java-samples, c\# 23
+facts, javascript 21 tests and 68 asserts, python 7
 files and 122 asserts, lua 21 checks, zero skipped.

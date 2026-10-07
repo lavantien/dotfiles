@@ -217,8 +217,8 @@ The ninety-second arc is assembled, not improvised, and its parts
 are the register's: the identity line, the tags, the four-employer
 arc, and the gap as a built period with inspectable output. Spoken:
 
-I am Gabriel, a programmer, and the un-leveled word is deliberate.
-Eight years since the first job, four employers, C, C\#, Go,
+I am Raeliosol, and the header carries no title by design.
+Eight years since the first job, four employers, C, Go, Java, C\#,
 JavaScript, Python,
 and Lua API work, SQLite and DuckDB where a database server would
 be overkill, distributed systems where the wire matters, and test

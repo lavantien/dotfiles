@@ -10,8 +10,8 @@ function is an object that carries behavior, compares against nil,
 and slots into fields and parameters. The chapter builds the six
 that survive translation, strategy, observer, command, iterator,
 state, and visitor, and each section runs one shared fixture through
-c, c\#, go, javascript, python, and lua, the dry-run block stating
-the contract before the six listings.
+c, go, java, c\#, javascript, python, and lua, the dry-run block
+stating the contract before the seven listings.
 
 == strategy
 
@@ -35,9 +35,11 @@ verified against the same implementation.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch04/strategy.c", first: 21, last: 61, caption: [C, a function pointer typedef, rle capping runs at 255, selection from a name table])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch04/Strategy.cs", first: 4, last: 38, caption: [C\#, a delegate type, rle and null as static values, the error riding a tuple])
-
 #listing("patterns-concurrency-distributed/samples/ch04/behavioral.go", first: 12, last: 40, caption: [Go, compression as a function type, rle and null as values])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch04/Strategy.java", first: 19, last: 51, caption: [Java, the strategy is a lambda over a one-method interface, selection answers null for the unknown name])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch04/Strategy.cs", first: 4, last: 38, caption: [C\#, a delegate type, rle and null as static values, the error riding a tuple])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch04-strategy.mjs", first: 6, last: 33, caption: [JavaScript, plain functions as values, selection throws on the unknown name])
 
@@ -49,10 +51,13 @@ Function types give the pattern for free: `Compression` is
 documented, comparable to nil, and the caller passes `Rle` like any
 value. The sibling trees say the same thing in their own spelling.
 C writes a function pointer typedef and answers the unknown name
-with NULL, C\# uses a delegate with the refusal riding a tuple,
-javascript and python pass functions natively and signal refusal by
-throwing and raising, and lua looks the name up in a table and hands
-back nil with a message. When strategies need configuration or
+with NULL, java spells the strategy as a lambda against a one-method
+interface and answers the unknown name with null, its signed `byte`
+forcing `& 0xff` on the count before the pairs can print, C\# uses a
+delegate with the refusal riding a tuple, javascript and python pass
+functions natively and signal refusal by throwing and raising, and
+lua looks the name up in a table and hands back nil with a message.
+When strategies need configuration or
 state, they become closures, chapter 5's territory.
 
 #diagram([selection is data, a lookup from name to function value], length: 13pt, {
@@ -103,9 +108,11 @@ closed.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch04/observer.c", first: 77, last: 94, caption: [C, subscribe under the hub mutex, cancel marks one subscriber closed])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch04/Observer.cs", first: 17, last: 46, caption: [C\#, Subscribe returns a bounded reader and its cancel, Remove completes the writer])
-
 #listing("patterns-concurrency-distributed/samples/ch04/behavioral.go", first: 42, last: 68, caption: [Go, hub: subscribe returns a channel and its cancel function])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch04/Observer.java", first: 18, last: 44, caption: [Java, subscribe hands back an int id over C's api, each subscriber a bounded ArrayDeque])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch04/Observer.cs", first: 17, last: 46, caption: [C\#, Subscribe returns a bounded reader and its cancel, Remove completes the writer])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch04-observer.mjs", first: 12, last: 29, caption: [JavaScript, subscribe returns a queue record and its cancel closure])
 
@@ -118,9 +125,11 @@ carries the two contract points the tests pin:
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch04/observer.c", first: 46, last: 64, caption: [C, try-send into each bounded buffer, a full one drops])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch04/Observer.cs", first: 48, last: 80, caption: [C\#, TryWrite is the drop, Complete is the close])
-
 #listing("patterns-concurrency-distributed/samples/ch04/behavioral.go", first: 80, last: 104, caption: [Go, non-blocking fan-out, then close on shutdown])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch04/Observer.java", first: 46, last: 71, caption: [Java, notify try-sends to live subscribers, close marks them closed, receive still drains the buffer])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch04/Observer.cs", first: 48, last: 80, caption: [C\#, TryWrite is the drop, Complete is the close])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch04-observer.mjs", first: 31, last: 47, caption: [JavaScript, notify walks the queues, close flips every one])
 
@@ -141,13 +150,14 @@ The cancel function returned from `Subscribe` is the registration
 lifecycle made explicit, the caller owns unsubscription and double
 cancel is safe because `remove` checks the map first. The sibling
 trees build the channel by hand where they must: C keeps a fixed
-array of bounded subscriber buffers under one mutex, C\# hands each
-subscriber a real bounded Channel where `TryWrite` stands in for the
-select default, javascript pushes onto plain arrays inside a Map
-whose insertion order fixes delivery order, python's Subscription
-answers takes with a value, a closed marker, or a BLOCKED sentinel
-naming where a goroutine would park, and lua keeps one table per
-subscriber with its own bounded buffer.
+array of bounded subscriber buffers under one mutex, java rides the
+same int-id api with a synchronized Hub over one ArrayDeque per
+subscriber, C\# hands each subscriber a real bounded Channel where
+`TryWrite` stands in for the select default, javascript pushes onto
+plain arrays inside a Map whose insertion order fixes delivery
+order, python's Subscription answers takes with a value, a closed
+marker, or a BLOCKED sentinel naming where a goroutine would park,
+and lua keeps one table per subscriber with its own bounded buffer.
 
 #diagram([notify is a non-blocking fan-out, slow subscribers drop, close preserves buffers], length: 13pt, {
   cdraw.rect((0, 2.4), (5.6, 4.2), fill: luma(205), radius: 0.02)
@@ -189,9 +199,11 @@ mode 1, against the same implementation.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch04/command.c", first: 43, last: 90, caption: [C, explicit undo records in a fixed array, undo restores or deletes])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch04/Command.cs", first: 5, last: 36, caption: [C\#, each Set pushes a restoring closure, Undo pops and runs it])
-
 #listing("patterns-concurrency-distributed/samples/ch04/behavioral.go", first: 107, last: 136, caption: [Go, set records the previous value, undo pops and replays it])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch04/Command.java", first: 18, last: 45, caption: [Java, each set pushes an Undo record, undo replays restore or remove newest first])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch04/Command.cs", first: 5, last: 36, caption: [C\#, each Set pushes a restoring closure, Undo pops and runs it])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch04-command.mjs", first: 5, last: 31, caption: [JavaScript, the undo stack holds closures over existed and prev])
 
@@ -201,10 +213,11 @@ mode 1, against the same implementation.
 
 The `Set` method closes over `prev` and `existed`, so the undo of an
 insert is a delete and the undo of an overwrite is a restore. The
-test walks all three cases. Five of the six trees capture that
-inverse as a closure or a tuple, and C stores explicit undo records
-in a fixed array because it has no closures to capture anything,
-the same trade its strategy listing made. This is also the seed of
+test walks all three cases. Six of the seven trees capture that
+inverse as a closure, a tuple, or a record, and C stores explicit
+undo records in a fixed array because it has no closures to capture
+anything, the same trade its strategy listing made. This is also the
+seed of
 the raft capstone's restart story: a write ahead log is a command
 history, replay is redo, and chapter 11 returns to the equivalence
 as idempotent re-delivery, chapter 16 as replay on restart.
@@ -238,7 +251,7 @@ brown, jumps with ties keeping source order, and early exit takes
 exactly the first two, quick and brown. The source observes the stop
 after offering exactly 3 words, the, quick, and brown. The go lane's
 frozen test pins the filtered set, the stable sort, and the first
-two, the offered-count stop probe is the five new trees' lane.
+two, the offered-count stop probe is the six new trees' lane.
 
 + The consumer's break makes yield return false, and the false
   verdict unwinds Filter into the source, which stops where it
@@ -250,9 +263,11 @@ two, the offered-count stop probe is the five new trees' lane.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch04/iterator.c", first: 35, last: 61, caption: [C, the source drives a yield callback, a false verdict stops it])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch04/Iterator.cs", first: 8, last: 43, caption: [C\#, yield return words, Filter stays lazy, Sorted materializes below])
-
 #listing("patterns-concurrency-distributed/samples/ch04/behavioral.go", first: 139, last: 177, caption: [Go, words as a sequence, filter and sorted as sequence adapters])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch04/Iterator.java", first: 20, last: 64, caption: [Java, no yield keyword, Seq pushes into a Predicate whose false verdict stops the source, List.sort is stable])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch04/Iterator.cs", first: 8, last: 43, caption: [C\#, yield return words, Filter stays lazy, Sorted materializes below])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch04-iterator.mjs", first: 8, last: 29, caption: [JavaScript, generator functions, the finally block observes the stop])
 
@@ -276,7 +291,10 @@ generators, the interpreter pausing the function at each
 yield#xref-to("python", "collections"). Javascript generators do the
 same and add the honest probe: closing the generator runs its
 `finally` block, so the source's stop observation is a language
-guarantee.
+guarantee. Java has no yield at all, so its `Seq` is an interface
+that pushes into a `Predicate<String>`, the boolean verdict the
+generator's channel, and `List.sort` is stable, so the sorted
+adapter needs no index tiebreak.
 
 Lua's push sequence is a function that feeds a yield callback, and
 `coroutine.wrap` gives the same iteration shape natively over
@@ -325,9 +343,11 @@ log alarm, thanks, click, against the same table.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch04/state.c", first: 30, last: 67, caption: [C, the table as a 2d array of transitions, fire is one row lookup])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch04/State.cs", first: 20, last: 53, caption: [C\#, nested dictionaries, Fire moves and logs])
-
 #listing("patterns-concurrency-distributed/samples/ch04/behavioral.go", first: 179, last: 231, caption: [Go, turnstile: two states, two events, four transitions, all visible at once])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch04/State.java", first: 19, last: 54, caption: [Java, enums index a Transition table, a null row is the rejection, fire is one lookup])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch04/State.cs", first: 20, last: 53, caption: [C\#, nested dictionaries, Fire moves and logs])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch04-state.mjs", first: 8, last: 27, caption: [JavaScript, a Map keyed by the state and event pair])
 
@@ -339,10 +359,12 @@ The table makes the whole machine inspectable at a glance, which is
 the entire argument for it over a switch per state. Unknown events
 are rejected without a transition, and the log of actions doubles as
 the observable output. The spelling of the key tracks the language:
-a 2d array with a rejected marker in C, nested dictionaries in C\#,
-a template string key in javascript, a tuple key in python, nested
-tables in lua, where handing the constructor a different table
-yields a different machine with the same Fire. This table returns in
+a 2d array with a rejected marker in C, enums indexing a
+`Transition[][]` in java where a null row is the rejection, nested
+dictionaries in C\#, a template string key in javascript, a tuple
+key in python, nested tables in lua, where handing the constructor a
+different table yields a different machine with the same Fire. This
+table returns in
 the capstone as the follower, candidate, leader spine of raft, with
 timers instead of pushes.
 
@@ -383,9 +405,11 @@ same literal pi.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch04/visitor.c", first: 18, last: 65, caption: [C, a tagged union and a switch, adding a variant adds a case])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch04/Visitor.cs", first: 5, last: 36, caption: [C\#, records as the closed set, pattern matching as the switch])
-
 #listing("patterns-concurrency-distributed/samples/ch04/behavioral.go", first: 233, last: 258, caption: [Go, variants as plain structs, visitors as functions that switch])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch04/Visitor.java", first: 19, last: 45, caption: [Java, a sealed interface over record variants, the exhaustive switch enforced at compile time])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch04/Visitor.cs", first: 5, last: 36, caption: [C\#, records as the closed set, pattern matching as the switch])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch04-visitor.mjs", first: 5, last: 31, caption: [JavaScript, kind-tagged objects, switch on the tag])
 
@@ -401,9 +425,13 @@ fails every implementor at build time. The marker method `isShape`
 at least keeps foreign types out of the union, a closed set by
 construction. The closed set itself wears a different costume per
 tree: a tagged union in C, a switch over a tag field in javascript,
-if chains on a tag in lua, records under pattern matching in C\#, and
-python's `match` binding class patterns directly, the structural
-side of its dataclass story#xref-to("python", "dataclasses").
+if chains on a tag in lua, records under pattern matching in C\#,
+and python's `match` binding class patterns directly, the structural
+side of its dataclass story#xref-to("python", "dataclasses"). Java
+is the one tree that turns the cost into a compile error: its sealed
+interface permits exactly `Circle` and `Rect`, the pattern switch
+over it is exhaustive, and a new variant refuses to build until
+every visitor grows its case, the rule the C comment can only state.
 
 #diagram([one closed union, visitors are switches over it], length: 13pt, {
   cdraw.rect((0, 1.2), (5.4, 4.2), fill: luma(205), radius: 0.02)
@@ -445,7 +473,7 @@ side of its dataclass story#xref-to("python", "dataclasses").
   cdraw.content((16.75, 1.05), [the composite tree plus eval], size: 6pt)
 })
 
-== across the six languages
+== across the seven languages
 
 The build sizes count non-comment source lines, the go column the
 chapter's one frozen file:
@@ -455,8 +483,9 @@ chapter's one frozen file:
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [618], [libc plus threads.h], [fixed subscriber arrays under one mutex, undo records instead of closures, the iterator a yield callback with a context pointer],
-  [c\#], [285], [bcl], [Channels subscribers with TryWrite drops, yield return iterators, record pattern matching visitors],
   [go], [211], [stdlib], [frozen reference lane, iter.Seq adapters, SortStableFunc, buffered channel subscribers],
+  [java], [375], [jdk 27 stdlib], [Predicate verdicts for push iteration, sealed visitors the compiler keeps exhaustive, enums indexing the transition table],
+  [c\#], [285], [bcl], [Channels subscribers with TryWrite drops, yield return iterators, record pattern matching visitors],
   [javascript], [154], [node stdlib], [generators whose finally observes the stop, Map insertion order fixing delivery order],
   [python], [311], [stdlib only], [generator close runs finally, match visitors, a tuple keyed transition table],
   [lua], [521], [lib.lua harness], [push sequences as functions over yield callbacks, index tiebreak for sort stability, swapped tables make new machines],
@@ -466,7 +495,8 @@ sources: go.dev/pkg/iter for `Seq`, `Seq2`, and `Pull` semantics,
 go.dev/ref/spec range over function, go.dev/pkg/slices for
 `SortStableFunc` stability, go.dev/pkg/net/http for the middleware
 as chain of responsibility precedent, accessed 2026-09-08. Verified
-by the six chapter legs: `go test -race` at 6 tests in
-`patternsbook/ch04`, 6 C programs with 47 embedded checks, 17 C\#
-facts over `PatternsBook.slnx`, 11 `node --test` cases, 52 Python
-checks across 6 files, and 28 Lua rows under `run.lua`.
+by the seven chapter legs: 6 Ch04 C programs with 47 embedded
+checks, `go test -race` at 6 tests in `patternsbook/ch04`, 6 Ch04
+java programs with 46 checks under `run-java-samples`, 17 C\# facts
+over `PatternsBook.slnx`, 11 `node --test` cases, 52 Python checks
+across 6 files, and 28 Lua rows under `run.lua`.

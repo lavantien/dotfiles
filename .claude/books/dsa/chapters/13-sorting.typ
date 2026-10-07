@@ -14,14 +14,15 @@ Shift each element left until it lands. Quadratic worst case, linear
 on nearly sorted input, stable by construction.
 
 The dry run: the comparison counts are the contract, identical
-literals in all six suites. Sorted 0 through 4999 costs exactly 4999
-comparisons with zero shifts, 5, 4, 3, 2, 1 costs 10, 3, 1, 2 costs
-3, 2, 1, 3, 1, 2 costs 7, and 4, 2, 2, 1 costs 6, every output
-sorted. The bound lane holds n-1 through n(n-1)/2 on a shuffled 500
-from each tree's own deterministic shuffle, and the Go lane returns
-the pair (comparisons, shifts) so its zero-shifts row asserts the
-adaptive side directly. The C\# meter keeps its sorted, shuffled,
-and binary runs, binary insertion held under 140000 probes.
+literals in all seven suites. Sorted 0 through 4999 costs exactly
+4999 comparisons with zero shifts, 5, 4, 3, 2, 1 costs 10, 3, 1, 2
+costs 3, 2, 1, 3, 1, 2 costs 7, and 4, 2, 2, 1 costs 6, every
+output sorted. The bound lane holds n-1 through n(n-1)/2 on a
+shuffled 500 from each tree's own deterministic shuffle, and the Go
+and Java lanes return the (comparisons, shifts) pair so their
+zero-shift rows assert the adaptive side directly. The C\# meter
+keeps its sorted, shuffled, and binary runs, binary insertion held
+under 140000 probes.
 
 + The adaptive fixture is 0 through 4999, already ascending.
 + Each pass compares the newcomer once against its left neighbor,
@@ -63,7 +64,13 @@ and binary runs, binary insertion held under 140000 probes.
 })
 
 The exact 4999 with zero shifts is the pinned pair, and the listings
-below are the metered runs that produce it six ways.
+below are the metered runs that produce it seven ways.
+
+#listing("dsa/samples-c/src/Ch13/insertion.c", first: 21, last: 41, caption: [c, the counted walk, shifts reported through an out parameter])
+
+#listing("dsa/samples-go/ch13/insertion.go", first: 3, last: 39, caption: [go, comparisons and shifts returned as a pair, the pinned lcg shuffle beside it])
+
+#listing("dsa/samples-java/src/Ch13/Insertion.java", first: 18, last: 38, caption: [java, comparisons and shifts returned as a record, the coprime-multiplier shuffle inline])
 
 #listing("dsa/samples/src/Ch13/Sorting.cs", first: 7, last: 49, caption: [c\#, insertion sort, then binary insertion with logarithmic slot search])
 
@@ -74,26 +81,23 @@ keeping the same shifts. Insertion sort is not a museum piece, it is
 the finisher inside quicksort below and inside many library sorts,
 because small ranges are where it wins.
 
-#listing("dsa/samples-c/src/Ch13/insertion.c", first: 21, last: 41, caption: [c, the counted walk, shifts reported through an out parameter])
-
-#listing("dsa/samples-go/ch13/insertion.go", first: 3, last: 39, caption: [go, comparisons and shifts returned as a pair, the pinned lcg shuffle beside it])
-
 #listing("dsa/samples-js/src/ch13-insertion.mjs", first: 1, last: 21, caption: [javascript, the meter object carries the shift count])
 
 #listing("dsa/samples-py/src/Ch13/insertion.py", first: 14, last: 37, caption: [python, the counted walk, the 64-bit lcg feeding the bound lane])
 
 #listing("dsa/samples-lua/ch13_insertion.lua", first: 6, last: 42, caption: [lua, the pair returned, table.sort as the bound lane's ground truth])
 
-Measured across the suites: all six pin the counted ladder, 4999 on
+Measured across the suites: all seven pin the counted ladder, 4999 on
 the sorted 5000 with the array left untouched, 10 on the reversed
 five, 3 on 3, 1, 2, 7 on 2, 1, 3, 1, 2, and 6 on 4, 2, 2, 1, the
 equal break stopping each duplicate walk early. The bound lane holds
 on each tree's own deterministic shuffle, Go and Python sharing the
-pinned 64-bit lcg constants, Lua a 31-bit one, and C a coprime
-multiplier permutation built inline. The meter rides differently per
-tree: Go and Lua return comparisons and shifts as a pair, C writes
-the shifts through an out parameter, JavaScript bumps an optional
-meter object, and Python and C\# return the comparison count alone.
+pinned 64-bit lcg constants, Lua a 31-bit one, and C and Java a
+coprime multiplier permutation built inline. The meter rides
+differently per tree: Go, Java, and Lua return comparisons and
+shifts as a pair, Java's as a record, C writes the shifts through an
+out parameter, JavaScript bumps an optional meter object, and Python
+and C\# return the comparison count alone.
 
 #diagram([insertion sort, one element walks the sorted prefix leftward, shifting as it goes], length: 13pt, {
   // 4 walks left through 3 5 8: two shifts, then it lands
@@ -131,9 +135,9 @@ every remaining element of the left half, so the merge counts
 inversions exactly.
 
 The dry run: the fixtures are the C\# reversed and sorted hundreds
-plus the interleaved tag set, asserted by the C\# suite; C and Lua
-walk a 5-pair set to ids 4 1 3 0 2 and Go, JavaScript, and Python pin
-the same tie rule on interleaved ids.
+plus the interleaved tag set, asserted by the C\# suite; C, Java,
+and Lua walk a 5-pair set to ids 4 1 3 0 2 and Go, JavaScript, and
+Python pin the same tie rule on interleaved ids.
 
 + The reversed fixture, 99 down to 0, holds every pair inverted: the
   counter lands 100 × 99 / 2 = 4950.
@@ -178,7 +182,13 @@ the same tie rule on interleaved ids.
 })
 
 The 4950 against the sorted 0 and the tag order b d f a c e are the
-C\# pins, and the listings below merge in six languages.
+C\# pins, and the listings below merge in seven languages.
+
+#listing("dsa/samples-c/src/Ch13/mergesort.c", first: 23, last: 42, caption: [c, stable merge of key and id pairs, halves to tmp and back])
+
+#listing("dsa/samples-go/ch13/mergesort.go", first: 10, last: 33, caption: [go, the left run wins ties, appended into one buffer])
+
+#listing("dsa/samples-java/src/Ch13/Mergesort.java", first: 21, last: 41, caption: [java, stable merge of record pairs, ties from the left, halves to tmp and back])
 
 #listing("dsa/samples/src/Ch13/Sorting.cs", first: 51, last: 96, caption: [c\#, merge sort returning comparisons and the exact inversion count])
 
@@ -188,10 +198,6 @@ is the canonical divide and conquer that is not a sort but rides one,
 and the stability test proves the strict-less rule in the merge keeps
 equal keys in input order.
 
-#listing("dsa/samples-c/src/Ch13/mergesort.c", first: 23, last: 42, caption: [c, stable merge of key and id pairs, halves to tmp and back])
-
-#listing("dsa/samples-go/ch13/mergesort.go", first: 10, last: 33, caption: [go, the left run wins ties, appended into one buffer])
-
 #listing("dsa/samples-js/src/ch13-mergesort.mjs", first: 5, last: 23, caption: [javascript, tmp array per merge, ties from the left])
 
 #listing("dsa/samples-py/src/Ch13/mergesort.py", first: 13, last: 33, caption: [python, merge over (key, tag) tuples, the tie keeps the left run])
@@ -199,13 +205,13 @@ equal keys in input order.
 #listing("dsa/samples-lua/ch13_mergesort.lua", first: 6, last: 30, caption: [lua, inclusive bounds, one shared tmp])
 
 Measured across the suites: every version sorts tagged pairs and
-pins the tie rule. C and Lua feed (5,0) (3,1) (5,2) (3,3) (1,4) and
-land ids 4 1 3 0 2, an all-equal run riding through untouched.
-Python pins (2,a) (1,b) (2,c) (1,d) to b d a c, Go and JavaScript
-pin the same shape with numeric ids, and the frozen C\# suite
-counts comparisons and inversions, the reversed fixture hitting the
-triangular number. The tie decision is one character everywhere,
-less-or-equal, and the left run wins.
+pins the tie rule. C, Java, and Lua feed (5,0) (3,1) (5,2) (3,3)
+(1,4) and land ids 4 1 3 0 2, an all-equal run riding through
+untouched. Python pins (2,a) (1,b) (2,c) (1,d) to b d a c, Go and
+JavaScript pin the same shape with numeric ids, and the frozen C\#
+suite counts comparisons and inversions, the reversed fixture
+hitting the triangular number. The tie decision is one character
+everywhere, less-or-equal, and the left run wins.
 
 #diagram([merge sort counting inversions, every take from the right charges the remaining left half], length: 13pt, {
   // left 1 3 5 against right 2 4 6: two right takes, three inversions
@@ -238,8 +244,8 @@ small ranges, and a tail loop instead of the right recursion.
 
 The dry run: the fixture is the C\# meter over 20000 sorted keys plus
 the four adversarial shapes at 2000; the siblings sort smaller
-fixtures, C, JavaScript, and Lua on nine keys and Go and Python
-against library ground truth.
+fixtures, C, Java, JavaScript, and Lua on nine keys and Go and
+Python against library ground truth.
 
 + The metered run is 0 through 19999, already sorted, the shape a
   first-element pivot murders: peeling one element per partition
@@ -273,7 +279,13 @@ against library ground truth.
 })
 
 Staying under 2000000 where the naive run pays 199990000 is the
-pinned gap, and the listings below partition in six languages.
+pinned gap, and the listings below partition in seven languages.
+
+#listing("dsa/samples-c/src/Ch13/quicksort.c", first: 24, last: 58, caption: [c, plain hoare, then the median-of-three variant])
+
+#listing("dsa/samples-go/ch13/quicksort.go", first: 24, last: 62, caption: [go, median of three by sorting three values, the hoare sweep])
+
+#listing("dsa/samples-java/src/Ch13/Quicksort.java", first: 18, last: 55, caption: [java, plain hoare on the first element, then the median-of-three variant])
 
 #listing("dsa/samples/src/Ch13/Sorting.cs", first: 98, last: 179, caption: [c\#, quicksort driver, median-of-three hoare partition, the small-range cutoff])
 
@@ -285,17 +297,13 @@ where the naive version would burn about two hundred million. The
 all-equal test matters too, Hoare handles repeated pivots without
 crossing into quadratic behavior, where Lomuto's scheme does not.
 
-#listing("dsa/samples-c/src/Ch13/quicksort.c", first: 24, last: 58, caption: [c, plain hoare, then the median-of-three variant])
-
-#listing("dsa/samples-go/ch13/quicksort.go", first: 24, last: 62, caption: [go, median of three by sorting three values, the hoare sweep])
-
 #listing("dsa/samples-js/src/ch13-quicksort.mjs", first: 12, last: 33, caption: [javascript, hoare around a pivot value, first element plain])
 
 #listing("dsa/samples-py/src/Ch13/quicksort.py", first: 14, last: 43, caption: [python, hoare partition, pivot from the middle by default])
 
 #listing("dsa/samples-lua/ch13_quicksort.lua", first: 7, last: 45, caption: [lua, repeat-until cursors, plain and median-of-three])
 
-Measured across the suites: C, JavaScript, and Lua sort
+Measured across the suites: C, Java, JavaScript, and Lua sort
 5 2 8 1 9 3 7 4 6 to 1 through 9 under plain Hoare and again under
 median-of-three, duplicates 3 1 2 3 1 landing 1 1 2 3 3, and prove
 the permutation with sum and xor. Go runs five fixtures including
@@ -355,7 +363,7 @@ unfixed, the same risk profile as the sort.
 
 The dry run: the fixture is 7, 1, 5, 3, 9, 2, 8, 6, 4 with k = 5
 plus the duplicate and all-equal sets, asserted by the C\# suite and
-pinned the same way in all five siblings.
+pinned the same way in all six siblings.
 
 + Round 1 on the 9-wide range: median of three probes 7, 9, and 4,
   parks 9 at the far end, and pivots on 7, the hoare sweep swaps the
@@ -383,11 +391,12 @@ pinned the same way in all five siblings.
 )
 
 The median 5 read off the 9-wide fixture is the pinned answer, and
-the listings below select in six languages.
+the listings below select in seven languages.
 
 #listing("dsa/samples-c/src/Ch13/quickselect.c", first: 43, last: 73, caption: [c, hoare around the median-of-three pivot, then the single-sided loop])
-#listing("dsa/samples/src/Ch13/Sorting.cs", first: 217, last: 247, caption: [c\#, the small-range insertion finish, the k renumbered inside the right side])
 #listing("dsa/samples-go/ch13/quickselect.go", first: 3, last: 21, caption: [go, the whole loop over the shared hoare partition])
+#listing("dsa/samples-java/src/Ch13/Quickselect.java", first: 43, last: 73, caption: [java, hoare around the median-of-three pivot, then the single-sided loop])
+#listing("dsa/samples/src/Ch13/Sorting.cs", first: 217, last: 247, caption: [c\#, the small-range insertion finish, the k renumbered inside the right side])
 #listing("dsa/samples-js/src/ch13-quickselect.mjs", first: 10, last: 32, caption: [javascript, the partition imported from the quicksort module, the recursion])
 #listing("dsa/samples-py/src/Ch13/quickselect.py", first: 15, last: 42, caption: [python, the hoare loop, the trio-sorted pivot, the kept side])
 #listing("dsa/samples-lua/ch13_quickselect.lua", first: 9, last: 38, caption: [lua, the pivot rule in-file, the loop in 1-based indices])
@@ -402,7 +411,9 @@ through 9 with 1 through 9 against the sorted ground truth, k = 5
 reading the median 5; the duplicates 3, 1, 3, 2, 3 answer k = 2 with 2
 and k = 4 with 3; all-equal 5, 5, 5, 5 answers 5 for every k and a
 single 42 answers itself; and a seeded lcg permutation of 40 elements
-matches sorted\[k-1\] on five sampled k.
+matches sorted\[k-1\] on five sampled k. The permutation's lcg is
+32-bit unsigned c: Java's int multiply wraps identically, so only
+the mod needs `Integer.remainderUnsigned`.
 
 #diagram([one partition of the fixture array around the median of three, the k = 5 slot shaded on the kept side], length: 13pt, {
   // 7 1 5 3 9 2 8 6 4, pivot 7 (median of a[0], a[4], a[8] = 7, 9, 4), one hoare pass
@@ -440,8 +451,8 @@ stable counting passes least significant digit up. Each pass must be
 stable or the previous pass's work dies.
 
 The dry run: the fixtures are the sign-flip ladder and the two radix
-runs, asserted by the C\# suite; C, Go, JavaScript, and Lua pin the
-counting fixture 4 2 2 8 3 3 1 instead and Python sorts digit
+runs, asserted by the C\# suite; C, Go, Java, JavaScript, and Lua pin
+the counting fixture 4 2 2 8 3 3 1 instead and Python sorts digit
 tuples.
 
 + The flip is one xor of bit 63, and the ladder reads
@@ -482,7 +493,13 @@ tuples.
 })
 
 The ladder order and the two working passes are the C\# pins, and
-the listings below bucket in six languages.
+the listings below bucket in seven languages.
+
+#listing("dsa/samples-c/src/Ch13/counting.c", first: 18, last: 56, caption: [c, counting sort, one stable digit pass, radix driver])
+
+#listing("dsa/samples-go/ch13/counting.go", first: 8, last: 55, caption: [go, tally-and-emit counting, two stable byte passes over 16-bit keys])
+
+#listing("dsa/samples-java/src/Ch13/Counting.java", first: 18, last: 53, caption: [java, backward fill for stability, decimal radix over record pairs])
 
 #listing("dsa/samples/src/Ch13/Sorting.cs", first: 181, last: 215, caption: [c\#, lsd radix on bytes, sign-bit key flip, the uniform-pass skip])
 
@@ -493,19 +510,15 @@ signed order, and flips back at the end. And a pass whose bucket
 count says every element shares the byte is skipped for free, which
 is why small-magnitude ints finish in a couple of passes.
 
-#listing("dsa/samples-c/src/Ch13/counting.c", first: 18, last: 56, caption: [c, counting sort, one stable digit pass, radix driver])
-
-#listing("dsa/samples-go/ch13/counting.go", first: 8, last: 55, caption: [go, tally-and-emit counting, two stable byte passes over 16-bit keys])
-
 #listing("dsa/samples-js/src/ch13-counting.mjs", first: 9, last: 35, caption: [javascript, backward fill for stability, byte radix])
 
 #listing("dsa/samples-py/src/Ch13/counting.py", first: 15, last: 34, caption: [python, counting sort keyed by a function, radix over digit tuples])
 
 #listing("dsa/samples-lua/ch13_counting.lua", first: 7, last: 50, caption: [lua, backward walk with 1-based out slots, decimal radix])
 
-Measured across the suites: C, Go, JavaScript, and Lua all
+Measured across the suites: C, Go, Java, JavaScript, and Lua all
 counting-sort 4 2 2 8 3 3 1 to 1 2 2 3 3 4 8. The radix half splits
-by family: C and Lua run the classic 3-digit fixture
+by family: C, Java, and Lua run the classic 3-digit fixture
 329 457 657 839 436 720 355 to 329 355 436 457 657 720 839 with
 tags surviving in order, Go and JavaScript run 16-bit keys in two
 stable byte passes, and Python sorts (hi, lo) digit tuples, probing
@@ -560,10 +573,10 @@ merge from this chapter, once with a deliberately unstable contrast,
 and reads the tags: equal keys must keep their input order under the
 first and are free to lose it under the second.
 
-The dry run: the fixture is the C and Lua pair set (2, 0), (2, 1),
-(1, 2) through both sorts, the contrast this section teaches, with
-Go, JavaScript, and Python on three equal 2s and the C\# suite
-pinning the stable half alone, OrderBy reading b d a c.
+The dry run: the fixture is the C, Java, and Lua pair set (2, 0),
+(2, 1), (1, 2) through both sorts, the contrast this section
+teaches, with Go, JavaScript, and Python on three equal 2s and the
+C\# suite pinning the stable half alone, OrderBy reading b d a c.
 
 + The set plants two equal 2s, ids 0 and 1, bracketing a 1 at id 2.
 + The stable merge outputs the 1 first, then reads the equal keys as
@@ -602,13 +615,15 @@ pinning the stable half alone, OrderBy reading b d a c.
 })
 
 The 2 0 1 against 2 1 0 contrast is the pinned pair, and the
-listings below probe it in six languages.
+listings below probe it in seven languages.
 
 #listing("dsa/samples-c/src/Ch13/stability.c", first: 23, last: 58, caption: [c, the stable merge against selection sort's long swap])
 
-#listing("dsa/samples/src/Ch13/Sorting.cs", first: 71, last: 96, caption: [c\#, the merge halves, strict less is the stable decision])
-
 #listing("dsa/samples-go/ch13/stability.go", first: 8, last: 38, caption: [go, heapsort over records as the unstable contrast, two wrappers])
+
+#listing("dsa/samples-java/src/Ch13/Stability.java", first: 21, last: 57, caption: [java, the stable merge against selection sort's long swap])
+
+#listing("dsa/samples/src/Ch13/Sorting.cs", first: 71, last: 96, caption: [c\#, the merge halves, strict less is the stable decision])
 
 #listing("dsa/samples-js/src/ch13-stability.mjs", first: 5, last: 48, caption: [javascript, stable merge sort, heapsort walking equals out reversed])
 
@@ -616,9 +631,9 @@ listings below probe it in six languages.
 
 #listing("dsa/samples-lua/ch13_stability.lua", first: 6, last: 42, caption: [lua, nested msort, selection sort contrast])
 
-Measured across the suites: C and Lua feed (2,0) (2,1) (1,2), the
-stable merge emits ids 2 0 1 while selection sort emits 2 1 0, its
-long swap pulling id 0 past id 1, and a longer fixture shows the
+Measured across the suites: C, Java, and Lua feed (2,0) (2,1) (1,2),
+the stable merge emits ids 2 0 1 while selection sort emits 2 1 0,
+its long swap pulling id 0 past id 1, and a longer fixture shows the
 contrast is a standing risk rather than a certainty. Go, JavaScript,
 and Python feed three equal 2s and a single 1, keep ids 0 1 2 under
 the stable merge, and watch heapsort walk them out reversed. Both
@@ -656,7 +671,7 @@ when the range is small or nearly ordered. The capstone's compaction
 does no sorting at all, it merges already sorted runs, chapter 8's
 k-way merge, which is the third way ordering appears in systems.
 
-== across the six languages
+== across the seven languages
 
 The build sizes count non-comment source lines. The first table
 covers the chapter's five original featured files per language,
@@ -669,14 +684,15 @@ too, one file for the whole chapter:
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [433], [libc only], [static tmp buffers, one file per sort, plain and median-of-three quicksort side by side, checks share the file with main, 53 of them],
-  [c\#], [212], [bcl only], [comparison meters and inversion counting throughout, insertion cutoff inside quicksort and quickselect, 16 tests],
   [go], [162], [slices], [slices.Sort as ground truth only, radix over uint16 keys, quickselect over the shared partition, tests in separate files, 13 tests],
+  [java], [413], [jdk 27 stdlib], [one file per sort, plain and median-of-three quicksort side by side, records carry the tags, decimal radix, the shuffle lcg's mod rides Integer.remainderUnsigned, 38 checks in 5 files],
+  [c\#], [212], [bcl only], [comparison meters and inversion counting throughout, insertion cutoff inside quicksort and quickselect, 16 tests],
   [javascript], [160], [node stdlib], [destructured swaps, radix over 16-bit keys in two byte passes, quickselect importing the quicksort pivot, 13 tests],
   [python], [297], [stdlib only], [sorted() as ground truth only, tagged tuples make stability visible, the seeded permutation property, 45 checks],
   [lua], [353], [lib.lua harness], [repeat-until hoare cursors, decimal radix base 10, checks ride in the module, 19 of them],
 )
 
-The counted insertion baseline lands as its own file in the five
+The counted insertion baseline lands as its own file in the six
 sibling trees, the C\# lane keeping its generic pair inside the
 chapter's one file:
 
@@ -685,8 +701,9 @@ chapter's one file:
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [74], [libc only], [long counters, shifts through an out parameter, the bound permutation built inline from the coprime multiplier 31],
-  [c\#], [41], [bcl only], [the generic insertion pair, plain and binary, over IComparable<T>, the comparison count as the meter],
   [go], [31], [slices], [the pair (comparisons, shifts) returned, DeterministicShuffle feeding the bound lane],
+  [java], [73], [jdk 27 stdlib], [long counters in a record pair, the bound permutation built inline from the same coprime multiplier 31, 14 checks],
+  [c\#], [41], [bcl only], [the generic insertion pair, plain and binary, over IComparable<T>, the comparison count as the meter],
   [javascript], [16], [node stdlib], [an optional meter object carries the shift count, the smallest build of the set],
   [python], [61], [stdlib only], [comparisons alone returned, the 64-bit lcg shuffle beside it, shuffled slices checked too],
   [lua], [90], [lib.lua harness], [1-based walk, the pair returned, table.sort as the bound lane's ground truth],
@@ -699,7 +716,8 @@ runtime itself for the comparer finding, and cp-algorithms, "K-th
 order statistic in O(N)", cp-algorithms.com/sequences/k-th.html,
 accessed 2026-09-20, cc by-sa 4.0, our own words and code throughout.
 Sample behavior verified by `make verify-csharp`, 16 tests in chapter
-13 of the samples suite. The six-language layer verifies the same
+13 of the samples suite. The seven-language layer verifies the same
 way: 6 C programs with 67 embedded checks under `make verify-c`, 16
-Go tests, 19 `node --test` cases, 60 Python checks across 6 files,
-and 26 Lua checks under `run.lua`.
+Go tests, the java runner's 52 Ch13 checks over 6 files under
+`run-java-samples`, 19 `node --test` cases, 60 Python checks across
+6 files, and 26 Lua checks under `run.lua`.

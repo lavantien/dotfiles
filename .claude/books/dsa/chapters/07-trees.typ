@@ -16,7 +16,7 @@ level. C carries the core in two functions, insert by recursion,
 find by loop.
 
 The dry run: the fixture is 50, 30, 70, 20, 40, 60, 80 plus the
-sorted storm 0 through 99, asserted by the C\# suite, while C,
+sorted storm 0 through 99, asserted by the C\# suite, while C, Java,
 JavaScript, and Lua insert 5, 3, 8, 1, 4, 7, 9, 2, 6 for the same
 contract.
 
@@ -66,14 +66,17 @@ both shapes.
 
 #listing("dsa/samples-c/src/Ch07/bst.c", first: 33, last: 48, caption: [c, insert by recursion, find by loop])
 
+#listing("dsa/samples-go/ch07/bst.go", first: 26, last: 52, caption: [go, insert and search as package functions])
+
+Six more languages build the same tree, Java relinking each level
+through the subtree its recursion returns:
+
+#listing("dsa/samples-java/src/Ch07/Bst.java", first: 31, last: 46, caption: [java, insert by recursion relinking through return values, find by loop])
+
 The C\# class carries a comparison meter for the same reason the
 hash table carried a probe meter:
 
-#listing("dsa/samples/src/Ch07/Trees.cs", first: 4, last: 35, caption: [the bst with a comparison meter on every operation])
-
-Four more languages build the same tree:
-
-#listing("dsa/samples-go/ch07/bst.go", first: 26, last: 52, caption: [go, insert and search as package functions])
+#listing("dsa/samples/src/Ch07/Trees.cs", first: 4, last: 35, caption: [c\#, the bst with a comparison meter on every operation])
 
 #listing("dsa/samples-js/src/ch07-bst.mjs", first: 13, last: 26, caption: [javascript, insert and find as free functions])
 
@@ -83,28 +86,31 @@ Four more languages build the same tree:
 
 Every suite pins the same contract: inorder comes back sorted no
 matter the insertion order, hits land on their node, misses return
-nothing. C, JavaScript, and Lua insert 5 3 8 1 4 7 9 2 6 and read
-1 through 9 back. Python inserts seven keys and deletes its way down
-to an empty tree. Go guards insert and delete with a search first,
-the only suite whose public methods refuse duplicates by design. C\#
-is the only one that counts comparisons while it walks.
+nothing. C, Java, JavaScript, and Lua insert 5 3 8 1 4 7 9 2 6 and
+read 1 through 9 back. Python inserts seven keys and deletes its way
+down to an empty tree. Go guards insert and delete with a search
+first, the only suite whose public methods refuse duplicates by
+design. C\# is the only one that counts comparisons while it walks.
 
 Insertion walks the same path and attaches a leaf where it falls
 off. The three traversals are one recursion with the visit in
 different positions, and level order is chapter 5's queue doing
 breadth first over a tree:
 
-#listing("dsa/samples/src/Ch07/Trees.cs", first: 62, last: 84, caption: [inorder, preorder, postorder, and the queue-driven level order])
+#listing("dsa/samples-c/src/Ch07/traverse.c", first: 39, last: 77, caption: [c, three recursive walks and the array-queue level order])
+
+#listing("dsa/samples-go/ch07/traverse.go", first: 37, last: 55, caption: [go, level order through a slice queue])
+
+The other five languages walk the same fixture, Java's level order
+advancing a head index over one array:
+
+#listing("dsa/samples-java/src/Ch07/Traverse.java", first: 41, last: 80, caption: [java, three recursive walks and the array-queue level order over a head index])
 
 Inorder is the payoff: it enumerates keys sorted regardless of shape,
 which is why a tree can back an ordered dictionary and a hash table
 cannot.
 
-The four walks in the other five languages:
-
-#listing("dsa/samples-c/src/Ch07/traverse.c", first: 39, last: 77, caption: [c, three recursive walks and the array-queue level order])
-
-#listing("dsa/samples-go/ch07/traverse.go", first: 37, last: 55, caption: [go, level order through a slice queue])
+#listing("dsa/samples/src/Ch07/Trees.cs", first: 62, last: 84, caption: [c\#, inorder, preorder, postorder, and the queue-driven level order])
 
 #listing("dsa/samples-js/src/ch07-traverse.mjs", first: 15, last: 41, caption: [javascript, the four walks as spread-recursive functions])
 
@@ -112,12 +118,13 @@ The four walks in the other five languages:
 
 #listing("dsa/samples-lua/ch07_traverse.lua", first: 29, last: 63, caption: [lua, the four walks over table nodes])
 
-The 7-node fixture over 1 through 7 is the anchor, and all six pin
+The 7-node fixture over 1 through 7 is the anchor, and all seven pin
 all four sequences: preorder 4 2 1 3 6 5 7, inorder 1 through 7,
 postorder 1 3 2 5 7 6 4, level order 4 2 6 1 3 5 7. The
-implementations differ only in queue discipline, C, Lua, and Python
-advance a head index over one array, Go reslices the front away, and
-JavaScript shifts the front element, the same fifo three ways.
+implementations differ only in queue discipline, C, Java, Lua, and
+Python advance a head index over one array, Go reslices the front
+away, and JavaScript shifts the front element, the same fifo three
+ways.
 
 #diagram([the same keys twice, shuffled input stays a shallow guided search, sorted input degenerates into a chain], length: 13pt, {
   // left: the same keys inserted shuffled, find 13 walks 8 12 14 13
@@ -169,8 +176,8 @@ the leftmost node of the right subtree, which preserves the invariant
 because it is the smallest key greater than the removed one.
 
 The dry run: the fixture is the eight keys 50, 30, 70, 20, 40, 60,
-80, 35, asserted by the C\# suite, while C, JavaScript, and Lua run
-5, 3, 8, 1, 4, 7, 9, 2, 6 and erase the leaf 2, the one-child 7,
+80, 35, asserted by the C\# suite, while C, Java, JavaScript, and Lua
+run 5, 3, 8, 1, 4, 7, 9, 2, 6 and erase the leaf 2, the one-child 7,
 and the two-child root 5.
 
 + 35 arrives last and walks deepest: 35 < 50, 35 > 30, 35 < 40,
@@ -201,9 +208,11 @@ and the listings below carry all three cases.
 
 #listing("dsa/samples-c/src/Ch07/bst.c", first: 50, last: 72, caption: [c, the three-case erase with the successor swap])
 
-#listing("dsa/samples/src/Ch07/Trees.cs", first: 86, last: 151, caption: [find and insert, then the three-case removal via successor swap])
-
 #listing("dsa/samples-go/ch07/bst.go", first: 66, last: 88, caption: [go, deletion as one switch over the three cases])
+
+#listing("dsa/samples-java/src/Ch07/Bst.java", first: 48, last: 70, caption: [java, the three-case erase with the successor swap, relinked through return values])
+
+#listing("dsa/samples/src/Ch07/Trees.cs", first: 86, last: 151, caption: [c\#, find and insert, then the three-case removal via successor swap])
 
 #listing("dsa/samples-js/src/ch07-bst.mjs", first: 28, last: 46, caption: [javascript, erase with the successor pulled up])
 
@@ -211,11 +220,11 @@ and the listings below carry all three cases.
 
 #listing("dsa/samples-lua/ch07_bst.lua", first: 24, last: 42, caption: [lua, erase over table nodes])
 
-C, JavaScript, and Lua run the fixture 5 3 8 1 4 7 9 2 6 and pin the
-same three removals, the leaf 2, the one-child node 7, and the
-two-child root 5 whose successor 6 takes over, with inorder sorted
-after every step. Python works seven keys and drains to an empty
-tree, its two-child case swapping 8's successor 9. Go deletes
+C, Java, JavaScript, and Lua run the fixture 5 3 8 1 4 7 9 2 6 and
+pin the same three removals, the leaf 2, the one-child node 7, and
+the two-child root 5 whose successor 6 takes over, with inorder
+sorted after every step. Python works seven keys and drains to an
+empty tree, its two-child case swapping 8's successor 9. Go deletes
 through one switch and replays the leaf, one-child, and successor
 cases in its tests. The successor swap hides a subtlety every
 listing covers: after copying the successor into the node, the code
@@ -246,7 +255,7 @@ repair is the same decision everywhere, look at the balance of the
 heavy child. C folds the decision into the insert itself.
 
 The dry run: the fixture is sorted inserts 0 through 999 plus the
-four three-key shapes, asserted by the C\# suite, while C,
+four three-key shapes, asserted by the C\# suite, while C, Java,
 JavaScript, and Lua pin the same shapes and ascending 1 through 15
 at height 4.
 
@@ -293,13 +302,20 @@ is the repair doing its job, and the listings below meter it.
 
 #listing("dsa/samples-c/src/Ch07/balance.c", first: 60, last: 84, caption: [c, avl insert with the four rotation cases inline])
 
-#listing("dsa/samples/src/Ch07/Trees.cs", first: 188, last: 280, caption: [the avl with rotation counter and imbalance probe])
+#listing("dsa/samples-go/ch07/balance.go", first: 75, last: 105, caption: [go, insert then rebalance by the child's balance factor])
+
+The same reflex in the other five languages, Java choosing the case
+by the inserted value against the child's key:
+
+#listing("dsa/samples-java/src/Ch07/Balance.java", first: 30, last: 83, caption: [java, cached heights, both rotations, avl insert with the four cases inline])
+
+#listing("dsa/samples/src/Ch07/Trees.cs", first: 188, last: 280, caption: [c\#, the avl with rotation counter and imbalance probe])
 
 A rotation moves a child up and a subtree across, three pointer
 assignments plus two height updates, and the invariant check is pure
 arithmetic on cached heights:
 
-#listing("dsa/samples/src/Ch07/Trees.cs", first: 281, last: 334, caption: [rebalance, the double-rotation cases, both rotations])
+#listing("dsa/samples/src/Ch07/Trees.cs", first: 281, last: 334, caption: [c\#, rebalance, the double-rotation cases, both rotations])
 
 The tests pin the headline numbers: 1000 sorted inserts leave height
 at most 12 where the plain tree reaches 1000, the imbalance probe
@@ -307,25 +323,21 @@ never exceeds 1, and the rotation counter proves sorted input is what
 forces rotations. The four shape tests insert three keys in each
 order, two single and two double rotation cases, and all end height 2.
 
-The same reflex in the other four languages:
-
-#listing("dsa/samples-go/ch07/balance.go", first: 75, last: 105, caption: [go, insert then rebalance by the child's balance factor])
-
 #listing("dsa/samples-js/src/ch07-balance.mjs", first: 31, last: 49, caption: [javascript, avl insert with the case labels inline])
 
 #listing("dsa/samples-py/src/Ch07/balance.py", first: 53, last: 72, caption: [python, insert with balance factors read off cached heights])
 
 #listing("dsa/samples-lua/ch07_balance.lua", first: 36, last: 58, caption: [lua, insert with the four cases commented])
 
-The four shapes pin identically in C, JavaScript, and Lua: 3 2 1,
-1 2 3, 3 1 2, and 1 3 2 all collapse to the root 2 with children 1
-and 3, and ascending 1 through 15 leaves height 4 rooted at 8. Python
-runs the four shapes plus the classic 10 20 30 40 50 25 sequence
-rooting at 30 with height 3. The case choice reads two routes to the
-same answer: Go asks the heavy child for its balance factor, while
-C, JavaScript, Lua, and Python compare the inserted value against the
-child's key. C\# meters rotations, the only balance factor the others
-leave uncounted.
+The four shapes pin identically in C, Java, JavaScript, and Lua:
+3 2 1, 1 2 3, 3 1 2, and 1 3 2 all collapse to the root 2 with
+children 1 and 3, and ascending 1 through 15 leaves height 4 rooted
+at 8. Python runs the four shapes plus the classic 10 20 30 40 50 25
+sequence rooting at 30 with height 3. The case choice reads two
+routes to the same answer: Go asks the heavy child for its balance
+factor, while C, Java, JavaScript, Lua, and Python compare the
+inserted value against the child's key. C\# meters rotations, the
+only balance factor the others leave uncounted.
 
 #flow(
   [the rotation reflex, the heavy stick before and after one left rotation],
@@ -423,7 +435,7 @@ against the tree's writes.
 The 6 against the 4 is the table above in one run, read-mostly
 buys the array pair and anything that moves wants the tree.
 
-== across the six languages
+== across the seven languages
 
 Build sizes count non-comment source lines over the featured files;
 bundled checks count where the language puts them in the same file:
@@ -433,8 +445,9 @@ bundled checks count where the language puts them in the same file:
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [309], [libc only], [nodes come from static pools, recursion over pointers, 31 checks in 3 files],
-  [c\#], [293], [bcl only], [generic trees with comparison and rotation meters, the only suite that counts either],
   [go], [232], [none], [unexported fields keep the height private, rebalance reads the child's balance factor],
+  [java], [306], [jdk 27 stdlib], [TreeMap exists in the stdlib and goes unused, insert and erase relink through return values over one shared static root, the avl case reads the inserted value against the child's key],
+  [c\#], [293], [bcl only], [generic trees with comparison and rotation meters, the only suite that counts either],
   [javascript], [119], [node stdlib], [spread recursion builds new arrays at every level, fine for fixtures, garbage at scale],
   [python], [208], [stdlib only], [`__slots__` nodes, drains the whole tree through all three delete shapes],
   [lua], [248], [lib.lua harness], [a node is a table with nil-able links, and and or pick the walk direction],
@@ -444,7 +457,8 @@ sources: learn.microsoft.com, `SortedDictionary<TKey,TValue>` remarks
 on the red-black implementation, `SortedList<TKey,TValue>` remarks on
 the sorted-array layout and operation costs, accessed 2026-09-08.
 Sample behavior verified by `make verify-csharp`, 10 tests in
-chapter 7 of the samples suite. The six-language layer verifies the
-same way: 3 C programs with 31 embedded checks, 8 Go tests, 6
-`node --test` cases, 24 Python checks across 3 files, and 14 Lua
+chapter 7 of the samples suite. The seven-language layer verifies
+the same way: 3 C programs with 31 embedded checks, 8 Go tests, the
+java runner's 31 Ch07 checks over 3 files under `run-java-samples`,
+6 `node --test` cases, 24 Python checks across 3 files, and 14 Lua
 checks under `run.lua`.

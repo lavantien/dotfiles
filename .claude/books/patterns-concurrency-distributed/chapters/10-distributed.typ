@@ -11,7 +11,7 @@ resilience, is engineering around those three facts. This chapter
 fixes the vocabulary and builds the two algorithmic primitives every
 later chapter leans on: logical clocks and quorum arithmetic. The
 three samples, lamport, vector, and quorum, are pure functions in
-all six trees, no concurrency at all, and the shared fixtures land
+all seven trees, no concurrency at all, and the shared fixtures land
 as the same literals in every lane.
 
 == the fallacies, as constraints
@@ -99,7 +99,7 @@ Lamport's 1978 insight: order does not have to come from time, it
 can come from communication. Each process keeps a counter, ticks it
 on every event, and folds the maximum on receive:
 
-The dry run: the same walk in all six lanes.
+The dry run: the same walk in all seven lanes.
 
 - a leader's 100 local ticks leave its stamp at exactly 100, and a
   lagging clock receiving that stamp lands on 101, max then tick
@@ -111,9 +111,11 @@ The dry run: the same walk in all six lanes.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch10/lamport.c", first: 21, last: 41, caption: [C, the clock is a struct, tick, send, and receive are plain functions over it])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch10/Lamport.cs", first: 3, last: 30, caption: [C\#, the clock is a class, Receive folds the max then ticks])
-
 #listing("patterns-concurrency-distributed/samples/ch10/clocks.go", first: 10, last: 33, caption: [Go, tick, send, receive: the whole scheme in three methods])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch10/Lamport.java", first: 20, last: 44, caption: [Java, the clock is a small final class around a long, receive folds the max then ticks])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch10/Lamport.cs", first: 3, last: 30, caption: [C\#, the clock is a class, Receive folds the max then ticks])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch10-lamport.mjs", first: 7, last: 35, caption: [JavaScript, the counter sits behind a private class field, the same three methods])
 
@@ -121,13 +123,14 @@ The dry run: the same walk in all six lanes.
 
 #listing("patterns-concurrency-distributed/samples-lua/ch10_lamport.lua", first: 7, last: 30, caption: [Lua, the clock is a table dispatched through its metatable])
 
-The counter's carrier is the only thing the six trees disagree on:
-go keeps `count uint64` in a struct, c a `uint64_t` beside the
+The counter's carrier is the only thing the seven trees disagree
+on: go keeps `count uint64` in a struct, c a `uint64_t` beside the
 process name, c\# a `ulong` property, javascript a private class
 field, python an attribute on `self`, lua a table field reached
-through `__index`. Receive is max then increment in every spelling,
-and because the scheme is pure arithmetic over one integer, all six
-fixtures print the same numbers with no portability seam at all.
+through `__index`, java a `long` field in a final class. Receive is
+max then increment in every spelling, and because the scheme is
+pure arithmetic over one integer, all seven fixtures print the same
+numbers with no portability seam at all.
 
 #diagram([local events tick, receive takes the max then ticks, order is one way], length: 13pt, {
   cdraw.content((0, 4.1), [process 1], size: 6.5pt)
@@ -172,7 +175,7 @@ for deciding which write wins.
 To recover the true causal relation, each process records the latest
 stamp it has seen from every process:
 
-The dry run: the fork-merge fixture, identical in all six lanes.
+The dry run: the fork-merge fixture, identical in all seven lanes.
 
 - 2 independent first ticks stamp {a:1} and {b:1} and compare
   concurrent
@@ -183,11 +186,13 @@ The dry run: the fork-merge fixture, identical in all six lanes.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch10/vector.c", first: 41, last: 87, caption: [C, merge folds elementwise max then ticks, compare walks the slots of a fixed two-process stamp])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch10/Vector.cs", first: 45, last: 94, caption: [C\#, the four-way compare over the sorted union of process names, missing slots read zero])
-
 #listing("patterns-concurrency-distributed/samples/ch10/clocks.go", first: 36, last: 66, caption: [Go, stamp per process, elementwise merge, tick on the receive itself])
 
 #listing("patterns-concurrency-distributed/samples/ch10/clocks.go", first: 69, last: 112, caption: [Go, comparison: all-less is before, all-greater is after, mixed is concurrent])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch10/Vector.java", first: 32, last: 64, caption: [Java, the fixed two-slot universe of the c tree, tick hands back a defensive copy, merge folds the max then ticks])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch10/Vector.cs", first: 45, last: 94, caption: [C\#, the four-way compare over the sorted union of process names, missing slots read zero])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch10-vector.mjs", first: 7, last: 49, caption: [JavaScript, the stamp is a Map, compare returns the relation as a string])
 
@@ -198,15 +203,16 @@ The dry run: the fork-merge fixture, identical in all six lanes.
 The carrier widens from one integer to a map of them and the trees
 split by grain: go a `map[string]uint64`, c\# a
 `Dictionary<string, ulong>`, javascript a `Map`, python a `dict`,
-lua a plain table, and c a fixed two-slot array, honest about a
-fixture that only ever forks two processes. Compare walks the union
-of process names in all six, sorted first in go, c\#, python, and
-lua, javascript settling for Set order over its Map keys, and c
-scanning its two slots, a missing name reading zero through
-`TryGetValue`, `?? 0`, `.get(name, 0)`, `or 0`, and c's zeroed
-array. The relation itself is an enum in go, c, and c\# and a
-returned name in javascript, python, and lua, the same four outcomes
-either way.
+lua a plain table, and c and java a fixed two-slot array, honest
+about a fixture that only ever forks two processes. Compare walks
+the union of process names in all seven, sorted first in go, c\#,
+python, and lua, javascript settling for Set order over its Map
+keys, and c and java scanning their two slots, a missing name
+reading zero through `TryGetValue`, `?? 0`, `.get(name, 0)`,
+`or 0`, and the c and java zeroed arrays. The relation itself is an
+enum in go, c, c\#, and java, java's carrying a name renderer for
+its check text, and a returned name in javascript, python, and lua,
+the same four outcomes either way.
 
 Comparison over the union of process ids yields exactly four
 outcomes, and `Concurrent` is the outcome this section exists for,
@@ -266,17 +272,20 @@ The dry run: quorum over cluster sizes 1 through 7 reads 1, 2, 2, 3,
 3, 4, 4 in every lane.
 
 - majority(2, 3) carries, majority(1, 3) does not, majority(3, 3)
-  carries, all six, and the c and python lanes add the even
-  cluster, where half is never enough
+  carries, all seven, and the c, java, and python lanes add the
+  even cluster, where half is never enough
 - quorum(n) + quorum(n) > n, the overlap the raft chapters stand
   on, swept for n up to 20 by the lua lane and checked at 5 and 7
-  by python
+  by python and java, which also sweeps the failure tolerance,
+  f+1 yes of 2f+1 for f up to 3
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch10/quorum.c", first: 18, last: 22, caption: [C, two functions, the whole arithmetic])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch10/Quorum.cs", first: 3, last: 10, caption: [C\#, Of and Majority as static one-liners])
-
 #listing("patterns-concurrency-distributed/samples/ch10/clocks.go", first: 115, last: 118, caption: [Go, quorum and majority])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch10/Quorum.java", first: 17, last: 30, caption: [Java, three static one-liners, n / 2 + 1 verbatim like c, plus the overlap predicate])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch10/Quorum.cs", first: 3, last: 10, caption: [C\#, Of and Majority as static one-liners])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch10-quorum.mjs", first: 1, last: 12, caption: [JavaScript, Math.floor spells the same formula over real division])
 
@@ -285,8 +294,8 @@ The dry run: quorum over cluster sizes 1 through 7 reads 1, 2, 2, 3,
 #listing("patterns-concurrency-distributed/samples-lua/ch10_quorum.lua", first: 6, last: 14, caption: [Lua, floor division, same formula])
 
 The formula survives translation because every language here floors
-its integer division: `n / 2 + 1` verbatim in c, go, and c\#, `n
-// 2 + 1` in python and lua, and `Math.floor(n / 2) + 1` in
+its integer division: `n / 2 + 1` verbatim in c, go, java, and
+c\#, `n // 2 + 1` in python and lua, and `Math.floor(n / 2) + 1` in
 javascript, where `/` alone is real division and would hand back
 2.5 seats for a five-node cluster. The majority predicate is one
 comparison everywhere. The number itself does the work in the next
@@ -339,7 +348,7 @@ tests exercise exactly that stoppage.
   edge((3.0, 1.2), (6.0, 1.2), "-|>"),
 )
 
-== across the six languages
+== across the seven languages
 
 The build sizes count non-comment source lines, the go column the
 chapter's one frozen file:
@@ -350,10 +359,12 @@ chapter's one frozen file:
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [178], [libc],
   [uint64_t clock, two-slot fixed vector stamps, an enum relation, n / 2 + 1],
-  [c\#], [102], [bcl],
-  [ulong clock, Dictionary stamps, TryGetValue zeros, static quorum one-liners],
   [go], [86], [stdlib],
   [frozen reference lane, map[string]uint64 stamps over the sorted union],
+  [java], [202], [jdk 27 stdlib],
+  [long-field clock, two-slot stamps with a defensive-copy tick, n / 2 + 1 verbatim],
+  [c\#], [102], [bcl],
+  [ulong clock, Dictionary stamps, TryGetValue zeros, static quorum one-liners],
   [javascript], [64], [node stdlib],
   [private-field clock, Map stamps in Set order, Math.floor over real division],
   [python], [143], [stdlib only],
@@ -369,8 +380,10 @@ list as compiled by Deutsch and others at Sun, Peter Norvig's
 latency numbers and the Berkeley interactive latency guide for the
 orders of magnitude, Gilbert and Lynch, "Brewer's Conjecture and
 the Feasibility of Consistent, Available, Partition-Tolerant Web
-Services", 2002, for CAP, accessed 2026-09-08. Verified by the six
-chapter legs: 3 C programs with 40 embedded checks, 10 xunit
-facts, `go test` at 5 tests in `patternsbook/ch10`, node's 4
-cases across 3 suites in `test/ch10.test.mjs`, the python runner's
-33 checks across 3 modules, and the lua runner's 11 ch10 rows.
+Services", 2002, for CAP, accessed 2026-09-08. Verified by the
+seven chapter legs: 3 C programs with 40 embedded checks, `go
+test` at 5 tests in `patternsbook/ch10`, the java runner's 49
+checks across 3 programs in `samples-java/src/Ch10`, 10 xunit
+facts, node's 4 cases across 3 suites in `test/ch10.test.mjs`, the
+python runner's 33 checks across 3 modules, and the lua runner's
+11 ch10 rows.

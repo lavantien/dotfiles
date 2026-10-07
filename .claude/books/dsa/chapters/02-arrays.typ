@@ -17,8 +17,8 @@ offset `r * cols + c`. C proves the layout with pointer arithmetic
 and prices both walks with a one-line cache simulator.
 
 The dry run: the fixture is the 4x4 grid holding r × 4 + c + 1,
-walked in both orders, asserted by the C, JavaScript, and Lua suites.
-C\# flattens a 2x3 grid instead, Go prices a 4x4 of int64 four
+walked in both orders, asserted by the C, Java, JavaScript, and Lua
+suites. C\# flattens a 2x3 grid instead, Go prices a 4x4 of int64 four
 elements per line, and Python builds a two-slot toy cache.
 
 + Cell (2, 3) lives at flat offset 2 × 4 + 3 = 11, the address law
@@ -48,23 +48,27 @@ elements per line, and Python builds a two-slot toy cache.
 })
 
 Both walks land the same 136, and the listings below walk both orders
-in six languages.
+in seven languages.
 
 #listing("dsa/samples-c/src/Ch02/rowmajor.c", first: 17, last: 32, caption: [c, line touches counted for either walk order])
 
-.NET stores a two dimensional `int[,]` the same way. Flatten and
-unflatten are that arithmetic with no library help:
-
-#listing("dsa/samples/src/Ch02/Arrays.cs", first: 3, last: 44, caption: [row-major flatten, unflatten, both traversal orders])
+#listing("dsa/samples-go/ch02/rowmajor.go", first: 25, last: 50, caption: [go, both walks over a flattened matrix, touches counted per stride])
 
 Row-major and column-major summation return the same value, the test
 asserts it, and yet they are not the same code. The order in which
 memory is touched differs, which is invisible to correctness and
 decisive for speed. That gap is where this chapter goes next.
 
-Four more languages pin the same walk pair:
+Five more languages pin the same walk pair, Java with no two
+dimensional pointer arithmetic to lean on, the flatten law stated
+over the explicit flat index:
 
-#listing("dsa/samples-go/ch02/rowmajor.go", first: 25, last: 50, caption: [go, both walks over a flattened matrix, touches counted per stride])
+#listing("dsa/samples-java/src/Ch02/Rowmajor.java", first: 20, last: 35, caption: [java, the walk simulator over the explicit flat index, touches counted for either order])
+
+.NET stores a two dimensional `int[,]` the same way. Flatten and
+unflatten are that arithmetic with no library help:
+
+#listing("dsa/samples/src/Ch02/Arrays.cs", first: 3, last: 44, caption: [c\#, row-major flatten, unflatten, both traversal orders])
 
 #listing("dsa/samples-js/src/ch02-rowmajor.mjs", first: 12, last: 38, caption: [javascript, both offset orders plus the line simulator])
 
@@ -72,10 +76,10 @@ Four more languages pin the same walk pair:
 
 #listing("dsa/samples-lua/ch02_rowmajor.lua", first: 8, last: 20, caption: [lua, the same line simulator in floor-division arithmetic])
 
-On the 64x64 fixture C, JavaScript, and Lua price the row walk at 256
-line touches and the column walk at 4096. Go works a 4x4 of int64
-values with a four-element stand-in line, 4 touches for the row walk
-against 16 for the column walk, and checks both sums against an
+On the 64x64 fixture C, Java, JavaScript, and Lua price the row walk
+at 256 line touches and the column walk at 4096. Go works a 4x4 of
+int64 values with a four-element stand-in line, 4 touches for the row
+walk against 16 for the column walk, and checks both sums against an
 independent closed form. Python builds a two-slot direct-mapped toy
 cache, 4 misses on the row walk, 16 on the column walk, and 4 again
 once four slots make it fully associative. C\# counts analytically,
@@ -90,7 +94,7 @@ fold inflation in memory traffic for the same arithmetical work. The
 cost model makes that countable without timing anything.
 
 The dry run: the fixture is 4096 sequential ints and strided walks of
-1000 touches, asserted by all six suites on the same integers. Every
+1000 touches, asserted by all seven suites on the same integers. Every
 tree computes the model in integer ceiling arithmetic, no float
 touches the state anywhere.
 
@@ -133,16 +137,18 @@ touches the state anywhere.
 })
 
 The 256 against the 1000-line degenerate stride are both pinned, and
-the listing below is the counter that computes them.
-
-#listing("dsa/samples/src/Ch02/Arrays.cs", first: 46, last: 67, caption: [deterministic cache line counts for sequential and strided walks])
-
-The other five languages carry the same two counters as pure integer
-arithmetic:
+the listings below are the counters that compute them:
 
 #listing("dsa/samples-c/src/Ch02/cache.c", first: 17, last: 33, caption: [c, the two line counters over one integer ceiling helper])
 
 #listing("dsa/samples-go/ch02/cache.go", first: 3, last: 32, caption: [go, both counters over the line and int constants])
+
+The other five languages carry the same two counters as pure integer
+arithmetic:
+
+#listing("dsa/samples-java/src/Ch02/Cache.java", first: 18, last: 36, caption: [java, the ceiling helper and both counters in long arithmetic])
+
+#listing("dsa/samples/src/Ch02/Arrays.cs", first: 46, last: 67, caption: [c\#, deterministic cache line counts for sequential and strided walks])
 
 #listing("dsa/samples-js/src/ch02-cache.mjs", first: 4, last: 24, caption: [javascript, both counters, the floor of the padded numerator])
 
@@ -150,14 +156,14 @@ arithmetic:
 
 #listing("dsa/samples-lua/ch02_cache.lua", first: 6, last: 25, caption: [lua, both counters over the floor division operator])
 
-Measured across the suites: all six pin 256 lines for 4096 sequential
+Measured across the suites: all seven pin 256 lines for 4096 sequential
 ints, 3 for 40, 1000 lines for 1000 touches at stride 16, 500 at
 stride 8, and the column walk of the 64x64 grid at 64 lines against
-the row walk. The five new trees also pin the small counts, 4 lines
+the row walk. The six new trees also pin the small counts, 4 lines
 for 64 ints and 1 for one, with stride 1 equal to the sequential
-count everywhere. The C and Lua files add property lanes, line counts
-never dip below the sequential packing, never exceed one line per
-touch, and never shrink as the stride grows. Every ceiling is
+count everywhere. The C, Java, and Lua files add property lanes, line
+counts never dip below the sequential packing, never exceed one line
+per touch, and never shrink as the stride grows. Every ceiling is
 (a + b - 1) / b integer division.
 
 The column walk of a 64x64 row-major grid strides one row per step,
@@ -209,11 +215,11 @@ count from the cache model becomes a zero allocation loop.
 
 The dry run: the fixture is a 200 byte buffer seeded with 0xAB at
 offsets 0, 64, 128, 192, and 199, walked by CountByLine, asserted by
-all six suites on the same values. The span is per-tree vocabulary, a
-pointer plus length struct in C, real slices in Go, subarray windows
-in JavaScript, explicit (start, length) helpers in Python, offset math
-in Lua, and the out of range lane uses each tree's own refusal
-mechanism.
+all seven suites on the same values. The span is per-tree vocabulary, a
+pointer plus length struct in C, real slices in Go, a record over
+array, offset, and length in Java, subarray windows in JavaScript,
+explicit (start, length) helpers in Python, offset math in Lua, and
+the out of range lane uses each tree's own refusal mechanism.
 
 + The first window slices bytes 0..63 and finds the seed at offset 0:
   one hit.
@@ -252,17 +258,19 @@ mechanism.
   cdraw.content((9.5, 0.9), [5 hits, 0 bytes allocated, no window copies], size: 6.5pt)
 })
 
-The 5 hits on 0 allocated bytes is the pinned pair, and the listing
-below is the walk itself.
-
-#listing("dsa/samples/src/Ch02/Arrays.cs", first: 69, last: 120, caption: [slice views, the allocation free line walk, span copies])
-
-The other five languages walk the same windows with their own slice
-vocabulary:
+The 5 hits on 0 allocated bytes is the pinned pair, and the listings
+below are the walks themselves.
 
 #listing("dsa/samples-c/src/Ch02/spans.c", first: 42, last: 90, caption: [c, a pointer plus length span, the bounds guard, the line walk, fold])
 
 #listing("dsa/samples-go/ch02/spans.go", first: 22, last: 67, caption: [go, real slices, the line walk, the panicking middle slice, fold])
+
+The other five languages walk the same windows with their own slice
+vocabulary:
+
+#listing("dsa/samples-java/src/Ch02/Spans.java", first: 22, last: 70, caption: [java, a record span over array, offset, length, the null-refusing guard, the line walk, fold])
+
+#listing("dsa/samples/src/Ch02/Arrays.cs", first: 69, last: 120, caption: [c\#, slice views, the allocation free line walk, span copies])
 
 #listing("dsa/samples-js/src/ch02-spans.mjs", first: 19, last: 52, caption: [javascript, subarray windows and explicit bounds, the line walk, fold])
 
@@ -275,8 +283,8 @@ the input unchanged, the fold of 0..14 reads (105, 15), the line walk
 lands 5 hits on the seeded buffer, the copy round trip equals its
 source as a distinct object, and the (10, 4) window of 0..99 hands
 back 10, 11, 12, 13. The error lane refuses out of range start and
-length pairs per tree, a return code in C, a panic in Go, a throw in
-JavaScript and Python, an error in Lua.
+length pairs per tree, a return code in C, a panic in Go, a null in
+Java, a throw in JavaScript and Python, an error in Lua.
 `CountByLine` walks a 200 byte buffer 64 bytes at a time and only C\#
 proves zero allocation while doing it, the chapter 1 meter put to
 work. `CopyViaSpan` is `Array.Copy` in modern dress, same semantics,
@@ -330,16 +338,16 @@ overhead to curse at: they are why this book can build a hash table in
 safe code that never corrupts memory, in any language with the same
 guarantee.
 
-All six suites build the guard by hand, a checked accessor plus an
+All seven suites build the guard by hand, a checked accessor plus an
 insertion-point search. For five of them it is necessity, their
-runtimes wrap, clamp, or trust the index, while C\# mirrors the check
-its runtime already runs. C returns a refusal code before the read
-is ever formed.
+runtimes wrap, clamp, or trust the index, while C\# and Java mirror
+the check their runtimes already run. C returns a refusal code before
+the read is ever formed.
 
 The dry run: the fixture is the sorted run 1, 3, 5, 7 behind the
 checked accessor and the insertion point, asserted by the C\#, C,
-JavaScript, and Lua suites. Go pins the same semantics over 10, 20,
-30, and Python's gate exists to refuse its own wrap habits.
+Java, JavaScript, and Lua suites. Go pins the same semantics over 10,
+20, 30, and Python's gate exists to refuse its own wrap habits.
 
 + The gate passes 2, 0 <= 2 < 4, and the read forms: 5. Index 0
   returns 1 the same way.
@@ -385,13 +393,15 @@ JavaScript, and Lua suites. Go pins the same semantics over 10, 20,
 })
 
 Absent 4 lands at index 2 in every suite that runs the fixture, and
-the listings below build the guard six ways.
+the listings below build the guard seven ways.
 
 #listing("dsa/samples-c/src/Ch02/bounds.c", first: 17, last: 36, caption: [c, checked accessor and insertion point, no undefined access])
 
-#listing("dsa/samples/src/Ch02/Bounds.cs", first: 9, last: 36, caption: [c\#, refusal accessor and insertion point, the runtime check underneath])
-
 #listing("dsa/samples-go/ch02/bounds.go", first: 9, last: 30, caption: [go, a returned error that names the range, and the insertion point])
+
+#listing("dsa/samples-java/src/Ch02/Bounds.java", first: 20, last: 52, caption: [java, the refusing accessor over the logical length, lowerBound, the shift insert])
+
+#listing("dsa/samples/src/Ch02/Bounds.cs", first: 9, last: 36, caption: [c\#, refusal accessor and insertion point, the runtime check underneath])
 
 #listing("dsa/samples-js/src/ch02-bounds.mjs", first: 7, last: 22, caption: [javascript, gate first, read second, insertion point by binary search])
 
@@ -399,17 +409,21 @@ the listings below build the guard six ways.
 
 #listing("dsa/samples-lua/ch02_bounds.lua", first: 7, last: 20, caption: [lua, nil refusal over one-based tables])
 
-Anchors: C, C\#, JavaScript, and Lua run the insertion-point search
-over 1, 3, 5, 7 and pin absent 4 at index 2, 0 at 0, 8 past the end
-at 4, and duplicate 5 on its twin at 2. Go pins the same semantics
-over 10, 20, 30 with a five-case table. Python's fixture is its own
-warning, negative indices wrap and the builtin insert clamps far
-positions, so its gate refuses both habits. JavaScript's accessor
+Anchors: C, C\#, Java, JavaScript, and Lua run the insertion-point
+search over 1, 3, 5, 7 and pin absent 4 at index 2, 0 at 0, 8 past
+the end at 4, and duplicate 5 on its twin at 2. Go pins the same
+semantics over 10, 20, 30 with a five-case table. Python's fixture is
+its own warning, negative indices wrap and the builtin insert clamps
+far positions, so its gate refuses both habits. JavaScript's accessor
 also rejects 1.5, an integer check C does not need. C\#'s runtime
 check stays the default guard, its tests pin the array and span
-exceptions alongside the same anchors.
+exceptions alongside the same anchors. Java's fixture pads the run
+with spare slots, which splits the boundary in two: the gate refuses
+index 4 against the logical length while the JVM's own check still
+accepts the slot, and the raw read throws only past the physical end,
+both sides asserted.
 
-== across the six languages
+== across the seven languages
 
 Build sizes count non-comment source lines over the featured files;
 bundled checks count where the language puts them in the same file:
@@ -419,8 +433,9 @@ bundled checks count where the language puts them in the same file:
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [279], [libc only], [pointer arithmetic proves the layout, refusal codes instead of exceptions, 52 checks in 4 files],
-  [c\#], [132], [bcl only], [the accessor mirrors the guard the runtime already runs, the span walk's zero-allocation proof is the chapter 1 meter at work],
   [go], [121], [fmt for errors], [no unchecked mode exists, the choice is a panic or a returned error],
+  [java], [273], [jdk 27 stdlib], [the jvm checks the physical length while the gate guards the logical one, the padded fixture asserts both boundaries, the span is a record that refuses with null],
+  [c\#], [132], [bcl only], [the accessor mirrors the guard the runtime already runs, the span walk's zero-allocation proof is the chapter 1 meter at work],
   [javascript], [95], [node stdlib], [the gate rejects non-integer indices too, insertAt rebuilds through spread],
   [python], [177], [stdlib only], [negative indices wrap by design, the gate exists to refuse that habit],
   [lua], [257], [lib.lua harness], [1-based tables shift the insertion-point bounds and its return by one],
@@ -430,7 +445,8 @@ sources: learn.microsoft.com, single dimensional arrays,
 multidimensional arrays, jagged arrays, `Span<T>` and `ReadOnlySpan<T>`
 api pages, `Array.Copy`, `Memory<T> and Span<T>` usage guidelines,
 accessed 2026-09-08. Sample behavior verified by `make verify-csharp`,
-18 tests in chapter 2 of the samples suite. The six-language layer
+18 tests in chapter 2 of the samples suite. The seven-language layer
 verifies the same way: 4 C programs with 52 embedded checks, 16 Go
-tests, 18 `node --test` cases, 40 Python checks across 4 files, and 21
-Lua checks under `run.lua`.
+tests, the java runner's 54 Ch02 checks over 4 files under
+`run-java-samples`, 18 `node --test` cases, 40 Python checks across
+4 files, and 21 Lua checks under `run.lua`.

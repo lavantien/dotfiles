@@ -8,11 +8,11 @@ why. The difference is structure: logs that carry attributes, metrics
 that carry labels, traces that carry causality, all attached while
 the code runs, never reconstructed after it fails. The go lane
 reads its three signals off the stdlib, `log/slog` and `expvar` and
-the raw material for spans, and the other five trees hand-roll the
+the raw material for spans, and the other six trees hand-roll the
 same shapes in their own grain, so this chapter builds all three
 twice over in testable form: a capture handler per language, a
-labeled counter registry per language, a span tree per language, all
-asserting the same fixtures.
+labeled counter registry per language, a span tree per language,
+all asserting the same fixtures.
 
 == structured logging, the capture handler
 
@@ -23,19 +23,21 @@ list, attributes as a map. The gate placement is the lesson that
 survives translation, the check runs before the record exists, so a
 dropped line never pays for its arguments.
 
-The dry run: all six lanes assert the same capture contract.
+The dry run: all seven lanes assert the same capture contract.
 
 - info and warn recorded, 2 records, attrs readable as a map
 - debug below min dropped before evaluation, the probe's side
   effect count stays 0
 - the frozen go test pins the 2 records and the attr map, the probe
-  literal is pinned by the 5 new trees
+  literal is pinned by the 6 new trees
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch14/capture.c", first: 74, last: 103, caption: [C, the emit path serializes one json line, the LOG macro is the gate the variadic signature buys elsewhere])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch14/Capture.cs", first: 30, last: 66, caption: [C\#, the in-memory handler resolves ILogValue attributes the way built-ins unwrap LogValuer])
-
 #listing("patterns-concurrency-distributed/samples/ch14/observe.go", first: 19, last: 58, caption: [Go, capture handler: records in memory, level filter, attrs as a map])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch14/Capture.java", first: 41, last: 75, caption: [Java, the message arrives as a Supplier, the gate runs before it, the emit path builds one json line])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch14/Capture.cs", first: 30, last: 66, caption: [C\#, the in-memory handler resolves ILogValue attributes the way built-ins unwrap LogValuer])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch14-capture.mjs", first: 12, last: 53, caption: [JavaScript, attrs may be a function, evaluated only after the gate passes])
 
@@ -49,11 +51,13 @@ assertable value: message, level, and attributes. The laziness idiom
 is where the languages spend differently. Go gets it from the
 variadic signature, `Enabled` is called early and the arguments of a
 dropped line are never built. C has no variadic evaluation to lean
-on, so the LOG macro is the gate, the only mechanism in the six that
-hides the evaluation behind a branch. C\# gives `Debug` a
-`Func<Attr[]>` supplier that stays uncalled below the level.
-Javascript and python accept attrs as a function and call it only
-after the gate. Lua takes a whole thunk that builds the message and
+on, so the LOG macro is the gate, the only mechanism in the seven
+that hides the evaluation behind a branch. C\# gives `Debug` a
+`Func<Attr[]>` supplier that stays uncalled below the level, java
+gates the whole message behind a `Supplier<String>`, the same trick
+without the macro. Javascript and python accept attrs as a function
+and call it only after the gate. Lua takes a whole thunk that
+builds the message and
 the attrs, so the dropped record is never constructed at all. This
 same shape is how production code tests its logging, assertions on
 what was said, not on log files.
@@ -78,14 +82,16 @@ bytes.
 The dry run: `Secret("hunter2token")` renders `secret(12 bytes)`,
 `Secret("api-key-0123456789")` renders `secret(18 bytes)`, and the
 raw token appears nowhere in the capture. The exact lengths are
-pinned by the 5 new trees, the frozen go test asserts the
+pinned by the 6 new trees, the frozen go test asserts the
 `secret(` prefix and the token's absence.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch14/capture.c", first: 68, last: 72, caption: [C, the render the serializer calls, length only])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch14/Capture.cs", first: 15, last: 26, caption: [C\#, ILogValue is the LogValuer analog, Secret implements it as a struct])
-
 #listing("patterns-concurrency-distributed/samples/ch14/observe.go", first: 62, last: 70, caption: [Go, a secret that logs its length, never its bytes])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch14/Capture.java", first: 34, last: 39, caption: [Java, the Attr record carries the secret flag, its render is the length, never the bytes])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch14/Capture.cs", first: 15, last: 26, caption: [C\#, ILogValue is the LogValuer analog, Secret implements it as a struct])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch14-capture.mjs", first: 55, last: 65, caption: [JavaScript, toJSON is the hook, JSON.stringify resolves it at serialization time])
 
@@ -99,10 +105,12 @@ token leaked, because resolving `LogValuer` is the handler's job.
 The built-in handlers call `Value.Resolve()`, and a custom handler
 that skips it publishes raw secrets while appearing to respect the
 pattern. Every lane carries the same obligation at the same spot:
-C's serializer must call `secret_render`, C\# must check `ILogValue`,
-javascript must go through `JSON.stringify` for `toJSON` to fire,
-python must probe for `log_value`, lua must run `redact` over the
-attrs. The fix is one call on the emit path, and the tests now guard
+C's serializer must call `secret_render`, C\#'s emit must check
+`ILogValue`, java's emit must go through the attr's own `render`,
+the one place the secret flag lives, javascript must go through
+`JSON.stringify` for `toJSON` to fire, python must probe for
+`log_value`, lua must run `redact` over the attrs. The fix is one
+call on the emit path, and the tests now guard
 it permanently.
 
 == the counter registry, and the one-line mount
@@ -119,8 +127,9 @@ the same name panics, so a `go test -count 2` re-run of the chapter
 dies in the expvar test and verify-go keeps `count=1`. Go is also
 the only tree whose stdlib ships a metrics mount at all. The
 siblings own the registry code below and would mount it behind
-`node:http` in javascript, an `http.server` handler in python, and
-nothing stdlib in C, C\#, or lua, where the nearest BCL surface is
+`node:http` in javascript, an `http.server` handler in python, the
+jdk's own `com.sun.net.httpserver` in java, and nothing stdlib in
+C, C\#, or lua, where the nearest BCL surface is
 `System.Diagnostics.Metrics` with its `MeterListener`, a row for
 prose, not for this book's samples.
 
@@ -131,17 +140,21 @@ The dry run: 20 writers x 100 incs, every 10th inc also errors.
 
 - hits 2000, errors 200, exact under concurrency
 - render is `"errors 200\nhits 2000\n"`, sorted by name, the exact
-  string pinned by the 5 new trees while the frozen go test checks
+  string pinned by the 6 new trees while the frozen go test checks
   both lines
 - the writers are real threads in C, C\#, go, and python, 20
   interleaved coroutines in lua, 20 async writers through the
-  microtask queue in javascript, all asserting the same totals
+  microtask queue in javascript, a cooperative round-robin in
+  25-inc quanta on one thread in java, all asserting the same
+  totals
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch14/registry.c", first: 39, last: 78, caption: [C, counters by name behind one mutex, the render walks the sorted name array])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch14/Registry.cs", first: 9, last: 44, caption: [C\#, counters by name under one lock, render sorts and joins])
-
 #listing("patterns-concurrency-distributed/samples/ch14/observe.go", first: 73, last: 116, caption: [Go, counters by name, snapshot under lock, sorted text render])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch14/Registry.java", first: 28, last: 49, caption: [Java, counters by name in a HashMap, every inc indivisible on the one thread, render sorts and joins])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch14/Registry.cs", first: 9, last: 44, caption: [C\#, counters by name under one lock, render sorts and joins])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch14-registry.mjs", first: 6, last: 22, caption: [JavaScript, a Map of counters, render sorts the keys])
 
@@ -151,13 +164,16 @@ The dry run: 20 writers x 100 incs, every 10th inc also errors.
 
 The storage idiom splits three ways. C keeps a fixed array of
 counters walked in name order, so sorted render is the walk order
-and the registry never allocates. The map languages, go, C\#,
-javascript, python, and lua alike, key counters by name and sort at
-render time. The serialization boundary is where the chapter's
-concurrency lesson cashes out: one mutex or lock around the
-increment is all the exact totals need, chapter 7 earning its keep
-again, and lua needs no lock at all because one `Inc` runs inside a
-single scheduler resume. The render format is deliberately the
+and the registry never allocates. The map languages, go, java,
+C\#, javascript, python, and lua alike, key counters by name and
+sort at render time. The serialization boundary is where the
+chapter's concurrency lesson cashes out: one mutex or lock around
+the increment is all the exact totals need, chapter 7 earning its
+keep again, and two lanes need no lock at all, lua because one
+`Inc` runs inside a single scheduler resume, java because its 20
+writers run as one cooperative round-robin and each `inc` is
+indivisible on the single thread. The render format is deliberately
+the
 `name value` exposition style, so a dashboard swap from this
 registry to a real metrics system is a formatting change, not an
 architecture change.
@@ -198,9 +214,11 @@ The dry run: hand-stamped stamps, no clock read anywhere.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch14/traces.c", first: 41, last: 76, caption: [C, the parent is an explicit pointer parameter, the stamps are longs the caller hands in])
 
-#listing("patterns-concurrency-distributed/samples-cs/src/Ch14/Traces.cs", first: 9, last: 44, caption: [C\#, AsyncLocal carries the current span, Dispose pops it, Begin attaches to the parent])
-
 #listing("patterns-concurrency-distributed/samples/ch14/observe.go", first: 122, last: 158, caption: [Go, span in the context, children attach to their parent, durations from an injectable clock])
+
+#listing("patterns-concurrency-distributed/samples-java/src/Ch14/Traces.java", first: 20, last: 55, caption: [Java, the parent a plain parameter, stamps handed in, an open span renders zero])
+
+#listing("patterns-concurrency-distributed/samples-cs/src/Ch14/Traces.cs", first: 9, last: 44, caption: [C\#, AsyncLocal carries the current span, Dispose pops it, Begin attaches to the parent])
 
 #listing("patterns-concurrency-distributed/samples-js/src/ch14-traces.mjs", first: 7, last: 32, caption: [JavaScript, the parent reference is an explicit first parameter, said plainly])
 
@@ -211,9 +229,10 @@ The dry run: hand-stamped stamps, no clock read anywhere.
 The context carrier is the idiom row. Go's `context.Value` is the
 one the chapter's pipeline chapters already threaded, C\#'s
 `AsyncLocal<Span>` flows with the async chain and needs no
-parameter at all, and the other four are honest explicit threads: a
-parent pointer in C, the first parameter in javascript, a ctx dict
-in python, a ctx table in lua. The render contract is identical
+parameter at all, and the other five are honest explicit threads: a
+parent pointer in C, the parent as a plain parameter in java, the
+first parameter in javascript, a ctx dict in python, a ctx table in
+lua. The render contract is identical
 everywhere, indented lines, deepest last, durations from the stamps
 the caller supplied. The one-millisecond query in the walks is
 deterministic, and the same property is what makes real span trees
@@ -266,7 +285,7 @@ different costume.
   cdraw.content((11.9, 0.5), [one signal alone means debugging by archaeology], size: 6pt)
 })
 
-== across the six languages
+== across the seven languages
 
 The build sizes count non-comment source lines, the go column the
 chapter's one frozen file:
@@ -277,10 +296,12 @@ chapter's one frozen file:
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [336], [libc plus threads.h],
   [the registry under one mutex, the span parent an explicit pointer parameter],
-  [c\#], [204], [bcl],
-  [AsyncLocal carries the current span, secrets redact as ILogValue at emit time],
   [go], [121], [stdlib],
   [a slog.Handler over capture, expvar's one-line mount, spans ride context.Value],
+  [java], [239], [jdk 27 stdlib],
+  [Supplier gates the message, hand-built json lines, the registry a one-thread round-robin],
+  [c\#], [204], [bcl],
+  [AsyncLocal carries the current span, secrets redact as ILogValue at emit time],
   [javascript], [78], [node stdlib],
   [lazy attrs as functions, secrets via toJSON, the parent the first parameter],
   [python], [209], [stdlib only],
@@ -293,7 +314,8 @@ sources: go.dev/pkg/log/slog for the Handler contract, `Enabled`
 timing, `LogValuer`, and `Value.Resolve`, go.dev/pkg/expvar for
 `NewInt` and the `/debug/vars` mount, go.dev/pkg/runtime/pprof for
 the profiles available alongside, accessed 2026-09-08. Verified by
-the six chapter legs: 3 Ch14 C programs with 82 embedded checks, 10
-xunit facts, `go test` at 5 tests in `patternsbook/ch14`, node's 4
-cases in `test/ch14.test.mjs`, 3 python modules with 34 embedded
-checks, and the lua runner's 14 ch14 rows.
+the seven chapter legs: 3 Ch14 C programs with 82 embedded checks,
+`go test` at 5 tests in `patternsbook/ch14`, the java runner's 37
+checks across 3 programs in `samples-java/src/Ch14`, 10 xunit
+facts, node's 4 cases in `test/ch14.test.mjs`, 3 python modules
+with 34 embedded checks, and the lua runner's 14 ch14 rows.

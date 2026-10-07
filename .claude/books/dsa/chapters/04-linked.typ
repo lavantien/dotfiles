@@ -17,7 +17,7 @@ never calls malloc.
 
 The dry run: the fixture is the C\# list built by three AddFirst
 calls and unspliced at 2, plus the abcdef reversal, asserted by the
-C\# suite; the other five languages push 1 through 5 and pin the same
+C\# suite; the other six languages push 1 through 5 and pin the same
 flip on integers.
 
 + AddFirst(1), AddFirst(2), AddFirst(3) each point a fresh node at
@@ -63,23 +63,28 @@ flip on integers.
 })
 
 The 3, 2, 1 into 3, 1 and the abcdef round trip are the C\# pins,
-and the listings below build the spine in six languages.
+and the listings below build the spine in seven languages.
 
 #listing("dsa/samples-c/src/Ch04/slist.c", first: 31, last: 53, caption: [c, push, reverse, find, and to-array over a node pool])
+
+#listing("dsa/samples-go/ch04/slist.go", first: 18, last: 36, caption: [go, push front and the three pointer reverse as methods])
+
+Six more languages carry the same spine, Java spelling the C pointers
+as references with null for NULL:
+
+#listing("dsa/samples-java/src/Ch04/Slist.java", first: 18, last: 53, caption: [java, push front, three-pointer reverse, find, to-array over reference nodes])
 
 Removal unsplices by finding the predecessor, a search followed by a
 two-line fixup, the shape the C\# class carries:
 
-#listing("dsa/samples/src/Ch04/Linked.cs", first: 4, last: 44, caption: [add first, remove by scan, iterate])
+#listing("dsa/samples/src/Ch04/Linked.cs", first: 4, last: 44, caption: [c\#, add first, remove by scan, iterate])
 
 Reversal is the canonical three pointer dance, `prev`, `cur`, `next`,
 one pass, no allocation, and it works on any head someone hands you:
 
-#listing("dsa/samples/src/Ch04/Linked.cs", first: 46, last: 61, caption: [in-place reversal, forward walk])
+#listing("dsa/samples/src/Ch04/Linked.cs", first: 46, last: 61, caption: [c\#, in-place reversal, forward walk])
 
-Four more languages carry the same spine:
-
-#listing("dsa/samples-go/ch04/slist.go", first: 18, last: 36, caption: [go, push front and the three pointer reverse as methods])
+Three more languages carry the same spine:
 
 #listing("dsa/samples-js/src/ch04-slist.mjs", first: 11, last: 27, caption: [javascript, push front and reverse as free functions over nodes])
 
@@ -87,13 +92,13 @@ Four more languages carry the same spine:
 
 #listing("dsa/samples-lua/ch04_slist.lua", first: 5, last: 25, caption: [lua, each node a table with a next field])
 
-Every suite pins the reversal. C, JavaScript, and Lua push 1 through
-5, read the list back as 5 4 3 2 1, and read 1 2 3 4 5 after the
-flip. Go reverses a 3 node list to 3 2 1. Python pushes 5 4 3 2 1 so
-the list reads 1 through 5, flips it twice, and checks the round
-trip. Node shapes differ, a static pool in C, `__slots__` in Python,
-a fresh table per node in Lua, and the reversal loop stays within a
-dozen lines in all six.
+Every suite pins the reversal. C, Java, JavaScript, and Lua push 1
+through 5, read the list back as 5 4 3 2 1, and read 1 2 3 4 5 after
+the flip. Go reverses a 3 node list to 3 2 1. Python pushes 5 4 3 2 1
+so the list reads 1 through 5, flips it twice, and checks the round
+trip. Node shapes differ, a static pool in C, a heap node behind a
+reference in Java, `__slots__` in Python, a fresh table per node in
+Lua, and the reversal loop stays within a dozen lines in all seven.
 
 #diagram([the three pointer reversal, one iteration: stash next, flip cur onto prev, slide both], length: 13pt, {
   let box = (x, y, ch) => {
@@ -144,9 +149,9 @@ every step modulo k, so it must pass through zero. C runs both races,
 one to detect, one from the head to find the entry.
 
 The dry run: the fixture is the rho 1, 2, 3, 4, 5 with the tail bent
-back onto 3, pinned by the C, JavaScript, and Lua suites at entry 3,
-mu 2, lambda 3; Go pins the length, Python bends onto 2 instead, and
-C\# flips a 10 node chain from acyclic to cyclic.
+back onto 3, pinned by the C, Java, JavaScript, and Lua suites at
+entry 3, mu 2, lambda 3; Go pins the length, Python bends onto 2
+instead, and C\# flips a 10 node chain from acyclic to cyclic.
 
 + Both pointers start at the head 1: slow steps one node per turn,
   fast two.
@@ -190,19 +195,24 @@ C\# flips a 10 node chain from acyclic to cyclic.
   cdraw.content((11.2, -0.2), [mu = 2, lambda = 3], size: 6pt)
 })
 
-The meet at 4 with mu 2 and lambda 3 is pinned three suites deep,
-and the listings below run both races in six languages.
+The meet at 4 with mu 2 and lambda 3 is pinned four suites deep,
+and the listings below run both races in seven languages.
 
 #listing("dsa/samples-c/src/Ch04/slist.c", first: 62, last: 91, caption: [c, meet detection, entry race, cycle length])
 
-#listing("dsa/samples/src/Ch04/Linked.cs", first: 63, last: 79, caption: [tortoise and hare, O(1) space])
+#listing("dsa/samples-go/ch04/slist.go", first: 81, last: 91, caption: [go, has cycle returns the meeting node for the second race])
+
+The other five languages run the same races, Java walking reference
+equality for the meet:
+
+#listing("dsa/samples-java/src/Ch04/Slist.java", first: 55, last: 82, caption: [java, meet detection, entry race, cycle length over reference nodes])
+
+#listing("dsa/samples/src/Ch04/Linked.cs", first: 63, last: 79, caption: [c\#, tortoise and hare, O(1) space])
 
 The test builds a 10 node chain, splices the tail onto the third
 node, and asserts the detection flips. The same machinery extends to
 finding the cycle's entry point, the point where the distances
 aligned, and to finding the middle of a list in one pass.
-
-#listing("dsa/samples-go/ch04/slist.go", first: 81, last: 91, caption: [go, has cycle returns the meeting node for the second race])
 
 #listing("dsa/samples-js/src/ch04-slist.mjs", first: 40, last: 59, caption: [javascript, meet, entry race, and cycle length])
 
@@ -210,12 +220,12 @@ aligned, and to finding the middle of a list in one pass.
 
 #listing("dsa/samples-lua/ch04_slist.lua", first: 37, last: 63, caption: [lua, meet, entry, and length over table nodes])
 
-The rho fixtures differ where the suites chose them. C, JavaScript,
-and Lua bend 1 2 3 4 5 back onto the node holding 3 and pin the
-entry, mu 2, lambda 3. Go bends the same list and pins the cycle
-length 3. Python bends the tail onto 2, entry value 2, cycle length
-4. C\# splices a 10 node chain onto the third node and asserts the
-detection flips. The argument is identical everywhere, the second
+The rho fixtures differ where the suites chose them. C, Java,
+JavaScript, and Lua bend 1 2 3 4 5 back onto the node holding 3 and
+pin the entry, mu 2, lambda 3. Go bends the same list and pins the
+cycle length 3. Python bends the tail onto 2, entry value 2, cycle
+length 4. C\# splices a 10 node chain onto the third node and asserts
+the detection flips. The argument is identical everywhere, the second
 race from the head lands on the entry because both walkers then sit
 the same distance above it.
 
@@ -253,8 +263,8 @@ file-scope sentinel plus four splices.
 
 The dry run: the fixture is the C\# ring across its three shapes,
 both-end order, position-free removal, and the version counter,
-asserted by the C\# suite; C, JavaScript, and Lua push 1, 0, 2, 9 and
-read 9 0 1 2 instead.
+asserted by the C\# suite; C, Java, JavaScript, and Lua push 1, 0, 2,
+9 and read 9 0 1 2 instead.
 
 + AddLast b, AddLast c, AddFirst a: forward reads a b c, backward
   reads c b a, count 3, the sentinel invisible at both ends.
@@ -290,13 +300,21 @@ read 9 0 1 2 instead.
 })
 
 The 1, 3 unsplice, the 9 after the drain, and the version bumps are
-the C\# pins, and the listings below build the ring in six languages.
+the C\# pins, and the listings below build the ring in seven
+languages.
 
 #listing("dsa/samples-c/src/Ch04/ring.c", first: 26, last: 57, caption: [c, ring init, both-end pushes, remove by node])
 
+#listing("dsa/samples-go/ch04/ring.go", first: 25, last: 38, caption: [go, one splice helper feeds both pushes])
+
+The other five rings, Java keeping the sentinel a real node that
+never becomes null:
+
+#listing("dsa/samples-java/src/Ch04/Ring.java", first: 24, last: 64, caption: [java, the sentinel node, both-end pushes, remove by node, iterate])
+
 The C\# class wraps the identical shape:
 
-#listing("dsa/samples/src/Ch04/Linked.cs", first: 82, last: 113, caption: [the ring with sentinel, both-end insertion])
+#listing("dsa/samples/src/Ch04/Linked.cs", first: 82, last: 113, caption: [c\#, the ring with sentinel, both-end insertion])
 
 Removal by node reference is the structure's whole value: the node
 knows both neighbors, no traversal happens. The test removes a
@@ -334,9 +352,7 @@ carries, structural changes invalidate in-flight iteration:
 reinsert at the head, both constant, which is why LRU caches are
 built as a hash map into a ring of nodes, chapter 6 meets chapter 4.
 
-The other four rings:
-
-#listing("dsa/samples-go/ch04/ring.go", first: 25, last: 38, caption: [go, one splice helper feeds both pushes])
+Three more rings:
 
 #listing("dsa/samples-js/src/ch04-ring.mjs", first: 16, last: 40, caption: [javascript, the ring class with both pushes and remove])
 
@@ -344,14 +360,14 @@ The other four rings:
 
 #listing("dsa/samples-lua/ch04_ring.lua", first: 6, last: 27, caption: [lua, the sentinel table and its four splices])
 
-C, JavaScript, and Lua pin the same both-end fixture, pushes 1, 0, 2,
-9 land as 9 0 1 2, the middle 1 unlinks to 9 0 2, and after a full
-drain the sentinel points at itself while remaining a valid node.
-Go pins pushes to 0 1 2, removal to 2 3, and a reinsert after drain
-to 9. Python walks both directions, 0 1 2 3 forward and its mirror
-backward, removes a middle node to 0 1 3, and proves the emptied
-ring folds onto the sentinel. C\# adds what the others leave out, a
-version counter and `MoveToFront`, the LRU splice.
+C, Java, JavaScript, and Lua pin the same both-end fixture, pushes 1,
+0, 2, 9 land as 9 0 1 2, the middle 1 unlinks to 9 0 2, and after a
+full drain the sentinel points at itself while remaining a valid
+node. Go pins pushes to 0 1 2, removal to 2 3, and a reinsert after
+drain to 9. Python walks both directions, 0 1 2 3 forward and its
+mirror backward, removes a middle node to 0 1 3, and proves the
+emptied ring folds onto the sentinel. C\# adds what the others leave
+out, a version counter and `MoveToFront`, the LRU splice.
 
 == when to reach for links
 
@@ -425,7 +441,7 @@ on chapter 2's line model, and the workload on trial is one pass over
 The 16 to 1 walk price against the 6 writes is the whole trade in two
 numbers, arrays first unless elements move by reference.
 
-== across the six languages
+== across the seven languages
 
 Build sizes count non-comment source lines over the featured files;
 bundled checks count where the language puts them in the same file:
@@ -435,8 +451,9 @@ bundled checks count where the language puts them in the same file:
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [208], [libc only], [nodes come from static pools, no malloc anywhere in the fixtures, 21 checks in 2 files],
-  [c\#], [122], [bcl only], [generic rings with a version counter, the only suite that invalidates in-flight iteration],
   [go], [127], [none], [unexported next pointers keep the list encapsulated, Tail and NodeAfter exist for the tests],
+  [java], [202], [jdk 27 stdlib], [references spell the c pointers and null spells NULL, reference equality is the cycle meet, the sentinel stays a real node that never becomes null],
+  [c\#], [122], [bcl only], [generic rings with a version counter, the only suite that invalidates in-flight iteration],
   [javascript], [99], [node stdlib], [identity comparison is the cycle test, === on node references],
   [python], [144], [stdlib only], [`__slots__` nodes, is comparison for the meet, floyd folds both races into one function],
   [lua], [165], [lib.lua harness], [a node is a plain table, the sentinel carries a label value],
@@ -446,7 +463,8 @@ sources: learn.microsoft.com, `LinkedList<T>` api page including the
 sentinel-based implementation remarks, `LinkedListNode<T>`,
 enumeration and thread safety notes, accessed 2026-09-08. Sample
 behavior verified by `make verify-csharp`, 9 tests in chapter 4 of
-the samples suite. The six-language layer verifies the same way:
-2 C programs with 21 embedded checks, 7 Go tests, 7 `node --test`
+the samples suite. The seven-language layer verifies the same way:
+2 C programs with 21 embedded checks, 7 Go tests, the java runner's
+21 Ch04 checks over 2 files under `run-java-samples`, 7 `node --test`
 cases, 16 Python checks across 2 files, and 9 Lua checks under
 `run.lua`.
