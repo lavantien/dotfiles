@@ -9,7 +9,7 @@ PSSA_FORMAT := pwsh -NoProfile -Command 'if (-not (Get-Module -ListAvailable PSS
 
 .DEFAULT_GOAL := help
 
-.PHONY: help baseline lint format test check e2e-linux e2e-windows deploy-windows bootstrap-windows
+.PHONY: help baseline lint format test check e2e-linux e2e-windows deploy-windows bootstrap-windows books-sync
 
 help: ## list targets
 	@printf '%-14s %s\n' target description
@@ -88,3 +88,7 @@ deploy-windows: ## real deploy.ps1 run against the live HOME
 bootstrap-windows: ## real bootstrap.ps1 run against the live machine, full category
 	@command -v pwsh >/dev/null 2>&1 || { echo 'skip: pwsh not installed'; exit 1; }
 	@pwsh -NoProfile -File bootstrap/bootstrap.ps1 -Y
+
+books-sync: ## mirror .claude/books and books/ from the corpus, regenerate the index
+	@./scripts/sync-book.sh
+	@./scripts/books-index.sh
