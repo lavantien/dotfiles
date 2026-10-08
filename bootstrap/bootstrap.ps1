@@ -1,27 +1,3 @@
-# Universal Bootstrap Script for Windows
-# Installs and configures development environment on Windows 10/11
-#
-# VERSION POLICY:
-#   All packages are installed or updated to their LATEST versions
-#   No hardcoded version numbers - always gets the newest stable release
-#   Run bootstrap again to update all tools to latest versions
-#
-# BRIDGE APPROACH:
-#   - Works without config file (uses hardcoded defaults - backward compatible)
-#   - Loads config file if present (~/.dotfiles.config.yaml) - forward compatible
-#   - Config library is optional - scripts work even if it's missing
-#   - Defaults: categories="full", interactive=true, no dry-run
-#
-# Usage:
-#   .\bootstrap.ps1 [options]
-#
-# Options:
-#   -Y                Non-interactive mode (accept all prompts)
-#   -DryRun           Show what would be installed without installing
-#   -Categories       minimal|sdk|full (default: full)
-#   -VerboseMode      Show detailed output including skipped items
-#   -Help             Show this help
-
 #requires -Version 7
 
 [CmdletBinding()]
@@ -32,51 +8,57 @@ param(
     [switch]$VerboseMode = $false
 )
 
-# ============================================================================
-# SCRIPT SETUP
-# ============================================================================
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $LibDir = Join-Path $ScriptDir "lib"
 $PlatformsDir = Join-Path $ScriptDir "platforms"
 
-# Source library functions
 . "$LibDir\common.ps1"
 . "$LibDir\version-check.ps1"
 
-# Source config library (optional - for custom configuration)
 $ConfigLibPath = Join-Path $ScriptDir "..\lib\config.ps1"
 if (Test-Path $ConfigLibPath) {
     . "$ConfigLibPath"
 }
 
-# Source platform-specific functions
 . "$PlatformsDir\windows.ps1"
 
-# Set global options from parameters
 $Script:Interactive = -not $Y
 $Script:DryRun = $DryRun
 $Script:Categories = $Categories
 $Script:Verbose = $VerboseMode
 
-# ============================================================================
-# SHOW HELP
-# ============================================================================
 function Show-Help {
-    Get-Content $ScriptDir\bootstrap.ps1 | Select-String -Pattern '^#' | Select-Object -First 25 | ForEach-Object {
-        $_.Line -replace '^# ', ''
-    }
+    @'
+Universal Bootstrap Script for Windows
+Installs and configures development environment on Windows 10/11
+#
+VERSION POLICY:
+  All packages are installed or updated to their LATEST versions
+  No hardcoded version numbers - always gets the newest stable release
+  Run bootstrap again to update all tools to latest versions
+#
+BRIDGE APPROACH:
+  - Works without config file (uses hardcoded defaults - backward compatible)
+  - Loads config file if present (~/.dotfiles.config.yaml) - forward compatible
+  - Config library is optional - scripts work even if it's missing
+  - Defaults: categories="full", interactive=true, no dry-run
+#
+Usage:
+  .\bootstrap.ps1 [options]
+#
+Options:
+  -Y                Non-interactive mode (accept all prompts)
+  -DryRun           Show what would be installed without installing
+  -Categories       minimal|sdk|full (default: full)
+  -VerboseMode      Show detailed output including skipped items
+  -Help             Show this help
+============================================================================
+'@
 }
 
-# PHP and Composer are not supported on Windows - use Unix/Linux or WSL for PHP development
-
-# ============================================================================
-# PHASE 1: FOUNDATION
-# ============================================================================
 function Install-Foundation {
     Write-Header "Phase 1: Foundation"
 
-    # Ensure git is installed first (needed for Scoop and Git Bash for .sh wrapper scripts)
-    # Try winget first since it includes Git Bash which is required for .sh script invocation via .ps1 wrappers
     if (-not (Test-Command git)) {
         Write-Step "Installing git (includes Git Bash for .sh scripts)..."
         if ($DryRun) {
@@ -85,7 +67,6 @@ function Install-Foundation {
         }
         else {
             $gitInstalled = $false
-            # Try winget first (preferred - comes with Windows, includes Git Bash)
             if (Get-Command winget -ErrorAction SilentlyContinue) {
                 try {
                     winget install --id Git.Git --exact --accept-source-agreements --accept-package-agreements *> $null
@@ -93,7 +74,6 @@ function Install-Foundation {
                         Write-Success "Git installed via winget"
                         Track-Installed "git" "version control"
                         $gitInstalled = $true
-                        # Refresh PATH for current session
                         $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
                     }
                 }
@@ -102,7 +82,6 @@ function Install-Foundation {
                 }
             }
 
-            # Fall back to Scoop if winget failed or wasn't available
             if (-not $gitInstalled) {
                 if (-not (Get-Command scoop -ErrorAction SilentlyContinue)) {
                     Write-Info "Installing Scoop first..."
@@ -117,32 +96,23 @@ function Install-Foundation {
         Track-Skipped "git" "version control"
     }
 
-    # Ensure Scoop is installed
     Ensure-Scoop
 
-    # Ensure Scoop shims are in PATH for current session
-    # Scoop adds shims to PATH in shell profiles, but current session doesn't have it yet
     $scoopShims = Join-Path $env:USERPROFILE "scoop\shims"
     if ((Test-Path $scoopShims) -and ($env:Path -notlike "*$scoopShims*")) {
         $env:Path = "$scoopShims;$env:Path"
     }
 
-    # Configure git and add GitHub to known_hosts
     Configure-GitSettings
 
-    # Install WezTerm terminal emulator
     Install-WezTerm
 
-    # Install IosevkaTerm Nerd Font (WezTerm config glyphs, avoids tofu)
     Install-NerdFont
 
     Write-Success "Foundation complete"
     return $true
 }
 
-# ============================================================================
-# PHASE 2: CORE SDKS
-# ============================================================================
 function Install-SDKs {
     if ($Script:Categories -eq "minimal") {
         return $true
@@ -150,13 +120,10 @@ function Install-SDKs {
 
     Write-Header "Phase 2: Core SDKs"
 
-    # Node.js (always installs latest LTS)
     Install-ScoopPackage "nodejs" "" "node"
 
-    # Python (always installs latest)
     Install-ScoopPackage "python" "" "python"
 
-    # Go (always installs latest)
     if ($Script:Categories -ne "minimal") {
         if (-not (Test-Command go)) {
             Install-ScoopPackage "go" "" "go"
@@ -168,12 +135,10 @@ function Install-SDKs {
         }
     }
 
-    # Rust
     if ($Script:Categories -eq "full") {
         Install-Rustup
     }
 
-    # dotnet SDK
     if ($Script:Categories -eq "full") {
         if (-not (Test-Command dotnet)) {
             Write-Step "Installing dotnet SDK via winget..."
@@ -193,14 +158,11 @@ function Install-SDKs {
         }
     }
 
-    # Bun (JavaScript runtime and package manager)
     if ($Script:Categories -eq "full") {
         Install-Bun
     }
 
-    # OpenJDK
     if ($Script:Categories -eq "full") {
-        # Try winget first (preferred for JDK)
         if (-not (Test-Command javac)) {
             Write-Step "Installing OpenJDK via winget..."
             if (-not $DryRun) {
@@ -223,9 +185,6 @@ function Install-SDKs {
     return $true
 }
 
-# ============================================================================
-# PHASE 3: LANGUAGE SERVERS
-# ============================================================================
 function Install-LanguageServers {
     if ($Script:Categories -eq "minimal") {
         return $true
@@ -233,7 +192,6 @@ function Install-LanguageServers {
 
     Write-Header "Phase 3: Language Servers"
 
-    # clangd (includes clang-format, clang-tidy)
     if (Test-Command clangd) {
         Write-Step "Checking clangd..."
         Write-Success "clangd (up to date)"
@@ -243,10 +201,8 @@ function Install-LanguageServers {
         Install-ScoopPackage "llvm" "" "clangd"
     }
 
-    # gcc (C/C++ toolchain)
     if (Test-Command gcc) {
         Write-Step "Checking gcc..."
-        # Verify gcc actually works (binary exists and executes)
         $gccWorks = $false
         try {
             $null = & gcc --version 2>&1 | Out-Null
@@ -254,7 +210,6 @@ function Install-LanguageServers {
                 $gccWorks = $true
             }
         } catch {
-            # gcc not functional
         }
 
         if ($gccWorks) {
@@ -262,7 +217,6 @@ function Install-LanguageServers {
             Track-Skipped "gcc" "C/C++ toolchain"
         }
         else {
-            # gcc found but broken - reinstall
             Install-ScoopPackage "gcc" "" "gcc"
         }
     }
@@ -270,7 +224,6 @@ function Install-LanguageServers {
         Install-ScoopPackage "gcc" "" "gcc"
     }
 
-    # gopls (via go install - always latest)
     if ((Test-Command go) -and $Script:Categories -eq "full") {
         if (Test-Command gopls) {
             Write-Step "Checking gopls..."
@@ -282,12 +235,10 @@ function Install-LanguageServers {
         }
     }
 
-    # rust-analyzer (via rustup)
     if ($Script:Categories -eq "full") {
         Install-RustAnalyzerComponent
     }
 
-    # pyright (via npm - always latest)
     if (Test-Command npm) {
         if (Test-Command pyright) {
             Write-Step "Checking pyright..."
@@ -299,7 +250,6 @@ function Install-LanguageServers {
         }
     }
 
-    # TypeScript language server (via npm - always latest)
     if (Test-Command npm) {
         if (Test-Command typescript-language-server) {
             Write-Step "Checking typescript-language-server..."
@@ -311,7 +261,6 @@ function Install-LanguageServers {
         }
     }
 
-    # HTML language server (via npm - always latest)
     if (Test-Command npm) {
         if (Test-Command vscode-html-language-server) {
             Write-Step "Checking vscode-html-language-server..."
@@ -323,7 +272,6 @@ function Install-LanguageServers {
         }
     }
 
-    # CSS language server (via npm - always latest)
     if (Test-Command npm) {
         if (Test-Command vscode-css-language-server) {
             Write-Step "Checking vscode-css-language-server..."
@@ -335,7 +283,6 @@ function Install-LanguageServers {
         }
     }
 
-    # Svelte language server (via npm - full category)
     if ($Script:Categories -eq "full" -and (Test-Command npm)) {
         if (Test-Command svelte-language-server) {
             Write-Step "Checking svelte-language-server..."
@@ -347,7 +294,6 @@ function Install-LanguageServers {
         }
     }
 
-    # bash-language-server (via npm - always latest)
     if (Test-Command npm) {
         if (Test-Command bash-language-server) {
             Write-Step "Checking bash-language-server..."
@@ -359,7 +305,6 @@ function Install-LanguageServers {
         }
     }
 
-    # YAML language server (via npm - always latest)
     if (Test-Command npm) {
         if (Test-Command yaml-language-server) {
             Write-Step "Checking yaml-language-server..."
@@ -371,7 +316,6 @@ function Install-LanguageServers {
         }
     }
 
-    # lua-language-server (via scoop - npm version has issues)
     if ($Script:Categories -eq "full") {
         if (Test-Command lua-language-server) {
             Write-Step "Checking lua-language-server..."
@@ -383,7 +327,6 @@ function Install-LanguageServers {
         }
     }
 
-    # csharp-ls (via dotnet tool)
     if ($Script:Categories -eq "full" -and (Test-Command dotnet)) {
         if (Test-Command csharp-ls) {
             Write-Step "Checking csharp-ls..."
@@ -395,24 +338,22 @@ function Install-LanguageServers {
         }
     }
 
-    # intelephense (PHP language server) - not supported on Windows, use Unix/Linux or WSL
-
-    # jdtls (Java Language Server) - not supported on Windows, use Unix/Linux or WSL
-
-    # Docker language servers (via npm - always latest)
-    if (Test-Command npm) {
-        if (Test-Command docker-langserver) {
-            Write-Step "Checking docker-langserver..."
-            Write-Success "docker-langserver (up to date)"
-            Track-Skipped "docker-langserver" "Dockerfile language server"
+    if (Test-Command go) {
+        if (Test-Command docker-language-server) {
+            Write-Step "Checking docker-language-server..."
+            Write-Success "docker-language-server (up to date)"
+            Track-Skipped "docker-language-server" "Docker language server"
         }
         else {
-            Install-NpmGlobal "dockerfile-language-server-nodejs" "docker-langserver" ""
+            Install-GoPackage "github.com/docker/docker-language-server/cmd/docker-language-server@latest" "docker-language-server" ""
         }
-        # Note: @microsoft/compose-language-service has no binary, skip version check
     }
 
-    # tombi (TOML language server via npm - always latest)
+    if ($Script:Categories -eq "full") {
+        Add-ScoopBucket "extras"
+        Install-ScoopPackage "helm-ls" "" "helm_ls"
+    }
+
     if (Test-Command npm) {
         if (Test-Command tombi) {
             Write-Step "Checking tombi..."
@@ -424,11 +365,6 @@ function Install-LanguageServers {
         }
     }
 
-    # dartls (Dart language server - requires Dart SDK)
-    # Note: Dart SDK must be installed separately from https://dart.dev/get-dart
-    # This is optional and not installed by default
-
-    # tinymist (Typst language server via npm - always latest)
     if ($Script:Categories -eq "full" -and (Test-Command npm)) {
         if (Test-Command tinymist) {
             Write-Step "Checking tinymist..."
@@ -444,9 +380,6 @@ function Install-LanguageServers {
     return $true
 }
 
-# ============================================================================
-# PHASE 4: LINTERS & FORMATTERS
-# ============================================================================
 function Install-LintersFormatters {
     if ($Script:Categories -eq "minimal") {
         return $true
@@ -454,7 +387,6 @@ function Install-LintersFormatters {
 
     Write-Header "Phase 4: Linters & Formatters"
 
-    # Prettier (via npm - always latest)
     if (Test-Command npm) {
         if (Test-Command prettier) {
             Write-Step "Checking prettier..."
@@ -466,7 +398,6 @@ function Install-LintersFormatters {
         }
     }
 
-    # ESLint (via npm - always latest)
     if (Test-Command npm) {
         if (Test-Command eslint) {
             Write-Step "Checking eslint..."
@@ -478,7 +409,6 @@ function Install-LintersFormatters {
         }
     }
 
-    # Stylelint (CSS/SCSS linter via npm - always latest)
     if (Test-Command npm) {
         if (Test-Command stylelint) {
             Write-Step "Checking stylelint..."
@@ -490,7 +420,6 @@ function Install-LintersFormatters {
         }
     }
 
-    # svelte-check (Svelte type checker via npm - full category)
     if ($Script:Categories -eq "full" -and (Test-Command npm)) {
         if (Test-Command svelte-check) {
             Write-Step "Checking svelte-check..."
@@ -502,7 +431,6 @@ function Install-LintersFormatters {
         }
     }
 
-    # repomix (Pack repositories for AI exploration via npm - full category)
     if ($Script:Categories -eq "full" -and (Test-Command npm)) {
         if (Test-Command repomix) {
             Write-Step "Checking repomix..."
@@ -514,7 +442,6 @@ function Install-LintersFormatters {
         }
     }
 
-    # mermaid-cli (diagram generation via npm - always available)
     if (Test-Command npm) {
         if (Test-Command mmdc) {
             Write-Step "Checking mermaid-cli..."
@@ -526,7 +453,6 @@ function Install-LintersFormatters {
         }
     }
 
-    # Ruff (via pip - always latest)
     if (Test-Command python) {
         if (Test-Command ruff) {
             Write-Step "Checking ruff..."
@@ -538,7 +464,6 @@ function Install-LintersFormatters {
         }
     }
 
-    # Additional Python tools (for full compatibility with git hooks - always latest)
     if ($Script:Categories -eq "full" -and (Test-Command python)) {
         if (Test-Command black) {
             Write-Step "Checking black..."
@@ -577,7 +502,6 @@ function Install-LintersFormatters {
         }
     }
 
-    # gup (Go package manager - always latest)
     if ((Test-Command go) -and (-not (Test-Command gup))) {
         Install-GoPackage "github.com/nao1215/gup@latest" "gup" ""
     }
@@ -587,7 +511,6 @@ function Install-LintersFormatters {
         Track-Skipped "gup" "Go package updater"
     }
 
-    # goimports (via gup if available, otherwise go install - always latest)
     if (Test-Command go) {
         if (Test-Command goimports) {
             Write-Step "Checking goimports..."
@@ -599,7 +522,6 @@ function Install-LintersFormatters {
         }
     }
 
-    # golangci-lint (always latest)
     if (Test-Command go) {
         if (Test-Command golangci-lint) {
             Write-Step "Checking golangci-lint..."
@@ -611,7 +533,6 @@ function Install-LintersFormatters {
         }
     }
 
-    # Shell tools (for Git Bash on Windows)
     if ($Script:Categories -eq "full") {
         if (Test-Command shellcheck) {
             Write-Step "Checking shellcheck..."
@@ -632,7 +553,6 @@ function Install-LintersFormatters {
         }
     }
 
-    # yamllint (YAML linter for Docker Compose, Helm, Kubernetes - via pip)
     if ($Script:Categories -eq "full" -and (Test-Command python)) {
         if (Test-Command yamllint) {
             Write-Step "Checking yamllint..."
@@ -644,7 +564,6 @@ function Install-LintersFormatters {
         }
     }
 
-    # hadolint (Dockerfile linter - scoop Main bucket)
     if ($Script:Categories -eq "full") {
         if (Test-Command hadolint) {
             Write-Step "Checking hadolint..."
@@ -656,7 +575,6 @@ function Install-LintersFormatters {
         }
     }
 
-    # cppcheck (C++ static analysis)
     if ($Script:Categories -eq "full") {
         if (Test-Command cppcheck) {
             Write-Step "Checking cppcheck..."
@@ -668,16 +586,6 @@ function Install-LintersFormatters {
         }
     }
 
-    # catch2 (C++ testing framework)
-    if ($Script:Categories -eq "full") {
-        # catch2 available via vcpkg, not scoop
-        # Skip for now - users can install via vcpkg if needed
-    }
-
-    # PHP and Composer tooling (Laravel Pint, PHPStan, Psalm) are not supported on Windows
-    # Use Unix/Linux or WSL for PHP development
-
-    # scalafmt (via Coursier - Scala tool, NOT available via cargo)
     if ($Script:Categories -eq "full") {
         Ensure-Coursier
         if (Test-Command scalafmt) {
@@ -690,7 +598,6 @@ function Install-LintersFormatters {
         }
     }
 
-    # scalafix (Scala linter via coursier)
     if ($Script:Categories -eq "full") {
         Ensure-Coursier
         if (Test-Command coursier) {
@@ -705,7 +612,6 @@ function Install-LintersFormatters {
         }
     }
 
-    # Metals (Scala language server via coursier)
     if ($Script:Categories -eq "full") {
         Ensure-Coursier
         if (Test-Command coursier) {
@@ -720,7 +626,6 @@ function Install-LintersFormatters {
         }
     }
 
-    # stylua (Lua formatter)
     if ($Script:Categories -eq "full") {
         if (Test-Command stylua) {
             Write-Step "Checking stylua..."
@@ -732,7 +637,6 @@ function Install-LintersFormatters {
         }
     }
 
-    # selene (Lua linter)
     if ($Script:Categories -eq "full") {
         if (Test-Command selene) {
             Write-Step "Checking selene..."
@@ -744,7 +648,6 @@ function Install-LintersFormatters {
         }
     }
 
-    # typos (spell checker used by the pre-commit hook)
     if ($Script:Categories -eq "full") {
         if (Test-Command typos) {
             Write-Step "Checking typos..."
@@ -756,27 +659,13 @@ function Install-LintersFormatters {
         }
     }
 
-    # checkstyle (Java linter)
-    if ($Script:Categories -eq "full") {
-        # checkstyle not typically installed globally on Windows
-        # Use via IDE or build tools (Maven/Gradle)
-        # Comment added for documentation purposes
-    }
-
-    # clang-tidy (for C/C++) - already installed with LLVM
-    # clang-format is also from LLVM
-
     Write-Success "Linters & formatters installation complete"
     return $true
 }
 
-# ============================================================================
-# PHASE 5: CLI TOOLS
-# ============================================================================
 function Install-CLITools {
     Write-Header "Phase 5: CLI Tools"
 
-    # Scoop packages to install (always latest versions)
     $scoopPackages = @(
         @{Package = "fzf"; MinVersion = ""; Cmd = "fzf"; Desc = "Fuzzy finder"},
         @{Package = "zoxide"; MinVersion = ""; Cmd = "zoxide"; Desc = "Smart cd"},
@@ -787,20 +676,17 @@ function Install-CLITools {
         @{Package = "ripgrep"; MinVersion = ""; Cmd = "rg"; Desc = "Grep alternative"},
         @{Package = "fd"; MinVersion = ""; Cmd = "fd"; Desc = "Find alternative"},
         @{Package = "sqlite"; MinVersion = ""; Cmd = "sqlite3"; Desc = "SQL database CLI"},
-        # jq and yazi are hard dependencies of the deployed configs (statusline,
-        # sync-book, books-index, aliases) and must exist before the deploy phase
         @{Package = "jq"; MinVersion = ""; Cmd = "jq"; Desc = "JSON processor"},
-        @{Package = "yazi"; MinVersion = ""; Cmd = "yazi"; Desc = "File manager"}
+        @{Package = "yazi"; MinVersion = ""; Cmd = "yazi"; Desc = "File manager"},
+        @{Package = "unzip"; MinVersion = ""; Cmd = "unzip"; Desc = "Zip extraction for nvim"}
     )
 
-    # Add extra packages for full install
     if ($Script:Categories -eq "full") {
         $scoopPackages += @{Package = "tokei"; MinVersion = ""; Cmd = "tokei"; Desc = "Code stats"}
         $scoopPackages += @{Package = "difftastic"; MinVersion = ""; Cmd = "difft"; Desc = "Diff tool"}
         $scoopPackages += @{Package = "btop-lhm"; MinVersion = ""; Cmd = "btop"; Desc = "System monitor"}
     }
 
-    # Install packages with checking
     foreach ($pkg in $scoopPackages) {
         if (Test-Command $pkg.Cmd) {
             Write-Step "Checking $($pkg.Package)..."
@@ -812,7 +698,6 @@ function Install-CLITools {
         }
     }
 
-    # BATS (testing framework via npm - always latest)
     if (Test-Command npm) {
         if (Test-Command bats) {
             Write-Step "Checking bats..."
@@ -824,19 +709,12 @@ function Install-CLITools {
         }
     }
 
-    # Infrastructure tools and prompt engine via winget (full category).
-    # helm and kubectl close the Linux parity gap; oh-my-posh is expected by
-    # the deployed PowerShell profile. docker-compose stays Docker Desktop
-    # territory on Windows.
     if ($Script:Categories -eq "full") {
         Install-WingetPackage -Id "Helm.Helm" -DisplayName "helm" -CheckCmd "helm"
         Install-WingetPackage -Id "Kubernetes.kubectl" -DisplayName "kubectl" -CheckCmd "kubectl"
         Install-WingetPackage -Id "JanDeDobbeleer.OhMyPosh" -DisplayName "oh-my-posh" -CheckCmd "oh-my-posh"
     }
 
-    # Interactive gh auth login, ported from bootstrap.sh's foundation phase.
-    # gh lands in this phase on Windows, so the offer runs here; a fresh box
-    # converges without a manual pre-step and -Y skips it.
     if ($DryRun) {
         Write-Info "[DRY-RUN] Would check gh auth and offer 'gh auth login'"
     }
@@ -876,19 +754,14 @@ function Install-CLITools {
     return $true
 }
 
-# ============================================================================
-# PHASE 5.25: MCP SERVERS (Model Context Protocol servers for Claude Code)
-# ============================================================================
 function Install-MCPServers {
     Write-Header "Phase 5.25: MCP Servers"
 
-    # Skip if npm is not available
     if (-not (Get-Command npm -ErrorAction SilentlyContinue)) {
         Write-WarningMsg "npm not found, skipping MCP server installation"
         return $true
     }
 
-    # Helper function to install/update npm package with version check
     function Install-NpmPackageWithCheck {
         param(
             [string]$Package,
@@ -923,20 +796,12 @@ function Install-MCPServers {
         }
     }
 
-    # tree-sitter-cli - Compiles parsers for nvim-treesitter install/update
     Install-NpmPackageWithCheck -Package "tree-sitter-cli" -DisplayName "tree-sitter-cli" -TrackName "tree-sitter-cli" -Description "Treesitter parser compiler"
 
-    # Context7 - Up-to-date library documentation and code examples
     Install-NpmPackageWithCheck -Package "@upstash/context7-mcp" -DisplayName "context7 MCP server" -TrackName "context7-mcp" -Description "documentation lookup"
 
-    # Playwright - Browser automation and E2E testing
     Install-NpmPackageWithCheck -Package "@playwright/mcp" -DisplayName "playwright MCP server" -TrackName "playwright-mcp" -Description "browser automation"
 
-
-    # Repomix - Pack repositories for full-context AI exploration
-    # Note: repomix MCP mode is invoked via npx -y repomix --mcp
-    # The repomix package itself has built-in MCP support via --mcp flag
-    # No global installation needed - npx handles it on-demand
     Write-Step "Checking repomix..."
     Write-Success "repomix (up to date)"
     Track-Skipped "repomix" "repository packer (uses npx -y repomix --mcp)"
@@ -945,13 +810,9 @@ function Install-MCPServers {
     return $true
 }
 
-# ============================================================================
-# PHASE 5.5: DEVELOPMENT TOOLS (Editors, LaTeX, AI Coding Assistants)
-# ============================================================================
 function Install-DevelopmentTools {
     Write-Header "Phase 5.5: Development Tools"
 
-    # VS Code (via winget for system-wide installation - avoids plugin auth issues)
     $vscodeAlreadyInstalled = $false
     if (Get-Command winget -ErrorAction SilentlyContinue) {
         $wingetList = winget list --id Microsoft.VisualStudioCode 2>&1
@@ -965,8 +826,7 @@ function Install-DevelopmentTools {
         if (-not $DryRun) {
             if (Get-Command winget -ErrorAction SilentlyContinue) {
                 winget install --id Microsoft.VisualStudioCode --exact --accept-package-agreements --accept-source-agreements *> $null
-                Refresh-Path  # Refresh PATH to pick up newly installed VS Code
-                # Check winget list to verify installation (more reliable than Test-Command for PATH issues)
+                Refresh-Path
                 $wingetList = winget list --id Microsoft.VisualStudioCode 2>&1
                 if ($LASTEXITCODE -eq 0 -and $wingetList -match "Microsoft.VisualStudioCode") {
                     Write-Success "VS Code installed system-wide via winget"
@@ -992,12 +852,9 @@ function Install-DevelopmentTools {
         Track-Skipped "vscode" "code editor"
     }
 
-    # Visual Studio Community (via winget - full IDE for C#, C++, etc.)
-    # Check for VS using vswhere or devenv
     $vsInstalled = $false
     $vsWherePath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
     if (Test-Path $vsWherePath) {
-        # vswhere can detect VS installations
         $vsInfo = & $vsWherePath -latest -property displayName 2>$null
         if ($vsInfo -match "Visual Studio") {
             $vsInstalled = $true
@@ -1012,14 +869,8 @@ function Install-DevelopmentTools {
         if (-not $DryRun) {
             if (Get-Command winget -ErrorAction SilentlyContinue) {
                 try {
-                    # Install VS Community with core workloads
-                    # --add Microsoft.VisualStudio.Workload.ManagedDesktop (C#, VB.NET)
-                    # --add Microsoft.VisualStudio.Workload.NativeDesktop (C++)
-                    # --add Microsoft.VisualStudio.Workload.NetCoreTools (modern .NET)
-                    # --add Microsoft.VisualStudio.Workload.Node (Node.js development)
                     winget install --id Microsoft.VisualStudio.Community --exact --accept-package-agreements --accept-source-agreements --override "--wait --passive --add Microsoft.VisualStudio.Workload.ManagedDesktop --add Microsoft.VisualStudio.Workload.NativeDesktop --add Microsoft.VisualStudio.Workload.NetCoreTools" *> $null
 
-                    # Verify installation
                     if (Test-Path $vsWherePath) {
                         $vsInfo = & $vsWherePath -latest -property displayName 2>$null
                         if ($vsInfo -match "Visual Studio") {
@@ -1058,15 +909,13 @@ function Install-DevelopmentTools {
         Track-Skipped "visual-studio" "full IDE"
     }
 
-    # LLVM (via winget - includes clang, clangd, lldb, etc.)
-    # LLVM is the backbone for many dev tools and Windows features
     if (-not (Test-Command clang)) {
         Write-Step "Installing LLVM (clang toolchain)..."
         if (-not $DryRun) {
             if (Get-Command winget -ErrorAction SilentlyContinue) {
                 try {
                     winget install --id LLVM.LLVM --exact --accept-package-agreements --accept-source-agreements *> $null
-                    Refresh-Path  # Refresh PATH to pick up newly installed LLVM
+                    Refresh-Path
                     if (Test-Command clang) {
                         Write-Success "LLVM installed"
                         Track-Installed "llvm" "C/C++ toolchain"
@@ -1098,13 +947,10 @@ function Install-DevelopmentTools {
         Track-Skipped "llvm" "C/C++ toolchain"
     }
 
-    # LaTeX (via scoop extras-plus bucket)
     if (-not (Test-Command pdflatex)) {
         Write-Step "Installing LaTeX (TeX Live)..."
         if (-not $DryRun) {
-            # Check if scoop is available
             if (Get-Command scoop -ErrorAction SilentlyContinue) {
-                # Add extras-plus bucket for texlive (if not already added)
                 $buckets = scoop bucket list 2>$null
                 if ($buckets -notmatch "extras-plus") {
                     Write-Info "Adding extras-plus bucket for TeX Live..."
@@ -1129,8 +975,6 @@ function Install-DevelopmentTools {
         Track-Skipped "latex" "document preparation"
     }
 
-    # Claude Code CLI (native installer - irm https://claude.ai/install.ps1 | iex)
-    # Clean up old npm shims and bun/npm global packages
     $npmBin = Join-Path $env:APPDATA "npm"
     $localBin = Join-Path $env:USERPROFILE ".local\bin"
     $oldShims = @("claude", "claude.cmd", "claude.ps1") | ForEach-Object {
@@ -1145,7 +989,6 @@ function Install-DevelopmentTools {
             Remove-Item $shim -Force -ErrorAction SilentlyContinue
         }
     }
-    # Remove old bun/npm global packages
     if (Test-Command bun) {
         bun remove -g @anthropic-ai/claude-code 2>$null
     }
@@ -1153,7 +996,6 @@ function Install-DevelopmentTools {
         npm rm -g @anthropic-ai/claude-code 2>$null
     }
 
-    # Get current version if claude is installed
     $currentVersion = ""
     if (Test-Command claude) {
         try {
@@ -1163,11 +1005,9 @@ function Install-DevelopmentTools {
             }
         }
         catch {
-            # Ignore errors
         }
     }
 
-    # Install if not found (native installer is idempotent, no registry lookup needed)
     $needsInstall = -not (Test-Command claude)
 
     if ($needsInstall) {
@@ -1175,7 +1015,6 @@ function Install-DevelopmentTools {
         if (-not $DryRun) {
             irm https://claude.ai/install.ps1 | iex
 
-            # Ensure native installer bin dir is in PATH
             $claudeBin = Join-Path $env:USERPROFILE ".claude\local\bin"
             if (Test-Path $claudeBin) {
                 Add-ToPath -Path $claudeBin -User
@@ -1201,12 +1040,10 @@ function Install-DevelopmentTools {
         Track-Skipped "claude-code" "AI CLI"
     }
 
-    # OpenCode AI CLI (via bun)
     if (Test-Command bun) {
         $needsInstall = $false
         $currentVersion = ""
 
-        # Check if opencode is installed and get version
         if (Test-Command opencode) {
             try {
                 $versionOutput = opencode --version 2>$null
@@ -1216,13 +1053,11 @@ function Install-DevelopmentTools {
             } catch {}
         }
 
-        # Get latest version from npm registry
         $latestVersion = ""
         try {
             $latestVersion = npm view opencode-ai version 2>$null
         } catch {}
 
-        # Determine if install/update needed
         if (-not (Test-Command opencode)) {
             $needsInstall = $true
         }
@@ -1253,7 +1088,6 @@ function Install-DevelopmentTools {
             }
         }
         else {
-            # Couldn't determine versions, install to be safe
             Write-Step "Installing OpenCode AI CLI..."
             if (-not $DryRun) {
                 $result = bun install -g opencode-ai 2>&1
@@ -1273,7 +1107,6 @@ function Install-DevelopmentTools {
         Track-Skipped "opencode" "AI CLI"
     }
 
-    # ComfyUI Desktop (AI image generation via winget - Windows only)
     if ($Script:Categories -eq "full") {
         if (Get-Command winget -ErrorAction SilentlyContinue) {
             $wingetList = winget list --id Comfy.ComfyUI-Desktop 2>&1
@@ -1303,9 +1136,6 @@ function Install-DevelopmentTools {
     return $true
 }
 
-# ============================================================================
-# PHASE 6: DEPLOY CONFIGURATIONS
-# ============================================================================
 function Deploy-Configs {
     Write-Header "Phase 6: Deploying Configurations"
 
@@ -1325,8 +1155,6 @@ function Deploy-Configs {
     & $deployScript
     Write-Success "Configurations deployed"
 
-    # Patch Claude LSP marketplace for Windows npm-installed servers
-    # (in case deploy.ps1 was run with -SkipConfig or marketplace was updated later)
     $MarketplaceJson = "$HOME/.claude/plugins/marketplaces/claude-plugins-official/.claude-plugin/marketplace.json"
 
     if (Test-Path $MarketplaceJson) {
@@ -1335,7 +1163,6 @@ function Deploy-Configs {
         $Json = Get-Content $MarketplaceJson -Raw
         $Patched = $false
 
-        # LSP servers that need cmd.exe wrapper (installed via npm)
         $NpmLsps = @(
             @{Name = "typescript"; CmdFile = "typescript-language-server.cmd"}
             @{Name = "pyright"; CmdFile = "pyright-langserver.cmd"}
@@ -1343,20 +1170,17 @@ function Deploy-Configs {
         )
 
         foreach ($Lsp in $NpmLsps) {
-            # Find the LSP entry
             $Pattern = '"' + $Lsp.Name + '"\s*:\s*\{[^}]*?"command"\s*:\s*"[^"]*"[^}]*?"args"\s*:\s*\[([^\]]*(?:\[[^\]]*\][^\]]*)*)*\]'
 
             if ($Json -match $Pattern) {
                 $LspSection = $Matches[0]
 
-                # Check if already patched
                 $CmdPattern = '"command"\s*:\s*"cmd\.exe"'
                 $ArgsPattern = '"args"\s*:\s*\["/c"\s*,\s*"' + [regex]::Escape($Lsp.CmdFile) + '"'
                 if ($LspSection -match $CmdPattern -and $LspSection -match $ArgsPattern) {
                     continue
                 }
 
-                # Patch: replace command and args
                 $PatchedCommand = '"command": "cmd.exe"'
                 $PatchedArgs = '"args": ["/c", "' + $Lsp.CmdFile + '", "--stdio"]'
                 $NewSection = $LspSection -replace '"command"\s*:\s*"[^"]*"', $PatchedCommand
@@ -1377,9 +1201,6 @@ function Deploy-Configs {
     return $true
 }
 
-# ============================================================================
-# MAIN
-# ============================================================================
 function Main {
     Write-Header "Bootstrap Windows Development Environment"
 
@@ -1389,7 +1210,6 @@ function Main {
     Write-Host "  Categories: $Script:Categories"
     Write-Host ""
 
-    # Confirm if interactive
     if ($Script:Interactive) {
         if (-not (Read-Confirmation "Proceed with bootstrap?" "n")) {
             Write-Host "Aborted."
@@ -1397,22 +1217,14 @@ function Main {
         }
     }
 
-    # CRITICAL: Initialize PATH first before any installations
-    # This ensures:
-    # 1. User PATH is restored if tests wiped it
-    # 2. Already-installed tools are detected correctly
-    # 3. Current session PATH is refreshed from registry
     if (-not $DryRun) {
         Initialize-UserPath
     }
 
-    # Initialize tracking variables used by windows.ps1 functions
-    # (Install-Rustup and others use these to track update statistics)
     $script:updated = 0
     $script:skipped = 0
     $script:failed = 0
 
-    # Run phases
     if (-not (Install-Foundation)) {
         Write-Error-Msg "Foundation installation failed"
         exit 1
@@ -1441,11 +1253,6 @@ function Main {
     }
 }
 
-# ============================================================================
-# LOAD USER CONFIGURATION (OPTIONAL)
-# ============================================================================
-
-# Only try to load config if the config library was successfully sourced
 if (Get-Command Load-DotfilesConfig -ErrorAction SilentlyContinue) {
     $ConfigFile = "$env:USERPROFILE\.dotfiles.config.yaml"
 
@@ -1454,7 +1261,6 @@ if (Get-Command Load-DotfilesConfig -ErrorAction SilentlyContinue) {
             Load-DotfilesConfig -ConfigFile $ConfigFile
             Write-Info "Config loaded from $ConfigFile"
 
-            # Override defaults with config values (if config was loaded)
             if ($script:CONFIG_CATEGORIES) {
                 $Script:Categories = $script:CONFIG_CATEGORIES
             }
@@ -1466,5 +1272,4 @@ if (Get-Command Load-DotfilesConfig -ErrorAction SilentlyContinue) {
     Write-Info "Config library not found, using hardcoded defaults"
 }
 
-# Run main
 Main
