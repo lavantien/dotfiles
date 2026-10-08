@@ -114,6 +114,7 @@ vim.lsp.config("yamlls", {
 })
 
 vim.lsp.config("helm_ls", {
+	cmd = vim.fn.executable("helm_ls") == 1 and { "helm_ls", "serve" } or { "helm-ls", "serve" },
 	settings = {
 		["helm-ls"] = {
 			yamlls = {
