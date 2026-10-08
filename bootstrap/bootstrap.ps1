@@ -351,7 +351,7 @@ function Install-LanguageServers {
 
     if ($Script:Categories -eq "full") {
         Add-ScoopBucket "extras"
-        Install-ScoopPackage "helm-ls" "" "helm_ls"
+        Install-ScoopPackage "helm-ls" "" "helm-ls"
     }
 
     if (Test-Command npm) {
