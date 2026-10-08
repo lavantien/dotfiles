@@ -358,11 +358,11 @@ toc:
 - 32 capstone: auto chess, human versus bot (lua/chapters/32-capstone.typ)
 - 33 appendices: coverage and sources (lua/chapters/33-appendices.typ)
 
-## practical data structures and algorithms (book 9, v7.0, dsa, 45 chapters)
+## practical data structures and algorithms (book 9, v8.0, dsa, 45 chapters)
 
-summary: a data structures and algorithms handbook in 7 languages, from complexity analysis and arrays through hashing, trees, graphs, dynamic programming, geometry, flows, and game theory, pairing each structure with cost and library counterpart. the appendix tracks each topic with cost and library columns.
+summary: a data structures and algorithms handbook in 7 languages, from complexity analysis and arrays through hashing, trees, graphs, dynamic programming, geometry, flows, game theory, and fine-grained speedups, pairing each structure with cost and library counterpart. the appendix tracks each topic with cost and library columns.
 capstone: storage engine toolkit: a log-structured storage engine with a crc-32 framed write-ahead log, bloom filters, crash recovery, prefix scans, and compaction, plus an htmx 4 web dashboard, every file under 260 lines.
-walkthroughs: geometry and lattices (ch 23 to 24), interpreter build (ch 26 to 27), big arithmetic (ch 28 to 29)
+walkthroughs: geometry and lattices (ch 23 to 24), interpreter build (ch 26 to 27), big arithmetic (ch 28 to 29), fine-grained speedups (ch 43)
 toc:
 
 - 01 complexity analysis and honest benchmarking (dsa/chapters/01-analysis.typ)
@@ -576,9 +576,9 @@ toc:
 
 ## the interview repertoire (book 16, v5.0, interview-repertoire, 42 chapters)
 
-summary: answer bank for interview rounds across algorithms, javascript, react, go, databases, networks, distributed systems, security, and behavioral questions. chapters drill frequent questions as [DRILL] definitional answers or [TDD] tested go and c# code under make verify, with sources pinned by access date.
+summary: answer bank for interview rounds across algorithms, javascript, react, go, databases, networks, distributed systems, security, and behavioral questions, plus a measured one billion row challenge chapter in eight lanes from c to sqlite. chapters drill frequent questions as [DRILL] definitional answers or [TDD] tested go and c# code under make verify, with sources pinned by access date.
 capstone: none: chapters instead drill question rounds and end in worked builds, like the test driven react listing page and the go storefront with live features.
-walkthroughs: react arc (ch 11 to 14), go build arc: rest apis, storefront, jetstream pipelines (ch 20 to 22), classics (ch 5 to 6), algorithms (ch 3 to 4 and 23 to 24)
+walkthroughs: react arc (ch 11 to 14), go build arc: rest apis, storefront, jetstream pipelines (ch 20 to 22), classics (ch 5 to 6), algorithms (ch 3 to 4 and 23 to 24), the 1brc chapter (ch 41)
 toc:
 
 - 01 the 2026 interview landscape (interview-repertoire/chapters/01-landscape.typ)

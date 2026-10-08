@@ -87,7 +87,7 @@ ladder.
 Every lane gates the same way: byte diff against the committed
 fixtures, the comparison trimming the line terminator on both sides
 because text-mode stdio on windows ends the line with `\r\n` in
-nine of the lanes, a split the divergence paragraph below pins. The
+nine of the variants, a split the divergence paragraph below pins. The
 c, java, lua, and sqlite variants ride `tools/run-1brc.ps1`, which
 compiles or invokes each lane, diffs stdout against all three
 fixtures, and adds two must-fail legs: every runner variant has to
@@ -725,7 +725,7 @@ keep it as data. A leading BOM is stripped by c sharp naive's
 `File.ReadLines` while every byte lane keeps it in the first
 name. So the chapter pins LF-terminated, BOM-free files as the
 input shape it teaches. The final newline splits by stdout mode:
-nine lanes write through windows text-mode streams and end
+nine variants write through windows text-mode streams and end
 `}\r\n` when redirected, c both, java naive, python both, lua
 both, and sqlite both, while the byte-writing lanes, tuned java,
 go, c sharp, and javascript, end `}\n` like every official

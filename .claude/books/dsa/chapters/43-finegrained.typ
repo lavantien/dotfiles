@@ -6,7 +6,7 @@
 
 The counting question of #xref-to("dsa", "analysis") asks whether an
 algorithm is polynomial. Fine-grained complexity asks a sharper one:
-can the exponent itself move. This chapter walks one 2025 paper's
+can the exponent itself move. This chapter walks one 2026 paper's
 answer end to end, Josh Alman and Virginia Vassilevska Williams, truly
 subquadratic 3SUM and truly subcubic APSP via triangles in sparse
 lopsided graphs (arXiv 2610.06783). The engine is theorem 1, page 5:
@@ -20,8 +20,8 @@ identity, the recursion on strings, the tiling that shares encodings,
 the pruned recursion with its leaf-count lemmas, the boxes data
 structure with O(D^0.437) queries (theorem 3, page 7), the exact
 triangle reduction by hashing weights modulo a prime (theorem 17,
-page 34), and the consequences for 3SUM and APSP (theorems 19 and 22,
-pages 35 and 36). A honesty thread runs through all 8: the exponents
+page 33), and the consequences for 3SUM and APSP (theorems 19 and 22,
+pages 35 and 36). An honesty thread runs through all 8: the exponents
 that move are small, the regimes that justify them are enormous, and
 the toy fixtures show the algorithms losing on purpose, because a
 speedup you cannot price is a slogan.
@@ -614,7 +614,7 @@ search, sort.SearchInts, Arrays.binarySearch, Array.BinarySearch.
 Javascript spreads two arrays into a Set and sorts numerically,
 python sorts a set comprehension, and lua dedupes through a seen
 table before table.sort. The regime tables are where the integer
-widths divide the trees: the (38, 2) betas reach 39 digits and pass
+widths divide the trees: the (38, 2) betas reach 38 digits and pass
 64 bits, so c hand-rolls a base-10^9 bignum, lua a base-10^4 one, go
 rides math/big, java BigInteger, c\# System.Numerics.BigInteger,
 javascript BigInt, and python pins the full integers natively, the
@@ -727,7 +727,7 @@ equality, the same normalization the identity section needed.
 == exact triangle by hashing weights modulo a prime
 
 The home problem is abstract until something reduces to it. Theorem
-17, page 34, reduces exact triangle deterministically: given a
+17, page 33, reduces exact triangle deterministically: given a
 tripartite graph with integer weights, decide whether any a, b, c has
 S(a, b, c) = w(a, b) + w(a, c) + w(b, c) equal to 0. The reduction
 hashes the weights modulo a prime p in [sqrt(D)/2, sqrt(D)) chosen
@@ -740,9 +740,11 @@ x^(w(b,c) mod p), so the coefficient of x^r in the product (PQ)\[a\]\[b\]
 counts the c with w(a, c) + w(b, c) congruent to r mod p, and summing
 the coefficient of x^(-w(a,b) mod p) over all pairs yields F(p) + Z0,
 false positives plus zero triangles. The paper's derandomized
-selection scans the primes of the range, the deterministic line of
-Chan and Xu 2024, and picks the minimum, which lands under the mean:
-min at most mean.
+selection scans the primes of the range and picks the minimum, which
+lands under the mean: min at most mean. The deterministic prime
+selection follows the 3SUM reduction of Fischer, Kaliciak, and Polak,
+while the instance construction and witness scan follow Chan and Xu,
+both 2024.
 
 An instance is a chunk of pairs against a piece of the c side. The
 middle part holds the piece's vertices paired with the p labels, at
@@ -820,7 +822,7 @@ listings below build the road in seven languages.
 The instances are built identically everywhere, and the masks divide
 the trees by width. C uses unsigned words, go uint32, java and c\#
 and javascript int, python arbitrary precision, lua native 64-bit.
-The witness scan exits three ways in the sample corpus: c sets a
+The witness scan exits by flag, break, or jump in the sample corpus: c sets a
 found flag, go and java break through labeled state, c\# jumps to a
 goto label, javascript breaks a labeled outer loop, python breaks
 out of nested loops with witness checks, lua walks with explicit
@@ -832,10 +834,11 @@ and digest.
 == consequences: 3SUM, min-plus products, and bridges
 
 The end of the chain is where the paper's title lives. Theorem 19,
-page 35: exact triangle is decidable in O(n^(3-0.0017) log n), that
-is O(n^2.9983), by plugging the data structure of section 6 into
-theorem 17's instances, and the same tower with theorem 5 at its base
-gives O(n^(3-1/648) log^2 n) for the weighted path problems. Theorem
+page 35: exact triangle is decidable in O(n^(3-0.00175) log n),
+weakened to O(n^2.9983) without the log, by plugging the data
+structure of section 6 into theorem 17's instances, and the same tower
+with theorem 5 at its base gives O(n^(3-1/648) log^2 n) for exact
+triangle as its other bound. Theorem
 22, page 36: 3SUM on n integers falls to n^(2-1/1296), about
 n^1.99923, and APSP and the min-plus product fall to
 O(n^(3-1/1944)), about n^2.99949. This section pins the min-plus leg
@@ -868,7 +871,7 @@ ceil(s/2) edges, and hits them with the greedy set cover of
 #xref-to("dsa", "greedy"). The chain shrinks 24, 16, 10, 5, 1, and
 every level's output is brute-verified as an (s, C)-bridge: every
 pair with eta at least s has a shortest walk through a bridge vertex
-within C eta edges. The honesty row is stage 3, where road A pays
+within C eta edges. The honesty row is stage 2 at s = 8, where road A pays
 29563 realized walk edges against a budget of n^2 s = 4608: the
 deterministic reduction loses at toy scale exactly as the tiling of
 section 4 did, and only the subcubic solver at the top of the tower
@@ -889,7 +892,7 @@ paper's own constants.
 + The bridge schedule pins all four stages, sizes 16, 10, 5, 1 after
   the initial 24, with kept paths, walks, and realized edges per
   stage, the (s, C)-bridge property brute-verified at every level,
-  and the stage 3 row 29563 against 4608 asserted as the honest loss.
+  and the stage 2 row 29563 against 4608 asserted as the honest loss.
 + The 3SUM chain draws three 16-value lists from the continuing
   stream, finds a zero triple with no planting needed, and pins the
   hash baseline at 257 ops with witness (16, -11, -5) against the
@@ -900,7 +903,7 @@ paper's own constants.
   so the middle part holds 1 or 2 vertices at every real size. The
   D^0.063 preprocessing saving reaches a factor of 2 only at D about
   6 x 10^4, which forces N at least D^18, about 10^86. The exact
-  triangle exponent saves 2.0 percent at n = 10^5 and 3.6 percent at
+  triangle exponent saves 1.9 percent at n = 10^5 and 3.5 percent at
   10^9, 3SUM 0.9 and 1.6 percent, APSP 0.6 and 1.1. The reduction's
   own constants sit on top: 4ng instances, and a Strassen ring
   multiplication n^(log2 7) D^(3/2), about n^2.89 at D = n^(1/18),
@@ -963,8 +966,8 @@ paper's own constants.
   cdraw.content((3.2, 2.4), [exact triangle: n^2.9983], size: 6pt)
   cdraw.content((3.2, 1.8), [3SUM: n^1.99923], size: 6pt)
   cdraw.content((3.2, 1.2), [APSP: n^2.99949], size: 6pt)
-  cdraw.content((13.6, 2.4), [saving at n = 10^5: 2.0, 0.9, 0.6 percent], size: 6pt)
-  cdraw.content((13.6, 1.8), [saving at n = 10^9: 3.6, 1.6, 1.1 percent], size: 6pt)
+  cdraw.content((13.6, 2.4), [saving at n = 10^5: 1.9, 0.9, 0.6 percent], size: 6pt)
+  cdraw.content((13.6, 1.8), [saving at n = 10^9: 3.5, 1.6, 1.1 percent], size: 6pt)
   cdraw.content((13.6, 1.2), [factor 2 in D^0.063 needs D about 6 x 10^4, N about 10^86], size: 6pt)
 })
 
@@ -977,7 +980,7 @@ listings below close the chapter in seven languages.
 #listing("dsa/samples-java/src/Ch43/Minplus.java", first: 233, last: 258, caption: [java, bridgeLevel with a scan helper, the 601-int stream digest pinned with the stage table])
 #listing("dsa/samples/src/Ch43/Minplus.cs", first: 299, last: 334, caption: [c\#, the bridge level as a BridgeResult record over uint masks, greedy hitting inline])
 #listing("dsa/samples-js/src/ch43-minplus.mjs", first: 227, last: 256, caption: [javascript, mpBridgeLevel with its scan closure, keep filtering by path length])
-#listing("dsa/samples-py/src/Ch43/minplus.py", first: 799, last: 841, caption: [python, walk recovery through the bounded dp, greedy hitting with sizes beside the masks])
+#listing("dsa/samples-py/src/Ch43/minplus.py", first: 226, last: 279, caption: [python, walk recovery through the bounded dp, greedy hitting with sizes beside the masks])
 #listing("dsa/samples-lua/ch43_minplus.lua", first: 233, last: 268, caption: [lua, the bridge level with 1-based recover and erase, the same stage pins])
 
 The min-plus lane leans on the floyd-warshall habits of chapter 11 and
@@ -996,9 +999,8 @@ opposite of the fancy road.
 == across the seven languages
 
 Featured build size counted as non-blank, non-comment source lines of
-the chapter's 8 sample files per language in the c, go, java,
-javascript, python, and lua trees, the c\# row counting non-blank
-lines of its 8 files, go test files excluded:
+the chapter's 8 sample files per language in the c, go, java, c\#,
+javascript, python, and lua trees, go test files excluded:
 
 #table(
   columns: (auto, auto, auto, auto, auto, auto, auto, auto, 1.6fr),
@@ -1011,20 +1013,24 @@ lines of its 8 files, go test files excluded:
   [pruned], [656], [419], [536], [454], [270], [446], [870], [two instances, the paper table, the regime bignums],
   [boxes], [536], [560], [558], [570], [422], [355], [633], [12393 boxes, lemmas 27 and 28, the query path],
   [extriangle], [207], [222], [223], [183], [146], [236], [233], [theorem 17 end to end against brute force],
-  [minplus], [606], [451], [576], [442], [351], [1117], [1202], [squaring, the bridge chain, the 3SUM chain, the pinned 576-entry matrix],
+  [minplus], [606], [451], [576], [442], [351], [606], [1200], [squaring, the bridge chain, the 3SUM chain, the pinned 576-entry matrix],
 )
 
-The heavy rows are the pins. Python and lua restate the full pinned
-576-entry distance matrix, the regime decimal strings, and the stage
-tables inline, and lua adds its 1-based index adjustments plus the
-base-10^4 bignum, which is why minplus and pruned run past 1100 and
-870 lines there. Go keeps every stem a package with the fixtures in
-test files, so its columns stay the lowest, 2297 lines across 8
-packages. Javascript holds the whole chapter under 1750 lines by
-importing nothing and leaning on Number where the values provably
-fit, with the LCG state alone in bigint. The c tree carries the
-hand-rolled base-10^9 bignum in pruned at 656 lines and the flat dp
-array in minplus at 606.
+The heavy rows are the pins. Pruned carries the regime decimal
+strings, 446 lines in python and 870 in lua beside the base-10^4
+bignum and 1-based adjustments. Minplus's 576-entry distance matrix
+lands in full only in lua, a sibling pins module required by the
+main file and never listed by run.lua. c pins spot rows plus
+downstream values, and python anchors the stream by sha256 digest
+with the matrix pinned as a checksum, edge rows, and spot cells,
+landing beside the c twin at 606 lines. Go keeps the fixtures in
+test files beside the code, so its columns stay the lowest, 2297
+lines across 7 packages, extriangle and minplus sharing the ch43
+package. Javascript holds the whole
+chapter under 1750 lines by importing nothing and leaning on Number
+where the values provably fit, with the LCG state alone in bigint.
+The c tree carries the hand-rolled base-10^9 bignum in pruned at 656
+lines and the flat dp array in minplus at 606.
 
 Sample behavior verified by the 7 suite gates scoped to chapter 43:
 c 8 files and 192 checks, go 7 packages and 75 test functions, java 8
@@ -1036,15 +1042,17 @@ skipped.
 sources: Josh Alman and Virginia Vassilevska Williams, truly
 subquadratic 3SUM and truly subcubic APSP via triangles in sparse
 lopsided graphs, arXiv 2610.06783v1, theorem 1 on page 5, theorems 2
-and 3 on page 7, corollary 16 on page 32, theorem 17 on page 34,
+and 3 on page 7, corollary 16 on page 32, theorem 17 on page 33,
 theorems 19 and 22 on pages 35 and 36, and the balanced-case remark
 on page 61, read against the local copy at ref/2610.06783v1.pdf.
 A. Schoenhage, the 1981 identity, and D. Coppersmith's 1982
 rectangular matrix multiplication, both as cited in the paper's
 section 2. U. Zwick, all pairs shortest paths using bridging sets
 and matrix products, 2002, behind the bridge schedule and the ring
-trick. T. M. Chan and H. Xu, the 2024 derandomized reduction the
-paper's prime selection follows. Fixtures generated and verified by
+trick. Fischer, Kaliciak, and Polak, the 2024 3SUM reduction whose
+deterministic minimum-count prime selection the paper follows, and
+T. M. Chan and H. Xu, the 2024 derandomized instance construction and
+witness scan the paper builds on. Fixtures generated and verified by
 the reference implementation at playground/ch43-spine, the corpus
 64-bit Knuth LCG with one advance per draw reading the high 32 bits,
 accessed 2026-10-08.

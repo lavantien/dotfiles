@@ -10,9 +10,9 @@ it seven audit trails. Every structure and algorithm the chapters
 build now exists once per language, built from scratch behind the
 same fixtures and the same anchors, and every chapter listing reads
 a real file that the pinned toolchain of its language compiles and
-runs. The totals: c 222 files and 4140 checks, go 724 tests, java
-222 files and 4269 checks, c\# 784 tests, javascript 755 tests,
-python 222 files and 3007 asserts, lua 936 checks, and the c\#
+runs. The totals: c 230 files and 4332 checks, go 799 tests, java
+230 files and 4455 checks, c\# 858 tests, javascript 846 tests,
+python 230 files and 3208 asserts, lua 1004 checks, and the c\#
 capstone of chapter 44 stays single-language inside the same suite.
 Zero skipped anywhere.
 
@@ -46,7 +46,7 @@ is as practical as knowing the ones it does ship.
 #diagram([the matrix as one strip, one bar per chapter that carries matrix rows, height is topic count, dark is shipped], length: 13pt, {
   // (shipped, n/a) per chapter in manifest order, counted from the
   // table above: chapters 1 to 39, then 41 to 43, and the capstone
-  let data = ((2, 0), (2, 0), (2, 0), (2, 1), (2, 2), (3, 1), (2, 1), (3, 2), (1, 2), (0, 5), (0, 6), (0, 4), (4, 2), (1, 4), (0, 5), (2, 4), (0, 7), (0, 5), (0, 6), (0, 4), (1, 5), (0, 4), (0, 4), (0, 4), (2, 2), (0, 3), (0, 3), (1, 7), (4, 2), (1, 3), (0, 7), (1, 5), (0, 5), (1, 5), (0, 13), (1, 5), (0, 11), (0, 9), (0, 11), (0, 12), (0, 11), (0, 0), (3, 6))
+  let data = ((2, 0), (2, 0), (2, 0), (2, 1), (2, 2), (3, 1), (2, 1), (3, 2), (1, 2), (0, 5), (0, 6), (0, 4), (4, 2), (1, 4), (0, 5), (2, 4), (0, 7), (0, 5), (0, 6), (0, 4), (1, 5), (0, 4), (0, 4), (0, 4), (2, 2), (0, 3), (0, 3), (1, 7), (4, 2), (1, 3), (0, 7), (1, 5), (0, 5), (1, 5), (0, 13), (1, 5), (0, 11), (0, 9), (0, 11), (0, 12), (0, 11), (1, 7), (3, 6))
   let nums = (range(1, 40) + (41, 42, 43, 44))
   for (i, d) in data.enumerate() {
     let (shipped, na) = d
@@ -71,7 +71,7 @@ is as practical as knowing the ones it does ship.
 
 == the seven sample trees
 
-One row per sample program, 222 of them across chapters 1 to 42,
+One row per sample program, 230 of them across chapters 1 to 43,
 and the file that carries it in each language. The roots, relative
 to the book directory: c in `dsa/samples-c/src/ChNN`, go in
 `dsa/samples-go/chNN`, java in `dsa/samples-java/src/ChNN`, c\# in
@@ -81,10 +81,13 @@ tree splits most chapters across a few files and groups sibling
 topics inside one file, so that column sometimes repeats the
 grouping file, go spells one ch31 file `disjoint_sparse.go` where
 the other trees say `disjointsparse`, go's ch37 tree shares one
-`geo.go` helper beside its ten samples, java spells every stem in
-pascal case so `memo_vs_prune.c` is `MemoVsPrune.java`, and
-chapter 15's naive matcher lives in its own file beside the frozen
-original.
+`geo.go` helper beside its ten samples, go's ch43 grid splits its 8
+samples over 7 packages with extriangle and minplus sharing the
+ch43 package, java spells every stem in pascal case so
+`memo_vs_prune.c` is `MemoVsPrune.java`, chapter 15's naive matcher
+lives in its own file beside the frozen original, and lua's ch43
+minplus keeps its pinned matrix in a sibling pins module the main
+file requires and run.lua never lists.
 
 #[
 #set text(size: 7.5pt)
@@ -314,6 +317,14 @@ original.
   [setcover], [ch 42], [setcover.c], [setcover.go], [Setcover.java], [Setcover.cs], [ch42-setcover.mjs], [setcover.py], [ch42_setcover.lua],
   [tsp2x], [ch 42], [tsp2x.c], [tsp2x.go], [Tsp2x.java], [Tsp2x.cs], [ch42-tsp2x.mjs], [tsp2x.py], [ch42_tsp2x.lua],
   [vc], [ch 42], [vc.c], [vc.go], [Vc.java], [Vc.cs], [ch42-vc.mjs], [vc.py], [ch42_vc.lua],
+  [baselines], [ch 43], [baselines.c], [baselines.go], [Baselines.java], [Baselines.cs], [ch43-baselines.mjs], [baselines.py], [ch43_baselines.lua],
+  [schoenhage], [ch 43], [schoenhage.c], [schoenhage.go], [Schoenhage.java], [Schoenhage.cs], [ch43-schoenhage.mjs], [schoenhage.py], [ch43_schoenhage.lua],
+  [recursion], [ch 43], [recursion.c], [recursion.go], [Recursion.java], [Recursion.cs], [ch43-recursion.mjs], [recursion.py], [ch43_recursion.lua],
+  [tiling], [ch 43], [tiling.c], [tiling.go], [Tiling.java], [Tiling.cs], [ch43-tiling.mjs], [tiling.py], [ch43_tiling.lua],
+  [pruned], [ch 43], [pruned.c], [pruned.go], [Pruned.java], [Pruned.cs], [ch43-pruned.mjs], [pruned.py], [ch43_pruned.lua],
+  [boxes], [ch 43], [boxes.c], [boxes.go], [Boxes.java], [Boxes.cs], [ch43-boxes.mjs], [boxes.py], [ch43_boxes.lua],
+  [extriangle], [ch 43], [extriangle.c], [extriangle.go], [Extriangle.java], [Extriangle.cs], [ch43-extriangle.mjs], [extriangle.py], [ch43_extriangle.lua],
+  [minplus], [ch 43], [minplus.c], [minplus.go], [Minplus.java], [Minplus.cs], [ch43-minplus.mjs], [minplus.py], [ch43_minplus.lua],
 )
 
 ]
@@ -322,17 +333,17 @@ original.
   columns: (auto, 1.2fr, 1.4fr, 1.8fr),
   inset: 4pt,
   table.header([*language*], [*suite size*], [*unit*], [*gate*]),
-  [c], [222 files, 4140], [checks, one ok line per file], [`make verify-c` scope `books/dsa/samples-c/src`],
-  [go], [724], [tests, go test], [`make verify-go`],
-  [java], [222 files, 4269], [checks, one ok line per file], [`make verify-java` scope `books/dsa/samples-java/src`],
-  [c\#], [784], [tests, dotnet test], [`make verify-csharp`],
-  [javascript], [755], [tests, node test runner], [`node --test` over `test/*.test.mjs`],
-  [python], [222 files, 3007], [asserts, one ok line per file], [`make verify-py` scope `books/dsa/samples-py/src`],
-  [lua], [936], [checks, the run.lua runner], [`make verify-lua`],
+  [c], [230 files, 4332], [checks, one ok line per file], [`make verify-c` scope `books/dsa/samples-c/src`],
+  [go], [799], [tests, go test], [`make verify-go`],
+  [java], [230 files, 4455], [checks, one ok line per file], [`make verify-java` scope `books/dsa/samples-java/src`],
+  [c\#], [858], [tests, dotnet test], [`make verify-csharp`],
+  [javascript], [846], [tests, node test runner], [`node --test` over `test/*.test.mjs`],
+  [python], [230 files, 3208], [asserts, one ok line per file], [`make verify-py` scope `books/dsa/samples-py/src`],
+  [lua], [1004], [checks, the run.lua runner], [`make verify-lua`],
 )
 
 The icpc toolbox suites ride beside these in book 10 and share
-the same six toolchains, 26 c\# tests, 36 javascript tests, 67
+the same seven toolchains, 26 c\# tests, 36 javascript tests, 67
 python asserts, and 45 lua checks over 6 to 10 files per language.
 
 == pinned sources
