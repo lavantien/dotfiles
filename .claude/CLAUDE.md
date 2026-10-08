@@ -4,7 +4,7 @@
 
 1. Verify first. Never assume, guess, or rely on memory. Confirm latest versions online for the current year, against canonical sources, and against the physical codebase before coding, because training data goes stale. Base everything on the latest verified data and double check: edge case attacks, e2e, screenshots, profiling, benchmarking, and blind adversarial review per the adversarial verification step under Testing.
 2. Generalize. Always prefer generalized, os-agnostic solutions. Never hardcode paths or constants, never manually copy. Every solution must be programmatically coherent, even "quick tests". Centralize every config, constant, tunable, enum, and argument path into a single config hub: no scoped globals, no stray constants. Inline test tables are the only exception, and any value that keeps reappearing across them must be centralized too.
-3. Keep it plain. Use the simplest solution, code, and architecture that solves the task. Never overcomplicate. Avoid abstraction and complex patterns unless absolutely necessary. Comment only where non-obvious, no AI-style over-commenting or decorative comments.
+3. Keep it plain. Use the simplest solution, code, and architecture that solves the task. Never overcomplicate. Avoid abstraction and complex patterns unless absolutely necessary.
 4. First principles.
 5. Bottom-up.
 6. Concurrency/parallel native.
@@ -18,6 +18,7 @@
 4. No manual migrations. Use `docker compose up -d` exclusively, wrapped in a make target.
 5. Makefile-first. Run every development and testing activity (build, test, lint, typecheck, run, migrate, deploy) through a `make` target for consistency and documentability. Never invent ad hoc bash one-liners or equivalents on the spot. If no target exists, add it to the Makefile first, then use it.
 6. Max 1000 SLOC per file. Conventional Commits: feat, fix, docs, refactor, test, chore.
+7. Zero comments in code and tests. Never write one, remove every single existing comment whenever a file is touched. Anything that needs documenting belongs in the readme, especially the architecture and flows sections.
 
 ## Workflow
 
@@ -33,10 +34,11 @@ Subagent fan-out is the default execution mode. Quota guard: every 20 minutes fi
 
 1. Before implementing, derive a comprehensive conflict-free task list from the plan: partition work so concurrent tasks never touch the same files or shared state, and keep dependent tasks sequenced.
 2. Fan out sub-agents over the list, at most 8 concurrent development slots plus 1 temporary slot for auxiliary checks like the quota guard, 9 sub-agents maximum in flight at any time. Recycle slots continuously: launch the next queued task in each freed slot until the list is empty.
-3. Dispose of and clean up every agent you do not intend to reuse as soon as it finishes, fails, or goes idle, temp agents (quota guard, CI watcher) especially, or defer cleanup explicitly. TaskStop on arrival: the moment a task notification for a background agent lands, issue an explicit TaskStop for it before anything else reuses the slot. Prevent self-inflicted memory leaks at all cost: never leave a finished, failed, idle, or unused agent holding context. Disposal includes the process: kill the agent's process tree and verify the OS process is gone, a released agent with a live orphaned process is still a leak. The same disposal covers project processes: on every slot recycle and at fan-out end, sweep for orphaned compilers, test binaries, mutation, and fuzz processes, kill each, and verify the OS process is gone.
-4. Each agent records progress durably (task notes or commit messages) and commits small atomic units often, so an outage loses at most the last unit.
-5. Every sub-agent keeps a reading log while working and appends it to its final report: one short line per file access in the form `read <path> <lines or grep> - <why>`. Never full-read generated files, only component logic.
-6. A task counts as done only when it passes the verification chain under Testing.
+3. Never idle on verification. The moment a task's verification chain starts running, start the next non-dependent task when one exists instead of waiting: verification results gate that task's own commit, never the start of other work.
+4. Dispose of and clean up every agent you do not intend to reuse as soon as it finishes, fails, or goes idle, temp agents (quota guard, CI watcher) especially, or defer cleanup explicitly. TaskStop on arrival: the moment a task notification for a background agent lands, issue an explicit TaskStop for it before anything else reuses the slot. Prevent self-inflicted memory leaks at all cost: never leave a finished, failed, idle, or unused agent holding context. Disposal includes the process: kill the agent's process tree and verify the OS process is gone, a released agent with a live orphaned process is still a leak. The same disposal covers project processes: on every slot recycle and at fan-out end, sweep for orphaned compilers, test binaries, mutation, and fuzz processes, kill each, and verify the OS process is gone.
+5. Each agent records progress durably (task notes or commit messages) and commits small atomic units often, so an outage loses at most the last unit.
+6. Every sub-agent keeps a reading log while working and appends it to its final report: one short line per file access in the form `read <path> <lines or grep> - <why>`. Never full-read generated files, only component logic.
+7. A task counts as done only when it passes the verification chain under Testing.
 
 ### Artifacts
 
