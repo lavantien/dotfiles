@@ -82,7 +82,8 @@ e2e-windows: ## bootstrap.ps1 dry run, deploy.ps1 against an isolated HOME, PSSA
 
 deploy-windows: ## real deploy.ps1 run against the live HOME
 	@command -v pwsh >/dev/null 2>&1 || { echo 'skip: pwsh not installed'; exit 1; }
-	@pwsh -NoProfile -File scripts/deploy.ps1
+	@root="$$(pwd -W 2>/dev/null || pwd)"; \
+	pwsh -NoProfile -File scripts/deploy.ps1 -DotfilesDir "$$root"
 
 bootstrap-windows: ## real bootstrap.ps1 run against the live machine, full category
 	@command -v pwsh >/dev/null 2>&1 || { echo 'skip: pwsh not installed'; exit 1; }
