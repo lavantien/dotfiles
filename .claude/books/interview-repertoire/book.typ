@@ -43,7 +43,8 @@
   "observed-answers": "chapters/38-observed-answers.typ",
   "negotiation-answers": "chapters/39-negotiation-answers.typ",
   "transfer-answers": "chapters/40-transfer-answers.typ",
-  "appendices": "chapters/41-appendices.typ",
+  "onebrc": "chapters/41-onebrc.typ",
+  "appendices": "chapters/42-appendices.typ",
 )
 
 #book(repertoire.meta, {

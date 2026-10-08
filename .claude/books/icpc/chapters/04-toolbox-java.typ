@@ -14,7 +14,7 @@ under a word-configured `StreamTokenizer` and the writer is a
 `StringBuilder` flushed by one write. The other is the 64-bit boundary: products that can leave long
 range travel as `Math.multiplyHigh` plus the low half with a
 shift-subtract remainder, the same lane the dsa book opened, and
-`BigInteger` appears exactly where c writes `__int128`. The kit is 771
+`BigInteger` appears exactly where c writes `__int128`. The kit is 772
 non-blank lines over 6 files carrying 50 ok-line checks, every number
 in this chapter measured on this machine under the pinned oracle jdk
 27.
@@ -298,7 +298,7 @@ GC mechanics, is #xref-to("java", "runtime"); the jdk pin itself is
 
 == built here, cited elsewhere
 
-Six kit files, 771 non-blank lines, 50 checks, and the split between
+Six kit files, 772 non-blank lines, 50 checks, and the split between
 what this toolbox owns and what the standard library already ships:
 
 #table(

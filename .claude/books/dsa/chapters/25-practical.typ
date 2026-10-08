@@ -8,7 +8,7 @@ order, leveldb bolts a bloom filter onto every sstable and keeps its
 memtable in a skip list, cdns use one to turn one-hit urls away at
 the door. This chapter builds the four structures behind those
 moves, each a screen of code with its behavior pinned by tests, and
-chapter 43's engine ships 2 of them with the same hash idioms
+chapter 44's engine ships 2 of them with the same hash idioms
 taught here.
 
 == the bloom filter
@@ -66,7 +66,7 @@ the listings below buy it in seven languages.
 
 #listing("dsa/samples-c/src/Ch25/bloom.c", first: 19, last: 61, caption: [c, fnv-1a against djb2, the second mixer chosen so the feeds stay independent])
 #listing("dsa/samples-go/ch25/bloom.go", first: 19, last: 47, caption: [go, bit slots by double hashing, h1 and h1 plus h2 into one word array])
-#listing("dsa/samples-java/src/Ch25/Bloom.java", first: 25, last: 79, caption: [java, fnv-1a with djb2, every hash mod through `Long.remainderUnsigned`, the offset parsed unsigned])
+#listing("dsa/samples-java/src/Ch25/Bloom.java", first: 26, last: 80, caption: [java, fnv-1a with djb2, every bloom hash mod through `Long.remainderUnsigned`, the offset parsed unsigned])
 #listing("dsa/samples/src/Ch25/Practical.cs", first: 12, last: 60, caption: [c\#, sizing in the ctor, kirsch-mitzenmacher probes off one fnv pair, an odd stride])
 #listing("dsa/samples-js/src/ch25-bloom.mjs", first: 9, last: 35, caption: [javascript, the 64-bit hashes imported from chapter 6 as bigint])
 #listing("dsa/samples-py/src/Ch25/bloom.py", first: 17, last: 34, caption: [python, an 8-bit filter where the false positives pin exactly])
@@ -556,9 +556,9 @@ cache section above, which has no matrix twin in the other six:
   inset: 4pt,
   table.header([*language*], [*build sloc*], [*container dependency*], [*boundary note*]),
   [c], [384], [byte bit arrays, slot-backed ring], [djb2 second hash with the correlation comment, bounded lie counts],
-  [c\#], [341], [`Dictionary<TKey,TValue>`, `List<T>`], [the only coin-flip skiplist, kirsch-mitzenmacher k of 7, lfu included],
   [go], [204], [`map[string]*lruNode`, slices], [double-hash bloom slots, promotion by insertion index],
-  [java], [518], [jdk 27 stdlib], [fnv offset parsed unsigned, every hash mod through `Long.remainderUnsigned`, the c fixture's empty 40th probe mirrored, both count-min fixtures in one file],
+  [java], [518], [jdk 27 stdlib], [fnv offset parsed unsigned, every bloom hash mod through `Long.remainderUnsigned`, the c fixture's empty 40th probe mirrored, both count-min fixtures in one file],
+  [c\#], [341], [`Dictionary<TKey,TValue>`, `List<T>`], [the only coin-flip skiplist, kirsch-mitzenmacher k of 7, lfu included],
   [javascript], [125], [`Map` in insertion order, `Set`], [bigint hash words, the map doubles as the lru ring],
   [python], [229], [`dict`, list of bools], [8-bit bloom with lies pinned by name, ruler promotion],
   [lua], [338], [`table` with string splice-free keys], [fnv offset built from a hex literal, divisibility promotion],

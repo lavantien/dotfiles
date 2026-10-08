@@ -24,7 +24,7 @@ letter order, one section per letter, seven listings per section, c
 through lua, every listing sliced from a solver file that ran against
 the official judge data held locally under `ref/icpc/`.
 
-== the year-local helpers: the sphinx oracle, ordered subsets, score hulls, pyramid vectors, failure functions, and the go scan cursor
+== the year-local helpers: the sphinx oracle, ordered subsets, score hulls, pyramid vectors, and the failure functions
 
 Five helper kits are year-local to this chapter, one per problem
 that wanted one, plus the go package's shared scan cursor, and
@@ -150,6 +150,8 @@ closure builds its table inline.
 #listing("icpc/samples-py/src/Ch12/ch12_kmp.py", first: 3, last: 34, caption: [python, fail, find_all yielding every overlapping hit, min_period from the last border])
 
 #listing("icpc/samples-lua/ch12_kmp.lua", first: 7, last: 45, caption: [lua, kmp.fail 1-based, kmp.find_all calling hit per occurrence, kmp.min_period])
+
+== the go scan cursor
 
 The scan kit is the go package's io contract, one file the whole
 year shares: `scan12` walks the input buffer with a whitespace

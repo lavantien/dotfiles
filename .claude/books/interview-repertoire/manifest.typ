@@ -7,7 +7,7 @@
     title: "the interview repertoire",
     subtitle: "working answers for frequent questions",
     author: "Raeliosol",
-    version: "4.2",
+    version: "5.0",
     volume-label: "book 16",
   ),
   chapters: (
@@ -51,6 +51,7 @@
     (id: "observed-answers", num: 38, title: "the observed round, take-homes, debugging"),
     (id: "negotiation-answers", num: 39, title: "offers and negotiation"),
     (id: "transfer-answers", num: 40, title: "the transfer answer: java and rust shops"),
-    (id: "appendices", num: 41, title: "appendices: question index and sources"),
+    (id: "onebrc", num: 41, title: "the one billion row challenge"),
+    (id: "appendices", num: 42, title: "appendices: question index and sources"),
   ),
 )

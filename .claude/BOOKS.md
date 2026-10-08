@@ -358,7 +358,7 @@ toc:
 - 32 capstone: auto chess, human versus bot (lua/chapters/32-capstone.typ)
 - 33 appendices: coverage and sources (lua/chapters/33-appendices.typ)
 
-## practical data structures and algorithms (book 9, v7.0, dsa, 44 chapters)
+## practical data structures and algorithms (book 9, v7.0, dsa, 45 chapters)
 
 summary: a data structures and algorithms handbook in 7 languages, from complexity analysis and arrays through hashing, trees, graphs, dynamic programming, geometry, flows, and game theory, pairing each structure with cost and library counterpart. the appendix tracks each topic with cost and library columns.
 capstone: storage engine toolkit: a log-structured storage engine with a crc-32 framed write-ahead log, bloom filters, crash recovery, prefix scans, and compaction, plus an htmx 4 web dashboard, every file under 260 lines.
@@ -407,8 +407,9 @@ toc:
 - 40 game theory and scheduling (dsa/chapters/40-games.typ)
 - 41 local search and metaheuristics (dsa/chapters/41-metaheuristics.typ)
 - 42 approximation algorithms (dsa/chapters/42-approximation.typ)
-- 43 capstone: storage engine toolkit (dsa/chapters/43-capstone.typ)
-- 44 appendices: topic matrix and sources (dsa/chapters/44-appendices.typ)
+- 43 fine-grained speedups (dsa/chapters/43-finegrained.typ)
+- 44 capstone: storage engine toolkit (dsa/chapters/44-capstone.typ)
+- 45 appendices: topic matrix and sources (dsa/chapters/45-appendices.typ)
 
 ## the icpc world finals (book 10, v5.0, icpc, 15 chapters)
 
@@ -573,7 +574,7 @@ toc:
 - 22 capstone part 4: balance by simulation (game-systems/chapters/22-capstone4.typ)
 - 23 appendices: topic matrix and sources (game-systems/chapters/23-appendices.typ)
 
-## the interview repertoire (book 16, v4.2, interview-repertoire, 41 chapters)
+## the interview repertoire (book 16, v5.0, interview-repertoire, 42 chapters)
 
 summary: answer bank for interview rounds across algorithms, javascript, react, go, databases, networks, distributed systems, security, and behavioral questions. chapters drill frequent questions as [DRILL] definitional answers or [TDD] tested go and c# code under make verify, with sources pinned by access date.
 capstone: none: chapters instead drill question rounds and end in worked builds, like the test driven react listing page and the go storefront with live features.
@@ -620,4 +621,5 @@ toc:
 - 38 the observed round, take-homes, debugging (interview-repertoire/chapters/38-observed-answers.typ)
 - 39 offers and negotiation (interview-repertoire/chapters/39-negotiation-answers.typ)
 - 40 the transfer answer: java and rust shops (interview-repertoire/chapters/40-transfer-answers.typ)
-- 41 appendices: question index and sources (interview-repertoire/chapters/41-appendices.typ)
+- 41 the one billion row challenge (interview-repertoire/chapters/41-onebrc.typ)
+- 42 appendices: question index and sources (interview-repertoire/chapters/42-appendices.typ)

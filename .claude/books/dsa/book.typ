@@ -1,4 +1,4 @@
-// book 9: all 44 chapters registered, the metaheuristics and approximation ids land their prose this wave
+// book 9: all 45 chapters written, the grey-stub map fully retired
 #import "../theme/lib.typ": book
 #import "manifest.typ": dsabook
 
@@ -45,8 +45,9 @@
   "games": "chapters/40-games.typ",
   "metaheuristics": "chapters/41-metaheuristics.typ",
   "approximation": "chapters/42-approximation.typ",
-  "capstone": "chapters/43-capstone.typ",
-  "appendices": "chapters/44-appendices.typ",
+  "finegrained": "chapters/43-finegrained.typ",
+  "capstone": "chapters/44-capstone.typ",
+  "appendices": "chapters/45-appendices.typ",
 )
 
 #book(dsabook.meta, {

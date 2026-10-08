@@ -259,11 +259,14 @@ paths in order links the broken ones.
 == what the suite proves
 
 The closer maps each layer to the fact it establishes, the grid below.
-The cross-lane claim is checkable in the tree: five books carry the 16
+The cross-lane claim is checkable in the tree: six books carry the 16
 vectors byte-identical today, go as the oracle with c, csharp,
-javascript, and python as mirrors, one rolling hash over the set, and
-the program's later lanes join the same spine when they land, lua,
-typescript, and java on the same vectors and the same hash.
+javascript, and python as mirrors and lua pinning all 16 through its
+suite, the typed layer riding the javascript contract's own vector
+gate, one rolling hash over the set. The java lane is the exception:
+its families pin their own frozen vectors, the jwt token and the
+observability exposition byte-exact, and it carries no 16-scenario
+wire replay.
 
 The honest boundary is the one the composition chapter paid to learn,
 and the suite is what could not see it. Three defects lived green under
