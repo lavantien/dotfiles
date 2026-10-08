@@ -53,9 +53,9 @@ toc:
 
 ## mathematics for programmers (book 2, v2.0, math, 33 chapters)
 
-summary: mathematics for programmers in c23: floating point and error analysis, linear algebra, calculus, optimization and autodiff, logic, algebra, and graphs, probability, statistics, numerical methods, game theory, then functional patterns in c23. 33 chapters, the coverage appendix names the sample check proving each topic.
+summary: mathematics for programmers in c23: floating point and error analysis, linear algebra, calculus, optimization and autodiff, logic, algebra, and graphs, probability, statistics, numerical methods with sparse matrix systems solved by jacobi and gauss-seidel iteration, game theory, then functional patterns in c23. 33 chapters, the coverage appendix names the sample check proving each topic.
 capstone: the arena game in 3 parts: design (game spec, adt state, numerics budget, mixed-strategy plus mcts ai, two-lane bit-exact architecture), implementation (verlet physics, sat collision, group hashing, allegro host), verification (discipline-to-module audit, determinism pins).
-walkthroughs: none beyond the capstone
+walkthroughs: sparse matrix systems, iterative solvers and conditioning (ch 23)
 toc:
 
 - 01 floating point anatomy (math/chapters/01-float.typ)
@@ -360,9 +360,9 @@ toc:
 
 ## practical data structures and algorithms (book 9, v8.0, dsa, 45 chapters)
 
-summary: a data structures and algorithms handbook in 7 languages, from complexity analysis and arrays through hashing, trees, graphs, dynamic programming, geometry, flows, game theory, and fine-grained speedups, pairing each structure with cost and library counterpart. the appendix tracks each topic with cost and library columns.
+summary: a data structures and algorithms handbook in 7 languages, from complexity analysis and arrays through hashing, trees, graphs, dynamic programming, geometry, flows, game theory, and fine-grained speedups that apply sparse matrix multiplication to triangle counting and subcubic apsp, pairing each structure with cost and library counterpart. the appendix tracks each topic with cost and library columns.
 capstone: storage engine toolkit: a log-structured storage engine with a crc-32 framed write-ahead log, bloom filters, crash recovery, prefix scans, and compaction, plus an htmx 4 web dashboard, every file under 260 lines.
-walkthroughs: geometry and lattices (ch 23 to 24), interpreter build (ch 26 to 27), big arithmetic (ch 28 to 29), fine-grained speedups (ch 43)
+walkthroughs: geometry and lattices (ch 23 to 24), interpreter build (ch 26 to 27), big arithmetic (ch 28 to 29), fine-grained speedups via sparse matrix multiplication (ch 43)
 toc:
 
 - 01 complexity analysis and honest benchmarking (dsa/chapters/01-analysis.typ)
