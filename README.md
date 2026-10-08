@@ -234,7 +234,7 @@ The enabled servers and parsers are listed in `.config/nvim/init.lua`, which is 
 
 ### CLI tools
 
-The everyday CLI set is fzf, yazi, zoxide, bat, eza, lazygit, gh, ripgrep, fd, sqlite, tokei, btop, repomix, docker-compose, helm, and kubectl. The install set also covers difftastic, jq, bats, oh-my-posh, and mermaid-cli, with the per-platform install lists living in `bootstrap/bootstrap.sh`, `bootstrap/platforms/`, and `bootstrap/bootstrap.ps1`. docker-compose on Windows comes with Docker Desktop, see [DOCKER_K8S.md](DOCKER_K8S.md).
+The everyday CLI set is fzf, yazi, zoxide, bat, eza, lazygit, gh, ripgrep, fd, sqlite, tokei, btop, repomix, docker-compose, helm, and kubectl. The install set also covers difftastic, jq, bats, unzip, oh-my-posh, and mermaid-cli, with the per-platform install lists living in `bootstrap/bootstrap.sh`, `bootstrap/platforms/`, and `bootstrap/bootstrap.ps1`. docker-compose on Windows comes with Docker Desktop, see [DOCKER_K8S.md](DOCKER_K8S.md).
 
 ### MCP servers (Claude Code and OpenCode)
 
@@ -380,7 +380,7 @@ Structural selection uses the treesitter text objects: `v_an` grows the selectio
 
 Enabled servers attach by filetype automatically, no `:LspStart`. Native keys handle the quick moves: `K` hover, `grn` rename, `gra` code action, `grr` references, `gri` implementations, `gO` symbol outline, `[d` and `]d` jump diagnostics, `<C-W>d` pops the diagnostic under the cursor. Leader pickers handle the rest with fzf previews: `<leader>j` definitions, `<leader>v` declarations, `<leader>r` references, `<leader>i` implementations, `<leader>s` document symbols, `<leader>w` live workspace symbols, `<leader>\` the all-in-one finder on the symbol under the cursor, `<leader>,` and `<leader>.` call hierarchy, `<leader>a` code actions, `<leader>b` format the buffer.
 
-Diagnostics stay quiet: pause on a line for 1 second and its message expands underneath as virtual text, then collapses when you move. That is `updatetime` 1000 plus `virtual_lines.current_line`. For the backlog, `<leader>dd` lists document diagnostics, `<leader>dw` the workspace. YAML gets schema-aware completion and validation for kubernetes manifests, docker-compose files, and GitHub workflows.
+Diagnostics stay quiet: pause on a line for 1 second and its message expands underneath as virtual text, then collapses when you move. That is `updatetime` 1000 plus `virtual_lines.current_line`. For the backlog, `<leader>dd` lists document diagnostics, `<leader>dw` the workspace. YAML gets schema-aware completion and validation for kubernetes manifests, docker-compose files, and GitHub workflows. Values files under a `Chart.yaml` attach `helm_ls` on top of `yamlls`, and compose files attach `docker_language_server` the same way.
 
 ### The git loop
 
