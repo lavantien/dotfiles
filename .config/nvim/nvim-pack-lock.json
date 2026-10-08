@@ -17,12 +17,12 @@
       "src": "https://github.com/neovim/nvim-lspconfig"
     },
     "nvim-treesitter": {
-      "rev": "9a168f6357ed21c3a636e1727bc7d382abc451b8",
+      "rev": "e289100ff98969e118c702199d88b764ce9e7fdf",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter",
       "version": "'main'"
     },
     "nvim-web-devicons": {
-      "rev": "914decffe650296c87312c53b7933ecb86718499",
+      "rev": "58447c1fca354bbf184425e4a8d01deecbd6f3c4",
       "src": "https://github.com/nvim-tree/nvim-web-devicons"
     },
     "typst-preview.nvim": {
