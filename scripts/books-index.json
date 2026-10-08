@@ -86,10 +86,10 @@
       "walkthroughs": "campaign content arc (ch 14 to 17), ecs theory into a c# implementation (ch 2 to 3)"
     },
     "interview-repertoire": {
-      "summary": "answer bank for interview rounds across algorithms, javascript, react, go, databases, networks, distributed systems, security, and behavioral questions, plus a measured one billion row challenge chapter in eight lanes from c to sqlite. chapters drill frequent questions as [DRILL] definitional answers or [TDD] tested go and c# code under make verify, with sources pinned by access date.",
+      "summary": "answer bank for interview rounds across algorithms, javascript, react, go, databases, networks, distributed systems, security, and behavioral questions, plus a measured 1 billion row handling chapter, the 1brc in 8 stdlib lanes from c to sqlite with 21 byte-pinned variants. chapters drill frequent questions as [DRILL] definitional answers or [TDD] tested go and c# code under make verify, with sources pinned by access date.",
       "capstone": "none: chapters instead drill question rounds and end in worked builds, like the test driven react listing page and the go storefront with live features.",
       "capstone_short": "none: worked interview builds",
-      "walkthroughs": "react arc (ch 11 to 14), go build arc: rest apis, storefront, jetstream pipelines (ch 20 to 22), classics (ch 5 to 6), algorithms (ch 3 to 4 and 23 to 24), the 1brc chapter (ch 41)"
+      "walkthroughs": "react arc (ch 11 to 14), go build arc: rest apis, storefront, jetstream pipelines (ch 20 to 22), classics (ch 5 to 6), algorithms (ch 3 to 4 and 23 to 24), 1 billion row handling: the 1brc in 8 stdlib lanes from c to sqlite, 21 measured variants (ch 41)"
     }
   }
 }
