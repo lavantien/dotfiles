@@ -1,50 +1,21 @@
 #!/usr/bin/env bash
-# Universal Bootstrap Script
-# Installs and configures development environment on Linux/macOS
-#
-# VERSION POLICY:
-#   All packages are installed or updated to their LATEST versions
-#   No hardcoded version numbers - always gets the newest stable release
-#   Run bootstrap again to update all tools to latest versions
-#
-# BRIDGE APPROACH:
-#   - Works without config file (uses hardcoded defaults - backward compatible)
-#   - Loads config file if present (~/.dotfiles.config.yaml) - forward compatible
-#   - Config library is optional - scripts work even if it's missing
-#   - Defaults: categories="full", interactive=true, no dry-run
-#
-# Usage:
-#   ./bootstrap.sh [options]
-#
-# Options:
-#   -y, --yes        Non-interactive mode (accept all prompts)
-#   --dry-run        Show what would be installed without installing
-#   --categories     minimal|sdk|full (default: full)
-#   --verbose        Show detailed progress output
-#   -h, --help       Show this help
 
 set -e
 
-# ============================================================================
-# SCRIPT SETUP
-# ============================================================================
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LIB_DIR="$SCRIPT_DIR/lib"
 PLATFORMS_DIR="$SCRIPT_DIR/platforms"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-# Source library functions
 # shellcheck source=lib/common.sh disable=SC1091
 source "$LIB_DIR/common.sh"
 # shellcheck source=lib/version-check.sh disable=SC1091
 source "$LIB_DIR/version-check.sh"
 # shellcheck source=lib/config.sh disable=SC1091
-# Config library is at root level, not in bootstrap/lib/
 if [[ -f "$ROOT_DIR/lib/config.sh" ]]; then
 	source "$ROOT_DIR/lib/config.sh"
 fi
 
-# Source platform-specific functions
 OS="$(detect_os)"
 
 if [[ "$OS" == "linux" ]]; then
@@ -55,9 +26,6 @@ elif [[ "$OS" == "macos" ]]; then
 	source "$PLATFORMS_DIR/macos.sh"
 fi
 
-# ============================================================================
-# DEFAULTS
-# ============================================================================
 INTERACTIVE=true
 DRY_RUN=false
 CATEGORIES="full"
@@ -65,12 +33,8 @@ VERBOSE=false
 AUTO_UPDATE_REPOS="false"
 BACKUP_BEFORE_DEPLOY="false"
 
-# ============================================================================
-# LOAD USER CONFIGURATION (OPTIONAL)
-# ============================================================================
 CONFIG_FILE="$HOME/.dotfiles.config.yaml"
 
-# Only try to load config if the config library was successfully sourced
 if declare -f load_dotfiles_config >/dev/null 2>&1; then
 	if [[ -f "$CONFIG_FILE" ]]; then
 		load_dotfiles_config "$CONFIG_FILE" 2>/dev/null || {
@@ -78,7 +42,6 @@ if declare -f load_dotfiles_config >/dev/null 2>&1; then
 		}
 	fi
 
-	# Override defaults with config values (if get_config function exists)
 	if declare -f get_config >/dev/null 2>&1; then
 		CATEGORIES=$(get_config "categories" "$CATEGORIES")
 		AUTO_UPDATE_REPOS=$(get_config "auto_update_repos" "$AUTO_UPDATE_REPOS")
@@ -88,16 +51,85 @@ else
 	log_info "Config library not found, using hardcoded defaults"
 fi
 
-# ============================================================================
-# HELP
-# ============================================================================
 show_help() {
-	grep '^#' "$SCRIPT_DIR/bootstrap.sh" | grep -v '#!/usr/bin/env' | sed 's/^# //' | sed 's/^#//'
+	cat <<'EOF'
+Universal Bootstrap Script
+Installs and configures development environment on Linux/macOS
+
+VERSION POLICY:
+  All packages are installed or updated to their LATEST versions
+  No hardcoded version numbers - always gets the newest stable release
+  Run bootstrap again to update all tools to latest versions
+
+BRIDGE APPROACH:
+  - Works without config file (uses hardcoded defaults - backward compatible)
+  - Loads config file if present (~/.dotfiles.config.yaml) - forward compatible
+  - Config library is optional - scripts work even if it's missing
+  - Defaults: categories="full", interactive=true, no dry-run
+
+Usage:
+  ./bootstrap.sh [options]
+
+Options:
+  -y, --yes        Non-interactive mode (accept all prompts)
+  --dry-run        Show what would be installed without installing
+  --categories     minimal|sdk|full (default: full)
+  --verbose        Show detailed progress output
+  -h, --help       Show this help
+============================================================================
+SCRIPT SETUP
+============================================================================
+Source library functions
+shellcheck source=lib/common.sh disable=SC1091
+shellcheck source=lib/version-check.sh disable=SC1091
+shellcheck source=lib/config.sh disable=SC1091
+Config library is at root level, not in bootstrap/lib/
+Source platform-specific functions
+============================================================================
+DEFAULTS
+============================================================================
+============================================================================
+LOAD USER CONFIGURATION (OPTIONAL)
+============================================================================
+Only try to load config if the config library was successfully sourced
+============================================================================
+HELP
+============================================================================
+============================================================================
+PARSE ARGUMENTS
+============================================================================
+============================================================================
+PHASE 1: FOUNDATION
+============================================================================
+============================================================================
+PHASE 2: CORE SDKS
+============================================================================
+============================================================================
+PHASE 3: LANGUAGE SERVERS
+============================================================================
+============================================================================
+PHASE 4: LINTERS & FORMATTERS
+============================================================================
+============================================================================
+PHASE 5: CLI TOOLS
+============================================================================
+============================================================================
+PHASE 5.25: MCP SERVERS (Model Context Protocol servers for Claude Code)
+============================================================================
+Install or update a global npm package using the shared version check,
+mirroring Install-NpmPackageWithCheck in bootstrap.ps1
+============================================================================
+PHASE 5.5: DEVELOPMENT TOOLS (Editors, LaTeX, AI Coding Assistants)
+============================================================================
+============================================================================
+PHASE 6: DEPLOY CONFIGURATIONS
+============================================================================
+============================================================================
+MAIN
+============================================================================
+EOF
 }
 
-# ============================================================================
-# PARSE ARGUMENTS
-# ============================================================================
 while [[ $# -gt 0 ]]; do
 	case $1 in
 	-y | --yes)
@@ -128,21 +160,15 @@ while [[ $# -gt 0 ]]; do
 	esac
 done
 
-# ============================================================================
-# PHASE 1: FOUNDATION
-# ============================================================================
 install_foundation() {
 	print_header "Phase 1: Foundation"
 
-	# Fix any existing issues before starting
 	fix_path_issues
 	fix_package_states
 	ensure_config_dir
 
-	# Make sure bootstrap scripts are executable
 	chmod +x "$SCRIPT_DIR/bootstrap.sh" 2>/dev/null || true
 
-	# Install prerequisites via apt BEFORE homebrew (for fresh Ubuntu)
 	if [[ "$OS" == "linux" ]] && [[ -f /etc/debian_version ]]; then
 		log_step "Installing prerequisites via apt: curl, git, vim..."
 		for pkg in curl git vim; do
@@ -153,8 +179,6 @@ install_foundation() {
 		done
 	fi
 
-	# Install Homebrew automatically on Linux (no prompt)
-	# macOS already has brew or we'll install it
 	if [[ "$OS" == "linux" ]]; then
 		if ! cmd_exists brew; then
 			ensure_homebrew || return 1
@@ -163,31 +187,25 @@ install_foundation() {
 		ensure_homebrew || return 1
 	fi
 
-	# Fix PATH again after brew installation
 	fix_path_issues
 
-	# Install WezTerm (Linux only via apt, macOS via brew cask later)
 	if [[ "$OS" == "linux" ]] && [[ -f /etc/debian_version ]]; then
 		install_wezterm_apt
 	fi
 
-	# Install Google Chrome (Linux via .deb, macOS via brew cask later)
 	if [[ "$OS" == "linux" ]] && [[ -f /etc/debian_version ]]; then
 		install_google_chrome
 	fi
 
-	# Install IosevkaTerm Nerd Font (needed for WezTerm config)
 	if [[ "$OS" == "linux" ]]; then
 		install_nerd_fonts "IosevkaTerm" "IosevkaTerm"
 	fi
 
-	# Install GitHub CLI via brew
 	if ! cmd_exists gh; then
 		log_step "Installing GitHub CLI via brew..."
 		install_brew_package gh "" gh
 	fi
 
-	# Interactive gh auth login - pause and wait for user
 	if cmd_exists gh && ! gh auth status >/dev/null 2>&1; then
 		print_header "GitHub Authentication Required"
 		echo -e "${YELLOW}You need to authenticate with GitHub to continue.${NC}"
@@ -212,13 +230,10 @@ install_foundation() {
 		log_success "GitHub CLI already authenticated"
 	fi
 
-	# Self-correction: Replace any system packages with brew versions
-	# This ensures git, gcc, node, go, and other key tools are from brew
 	if [[ "$OS" == "linux" ]] && cmd_exists brew; then
 		ensure_brew_packages
 	fi
 
-	# Ensure git is installed (final fallback)
 	if ! cmd_exists git; then
 		log_step "Installing git..."
 		if cmd_exists brew; then
@@ -228,27 +243,22 @@ install_foundation() {
 		fi
 	fi
 
-	# Configure git and add GitHub to known_hosts (platform-specific function)
 	configure_git_settings
 
-	# Install zsh (shell)
 	if [[ "$OS" == "linux" ]]; then
 		install_zsh
 	elif [[ "$OS" == "macos" ]]; then
 		install_brew_package zsh "" zsh
 	fi
 
-	# Install oh-my-zsh (zsh framework)
 	if [[ "$OS" == "linux" ]] || [[ "$OS" == "macos" ]]; then
 		install_oh_my_zsh
 	fi
 
-	# Install zsh plugins
 	if [[ "$OS" == "linux" ]] || [[ "$OS" == "macos" ]]; then
 		install_zsh_plugins
 	fi
 
-	# Set zsh as default shell (only if zsh is installed and not already set)
 	if cmd_exists zsh; then
 		if [[ "$SHELL" != *"zsh"* ]]; then
 			log_info "To set zsh as your default shell, run: chsh -s $(which zsh)"
@@ -262,13 +272,9 @@ install_foundation() {
 	return 0
 }
 
-# ============================================================================
-# PHASE 2: CORE SDKS
-# ============================================================================
 install_sdks() {
 	print_header "Phase 2: Core SDKs"
 
-	# Node.js (always latest LTS)
 	if [[ "$CATEGORIES" != "minimal" ]]; then
 		if [[ "$OS" == "macos" ]]; then
 			install_brew_package node "" ""
@@ -277,14 +283,12 @@ install_sdks() {
 		fi
 	fi
 
-	# Python (always latest)
 	if [[ "$OS" == "macos" ]]; then
 		install_brew_package python "" python3
 	elif [[ "$OS" == "linux" ]]; then
 		install_linux_package python3 "" python3
 	fi
 
-	# Go (always latest)
 	if [[ "$CATEGORIES" != "minimal" ]]; then
 		if [[ "$OS" == "macos" ]]; then
 			install_brew_package go "" ""
@@ -293,13 +297,10 @@ install_sdks() {
 		fi
 	fi
 
-	# Rust
 	if [[ "$CATEGORIES" == "full" ]]; then
 		install_rustup
 	fi
 
-	# dotnet SDK (via native system packages)
-	# Ubuntu 26.04+ and modern distros have dotnet-sdk in their repos
 	if [[ "$CATEGORIES" == "full" ]]; then
 		if [[ "$OS" == "macos" ]]; then
 			install_brew_package dotnet-sdk "" dotnet
@@ -308,12 +309,10 @@ install_sdks() {
 		fi
 	fi
 
-	# Bun (JavaScript runtime and package manager)
 	if [[ "$CATEGORIES" == "full" ]]; then
 		install_bun
 	fi
 
-	# OpenJDK
 	if [[ "$CATEGORIES" == "full" ]]; then
 		if [[ "$OS" == "macos" ]]; then
 			install_brew_package openjdk "" javac
@@ -326,9 +325,6 @@ install_sdks() {
 	return 0
 }
 
-# ============================================================================
-# PHASE 3: LANGUAGE SERVERS
-# ============================================================================
 install_language_servers() {
 	if [[ "$CATEGORIES" == "minimal" ]]; then
 		return 0
@@ -336,89 +332,70 @@ install_language_servers() {
 
 	print_header "Phase 3: Language Servers"
 
-	# lua_ls (via system package - always latest)
 	if [[ "$OS" == "macos" ]]; then
 		install_brew_package lua-language-server "" lua-language-server
 	elif [[ "$OS" == "linux" ]]; then
 		install_linux_package lua-language-server "" lua-language-server || true
 	fi
 
-	# clangd (via system package - always latest)
 	if [[ "$OS" == "macos" ]]; then
 		install_brew_package llvm "" clangd
 	elif [[ "$OS" == "linux" ]]; then
 		install_linux_package clangd "" clangd
 	fi
 
-	# gopls (via go install - always latest)
 	if [[ "$CATEGORIES" == "full" ]] && cmd_exists go; then
 		install_go_package "golang.org/x/tools/gopls" gopls ""
 	fi
 
-	# rust-analyzer (via rustup)
 	if [[ "$CATEGORIES" == "full" ]]; then
 		install_rust_analyzer_component
 	fi
 
-	# pyright (via npm - always latest)
 	if cmd_exists npm; then
 		install_npm_global pyright pyright ""
 	fi
 
-	# TypeScript language server (via npm - always latest)
 	if cmd_exists npm; then
 		install_npm_global typescript-language-server typescript-language-server ""
 	fi
 
-	# HTML language server (via npm - always latest)
 	if cmd_exists npm; then
 		install_npm_global "vscode-html-languageserver-bin" "" ""
 	fi
 
-	# CSS language server (via npm - always latest)
 	if cmd_exists npm; then
 		install_npm_global "vscode-css-languageserver-bin" "" ""
 	fi
 
-	# Svelte language server (via npm - always latest)
 	if [[ "$CATEGORIES" == "full" ]] && cmd_exists npm; then
 		install_npm_global "svelte-language-server" "svelteserver" ""
 	fi
 
-	# bash-language-server (via npm - always latest)
 	if cmd_exists npm; then
 		install_npm_global "bash-language-server" "bash-language-server" ""
 	fi
 
-	# YAML language server (via npm - always latest)
 	if cmd_exists npm; then
 		install_npm_global yaml-language-server yaml-language-server ""
 	fi
 
-	# csharp-ls (via dotnet tool)
 	if [[ "$CATEGORIES" == "full" ]] && cmd_exists dotnet; then
 		install_dotnet_tool "csharp-ls" "csharp-ls" ""
 	fi
 
-	# jdtls (Java Language Server)
 	if [[ "$CATEGORIES" == "full" ]]; then
 		install_brew_package jdtls "" jdtls || true
 	fi
 
-	# intelephense (PHP language server via npm)
 	if [[ "$CATEGORIES" == "full" ]] && cmd_exists npm; then
 		install_npm_global "intelephense" "intelephense" ""
 	fi
 
-	# Docker language servers (via npm - always latest)
-	if cmd_exists npm; then
-		# dockerfile-language-server (binary: docker-langserver)
-		# Note: docker-language-server (formerly docker-compose-language-server) covers both Dockerfile and Docker Compose
-		install_npm_global "dockerfile-language-server-nodejs" "docker-langserver" ""
+	if cmd_exists go; then
+		install_go_package "github.com/docker/docker-language-server/cmd/docker-language-server@latest" "docker-language-server" ""
 	fi
 
-	# helm-ls (Helm language server - prefer brew, fallback to go install)
-	# Note: binary is named helm_ls (underscore) not helm-ls (hyphen)
 	if [[ "$CATEGORIES" == "full" ]]; then
 		if [[ "$OS" == "macos" ]] || [[ "$OS" == "linux" ]]; then
 			install_brew_package "helm-ls" "" "helm_ls" ||
@@ -426,16 +403,10 @@ install_language_servers() {
 		fi
 	fi
 
-	# tombi (TOML language server via npm - always latest)
 	if cmd_exists npm; then
 		install_npm_global "tombi" "tombi" ""
 	fi
 
-	# dartls (Dart language server - requires Dart SDK)
-	# Note: Dart SDK must be installed separately from https://dart.dev/get-dart
-	# This is optional and not installed by default
-
-	# tinymist (Typst language server via npm - always latest)
 	if [[ "$CATEGORIES" == "full" ]] && cmd_exists npm; then
 		install_npm_global "tinymist" "tinymist" ""
 	fi
@@ -444,9 +415,6 @@ install_language_servers() {
 	return 0
 }
 
-# ============================================================================
-# PHASE 4: LINTERS & FORMATTERS
-# ============================================================================
 install_linters_formatters() {
 	if [[ "$CATEGORIES" == "minimal" ]]; then
 		return 0
@@ -454,22 +422,18 @@ install_linters_formatters() {
 
 	print_header "Phase 4: Linters & Formatters"
 
-	# Prettier (via npm - always latest)
 	if cmd_exists npm; then
 		install_npm_global prettier prettier ""
 	fi
 
-	# ESLint (via npm - always latest)
 	if cmd_exists npm; then
 		install_npm_global eslint eslint ""
 	fi
 
-	# Stylelint (CSS/SCSS linter via npm - always latest)
 	if cmd_exists npm; then
 		install_npm_global stylelint stylelint ""
 	fi
 
-	# yamllint (YAML linter for Docker Compose, Helm, Kubernetes)
 	if [[ "$CATEGORIES" == "full" ]]; then
 		if [[ "$OS" == "macos" ]]; then
 			install_brew_package yamllint "" yamllint
@@ -478,7 +442,6 @@ install_linters_formatters() {
 		fi
 	fi
 
-	# hadolint (Dockerfile linter)
 	if [[ "$CATEGORIES" == "full" ]]; then
 		if [[ "$OS" == "macos" ]]; then
 			install_brew_package hadolint "" hadolint
@@ -487,27 +450,22 @@ install_linters_formatters() {
 		fi
 	fi
 
-	# svelte-check (Svelte type checker via npm - always latest)
 	if [[ "$CATEGORIES" == "full" ]] && cmd_exists npm; then
 		install_npm_global "svelte-check" "svelte-check" ""
 	fi
 
-	# repomix (Pack repositories for AI exploration via npm - always latest)
 	if [[ "$CATEGORIES" == "full" ]] && cmd_exists npm; then
 		install_npm_global "repomix" "repomix" ""
 	fi
 
-	# mermaid-cli (diagram generation via npm - always available)
 	if cmd_exists npm; then
 		install_npm_global "@mermaid-js/mermaid-cli" "mmdc" ""
 	fi
 
-	# Ruff (via pip - always latest)
 	if cmd_exists python3 || cmd_exists python; then
 		install_pip_global "ruff" ruff ""
 	fi
 
-	# Additional Python tools (for full compatibility with git hooks - always latest)
 	if [[ "$CATEGORIES" == "full" ]]; then
 		if cmd_exists python3 || cmd_exists python; then
 			install_pip_global "black" black "" || true
@@ -517,17 +475,14 @@ install_linters_formatters() {
 		fi
 	fi
 
-	# gup (Go package manager - always latest)
 	if cmd_exists go && ! cmd_exists gup; then
 		install_go_package "github.com/nao1215/gup" gup ""
 	fi
 
-	# goimports (via gup if available, otherwise go install - always latest)
 	if cmd_exists go; then
 		install_go_package "golang.org/x/tools/cmd/goimports" goimports ""
 	fi
 
-	# golangci-lint (always latest)
 	if cmd_exists go; then
 		if [[ "$OS" == "macos" ]]; then
 			install_brew_package golangci-lint "" golangci-lint
@@ -537,7 +492,6 @@ install_linters_formatters() {
 		fi
 	fi
 
-	# clang-format (usually comes with clangd - always latest)
 	if ! cmd_exists clang-format; then
 		if [[ "$OS" == "macos" ]]; then
 			install_brew_package llvm "" clang-format
@@ -546,7 +500,6 @@ install_linters_formatters() {
 		fi
 	fi
 
-	# cppcheck (C++ static analysis - always latest)
 	if [[ "$CATEGORIES" == "full" ]]; then
 		if [[ "$OS" == "macos" ]]; then
 			install_brew_package cppcheck "" cppcheck
@@ -555,7 +508,6 @@ install_linters_formatters() {
 		fi
 	fi
 
-	# catch2 (C++ testing framework)
 	if [[ "$CATEGORIES" == "full" ]]; then
 		if [[ "$OS" == "macos" ]]; then
 			install_brew_package catch2 "" catch2
@@ -564,7 +516,6 @@ install_linters_formatters() {
 		fi
 	fi
 
-	# php (PHP runtime with curl extension - prerequisite for composer)
 	if [[ "$CATEGORIES" == "full" ]]; then
 		if [[ "$OS" == "macos" ]]; then
 			install_php || true
@@ -573,7 +524,6 @@ install_linters_formatters() {
 		fi
 	fi
 
-	# composer (PHP package manager - prerequisite for PHP tools)
 	if [[ "$CATEGORIES" == "full" ]]; then
 		if [[ "$OS" == "macos" ]]; then
 			install_brew_package composer "" composer
@@ -594,7 +544,6 @@ install_linters_formatters() {
 		fi
 	fi
 
-	# Laravel Pint (PHP code style via composer global)
 	if [[ "$CATEGORIES" == "full" ]] && cmd_exists composer; then
 		if ! composer global show laravel/pint >/dev/null 2>&1; then
 			log_step "Installing Laravel Pint..."
@@ -613,7 +562,6 @@ install_linters_formatters() {
 		fi
 	fi
 
-	# PHPStan (PHP static analysis via composer global)
 	if [[ "$CATEGORIES" == "full" ]] && cmd_exists composer; then
 		if ! composer global show phpstan/phpstan >/dev/null 2>&1; then
 			log_step "Installing PHPStan..."
@@ -632,7 +580,6 @@ install_linters_formatters() {
 		fi
 	fi
 
-	# Psalm (PHP static analysis via composer global)
 	if [[ "$CATEGORIES" == "full" ]] && cmd_exists composer; then
 		if ! composer global show vimeo/psalm >/dev/null 2>&1; then
 			log_step "Installing Psalm..."
@@ -651,7 +598,6 @@ install_linters_formatters() {
 		fi
 	fi
 
-	# Shell tools
 	if [[ "$CATEGORIES" == "full" ]]; then
 		if [[ "$OS" == "macos" ]]; then
 			install_brew_package shellcheck "" shellcheck
@@ -662,7 +608,6 @@ install_linters_formatters() {
 		fi
 	fi
 
-	# scalafmt (Scala formatter: brew on macOS, coursier on Linux)
 	if [[ "$CATEGORIES" == "full" ]]; then
 		if [[ "$OS" == "macos" ]]; then
 			install_brew_package scalafmt "" scalafmt
@@ -671,7 +616,6 @@ install_linters_formatters() {
 		fi
 	fi
 
-	# scalafix (Scala linter via coursier)
 	if [[ "$CATEGORIES" == "full" ]]; then
 		if [[ "$OS" == "linux" ]]; then
 			install_coursier_package scalafix "Scala linter"
@@ -689,7 +633,6 @@ install_linters_formatters() {
 		fi
 	fi
 
-	# Metals (Scala language server via coursier)
 	if [[ "$CATEGORIES" == "full" ]]; then
 		if [[ "$OS" == "linux" ]]; then
 			install_coursier_package metals "Scala language server"
@@ -707,7 +650,6 @@ install_linters_formatters() {
 		fi
 	fi
 
-	# checkstyle (Java linter)
 	if [[ "$CATEGORIES" == "full" ]]; then
 		if [[ "$OS" == "macos" ]]; then
 			install_brew_package checkstyle "" checkstyle
@@ -716,7 +658,6 @@ install_linters_formatters() {
 		fi
 	fi
 
-	# stylua (Lua formatter)
 	if [[ "$CATEGORIES" == "full" ]]; then
 		if [[ "$OS" == "macos" ]]; then
 			install_brew_package stylua "" stylua
@@ -736,7 +677,6 @@ install_linters_formatters() {
 		fi
 	fi
 
-	# selene (Lua linter)
 	if [[ "$CATEGORIES" == "full" ]]; then
 		if [[ "$OS" == "macos" ]]; then
 			install_brew_package selene "" selene
@@ -756,7 +696,6 @@ install_linters_formatters() {
 		fi
 	fi
 
-	# typos (spell checker used by the pre-commit hook)
 	if [[ "$CATEGORIES" == "full" ]]; then
 		if [[ "$OS" == "macos" ]]; then
 			install_brew_package typos-cli "" typos
@@ -776,7 +715,6 @@ install_linters_formatters() {
 		fi
 	fi
 
-	# busted (Lua testing framework)
 	if [[ "$CATEGORIES" == "full" ]]; then
 		if [[ "$OS" == "macos" ]]; then
 			install_brew_package busted "" busted
@@ -785,50 +723,39 @@ install_linters_formatters() {
 		fi
 	fi
 
-	# Initialize user PATH with all common development directories
-	# This runs AFTER tool installations so directories exist and can be added
 	init_user_path
 
 	log_success "Linters & formatters installation complete"
 	return 0
 }
 
-# ============================================================================
-# PHASE 5: CLI TOOLS
-# ============================================================================
 install_cli_tools() {
 	print_header "Phase 5: CLI Tools"
 
-	# jq (hard dependency: aliases, statusline, sync-book, and books-index all
-	# call it, and deploy runs the books scripts, so it must exist pre-deploy)
 	if [[ "$OS" == "macos" ]]; then
 		install_brew_package jq "" jq
 	elif [[ "$OS" == "linux" ]]; then
 		install_linux_package jq "" jq
 	fi
 
-	# fzf (always latest)
 	if [[ "$OS" == "macos" ]]; then
 		install_brew_package fzf "" ""
 	elif [[ "$OS" == "linux" ]]; then
 		install_linux_package fzf "" fzf
 	fi
 
-	# zoxide (always latest)
 	if [[ "$OS" == "macos" ]]; then
 		install_brew_package zoxide "" ""
 	elif [[ "$OS" == "linux" ]]; then
 		install_linux_package zoxide "" zoxide
 	fi
 
-	# bat (always latest)
 	if [[ "$OS" == "macos" ]]; then
 		install_brew_package bat "" ""
 	elif [[ "$OS" == "linux" ]]; then
 		install_linux_package bat "" bat
 	fi
 
-	# eza (modern ls - always latest)
 	if [[ "$OS" == "macos" ]]; then
 		install_brew_package eza "" ""
 	elif [[ "$OS" == "linux" ]]; then
@@ -836,14 +763,12 @@ install_cli_tools() {
 			install_linux_package exa "" eza || true
 	fi
 
-	# yazi (file manager, aliased in the deployed shell configs)
 	if [[ "$OS" == "macos" ]]; then
 		install_brew_package yazi "" yazi
 	elif [[ "$OS" == "linux" ]]; then
 		install_linux_package yazi "" yazi
 	fi
 
-	# difftastic (difft is the default difftool in the deployed .gitconfig)
 	if [[ "$CATEGORIES" == "full" ]]; then
 		if [[ "$OS" == "macos" ]]; then
 			install_brew_package difftastic "" difft
@@ -852,21 +777,18 @@ install_cli_tools() {
 		fi
 	fi
 
-	# lazygit (always latest)
 	if [[ "$OS" == "macos" ]]; then
 		install_brew_package lazygit "" ""
 	elif [[ "$OS" == "linux" ]]; then
 		install_linux_package lazygit "" lazygit
 	fi
 
-	# gh (GitHub CLI - always latest)
 	if [[ "$OS" == "macos" ]]; then
 		install_brew_package gh "" ""
 	elif [[ "$OS" == "linux" ]]; then
 		install_linux_package gh "" gh
 	fi
 
-	# tokei (code stats - always latest)
 	if [[ "$CATEGORIES" == "full" ]]; then
 		if [[ "$OS" == "macos" ]]; then
 			install_brew_package tokei "" ""
@@ -875,7 +797,6 @@ install_cli_tools() {
 		fi
 	fi
 
-	# ripgrep (always latest)
 	if [[ "$CATEGORIES" != "minimal" ]]; then
 		if [[ "$OS" == "macos" ]]; then
 			install_brew_package ripgrep "" rg
@@ -884,7 +805,6 @@ install_cli_tools() {
 		fi
 	fi
 
-	# fd (always latest)
 	if [[ "$CATEGORIES" == "full" ]]; then
 		if [[ "$OS" == "macos" ]]; then
 			install_brew_package fd "" fd
@@ -893,14 +813,12 @@ install_cli_tools() {
 		fi
 	fi
 
-	# sqlite (SQL database CLI - always latest)
 	if [[ "$OS" == "macos" ]]; then
 		install_brew_package sqlite "" sqlite3
 	elif [[ "$OS" == "linux" ]]; then
 		install_brew_package sqlite "" sqlite3
 	fi
 
-	# btop (system monitor - always latest)
 	if [[ "$CATEGORIES" == "full" ]]; then
 		if [[ "$OS" == "macos" ]]; then
 			install_brew_package btop "" btop
@@ -909,7 +827,6 @@ install_cli_tools() {
 		fi
 	fi
 
-	# bats (testing framework - always latest)
 	if cmd_exists npm; then
 		install_npm_global bats bats ""
 	elif [[ "$OS" == "macos" ]]; then
@@ -918,31 +835,23 @@ install_cli_tools() {
 		install_linux_package bats "" bats
 	fi
 
-	# Infrastructure tools (Docker Compose, Helm, kubectl)
 	if [[ "$CATEGORIES" == "full" ]]; then
-		# Priority: brew → official script → apt (last resort)
 
-		# docker-compose
 		if ! cmd_exists docker-compose; then
 			if [[ "$OS" == "macos" ]]; then
 				install_brew_package docker-compose "" docker-compose
 			elif [[ "$OS" == "linux" ]]; then
-				# Try brew first (if available), then apt as last resort
 				install_linux_package docker-compose "" docker-compose || true
 			fi
 		fi
 
-		# helm
 		if ! cmd_exists helm; then
 			if [[ "$OS" == "macos" ]]; then
 				install_brew_package helm "" helm
 			elif [[ "$OS" == "linux" ]]; then
-				# Priority: brew → official script → apt
 				if ! cmd_exists brew || ! install_brew_package helm "" helm 2>/dev/null; then
-					# Brew not available or failed, try official script
 					if ! run_cmd "curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 && \
                         chmod +x get_helm.sh && ./get_helm.sh"; then
-						# Official script failed, try apt as last resort
 						install_linux_package helm "" helm || true
 					else
 						track_installed "helm" "Kubernetes package manager"
@@ -952,17 +861,13 @@ install_cli_tools() {
 			fi
 		fi
 
-		# kubectl
 		if ! cmd_exists kubectl; then
 			if [[ "$OS" == "macos" ]]; then
 				install_brew_package kubectl "" kubectl
 			elif [[ "$OS" == "linux" ]]; then
-				# Priority: brew → official script → apt (with k8s repo setup)
 				if ! cmd_exists brew || ! install_brew_package kubectl "" kubectl 2>/dev/null; then
-					# Brew not available or failed, try official script
 					if ! run_cmd "curl -fsSL -o kubectl 'https://dl.k8s.io/release/$(curl -fsSL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl' && \
                         chmod +x kubectl && sudo mv kubectl /usr/local/bin/kubectl"; then
-						# Official script failed, try apt as last resort
 						install_linux_package kubectl "" kubectl || true
 					else
 						track_installed "kubectl" "Kubernetes CLI"
@@ -976,12 +881,6 @@ install_cli_tools() {
 	return 0
 }
 
-# ============================================================================
-# PHASE 5.25: MCP SERVERS (Model Context Protocol servers for Claude Code)
-# ============================================================================
-
-# Install or update a global npm package using the shared version check,
-# mirroring Install-NpmPackageWithCheck in bootstrap.ps1
 install_npm_package_checked() {
 	local pkg="$1"
 	local display="$2"
@@ -1012,38 +911,26 @@ install_npm_package_checked() {
 install_mcp_servers() {
 	print_header "Phase 5.25: MCP Servers"
 
-	# Skip if npm is not available
 	if ! cmd_exists npm; then
 		log_warning "npm not found, skipping MCP server installation"
 		return 0
 	fi
 
-	# tree-sitter-cli - Compiles parsers for nvim-treesitter install/update
 	install_npm_package_checked "tree-sitter-cli" "tree-sitter-cli" "tree-sitter-cli" "Treesitter parser compiler"
 
-	# Context7 - Up-to-date library documentation and code examples
 	install_npm_package_checked "@upstash/context7-mcp" "context7 MCP server" "context7-mcp" "documentation lookup"
 
-	# Playwright - Browser automation and E2E testing
 	install_npm_package_checked "@playwright/mcp" "playwright MCP server" "playwright-mcp" "browser automation"
 
-	# Repomix - Pack repositories for full-context AI exploration
-	# Note: repomix MCP mode is invoked via npx -y repomix --mcp
-	# The repomix package itself has built-in MCP support via --mcp flag
-	# No global installation needed - npx handles it on-demand
 	track_skipped "repomix" "repository packer - uses npx -y repomix --mcp"
 
 	log_success "MCP server installation complete"
 	return 0
 }
 
-# ============================================================================
-# PHASE 5.5: DEVELOPMENT TOOLS (Editors, LaTeX, AI Coding Assistants)
-# ============================================================================
 install_development_tools() {
 	print_header "Phase 5.5: Development Tools"
 
-	# Neovim 0.13 (via snap edge channel, which delivers the nightlies)
 	if ! cmd_exists nvim; then
 		log_step "Installing Neovim 0.13 (prerelease via snap)..."
 		if [[ "$DRY_RUN" == "true" ]]; then
@@ -1060,8 +947,6 @@ install_development_tools() {
 						track_failed "neovim" "editor"
 					fi
 				else
-					# Minimal servers and containers ship without snapd; converge
-					# through brew (priority) then apt instead of failing the phase
 					log_info "snap not found, falling back to brew/apt for Neovim"
 					if install_linux_package neovim "" nvim; then
 						log_success "Neovim installed via package fallback"
@@ -1070,7 +955,6 @@ install_development_tools() {
 					fi
 				fi
 			elif [[ "$OS" == "macos" ]]; then
-				# macOS: use brew for neovim
 				if install_brew_package neovim "" nvim; then
 					log_success "Neovim installed via brew"
 					track_installed "neovim" "editor"
@@ -1082,7 +966,6 @@ install_development_tools() {
 		track_skipped "neovim" "editor"
 	fi
 
-	# VS Code (system-wide installation via official apt repository)
 	if ! cmd_exists code; then
 		log_step "Installing VS Code..."
 		if [[ "$DRY_RUN" == "true" ]]; then
@@ -1090,20 +973,15 @@ install_development_tools() {
 			track_installed "vscode" "code editor"
 		else
 			if [[ "$OS" == "macos" ]] && declare -f install_brew_cask >/dev/null; then
-				# macOS: use brew cask (installs in /Applications)
 				if install_brew_cask "visual-studio-code" "code"; then
 					log_success "VS Code installed"
 					verify_installed code vscode "code editor"
 				fi
 			elif [[ "$OS" == "linux" ]] && [[ -f /etc/debian_version ]]; then
-				# Debian/Ubuntu: Use official Microsoft apt repository
 				log_info "Installing VS Code via Microsoft apt repository..."
 
-				# Import Microsoft GPG key
 				if run_cmd "wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft.gpg"; then
-					# Add VS Code repository
 					if run_cmd "echo \"deb [arch=amd64,arm64,armhf signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/code stable main\" | sudo tee /etc/apt/sources.list.d/vscode.list >/dev/null"; then
-						# Install
 						if run_cmd "sudo apt update >/dev/null 2>&1 && sudo apt install -y code >/dev/null 2>&1"; then
 							log_success "VS Code installed via apt repository"
 							track_installed "vscode" "code editor"
@@ -1121,7 +999,6 @@ install_development_tools() {
 					track_failed "vscode" "code editor"
 				fi
 			elif [[ "$OS" == "linux" ]] && [[ -f /etc/redhat-release ]] || [[ -f /etc/fedora-release ]]; then
-				# Fedora/RHEL: Use Microsoft yum repository
 				log_info "Installing VS Code via Microsoft yum repository..."
 				if run_cmd "sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc >/dev/null 2>&1"; then
 					if run_cmd "sudo sh -c 'echo -e \"[code]\\nname=Visual Studio Code\\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\\nenabled=1\\ngpgcheck=1\\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc\" > /etc/yum.repos.d/vscode.repo'"; then
@@ -1136,7 +1013,6 @@ install_development_tools() {
 					fi
 				fi
 			elif [[ "$OS" == "linux" ]] && [[ -f /etc/arch-release ]]; then
-				# Arch: use yay from AUR
 				if cmd_exists yay; then
 					if run_cmd "yay -S --noconfirm visual-studio-code-bin >/dev/null 2>&1"; then
 						log_success "VS Code installed via yay"
@@ -1157,10 +1033,7 @@ install_development_tools() {
 		track_skipped "vscode" "code editor"
 	fi
 
-	# LaTeX TeX Live (via brew - works on both macOS and Linux)
-	# Auto-correction: Remove any non-brew texlive installations
 	if [[ "$OS" == "linux" ]] && [[ -f /etc/debian_version ]]; then
-		# Remove apt texlive packages if present
 		if dpkg -l | grep -q "texlive-base"; then
 			log_warning "Found texlive from apt (removing for brew version)..."
 			if [[ "$DRY_RUN" != "true" ]]; then
@@ -1177,12 +1050,10 @@ install_development_tools() {
 			track_installed "latex" "document preparation"
 		else
 			if [[ "$OS" == "macos" ]]; then
-				# macOS: use basictex cask for smaller installation
 				if install_brew_cask "basictex" "pdflatex"; then
 					log_success "LaTeX BasicTeX installed"
 				fi
 			elif [[ "$OS" == "linux" ]]; then
-				# Linux: use brew texlive formula
 				if install_brew_package "texlive" "" "pdflatex"; then
 					log_success "LaTeX TeX Live installed via brew"
 				fi
@@ -1193,22 +1064,16 @@ install_development_tools() {
 		track_skipped "latex" "document preparation"
 	fi
 
-	# Claude Code CLI (native install via official script)
-	# Version-aware check: command existence + npm registry version comparison
-
-	# Get current version if claude is installed
 	current_version=""
 	if cmd_exists claude; then
 		current_version=$(claude --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
 	fi
 
-	# Get latest version from npm registry
 	latest_version=""
 	if cmd_exists npm; then
 		latest_version=$(npm view @anthropic-ai/claude-code version 2>/dev/null)
 	fi
 
-	# Install if not found or version differs
 	needs_claude_install=false
 	if ! cmd_exists claude; then
 		needs_claude_install=true
@@ -1222,11 +1087,8 @@ install_development_tools() {
 		if [[ "$DRY_RUN" == "true" ]]; then
 			log_info "[DRY-RUN] Would install Claude Code CLI"
 		else
-			# Install via official script
 			if run_cmd "curl -fsSL https://claude.ai/install.sh | bash"; then
-				# Add to PATH for current session
 				ensure_path "$HOME/.local/bin"
-				# Fix PATH to ensure claude is discoverable
 				fix_path_issues
 				if cmd_exists claude; then
 					log_success "Claude Code CLI installed"
@@ -1246,30 +1108,20 @@ install_development_tools() {
 			version_info=" ($current_version)"
 		fi
 		log_info "Claude Code CLI already at latest version${version_info}"
-		# Ensure PATH is set even when skipping install
 		ensure_path "$HOME/.local/bin"
 		track_skipped "claude-code" "AI CLI"
 	fi
 
-	# OpenCode AI CLI (via official installer)
-	# Version-aware check: binary existence + npm registry version comparison
-
-	# ComfyUI on Linux requires manual installation
-	# See: https://docs.comfy.org/getting_started/installing_comfyui/linux
 	if [[ "$OS" == "linux" ]] && [[ "$CATEGORIES" == "full" ]]; then
 		log_info "ComfyUI Desktop on Linux requires manual installation"
 		log_info "See: https://docs.comfy.org/getting_started/installing_comfyui/linux"
 	fi
 
-	# OpenCode AI CLI (via official installer)
-	# First, clean up any old npm shims that might shadow the official binary
-	# This prevents confusion where `opencode --version` returns old version
 	if [[ -d "$NPM_CONFIG_PREFIX" ]]; then
 		npm_bin="$NPM_CONFIG_PREFIX/bin"
 	else
 		npm_bin="$HOME/.npm-global/bin"
 	fi
-	# Also check standard npm location on Windows via Git Bash
 	if [[ -n "$APPDATA" ]]; then
 		npm_bin_alt="$APPDATA/npm"
 	fi
@@ -1289,17 +1141,13 @@ install_development_tools() {
 	opencode_exe="$opencode_bin/opencode"
 
 	if [[ ! -f "$opencode_exe" ]]; then
-		# Binary doesn't exist
 		needs_opencode_install=true
 	else
-		# Binary exists, check version (run binary directly, not via PATH)
 		if current_version=$("$opencode_exe" --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1); then
-			# Get latest version from npm registry
 			latest_version=$(npm view opencode-ai version 2>/dev/null)
 			if [[ -n "$latest_version" ]]; then
 				if [[ "$current_version" == "$latest_version" ]]; then
 					log_info "OpenCode AI CLI already at latest version ($current_version)"
-					# Ensure PATH is set even when skipping install
 					ensure_path "$HOME/.opencode/bin"
 					track_skipped "opencode" "AI CLI"
 					needs_opencode_install=false
@@ -1308,11 +1156,9 @@ install_development_tools() {
 					needs_opencode_install=true
 				fi
 			else
-				# Couldn't get latest version, install to be safe
 				needs_opencode_install=true
 			fi
 		else
-			# Couldn't get current version, install to be safe
 			needs_opencode_install=true
 		fi
 	fi
@@ -1322,7 +1168,6 @@ install_development_tools() {
 		if [[ "$DRY_RUN" == "true" ]]; then
 			log_info "[DRY-RUN] Would install OpenCode AI CLI"
 		else
-			# Install via official script
 			if run_cmd "curl -fsSL https://opencode.ai/install | bash"; then
 				ensure_path "$HOME/.opencode/bin"
 				fix_path_issues
@@ -1344,9 +1189,6 @@ install_development_tools() {
 	return 0
 }
 
-# ============================================================================
-# PHASE 6: DEPLOY CONFIGURATIONS
-# ============================================================================
 deploy_configs() {
 	print_header "Phase 6: Deploying Configurations"
 
@@ -1368,9 +1210,6 @@ deploy_configs() {
 	log_success "Configurations deployed"
 }
 
-# ============================================================================
-# MAIN
-# ============================================================================
 main() {
 	print_header "Bootstrap $(capitalize "$OS") Development Environment"
 
@@ -1381,7 +1220,6 @@ main() {
 	echo -e "  Categories: ${CATEGORIES}"
 	echo ""
 
-	# Confirm if interactive
 	if [[ "$INTERACTIVE" == "true" ]]; then
 		if ! confirm "Proceed with bootstrap?" "n"; then
 			echo "Aborted."
@@ -1389,7 +1227,6 @@ main() {
 		fi
 	fi
 
-	# Run phases
 	install_foundation || {
 		log_error "Foundation installation failed"
 		exit 1
