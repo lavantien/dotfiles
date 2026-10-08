@@ -1,7 +1,4 @@
-# Windows-specific installation functions for bootstrap script
-# Supports: Scoop (preferred), winget
 
-# Source parent libraries if not already loaded
 if (-not (Get-Command -Name Test-Command -ErrorAction SilentlyContinue)) {
     . "$PSScriptRoot\..\lib\common.ps1"
 }
@@ -9,13 +6,8 @@ if (-not (Get-Command -Name Test-NeedsInstall -ErrorAction SilentlyContinue)) {
     . "$PSScriptRoot\..\lib\version-check.ps1"
 }
 
-# ============================================================================
-# GIT CONFIGURATION
-# ============================================================================
 function Configure-GitSettings {
-    # Set core.autocrlf=input to normalize line endings to LF
-    # This converts CRLF to LF on commit, but keeps LF on checkout
-    # Combined with .gitattributes, this ensures consistent LF endings
+
     $currentAutocrlf = git config --global core.autocrlf 2>$null
     if ($currentAutocrlf -ne "input") {
         Write-Step "Configuring git line endings (core.autocrlf=input)..."
@@ -31,14 +23,12 @@ function Configure-GitSettings {
         Track-Skipped "git autocrlf already configured"
     }
 
-    # Ensure .gitattributes is respected
     $currentAttrs = git config --global core.attributesfile 2>$null
     if ([string]::IsNullOrEmpty($currentAttrs)) {
-        # No global attributes file set - .gitattributes in repo will be used
+
         Write-Info "Repo .gitattributes will enforce line endings"
     }
 
-    # Add GitHub SSH key to known_hosts to prevent host key verification prompts
     $sshDir = Join-Path $env:USERPROFILE ".ssh"
     $knownHosts = Join-Path $sshDir "known_hosts"
     $needsGitHubKey = $true
@@ -73,19 +63,15 @@ function Configure-GitSettings {
     }
 }
 
-# ============================================================================
-# PACKAGE DESCRIPTIONS
-# ============================================================================
 function Get-PackageDescription {
     param([string]$Package)
     switch ($Package) {
-        # Package managers
+
         "scoop" { return "package manager" }
         "winget" { return "Windows package manager" }
         "npm" { return "Node.js package manager" }
         "coursier" { return "JVM dependency manager" }
 
-        # Core runtimes
         "git" { return "version control" }
         "llvm" { return "C/C++ toolchain" }
         "gcc" { return "C/C++ toolchain" }
@@ -99,7 +85,6 @@ function Get-PackageDescription {
         "bun" { return "JavaScript runtime" }
         "OpenJDK" { return "Java development" }
 
-        # Language servers
         "clangd" { return "C/C++ LSP" }
         "gopls" { return "Go LSP" }
         "rust-analyzer" { return "Rust LSP" }
@@ -109,11 +94,9 @@ function Get-PackageDescription {
         "lua-language-server" { return "Lua LSP" }
         "csharp-ls" { return "C# LSP" }
         "intelephense" { return "PHP LSP" }
-        "docker-langserver" { return "Docker LSP" }
         "tombi" { return "TOML LSP" }
         "tinymist" { return "Typst LSP" }
 
-        # Linters & formatters
         "prettier" { return "code formatter" }
         "eslint" { return "JavaScript linter" }
         "ruff" { return "Python linter" }
@@ -130,7 +113,6 @@ function Get-PackageDescription {
         "yamllint" { return "YAML linter" }
         "hadolint" { return "Dockerfile linter" }
 
-        # CLI tools
         "fzf" { return "fuzzy finder" }
         "zoxide" { return "smart directory navigation" }
         "bat" { return "enhanced cat" }
@@ -151,7 +133,6 @@ function Get-PackageDescription {
         "kubectl" { return "Kubernetes CLI" }
         "oh-my-posh" { return "prompt engine" }
 
-        # Development tools
         "vscode" { return "code editor" }
         "visual-studio" { return "full IDE" }
         "latex" { return "document preparation" }
@@ -164,9 +145,6 @@ function Get-PackageDescription {
     }
 }
 
-# ============================================================================
-# SCOOP
-# ============================================================================
 function Ensure-Scoop {
     if (Get-Command scoop -ErrorAction SilentlyContinue) {
         Track-Skipped "scoop" (Get-PackageDescription "scoop")
@@ -200,49 +178,39 @@ function Install-ScoopPackage {
         [string]$CheckCmd = $Package
     )
 
-    # Get Scoop installation path - check both possible locations
     $scoopScript = "$env:USERPROFILE\scoop\apps\scoop\current\bin\scoop.ps1"
     $scoopInstalled = Test-Path $scoopScript
 
-    # Check if scoop command is available
     $scoopCommandAvailable = Get-Command scoop -ErrorAction SilentlyContinue
 
-    # Helper to invoke Scoop directly, bypassing the broken shim
-    # The shim passes '-y' as first argument which breaks Scoop's command parsing
-    # NOTE: If Get-FileHash is missing (PS 5.1 issue), use: pwsh -NoProfile -Command "& scoop.ps1 install <package>"
     function Invoke-Scoop {
         param([string[]]$Arguments)
         if ($scoopInstalled) {
             & $scoopScript @Arguments 2>&1
         }
         elseif ($scoopCommandAvailable) {
-            # Fall back to scoop command
+
             scoop @Arguments 2>&1
         }
     }
 
-    # Early return if command is already available (for idempotency and efficiency)
     if (-not (Test-NeedsInstall $CheckCmd $MinVersion)) {
         Track-Skipped $CheckCmd (Get-PackageDescription $CheckCmd)
         return $true
     }
 
-    # Check if Scoop is available before attempting installation
     if (-not $scoopInstalled -and -not $scoopCommandAvailable -and -not $DryRun) {
         Write-WarningMsg "Scoop not installed, skipping $Package"
         Track-Failed $Package (Get-PackageDescription $Package)
         return $false
     }
 
-    # Check if scoop already has this package installed (for idempotency)
-    # Verify the command actually works by running it, don't just check if it exists
-    # This catches cases where the package is "installed" but shim is broken
     if (-not $DryRun -and ($scoopInstalled -or $scoopCommandAvailable)) {
         $scoopList = Invoke-Scoop -Arguments "list"
         $scoopHasPackage = $scoopList | Where-Object { $_.Name -eq $Package }
 
         if ($scoopHasPackage -and (Test-Command $CheckCmd)) {
-            # Verify by actually running the command (most support --version)
+
             $cmdWorks = $false
             try {
                 $null = & $CheckCmd --version 2>&1 | Out-Null
@@ -250,14 +218,14 @@ function Install-ScoopPackage {
                     $cmdWorks = $true
                 }
             } catch {
-                # Command doesn't support --version or failed to run
+
             }
 
             if ($cmdWorks) {
                 Track-Skipped $Package (Get-PackageDescription $Package)
                 return $true
             }
-            # Command exists but doesn't work - continue to reinstall
+
         }
     }
 
@@ -270,7 +238,7 @@ function Install-ScoopPackage {
 
     try {
         $output = Invoke-Scoop -Arguments @("install", $Package)
-        # Check if scoop reported "already installed"
+
         $outputString = $output -join "`n"
         if ($outputString -match "already installed") {
             Track-Skipped $Package (Get-PackageDescription $Package)
@@ -278,7 +246,7 @@ function Install-ScoopPackage {
         else {
             Track-Installed $Package (Get-PackageDescription $Package)
         }
-        # Refresh PATH so the newly installed tool can be found in subsequent checks
+
         Refresh-Path
         return $true
     }
@@ -289,50 +257,41 @@ function Install-ScoopPackage {
     }
 }
 
-# Install multiple Scoop packages at once
 function Install-ScoopPackages {
     param(
         [string[]]$Packages
     )
 
-    # Handle empty packages list
     if ($null -eq $Packages -or $Packages.Count -eq 0) {
         return $true
     }
 
-    # Get Scoop installation path
     $scoopScript = "$env:USERPROFILE\scoop\apps\scoop\current\bin\scoop.ps1"
     $scoopInstalled = Test-Path $scoopScript
 
-    # Check if scoop command is available
     $scoopCommandAvailable = Get-Command scoop -ErrorAction SilentlyContinue
 
-    # Helper to invoke Scoop directly, bypassing the broken shim
     function Invoke-ScoopBulk {
         param([string[]]$Arguments)
         if ($scoopInstalled) {
             & $scoopScript @Arguments 2>&1
         }
         elseif ($scoopCommandAvailable) {
-            # Fall back to scoop command
+
             scoop @Arguments 2>&1
         }
     }
 
-    # Get list of packages already installed by scoop (for idempotency)
-    # Skip this check in dry-run mode or when Scoop isn't actually installed
     $scoopList = if ($DryRun) { @() } elseif ($scoopInstalled -or $scoopCommandAvailable) { Invoke-ScoopBulk -Arguments "list" } else { @() }
 
     $toInstall = @()
 
     foreach ($pkg in $Packages) {
-        # Check if scoop already has this package
-        # Scoop list returns objects with Name property - check directly
+
         $alreadyInstalled = $scoopList | Where-Object { $_.Name -eq $pkg }
 
         if ($alreadyInstalled) {
-            # Package installed by scoop - trust scoop's state and skip
-            # Some packages (like TeX Live) don't create traditional shims
+
             Track-Skipped $pkg (Get-PackageDescription $pkg)
         }
         elseif (Test-NeedsInstall $pkg "") {
@@ -344,7 +303,7 @@ function Install-ScoopPackages {
     }
 
     if ($toInstall.Count -gt 0) {
-        # Check if Scoop is available before attempting installation
+
         if (-not $scoopInstalled -and -not $scoopCommandAvailable -and -not $DryRun) {
             Write-WarningMsg "Scoop not installed"
             foreach ($pkg in $toInstall) {
@@ -364,10 +323,9 @@ function Install-ScoopPackages {
 
         try {
             $output = Invoke-ScoopBulk -Arguments (@("install") + $toInstall)
-            # Refresh PATH so the newly installed tools can be found in subsequent checks
+
             Refresh-Path
 
-            # Parse output to determine which packages were actually installed vs skipped
             foreach ($pkg in $toInstall) {
                 if ($output -match "$pkg.*already installed" -or $output -match "'$pkg' is already installed") {
                     Track-Skipped $pkg (Get-PackageDescription $pkg)
@@ -390,7 +348,6 @@ function Install-ScoopPackages {
     return $true
 }
 
-# Add Scoop bucket
 function Add-ScoopBucket {
     param([string]$Bucket)
 
@@ -399,24 +356,20 @@ function Add-ScoopBucket {
         return $true
     }
 
-    # Get Scoop installation path
     $scoopScript = "$env:USERPROFILE\scoop\apps\scoop\current\bin\scoop.ps1"
     if (-not (Test-Path $scoopScript)) {
         return $false
     }
 
-    $buckets = & $scoopScript bucket list 2>&1
-    if ($Bucket -notin $buckets) {
+    $bucketPath = "$env:USERPROFILE\scoop\buckets\$Bucket"
+    if (-not (Test-Path $bucketPath)) {
         Write-Step "Adding Scoop bucket: $Bucket"
         & $scoopScript bucket add $Bucket *> $null
     }
 }
 
-# ============================================================================
-# WINGET
-# ============================================================================
 function Ensure-Winget {
-    # winget comes with Windows 10/11, check if available
+
     if (Get-Command winget -ErrorAction SilentlyContinue) {
         Track-Skipped "winget" (Get-PackageDescription "winget")
         return $true
@@ -440,17 +393,14 @@ function Install-WingetPackage {
         return $false
     }
 
-    # Extract package name from ID for check command
     if ([string]::IsNullOrEmpty($CheckCmd)) {
         $CheckCmd = ($Id -split '\.')[-1]
     }
 
-    # Check if winget already has this package installed (for idempotency)
-    # Skip the query in dry-run mode so no real winget invocation happens
     if (-not $DryRun) {
         $wingetList = winget list --id $Id --exact 2>&1
         if ($LASTEXITCODE -eq 0 -and $wingetList -match $Id) {
-            # Package already installed by winget - trust winget's state
+
             Track-Skipped $DisplayName (Get-PackageDescription $DisplayName)
             return $true
         }
@@ -466,7 +416,7 @@ function Install-WingetPackage {
 
         try {
             $output = winget install --id $Id --exact --accept-source-agreements --accept-package-agreements 2>&1
-            # winget exits nonzero without throwing on real failures
+
             if ($output -match "already installed") {
                 Track-Skipped $DisplayName (Get-PackageDescription $DisplayName)
                 return $true
@@ -491,9 +441,6 @@ function Install-WingetPackage {
     }
 }
 
-# ============================================================================
-# WEZTERM
-# ============================================================================
 function Install-WezTerm {
     if (Test-Command wezterm) {
         Track-Skipped "wezterm" "terminal emulator"
@@ -527,13 +474,8 @@ function Install-WezTerm {
     }
 }
 
-# ============================================================================
-# NERD FONT (IosevkaTerm for WezTerm)
-# ============================================================================
 function Test-NerdFontInstalled {
-    # NF file names carry the NerdFont infix (IosevkaTermNerdFont-Regular.ttf,
-    # IosevkaTermNerdFontMono-*.ttf). Plain IosevkaTerm variants have no nerd
-    # glyphs and must not satisfy the check, or WezTerm keeps rendering tofu.
+
     param([string]$FontFile = "IosevkaTermNerdFont")
 
     $fontDirs = @(
@@ -550,8 +492,7 @@ function Test-NerdFontInstalled {
 
     $fontsReg = "HKCU:\Software\Microsoft\Windows NT\CurrentVersion\Fonts"
     if (Test-Path $fontsReg) {
-        # Registry names use the spaced display name ("IosevkaTerm Nerd Font"),
-        # file-backed entries keep the unspaced base name
+
         $props = (Get-ItemProperty $fontsReg).PSObject.Properties.Name
         $displayName = $FontFile -replace 'NerdFont', ' Nerd Font'
         if ($props -match "$FontFile" -or $props -match $displayName) {
@@ -563,10 +504,7 @@ function Test-NerdFontInstalled {
 }
 
 function Install-NerdFont {
-    # WezTerm's config expects IosevkaTerm Nerd Font glyphs; without them the
-    # terminal renders tofu. Primary: scoop nerd-fonts bucket (the live alias
-    # for matthewjberger/scoop-nerd-fonts, no winget package exists).
-    # Fallback: per-user copy from the official release plus HKCU registration.
+
     param(
         [string]$FontName = "IosevkaTerm-NF",
         [string]$ZipName = "IosevkaTerm"
@@ -631,11 +569,6 @@ function Install-NerdFont {
     }
 }
 
-# ============================================================================
-# LANGUAGE PACKAGE MANAGERS
-# ============================================================================
-
-# Install via npm global
 function Install-NpmGlobal {
     param(
         [string]$Package,
@@ -654,7 +587,6 @@ function Install-NpmGlobal {
         return $false
     }
 
-    # Check if package needs install or update using version check
     $needsUpdate = Test-NpmPackageNeedsUpdate -Package $Package
     if ($needsUpdate) {
         Write-Step "Installing $Package via npm..."
@@ -689,7 +621,6 @@ function Install-NpmGlobal {
     }
 }
 
-# Install via go install or gup
 function Install-GoPackage {
     param(
         [string]$Package,
@@ -707,71 +638,44 @@ function Install-GoPackage {
         return $false
     }
 
-    # Get GOPATH and ensure it's in PATH (for current session + persist)
-    # Skip in DryRun mode to avoid calling external go command
     $goPath = if ($DryRun) { "" } else { go env GOPATH }
     if ($goPath) {
-        # Normalize path (convert forward slashes to backslashes, remove trailing slashes)
         $goPath = $goPath -replace '[\\/]', '\'
         $goPath = $goPath.TrimEnd('\')
         $goPathBin = "$goPath\bin"
 
-        # Persist to User PATH for future sessions (check if already in registry PATH)
         $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
         if (($userPath -split ';') -notcontains $goPathBin) {
             Add-ToPath $goPathBin
         }
 
-        # Always add to current session PATH so we can find commands immediately
         $env:PATH = "$goPathBin;$env:PATH"
     }
 
-    # Check if already installed (after ensuring GOPATH/bin in PATH)
     if (Get-Command $CmdName -ErrorAction SilentlyContinue) {
         Track-Skipped $CmdName (Get-PackageDescription $CmdName)
         return $true
     }
 
-    # Try using gup if available
-    if (Get-Command gup -ErrorAction SilentlyContinue) {
-        Write-Step "Installing $Package via gup..."
-        if ($DryRun) {
-            Write-Info "[DRY-RUN] Would gup install $Package"
-            Track-Installed $Package (Get-PackageDescription $Package)
-            return $true
-        }
-
-        try {
-            gup install $Package *> $null
-            Track-Installed $Package (Get-PackageDescription $Package)
-            return $true
-        }
-        catch {
-            Write-WarningMsg "gup install failed, falling back to go install..."
-        }
-    }
-
-    # Fallback to go install
-    Write-Step "Installing $Package via go..."
+    $clean = ($Package -split '@')[0]
+    Write-Step "Installing $clean via go..."
     if ($DryRun) {
-        Write-Info "[DRY-RUN] Would go install $Package@latest"
-        Track-Installed $Package (Get-PackageDescription $Package)
+        Write-Info "[DRY-RUN] Would go install $clean@latest"
+        Track-Installed $clean (Get-PackageDescription $clean)
         return $true
     }
 
-    try {
-        go install ${Package}@latest *> $null
-        Track-Installed $Package (Get-PackageDescription $Package)
-        return $true
-    }
-    catch {
-        Write-WarningMsg ("Failed to install {0}: {1}" -f $Package, $_.Exception.Message)
-        Track-Failed $Package (Get-PackageDescription $Package)
+    go install "$clean@latest" *> $null
+    if ($LASTEXITCODE -ne 0) {
+        Write-WarningMsg "Failed to install $clean"
+        Track-Failed $clean (Get-PackageDescription $clean)
         return $false
     }
+
+    Track-Installed $clean (Get-PackageDescription $clean)
+    return $true
 }
 
-# Install via cargo
 function Install-CargoPackage {
     param(
         [string]$Package,
@@ -811,7 +715,6 @@ function Install-CargoPackage {
     }
 }
 
-# Install cargo-update (package manager for cargo-installed tools)
 function Install-CargoUpdate {
     if (Get-Command cargo-install-update -ErrorAction SilentlyContinue) {
         Track-Skipped "cargo-update" (Get-PackageDescription "cargo-update")
@@ -844,29 +747,22 @@ function Install-CargoUpdate {
     }
 }
 
-# ============================================================================
-# COURSIER (Scala tool installer)
-# ============================================================================
-# Helper to check if coursier executable exists (bypasses Get-Command session limitation)
 function Test-CoursierInstalled {
-    # Check scoop shims for coursier.cmd (main install method)
+
     $scoopShim = Join-Path $env:USERPROFILE "scoop\shims\coursier.cmd"
     if (Test-Path $scoopShim) {
         return $true
     }
 
-    # Check Coursier bin directory for cs.exe (created after coursier setup)
     $csBin = Join-Path $env:USERPROFILE ".local\share\coursier\bin\cs.exe"
     if (Test-Path $csBin) {
         return $true
     }
 
-    # Fallback to Get-Command (for existing installations in PATH)
     if (Get-Command cs -ErrorAction SilentlyContinue) {
         return $true
     }
 
-    # Also check for coursier command directly
     if (Get-Command coursier -ErrorAction SilentlyContinue) {
         return $true
     }
@@ -874,21 +770,18 @@ function Test-CoursierInstalled {
     return $false
 }
 
-# Helper to get the actual coursier executable path
 function Get-CoursierExe {
-    # Check scoop shims first
+
     $scoopShim = Join-Path $env:USERPROFILE "scoop\shims\coursier.cmd"
     if (Test-Path $scoopShim) {
         return $scoopShim
     }
 
-    # Check Coursier bin for cs.exe
     $csBin = Join-Path $env:USERPROFILE ".local\share\coursier\bin\cs.exe"
     if (Test-Path $csBin) {
         return $csBin
     }
 
-    # Fallback to command name (may be in PATH)
     return "coursier"
 }
 
@@ -906,11 +799,11 @@ function Ensure-Coursier {
     }
 
     try {
-        # Coursier is available via scoop - use direct path to avoid broken shim
+
         $scoopScript = "$env:USERPROFILE\scoop\apps\scoop\current\bin\scoop.ps1"
         if (Test-Path $scoopScript) {
             & $scoopScript install coursier *> $null
-            # Refresh PATH for current session (uses safe Refresh-Path from common.ps1)
+
             Refresh-Path
             Track-Installed "coursier" (Get-PackageDescription "coursier")
             return $true
@@ -950,10 +843,10 @@ function Install-CoursierPackage {
         }
 
         try {
-            # Use helper to get the actual coursier executable path
+
             $csExe = Get-CoursierExe
             & $csExe install $Package *> $null
-            # Coursier installs to %LOCALAPPDATA%\Coursier\data\bin on Windows
+
             $csBin = Join-Path $env:LOCALAPPDATA "Coursier\data\bin"
             if (Test-Path $csBin) {
                 Add-ToPath $csBin -User
@@ -973,7 +866,6 @@ function Install-CoursierPackage {
     }
 }
 
-# Install via pip
 function Install-PipGlobal {
     param(
         [string]$Package,
@@ -1008,7 +900,7 @@ function Install-PipGlobal {
 
         try {
             & $pythonCmd -m pip install --user --upgrade $Package *> $null
-            # Add Python Scripts directory to PATH for user packages
+
             $pythonScriptsPath = Join-Path $env:APPDATA "Python\Scripts"
             if (Test-Path $pythonScriptsPath) {
                 Add-ToPath $pythonScriptsPath
@@ -1028,7 +920,6 @@ function Install-PipGlobal {
     }
 }
 
-# Install via dotnet tool
 function Install-DotnetTool {
     param(
         [string]$Package,
@@ -1057,7 +948,7 @@ function Install-DotnetTool {
             return $true
         }
         catch {
-            # Try update if install failed
+
             try {
                 dotnet tool update --global $Package *> $null
                 Track-Installed $Package (Get-PackageDescription $Package)
@@ -1076,9 +967,6 @@ function Install-DotnetTool {
     }
 }
 
-# ============================================================================
-# RUSTUP
-# ============================================================================
 function Install-Rustup {
     if (Get-Command rustup -ErrorAction SilentlyContinue) {
         Write-Step "Checking Rust..."
@@ -1089,18 +977,18 @@ function Install-Rustup {
         }
 
         try {
-            # Check for rustup update
+
             $output = rustup update 2>&1
             $exitCode = $LASTEXITCODE
 
             if ($exitCode -eq 0) {
-                # Show relevant output
+
                 $output | Where-Object { $_ -notmatch '^\s*$' -and $_ -notmatch '^Updating|Downloading|Installing|Installed' } | Select-Object -First 10 | ForEach-Object { Write-Info $_ }
                 Write-Success "rust (updated)"
                 $script:updated++
             }
             else {
-                # Already up to date or error
+
                 if ($output -match 'is up to date|already installed') {
                     Write-Success "rust (up to date)"
                     $script:updated++
@@ -1127,16 +1015,15 @@ function Install-Rustup {
     }
 
     try {
-        # Download and run rustup-init
+
         $rustupUrl = "https://win.rustup.rs/x86_64"
         $rustupPath = "$env:TEMP\rustup-init.exe"
         Invoke-WebRequest -Uri $rustupUrl -OutFile $rustupPath
         & $rustupPath -y
         Remove-Item $rustupPath
 
-        # Add cargo to PATH
         Add-ToPath "$env:USERPROFILE\.cargo\bin"
-        # Refresh PATH for current session
+
         Refresh-Path
         Track-Installed "rust" (Get-PackageDescription "rust")
         return $true
@@ -1180,9 +1067,6 @@ function Install-RustAnalyzerComponent {
     }
 }
 
-# ============================================================================
-# BUN
-# ============================================================================
 function Install-Bun {
     if (Get-Command bun -ErrorAction SilentlyContinue) {
         Write-Step "Checking Bun..."
@@ -1193,7 +1077,7 @@ function Install-Bun {
         }
 
         try {
-            # Check for bun upgrade
+
             $output = bun upgrade 2>&1
             $exitCode = $LASTEXITCODE
 
@@ -1202,10 +1086,10 @@ function Install-Bun {
                 Track-Skipped "bun" (Get-PackageDescription "bun")
             }
             else {
-                # Show relevant output
+
                 $output | Where-Object { $_ -notmatch '^\s*$' } | Select-Object -First 5 | ForEach-Object { Write-Info $_ }
                 Write-Success "bun (updated)"
-                # Refresh PATH after upgrade
+
                 Add-ToPath "$env:USERPROFILE\.bun\bin"
                 Refresh-Path
                 Track-Skipped "bun" (Get-PackageDescription "bun")
@@ -1228,7 +1112,7 @@ function Install-Bun {
 
     try {
         pwsh -c "irm bun.sh/install.ps1|iex"
-        # Bun installs to %USERPROFILE%\.bun\bin
+
         Add-ToPath "$env:USERPROFILE\.bun\bin"
         Refresh-Path
         Track-Installed "bun" (Get-PackageDescription "bun")
@@ -1240,9 +1124,3 @@ function Install-Bun {
         return $false
     }
 }
-
-# ============================================================================
-# PATH MANAGEMENT
-# ============================================================================
-# Add-ToPath is now sourced from common.ps1 with safety checks for empty User PATH
-# Refresh-Path is now sourced from common.ps1 with safety checks
