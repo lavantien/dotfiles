@@ -99,7 +99,7 @@ Two Windows one-offs clean up package manager damage: `scripts/cleanup-npm-trash
 
 Windows uses `.ps1` scripts. Linux/macOS uses `.sh` scripts.
 
-Development gates run through make: `make check` runs the lint gate plus the bats suite, `make e2e-linux` runs the docker lifecycle harness and skips with a message when the docker daemon is down, and `make e2e-windows` runs the bootstrap dry run, a deploy against an isolated HOME, and the PSScriptAnalyzer pass.
+Development gates run through make: `make check` runs the lint gate plus the bats suite, `make e2e-linux` runs the docker lifecycle harness and skips with a message when the docker daemon is down, and `make e2e-windows` runs the bootstrap dry run, a deploy against an isolated HOME, and the PSScriptAnalyzer pass. `make deploy-windows` runs `scripts/deploy.ps1` against the live HOME and `make bootstrap-windows` runs `bootstrap/bootstrap.ps1 -Y` against the live machine, both idempotent. `KNOWN_SHELLCHECK_ERRORS` in the Makefile carves known shellcheck debt out of the lint gate, format `file:SC code`, and each entry must be deleted when its owning fix lands so the gate never hides new errors.
 
 ### Bootstrap options
 
