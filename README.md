@@ -84,7 +84,7 @@ up  # Runs update-all
 | `books/` | The published corpus volumes as PDFs, numbered 01 through 14 plus 16 |
 | `home/` | Home-level configs: .bash_aliases, .zshrc, .gitconfig, Microsoft.PowerShell_profile.ps1, .dotfiles.config.yaml.example |
 | `lib/` | Shared script libraries: config parsing and JSON merge |
-| `playground/` | Scratch space for one-off programs, untracked and gitignored |
+| `playground/` | Scratch space for one-off programs, committed with the work unless it holds secrets |
 | `scripts/` | Every maintenance script: allow, deploy, update, update-all, git-update-repos, sync-book, books-index, healthcheck, backup, restore, uninstall, cleanup one-offs |
 
 The root also carries README.md, CHANGELOG.md, DOCKER_K8S.md, LICENSE, the Makefile, the lint configs selene.toml, typos.toml, and vim.yml, and git-clone-all.sh, a vendored gh utility kept at the root.

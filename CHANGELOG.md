@@ -8,7 +8,7 @@ CLAUDE.md raised the fan-out cap to 8 development plus 1 temporary slot in fligh
 
 A Makefile arrived with make check, baseline, lint, format, test, e2e-linux, and e2e-windows targets over a new bats suite and a docker linux lifecycle harness.
 
-The playground scratch directory is gitignored.
+The playground scratch directory is tracked and committed with the work unless it holds secrets.
 
 Bootstrap now installs jq, yazi, and difftastic on every platform, plus helm, kubectl, oh-my-posh, yamllint, and hadolint on Windows, the IosevkaTerm Nerd Font with a scoop or registry fallback, and an interactive gh login offer.
 

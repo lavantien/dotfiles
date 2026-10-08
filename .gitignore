@@ -5,4 +5,3 @@ nul
 .claude/*.local.md
 /coverage
 coverage-bash.json
-playground/
