@@ -540,7 +540,7 @@ install_linux_package() {
 	case "$package" in
 	yaml-language-server | typescript-language-server | \
 		intelephense | tinymist | tombi | \
-		vscode-html-languageserver-bin | vscode-css-languageserver-bin | svelte-language-server)
+		vscode-langservers-extracted | svelte-language-server)
 		if cmd_exists npm; then
 			log_step "Trying npm for $package..."
 			if install_npm_global "$package" "$check_cmd" ""; then

@@ -268,7 +268,7 @@ function Install-LanguageServers {
             Track-Skipped "vscode-html-language-server" "HTML language server"
         }
         else {
-            Install-NpmGlobal "vscode-html-languageserver-bin" "vscode-html-language-server" ""
+            Install-NpmGlobal "vscode-langservers-extracted" "vscode-html-language-server" ""
         }
     }
 
@@ -279,18 +279,18 @@ function Install-LanguageServers {
             Track-Skipped "vscode-css-language-server" "CSS language server"
         }
         else {
-            Install-NpmGlobal "vscode-css-languageserver-bin" "vscode-css-language-server" ""
+            Install-NpmGlobal "vscode-langservers-extracted" "vscode-css-language-server" ""
         }
     }
 
     if ($Script:Categories -eq "full" -and (Test-Command npm)) {
-        if (Test-Command svelte-language-server) {
-            Write-Step "Checking svelte-language-server..."
-            Write-Success "svelte-language-server (up to date)"
-            Track-Skipped "svelte-language-server" "Svelte language server"
+        if (Test-Command svelteserver) {
+            Write-Step "Checking svelteserver..."
+            Write-Success "svelteserver (up to date)"
+            Track-Skipped "svelteserver" "Svelte language server"
         }
         else {
-            Install-NpmGlobal "svelte-language-server" "svelte-language-server" ""
+            Install-NpmGlobal "svelte-language-server" "svelteserver" ""
         }
     }
 
