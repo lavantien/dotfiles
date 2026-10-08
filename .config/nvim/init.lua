@@ -33,15 +33,19 @@ vim.g.loaded_ruby_provider = 0
 
 vim.filetype.add({
 	pattern = {
-		["[/\\]templates[/\\].*%.tpl"] = "helm",
-		["[/\\]values[%w.-]*%.ya?ml"] = function(path)
-			local dir = vim.fs.dirname(path)
-			if vim.fs.find({ "Chart.yaml" }, { upward = true, path = dir })[1] then
+		["[%w.-]*%.tpl"] = function(path)
+			if path:find("templates") then
+				return "helm"
+			end
+		end,
+		["values[%w.-]*%.ya?ml"] = function(path)
+			local hit = vim.fs.find({ "Chart.yaml" }, { upward = true, path = vim.fs.dirname(path) })[1]
+			if hit then
 				return "yaml.helm-values"
 			end
 		end,
-		["[/\\]docker%-compose[%w.-]*%.ya?ml"] = "yaml.docker-compose",
-		["[/\\]compose[%w.-]*%.ya?ml"] = "yaml.docker-compose",
+		["docker%-compose[%w.-]*%.ya?ml"] = "yaml.docker-compose",
+		["compose[%w.-]*%.ya?ml"] = "yaml.docker-compose",
 	},
 })
 
