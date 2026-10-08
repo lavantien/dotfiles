@@ -2,8 +2,6 @@ SHELL := /usr/bin/env bash
 .SHELLFLAGS := -eu -o pipefail -c
 
 E2E_IMAGE := dotfiles-e2e
-# Wave 1 debt gate carve-outs, format file:SC code. Delete each entry when
-# its owning slot lands the fix so the gate never hides new errors.
 KNOWN_SHELLCHECK_ERRORS :=
 
 PSSA_LINT := pwsh -NoProfile -Command 'if (-not (Get-Module -ListAvailable PSScriptAnalyzer)) { "skip: PSScriptAnalyzer not installed"; exit 0 }; $$files = @(git ls-files -- "*.ps1"); if ($$files.Count -eq 0) { exit 0 }; $$findings = @(Invoke-ScriptAnalyzer -Path $$files -Severity Error); if ($$findings.Count -gt 0) { foreach ($$x in $$findings) { "{0}:{1}:{2}: {3}" -f $$x.ScriptName, $$x.Line, $$x.Column, $$x.Message }; exit 1 }; "PSScriptAnalyzer: 0 errors in $$($$files.Count) files"'
@@ -11,7 +9,7 @@ PSSA_FORMAT := pwsh -NoProfile -Command 'if (-not (Get-Module -ListAvailable PSS
 
 .DEFAULT_GOAL := help
 
-.PHONY: help baseline lint format test check e2e-linux e2e-windows
+.PHONY: help baseline lint format test check e2e-linux e2e-windows deploy-windows bootstrap-windows
 
 help: ## list targets
 	@printf '%-14s %s\n' target description
@@ -81,3 +79,11 @@ e2e-windows: ## bootstrap.ps1 dry run, deploy.ps1 against an isolated HOME, PSSA
 	rm -rf "$$tmp"; \
 	echo '== PSScriptAnalyzer =='; \
 	$(PSSA_LINT)
+
+deploy-windows: ## real deploy.ps1 run against the live HOME
+	@command -v pwsh >/dev/null 2>&1 || { echo 'skip: pwsh not installed'; exit 1; }
+	@pwsh -NoProfile -File scripts/deploy.ps1
+
+bootstrap-windows: ## real bootstrap.ps1 run against the live machine, full category
+	@command -v pwsh >/dev/null 2>&1 || { echo 'skip: pwsh not installed'; exit 1; }
+	@pwsh -NoProfile -File bootstrap/bootstrap.ps1 -Y
