@@ -26,15 +26,19 @@ vim.opt.updatetime = 1000
 
 vim.g.mapleader = " "
 vim.g.have_nerd_font = true
+vim.g.loaded_node_provider = 0
+vim.g.loaded_perl_provider = 0
+vim.g.loaded_python3_provider = 0
+vim.g.loaded_ruby_provider = 0
 
 vim.pack.add({
 	{ src = "https://github.com/rose-pine/neovim" },
-	{ src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" }, -- v2 rewrite
-	{ src = "https://github.com/neovim/nvim-lspconfig" }, -- wrappers for built-in
-	{ src = "https://github.com/nvim-tree/nvim-web-devicons" }, -- fzf-lua dep
+	{ src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
+	{ src = "https://github.com/neovim/nvim-lspconfig" },
+	{ src = "https://github.com/nvim-tree/nvim-web-devicons" },
 	{ src = "https://github.com/ibhagwan/fzf-lua" },
-	{ src = "https://github.com/chomosuke/typst-preview.nvim" }, -- typst live preview
-	{ src = "https://github.com/brianhuster/live-preview.nvim" }, -- markdown, html, csv live preview
+	{ src = "https://github.com/chomosuke/typst-preview.nvim" },
+	{ src = "https://github.com/brianhuster/live-preview.nvim" },
 })
 
 vim.opt.background = "dark"
@@ -56,7 +60,6 @@ require("fzf-lua").setup({
 	},
 })
 
--- Build LSP server list, excluding jdtls on Windows (it doesn't work)
 local lsp_servers = {
 	"lua_ls",
 	"clangd",
@@ -70,7 +73,6 @@ local lsp_servers = {
 	"bashls",
 	"metals",
 	"csharp_ls",
-	"dartls",
 	"tinymist",
 	"docker_language_server",
 	"helm_ls",
@@ -79,7 +81,6 @@ local lsp_servers = {
 	"intelephense",
 	"codebook",
 }
--- jdtls is not supported on Windows
 if vim.fn.has("win32") == 0 then
 	table.insert(lsp_servers, "jdtls")
 end
@@ -95,20 +96,14 @@ vim.lsp.config("lua_ls", {
 	},
 })
 
--- Configure yamlls with Kubernetes and Docker Compose schema support
--- Source: https://github.com/redhat-developer/yaml-language-server
--- Source: https://www.arthurkoziel.com/json-schemas-in-neovim/
 vim.lsp.config("yamlls", {
 	settings = {
 		yaml = {
 			schemas = {
-				-- Kubernetes: use the special 'kubernetes' keyword, LSP provides the schema
 				kubernetes = "*.yaml",
 
-				-- Docker Compose
 				["https://json.schemastore.org/docker-compose.json"] = "docker-compose*.yml",
 
-				-- GitHub Actions
 				["https://json.schemastore.org/github-workflow"] = ".github/workflows/*",
 			},
 			validate = true,
@@ -118,8 +113,6 @@ vim.lsp.config("yamlls", {
 	},
 })
 
--- Configure helm_ls (Helm language server)
--- Source: https://github.com/mrjosh/helm-ls
 vim.lsp.config("helm_ls", {
 	settings = {
 		["helm-ls"] = {
@@ -167,7 +160,6 @@ vim.diagnostic.config({
 	virtual_lines = { current_line = true },
 })
 
--- autosave on leaving insert mode
 vim.o.autowriteall = true
 vim.api.nvim_create_autocmd({ "InsertLeavePre", "TextChanged", "TextChangedP" }, {
 	pattern = "*",
@@ -192,14 +184,11 @@ require("nvim-web-devicons").setup()
 require("typst-preview").setup()
 require("livepreview").setup()
 
--- nvim-treesitter v2: install() skips parsers that are already installed
 local ts_parsers = {
-	-- Core & config
 	"lua",
 	"vim",
 	"vimdoc",
 	"query",
-	-- System languages
 	"c",
 	"cpp",
 	"rust",
@@ -209,7 +198,6 @@ local ts_parsers = {
 	"c_sharp",
 	"php",
 	"scala",
-	-- Web & frontend
 	"javascript",
 	"typescript",
 	"tsx",
@@ -218,18 +206,14 @@ local ts_parsers = {
 	"css",
 	"scss",
 	"svelte",
-	-- Data & config formats
 	"yaml",
 	"json",
 	"toml",
-	-- Documentation
 	"markdown",
 	"markdown_inline",
-	-- DevOps & infrastructure
 	"bash",
 	"powershell",
 	"dockerfile",
-	-- Typesetting
 	"typst",
 }
 
