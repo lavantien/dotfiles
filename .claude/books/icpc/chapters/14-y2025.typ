@@ -21,7 +21,7 @@ interactive with no answers to diff, judged through a driver that
 speaks the protocol against each language's solver core, both beside
 the self-check simulators the walkthroughs name where they occur.
 
-== the year-local helpers: kuhn matchings, the rollback sweep engine, slot wheels, and the go scan cursor
+== the year-local helpers: kuhn matchings, the rollback sweep engine, and slot wheels
 
 Four helper kits are year-local to this chapter, the match, moat, and
 wheels engines plus the go package's shared scan cursor, and
@@ -116,6 +116,8 @@ the same file in the harness's single javac pass:
 #listing("icpc/samples-py/src/Ch13/ch13_wheels.py", first: 7, last: 23, caption: [python, the Wheels class, k as a set of normalized symbols, rotate returning the new count])
 
 #listing("icpc/samples-lua/ch13_wheels.lua", first: 7, last: 33, caption: [lua, wheels.init, wheels.k, wheels.rotate, 1-based positions held mod n])
+
+== the go scan cursor
 
 The scan kit is the go package's io contract, one file the whole
 year shares: `scan13` walks the input buffer with a whitespace

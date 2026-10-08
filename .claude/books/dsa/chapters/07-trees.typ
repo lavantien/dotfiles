@@ -446,7 +446,7 @@ bundled checks count where the language puts them in the same file:
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [309], [libc only], [nodes come from static pools, recursion over pointers, 31 checks in 3 files],
   [go], [232], [none], [unexported fields keep the height private, rebalance reads the child's balance factor],
-  [java], [306], [jdk 27 stdlib], [TreeMap exists in the stdlib and goes unused, insert and erase relink through return values over one shared static root, the avl case reads the inserted value against the child's key],
+  [java], [304], [jdk 27 stdlib], [TreeMap exists in the stdlib and goes unused, insert and erase relink through return values over one shared static root, the avl case reads the inserted value against the child's key],
   [c\#], [293], [bcl only], [generic trees with comparison and rotation meters, the only suite that counts either],
   [javascript], [119], [node stdlib], [spread recursion builds new arrays at every level, fine for fixtures, garbage at scale],
   [python], [208], [stdlib only], [`__slots__` nodes, drains the whole tree through all three delete shapes],

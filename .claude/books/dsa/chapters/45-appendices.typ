@@ -13,7 +13,7 @@ a real file that the pinned toolchain of its language compiles and
 runs. The totals: c 222 files and 4140 checks, go 724 tests, java
 222 files and 4269 checks, c\# 784 tests, javascript 755 tests,
 python 222 files and 3007 asserts, lua 936 checks, and the c\#
-capstone of chapter 43 stays single-language inside the same suite.
+capstone of chapter 44 stays single-language inside the same suite.
 Zero skipped anywhere.
 
 == topic coverage
@@ -45,9 +45,9 @@ is as practical as knowing the ones it does ship.
 
 #diagram([the matrix as one strip, one bar per chapter that carries matrix rows, height is topic count, dark is shipped], length: 13pt, {
   // (shipped, n/a) per chapter in manifest order, counted from the
-  // table above: chapters 1 to 39, then 41, 42, and the capstone
-  let data = ((2, 0), (2, 0), (2, 0), (2, 1), (2, 2), (3, 1), (2, 1), (3, 2), (1, 2), (0, 5), (0, 6), (0, 4), (4, 2), (1, 4), (0, 5), (2, 4), (0, 7), (0, 5), (0, 6), (0, 4), (1, 5), (0, 4), (0, 4), (0, 4), (2, 2), (0, 3), (0, 3), (1, 7), (4, 2), (1, 3), (0, 7), (1, 5), (0, 5), (1, 5), (0, 13), (1, 5), (0, 11), (0, 9), (0, 11), (0, 12), (0, 11), (3, 6))
-  let nums = (range(1, 40) + (41, 42, 43))
+  // table above: chapters 1 to 39, then 41 to 43, and the capstone
+  let data = ((2, 0), (2, 0), (2, 0), (2, 1), (2, 2), (3, 1), (2, 1), (3, 2), (1, 2), (0, 5), (0, 6), (0, 4), (4, 2), (1, 4), (0, 5), (2, 4), (0, 7), (0, 5), (0, 6), (0, 4), (1, 5), (0, 4), (0, 4), (0, 4), (2, 2), (0, 3), (0, 3), (1, 7), (4, 2), (1, 3), (0, 7), (1, 5), (0, 5), (1, 5), (0, 13), (1, 5), (0, 11), (0, 9), (0, 11), (0, 12), (0, 11), (0, 0), (3, 6))
+  let nums = (range(1, 40) + (41, 42, 43, 44))
   for (i, d) in data.enumerate() {
     let (shipped, na) = d
     let x = 0.8 + i * 0.52

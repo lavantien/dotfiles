@@ -9,15 +9,17 @@ The topic matrix is this book's audit trail: every pattern,
 primitive, and protocol the chapters build, the cost it carries,
 and the go standard library counterpart to reach for in
 production code. The six-voice rebuild gave chapters 1 to 15
-five sibling trees, every featured listing now exists once per
-language, c, c\#, go, javascript, python, and lua, built behind
-the same fixtures, while the raft capstone of chapter 16 and
+five sibling trees and the java wave added the sixth, every
+featured listing now exists once per language, c, go, java,
+c\#, javascript, python, and lua, built behind the same
+fixtures, while the raft capstone of chapter 16 and
 this appendix stay go-only by design. The build enforces the
 rest, every chapter listing reads a real file that its own
 pinned toolchain compiles and tests. The totals: c 64 files and
-6755 checks, c\# 178 tests, go 89 sample tests and 19 capstone
-tests, javascript 121 tests, python 64 files and 582 asserts,
-lua 271 checks, zero skipped anywhere, with the go concurrency
+6755 checks, go 89 sample tests and 19 capstone tests, java 64
+files and 703 checks, c\# 178 tests, javascript 121 tests,
+python 64 files and 582 asserts, lua 271 checks, zero skipped
+anywhere, with the go concurrency
 chapters also held under `go test -race`.
 
 == topic coverage

@@ -208,6 +208,9 @@ grep.
   q([the transfer method, what transfers between languages]), loc([transfer-answers, ch 40], [the transfer method]), lab([DRILL]),
   q([our shop is java: jvm gc, virtual threads, streams, checked exceptions, spring]), loc([transfer-answers, ch 40], [java section]), lab([DRILL]),
   q([our shop is rust: ownership, option and result, no gc, the traps]), loc([transfer-answers, ch 40], [rust and traps sections]), lab([DRILL]),
+  table.cell(colspan: 3)[*the performance floor: one problem, eight lanes*],
+  q([the billion-row aggregation, the output contract, the exact integer-tenths arithmetic]), loc([onebrc, ch 41], [exact arithmetic, sqlite lane, full-scale table sections]), lab([TDD]),
+  q([the eight-lane decision ladders, hash map versus table, windowed chunk scans, the parallel junctions]), loc([onebrc, ch 41], [the seven lane sections]), lab([EWC]),
 )
 
 #diagram([every question maps to a label; a missing row is a visible gap], length: 13pt, {
@@ -261,9 +264,16 @@ grep.
   [ch33-js], [pipeline, a11y, contrast models], [node \-\-test], [10],
   [ch34-js], [security answer models, xss csrf cors sql headers], [node \-\-test], [14],
   [ch36-go], [base62 codec, windowed counter allocator], [go test], [11],
+  [ch41-go], [onebrc scan ladder, table against map, sharded merge], [go test], [15],
+  [ch41-cs], [onebrc byte-key table, snapped parallel cuts], [dotnet], [28],
+  [ch41-js], [onebrc buffer scan, windowed worker shards], [node \-\-test], [25],
 )
 
-#diagram([29 workspaces under three runners, one verify gate], length: 13pt, {
+The ch41 c, java, lua, and sqlite lanes gate through `tools/run-1brc.ps1`
+byte diffs, and its python lane's 60 plain asserts in `test_onebrc.py` ride
+the same runner's py leg, counts this table does not carry.
+
+#diagram([32 workspaces under three runners, one verify gate], length: 13pt, {
   // the three runner families with their workspace and test counts
   let col(cx, runner, ws, tests) = {
     cdraw.rect((cx - 3.4, 5.4), (cx + 3.4, 8.6), fill: luma(235), stroke: luma(120), radius: 0.02)
@@ -271,10 +281,10 @@ grep.
     cdraw.content((cx, 7.05), [#ws], size: 6pt)
     cdraw.content((cx, 6.05), [#tests], size: 6pt)
   }
-  col(4.2, "go test", "17 workspaces", "221 tests")
-  col(12.0, "dotnet test", "4 workspaces", "76 tests")
-  col(19.8, "node --test", "8 workspaces", "163 tests")
-  cdraw.content((12.0, 3.4), [29 workspaces, 460 tests, one gate], size: 6pt)
+  col(4.2, "go test", "18 workspaces", "236 tests")
+  col(12.0, "dotnet test", "5 workspaces", "104 tests")
+  col(19.8, "node --test", "9 workspaces", "188 tests")
+  cdraw.content((12.0, 3.4), [32 workspaces, 528 tests, one gate], size: 6pt)
   cdraw.content((12.0, 2.4), [every suite runs in make verify], size: 6pt)
 })
 

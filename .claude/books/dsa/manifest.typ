@@ -53,7 +53,8 @@
     (id: "games", num: 40, title: "game theory and scheduling"),
     (id: "metaheuristics", num: 41, title: "local search and metaheuristics"),
     (id: "approximation", num: 42, title: "approximation algorithms"),
-    (id: "capstone", num: 43, title: "capstone: storage engine toolkit"),
-    (id: "appendices", num: 44, title: "appendices: topic matrix and sources"),
+    (id: "finegrained", num: 43, title: "fine-grained speedups"),
+    (id: "capstone", num: 44, title: "capstone: storage engine toolkit"),
+    (id: "appendices", num: 45, title: "appendices: topic matrix and sources"),
   ),
 )
