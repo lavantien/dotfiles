@@ -50,7 +50,7 @@ For typos or one-line non-logic changes: skip requirements, run linter, commit.
 
 ### When stuck
 
-Write one-off programs in `./playground` to isolate and test intent/hypothesis.
+Write one-off programs in `./playground` to isolate and test intent/hypothesis. Commit playground files with the work unless they hold secrets or other sensitive data.
 
 ## Testing
 
