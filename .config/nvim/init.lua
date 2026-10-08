@@ -31,6 +31,20 @@ vim.g.loaded_perl_provider = 0
 vim.g.loaded_python3_provider = 0
 vim.g.loaded_ruby_provider = 0
 
+vim.filetype.add({
+	pattern = {
+		["[/\\]templates[/\\].*%.tpl"] = "helm",
+		["[/\\]values[%w.-]*%.ya?ml"] = function(path)
+			local dir = vim.fs.dirname(path)
+			if vim.fs.find({ "Chart.yaml" }, { upward = true, path = dir })[1] then
+				return "yaml.helm-values"
+			end
+		end,
+		["[/\\]docker%-compose[%w.-]*%.ya?ml"] = "yaml.docker-compose",
+		["[/\\]compose[%w.-]*%.ya?ml"] = "yaml.docker-compose",
+	},
+})
+
 vim.pack.add({
 	{ src = "https://github.com/rose-pine/neovim" },
 	{ src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
