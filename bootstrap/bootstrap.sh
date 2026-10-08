@@ -361,11 +361,11 @@ install_language_servers() {
 	fi
 
 	if cmd_exists npm; then
-		install_npm_global "vscode-html-languageserver-bin" "" ""
+		install_npm_global "vscode-langservers-extracted" "vscode-html-language-server" ""
 	fi
 
 	if cmd_exists npm; then
-		install_npm_global "vscode-css-languageserver-bin" "" ""
+		install_npm_global "vscode-langservers-extracted" "vscode-css-language-server" ""
 	fi
 
 	if [[ "$CATEGORIES" == "full" ]] && cmd_exists npm; then
