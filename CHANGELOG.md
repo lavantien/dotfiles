@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented in this file, newest first. One short line per release states what happened, with no detail enumeration, the commit history carries the detail. Versioning is major.minor. Unreleased work lands under an `## [Unreleased]` heading that is renamed to the version and date at release time.
 
-## [Unreleased]
+## [6.4] - 2026-10-08
 
 CLAUDE.md raised the fan-out cap to 8 development plus 1 temporary slot in flight, added a memory guard capping the combined working set of all project processes at machine RAM / 4 through a monitor process, and extended the orphan sweeps to project processes.
 
@@ -35,6 +35,16 @@ git-update-repos fetches before comparing so advanced remotes update, assigns it
 The dead packages.yaml manifest is gone and the README now points at the bootstrap scripts.
 
 The README was rewritten to verified claims without bragging counts, its tools matrix cells now list only what bootstrap installs or the hooks invoke, and its configuration section documents the real settings keys.
+
+The Neovim health scan came clean: the 4 unused provider hosts are disabled up front, dartls left the enabled list, the plugin lockfile pins were regenerated onto the live checkouts, and unzip joined the CLI set so the zip plugin works again.
+
+Bootstrap installs the official docker-language-server through go install, helm-ls from the scoop extras bucket under the binary name it actually shims, and vscode-langservers-extracted for the html and css servers. The go package helper dropped the dead gup install path, normalizes the version suffix, and checks the real exit code so silent install failures cannot report success, and the scoop bucket helper probes the buckets directory instead of parsing the bucket list table.
+
+Filetype rules attach helm_ls and docker_language_server to chart values and compose files, make deploy-windows and bootstrap-windows wrap the live scripts, and deploy-windows passes the checkout root so worktrees deploy their own tree.
+
+## [6.3] - 2026-10-06
+
+v6.3 reframes the corpus as the harness opening book in the readme with the variant engines and maximal reduction wording, requires a process tree kill and os process verification on agent disposal, and syncs the books corpus: java capstone and appendix touch-ups, v8.9 touch-ups across volumes, the author byline rename across all 15 manifests, and rebuilt pdfs.
 
 ## [6.2] - 2026-10-05
 
