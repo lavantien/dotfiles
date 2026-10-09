@@ -7,7 +7,7 @@
     title: "infrastructure: docker, databases, and testing",
     subtitle: "an engineering handbook",
     author: "Raeliosol",
-    version: "2.0",
+    version: "2.1",
     volume-label: "book 12",
   ),
   chapters: (

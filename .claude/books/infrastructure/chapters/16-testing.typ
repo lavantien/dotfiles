@@ -135,6 +135,96 @@ diagnosis.
   a timeout.
 ])
 
+== where expected values come from
+
+Every assertion in both gates compares an observed value against an
+expected one, and the suite is only as honest as the source of the
+expected side. The chapter's bounded waits assert content, not just
+progress, and content is only as trustworthy as the place it was
+written down from. The three substitutions assemble a system whose
+answers are worth comparing, and the build tag keeps the gates honest
+about when they run, but neither earns its green if the values on the
+right of the comparison were lifted from the code on the left.
+Expected values have a rank order. Hand-derived from the requirement
+is best, arithmetic a person did away from the code, the closed form
+row sums and the hand computed statistics of
+#xref-to("infrastructure", "duckdb"). Captured from a reference
+system comes next, an answer recorded from an engine already trusted,
+with the capture and its date written beside it. A domain property
+ranks last and still holds, an invariant any correct answer
+satisfies, the way the analytics store keeps its total at 1 across a
+redelivered message, because a redelivery is not a new message in any
+correct system.
+
+#listing("infrastructure/capstone/internal/analytics/store_test.go", first: 55, last: 91, caption: [3 documents anyone can read, every expected value counted from them by hand])
+
+The analytics store runs the same discipline against its engine.
+Three documents, and every want literal derived from them by a
+person, away from the engine: the talker ranking from counting
+senders, the busiest hour from the timestamps, the word ranking from
+applying the length filter by eye. The corpus is small enough to
+count in one glance, and that is what makes it an oracle. The same
+discipline reaches the fake store in the docker-free gate: the web
+suite posts 1 message and wants the fake's total and the duckdb
+panel to agree on 1, a number written down from the send itself, and
+the contract #xref-to("infrastructure", "mocks") holds from both
+sides.
+
+The failure mode has one mechanic. Run the implementation, paste its
+output into the test, and the suite becomes a mirror: a green
+certifies that the code still does whatever it did on the day it was
+pasted, and a bug present at capture time is certified along with
+everything else. Mutation scores change meaning on such a suite. A
+mirror can kill 100 percent of mutants, because every mutant changes
+some output and the mirror flags each change, and the perfect score
+proves only that the suite tracks the code, not that the code meets
+the requirement. The requirement never entered the comparison.
+Mutation results mean something exactly when the oracle is
+independent of the implementation.
+
+#diagram([where the expected value comes from, and the arrow that makes the suite a mirror], length: 13pt, {
+  cdraw.rect((0.0, 6.5), (6.4, 8.3), fill: luma(235), radius: 0.02)
+  cdraw.content((3.2, 7.75), [the requirement], size: 6.5pt)
+  cdraw.content((3.2, 6.75), [what the answer owes], size: 6pt)
+
+  cdraw.line((6.4, 7.4), (7.9, 7.4), stroke: luma(100), mark: (end: ">>"))
+
+  cdraw.rect((7.9, 6.5), (14.7, 8.3), fill: luma(205), radius: 0.02)
+  cdraw.content((11.3, 7.75), [expected value], size: 6.5pt)
+  cdraw.content((11.3, 6.75), [counted by hand, on paper], size: 6pt)
+
+  cdraw.rect((0.0, 3.3), (6.4, 5.1), fill: luma(235), radius: 0.02)
+  cdraw.content((3.2, 4.55), [the implementation], size: 6.5pt)
+  cdraw.content((3.2, 3.55), [the code under test], size: 6pt)
+
+  cdraw.line((6.4, 4.2), (7.9, 4.2), stroke: luma(100), mark: (end: ">>"))
+
+  cdraw.rect((7.9, 3.3), (14.7, 5.1), fill: luma(235), radius: 0.02)
+  cdraw.content((11.3, 4.55), [observed output], size: 6.5pt)
+  cdraw.content((11.3, 3.55), [what it answered], size: 6pt)
+
+  cdraw.line((8.9, 6.5), (8.9, 5.1), stroke: luma(100), mark: (start: "|", end: "|"))
+  cdraw.content((11.2, 5.8), [asserted equal], size: 6pt)
+
+  cdraw.line((13.9, 5.1), (13.9, 6.5), stroke: (paint: luma(100), dash: "dashed"), mark: (end: ">>"))
+  cdraw.content((18.7, 6.05), [the mirror failure:], size: 6pt)
+  cdraw.content((18.7, 5.45), [output becomes the oracle], size: 6pt)
+
+  cdraw.content((11.3, 2.0), [the requirement feeds the expectation, the code feeds the observation], size: 6pt)
+  cdraw.content((11.3, 1.1), [the dashed arrow turns a suite into a mirror of the code], size: 6pt)
+})
+
+#callout("pitfall", "the direction of fit runs one way", [
+  Expectations are written from the requirement, before or while the
+  code is written, never harvested from the finished output. The
+  moment a wanted value is copied from what the implementation
+  printed, the test stops being evidence about the requirement and
+  becomes a record of the code's behavior, and no later green can
+  tell the two apart. When the hand-derived oracle is out of reach,
+  capture from a reference system and record the capture, so the
+  next reader can tell an independent answer from a copied one.
+])
+
 sources: pkg.go.dev for the embedded nats server options and go's
 build constraints, accessed 2026-09-10. Verified by `make verify`,
 103 go tests green, and `make verify-infra-docker`, 4 tagged tests

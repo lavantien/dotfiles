@@ -171,8 +171,8 @@ is where the running evidence lives, a test, a listing, or a gate.
   )).flatten(),
 )
 
-#diagram([where the 60 topics landed, none unmapped], length: 13pt, {
-  cdraw.content((11.0, 9.0), [60 topics, 20 chapters, 0 unmapped], size: 6.5pt)
+#diagram([where the 63 topics landed, none unmapped], length: 13pt, {
+  cdraw.content((11.0, 9.0), [63 topics, 20 chapters, 0 unmapped], size: 6.5pt)
   cdraw.line((0.5, 1.6), (22.0, 1.6), stroke: luma(100))
   let bar(x, h, count, label, hot) = {
     cdraw.rect((x, 1.6), (x + 3.0, 1.6 + h), fill: if hot { luma(205) } else { luma(235) }, radius: 0.02)
@@ -182,7 +182,7 @@ is where the running evidence lives, a test, a listing, or a gate.
   bar(1.0, 3.1, [11], [containers], false)
   bar(5.4, 6.4, [23], [engines], true)
   bar(9.8, 3.9, [14], [stores], false)
-  bar(14.2, 2.2, [8], [testing], false)
+  bar(14.2, 3.1, [11], [testing], false)
   bar(18.6, 1.1, [4], [capstone], false)
 })
 

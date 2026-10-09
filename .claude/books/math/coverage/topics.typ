@@ -144,6 +144,8 @@
   (topic: "bit-precise integers", chapter: "proof", check: "functions.c: 20^20 exact in _BitInt(128), 87 bits, uint64 wrap pinned"),
   (topic: "induction and loop invariants", chapter: "proof", check: "induction.c: gauss loop asserts k(k+1)/2 per rung, S(100) = 5050"),
   (topic: "invariants under mutation", chapter: "proof", check: "induction.c: bitset parity, permutation sign, rotation sum per step"),
+  (topic: "proofs as checked step data", chapter: "proof", check: "checker.c: 8-step syllogism proof, every step recomputed, goal mask 0xff reached"),
+  (topic: "planted bad step rejection", chapter: "proof", check: "checker.c: s4 claiming 0xcf in the q->r slot rejected at index 4, disagree mask 0x74"),
   (topic: "graph representations (matrix, list, bitmask)", chapter: "graphs", check: "models.c: matrix, bitmask, and edge list agree on degrees (2,3,3,3,3,2) and the same symmetric relation"),
   (topic: "handshake lemma", chapter: "graphs", check: "models.c: degree sum 16 == 2m, 4 odd-degree vertices even, directed sums 8 == m both ways"),
   (topic: "walks and adjacency powers", chapter: "graphs", check: "models.c: A^2 diagonal equals degrees, A^2[0][1] == 1, total 2-walks 44, trace(A^3) == 12 so 2 triangles"),
