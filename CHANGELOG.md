@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file, newest first. One short line per release states what happened, with no detail enumeration, the commit history carries the detail. Versioning is major.minor. Unreleased work lands under an `## [Unreleased]` heading that is renamed to the version and date at release time.
 
+## [6.5] - 2026-10-09
+
+CLAUDE.md adds 5 testing directives: oracle independence, direction of fit, fixture origin, artifact over self-report, and role split.
+
 ## [6.4] - 2026-10-08
 
 CLAUDE.md raised the fan-out cap to 8 development plus 1 temporary slot in flight, added a memory guard capping the combined working set of all project processes at machine RAM / 4 through a monitor process, and extended the orphan sweeps to project processes.
