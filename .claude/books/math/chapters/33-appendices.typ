@@ -10,7 +10,7 @@
   "float": (3, 63), "error": (4, 55), "trig": (3, 62), "coordgeo": (4, 51),
   "vectors": (3, 55), "matrices": (4, 60), "inner": (4, 53), "decomp": (4, 52),
   "univariate": (4, 70), "multivariate": (4, 59), "optimization": (4, 81),
-  "autodiff": (3, 57), "proof": (4, 45), "combinatorics": (4, 60),
+  "autodiff": (3, 57), "proof": (5, 52), "combinatorics": (4, 60),
   "graphs": (4, 60), "groups": (4, 58), "actions": (4, 61),
   "probability": (4, 60), "statistics": (4, 63), "roots": (4, 60),
   "interp": (4, 63), "quadrature": (4, 58), "iterative": (4, 68),
@@ -54,7 +54,7 @@ and the chapter ledger, the suite totals recounted against the gates,
 the source base classified by url prefix, and the book's place in the
 sixteen-document corpus. The contract: every count below is computed
 from the live registries at compile time or printed by a gate this
-chapter names, the suite numbers were recounted on 2026-09-22, and the
+chapter names, the suite numbers were recounted on 2026-10-09, and the
 totals are #mathbook.chapters.len() chapters, #topics.len() topic
 rows, #sources.len() pinned sources, #suite-files sample files at
 #suite-checks checks plus a 64-check capstone build, #(suite-checks +

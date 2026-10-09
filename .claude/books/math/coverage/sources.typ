@@ -102,4 +102,6 @@
   (topic: "capstone allegro host source", url: "books/math/capstone/host", accessed: "2026-09-22"),
   (topic: "capstone build gate", url: "playground/math-capstone/build.ps1", accessed: "2026-09-22"),
   (topic: "capstone host runner gate", url: "tools/run-math-capstone.ps1", accessed: "2026-09-22"),
+  (topic: "openai math release, proofs as machine-checkable artifacts", url: "https://openai.com/index/sharing-ai-progress-in-mathematics/", accessed: "2026-10-09"),
+  (topic: "openai math repository, ComparatorChallenges targets", url: "https://github.com/openai/math", accessed: "2026-10-09"),
 )

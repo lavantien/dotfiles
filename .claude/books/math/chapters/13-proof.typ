@@ -6,15 +6,16 @@ The discrete half of this book starts here: propositions as bit patterns
 a machine can exhaust, quantifiers as bounded loops that return evidence,
 sets and relations as masks and boolean matrices, functions with
 injections and the pigeonhole principle, induction written as a loop
-invariant, and invariants that must survive mutation. Every behavioral
-claim below is one of the 45 checks in the 4 samples of chapter 13 or a
+invariant, invariants that must survive mutation, and proofs as step
+tables a checker recomputes. Every behavioral
+claim below is one of the 52 checks in the 5 samples of chapter 13 or a
 sentence quoted from a canonical source fetched 2026-09-21. The dsa
 book's #xref-to("dsa", "analysis") chapter measures what algorithms cost;
 this chapter builds the proof patterns that establish what a program is
 true of, with counting left to #xref-to("dsa", "combinatorics") and to
 the next chapter.
 
-The one idea that carries all six sections: a finite mathematical claim
+The one idea that carries all seven sections: a finite mathematical claim
 is data. A proposition over 3 variables is 8 bits, a subset of a fixed
 universe is one integer, a relation on 5 points is 5 integers, a
 function between finite sets is a short array. Once the claim is data,
@@ -400,9 +401,88 @@ matches the playground prediction bit for bit.
   cdraw.content((5.1, 0.45), [parity == popcount mod 2, 13 asserts, 0 fails], size: 6pt)
 })
 
+== proofs as data
+
+The chapter closes by turning its machinery on itself. A proof is a
+table of steps over the 8-row universe: each step carries a claimed
+truth vector and a justification, either a base rule naming one of $p$,
+$q$, $r$ or a derivation citing two prior steps with a bit operation or
+implication. The checker recomputes every step from its justification,
+requires the recomputation to agree with the claim row by row, and
+accepts the proof only when the final step equals the goal mask. It
+trusts nothing the prover says, only what it can recompute, which makes
+it the whole-vector descendant of the exhaustion checks in the first
+section: there the claim was one mask, here the claim is the whole
+derivation.
+
+The worked proof is hypothetical syllogism, $(p -> q) and (q -> r)$
+together give $(p -> r)$, in 8 steps. Steps s0, s1, s2 are the base
+vectors `0xF0`, `0xCC`, `0xAA`, s3 is `imp(s0, s1)` = `0xCF`, s4 is
+`imp(s1, s2)` = `0xBB`, s5 is their conjunction `0x8B`, s6 is the
+conclusion's own mask `imp(s0, s2)` = `0xAF`, and s7 applies implication
+to s5 and s6, landing on the tautology `0xFF`, the goal. The planted
+forgery changes one byte of that table: s4 claims `0xCF`, the mask of
+$p -> q$, in the $q -> r$ slot, exactly the shape of a copy-paste slip,
+and the checker rejects the table at index 4 with the disagree mask
+`0x74`.
+
+#listing("math/samples/src/Ch13/checker.c", first: 102, last: 153, caption: [checker.c, the syllogism as a step table, the planted forgery, and both verdicts])
+
+The dry run: the checker walks the good table in order. The first three
+steps return the base vectors, then each derivation recomputes from the
+cited claims, `0xCF`, `0xBB`, `0x8B`, `0xAF`, and `0xFF` at s7, every
+step agreeing, the final claim equal to the goal, the proof accepted.
+The same walk over the forged table dies at index 4: the recomputation
+says `0xBB`, the claim says `0xCF`, and the disagree mask
+`(0xBB ^ 0xCF) & 0xFF = 0x74` names rows 2, 4, 5, and 6, the
+rows where the forged claim misstates $q -> r$.
+
+#diagram([the proof as data: steps s0 to s7 carry their claim masks, citations flow downward into the checker, and the flagged variant of s4 routes to reject], length: 13pt, {
+  let box(x, y, t, fill: luma(235), stroke: luma(100)) = {
+    cdraw.rect((x, y), (x + 1.0, y + 0.8), fill: fill, radius: 0.02, stroke: stroke)
+    cdraw.content((x + 0.5, y + 0.4), t, size: 6pt)
+  }
+  box(0.0, 3.6, [s0 f0])
+  box(1.2, 3.6, [s1 cc])
+  box(2.4, 3.6, [s2 aa])
+  box(3.9, 3.6, [s3 cf])
+  box(5.1, 3.6, [s4 bb])
+  box(0.6, 2.0, [s6 af])
+  box(4.5, 2.0, [s5 8b])
+  box(2.4, 0.6, [s7 ff])
+  cdraw.line((4.4, 3.6), (4.9, 2.8), stroke: luma(100), mark: (end: ">"))
+  cdraw.line((5.6, 3.6), (5.2, 2.8), stroke: luma(100), mark: (end: ">"))
+  cdraw.line((0.5, 3.6), (1.0, 2.8), stroke: luma(100), mark: (end: ">"))
+  cdraw.line((2.9, 3.6), (1.4, 2.8), stroke: luma(100), mark: (end: ">"))
+  cdraw.line((4.6, 2.0), (3.2, 1.4), stroke: luma(100), mark: (end: ">"))
+  cdraw.line((1.6, 2.0), (2.6, 1.4), stroke: luma(100), mark: (end: ">"))
+  cdraw.line((3.4, 1.0), (4.4, 1.0), stroke: luma(100), mark: (end: ">"))
+  cdraw.rect((4.4, 0.6), (6.8, 1.4), fill: luma(205), radius: 0.02, stroke: luma(60))
+  cdraw.content((5.6, 1.0), [checker: recompute every step], size: 6pt)
+  box(6.9, 3.6, [s4 cf], fill: luma(255), stroke: (paint: luma(60), dash: "dashed"))
+  cdraw.content((7.4, 4.7), [planted claim], size: 6pt)
+  cdraw.line((7.4, 3.6), (6.4, 1.4), stroke: (paint: luma(150), dash: "dashed"), mark: (end: ">"))
+  cdraw.content((8.6, 2.0), [agree: accept, goal 0xff], size: 6pt)
+  cdraw.line((6.8, 1.2), (7.6, 1.8), stroke: luma(100), mark: (end: ">"))
+  cdraw.content((8.6, 0.2), [disagree: reject at 4, 0x74], size: 6pt)
+  cdraw.line((6.8, 0.8), (7.6, 0.4), stroke: luma(100), mark: (end: ">"))
+})
+
+#callout("pitfall", "citations must point backward", [the checker validates steps in order and reads only the claims of the cited steps, so the contract that citations name earlier steps is what keeps every recomputation resting on already-validated ground. a table that cites forward, or cycles, can be self-consistent and still prove nothing: recompute the cycle and it agrees with itself. the sample tables cite backward by construction, and a checker outside the trust boundary would reject any forward citation before recomputing a single mask.])
+
+The same shape runs at research scale in the openai/math release. An
+internal model was pointed at about 4,000 open research problems, and
+the 2026-10-06 publication carries 722 manuscripts in 372 result
+families, with about 42 percent of top-line results backed by Lean 4
+formalizations and trust graded per claim: formal, comparator-checked
+supporting, and warned unformalized. The proof is the artifact handed
+to a small checker that decides acceptance on its own recomputation,
+which is what makes the output auditable claim by claim.
+
 With propositions, quantifiers, sets, relations, functions, induction,
-and invariants in hand as data plus loops, the next step is counting
-the structures themselves, which is #xref-to("math", "combinatorics").
+invariants, and proofs in hand as data plus loops, the next step is
+counting the structures themselves, which is
+#xref-to("math", "combinatorics").
 
 sources: Hammack, Book of Proof, 3rd ed., 2018, and Rosen, Discrete
 Mathematics and Its Applications, 8th ed., 2019, cited by name and
@@ -422,7 +502,15 @@ cleanly under the pinned clang 23 with the MSVC toolset, while `%`
 with a runtime divisor lowers to a compiler-rt `__umodti3` call that
 fails the link (a constant divisor expands to multiply-shift and links),
 so the sample masks by `2^64 - 1` instead, and `<stdbit.h>` is absent from the
-toolset headers, so popcount is the clear-lowest-bit loop. Sample
+toolset headers, so popcount is the clear-lowest-bit loop. OpenAI,
+"Sharing AI progress in mathematics",
+https://openai.com/index/sharing-ai-progress-in-mathematics/, published
+2026-10-06, fetched 2026-10-09, an internal model pointed at about
+4,000 open research problems whose release publishes 722 manuscripts in
+372 result families with trust graded formal, comparator-checked, and
+warned. The repository github.com/openai/math, fetched 2026-10-09,
+publishes the ComparatorChallenges verification targets run via
+`lake env comparator <file>`. Sample
 behavior verified by `pwsh -NoProfile -File tools/run-c-samples.ps1
--SampleRoot books/math/samples/src -Chapter Ch13`, 45 checks in chapter
+-SampleRoot books/math/samples/src -Chapter Ch13`, 52 checks in chapter
 13 of the math suite, format leg clean, zero failures.
