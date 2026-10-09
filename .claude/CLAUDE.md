@@ -66,6 +66,11 @@ TDD, fuzzy testing, mutation testing, and e2e testing are mandatory on every dev
 - No skipped tests. Detect and re-enable. Investigate root causes.
 - Atomic commits. Include tests and implementation in same commit.
 - Adversarial verification: before declaring work done, dispatch 2 independent agents to attack the change, neither seeing the other's work. Each must hunt counterexamples, break edge cases, and challenge assumptions. Fix every confirmed finding, then re-run the affected steps.
+- Oracle independence: derive expected values from the requirement or a reference system, never from the implementation under test, a suite fitted to the code certifies self-consistency only.
+- Direction of fit: write the failing expectation before the passing code, a suite generated after the fact mirrors whatever the code does, bugs included.
+- Fixture origin: record where each fixture came from and when it was captured, an undocumented capture is indistinguishable from a hand-edit later.
+- Artifact over self-report: verify the physical artifact, binary, log, screenshot, or command output, whenever a tool or agent claims work is done, self-graded pass rates are not evidence.
+- Role split: the agent authoring tests reads the requirement and not the implementation, tests written by the implementer inherit the implementer's reading of the spec.
 
 ### Verification chain
 
