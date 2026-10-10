@@ -4,6 +4,10 @@
 
 The repo deploys an engineering environment for Linux and Windows: Neovim, WezTerm, zsh, and PowerShell configs, git hooks, Claude Code and OpenCode settings, the maintenance scripts, and a typst books corpus used for offline grounding. The supported platforms are Ubuntu 26.04 and newer plus Windows 11 with PowerShell 7. Bootstrap and deploy are idempotent, rerunning them converges the machine.
 
+> what's the progress? what's in flight? what's remaining?
+>
+> the opening books corpus contain chapters that might be useful to our endeavor. now let fan out subagents and start the development loop according to the prime directives and principles
+
 ## Contents
 
 - [Core features](#core-features)
