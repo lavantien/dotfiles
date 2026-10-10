@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented in this file, newest first. One short line per release states what happened, with no detail enumeration, the commit history carries the detail. Versioning is major.minor. Unreleased work lands under an `## [Unreleased]` heading that is renamed to the version and date at release time.
 
+## [Unreleased]
+
+CLAUDE.md added a progress watchdog that disposes and relaunches any agent silent for 30 minutes, and relaxed the memory guard cap to 12 GB.
+
+The books corpus copies and index resynced from the authoring repo, and the readme corpus section now names the lean 4 proofs arc.
+
+The readme gained the opening passage above the table of contents.
+
 ## [6.5] - 2026-10-09
 
 CLAUDE.md adds 5 testing directives: oracle independence, direction of fit, fixture origin, artifact over self-report, and role split.
