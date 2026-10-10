@@ -51,9 +51,9 @@ toc:
 - 40 the test suite (c-os-cloud/chapters/40-suite.typ)
 - 41 appendices: topic matrix and sources (c-os-cloud/chapters/41-appendices.typ)
 
-## mathematics for programmers (book 2, v2.0, math, 33 chapters)
+## mathematics for programmers (book 2, v2.1, math, 33 chapters)
 
-summary: mathematics for programmers in c23: floating point and error analysis, linear algebra, calculus, optimization and autodiff, logic, algebra, and graphs, probability, statistics, numerical methods with sparse matrix systems solved by jacobi and gauss-seidel iteration, game theory, then functional patterns in c23. 33 chapters, the coverage appendix names the sample check proving each topic.
+summary: mathematics for programmers in c23: floating point and error analysis, linear algebra, calculus, optimization and autodiff, logic with proofs as machine-checkable data against the lean 4 formalization share of published research results, algebra, and graphs, probability, statistics, numerical methods with sparse matrix systems solved by jacobi and gauss-seidel iteration, game theory, then functional patterns in c23. 33 chapters, the coverage appendix names the sample check proving each topic.
 capstone: the arena game in 3 parts: design (game spec, adt state, numerics budget, mixed-strategy plus mcts ai, two-lane bit-exact architecture), implementation (verlet physics, sat collision, group hashing, allegro host), verification (discipline-to-module audit, determinism pins).
 walkthroughs: sparse matrix systems, iterative solvers and conditioning (ch 23)
 toc:
@@ -459,9 +459,9 @@ toc:
 - 16 capstone: raft replicated configuration service (patterns-concurrency-distributed/chapters/16-capstone.typ)
 - 17 appendices: topic matrix and sources (patterns-concurrency-distributed/chapters/17-appendices.typ)
 
-## infrastructure: docker, databases, and testing (book 12, v2.0, infrastructure, 20 chapters)
+## infrastructure: docker, databases, and testing (book 12, v2.1, infrastructure, 20 chapters)
 
-summary: an engineering handbook pairing docker (toolchain, images, containers, compose, networking) with embedded databases: sqlite schemas through production, duckdb analytics, mongo aggregation, nats and jetstream messaging, and closes with docker-free testing, mocks, and test-driven migrations. the coverage matrix names each mechanism's running proof.
+summary: an engineering handbook pairing docker (toolchain, images, containers, compose, networking) with embedded databases: sqlite schemas through production, duckdb analytics, mongo aggregation, nats and jetstream messaging, and closes with docker-free testing, mocks, and test-driven migrations that name where every expected value comes from. the coverage matrix names each mechanism's running proof.
 capstone: two parts: part 1 builds six go services (chat, presence, notify, history, analytics, web) over nats, sqlite, mongo, and duckdb, each owning one store. part 2 adds the htmx chat ui and a gated suite proving the stack from one compose command.
 walkthroughs: docker arc (ch 1 to 5), sqlite arc (ch 6 to 10), duckdb engine pair (ch 11 to 12), messaging arc (ch 14 to 15), testing arc (ch 16 to 18)
 toc:
