@@ -21,7 +21,10 @@ the pruned recursion with its leaf-count lemmas, the boxes data
 structure with O(D^0.437) queries (theorem 3, page 7), the exact
 triangle reduction by hashing weights modulo a prime (theorem 17,
 page 33), and the consequences for 3SUM and APSP (theorems 19 and 22,
-pages 35 and 36). An honesty thread runs through all 8: the exponents
+pages 35 and 36). A closing section opens the matrix multiplication
+black box those towers stand on, the 2026 exponent ladder and the 9/4
+profile argument of the openai/math release, priced by two more toys.
+An honesty thread runs through all 8: the exponents
 that move are small, the regimes that justify them are enormous, and
 the toy fixtures show the algorithms losing on purpose, because a
 speedup you cannot price is a slogan.
@@ -996,10 +999,264 @@ construction, and the baseline's hash table is the plain dictionary
 of every corpus language, chapter 6's structure doing the honest
 opposite of the fancy road.
 
+== the 2026 exponent ladder and the 9/4 profile argument
+
+Every tower in this chapter stands on fast matrix multiplication as a
+black box: the exact triangle reduction multiplies Strassen rings at
+n^(log2 7) D^(3/2), and the consequence chain's win rides the subcubic
+solver at the top. This section opens the box. The exponent omega is
+the infimum of the exponents c with O(n^c) arithmetic operations
+sufficient for n x n multiplication, and 2026 moved it twice on paper: the public laser-method
+record fell to omega < 2.371177 (Dupont et al, arXiv 2608.16884), and
+the openai/math release's family 107 went below it in 2 tiers. Lean
+formalized omega < 2.371054886006746 over every fixed field with all
+positive characteristics included, and omega <= 9/4 over the complex
+numbers, carrying the dual exponent alpha > 0.465 and a rectangular n
+by n^0.709 by n bound below 2.092. Paper tier sits below the
+formalized rungs: omega < 2.258 in characteristic zero, with strict
+square and 0.709 rectangular bounds extending outside at most finitely
+many positive characteristics, the below-2258 preprint's claim, and
+over the complex numbers alone 2.258 follows trivially from the
+formalized 9/4. The ladder separates what runs from what exists.
+
+#table(
+  columns: (auto, 2.8fr, auto, 1.9fr),
+  inset: 4pt,
+  table.header([*year*], [*result*], [*exponent*], [*tier*]),
+  [schoolbook], [the dense triple loop of section 1], [3], [constructive, runnable],
+  [1969], [Strassen, 7 block products for 8], [log2 7 = 2.8074], [constructive, runnable at small sizes],
+  [1990], [Coppersmith and Winograd], [2.376], [laser line, never run at practical size],
+  [2012], [Vassilevska Williams, after Stothers 2010], [2.372873], [laser line],
+  [2014], [Le Gall], [2.3728639], [laser line],
+  [2021], [Alman and Vassilevska Williams], [2.3728596], [laser line],
+  [2023], [Duan, Wu, and Zhou], [2.371866], [laser line],
+  [2026], [Dupont et al, arXiv 2608.16884], [2.371177], [laser line, public record],
+  [2026], [family 107, every fixed field], [\< 2.371054886006746], [formalized existence, arithmetic model],
+  [2026], [family 107, characteristic zero, the below-2258 preprint], [\< 2.258], [paper existence],
+  [2026], [family 107, complex, alpha \> 0.465, rectangular \< 2.092], [2.25], [formalized existence, walked below],
+)
+
+#callout("warning", "existence bounds are not implementations", [
+  The 2.371-class and 9/4 rows prove that algorithms exist in the
+  arithmetic-operation model: additions, subtractions, and
+  multiplications over a field, counted one per operation, no bit
+  complexity. No competitive finite matrix size is claimed anywhere on
+  the formalized tiers, and the 9/4 paper says so itself. The laser
+  line is the same story with smaller exponents: tensor powers and
+  constants far past any feasible size. What runs in practice is
+  classical plus Strassen-level blocking, which is what the toy below
+  measures, and this chapter's fine-grained chain stays the
+  engineering content.
+])
+
+The 9/4 rung is the one a chapter can walk end to end, sections 4 and
+5 of An Upper Bound of 9/4 for the Matrix Multiplication Exponent, read
+against the local copy at ref/openai-math/family-107/paper-9fourths.tex.
+Multiplying homogeneous binary forms gives a tensor C(a,b) whose rank
+is exactly a+b-1, evaluation at a+b-1 points bounding it from above
+and the output flattening forcing equality. A
+character on tensors induces the symmetrized profile P(a,b), the
+1/(6t)-root geometric mean over the six leg permutations, and the paper proves P
+obeys four laws: symmetry P(a,b) = P(b,a), the unit row P(1,b) = b,
+discrete concavity 2P(a,b) >= P(a,b+1) + P(a,b-1), so increments shrink
+as the second argument grows, and shifted tripling P(a,3h+a-1) >=
+3P(a,h), a degeneration splitting C(a,3h+a-1) into 3 matched copies of
+C(a,h) sharing the first leg. Diagonal growth is then forced. Write
+D_a = P(a,a) and H_a = 2 D_a / (3a-1). Tripling at h = a leaves
+P(a,4a-1) - D_a >= 2 D_a to be covered by 3a-1 nonincreasing
+increments, so the increment at the diagonal obeys Delta_a >= H_a.
+Symmetry and concavity give D_a - D_{a-1} >= H_{a-1} + H_a, and
+substituting D_a = (3a-1) H_a / 2 unrolls to H_a >= the product of
+(1 + 1/(3m)) for m from 1 to a-1. The cube trick (1+1/(3m))^3 >= 1+1/m,
+exact per m, cubes that product into the product of (1+1/m), which
+telescopes to a, so H_a >= a^(1/3) and D_a >= a H_a >= a^(4/3). The
+rank caps the other side, P(a,b) <= (a+b-1)^(1/t) with t the average
+dot-product exponent, so a^(4/3) <= P(a,a) <= (2a-1)^(1/t) for every a
+forces t <= 3/4, and omega <= 3t = 9/4.
+
+The lower-bound side barely exists. Family 135 of the same release
+proves the (1,1) entry of a product of n independent n x n variable
+matrices requires n^Theta(sqrt n) gates in homogeneous depth-5
+sum-product circuits over every characteristic-zero field, a sharp
+bound that allows shared gates and bottom linear forms over all
+variables. That sits one circuit-class restriction away from matrix
+multiplication itself, paper tier against this chapter's conditional
+lower bounds: unconditional barriers for unrestricted circuits stay
+near quadratic, which is why the ladder's top is all upper bound.
+
+The runnable rung is Strassen's, and the first toy prices it exactly.
+Strassen trades 8 block products for 7 at the cost of 18 block
+additions or subtractions per node, 11 adds and 7 subs in the standard
+arrangement, so the recursion is T(n) = 7 T(n/2) + 18 (n/2)^2 and the
+closed form at cutoff c = 2^k reads mul = 7^(L-k) c^3, add =
+(7^(L-k) c^2 (3c+8) - 11 n^2) / 3, sub = 7 (7^(L-k) c^2 - n^2) / 3.
+Two of those identities were wrong in this chapter's own drafting, a
+flipped decode sign and a missing B11 + B22 operand that miscounted
+the node at 17 block ops: the spine's closed-form oracle caught both,
+the pin discipline earning its keep.
+
+The dry run: the fixture is seed 4303, family 8 of the spine, an
+8194-value stream pinned by digest, with n = 64 and cutoff 8.
+
++ A and B draw signed in \[-9, 9\] row major, the head rows pin, and
+  the stream digest pins over n, cutoff, then 8192 draws.
++ Classical spends 262144 muls and 258048 adds, the product digest
+  pins, and 5 spot entries pin as \[518, 175, 282, -206, -321\], the
+  largest well under the 64 x 81 = 5184 ceiling.
++ Strassen equals the classical oracle on all 4096 entries, at cost
+  175616 muls, 219136 adds, 41664 subs, the closed form exactly.
++ The op table pins at sizes 8, 16, 32, 64 as \[512, 448, 0, 960\]
+  through \[175616, 219136, 41664, 436416\], every row matching the
+  closed form, and the recurrence rows pin as \[4288, 34624, 260800\],
+  each exactly 7 times the previous add-sub total plus 18 (n/2)^2.
++ The measured log-log slopes of the totals pin as \[3.03562391,
+  2.923218766, 2.869611199\], falling toward log2 7 = 2.8074 from
+  above as the additive n^2 term amortizes.
++ The honesty row pins: recursion to size 1 costs 798967 and loses to
+  classical 520192, the cutoff at 8 costs 436416 and wins by 1.19, the
+  same measured-crossover discipline as the Karatsuba pins of
+  #xref-to("dsa", "fastarith").
+
+The 9/4 laws are checkable on any candidate table, and the second toy
+runs the paper's induction as a certificate. Three tables enter. The
+rank profile a+b-1 passes symmetry, the unit row, and concavity, and
+fails exactly shifted tripling at (a,h) = (2,1) with P(2,4) = 5 below
+3 P(2,1) = 6, rank alone carrying no growth, which is why the paper
+needs characters. The product table ab passes all four trivially. The
+geometry table sqrt(ab(a+b-1)) passes all four by exact algebra, its
+diagonal D_a = a sqrt(2a-1), and the checker certifies the diagonal
+over a to 48.
+
+The dry run: family 9 is parameter-only, no draws, everything pinned
+from the paper's arithmetic.
+
++ The rank witness pins as (a,h,P,3P) = (2,1,5,6), the first tripling
+  failure, and the axiom rows pin as 3 passes plus 1 failure for rank,
+  all four for product and geometry.
++ The geometry row a = 2 pins 8 values ending P(2,8) = 12 exact, and
+  the diagonal pins 12 values to 9 decimals, 1 through 57.549978280.
++ The certified chain holds for all 48 a: the increment at the
+  diagonal covers H_a, D_a covers a times the running product, and
+  D_a^3 >= a^4, the tightest diagonal step slack 0.078460969 at a = 2.
++ The cube trick holds exactly as the integer inequality m(3m+1)^3 >=
+  27 m^3 (m+1) for every m to 48, first row 64 >= 54.
++ The induction bound a prod(1+1/(3m)) pins to 9 decimals through
+  a = 12, from 1 to 30.480916769.
++ The cap comparison pins: t_a = 3 ln(2a-1)/(4 ln a), the largest t
+  keeping a^(4/3) <= (2a-1)^(1/t) at a given size, runs \[1.188721876,
+  1.052758096, 0.928911808, 0.843485576, 0.796874484, 0.787499974\]
+  across a = 2, 4, 16, 256, 65536, 1048576, a squaring ladder to 2^16
+  then 2^20, strictly decreasing and every value above 3/4, so the
+  limit forces t <= 3/4 and omega <= 9/4 = 2.25.
+
+#diagram([the exponent ladder as descending rungs over 3 tier bands: 2 constructive rows that run, a laser line from 2.376 to the 2026 public record 2.371177, and the formalized family 107 bounds from 2.371054886006746 down to 9/4], length: 13pt, {
+  let rung = (y, label, val, hot) => {
+    cdraw.line((8.8, y), (18.4, y), stroke: if hot { luma(90) } else { luma(160) })
+    cdraw.content((8.5, y), label, size: 6pt, anchor: "east")
+    cdraw.content((18.7, y), val, size: 6pt)
+  }
+  cdraw.content((12.0, 9.0), [omega rungs, schoolbook 3 down to 9/4, tier-graded], size: 6.5pt)
+  cdraw.line((8.0, 8.2), (8.0, 7.5), stroke: luma(120))
+  cdraw.content((3.4, 8.0), [constructive], size: 6pt, anchor: "east")
+  cdraw.content((3.4, 7.5), [runs], size: 6pt, anchor: "east")
+  rung(8.2, [schoolbook], [3], false)
+  rung(7.5, [Strassen 1969], [2.8074], true)
+  cdraw.line((8.0, 6.8), (8.0, 3.9), stroke: luma(120))
+  cdraw.content((3.4, 6.3), [laser line], size: 6pt, anchor: "east")
+  cdraw.content((3.4, 5.8), [never run], size: 6pt, anchor: "east")
+  rung(6.8, [CW 1990], [2.376], false)
+  rung(6.3, [VW 2012], [2.37287], false)
+  rung(5.8, [Le Gall 2014], [2.3728639], false)
+  rung(5.3, [Alman-VW 2021], [2.3728596], false)
+  rung(4.8, [DWZ 2023], [2.371866], false)
+  rung(4.3, [Dupont 2026], [2.371177], false)
+  cdraw.line((8.0, 3.6), (8.0, 2.1), stroke: luma(120))
+  cdraw.content((3.4, 3.1), [family 107], size: 6pt, anchor: "east")
+  cdraw.content((3.4, 2.6), [formalized, char 0 paper], size: 6pt, anchor: "east")
+  rung(3.6, [every fixed field], [2.371054886], true)
+  rung(3.1, [char 0, paper tier], [2.258], false)
+  rung(2.6, [complex], [2.25], true)
+  cdraw.content((12.0, 1.7), [all above the 2 barrier: no unconditional general lower bound past 2], size: 6pt)
+  cdraw.content((12.0, 1.0), [the lower two bands are existence bounds, no finite size claimed], size: 6pt)
+})
+
+#diagram([the 9/4 argument as a pipeline: the profile table and its four laws, tripling forcing the diagonal increment, the H_a recurrence unrolled into the product, the cube trick, D_a >= a^(4/3), the rank cap at (2a-1)^(1/t), t \<= 3/4, omega \<= 9/4], length: 13pt, {
+  let box = (x, y, w, label, hot) => {
+    cdraw.rect((x - w / 2, y - 0.32), (x + w / 2, y + 0.32), fill: if hot { luma(205) } else { luma(235) }, radius: 0.02)
+    cdraw.content((x, y), label, size: 6pt)
+  }
+  let e = (a, b) => cdraw.line(a, b, stroke: luma(100), mark: (end: ">"))
+  cdraw.content((11.5, 8.8), [sections 4 and 5 of the 9/4 paper, as a checker], size: 6.5pt)
+  box(2.9, 7.6, 3.4, [P(a,b), 4 laws], false)
+  box(9.4, 7.6, 4.4, [tripling: Delta_a \>= H_a], false)
+  box(16.2, 7.6, 4.6, [H_a \>= prod(1+1/(3m))], false)
+  box(20.9, 7.6, 2.6, [cube trick], true)
+  e((4.6, 7.6), (7.2, 7.6))
+  e((11.6, 7.6), (13.9, 7.6))
+  e((18.5, 7.6), (19.6, 7.6))
+  cdraw.content((2.9, 6.7), [symmetry, unit row,], size: 6pt)
+  cdraw.content((2.9, 6.1), [concavity, tripling], size: 6pt)
+  cdraw.content((9.4, 6.7), [H_a = 2 D_a / (3a-1),], size: 6pt)
+  cdraw.content((9.4, 6.1), [3a-1 shrinking steps], size: 6pt)
+  cdraw.content((16.2, 6.7), [(1+1/(3m))^3 \>= 1+1/m], size: 6pt)
+  cdraw.content((16.2, 6.1), [telescopes to a], size: 6pt)
+  box(6.4, 4.6, 3.6, [D_a \>= a^(4/3)], true)
+  box(12.6, 4.6, 4.6, [P(a,a) \<= (2a-1)^(1/t)], false)
+  box(19.4, 4.6, 3.6, [t \<= 3/4], true)
+  e((20.9, 7.28), (19.4, 4.92))
+  e((8.2, 4.6), (10.3, 4.6))
+  e((14.9, 4.6), (17.6, 4.6))
+  box(11.5, 2.8, 5.2, [omega \<= 3t = 9/4], true)
+  e((19.4, 4.28), (13.2, 3.12))
+  cdraw.content((2.9, 3.6), [rank table fails tripling], size: 6pt)
+  cdraw.content((2.9, 3.0), [at (2,1): 5 \<  6], size: 6pt)
+  cdraw.content((2.9, 2.4), [geometry table certifies], size: 6pt)
+  cdraw.content((2.9, 1.8), [all 48 diagonal steps], size: 6pt)
+  cdraw.content((11.5, 1.9), [t_a falls 1.1887 to 0.7875, all above 3/4], size: 6pt)
+  cdraw.content((19.4, 3.5), [existence only, no finite size], size: 6pt)
+})
+
+One kernel priced to its last op and one induction run as a checker,
+and the listings below state both in seven languages.
+
+#listing("dsa/samples-c/src/Ch43/strassen.c", first: 80, last: 145, caption: [c, the 7-product recursion with the 10 block sums and the decode assembling the 4 quarters])
+#listing("dsa/samples-go/ch43strassen/strassen.go", first: 135, last: 174, caption: [go, Strassen recursing through mAdd and mSub with the Ops counter threaded by pointer])
+#listing("dsa/samples-java/src/Ch43/Strassen.java", first: 134, last: 172, caption: [java, the ten sums, seven products, decode into quarters, counters in a mutable Ops])
+#listing("dsa/samples/src/Ch43/Strassen.cs", first: 182, last: 244, caption: [c\#, Run with MAdd and MSub over range slices, ClosedForm returning the 3 closed forms as a tuple])
+#listing("dsa/samples-js/src/ch43-strassen.mjs", first: 102, last: 131, caption: [javascript, the recursion over slice-built blocks, values exact in Number below 2^53])
+#listing("dsa/samples-py/src/Ch43/strassen.py", first: 101, last: 130, caption: [python, the recursion over quarter views, the decode composing madd and msub])
+#listing("dsa/samples-lua/ch43_strassen.lua", first: 95, last: 136, caption: [lua, the recursion over 0-based tables, block_add and block_sub charging the shared counters])
+
+#listing("dsa/samples-c/src/Ch43/profile.c", first: 45, last: 93, caption: [c, the axiom checker over a function pointer, the chain certifier, the min step slack])
+#listing("dsa/samples-go/ch43profile/profile.go", first: 42, last: 125, caption: [go, CheckAxioms over a table function, Chain rows, the cube trick in int64])
+#listing("dsa/samples-java/src/Ch43/Profile.java", first: 43, last: 84, caption: [java, axioms over a Table interface, chainCertifies with the running product])
+#listing("dsa/samples/src/Ch43/Profile.cs", first: 45, last: 114, caption: [c\#, the Axioms record struct, ChainCertifies and MinStepSlack over the delegate])
+#listing("dsa/samples-js/src/ch43-profile.mjs", first: 35, last: 112, caption: [javascript, axioms, chainCertifies, minStepSlack, tForced, doubles agreeing inside 1e-9])
+#listing("dsa/samples-py/src/Ch43/profile.py", first: 69, last: 102, caption: [python, axioms as generator folds, chain rows carrying the step slack])
+#listing("dsa/samples-lua/ch43_profile.lua", first: 65, last: 111, caption: [lua, the same checker with 1-based loops over the paper's 1-based indices])
+
+The strassen lanes differ in where the counters live: c keeps 3
+file-scope longs and mallocs its blocks, go, c\#, and javascript carry
+an ops object through the calls, java a mutable Ops class, python an
+Ops class with a row helper, lua one module-level table. Every tree
+asserts the closed form locally before pinning the table, so the pins
+answer to the math, never to each other. The digest lanes repeat the
+chapter rule: java, go, c\#, javascript, and python pin the stream and
+product digests, c and lua pin element rows instead, the first,
+middle, and last product rows beside the spot entries.
+
+The profile lanes hold no randomness, so every tree computes the same
+doubles: sqrt and log agree across the 7 libms far inside the 1e-9 pin
+tolerance, and the pins carry 9 decimals. The integer lanes stay in 64
+bits throughout, the cube trick's largest product 48 times 145^3 about
+1.5 x 10^8, no bignum this time. The table abstraction splits the
+trees thinly: a function pointer in c, a delegate in c\#, an interface
+in java, plain function values in go, javascript, python, and lua.
+
 == across the seven languages
 
 Featured build size counted as non-blank, non-comment source lines of
-the chapter's 8 sample files per language in the c, go, java, c\#,
+the chapter's 10 sample files per language in the c, go, java, c\#,
 javascript, python, and lua trees, go test files excluded:
 
 #table(
@@ -1014,6 +1271,8 @@ javascript, python, and lua trees, go test files excluded:
   [boxes], [536], [560], [558], [570], [422], [355], [633], [12393 boxes, lemmas 27 and 28, the query path],
   [extriangle], [207], [222], [223], [183], [146], [236], [233], [theorem 17 end to end against brute force],
   [minplus], [606], [451], [576], [442], [351], [606], [1200], [squaring, the bridge chain, the 3SUM chain, the pinned 576-entry matrix],
+  [strassen], [245], [192], [277], [228], [166], [192], [302], [the 7-product recursion instrumented, the closed forms, the measured slopes],
+  [profile], [146], [107], [152], [119], [107], [149], [207], [4 axiom laws, the induction certificate, the t_a convergence to 3/4],
 )
 
 The heavy rows are the pins. Pruned carries the regime decimal
@@ -1024,19 +1283,19 @@ main file and never listed by run.lua. c pins spot rows plus
 downstream values, and python anchors the stream by sha256 digest
 with the matrix pinned as a checksum, edge rows, and spot cells,
 landing beside the c twin at 606 lines. Go keeps the fixtures in
-test files beside the code, so its columns stay the lowest, 2297
-lines across 7 packages, extriangle and minplus sharing the ch43
+test files beside the code, so its columns stay the lowest, 2596
+lines across 9 packages, extriangle and minplus sharing the ch43
 package. Javascript holds the whole
-chapter under 1750 lines by importing nothing and leaning on Number
+chapter under 2000 lines by importing nothing and leaning on Number
 where the values provably fit, with the LCG state alone in bigint.
 The c tree carries the hand-rolled base-10^9 bignum in pruned at 656
 lines and the flat dp array in minplus at 606.
 
 Sample behavior verified by the 7 suite gates scoped to chapter 43:
-c 8 files and 192 checks, go 7 packages and 75 test functions, java 8
-files and 186 checks under run-java-samples, c\# 74 facts,
-javascript 8 suites and 91 tests, python 8 files and 201 checks, lua
-8 modules and 68 checks inside the 1004-check full suite, zero
+c 10 files and 207 checks, go 9 packages and 89 test functions, java
+10 files and 216 checks under run-java-samples, c\# 88 facts,
+javascript 10 suites and 105 tests, python 10 files and 232 checks,
+lua 10 modules and 81 checks inside the 1017-check full suite, zero
 skipped.
 
 sources: Josh Alman and Virginia Vassilevska Williams, truly
@@ -1055,4 +1314,17 @@ T. M. Chan and H. Xu, the 2024 derandomized instance construction and
 witness scan the paper builds on. Fixtures generated and verified by
 the reference implementation at playground/ch43-spine, the corpus
 64-bit Knuth LCG with one advance per draw reading the high 32 bits,
-accessed 2026-10-08.
+accessed 2026-10-08, families 8 and 9 added 2026-10-11. The ladder
+section reads OpenAI, matrix multiplication with exponent at most
+9/4, the family 107 release: An Upper Bound of 9/4 for the Matrix
+Multiplication Exponent, 2026-10-02, sections 4 and 5, plus the
+staggered-extraction every-field bound and the below-2.258 complex
+paper, all against the local copies at ref/openai-math/family-107 and
+the release overview at ref/openai-math/overview.tex, fetched
+2026-10-11. The public rungs follow V. Strassen 1969, D. Coppersmith
+and S. Winograd 1990, A. Stothers 2010 and V. Vassilevska Williams
+2012, F. Le Gall 2014, J. Alman and Vassilevska Williams 2021, R.
+Duan, H. Wu, and R. Zhou 2023, and Dupont et al 2026, arXiv
+2608.16884, the 2026 public record. The lower-bound paragraph quotes
+family 135 of the same release, homogeneous depth-5 iterated matrix
+multiplication lower bounds.

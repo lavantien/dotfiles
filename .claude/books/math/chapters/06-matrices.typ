@@ -200,6 +200,28 @@ is the dot grid made literal, running mml Example 2.4's inverse pair
   cdraw.content((10.7, 1.6), [$1 dot 2 + 2 dot (-1) + 3 dot 1 = 3$], size: 6pt)
 })
 
+#callout("note", "the exponent ladder", [
+The dot grid costs $n^3$ multiply-add units, and the exponent itself is
+negotiable. Strassen 1969 replaces each 2 by 2 block product with 7 scalar
+multiplications plus recursion, landing at $n^(log_2 7) approx 2.8074$.
+The laser method line pushed lower from there: the public record stood at
+$omega < 2.371177$, Dupont et al 2026, arXiv 2608.16884. The openai/math
+release then went below it in 2 tiers, in the arithmetic-operation
+model: Lean-formalized, $omega < 2.371054886006746$ over every fixed
+field and $omega <= 9/4$ over the complex numbers, with dual exponent
+$alpha > 0.465$ and rectangular products below 2.092, and paper tier
+beside them, $omega < 2.258$ in characteristic zero, the preprint
+headline whose complex case follows trivially from the formalized 9/4.
+Read
+the terms strictly: these are existence bounds, the model counts
+arithmetic operations and ignores bit cost, the 9/4 proof states no
+competitive finite matrix size, and no practical algorithm follows. What
+runs on real hardware is still this chapter's elimination and
+Strassen-style blocking: the runnable 7-product kernel and its recurrence
+live in #xref-to("dsa", "finegrained"), and #xref-to("math", "proof")
+reruns the release's exact-rational verifier for the every-field bound.
+])
+
 == elimination with partial pivoting
 
 Solving is row bookkeeping. mml section 2.3.2 [printed pp 28-32 / pdf
@@ -544,6 +566,10 @@ elimination counts, Trefethen and Bau III, Numerical Linear Algebra,
 SIAM 1997, cited by name and edition. Expected values computed by the
 playground one-off playground/math-ch06/expected.py, exact Fractions
 plus a binary64 simulation of the sample loops. Probed on this machine
-the same day. Sample behavior verified by `pwsh -NoProfile -File
+the same day. Exponent ladder bounds from the openai/math release,
+overview.tex entry 107 with the family 107 cache
+ref/openai-math/family-107/ and its doc-107.md stating the Lean scope,
+fetched 2026-10-11, and the prior public record Dupont et al 2026, arXiv
+2608.16884, $omega < 2.371177$. Sample behavior verified by `pwsh -NoProfile -File
 tools/run-c-samples.ps1 -SampleRoot books/math/samples/src -Chapter
 Ch06`, 60 checks in chapter 06 of the math suite.

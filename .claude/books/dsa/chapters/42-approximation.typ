@@ -982,6 +982,76 @@ them, and the fptas is the exact shape of that weakness. When a new
 problem arrives, the first structural question after the exact
 lanes fail is which side of this line its hardness lives on.
 
+== the unique games release closes the open spreads
+
+Section 11 priced 4 barriers and left one spread open on purpose:
+vertex cover's 2, where no polynomial 1.9x was known and the classical
+hardness stopped well short of forbidding one. The openai/math release
+claims that spread closed. It is a GitHub publication by OpenAI dated
+2026-10-06, fetched for this book on 2026-10-11, 719 manuscripts in
+372 result families, a preprint release with no peer review behind it.
+Family 102 proves Khot's Unique Games Conjecture, the 2002 hypothesis
+that for every pair eps and delta it is NP-hard to distinguish a
+unique game whose constraints are almost all satisfiable from one
+where almost none are. A unique game is a constraint graph where every
+edge carries a bijection between the label sets of its 2 endpoints,
+and the conjecture spent 24 years as the standing hypothesis behind a
+long list of approximation thresholds.
+
+The same family carries the 4 threshold consequences as direct
+reductions from established PCP and Label Cover hardness, independent
+of the new conjecture proof. On unweighted graphs, approximating
+max-cut beyond the 0.878 ratio of Goemans and Williamson is NP-hard,
+and so is approximating vertex cover below factor 2. Min-UnCut and
+directed feedback vertex set, 2 neighbors this chapter does not build,
+are NP-hard within any fixed constant factor. The vertex cover line
+lands on this chapter directly: the matching cover of section 3 is a 2
+on exactly the unweighted problem the reduction speaks about, the
+tight family of k disjoint edges already sits at the boundary, and the
+spread section 11 called the widest in the field becomes a threshold,
+modulo the release's proof. Unless P = NP, no polynomial algorithm
+returns a cover under twice the optimum.
+
+The max-cut line lands on section 10. The flip driver guarantees half
+the edges, at least half the optimum, rho 2 in the chapter's terms.
+The semidefinite program of Goemans and Williamson, machinery this
+chapter never builds, guarantees 0.878 of the optimum, and before the
+release both frontier thresholds, max-cut and vertex cover, were
+theorems only under the conjecture, the max-cut one from Khot,
+Kindler, Mossel, and O'Donnell, the vertex cover one from Khot and
+Regev. The direct proofs turn them into unconditional NP-hardness
+statements, unconditional meaning they rest on the reductions alone,
+with the same reading every barrier in section 11 already carries: an
+algorithm past the threshold would solve an NP-complete problem in
+polynomial time. The room left to walk sits between 0.5 and 0.8785676,
+and above 0.8785676 there is nothing to find.
+
+One more entry of the release touches a problem this chapter teaches.
+Family 118 proves that approximating the bin packing optimum within
+any fixed additive constant is NP-hard, even when every item exceeds
+1/6 and each bin holds at most 5 items, and that the integral optimum
+can exceed its configuration linear program by an unbounded additive
+constant, which disproves the modified integer round-up conjecture of
+Scheithauer and Terno. Section 9 prices bin packing multiplicatively,
+11/9 opt plus 2/3 for first fit decreasing among its bounds, and the
+additive frontier is closed the same way: unless P = NP, no polynomial
+algorithm returns opt plus a fixed constant of bins.
+
+Where the claims sit, plainly. The release grades trust per claim,
+formal, comparator-checked, or warned, and publishes a catalogue of
+the papers whose top-line result carries a Lean 4 formalization. Of
+family 102's 5 papers, the Unique Games theorem, the optimal max-cut
+hardness, and the vertex cover factor-two threshold appear in that
+catalogue, and the Min-UnCut and directed feedback vertex set papers
+do not. The release proves no separation of P from NP and no claim in
+this section does either. What changes is the answer to one question
+per problem, whether a better ratio might exist, and the algorithms of
+this chapter are untouched: the matching cover, greedy set cover,
+christofides, the ptas ladder, and the fptas keep their proofs and
+their tests. The thresholds above close vertex cover, max-cut, and the
+additive bin packing line, and leave the rest of the map as section 11
+drew it.
+
 == choosing the right surrender
 
 The corpus now holds every tier of the trade, and the choice is a
@@ -1093,8 +1163,28 @@ treatments. P. Slavik, "A tight analysis of the greedy algorithm
 for set cover", Journal of Algorithms 25, 1997, the exact greedy
 worst case named in section 4. The bin packing bounds follow
 D. S. Johnson's 1973 thesis and G. Dosa's 2007 tightening of the
-additive constant. Sample behavior verified by the 7 suite gates
-scoped to chapter 42: c 8 files and 8 checks, go 17 test functions,
-java 8 files and 224 checks under run-java-samples, c\# 24 facts,
-javascript 24 tests across 8 suites, python 8 files and 8 checks, lua
-37 checks, zero skipped.
+additive constant. OpenAI, "Sharing AI progress in mathematics",
+https://openai.com/index/sharing-ai-progress-in-mathematics/,
+published 2026-10-06, the repository github.com/openai/math fetched
+2026-10-11, families 102 and 118 of the 372 cited in section 12: the
+Unique Games theorem with the direct max-cut, vertex cover, Min-UnCut,
+and directed feedback vertex set threshold reductions, and the
+additive bin packing hardness with the modified integer round-up
+disproof, preprint results whose trust grades come from the release's
+catalogue of Lean 4 formalizations, the Unique Games theorem, the
+max-cut hardness, and the vertex cover factor-two papers among the
+formalized, and none of it peer reviewed. M. X. Goemans and
+D. P. Williamson, "Improved approximation algorithms for maximum cut
+and satisfiability problems using semidefinite programming", Journal
+of the ACM 42, 1995,
+the 0.878 ratio named in section 12. S. Khot, "On the power of unique
+2-prover 1-round games", STOC 2002, the conjecture. S. Khot and
+O. Regev, "Vertex cover might be hard to approximate to within
+2-epsilon", STOC 2003, and S. Khot, G. Kindler, E. Mossel, and
+R. O'Donnell, "Optimal inapproximability results for MAX-CUT and other
+2-variable CSPs?", FOCS 2004, the 2 conditional thresholds the
+release's direct proofs replace. Sample behavior verified by the 7
+suite gates scoped to chapter 42: c 8 files and 92 checks, go 17 test
+functions, java 8 files and 224 checks under run-java-samples,
+c\# 24 facts, javascript 24 tests across 8 suites, python 8 files and
+184 checks, lua 37 checks, zero skipped.
