@@ -472,12 +472,85 @@ rows where the forged claim misstates $q -> r$.
 
 The same shape runs at research scale in the openai/math release. An
 internal model was pointed at about 4,000 open research problems, and
-the 2026-10-06 publication carries 722 manuscripts in 372 result
+the 2026-10-06 publication carries 719 manuscripts in 372 result
 families, with about 42 percent of top-line results backed by Lean 4
 formalizations and trust graded per claim: formal, comparator-checked
 supporting, and warned unformalized. The proof is the artifact handed
 to a small checker that decides acceptance on its own recomputation,
 which is what makes the output auditable claim by claim.
+
+Family 107, matrix multiplication, is the release's worked instance of
+both tiers at once, and this book reran its numerical checker. The
+staggered-extraction preprint packages `verify_parameters.py`, which
+recomputes the every-field bound $omega < 2.371054886006746$ from exact
+rationals: all 104 printed enclosures are rebuilt from exact Fraction
+weights with outward rounding, an assertion over an interval requires the
+whole interval to satisfy the bound, the widths obey caps of $10^(-76)$
+in native log mode and $3 dot 10^(-29)$ in series mode, and the script
+writes its output only after every internal assertion passes. The two
+commands and their manifest live in `ref/openai-math/family-107/README.md`,
+and the two local runs of 2026-10-11, python 3.14.7 with mpmath 1.3.0,
+one in native log mode and one in rational-series mode, are cached there
+under `recheck/` and copied byte-exact into
+`books/math/samples/fixtures/` with their provenance. What the rerun
+certifies is the numerical layer: the enclosures, the 13 structural
+checks, and the strict gap. What it does not certify sits above that
+layer, the Lean proofs are separate comparator targets and the extraction
+theorem lifting the numerics to the omega bound is proved in the
+accompanying paper. Same shape as the step table: the checker trusts only
+what it recomputes.
+
+#table(
+  columns: (auto, auto, auto),
+  inset: 4pt,
+  table.header([*log mode*], [*strict gap lo*], [*exponent upper bound hi*]),
+  [native], [$4.6768297259683273017708127 dot 10^(-6)$], [$2.3710548860067456848611118755974003053609...$],
+  [rational series], [$4.6768297259683273017708094 dot 10^(-6)$], [$2.3710548860067456848611118755981907927968...$],
+)
+
+The two modes agree on the gap through 23 digits and on the bound
+through 30, then the native and series enclosures diverge while both stay
+below the claimed threshold. The full hi strings, 92 characters carrying
+91 significant digits and 90 decimals, are the lane's oracle,
+compared byte for byte against the values recorded in the family README.
+
+The book's own checker for these fixtures is `mmbound.c`, built by the
+same pinned clang 23 lane as the chapter samples. It parses the two
+decimals under `exponent_upper_bound` and the two under `strict_gap`, and
+compares them exactly with no floating point anywhere: `lo < hi` holds
+exactly when lo's digits followed by hi's number of zeros fall short of
+hi's digits followed by lo's number of zeros, the cross-multiplication by
+the other side's power of ten carried out as digit-string padding, and
+two integers written as digit strings compare by length then place value.
+The verdict set is the claim in miniature: the exponent interval is
+nonempty, its top sits strictly below $2.371054886006746$ the same way,
+the gap is strictly positive, and any tampered or malformed fixture exits
+nonzero. `make verify-math-f107` drives it: 16 field checks against the
+README oracle, the 8 checker verdicts over both fixtures, 16 tamper
+probes covering swapped, raised, equal-to-threshold, garbled, negative,
+and zero-valued bounds plus duplicated-key and duplicated-member
+decoys, and 64 seeded byte mutations, all green.
+
+#listing("math/samples/checker/mmbound.c", first: 69, last: 85, caption: [mmbound.c, the exact compare, digit strings by length then place value, and the power-of-ten padding, no floating point])
+
+#listing("math/samples/checker/mmbound.c", first: 97, last: 117, caption: [mmbound.c, the cross-multiplication, each side's digits followed by the other side's number of zeros])
+
+The release's families touch several Clay millennium problems, and the
+trust grades decide what a book may claim from them. The stance rows:
+
+#table(
+  columns: (auto, auto, auto, auto),
+  inset: 4pt,
+  table.header([*family*], [*claim*], [*tier*], [*what this book states*]),
+  [002], [full BSD formula over $Q$ in Selmer corank 0 and 1, with Sha finiteness], [report, paper only], [absent from the formalized catalogue, no formal backing claimed],
+  [032], [rational Hodge conjecture for CM abelian varieties], [report, paper only], [same gap, one of the release's two procedure exceptions],
+  [003], [quasi-RH, Dirichlet L-functions zero-free for $Re(s) > 7/8$, companion proof at $11/12$], [Lean], [formalized with comparator `DirichletSevenEighths`, and the Riemann hypothesis itself stays open],
+)
+
+No P versus NP claim exists anywhere in the release. The complexity-side
+headline is family 102, the Unique Games Conjecture at Lean tier, which
+carries the approximation thresholds the #xref-to("dsa", "approximation")
+chapter restates with their tier named.
 
 With propositions, quantifiers, sets, relations, functions, induction,
 invariants, and proofs in hand as data plus loops, the next step is
@@ -506,11 +579,28 @@ toolset headers, so popcount is the clear-lowest-bit loop. OpenAI,
 "Sharing AI progress in mathematics",
 https://openai.com/index/sharing-ai-progress-in-mathematics/, published
 2026-10-06, fetched 2026-10-09, an internal model pointed at about
-4,000 open research problems whose release publishes 722 manuscripts in
+4,000 open research problems whose release publishes 719 manuscripts in
 372 result families with trust graded formal, comparator-checked, and
 warned. The repository github.com/openai/math, fetched 2026-10-09,
 publishes the ComparatorChallenges verification targets run via
-`lake env comparator <file>`. Sample
+`lake env comparator <file>`. Family 107 sources, fetched 2026-10-11
+through the cache ref/openai-math/family-107/: the staggered-extraction
+verifier `verify_parameters.py`, sha256
+d7d11c2ff81ebb535a80f61da1b68928743ab6d782ffb2f23442045a0342cb32, run
+locally in both modes (python 3.14.7, mpmath 1.3.0) over inputs pinned
+by parameter sha256
+538deff25fb30b68b01f7ff43b2a62ce0719afba25891ff38fda7027a31c2b65, both
+outputs copied byte-exact into books/math/samples/fixtures/ with
+provenance in the README there. Millennium stance rows from overview.tex
+entries 002, 003, 032, and 102, with formalization.yaml as the tier
+arbiter, its Dirichlet entry carrying declaration
+`OAI.DirichletCharacter.LFunction_ne_zero_of_seven_eighths_lt_re` and
+comparator config `ComparatorChallenges/DirichletSevenEighths.json`. The
+f107 lane verified by `pwsh -NoProfile -File tools/verify-math-f107.ps1`:
+16 fixture field checks against the family README oracle, 8 mmbound
+verdicts over both fixtures, 16 tamper probes with the right verdict
+each, 64 seeded byte
+mutations exited clean, format leg clean. Sample
 behavior verified by `pwsh -NoProfile -File tools/run-c-samples.ps1
 -SampleRoot books/math/samples/src -Chapter Ch13`, 52 checks in chapter
 13 of the math suite, format leg clean, zero failures.

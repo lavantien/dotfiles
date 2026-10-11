@@ -104,4 +104,12 @@
   (topic: "capstone host runner gate", url: "tools/run-math-capstone.ps1", accessed: "2026-09-22"),
   (topic: "openai math release, proofs as machine-checkable artifacts", url: "https://openai.com/index/sharing-ai-progress-in-mathematics/", accessed: "2026-10-09"),
   (topic: "openai math repository, ComparatorChallenges targets", url: "https://github.com/openai/math", accessed: "2026-10-09"),
+  (topic: "family 107 preprint, 9/4 exponent over the complex numbers", url: "ref/openai-math/family-107/paper-9fourths.pdf and paper-9fourths.tex, fetched 2026-10-11 from github.com/openai/math", accessed: "2026-10-11"),
+  (topic: "family 107 preprint, complex multiplication below 2.258", url: "ref/openai-math/family-107/paper-below-2258.pdf, fetched 2026-10-11 from github.com/openai/math", accessed: "2026-10-11"),
+  (topic: "family 107 preprint, staggered extraction over every field", url: "ref/openai-math/family-107/paper-staggered-extraction.pdf, fetched 2026-10-11 from github.com/openai/math", accessed: "2026-10-11"),
+  (topic: "openai math release overview, entry 107 and the millennium stance rows", url: "ref/openai-math/overview.tex, fetched 2026-10-11 from github.com/openai/math", accessed: "2026-10-11"),
+  (topic: "openai math formalization manifest, the tier arbiter", url: "ref/openai-math/formalization.yaml, fetched 2026-10-11 from github.com/openai/math", accessed: "2026-10-11"),
+  (topic: "family 107 lean sources and comparator challenges", url: "ref/openai-math/family-107/lean-Main.lean, lean-AuxiliarySeparation-Main.lean, lean-ComparatorChallenges.lean, and doc-107.md, fetched 2026-10-11", accessed: "2026-10-11"),
+  (topic: "staggered-extraction verification tree, sha256-pinned inputs and verifier", url: "ref/openai-math/family-107/staggered-verification/, scripts and data fetched 2026-10-11 from github.com/openai/math", accessed: "2026-10-11"),
+  (topic: "family 107 verifier recheck outputs, native log and rational series modes", url: "ref/openai-math/family-107/recheck/, generated 2026-10-11 on this machine, provenance is the command lines in ref/openai-math/family-107/README.md", accessed: "2026-10-11"),
 )
