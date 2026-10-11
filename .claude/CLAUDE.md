@@ -24,6 +24,7 @@
 
 - Subagent fan-out is the default execution mode.
 - Before any execution, prepare a comprehensive task list with isolated concurrency in mind and proper dependency relationships.
+- All terminal commands always need to be async, especially with sub agents, so that they can communicate back when pinged and not went stuck unnoticed.
 - Quota guard: every 20 minutes fire a throwaway subagent to query the glm-plan-usage 5-hour window quota, and pause all development and fan-out at 95% until the window resets.
 - Memory guard: alongside the quota polling, run a cron-scheduled check every 5 minutes for the whole fan-out lifetime that enforces a hard cap on the combined working set of all project processes (compilers, test binaries, mutation, fuzz, e2e drivers, ...) at 16 GB RAM, read from the OS at runtime, from all the working repo's processes. On breach kill the least recently used's process tree, verify the OS process is gone, and rerun its task in the freed slot, never touch processes that are not originated from the working repo.
 - Progress watchdog: every agent schedules a recurring job that reports its current status every 20 minutes. If 30 minutes pass with no report, the agent is stuck: dispose of it per the disposal rules and relaunch its task from its last recorded progress.
