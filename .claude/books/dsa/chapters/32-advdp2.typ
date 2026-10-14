@@ -75,9 +75,10 @@ optima pinned in the C, Java, and Python suites.
 })
 
 The 224 closes the ladder at 39 evaluations against 45, and the
-listings below fill the layers in seven languages.
+listings below fill the layers in eight languages.
 
 #listing("dsa/samples-c/src/Ch32/dncdp.c", first: 34, last: 55, caption: [c, the recursion: midpoint scan inside the inherited window, halves narrowed by bestj])
+#listing("dsa/samples-rust/src/Ch32/dncdp.rs", first: 33, last: 55, caption: [rust, the recursion: midpoint scan inside the inherited window, halves narrowed by bestj])
 #listing("dsa/samples-go/ch32/dncdp.go", first: 42, last: 68, caption: [go, the closure recursion, infeasible candidates skipped])
 #listing("dsa/samples-java/src/Ch32/Dncdp.java", first: 32, last: 51, caption: [java, the recursion: midpoint scan inside the inherited window, halves narrowed by bestj])
 #listing("dsa/samples/src/Ch32/DncDp.cs", first: 37, last: 61, caption: [c\#, the recursion as a local function over the two layer arrays])
@@ -95,7 +96,7 @@ brute enumeration of all cut masks. The meter is the point: 39
 candidate evaluations across three layers against 45 for the full
 scan, 15 per layer. The edges cover k = n, all singles, k = 1, and
 the k past n layers staying infeasible. The application is icpc
-world finals 2017 problem D (book 10, chapter 8), money for nothing:
+world finals 2017 problem D (book 11, chapter 10), money for nothing:
 after pruning producers and consumers to staircases, the best
 consumer index for the middle producer is found by exactly this
 monotone-optimum divide and conquer at O((m+n) log n).
@@ -181,9 +182,10 @@ Python suites.
 )
 
 The full span pays one candidate for the pinned 39, and the
-listings below fill the windows in seven languages.
+listings below fill the windows in eight languages.
 
 #listing("dsa/samples-c/src/Ch32/knuth.c", first: 38, last: 65, caption: [c, the length loop with the root window, candidates metered])
+#listing("dsa/samples-rust/src/Ch32/knuth.rs", first: 42, last: 66, caption: [rust, the length loop with the root window, candidates metered])
 #listing("dsa/samples-go/ch32/knuth.go", first: 21, last: 42, caption: [go, the diagonal and length loops, window from the root table])
 #listing("dsa/samples-java/src/Ch32/Knuth.java", first: 38, last: 62, caption: [java, the length loop with the root window, candidates metered])
 #listing("dsa/samples/src/Ch32/Knuth.cs", first: 32, last: 50, caption: [c\#, the window loop, the root table filled beside the cost])
@@ -289,9 +291,10 @@ the domino ladder 2, 3, 5, 8 pinned beside it.
 })
 
 The sweep closes at the pinned 8 over all four rows, and the
-listings below carry both machines in seven languages.
+listings below carry both machines in eight languages.
 
 #listing("dsa/samples-c/src/Ch32/brokenprofile.c", first: 27, last: 55, caption: [c, the fill recursion, vertical pairs or horizontal protrusions])
+#listing("dsa/samples-rust/src/Ch32/brokenprofile.rs", first: 30, last: 63, caption: [rust, the fill recursion, vertical pairs or horizontal protrusions, inside the column loop])
 #listing("dsa/samples-go/ch32/brokenprofile.go", first: 7, last: 37, caption: [go, the fill recursion inside the column loop])
 #listing("dsa/samples-java/src/Ch32/Brokenprofile.java", first: 25, last: 53, caption: [java, the fill recursion over array masks, vertical pairs or horizontal protrusions])
 #listing("dsa/samples/src/Ch32/BrokenProfile.cs", first: 44, last: 77, caption: [c\#, the histogram stack half, the fill recursion above it])
@@ -310,7 +313,7 @@ columns 2 and 3, and the reference cross-checked 300 random grids
 against brute-force rectangles. Tiling runs O(n 2^m) and the
 submatrix O(rows times cols). The counting cousin, the
 tiling-tiles style sweep of icpc world finals 2023 problem F
-(book 10, chapter 12), stays in the icpc book.
+(book 11, chapter 14), stays in the icpc book.
 
 #diagram([the 3 by 4 grid mid-sweep with its protrusion mask, beside the 4 by 6 zero matrix as height bars with the 8-cell rectangle shaded], length: 13pt, {
   // left: 3x4 grid, column 1 filling: incoming mask 100 (row 0 protrudes),
@@ -419,9 +422,10 @@ at cost 5 with the final multiset 2, 2, 1, 1 and the shift trace
 })
 
 The trace closes at the pinned pair, cost 5 and heap 2, 2, 1, 1,
-and the listings below pay the crossings in seven languages.
+and the listings below pay the crossings in eight languages.
 
 #listing("dsa/samples-c/src/Ch32/slopetrick.c", first: 84, last: 105, caption: [c, the one-heap loop, the payment and the lazy repush])
+#listing("dsa/samples-rust/src/Ch32/slopetrick.rs", first: 100, last: 118, caption: [rust, the one-heap loop, payment and lazy repush, the max-heap hand-rolled over a vec])
 #listing("dsa/samples-go/ch32/slopetrick.go", first: 80, last: 92, caption: [go, slopeRun, the heap.Push and Pop pair at the crossing])
 #listing("dsa/samples-java/src/Ch32/Slopetrick.java", first: 87, last: 107, caption: [java, the one-heap loop over the hand-rolled long max-heap, payment and lazy repush])
 #listing("dsa/samples/src/Ch32/SlopeTrick.cs", first: 23, last: 41, caption: [c\#, the payment loop over a PriorityQueue as a negated max-heap])
@@ -438,7 +442,7 @@ costs 0, the single element costs 0, 10, 1, 1 costs 9, and 4, 4, 8,
 -2 and costs 7, holds 5, 5, 5 at 2 through z 5, 4, 3, and 1, 1, 1
 at 2. The reference cross-checked 400 random instances against an
 independent dp ground truth for both variants. The kin application
-is icpc world finals 2022 problem S (book 10, chapter 11), bridging
+is icpc world finals 2022 problem S (book 11, chapter 13), bridging
 the gap: its judge-green engine is a pull-based dp row sweep whose
 offers live in lazily-shifted window heaps, the same lazy-offset
 heap idiom, kin to the classic objective rather than an instance of
@@ -512,10 +516,11 @@ asserted by the C\# suite at V = 4.5, 4, 3, 2, 1.
 )
 
 The fifth sweep lands the pinned 4.5, 4, 3, 2, 1 and the sixth
-changes nothing, and the listings below sweep the ladder in seven
+changes nothing, and the listings below sweep the ladder in eight
 languages.
 
 #listing("dsa/samples-c/src/Ch32/valueiter.c", first: 24, last: 40, caption: [c, one gauss-seidel sweep ascending, the max delta returned])
+#listing("dsa/samples-rust/src/Ch32/valueiter.rs", first: 22, last: 38, caption: [rust, one gauss-seidel sweep ascending, the max delta returned])
 #listing("dsa/samples-go/ch32/valueiter.go", first: 12, last: 37, caption: [go, the ladder sweep, gamble falling to state 2])
 #listing("dsa/samples-java/src/Ch32/Valueiter.java", first: 22, last: 35, caption: [java, one gauss-seidel sweep ascending, the max delta returned])
 #listing("dsa/samples/src/Ch32/ValueIter.cs", first: 15, last: 44, caption: [c\#, the generic sweep over an action table, walk and gamble supplied as data])
@@ -537,7 +542,7 @@ state rolling toward the goal at one sixth: V converges to exactly
 6. The edges cover a goal-only mdp at 0, an unreachable state
 keeping its initialized 0 by stated convention, and a state whose
 every action leads to the goal. The application is icpc world
-finals 2023 problem K (book 10, chapter 12), alea iacta est: the
+finals 2023 problem K (book 11, chapter 14), alea iacta est: the
 7^d expected-rolls mdp solved by value iteration, the approach
 every contest team used where the editorial ran the backward
 dijkstra of #xref-to("dsa", "shortestpaths").
@@ -592,8 +597,7 @@ amortized-doubling argument as the dynamic array growth of
 of capacity. The consumers are the standard trio: dsu component
 lists, subtree queries that merge children into the heaviest first,
 and heavy path bookkeeping in tree decompositions. The kin
-application is icpc world finals 2025 problem E (book 10, chapter
-13), delivery service, whose component-merge accounting runs on
+application is icpc world finals 2025 problem E (book 11, chapter 15), delivery service, whose component-merge accounting runs on
 exactly this lemma. No samples ship for it: the proof is the
 doubling ladder below, and the tree structures that consume it
 belong to later chapters.
@@ -680,7 +684,7 @@ below draws the per-element view.
   cdraw.content((13.5, 0.1), [the dynamic array's doubling, on members], size: 6pt)
 })
 
-== across the seven languages
+== across the eight languages
 
 Featured build size counted as non-blank, non-comment lines of the
 chapter's five sample files per language, embedded test scripts
@@ -691,6 +695,7 @@ included:
   inset: 4pt,
   table.header([*language*], [*build sloc*], [*container dependency*], [*boundary note*]),
   [c], [605], [static tables, hand heaps], [double and fraction-free paths, fabs for the delta, pop order recorded from the selection loop],
+  [rust], [785], [rust 1.99 std], [the slope trick max-heap hand-rolled over a vec though std BinaryHeap ships max-order, infeasible cells as the 1 << 60 sentinel],
   [go], [416], [container/heap, math], [two heap types over one item shape, the die mini converging under 1e-13],
   [java], [630], [jdk 27 stdlib], [the slope trick max-heap hand-rolled over a long array, PriorityQueue ships min-order only, infeasible cells marked by the 1L << 60 sentinel],
   [c\#], [301], [priorityqueue, tuples, records], [the value iterator generic over an action table, walk and gamble supplied as data],
@@ -710,11 +715,12 @@ cp-algorithms.com/dynamic_programming/zero_matrix.html, all accessed
 2026-09-20, cc by-sa 4.0, our own words and code throughout. The
 slope trick and value iteration sections have no cp-algorithms
 article and stand as general techniques with their icpc applications
-as sources: icpc world finals 2017 problem D (book 10, chapter 8),
-2022 problem S (book 10, chapter 11), 2023 problem K (book 10,
-chapter 12), and 2025 problem E (book 10, chapter 13) as the kin
-clause of the last section. Sample behavior verified by the seven
-suite gates scoped to chapter 32: c 5 files and 129 checks, go 19
+as sources: icpc world finals 2017 problem D (book 11, chapter 10),
+2022 problem S (book 11, chapter 13), 2023 problem K (book 11, chapter 14), and 2025 problem E (book 11, chapter 15) as the kin
+clause of the last section. Sample behavior verified by the eight
+suite gates scoped to chapter 32: c 5 files and 129 checks, rust 5
+files and 129 checks under run-rust-samples in books/dsa/samples-rust,
+go 19
 test functions, java 5 files and 129 checks under run-java-samples,
 c\# 23
 facts, javascript 18 tests and 66 asserts,

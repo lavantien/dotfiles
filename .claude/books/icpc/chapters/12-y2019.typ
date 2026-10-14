@@ -1,4 +1,4 @@
-// book 10, chapter 11: icpc world finals 2019. eleven problems, letters
+// book 11, chapter 12: icpc world finals 2019. eleven problems, letters
 // A through K, each walked in seven languages over the frozen solver
 // trees under samples-c, samples-go, samples-java, samples, samples-js,
 // samples-py, and samples-lua
@@ -29,7 +29,7 @@ run.
 
 Three helper kits are year-local to 2019, and everything else the
 year's solvers import comes from the wave 1 toolbox chapters 2
-through 7. The scan kit exists because the 2019 inputs reach 19.6 MB
+through 8. The scan kit exists because the 2019 inputs reach 19.6 MB
 and a million tokens, past what the toolbox line splitter tolerates:
 the C solvers read the whole file into one buffer and a const cursor
 walks it, `next_int64` parsing digits in place, inside
@@ -41,7 +41,7 @@ splits the buffer natively, lua walks a byte cursor of its own, and
 java reads the whole file through a `BufferedReader` into one string
 that a static cursor and `nextLong` walk inside each solver, the
 scan family subsumed rather than ported.
-The cursor outlived its year: chapters 11, 12 and 13 face the same
+The cursor outlived its year: chapters 12, 13 and 14 face the same
 oversized inputs and their C solvers include the `ch11_scan.h` twin
 of this kit.
 
@@ -222,7 +222,7 @@ interchangeable and the whole task is which front sits under which
 back, a strict-dominance pairing one order-statistics query answers
 per position. Problem A is the 2019 face of the greedy with a
 safety proof family, and greedy with a safety proof is the family
-of chapter 09 problem H, chapter 10 problem K, and chapter 13
+of chapter 10 problem H, chapter 11 problem K, and chapter 14
 problem H.
 
 The tempting alternative, a bipartite matching over heights, is
@@ -391,7 +391,7 @@ pillars may stand only at key points, which arrive sorted by x, and
 an arch's legality couples exactly its two endpoints and the
 points between them, the shape of a dp over the last chosen pillar
 with a per-pair validity window. Problem B is the 2019 face of the
-chain dp over sorted positions family, and chapter 09 problem F
+chain dp over sorted positions family, and chapter 10 problem F
 carries the same shape.
 
 The tempting alternative, a knuth-style or divide-and-conquer
@@ -586,7 +586,7 @@ game, a hidden initial state rebuilt from a partial observation
 log, every rule the replay trips over turning into a constraint
 that adds a witness piece or crowns one. Problem C is the 2019
 face of the constraint repair with backtracking family, and
-chapter 09 problem B is its only sibling.
+chapter 10 problem B is its only sibling.
 
 The tempting alternative, enumerating setups directly, is priced
 out by the universe: five piece states over 32 squares is about
@@ -729,7 +729,7 @@ its markers, none left out, is built from the grammar siei, or siNei
 wrapping another nested structure N, or the concatenation AB of two
 nested structures, which is exactly the bracket condition that the
 type's running balance never dips below zero and ends at zero. Book
-7's chapter 35, combinatorics, counts these balanced-bracket families
+10's chapter 35, combinatorics, counts these balanced-bracket families
 exactly. The
 strand under study is circular DNA, a closed loop, and whether a type
 nests depends on where the loop is cut. The task is the cut, made just
@@ -776,8 +776,8 @@ on one type's running balance, and the whole question is which
 cuts leave every type's balance at its minimum, one rotating
 aggregate per type. Problem D is the 2019 face of the event sweep
 over a sorted axis family, and the same event sweep over a sorted
-axis cue drives chapter 10 problem A, chapter 10 problem H,
-chapter 11 problem J, and chapter 14 problem L.
+axis cue drives chapter 11 problem A, chapter 11 problem H,
+chapter 12 problem J, and chapter 15 problem L.
 
 The tempting alternative, rotating the marker string per cut and
 re-checking bracket balance per type, is priced out at 1e6 cuts
@@ -957,9 +957,9 @@ about whole components of the road graph rather than any single
 street, and the components that matter are exactly the 2-core and
 what peels off it. Problem E is the 2019 face of the component
 structure and connectivity family, and the component structure
-and connectivity family runs through chapter 10 problem B,
-chapter 11 problem H, chapter 12 problem R, chapter 14 problem E,
-and chapter 14 problem G.
+and connectivity family runs through chapter 11 problem B,
+chapter 12 problem H, chapter 13 problem R, chapter 15 problem E,
+and chapter 15 problem G.
 
 The tempting alternative, a reachability walk per entrance, is
 priced out at up to 1e6 entrances times an O(n + m) traversal
@@ -972,7 +972,7 @@ component that peels entirely is a tree, where only the original leaf
 entrances survive redundancy pruning, and otherwise every street with
 exactly one peeled endpoint keeps its sign at the core endpoint, since
 everything on the peeled branch reaches that entrance without a
-U-turn (solutions.pdf p. 4, O(n + m)). Book 9's chapter 39, graph
+U-turn (solutions.pdf p. 4, O(n + m)). Book 10's chapter 39, graph
 connectivity and decomposition, builds this 2-core peel, degree queues
 and all, from scratch. The seven peelings follow.
 
@@ -1154,7 +1154,7 @@ lower end, or drops through a puncture, all verbs of vertical
 stacking order at a moving x, so the shape is a left-to-right
 sweep holding the live tarps ordered by height, with the dp the
 drops feed sitting underneath. Problem F is the 2019 face of the
-sweep line with an ordered active set family, chapter 09 problem
+sweep line with an ordered active set family, chapter 10 problem
 L is its only sibling, and a secondary thread, dp over a
 piecewise-constant function, covers the water trajectory under
 the tarps.
@@ -1262,7 +1262,7 @@ the trace ends at the printed answer `2`.
 The vehicle is the year's own: V lives as a run treap, equal-value
 runs in a treap with subtree min and max, lazy addition, and
 cell-boundary splits and merges, ported from the judge-green go
-implementation. Book 9's chapter 30, balanced trees and order
+implementation. Book 10's chapter 30, balanced trees and order
 statistics, builds this treap from scratch, lazy adds and subtree
 aggregates included. Run cuts cannot keep a treap heap-consistent under
 adversarial cut orders, so the vehicle rebuilds, and the rebuild
@@ -1400,7 +1400,7 @@ mother tree, and counting every lady's path against all queries
 at once is exactly what a pattern automaton with suffix links
 does. Problem G is the 2019 face of the string borders,
 rotations, and automata family, and string borders, rotations,
-and automata connect chapter 09 problem K and chapter 13
+and automata connect chapter 10 problem K and chapter 14
 problem F.
 
 The tempting alternative, materializing the names, is priced out
@@ -1598,8 +1598,8 @@ are its own subtree count plus an arc of its ring, component
 structure answering a question that reads like a search. Problem
 H is the 2019 face of the component structure and connectivity
 family, and the component structure and connectivity family runs
-through chapter 10 problem B, chapter 11 problem E, chapter 12
-problem R, chapter 14 problem E, and chapter 14 problem G.
+through chapter 11 problem B, chapter 12 problem E, chapter 13
+problem R, chapter 15 problem E, and chapter 15 problem G.
 
 The tempting alternative, a backward breadth-first search per
 station, is priced out at 5e5 stations times up to 5e5 reached
@@ -1618,7 +1618,7 @@ node whose ring entry is reached within k legs, ring nodes at distance
 zero included, adds one to the forward ring arc of length
 min(k - dist + 1, ring length) starting at its entry, accumulated with
 a wrapped difference array, and ring answers are the arc prefix sums
-while tree answers are g (solutions.pdf pp. 5-6, O(n)). Book 9's
+while tree answers are g (solutions.pdf pp. 5-6, O(n)). Book 10's
 chapter 39, graph connectivity and decomposition, develops the
 functional graph itself, this ring-with-hanging-trees decomposition
 included. The seven tree walks follow.
@@ -1838,8 +1838,8 @@ a program into mapping a transition function over robot
 configurations and code positions, divergence being exactly a
 cycle in that product. Problem I is the 2019 face of the dp over
 an engineered state space family, and the dp over an engineered
-state space family spans chapter 10 problem J, chapter 12
-problem S, chapter 13 problem J, and chapter 14 problem H.
+state space family spans chapter 11 problem J, chapter 13
+problem S, chapter 14 problem J, and chapter 15 problem H.
 
 The tempting alternative, running the program under a step
 counter with a guessed bound, is priced out by honesty rather
@@ -1857,7 +1857,7 @@ state means the evaluation cannot terminate and every state it
 touched goes divergent, and results are caller-independent so the
 memo carries across all programs (solutions.pdf pp. 6-7, O(rcs) over
 the configuration space times the code). The interpreter machine is
-book 9's chapter 27, an opcode machine, a memoized program-counter
+book 10's chapter 27, an opcode machine, a memoized program-counter
 interpreter with configuration-space cycle detection, and this letter
 is its contest form. The machine runs in two vehicles
 here: c, java, javascript, and python evaluate over an explicit resume
@@ -2032,8 +2032,8 @@ the whole question lives on one axis where each pair's preference
 is an interval and the best rank is the deepest overlap.
 Problem J is the 2019 face of the event sweep over a sorted axis
 family, and the same event sweep over a sorted axis cue drives
-chapter 10 problem A, chapter 10 problem H, chapter 11 problem D,
-and chapter 14 problem L.
+chapter 11 problem A, chapter 11 problem H, chapter 12 problem D,
+and chapter 15 problem L.
 
 The tempting alternative, evaluating the rank at every candidate
 cap, is priced out twice over: the scores run to 1e9, and even
@@ -2204,7 +2204,7 @@ of departures is 2520 residues, grouped by shared primes and
 independent across groups by the chinese remainder theorem.
 Problem K is the 2019 face of the algebraic reduction to a small
 universe family, and algebraic reduction to a small universe
-covers chapter 09 problem I and chapter 12 problem Z.
+covers chapter 10 problem I and chapter 13 problem Z.
 
 The tempting alternative, multiplying per-light marginals, is
 priced out by correctness rather than time: lights whose periods
@@ -2222,9 +2222,9 @@ reduced periods share a prime join one group whose modulus is the
 least common multiple of the members, since their free phases
 correlate through the shared j residue, distinct groups are
 independent by the chinese remainder theorem, and the q = 1 lights
-form one extra group of period one. Book 9's chapter 16, number
+form one extra group of period one. Book 10's chapter 16, number
 theory and modular arithmetic, develops the chinese remainder theorem
-this independence rides on, and book 9's chapter 28, advanced number
+this independence rides on, and book 10's chapter 28, advanced number
 theory, reconstructs each merged residue the garner way. Per residue
 t0, each group walks
 its lights in position order over its k phases for first-red counts

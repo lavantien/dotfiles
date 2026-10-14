@@ -33,7 +33,7 @@ condensation itself is a dag.
 
 The dry run: the fixture is the 8-vertex chain of cycles, arcs 0 to
 1, 1 to 2, 2 back to 0, 2 to 3, 3 to 4, 4 to 5, 5 back to 3, 5 to 6,
-6 to 7, 7 back to 6, asserted by all seven suites.
+6 to 7, 7 back to 6, asserted by all eight suites.
 
 + The first pass runs from 0 and pushes one spine, 0, 1, 2, 3, 4, 5,
   6, 7: every arc leads onward, and the two closers, 2 to 0 and 5 to
@@ -62,9 +62,10 @@ The dry run: the fixture is the 8-vertex chain of cycles, arcs 0 to
 
 The labels 0, 0, 0, 3, 3, 3, 6, 6 over three components with the
 arcs (0, 3) and (3, 6) are the pinned row, and the listings below
-run both passes in seven languages.
+run both passes in eight languages.
 
 #listing("dsa/samples-c/src/Ch39/scc.c", first: 50, last: 97, caption: [c, the finish-order pass on explicit frames, the reversed-graph flood])
+#listing("dsa/samples-rust/src/Ch39/scc.rs", first: 66, last: 122, caption: [rust, the finish-order pass on explicit frames, the reversed-graph flood])
 #listing("dsa/samples-go/ch39/scc.go", first: 20, last: 65, caption: [go, the two passes over frame structs, component ids from the flood])
 #listing("dsa/samples-java/src/Ch39/Scc.java", first: 51, last: 100, caption: [java, the finish-order pass on explicit frames, the reversed-graph flood, a line-for-line port of the c stack])
 #listing("dsa/samples/src/Ch39/Strong.cs", first: 43, last: 91, caption: [c\#, raw components in condensation order, relabeled by smallest member above])
@@ -138,7 +139,7 @@ and every condensation-shaped dp.
 
 A clause (a or b) is two promises: if a is false then b, and if b is
 false then a. Literal x lives at node 2v and its negation at 2v + 1,
-uniform across the seven languages, and each clause adds the two
+uniform across the eight languages, and each clause adds the two
 implication arcs, from the negation of one side into the other. One
 kosaraju run over that implication graph decides satisfiability: a
 variable whose two literals share a component is contradictory, the
@@ -147,7 +148,7 @@ the literal whose component sits later in the condensation order, the
 side with no outgoing path into its negation.
 
 The dry run: the fixture is the forced formula (a) and (not a or
-not b) and (b or c), asserted by all seven suites, each brute-checking
+not b) and (b or c), asserted by all eight suites, each brute-checking
 that a true, b false, c true is the only satisfying row.
 
 + Literals sit at 2v and 2v + 1: a at 0, not a at 1, b at 2, not b
@@ -191,9 +192,10 @@ that a true, b false, c true is the only satisfying row.
 
 The unique a true, b false, c true is the pinned row, and the
 listings below build the implication graph and read the assignment
-out in seven languages.
+out in eight languages.
 
 #listing("dsa/samples-c/src/Ch39/twosat.c", first: 105, last: 125, caption: [c, the contradiction test and the later-component rule, the clause builder two arcs above])
+#listing("dsa/samples-rust/src/Ch39/twosat.rs", first: 131, last: 148, caption: [rust, the contradiction test and the later-component rule, the clause builder two arcs above])
 #listing("dsa/samples-go/ch39/twosat.go", first: 10, last: 41, caption: [go, literal encoding, the embedded kosaraju twin, the extraction])
 #listing("dsa/samples-java/src/Ch39/Twosat.java", first: 107, last: 129, caption: [java, the contradiction test and the later-component rule, the clause evaluator for the brute twin])
 #listing("dsa/samples/src/Ch39/Strong.cs", first: 104, last: 125, caption: [c\#, the clause-to-arcs translation, the value extraction over raw ids])
@@ -271,7 +273,7 @@ carry none. The root is its own trap, it articulates exactly when it
 has two or more dfs children, the case the single-edge fixture pins.
 
 The dry run: the fixture is two triangles joined by the single edge
-2 to 3, asserted by all seven suites.
+2 to 3, asserted by all eight suites.
 
 + The timer opens at 1 on root 0 and the spine runs 0, 1, 2, 3, 4,
   5, one discovery each: disc 1 through 6, low starting equal.
@@ -298,9 +300,10 @@ The dry run: the fixture is two triangles joined by the single edge
 )
 
 The lone bridge with both endpoints hinging is the pinned pair, and
-the listings below classify in seven languages.
+the listings below classify in eight languages.
 
 #listing("dsa/samples-c/src/Ch39/bridges.c", first: 56, last: 105, caption: [c, the iterative unwind merging low and classifying bridge and articulation])
+#listing("dsa/samples-rust/src/Ch39/bridges.rs", first: 91, last: 141, caption: [rust, the iterative unwind merging low and classifying bridge and articulation])
 #listing("dsa/samples-go/ch39/bridges.go", first: 34, last: 82, caption: [go, paired arcs per edge, the unwind classifying on the parent frame])
 #listing("dsa/samples-java/src/Ch39/Bridges.java", first: 56, last: 108, caption: [java, the iterative unwind merging low and classifying bridge and articulation])
 #listing("dsa/samples/src/Ch39/Edges.cs", first: 24, last: 70, caption: [c\#, the same unwind, enumerators on the frame stack, the root child count])
@@ -344,8 +347,7 @@ articulation vertex at all, the root trap: the root has one child.
   cdraw.content((2.6, 0.9), [the ringed 2 appears on both sides], size: 6pt)
 })
 
-The application is icpc world finals 2022 problem R (book 10, chapter
-11), zoo management, which drops every bridge and solves each
+The application is icpc world finals 2022 problem R (book 11, chapter 13), zoo management, which drops every bridge and solves each
 2-edge-connected component alone. The online variant, bridges under
 edge insertion via link-cut machinery, is one prose paragraph in the
 sources and stays out of the code.
@@ -361,10 +363,10 @@ smallest odd vertex or else the smallest non-isolated one, always
 taking the smallest-indexed unused edge by multigraph edge id, and
 appends the current vertex to the walk when stuck. The stack order
 reversed is the walk, and the smallest-next rule makes it identical in
-all seven languages.
+all eight languages.
 
 The dry run: the fixture is the triangle 0, 1, 2 plus the tail 2 to
-3, 3 to 4, asserted by all seven suites.
+3, 3 to 4, asserted by all eight suites.
 
 + Degrees read 2, 2, 3, 2, 1: exactly two odd vertices, 2 and 4, so
   an open path exists and the canonical start is the smaller, 2.
@@ -396,9 +398,10 @@ The dry run: the fixture is the triangle 0, 1, 2 plus the tail 2 to
 })
 
 The walk 2, 0, 1, 2, 3, 4 is the pinned row, and the listings below
-trace it in seven languages.
+trace it in eight languages.
 
 #listing("dsa/samples-c/src/Ch39/euler.c", first: 54, last: 99, caption: [c, parity and start, the stack loop taking the smallest unused edge, the reverse])
+#listing("dsa/samples-rust/src/Ch39/euler.rs", first: 68, last: 121, caption: [rust, parity and start, the stack loop over adjacency slots holding the doubled half-edge, the reverse])
 #listing("dsa/samples-go/ch39/euler.go", first: 44, last: 79, caption: [go, the paired arc ids, the sorted adjacency, the loop and reverse])
 #listing("dsa/samples-java/src/Ch39/Euler.java", first: 55, last: 101, caption: [java, parity and start, the stack loop taking the smallest unused edge, the reverse])
 #listing("dsa/samples/src/Ch39/Edges.cs", first: 99, last: 134, caption: [c\#, the odd count, the canonical start, the stuck-append loop])
@@ -476,7 +479,7 @@ tree, and the rmq equivalence, euler tour plus the sparse table of
 #xref-to("dsa", "ranges"), is the prose third way.
 
 The dry run: the fixture is the pinned 9-vertex tree, asserted by
-all seven suites; the walk uses the 0-based labels the suites store,
+all eight suites; the walk uses the 0-based labels the suites store,
 one below the book's reading.
 
 + The bfs visits 0 through 8 with children ascending: parent of 7 is
@@ -505,9 +508,10 @@ one below the book's reading.
 )
 
 The meeting at 1 is one of nine rows both solvers pin, and the
-listings below lift and walk offline in seven languages.
+listings below lift and walk offline in eight languages.
 
 #listing("dsa/samples-c/src/Ch39/lca.c", first: 90, last: 137, caption: [c, the lift query, then the tarjan pass with its dsu])
+#listing("dsa/samples-rust/src/Ch39/lca.rs", first: 120, last: 182, caption: [rust, the lift query, then the tarjan pass with its path-compressing dsu])
 #listing("dsa/samples-go/ch39/lca.go", first: 81, last: 105, caption: [go, the lift query, the tarjan twin lives below in the same file])
 #listing("dsa/samples-java/src/Ch39/Lca.java", first: 85, last: 135, caption: [java, the lift query, then the tarjan pass with its dsu])
 #listing("dsa/samples/src/Ch39/Paths2.cs", first: 49, last: 81, caption: [c\#, the doubling table above, the lift query, depths and split search])
@@ -569,7 +573,7 @@ The walk goes head to head, the deeper head first, taking the max edge
 weight over each crossed chain's run.
 
 The dry run: the fixture is the same pinned tree in the 0-based
-labels the suites store, asserted by all seven suites.
+labels the suites store, asserted by all eight suites.
 
 + The size pass picks heavy children: 1 at the root with subtree 5
   against 2's 3, 4 at 1 with 3 against 3's 1, and the size-1 ties at
@@ -597,9 +601,10 @@ labels the suites store, asserted by all seven suites.
 )
 
 The 9 over four contiguous runs is the pinned row, and the listings
-below decompose and query in seven languages.
+below decompose and query in eight languages.
 
 #listing("dsa/samples-c/src/Ch39/hld.c", first: 151, last: 185, caption: [c, the segment query and the path walk, deeper head first])
+#listing("dsa/samples-rust/src/Ch39/hld.rs", first: 208, last: 251, caption: [rust, the segment query and the path walk, deeper head first])
 #listing("dsa/samples-go/ch39/hld.go", first: 110, last: 160, caption: [go, the range max tree and the head-to-head walk])
 #listing("dsa/samples-java/src/Ch39/Hld.java", first: 152, last: 186, caption: [java, the flat-tree range max, the path walk, deeper head first])
 #listing("dsa/samples/src/Ch39/Paths2.cs", first: 238, last: 274, caption: [c\#, the range max and the path walk over chains])
@@ -677,7 +682,7 @@ ancestor chain, because the path from the query to any marked vertex
 passes through their common centroid ancestor.
 
 The dry run: the fixture is the same pinned tree in 0-based labels,
-asserted by all seven suites.
+asserted by all eight suites.
 
 + The majority walk from 0 steps into child 1, whose subtree of 5
   outweighs the parent side's 9 - 5 = 4, and no piece of 1 beats
@@ -703,9 +708,10 @@ asserted by all seven suites.
 )
 
 The 4, 3, 4, 3 script is the pinned row, and the listings below
-build and query in seven languages.
+build and query in eight languages.
 
 #listing("dsa/samples-c/src/Ch39/centroid.c", first: 124, last: 165, caption: [c, the recursive build with its bfs tables, the ancestor-walking query])
+#listing("dsa/samples-rust/src/Ch39/centroid.rs", first: 152, last: 200, caption: [rust, the recursive build with its bfs tables, the ancestor-walking query])
 #listing("dsa/samples-go/ch39/centroid.go", first: 123, last: 162, caption: [go, mark relaxing ancestors, the query walking them])
 #listing("dsa/samples-java/src/Ch39/Centroid.java", first: 124, last: 166, caption: [java, the recursive build with its bfs tables, the ancestor-walking query])
 #listing("dsa/samples/src/Ch39/Centers.cs", first: 79, last: 93, caption: [c\#, mark, unmark, and closest by the ancestor walk, tables built above])
@@ -786,7 +792,7 @@ every fixture.
 
 The dry run: the fixture is the 2019 problem H sample, successors 2,
 3, 2, 5, 4, 5, 6 in the statement's reading with k = 2, asserted by
-all seven suites against a walking brute.
+all eight suites against a walking brute.
 
 + The indegree peel splits two rings, 1 with 2 and 3 with 4: station
   0 hangs one leg off 1, and the chain 6, 5 enters the second ring
@@ -814,9 +820,10 @@ all seven suites against a walking brute.
 )
 
 Counting the starts per station reads the answer row 1, 3, 3, 3, 4,
-2, 1, and the listings below peel and count in seven languages.
+2, 1, and the listings below peel and count in eight languages.
 
 #listing("dsa/samples-c/src/Ch39/functional.c", first: 96, last: 136, caption: [c, the ring walk, the difference-array arcs, the prefix fold])
+#listing("dsa/samples-rust/src/Ch39/functional.rs", first: 74, last: 129, caption: [rust, the ring walk, the difference-array arcs, the prefix fold])
 #listing("dsa/samples-go/ch39/functional.go", first: 58, last: 84, caption: [go, the ring collected in walk order, addarc, the ring's own arcs])
 #listing("dsa/samples-java/src/Ch39/Functional.java", first: 76, last: 130, caption: [java, the ring walk, the difference-array arcs, the doubled prefix fold])
 #listing("dsa/samples/src/Ch39/Centers.cs", first: 170, last: 216, caption: [c\#, the cast helper with its wraps, the entry walk, the fold])
@@ -859,8 +866,7 @@ and 1, 3, 3 at k = 2, the ring saturating as the budget grows.
   cdraw.content((4.2, 1.5), [answers 1, 3, 3, 3, 4, 2, 1], size: 6pt)
 })
 
-The application is icpc world finals 2019 problem H (book 10, chapter
-10), hobson's trains, exactly this structure at n of 5e5 with
+The application is icpc world finals 2019 problem H (book 11, chapter 12), hobson's trains, exactly this structure at n of 5e5 with
 k-th-ancestor counts and ring difference arrays, and the chapter
 sample is the contest's own crafted case.
 
@@ -876,7 +882,7 @@ the exact seam the dead-end sign question cares about.
 
 The dry run: the fixture is the 2019 problem E sample graph, edges
 1-2, 2-3, 3-1, 3-4, 4-5, 6-7 in the statement's reading, asserted by
-all seven suites.
+all eight suites.
 
 + Degrees start 3, 2, 2, 2, 1, 1, 1 over the 0-based labels:
   vertices 4, 5, 6 open the queue.
@@ -899,9 +905,10 @@ all seven suites.
 )
 
 The core 0, 1, 2 with the single boundary edge (0, 3) is the pinned
-pair, and the listings below peel in seven languages.
+pair, and the listings below peel in eight languages.
 
 #listing("dsa/samples-c/src/Ch39/twocore.c", first: 51, last: 85, caption: [c, the peel queue, the survivor collection, the boundary edges])
+#listing("dsa/samples-rust/src/Ch39/twocore.rs", first: 70, last: 116, caption: [rust, the peel queue, the survivor collection, the boundary edges])
 #listing("dsa/samples-go/ch39/twocore.go", first: 17, last: 60, caption: [go, the queue, the decrement, the boundary collection and sort])
 #listing("dsa/samples-java/src/Ch39/Twocore.java", first: 52, last: 83, caption: [java, the peel queue, the survivor collection, the boundary edges])
 #listing("dsa/samples/src/Ch39/Centers.cs", first: 226, last: 257, caption: [c\#, the same peel, core and boundary as linq reads])
@@ -948,8 +955,7 @@ sides and survive.
   cdraw.content((3.0, 1.6), [one queue, degree drops drive it], size: 6pt)
 })
 
-The application is icpc world finals 2019 problem E (book 10, chapter
-10), dead-end detector, this peel plus a sign-placement rule on the
+The application is icpc world finals 2019 problem E (book 11, chapter 12), dead-end detector, this peel plus a sign-placement rule on the
 boundary edges, and the fixture above is its sample graph.
 
 == prufer codes and the second-best mst
@@ -969,7 +975,7 @@ lifting speedup of the ancestor section above cross-named for the
 logarithmic form.
 
 The dry run: the fixtures are the 6-vertex tree and the 7-edge
-second-best graph, asserted by all seven suites.
+second-best graph, asserted by all eight suites.
 
 + The encode strips smallest leaves: 1 goes recording 3, 2 goes
   recording 3, 3 goes recording 4, 5 goes recording 4, and 4, 6
@@ -995,10 +1001,11 @@ second-best graph, asserted by all seven suites.
 )
 
 The mst 6 and the runner-up 7 by the (2,3) for (3,4) swap are the
-pinned pair, and the listings below encode, decode, and scan in seven
+pinned pair, and the listings below encode, decode, and scan in eight
 languages.
 
 #listing("dsa/samples-c/src/Ch39/prufer.c", first: 30, last: 61, caption: [c, the encode loop removing the smallest leaf, decode below])
+#listing("dsa/samples-rust/src/Ch39/prufer.rs", first: 15, last: 46, caption: [rust, the encode loop removing the smallest leaf, decode below])
 #listing("dsa/samples-go/ch39/prufer.go", first: 23, last: 59, caption: [go, the leaf pick and removal, the neighbor recorded 1-indexed])
 #listing("dsa/samples-java/src/Ch39/Prufer.java", first: 26, last: 55, caption: [java, the encode loop removing the smallest leaf over an inline adjacency matrix, decode below])
 #listing("dsa/samples/src/Ch39/Prufer.cs", first: 11, last: 40, caption: [c\#, the priority-queue encode, the degree decode below])
@@ -1068,7 +1075,7 @@ the ancestor, and every cycle of the graph becomes a directed cycle,
 which is exactly the local strong connectivity the flood needs. No
 samples ship for this section, the decision is two existing tools
 composed, and the theorem is the prose payoff. Icpc world finals 2022
-problem R (book 10, chapter 11) is the reachability kin, its
+problem R (book 11, chapter 13) is the reachability kin, its
 2-edge-connected components being the maximal pieces that qualify.
 
 The dry run: no suite carries this section, the numbers are
@@ -1156,7 +1163,7 @@ the orientable and the bridged side by side.
   cdraw.content((10.2, 3.0), [whatever crosses cannot return], size: 6pt)
 })
 
-== across the seven languages
+== across the eight languages
 
 Featured build size counted as non-blank, non-comment lines of the
 chapter's ten sample files per language, c\# spread over its five
@@ -1167,6 +1174,7 @@ family files, go test files excluded:
   inset: 4pt,
   table.header([*language*], [*build sloc*], [*container dependency*], [*boundary note*]),
   [c], [1563], [static arc arrays, per-file mains], [the shared 9-node tree inlined per file, 1-based fixtures translated at the boundary],
+  [rust], [2108], [rust 1.99 std], [the frame-stack dfs ports verbatim from c over vecs, euler adjacency storing the doubled half-edge slot, one standalone file per facet],
   [go], [1134], [slices, sort], [the treeadj helper shared across lca, hld, centroid, functional ports fully iterative],
   [java], [1607], [jdk 27 stdlib], [the frame-stack dfs ports verbatim from c, the prufer lcg draws through Integer.remainderUnsigned and trims its 8-row buffer by Arrays.copyOf, no stdlib sort in the chapter],
   [c\#], [815], [lists, linq, tuples], [five family files, the 2-sat solver reuses the scc raw pass, priority queues in prufer],
@@ -1197,10 +1205,11 @@ Orientation", cp-algorithms.com/graph/strong-orientation.html, all
 accessed 2026-09-20, cc by-sa 4.0, our own words and code throughout.
 Functional graphs and the 2-core have no dedicated cp-algorithms
 article, both taught as general technique with the icpc world finals
-2019 problem H and problem E solutions (book 10, chapter 10) as the
+2019 problem H and problem E solutions (book 11, chapter 12) as the
 application sources, alongside icpc world finals 2022 problem R (book
-9, chapter 11). Sample behavior verified by the seven suite gates scoped
-to chapter 39: c 10 files and 208 checks, go 32 test functions, java 10
+11, chapter 13). Sample behavior verified by the eight suite gates scoped
+to chapter 39: c 10 files and 208 checks, rust 10 files and 208
+checks under run-rust-samples in books/dsa/samples-rust, go 32 test functions, java 10
 files and 210 checks under run-java-samples, c\# 32 facts,
 javascript 33 tests and 79 asserts across its two split files, python
 10 files and 80 asserts, lua 33 checks, zero skipped.

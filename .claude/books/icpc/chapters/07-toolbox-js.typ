@@ -442,7 +442,7 @@ Six files, 239 non-blank lines, 36 tests, and what each piece leans on:
   [crt mathematics], [built, `num.mjs`], [derived in #xref-to("dsa", "numtheory")],
 )
 
-Java's chapter 4 never meets the 2^53 wall: its long is a true 64-bit
+Java's chapter 5 never meets the 2^53 wall: its long is a true 64-bit
 word, so the only boundary it states is the 128-bit product,
 `Math.multiplyHigh` plus the low half, with BigInteger held for the
 values that outgrow the word.

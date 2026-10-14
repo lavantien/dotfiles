@@ -1,4 +1,4 @@
-// book 10, chapter 1: the contest, the content rules, and the chapter shape
+// book 11, chapter 1: the contest, the content rules, and the chapter shape
 // every later chapter follows. no listings here: this chapter reads the
 // cached finals pdfs and defines the rules the sample suites obey
 #import "../../theme/lib.typ": callout, xref-to, diagram, cdraw
@@ -14,8 +14,8 @@ languages built from first principles. The chapter you are reading
 is the contract for how: the shape of a finals, the anatomy of one
 problem, the content rules that govern everything this book says
 about the problem sets, the chapter template every later chapter
-follows, and the integer ground rules the seven languages bring with
-them. The seven toolbox chapters behind this one, one per language,
+follows, and the integer ground rules the eight languages bring with
+them. The eight toolbox chapters behind this one, one per language,
 are the shared substrate the finals chapters import and extend.
 
 == what the contest is
@@ -197,7 +197,7 @@ geometry, network flows, game trees, and reductions the shared
 modules do not carry, and the house rule for those is year-local:
 such helpers are built inside the year chapter with a one-line spec
 in the year's suite. That boundary is deliberate. The toolbox holds
-what all seven languages need across all six years, and everything
+what all eight languages need across all six years, and everything
 specific to one problem lives with that problem.
 
 #diagram([the recurring problem families on the left, the toolbox that carries each on the right, year-local where no shared module exists], length: 12pt, {
@@ -277,7 +277,7 @@ figure when the run is visual and a numbered state table when it is
 tabular, ending at the byte-exact printed answer. After the trace
 the solver walks in seven listings, one per language, in the fixed
 order c, go, java, c\#, javascript, python, lua. That order is book
-9's order with java slotted after go, the data structures book this
+10's order with java slotted after go, the data structures book this
 series pairs with, and keeping
 it means a reader moving between the two books always knows where a
 language's version of a structure lives. A helper section opens the
@@ -338,10 +338,10 @@ answers are public statement data and this book prints them, checked
 byte for byte against the cache; the secret inputs and answers stay
 on the machine, so the judge data stays a private second gate.
 
-== the seven languages and their integers
+== the eight languages and their integers
 
-The seven languages were not chosen for this book. They are the
-series: six language manuals and C, the same seven that book 9
+The eight languages were not chosen for this book. They are the
+series: seven language manuals and C, the same eight that book 10
 rebuilt every data structure in, in the same order. What differs
 between them, and what every toolbox chapter has to say out loud,
 is what happens when a product outgrows the machine word, and a
@@ -355,6 +355,7 @@ book and each toolbox chapter repeats the ones it lives under.
   inset: 4pt,
   table.header([*language*], [*machine word*], [*big integers*], [*wrap-safe product*]),
   [c], [`unsigned long long`], [toolbox bigint, 12 limbs of 9 digits], [add-and-double with a remainder every step],
+  [rust], [`u64`, `usize` indices], [toolbox bigint, the same 12 limbs], [one native `u128` expression, widened and reduced],
   [go], [`uint64` / `int64`], [`math/big` where needed], [`math/bits.Mul64` for the wide product],
   [java], [`long`], [`BigInteger` at the c `__int128` sites], [`Math.multiplyHigh` plus the shift-subtract lane],
   [c\#], [`long`], [`System.Numerics.BigInteger`], [checked 64-bit, checked bigint],
@@ -368,7 +369,12 @@ Two of those rows carry a story this book tells in full later. C's
 link then fails for want of `__umodti3`, the runtime helper for a
 128-bit remainder, so the C toolbox and every C modular routine use
 add-and-double instead, and #xref-to("icpc", "toolbox-c") shows the
-whole decision. Lua's integers wrap without a sound, and the Lua
+whole decision. Rust on the same machine never meets that wall:
+`u128` is a first-class type there, the wide product and its
+remainder are one expression, and #xref-to("icpc", "toolbox-rust")
+spends the saved length on the boundaries rust refuses to hide, the
+wrapping sites said out loud and the checked adds that refuse to
+overflow silently. Lua's integers wrap without a sound, and the Lua
 toolbox pins the proof in a test, `math.maxinteger * 2 == -2`, then
 builds its mulmod on doubling so no wrap can happen, and
 #xref-to("icpc", "toolbox-lua") walks it. Python, C\#, and Java sit at the
@@ -381,9 +387,10 @@ stated in a comment at every place a toolbox crosses it.
 
 == the toolbox layer
 
-The seven chapters between this one and the finals chapters are
+The eight chapters between this one and the finals chapters are
 toolboxes, one per language: #xref-to("icpc", "toolbox-c"),
-#xref-to("icpc", "toolbox-go"), #xref-to("icpc", "toolbox-java"),
+#xref-to("icpc", "toolbox-rust"), #xref-to("icpc", "toolbox-go"),
+#xref-to("icpc", "toolbox-java"),
 #xref-to("icpc", "toolbox-cs"), #xref-to("icpc", "toolbox-js"),
 #xref-to("icpc", "toolbox-py"),
 and #xref-to("icpc", "toolbox-lua"). Each is a small from-scratch
@@ -395,16 +402,18 @@ wrap, md5 from the RFC, and a json decoder. The finals chapters
 import and extend these. They never re-derive a container inline,
 because a chapter about a hard search problem should spend its
 length on the search, and because a container built once and tested
-once beats seven private re-derivations with seven private bugs.
+once beats eight private re-derivations with eight private bugs.
 
 The measured size of the layer is part of the story. The C toolbox is
 11 header files, 1125 lines, in `books/icpc/samples-c/src/Ch02/`,
-tested by 10 programs with 251 internal checks. The Lua toolbox is 9
+tested by 10 programs with 251 internal checks. The Rust toolbox is
+11 files, 1362 non-blank lines, in `books/icpc/samples-rust/src/Ch03/`,
+with 278 checks through its runner. The Lua toolbox is 9
 modules, 1088 lines, in `books/icpc/samples-lua/`, with 45 checks
 through its runner. The other five languages carry their own chapters
 and their own counts. Those numbers are counted from the tree, not
 estimated, raw line totals for C and Lua and non-blank lines for the
-other five, and the chapter that owns each suite restates its own.
+other six, and the chapter that owns each suite restates its own.
 
 #diagram([the layering: finals chapters import the toolbox of their language, never re-derive containers], length: 12pt, {
   let cell(x, w, y, t, fill: luma(205)) = {
@@ -416,24 +425,25 @@ other five, and the chapter that owns each suite restates its own.
                   (4, [2023]), (5, [2025])) {
     cell(0.8 + i * 3.35, 2.9, 6.4, yr, fill: luma(225))
   }
-  cdraw.content((10.6, 7.7), [the six finals chapters, 9 through 14], size: 6.5pt, fill: luma(100))
-  for (i, l) in ([c], [go], [java], [c\#], [js], [py], [lua]).enumerate() {
-    cell(0.8 + i * 2.95, 2.55, 2.6, l)
+  cdraw.content((10.6, 7.7), [the six finals chapters, 10 through 15], size: 6.5pt, fill: luma(100))
+  for (i, l) in ([c], [rust], [go], [java], [c\#], [js], [py], [lua]).enumerate() {
+    cell(0.8 + i * 2.55, 2.55, 2.25, l)
   }
-  cdraw.content((10.6, 1.5), [the seven toolboxes, chapters 2-8], size: 6.5pt, fill: luma(100))
+  cdraw.content((10.6, 1.5), [the eight toolboxes, chapters 2-9], size: 6.5pt, fill: luma(100))
   cdraw.line((10.6, 6.4), (10.6, 3.4), stroke: luma(100), mark: (end: ">"))
   cdraw.content((11.4, 4.3), [import and extend], size: 6.5pt, fill: luma(100), anchor: "west")
 })
 
-The test discipline is the same across all seven, and it is the same
-discipline book 9's suites run under. Tests are table-driven over
+The test discipline is the same across all eight, and it is the same
+discipline book 10's suites run under. Tests are table-driven over
 crafted fixtures with hand-computed answers. No network, no clock,
 no randomness unless it is seeded deterministically. Brute-force
 cross-checks are welcome and counted, because a clever method that
 agrees with a naive one on a small fixture is worth more than either
 alone. Every language's suite prints or asserts so its gate can
 count: the C gate compiles every module under `-Werror` and counts
-one ok line per program, the Lua runner counts checks per module,
+one ok line per program, the Rust gate does the same with rustc per
+file under `-D warnings`, the Lua runner counts checks per module,
 and the managed-language suites run their native test frameworks. The
 footer of every toolbox chapter states its own verified counts.
 
@@ -453,5 +463,5 @@ in `ref/icpc/INDEX.md`. The solution sketches settle the algorithm
 and complexity claims made here, and the 2025 set postdates training
 data, so everything said about it derives from the cached pdfs. This
 chapter has no sample suite. The suites begin with chapter 2, whose
-gate line is 10 files and 251 internal checks, and chapter 8, whose
+gate line is 10 files and 251 internal checks, and chapter 9, whose
 runner reports 45 checks across 9 modules.

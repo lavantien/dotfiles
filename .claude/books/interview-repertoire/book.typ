@@ -1,4 +1,4 @@
-// book 16: written map grows chapter by chapter
+// book 17: written map grows chapter by chapter
 #import "../theme/lib.typ": book
 #import "manifest.typ": repertoire
 

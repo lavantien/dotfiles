@@ -1,4 +1,4 @@
-// book 10, chapter 8: the lua toolbox. nine modules plus their own
+// book 11, chapter 9: the lua toolbox. nine modules plus their own
 // lib.lua in books/icpc/samples-lua/, one runner, listings sliced
 // from the landed files
 #import "../../theme/lib.typ": listing, callout, xref-to, diagram, cdraw
@@ -801,7 +801,7 @@ mini-inputs, exactly the fixture policy chapter 1 states.
   cdraw.line((14.8, 3.4), (14.8, 2.4), stroke: luma(100), mark: (end: ">"))
 })
 
-== across the seven languages
+== across the eight languages
 
 The C chapter closes with the structure table from its side, and this
 chapter closes with the same table from Lua's. The rows are the same
@@ -823,10 +823,14 @@ reasons are the machine facts each language lives under.
   [json], [node pool with tags], [plain tables, null sentinel], [c needs the tree, lua is the tree],
 )
 
-Java's chapter 4 contributes the seam no row above carries: the jvm's
+Java's chapter 5 contributes the seam no row above carries: the jvm's
 default stack dies at 22774 frames where `-Xss512m` holds 33506905, a
 measured fact its judge invocation pins before any deep recursion
-runs.
+runs. Rust's chapter 3 contributes the pole the modular row sits
+between: native `u128` makes the wide product one expression, so
+neither c's refused link nor lua's proven wrap applies, and its
+`BTreeMap` replaces the tombstone walk with iteration that is key
+order by contract.
 
 Verified by `make verify-lua`: 9 modules, 45 checks, bigint 7, heap
 4, deque 4, set 5, grid 5, strutil 4, num 5, md5 5, json 6, on the

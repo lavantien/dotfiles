@@ -19,7 +19,7 @@ Linear diophantine equations solve exactly with no rounding. Gray
 code and balanced ternary are the two odd numerations worth owning.
 Continued fractions, the stern-brocot tree, and the farey sequence
 close the chapter as one structure seen three ways. Every fixture
-pins the same digits in all seven languages.
+pins the same digits in all eight languages.
 
 == the linear sieve and multiplicative functions
 
@@ -40,7 +40,7 @@ scales by p minus 1 and mu flips sign.
 
 The dry run: the fixture is the C\# Build(1000) tables, the prime
 count, the phi and mu heads, and the lp anchors all asserted by the
-C\# suite, the other six pinning the same rung.
+C\# suite, the other seven pinning the same rung.
 
 + i = 2 has no least factor, joins the prime list, and crosses its
   first composite as 2 × 2 = 4 with lp = 2.
@@ -87,10 +87,12 @@ C\# suite, the other six pinning the same rung.
   cdraw.content((1.2, -0.6), [the break at p = lp keeps the pass linear], size: 6pt, anchor: "west")
 })
 
-The 400 closes the table, and the listings below sieve it in seven
+The 400 closes the table, and the listings below sieve it in eight
 languages.
 
 #listing("dsa/samples-c/src/Ch28/linsieve.c", first: 26, last: 50, caption: [c, one pass, every composite crossed once by i times lp of i, the phi and mu fork inside])
+
+#listing("dsa/samples-rust/src/Ch28/linsieve.rs", first: 17, last: 47, caption: [rust, one pass, every composite crossed once by i times lp of i, the phi and mu fork inside, the break tested at the top])
 
 #listing("dsa/samples-go/ch28/linsieve.go", first: 14, last: 43, caption: [go, the fork closes the inner loop itself, the hinge that keeps the pass linear])
 
@@ -105,7 +107,8 @@ languages.
 #listing("dsa/samples-lua/ch28_linsieve.lua", first: 10, last: 33, caption: [lua, tables indexed by the domain value, so lp of 60 reads lp of 60])
 
 The languages split on where the loop stops and it does not matter.
-C, C\#, JavaScript, and Java test p against lp[i] at the top of the
+C, Rust, C\#, JavaScript, and Java test p against lp[i] at the top of
+the
 inner
 loop, Go, Python, and Lua break inside the p equals lp[i] branch, and
 both forms leave the inner loop exactly when the prime reaches the
@@ -181,12 +184,12 @@ floyd cycle, one tortoise step against two hare steps, and take the
 gcd of the gap with n at every step, a nontrivial gcd is a factor.
 The constants c and every restart draw from the house seeded lcg,
 x' = 6364136223846793005 \* x + 1442695040888963407 mod 2^64 seeded
-0x9E3779B97F4A7C15, the same constants the icpc book's chapter 14
-pins, so all seven languages walk the identical rho trajectory.
+0x9E3779B97F4A7C15, the same constants the icpc book's chapter 16
+pins, so all eight languages walk the identical rho trajectory.
 
 The dry run: the fixtures are the liar 3215031751 asserted both
 ways and the rho factorizations, carried by the C\# suite, the other
-six walking the same seeded trajectory.
+seven walking the same seeded trajectory.
 
 + The small-divisor gate settles the carmichaels before any witness
   runs: 5 + 6 + 1 = 12 exposes the 3 in 561, and 41041 opens at 7.
@@ -230,9 +233,11 @@ six walking the same seeded trajectory.
 })
 
 The two-way liar closes the run, and the listings below carry the
-gate and rho in seven languages.
+gate and rho in eight languages.
 
 #listing("dsa/samples-c/src/Ch28/primality.c", first: 64, last: 99, caption: [c, one strong-pseudoprime round, then the witness loop over any base set])
+
+#listing("dsa/samples-rust/src/Ch28/primality.rs", first: 56, last: 95, caption: [rust, one strong-pseudoprime round, then the witness loop over any base set, mulmod through native u128 above])
 
 #listing("dsa/samples-go/ch28/primality.go", first: 25, last: 64, caption: [go, small divisors pre-checked, ch16 mulmod and modpow underneath])
 
@@ -244,7 +249,7 @@ gate and rho in seven languages.
 
 #listing("dsa/samples-py/src/Ch28/primality.py", first: 49, last: 78, caption: [python, the rho driver, c and starts drawn from the shared stream])
 
-#listing("dsa/samples-lua/ch28_primality.lua", first: 61, last: 89, caption: [lua, the shared seed, then rho splitting with bounded restarts])
+#listing("dsa/samples-lua/ch28_primality.lua", first: 82, last: 116, caption: [lua, the shared seed, then rho splitting with bounded restarts])
 
 The integer roads split exactly where chapter 16 left them. Rho on
 these moduli squares residues at 4.6e18, past 2^63, so C multiplies by
@@ -253,7 +258,9 @@ ruling bans 128-bit help, Lua does the same with its silently wrapping
 int64, Java walks C's add-and-double road too and pushes its rho
 modulus draws through `Long.remainderUnsigned` because the seeded lcg
 wraps negative in a signed long, C\# rides every product through
-System.UInt128, Go goes through
+System.UInt128, Rust multiplies through native u128 with one cast and
+one remainder per product, its plain unsigned u64 sparing it java's
+remainder dance on the lcg draws, Go goes through
 ch16's Mul64 and Div64, and JavaScript puts the whole computation on
 BigInt. Fixtures agree digit for digit. The miller-rabin anchors: 2,
 3, and 97 prime, 4 not, 1000003 and 1000033 prime, the mersenne prime
@@ -268,9 +275,8 @@ halves. Edge behavior: 1 is not prime, rho of 4 returns 2, factoring
 a prime refuses through the miller-rabin gate in every refusal
 channel, and every factor list multiplies back to its input. Two
 finals problems live one rung below and one rung above this section:
-icpc 2025 problem F (book 10, chapter 13) takes the largest prime up
-to n/3 by trial division, and icpc 2025 problem B (book 10, chapter
-13) bipartitions its graph by the parity of the prime factor count,
+icpc 2025 problem F (book 11, chapter 15) takes the largest prime up
+to n/3 by trial division, and icpc 2025 problem B (book 11, chapter 15) bipartitions its graph by the parity of the prime factor count,
 omega read off exactly these factorizations.
 
 #diagram([the witness ladder: 3215031751 slips past bases 2, 3, 5, 7 and dies on witness 11], length: 13pt, {
@@ -295,7 +301,7 @@ omega read off exactly these factorizations.
   cdraw.content((12.4, 3.1), [so the pinned set is deterministic], size: 6pt, anchor: "west")
   cdraw.content((12.4, 2.2), [the verdict stops at the first failure], size: 6pt, anchor: "west")
   cdraw.content((12.4, 1.3), [rho factors the composites next], size: 6pt, anchor: "west")
-  cdraw.content((12.4, 0.4), [seeded lcg, one trajectory in all six], size: 6pt, anchor: "west")
+  cdraw.content((12.4, 0.4), [seeded lcg, one trajectory in all eight], size: 6pt, anchor: "west")
 })
 
 == divisor counts, divisor sums, and the phi identities
@@ -347,9 +353,11 @@ the pillai value brute-counted in-suite.
 )
 
 The 91 closes the accumulation at the pinned 9 divisors, and the
-listings below sieve both tables in seven languages.
+listings below sieve both tables in eight languages.
 
 #listing("dsa/samples-c/src/Ch28/totdiv.c", first: 23, last: 47, caption: [c, the accumulation sieve, then phi by the same linear pass as 28.1])
+
+#listing("dsa/samples-rust/src/Ch28/totdiv.rs", first: 17, last: 52, caption: [rust, the accumulation sieve, then phi by the same linear pass as 28.1 inlined])
 
 #listing("dsa/samples-go/ch28/totdiv.go", first: 3, last: 47, caption: [go, the sieve, the ground-truth divisor walk, pillai over the 28.1 phi table])
 
@@ -366,7 +374,7 @@ listings below sieve both tables in seven languages.
 Python is the one that builds phi differently, and the difference is
 worth the read: it initializes phi to the identity and subtracts
 phi of m over p for every prime multiple, the eratosthenes-shaped
-totient sieve, while the other six reuse the 28.1 linear pass. The
+totient sieve, while the other seven reuse the 28.1 linear pass. The
 anchors: d(360) = 24 and sigma(360) = 1170 with the full 24-entry
 divisor list pinned 1, 2, 3, 4, 5, 6, 8, 9, 10, 12, 15, 18, 20, 24,
 30, 36, 40, 45, 60, 72, 90, 120, 180, 360, and the smaller pair
@@ -466,9 +474,11 @@ table pinned beside it.
 })
 
 The 22 closes the meet, and the listings below run both walks in
-seven languages.
+eight languages.
 
 #listing("dsa/samples-c/src/Ch28/dlog.c", first: 46, last: 82, caption: [c, the baby table sorted for binary search, giant steps by a^(p-1-m)])
+
+#listing("dsa/samples-rust/src/Ch28/dlog.rs", first: 28, last: 67, caption: [rust, the baby table sorted for binary search, the leftmost hit kept, giant steps by a^(p-1-m)])
 
 #listing("dsa/samples-go/ch28/dlog.go", first: 15, last: 48, caption: [go, ch16 mulmod and the fermat inverse, errors on refusal])
 
@@ -486,7 +496,8 @@ The baby table must keep the smallest exponent per value, exponents
 repeat whenever the order of a is below m, and the suites that skip
 that check can return a larger x than asked for, java's HashMap
 holding its table through `putIfAbsent` so the first, smallest
-exponent survives every repeat. Fixtures pin the
+exponent survives every repeat, rust's sorted entries binary-searched
+leftward after the hit for the same reason. Fixtures pin the
 1e9+7 anchor, dlog of 2 to 3 is 385273928, verified back by pow, and
 the mod 29 triple dlog(2, 5) = 22, dlog(3, 6) = 18, dlog(2, 14) = 13,
 each verified by substitution. The primitive roots land on the two
@@ -580,9 +591,11 @@ moduli 8, 9, 5, 7, asserted digit by digit by the C\# suite, the
 )
 
 The 1736 closes the rebuild, and the listings below carry the
-digits in seven languages.
+digits in eight languages.
 
 #listing("dsa/samples-c/src/Ch28/garner.c", first: 19, last: 57, caption: [c, inverse by extended euclid for composite moduli, then the digit loop and the rebuild])
+
+#listing("dsa/samples-rust/src/Ch28/garner.rs", first: 15, last: 53, caption: [rust, inverse by extended euclid for composite moduli, then the digit loop and the rebuild in u64])
 
 #listing("dsa/samples-go/ch28/garner.go", first: 10, last: 39, caption: [go, the telescoping digit update, moduli reduced mod m~i~])
 
@@ -603,13 +616,14 @@ has residues 901234575, 760561298, 160985081, digits 901234575,
 12345678, 0, and the rebuild returns the input exactly, JavaScript
 doing it through BigInt because the combined modulus reaches 1.2e16
 past 2^53, java rebuilding in plain longs where every intermediate
-stays under 2^63, and cross-naming the 416537774 INV beside its
+stays under 2^63, rust in plain u64 the same way, and cross-naming
+the 416537774 INV beside its
 digits. Factorials: 10! mod 11 = 10 with 9! mod 11 = 1, the
 wilson pair, 30! mod 1000000007 = 109361473, 100! mod 1000000007 =
 437918130, 1000! mod 998244353 = 421678599, and 101! mod 101 = 0.
 Legendre: v~2~ of 100! is 97, v~3~ of 1000! is 498, v~5~ of 2026! is
 505, and 0! = 1! = 1. The contest tie is the third fixture: icpc
-2019 problem K (book 10, chapter 10) multiplies survival fractions
+2019 problem K (book 11, chapter 12) multiplies survival fractions
 over residue classes of a departure time mod 2520 = 8 \* 9 \* 5 \* 7,
 chapter 16 names the crt existence clause, and the departure time
 1736 with residues (0, 8, 1, 0) and digits (0, 1, 4, 4) rebuilds
@@ -699,9 +713,11 @@ beside it.
 })
 
 The three pairs close the count at the pinned 3, and the listings
-below solve the family in seven languages.
+below solve the family in eight languages.
 
 #listing("dsa/samples-c/src/Ch28/diophantine.c", first: 18, last: 66, caption: [c, iterative extgcd, the scaled solve, ceil and floor division, the minimal-x shift])
+
+#listing("dsa/samples-rust/src/Ch28/diophantine.rs", first: 38, last: 79, caption: [rust, the scaled solve off the iterative extgcd above, explicit ceil and floor corrections, the minimal-x shift and the t-window count])
 
 #listing("dsa/samples-go/ch28/diophantine.go", first: 9, last: 43, caption: [go, ch16 extgcd underneath, the negative-x shift into the fundamental window])
 
@@ -720,8 +736,9 @@ verified by substitution in-suite. 39x + 15y = 12 gives (8, -20),
 2x + 3y = 10 gives (-10, 10), and 7x + 11y = 100 gives (-300, 200),
 the extended euclid coefficients landing far from the first quadrant
 and the shift doing the walking, java keeping its coefficients in
-static fields with the same explicit ceil and floor corrections C
-carries for a truncating remainder. Minimal non-negative x: the first
+static fields with the same explicit ceil and floor corrections C and
+rust carry for a truncating remainder, rust returning an Option that
+reads as the refusal. Minimal non-negative x: the first
 lands at (3, -7) with zero fully non-negative solutions, the second
 at (2, 2) with exactly 2, the pairs (2, 2) and (5, 0), the third at
 (8, 4) with exactly 1, and 3x + 5y = 30 lands at (0, 6) with 3, the
@@ -730,7 +747,7 @@ consecutive members differ by exactly (b/g, -a/g), which is (5, -13)
 on the first equation. Edges: 4x + 6y = 3 refuses because gcd 2 does
 not divide 3, zero coefficients solve on their own branches with 0x +
 5y = 15 at (0, 3) and 5x + 0y = 15 at (3, 0). The contest kin: icpc
-2023 problem A (book 10, chapter 12) solves an overdetermined integer
+2023 problem A (book 11, chapter 14) solves an overdetermined integer
 3 by 3 system whose triples have determinant 1 or 2, and the exact
 two-variable theory here is the same no-rounding backbone. This is
 general technique beyond that one problem.
@@ -784,7 +801,7 @@ digit, and k trits span exactly the interval from -(3^k - 1)/2 to
 
 The dry run: the fixtures are the gray table over 0 to 15 and
 gray(1234) = 1723 with the balanced ternary strings, asserted by the
-C\# suite and identical in all seven.
+C\# suite and identical in all eight.
 
 + gray folds one shift: i ^ (i >> 1) walks 0, 1, 3, 2, 6, 7, 5, 4
   across 0 to 7, each code one bit from its neighbor.
@@ -815,9 +832,11 @@ C\# suite and identical in all seven.
 )
 
 The 1723 round trip closes the numerations, and the listings below
-build both in seven languages.
+build both in eight languages.
 
 #listing("dsa/samples-c/src/Ch28/graytern.c", first: 19, last: 61, caption: [c, the gray pair, then encode by remainder lift, decode by horner])
+
+#listing("dsa/samples-rust/src/Ch28/graytern.rs", first: 15, last: 63, caption: [rust, the gray pair, encode by remainder lift handling a negative r, decode by horner at base 3])
 
 #listing("dsa/samples-go/ch28/graytern.go", first: 3, last: 33, caption: [go, the gray pair and the k-trit span walk, the encoder below])
 
@@ -832,14 +851,15 @@ build both in seven languages.
 #listing("dsa/samples-lua/ch28_graytern.lua", first: 5, last: 47, caption: [lua, the doubling-shift fold, chunks cut from the right])
 
 The remainder-lift branch structure differs by language because %
-differs, C, Go, JavaScript, and Java keep the dividend's sign so their
+differs, C, Go, JavaScript, Java, and Rust keep the dividend's sign so
+their
 encoders handle a lifted -1 and a lifted -2, Python and Lua floor, so
 only r = 2 ever needs lifting, and C\# normalizes into 0, 1, 2 first.
-All seven pin the same strings. The gray table over 0 to 15 reads 0, 1,
+All eight pin the same strings. The gray table over 0 to 15 reads 0, 1,
 3, 2, 6, 7, 5, 4, 12, 13, 15, 14, 10, 11, 9, 8, gray(1234) = 1723
 with ungray(1723) = 1234 and ungray(1789) = 1193, and the sweeps
 assert one-bit adjacency and round trips across 0 to 999. The
-balanced ternary encodings, identical digit strings in all six:
+balanced ternary encodings, identical digit strings in all eight:
 2026 is +0-+000+, -2026 is -0+-000-, 121393 is +-0+-----00+, 1093 is
 +++++++, -1093 is -------, 547 is +-+-+-+, and 0, 1, -1 are 0, +, -.
 The edge is the span: (3^7 - 1)/2 = 1093 is the 7-trit maximum, all
@@ -953,9 +973,11 @@ beside it.
 })
 
 The 415/93 closes as its own last convergent, and the listings
-below build all three faces in seven languages.
+below build all three faces in eight languages.
 
 #listing("dsa/samples-c/src/Ch28/cfrac.c", first: 45, last: 91, caption: [c, the periodic sqrt machine on exact integers, then the stern-brocot walk])
+
+#listing("dsa/samples-rust/src/Ch28/cfrac.rs", first: 49, last: 88, caption: [rust, the periodic sqrt machine on exact i64, then the stern-brocot walk keeping bounds])
 
 #listing("dsa/samples-go/ch28/cfrac.go", first: 16, last: 52, caption: [go, convergents and the sqrt cycle with its period length])
 
@@ -1014,7 +1036,7 @@ any approximation question.
   cdraw.content((1.4, 0.0), [sqrt(61) closes at period 11, sqrt(2) at 1], size: 6pt, anchor: "west")
 })
 
-== across the seven languages
+== across the eight languages
 
 Build size counts non-blank, non-comment lines over the chapter's
 eight sample files per language, embedded checks included:
@@ -1024,6 +1046,7 @@ eight sample files per language, embedded checks included:
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [858], [libc only], [static tables to 1000 and cap 512 limbs of scratch, add-and-double mulmod with a remainder every step because rho moduli reach 4.6e18],
+  [rust], [991], [rust 1.99 std], [native u128 mulmod where c pays add-and-double, the seeded lcg on plain u64 with no unsigned-remainder helpers, extgcd inverse for the composite garner moduli],
   [go], [563], [dsabook/ch16], [MulMod and ModPow from ch16 over bits.Mul64, errors name the cause, one package for all eight files],
   [java], [839], [jdk 27 stdlib], [self-contained files, the ch16 helpers re-carried inline, add-and-double mulmod with rho draws through `Long.remainderUnsigned`, plain long products at the 1e9+7 moduli, rebuild under 2^63],
   [c\#], [494], [bcl, Ch16 NumTheory], [UInt128 carries every product past 2^63, NumTheory and the rho lcg shared by import, refusals throw],
@@ -1051,9 +1074,11 @@ cp-algorithms.com/others/stern_brocot_tree_farey_sequences.html.
 Mobius has no cp-algorithms article, the table treatment follows
 Hardy and Wright, An Introduction to the Theory of Numbers. The icpc
 problems named as applications: 2025 F and B, 2019 K, and 2023 A,
-pinned in the icpc book. Sample behavior verified by the seven suite
-gates scoped to chapter 28: c 8 files and 142 checks, c\# 57 facts,
+pinned in the icpc book. Sample behavior verified by the eight suite
+gates scoped to chapter 28: c 8 files and 142 checks, rust 8 files
+and 228 checks under `run-rust-samples` over `samples-rust/src`,
+c\# 57 facts,
 go 26 tests, java 8 files and 228 checks, javascript 26 tests,
 python 8 files and 113 asserts,
-lua 32 checks, zero skipped. This chapter carries 56 listings and 8
+lua 32 checks, zero skipped. This chapter carries 64 listings and 8
 figures.

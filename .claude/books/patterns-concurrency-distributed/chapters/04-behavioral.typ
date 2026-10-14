@@ -10,8 +10,8 @@ function is an object that carries behavior, compares against nil,
 and slots into fields and parameters. The chapter builds the six
 that survive translation, strategy, observer, command, iterator,
 state, and visitor, and each section runs one shared fixture through
-c, go, java, c\#, javascript, python, and lua, the dry-run block
-stating the contract before the seven listings.
+c, rust, go, java, c\#, javascript, python, and lua, the dry-run
+block stating the contract before the eight listings.
 
 == strategy
 
@@ -35,6 +35,8 @@ verified against the same implementation.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch04/strategy.c", first: 21, last: 61, caption: [C, a function pointer typedef, rle capping runs at 255, selection from a name table])
 
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch04/strategy.rs", first: 13, last: 56, caption: [Rust, strategies are zero-sized types behind a trait, selection a static table borrowed as a trait object])
+
 #listing("patterns-concurrency-distributed/samples/ch04/behavioral.go", first: 12, last: 40, caption: [Go, compression as a function type, rle and null as values])
 
 #listing("patterns-concurrency-distributed/samples-java/src/Ch04/Strategy.java", first: 19, last: 51, caption: [Java, the strategy is a lambda over a one-method interface, selection answers null for the unknown name])
@@ -51,7 +53,9 @@ Function types give the pattern for free: `Compression` is
 documented, comparable to nil, and the caller passes `Rle` like any
 value. The sibling trees say the same thing in their own spelling.
 C writes a function pointer typedef and answers the unknown name
-with NULL, java spells the strategy as a lambda against a one-method
+with NULL, rust's strategies are zero-sized types handed out as
+`&'static dyn Compression` from a static table, `None` the unknown
+name, java spells the strategy as a lambda against a one-method
 interface and answers the unknown name with null, its signed `byte`
 forcing `& 0xff` on the count before the pairs can print, C\# uses a
 delegate with the refusal riding a tuple, javascript and python pass
@@ -78,7 +82,7 @@ state, they become closures, chapter 5's territory.
 
 == observer with channels
 
-Book 3 toured the channel syntax#xref-to("go", "concurrency"), and
+Book 4 toured the channel syntax#xref-to("go", "concurrency"), and
 the observer pattern is where channels earn a salary. Subscribers
 receive buffered channels, the hub's `Notify` is non-blocking with a
 `select` default, and `Close` releases everyone:
@@ -108,6 +112,8 @@ closed.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch04/observer.c", first: 77, last: 94, caption: [C, subscribe under the hub mutex, cancel marks one subscriber closed])
 
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch04/observer.rs", first: 31, last: 53, caption: [Rust, subscribe under the hub mutex, an int id per subscriber, closed hubs hand back none])
+
 #listing("patterns-concurrency-distributed/samples/ch04/behavioral.go", first: 42, last: 68, caption: [Go, hub: subscribe returns a channel and its cancel function])
 
 #listing("patterns-concurrency-distributed/samples-java/src/Ch04/Observer.java", first: 18, last: 44, caption: [Java, subscribe hands back an int id over C's api, each subscriber a bounded ArrayDeque])
@@ -124,6 +130,8 @@ Registration is the quieter half of the pattern, and the notify half
 carries the two contract points the tests pin:
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch04/observer.c", first: 46, last: 64, caption: [C, try-send into each bounded buffer, a full one drops])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch04/observer.rs", first: 55, last: 93, caption: [Rust, notify counts deliveries into bounded buffers, close marks every sub, receive drains what was sent])
 
 #listing("patterns-concurrency-distributed/samples/ch04/behavioral.go", first: 80, last: 104, caption: [Go, non-blocking fan-out, then close on shutdown])
 
@@ -150,7 +158,9 @@ The cancel function returned from `Subscribe` is the registration
 lifecycle made explicit, the caller owns unsubscription and double
 cancel is safe because `remove` checks the map first. The sibling
 trees build the channel by hand where they must: C keeps a fixed
-array of bounded subscriber buffers under one mutex, java rides the
+array of bounded subscriber buffers under one mutex, rust is the same
+shape as `Mutex` over a Vec of bounded subscribers with int ids, plus
+a producer on another thread filling the buffer, java rides the
 same int-id api with a synchronized Hub over one ArrayDeque per
 subscriber, C\# hands each subscriber a real bounded Channel where
 `TryWrite` stands in for the select default, javascript pushes onto
@@ -199,6 +209,8 @@ mode 1, against the same implementation.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch04/command.c", first: 43, last: 90, caption: [C, explicit undo records in a fixed array, undo restores or deletes])
 
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch04/command.rs", first: 26, last: 65, caption: [Rust, set pushes a key, prev, existed record, undo pops and restores or removes])
+
 #listing("patterns-concurrency-distributed/samples/ch04/behavioral.go", first: 107, last: 136, caption: [Go, set records the previous value, undo pops and replays it])
 
 #listing("patterns-concurrency-distributed/samples-java/src/Ch04/Command.java", first: 18, last: 45, caption: [Java, each set pushes an Undo record, undo replays restore or remove newest first])
@@ -213,8 +225,9 @@ mode 1, against the same implementation.
 
 The `Set` method closes over `prev` and `existed`, so the undo of an
 insert is a delete and the undo of an overwrite is a restore. The
-test walks all three cases. Six of the seven trees capture that
-inverse as a closure, a tuple, or a record, and C stores explicit
+test walks all three cases. Seven of the eight trees capture that
+inverse as a closure, a tuple, or a record, rust as a plain
+`UndoRecord` struct of key, prev, and existed, and C stores explicit
 undo records in a fixed array because it has no closures to capture
 anything, the same trade its strategy listing made. This is also the
 seed of
@@ -251,7 +264,7 @@ brown, jumps with ties keeping source order, and early exit takes
 exactly the first two, quick and brown. The source observes the stop
 after offering exactly 3 words, the, quick, and brown. The go lane's
 frozen test pins the filtered set, the stable sort, and the first
-two, the offered-count stop probe is the six new trees' lane.
+two, the offered-count stop probe is the seven new trees' lane.
 
 + The consumer's break makes yield return false, and the false
   verdict unwinds Filter into the source, which stops where it
@@ -262,6 +275,8 @@ two, the offered-count stop probe is the six new trees' lane.
   order, so the adapter never scrambles its input's tie order.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch04/iterator.c", first: 35, last: 61, caption: [C, the source drives a yield callback, a false verdict stops it])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch04/iterator.rs", first: 19, last: 70, caption: [Rust, no yield either, a run trait over a yield callback, Filter and Sorted as generic adapters over it])
 
 #listing("patterns-concurrency-distributed/samples/ch04/behavioral.go", first: 139, last: 177, caption: [Go, words as a sequence, filter and sorted as sequence adapters])
 
@@ -294,7 +309,13 @@ same and add the honest probe: closing the generator runs its
 guarantee. Java has no yield at all, so its `Seq` is an interface
 that pushes into a `Predicate<String>`, the boolean verdict the
 generator's channel, and `List.sort` is stable, so the sorted
-adapter needs no index tiebreak.
+adapter needs no index tiebreak. Rust joins java in having no yield,
+its `Seq` a trait whose `run` takes the yield as a
+`&mut dyn FnMut(&str) -> bool`, and its adapters are generic structs,
+`Filter<S: Seq>` and `Sorted<S: Seq>` each a distinct monomorphized
+type, the composition free at run time and one concrete type per
+chain at build time. The file closes by pinning the same walk in the
+stdlib's pull form, `split_whitespace().filter().take(2)`.
 
 Lua's push sequence is a function that feeds a yield callback, and
 `coroutine.wrap` gives the same iteration shape natively over
@@ -343,6 +364,8 @@ log alarm, thanks, click, against the same table.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch04/state.c", first: 30, last: 67, caption: [C, the table as a 2d array of transitions, fire is one row lookup])
 
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch04/state.rs", first: 72, last: 104, caption: [Rust, the const table indexed by enum casts, a None action is the rejection that never logs])
+
 #listing("patterns-concurrency-distributed/samples/ch04/behavioral.go", first: 179, last: 231, caption: [Go, turnstile: two states, two events, four transitions, all visible at once])
 
 #listing("patterns-concurrency-distributed/samples-java/src/Ch04/State.java", first: 19, last: 54, caption: [Java, enums index a Transition table, a null row is the rejection, fire is one lookup])
@@ -359,7 +382,9 @@ The table makes the whole machine inspectable at a glance, which is
 the entire argument for it over a switch per state. Unknown events
 are rejected without a transition, and the log of actions doubles as
 the observable output. The spelling of the key tracks the language:
-a 2d array with a rejected marker in C, enums indexing a
+a 2d array with a rejected marker in C, a const 2d array of struct
+transitions indexed by enum casts in rust where a `None` action is
+the rejection, enums indexing a
 `Transition[][]` in java where a null row is the rejection, nested
 dictionaries in C\#, a template string key in javascript, a tuple
 key in python, nested tables in lua, where handing the constructor a
@@ -405,6 +430,8 @@ same literal pi.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch04/visitor.c", first: 18, last: 65, caption: [C, a tagged union and a switch, adding a variant adds a case])
 
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch04/visitor.rs", first: 15, last: 40, caption: [Rust, a real enum is the closed set, match arms the visitor, the compiler keeps every match exhaustive])
+
 #listing("patterns-concurrency-distributed/samples/ch04/behavioral.go", first: 233, last: 258, caption: [Go, variants as plain structs, visitors as functions that switch])
 
 #listing("patterns-concurrency-distributed/samples-java/src/Ch04/Visitor.java", first: 19, last: 45, caption: [Java, a sealed interface over record variants, the exhaustive switch enforced at compile time])
@@ -428,9 +455,11 @@ tree: a tagged union in C, a switch over a tag field in javascript,
 if chains on a tag in lua, records under pattern matching in C\#,
 and python's `match` binding class patterns directly, the structural
 side of its dataclass story#xref-to("python", "dataclasses"). Java
-is the one tree that turns the cost into a compile error: its sealed
-interface permits exactly `Circle` and `Rect`, the pattern switch
-over it is exhaustive, and a new variant refuses to build until
+and rust are the two trees that turn the cost into a compile error:
+java's sealed interface permits exactly `Circle` and `Rect`, the
+pattern switch over it exhaustive, and rust's `enum Shape` is the
+closed set by construction, every `match` over it exhaustive, so in
+both a new variant refuses to build until
 every visitor grows its case, the rule the C comment can only state.
 
 #diagram([one closed union, visitors are switches over it], length: 13pt, {
@@ -473,7 +502,7 @@ every visitor grows its case, the rule the C comment can only state.
   cdraw.content((16.75, 1.05), [the composite tree plus eval], size: 6pt)
 })
 
-== across the seven languages
+== across the eight languages
 
 The build sizes count non-comment source lines, the go column the
 chapter's one frozen file:
@@ -483,6 +512,7 @@ chapter's one frozen file:
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [618], [libc plus threads.h], [fixed subscriber arrays under one mutex, undo records instead of closures, the iterator a yield callback with a context pointer],
+  [rust], [678], [std only, no crates], [static trait-object strategy table, generic Seq adapters over a yield callback, enum-indexed transition table, exhaustive match visitors],
   [go], [211], [stdlib], [frozen reference lane, iter.Seq adapters, SortStableFunc, buffered channel subscribers],
   [java], [375], [jdk 27 stdlib], [Predicate verdicts for push iteration, sealed visitors the compiler keeps exhaustive, enums indexing the transition table],
   [c\#], [285], [bcl], [Channels subscribers with TryWrite drops, yield return iterators, record pattern matching visitors],
@@ -495,8 +525,10 @@ sources: go.dev/pkg/iter for `Seq`, `Seq2`, and `Pull` semantics,
 go.dev/ref/spec range over function, go.dev/pkg/slices for
 `SortStableFunc` stability, go.dev/pkg/net/http for the middleware
 as chain of responsibility precedent, accessed 2026-09-08. Verified
-by the seven chapter legs: 6 Ch04 C programs with 47 embedded
-checks, `go test -race` at 6 tests in `patternsbook/ch04`, 6 Ch04
+by the eight chapter legs: 6 Ch04 C programs with 47 embedded
+checks, 6 Ch04 rust programs in `samples-rust/src` with 49 embedded
+checks under `run-rust-samples`, `go test -race` at 6 tests in
+`patternsbook/ch04`, 6 Ch04
 java programs with 46 checks under `run-java-samples`, 17 C\# facts
 over `PatternsBook.slnx`, 11 `node --test` cases, 52 Python checks
 across 6 files, and 28 Lua rows under `run.lua`.

@@ -1,14 +1,14 @@
-// book 9 manifest: chapter registry used by cross references and stubs
+// book 10 manifest: chapter registry used by cross references and stubs
 #let dsabook = (
-  num: 9,
+  num: 10,
   volume: false,
   title: "practical data structures and algorithms",
   meta: (
     title: "practical data structures and algorithms",
-    subtitle: "an engineering handbook in seven languages",
+    subtitle: "an engineering handbook in eight languages",
     author: "Raeliosol",
-    version: "8.0",
-    volume-label: "book 9",
+    version: "9.0",
+    volume-label: "book 10",
   ),
   chapters: (
     (id: "analysis", num: 1, title: "complexity analysis and honest benchmarking"),

@@ -1,4 +1,4 @@
-// book 10, chapter 9: icpc world finals 2017, rapid city. twelve problems
+// book 11, chapter 10: icpc world finals 2017, rapid city. twelve problems
 // a through l, every one walked in c, go, java, c#, javascript, python
 // and lua, listings sliced from the frozen solver files under samples-c,
 // samples-go, samples-java, samples, samples-js, samples-py and samples-lua
@@ -14,7 +14,7 @@ problems, #link("https://icpc.global/worldfinals/problems/2017-ICPC-World-Finals
 
 Four helper kits are year-local to 2017, one per problem that wanted
 one, and everything else the year's solvers import comes from the
-wave 1 toolbox chapters 2 through 8. Each kit states its contract
+wave 1 toolbox chapters 2 through 9. Each kit states its contract
 and prints its twin files below in the book's fixed language order.
 
 The geom kit backs problem A with the year's hardest contract: given
@@ -168,9 +168,9 @@ slid and stretched until its supporting line pins against two
 polygon vertices, the cue that turns a continuous placement search
 into 19900 discrete lines. Problem A is the 2017 face of the
 geometric critical-point enumeration family. Geometric
-critical-point enumeration is the shared shape of chapter 09 problem
-D, chapter 10 problem E, chapter 10 problem G, chapter 12 problem T,
-and chapter 13 problem D.
+critical-point enumeration is the shared shape of chapter 10 problem
+D, chapter 11 problem E, chapter 11 problem G, chapter 13 problem T,
+and chapter 14 problem D.
 
 The tempting shortcut, rotating calipers over the convex hull, is
 priced out by the shape itself: the hull pads every bay with sea,
@@ -191,7 +191,7 @@ chord's line can touch an edge at a point, run along it, and veer
 back to its own side, or cross over to the far side, and only the
 crossing toggles the inside parity, so the classifier has to tell a
 touch-and-return from a touch-and-cross using exact integer cross
-products on the given coordinates. Book 9's chapter 24, lattice
+products on the given coordinates. Book 10's chapter 24, lattice
 geometry and grid algorithms, develops that lattice polygon
 arithmetic from scratch. Seven solvers, seven exactness strategies on
 that classification.
@@ -360,7 +360,7 @@ question mark must survive because at least one consistent deal
 exists, and the rule that a responder holding several suggested
 cards may show any one means no local deduction closes a category on
 its own. Problem B is the 2017 face of the constraint repair with
-backtracking family. Chapter 10 problem C is the other constraint
+backtracking family. Chapter 11 problem C is the other constraint
 repair with backtracking member.
 
 The tempting shortcut, a forward rule engine that propagates forced
@@ -503,8 +503,8 @@ every row and every column pins its maximum, and one tall pile can
 satisfy a row and a column at once, which is a matching question per
 height over the nonempty cells. Problem C is the 2017 face of the
 bipartite assignment feasibility family. The bipartite assignment
-feasibility family collects chapter 12 problem X, chapter 14 problem
-B, and chapter 14 problem F.
+feasibility family collects chapter 13 problem X, chapter 15 problem
+B, and chapter 15 problem F.
 
 The tempting shortcut, the max(m, n) tally that keeps one pile per
 row or column maximum, is priced out by exactly the matching: on
@@ -525,7 +525,7 @@ cell keeps exactly one crate, so the kept total is the sum of
 H times (m + n - match(H)) over all heights plus the leftover singles,
 and the answer is the initial total minus that. Each height runs its
 own matching on at most 100 plus 100 nodes, well inside the limit.
-Book 9's chapter 38, network flows ii, teaches Kuhn's
+Book 10's chapter 38, network flows ii, teaches Kuhn's
 augmenting-path bipartite matching from scratch. The matching is
 what separates this from the naive max(m, n) tally.
 
@@ -648,8 +648,8 @@ exactly the axis-aligned rectangle between the two corners, and the
 maximum is attained at finitely many staircase corners. Problem D is
 the 2017 face of the geometric critical-point enumeration family.
 Geometric critical-point enumeration is the shared shape of chapter
-08 problem A, chapter 10 problem E, chapter 10 problem G, chapter 12
-problem T, and chapter 13 problem D.
+11 problem A, chapter 11 problem E, chapter 11 problem G, chapter 13
+problem T, and chapter 14 problem D.
 
 The tempting shortcut, a ternary search over each producer's stretch
 of the consumer staircase, is priced out by shape: along the
@@ -668,7 +668,7 @@ sides to staircases, and then a divide and conquer finds every
 producer's best consumer: for the middle producer scan the consumers
 linearly, and because the optimal consumer index is monotone across
 the recursion, each level touches each consumer once, O((m + n) log n)
-in total. Book 9's chapter 32, dynamic programming ii, develops the
+in total. Book 10's chapter 32, dynamic programming ii, develops the
 divide-and-conquer over a monotone argmax that this sweep is the
 bare-bones shape of. An alternative half-plane sweep with the same
 bound exists.
@@ -799,7 +799,7 @@ every such term strictly decreases as c grows across the valid
 range, so the whole journey took time t pins one crossing of one
 falling curve. Problem E is the 2017 face of the one-dimensional
 answer-space search family. The one-dimensional answer-space search
-family also collects chapter 10 problem F and chapter 14 problem C.
+family also collects chapter 11 problem F and chapter 15 problem C.
 
 The tempting shortcut, solving the equation in closed form, is
 priced out by degree: the sum clears to a degree-n polynomial,
@@ -927,7 +927,7 @@ the values arrive sorted, an optimal level set never needs two
 levels sharing a boundary with no value between them, so the
 clusters are contiguous runs and the last chosen breakpoint drives
 each transition. Problem F is the 2017 face of the chain dp over
-sorted positions family. Chapter 10 problem B carries the same chain
+sorted positions family. Chapter 11 problem B carries the same chain
 dp over sorted positions shape.
 
 The tempting shortcut, generic k-means with Lloyd iterations, is
@@ -1067,7 +1067,7 @@ filled, is fully known and deterministic, and a smallest initial
 pattern asks which earlier states could have produced the final one,
 so the run walks the rule backwards and repairs the at most one
 flipped cell each step leaves. Problem G is the 2017 face of the
-inverting a deterministic process family. Chapter 13 problem A is
+inverting a deterministic process family. Chapter 14 problem A is
 the other half of the inverting a deterministic process pair.
 
 The tempting shortcut, searching forward from candidate seeds, is
@@ -1213,8 +1213,8 @@ with equal lengths, and the certified answer runs an earliest
 deadline pass that avoids regions proven to starve a subproblem, an
 exchange argument behind every placement. Problem H is the 2017 face
 of the greedy with a safety proof family. Greedy with a safety proof
-is the family of chapter 10 problem K, chapter 11 problem A, and
-chapter 13 problem H.
+is the family of chapter 11 problem K, chapter 12 problem A, and
+chapter 14 problem H.
 
 The tempting shortcut, the plain greedy that shoots at time zero
 whenever the clock allows, is priced out by the chapter's own
@@ -1235,7 +1235,7 @@ per s. Incremental bookkeeping makes the phase O(n^2). Phase two runs
 a forward earliest-deadline greedy that never starts a shot inside a
 forbidden region, and the solutions prove that a greedy failure
 always exhibits a phase-one failure, so a greedy success is final.
-Book 9's chapter 40, game theory and scheduling, collects the
+Book 10's chapter 40, game theory and scheduling, collects the
 Garey-Johnson-Simons-Tarjan window scheduling family this comes
 from. A greedy that shoots at time zero on the fixture is exactly
 the trap.
@@ -1373,7 +1373,7 @@ more translations, is per-position reachability: a length mismatch
 fails at once, and otherwise the only question is which of the 26
 letters reach which. Problem I is the 2017 face of the algebraic
 reduction to a small universe family. Algebraic reduction to a small
-universe covers chapter 11 problem K and chapter 12 problem Z.
+universe covers chapter 12 problem K and chapter 13 problem Z.
 
 The tempting shortcut, checking one translation step per position or
 walking the 500-edge graph per position, is priced out both ways:
@@ -1526,7 +1526,7 @@ v f + w at most c with a product objective, is supply moving through
 shared capacity: bill one flubber liter as v capacity units and both
 fluids become one commodity whose total the max flow fixes and whose
 split between the sources the objective chooses. Problem J is the
-2017 face of the flow modeling on a network family. Chapter 09
+2017 face of the flow modeling on a network family. Chapter 10
 problem C is the other half of the flow modeling on a network pair.
 
 The tempting shortcut, a genuine two-commodity flow that routes the
@@ -1552,7 +1552,7 @@ residual carrying water gives f1, max water first with the residual
 carrying flubber gives f2, mixing alpha times f1 plus 1 minus alpha
 times f2 reaches the target totals, and one final max flubber flow
 from node 1 through a digraph whose arcs are the mixed usages splits
-each pipe into flubber plus leftover water. Book 9's chapter 38,
+each pipe into flubber plus leftover water. Book 10's chapter 38,
 network flows ii, builds Dinic's algorithm from scratch. Four Dinic
 runs per input.
 
@@ -1685,7 +1685,7 @@ terms are identical across strings, so only self-overlap separates
 them, and self-overlap is exactly the border sequence read off the
 KMP failure chain. Problem K is the 2017 face of the string borders,
 rotations, and automata family. String borders, rotations, and
-automata connect chapter 11 problem G and chapter 13 problem F.
+automata connect chapter 12 problem G and chapter 14 problem F.
 
 The tempting shortcut, computing the probabilities exactly, is
 priced out by the state space: the rival's sequence ranges over
@@ -1703,7 +1703,7 @@ threshold 2 l - n because two occurrences cannot both fit in n rounds
 below it, and a uniform trailing zero entry never affects the order,
 so it is dropped. A lexicographically smaller border sequence means a
 more likely prediction, so the sort is ascending and stable, O(l + s
-log s) overall. Book 9's chapter 35, combinatorics, carries the
+log s) overall. Book 10's chapter 35, combinatorics, carries the
 inclusion-exclusion machinery the ranking's first-order terms are an
 instance of. Both official samples fall out of the rule, the
 second one ranking the border-free PRSPS first and the 4-3-2-1 chain
@@ -1842,7 +1842,7 @@ columns left to right, the unmatched top-left corners form a set
 ordered by row, and a bottom-right corner at row r2 matches the
 largest open row at most r2, exactly the predecessor question an
 ordered active set answers. Problem L is the 2017 face of the sweep
-line with an ordered active set family. Chapter 10 problem F is the
+line with an ordered active set family. Chapter 11 problem F is the
 other member of the sweep line with an ordered active set family.
 
 The tempting shortcut, pairing each top-left with the bottom-right

@@ -17,7 +17,7 @@ never calls malloc.
 
 The dry run: the fixture is the C\# list built by three AddFirst
 calls and unspliced at 2, plus the abcdef reversal, asserted by the
-C\# suite; the other six languages push 1 through 5 and pin the same
+C\# suite; the other seven languages push 1 through 5 and pin the same
 flip on integers.
 
 + AddFirst(1), AddFirst(2), AddFirst(3) each point a fresh node at
@@ -63,9 +63,14 @@ flip on integers.
 })
 
 The 3, 2, 1 into 3, 1 and the abcdef round trip are the C\# pins,
-and the listings below build the spine in seven languages.
+and the listings below build the spine in eight languages.
 
 #listing("dsa/samples-c/src/Ch04/slist.c", first: 31, last: 53, caption: [c, push, reverse, find, and to-array over a node pool])
+
+Rust rebuilds the same spine over an index pool, node handles are i64
+slots and NIL is minus one, no Box and no unsafe:
+
+#listing("dsa/samples-rust/src/Ch04/slist.rs", first: 38, last: 73, caption: [rust, push, reverse, find, and to-array over the index pool])
 
 #listing("dsa/samples-go/ch04/slist.go", first: 18, last: 36, caption: [go, push front and the three pointer reverse as methods])
 
@@ -92,13 +97,14 @@ Three more languages carry the same spine:
 
 #listing("dsa/samples-lua/ch04_slist.lua", first: 5, last: 25, caption: [lua, each node a table with a next field])
 
-Every suite pins the reversal. C, Java, JavaScript, and Lua push 1
-through 5, read the list back as 5 4 3 2 1, and read 1 2 3 4 5 after
+Every suite pins the reversal. C, Rust, Java, JavaScript, and Lua push
+1 through 5, read the list back as 5 4 3 2 1, and read 1 2 3 4 5 after
 the flip. Go reverses a 3 node list to 3 2 1. Python pushes 5 4 3 2 1
 so the list reads 1 through 5, flips it twice, and checks the round
-trip. Node shapes differ, a static pool in C, a heap node behind a
-reference in Java, `__slots__` in Python, a fresh table per node in
-Lua, and the reversal loop stays within a dozen lines in all seven.
+trip. Node shapes differ, a static pool in C, an index pool in Rust, a
+heap node behind a reference in Java, `__slots__` in Python, a fresh
+table per node in Lua, and the reversal loop stays within a dozen
+lines in all eight.
 
 #diagram([the three pointer reversal, one iteration: stash next, flip cur onto prev, slide both], length: 13pt, {
   let box = (x, y, ch) => {
@@ -149,8 +155,8 @@ every step modulo k, so it must pass through zero. C runs both races,
 one to detect, one from the head to find the entry.
 
 The dry run: the fixture is the rho 1, 2, 3, 4, 5 with the tail bent
-back onto 3, pinned by the C, Java, JavaScript, and Lua suites at
-entry 3, mu 2, lambda 3; Go pins the length, Python bends onto 2
+back onto 3, pinned by the C, Rust, Java, JavaScript, and Lua suites
+at entry 3, mu 2, lambda 3; Go pins the length, Python bends onto 2
 instead, and C\# flips a 10 node chain from acyclic to cyclic.
 
 + Both pointers start at the head 1: slow steps one node per turn,
@@ -195,10 +201,14 @@ instead, and C\# flips a 10 node chain from acyclic to cyclic.
   cdraw.content((11.2, -0.2), [mu = 2, lambda = 3], size: 6pt)
 })
 
-The meet at 4 with mu 2 and lambda 3 is pinned four suites deep,
-and the listings below run both races in seven languages.
+The meet at 4 with mu 2 and lambda 3 is pinned five suites deep,
+and the listings below run both races in eight languages.
 
 #listing("dsa/samples-c/src/Ch04/slist.c", first: 62, last: 91, caption: [c, meet detection, entry race, cycle length])
+
+Rust hands the meet back as an Option over the same pool indices:
+
+#listing("dsa/samples-rust/src/Ch04/slist.rs", first: 75, last: 103, caption: [rust, meet detection, entry race, cycle length over the index pool])
 
 #listing("dsa/samples-go/ch04/slist.go", first: 81, last: 91, caption: [go, has cycle returns the meeting node for the second race])
 
@@ -220,7 +230,7 @@ aligned, and to finding the middle of a list in one pass.
 
 #listing("dsa/samples-lua/ch04_slist.lua", first: 37, last: 63, caption: [lua, meet, entry, and length over table nodes])
 
-The rho fixtures differ where the suites chose them. C, Java,
+The rho fixtures differ where the suites chose them. C, Rust, Java,
 JavaScript, and Lua bend 1 2 3 4 5 back onto the node holding 3 and
 pin the entry, mu 2, lambda 3. Go bends the same list and pins the
 cycle length 3. Python bends the tail onto 2, entry value 2, cycle
@@ -263,8 +273,8 @@ file-scope sentinel plus four splices.
 
 The dry run: the fixture is the C\# ring across its three shapes,
 both-end order, position-free removal, and the version counter,
-asserted by the C\# suite; C, Java, JavaScript, and Lua push 1, 0, 2,
-9 and read 9 0 1 2 instead.
+asserted by the C\# suite; C, Rust, Java, JavaScript, and Lua push 1,
+0, 2, 9 and read 9 0 1 2 instead.
 
 + AddLast b, AddLast c, AddFirst a: forward reads a b c, backward
   reads c b a, count 3, the sentinel invisible at both ends.
@@ -300,10 +310,15 @@ asserted by the C\# suite; C, Java, JavaScript, and Lua push 1, 0, 2,
 })
 
 The 1, 3 unsplice, the 9 after the drain, and the version bumps are
-the C\# pins, and the listings below build the ring in seven
+the C\# pins, and the listings below build the ring in eight
 languages.
 
 #listing("dsa/samples-c/src/Ch04/ring.c", first: 26, last: 57, caption: [c, ring init, both-end pushes, remove by node])
+
+Rust spells the ring over parallel index arrays, the sentinel the
+last slot pointing at itself:
+
+#listing("dsa/samples-rust/src/Ch04/ring.rs", first: 23, last: 61, caption: [rust, ring over index arrays, both-end pushes, remove by node])
 
 #listing("dsa/samples-go/ch04/ring.go", first: 25, last: 38, caption: [go, one splice helper feeds both pushes])
 
@@ -360,10 +375,10 @@ Three more rings:
 
 #listing("dsa/samples-lua/ch04_ring.lua", first: 6, last: 27, caption: [lua, the sentinel table and its four splices])
 
-C, Java, JavaScript, and Lua pin the same both-end fixture, pushes 1,
-0, 2, 9 land as 9 0 1 2, the middle 1 unlinks to 9 0 2, and after a
-full drain the sentinel points at itself while remaining a valid
-node. Go pins pushes to 0 1 2, removal to 2 3, and a reinsert after
+C, Rust, Java, JavaScript, and Lua pin the same both-end fixture,
+pushes 1, 0, 2, 9 land as 9 0 1 2, the middle 1 unlinks to 9 0 2, and
+after a full drain the sentinel points at itself while remaining a
+valid node. Go pins pushes to 0 1 2, removal to 2 3, and a reinsert after
 drain to 9. Python walks both directions, 0 1 2 3 forward and its
 mirror backward, removes a middle node to 0 1 3, and proves the
 emptied ring folds onto the sentinel. C\# adds what the others leave
@@ -441,7 +456,7 @@ on chapter 2's line model, and the workload on trial is one pass over
 The 16 to 1 walk price against the 6 writes is the whole trade in two
 numbers, arrays first unless elements move by reference.
 
-== across the seven languages
+== across the eight languages
 
 Build sizes count non-comment source lines over the featured files;
 bundled checks count where the language puts them in the same file:
@@ -451,6 +466,7 @@ bundled checks count where the language puts them in the same file:
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [208], [libc only], [nodes come from static pools, no malloc anywhere in the fixtures, 21 checks in 2 files],
+  [rust], [223], [rust 1.99 std], [node handles are pool indices over flat arrays, NIL is minus one and the sentinel the last slot, no Box and no unsafe anywhere, 21 checks in 2 files],
   [go], [127], [none], [unexported next pointers keep the list encapsulated, Tail and NodeAfter exist for the tests],
   [java], [202], [jdk 27 stdlib], [references spell the c pointers and null spells NULL, reference equality is the cycle meet, the sentinel stays a real node that never becomes null],
   [c\#], [122], [bcl only], [generic rings with a version counter, the only suite that invalidates in-flight iteration],
@@ -463,8 +479,10 @@ sources: learn.microsoft.com, `LinkedList<T>` api page including the
 sentinel-based implementation remarks, `LinkedListNode<T>`,
 enumeration and thread safety notes, accessed 2026-09-08. Sample
 behavior verified by `make verify-csharp`, 9 tests in chapter 4 of
-the samples suite. The seven-language layer verifies the same way:
-2 C programs with 21 embedded checks, 7 Go tests, the java runner's
+the samples suite. The eight-language layer verifies the same way:
+2 C programs with 21 embedded checks, 2 rust programs under
+`run-rust-samples` with 21 Ch04 checks over `samples-rust/src`, 7 Go
+tests, the java runner's
 21 Ch04 checks over 2 files under `run-java-samples`, 7 `node --test`
 cases, 16 Python checks across 2 files, and 9 Lua checks under
 `run.lua`.

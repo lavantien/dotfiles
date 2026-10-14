@@ -326,7 +326,7 @@ own migration guide, "removed tools and components" at
 docs.oracle.com/en/java/javase/26/migrate/, which says java db was
 bundled with jdk 7 and 8 and is no longer included, accessed
 2026-10-05. The wal and synchronous NORMAL analogy follows the go
-book's store chapter, book 3, chapter 23, and the sqlite
+book's store chapter, book 4, chapter 23, and the sqlite
 documentation it cited. Verified live 2026-10-05 by the
 `javabook.store` tests under the vendored junit 6.1.3 lane, 24 tests
 green three consecutive runs in a module of 92, with the

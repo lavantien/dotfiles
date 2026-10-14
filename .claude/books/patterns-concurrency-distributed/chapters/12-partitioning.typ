@@ -12,7 +12,7 @@ placement schemes that move the minimum, consistent hashing and
 rendezvous, plus jump hash, the stateless special case, and one
 hashing bug worth more than all of them. It is also this book's
 exact-lane chapter: the raw hash universe and every placement
-sequence are pinned byte-identical across the six sibling trees,
+sequence are pinned byte-identical across the seven sibling trees,
 while the frozen go tests hold the stability and band properties,
 and the dry runs below say which lane asserts what.
 
@@ -64,15 +64,17 @@ The dry run: the exact-lane contract, split by design.
   3500 of 10000 keys with every mover landing on the new node,
   four-node balance stays inside 550..1450 of 4000, and removal
   never disturbs a survivor
-- the six sibling trees pin the exact sequences off the same
+- the seven sibling trees pin the exact sequences off the same
   implementation: the join moves exactly 2303 keys, all to n4, with
   post counts 2870/2267/2560/2303, balance lands 1174/1024/879/923,
   and removing n2 relocates exactly 705 keys, 321 to n1 and 384 to
   n3
 - ring{alpha,beta} at 64 vnodes owns user:0..9 as
-  a,a,a,b,a,a,a,b,a,b, the ownership strip the six new trees pin
+  a,a,a,b,a,a,a,b,a,b, the ownership strip the seven new trees pin
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch12/ring.c", first: 73, last: 123, caption: [C, insertion-sorted points with the node name breaking hash ties, owner scans for the first point at or after the key])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch12/ring.rs", first: 59, last: 99, caption: [Rust, points sorted by `sort_by` with the name tiebreak chained through `then_with`, owner the first point at or after the key, None on the empty ring])
 
 #listing("patterns-concurrency-distributed/samples/ch12/hashing.go", first: 38, last: 105, caption: [Go, ring points sorted by hash, owner is the first point after the key, wrapping])
 
@@ -92,18 +94,21 @@ for small clusters, while 100 to 200 vnodes per node averages the
 arcs until each node's share sits near `1/n`. The tiebreak matters
 as much as the sort: points with equal hashes order by node name in
 every lane, go through `slices.Compare` on the names, c through
-`strcmp` inside its insertion sort, c\# through `CompareOrdinal`,
+`strcmp` inside its insertion sort, rust through `cmp` chained by
+`then_with` in `sort_by`, c\# through `CompareOrdinal`,
 and the dynamic four through their native string order, which is
-one of the two details that keep seven independent implementations
+one of the two details that keep eight independent implementations
 on one movement sequence. The other is the hash itself, next
 section.
 
 The test side is half the fixture, and each tree answers with its
 own test artifact: the frozen go test file, the xunit and node test
-files, and the check regions of the C, java, python, and lua
+files, and the check regions of the C, rust, java, python, and lua
 modules.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch12/ring.c", first: 148, last: 181, caption: [C, the check region: 2303 movers, all gained, post counts exact, the go lane's band stated beside them])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch12/ring.rs", first: 128, last: 154, caption: [Rust, the check region: 2303 movers, all captured by n4, post counts exact, the band stated beside])
 
 #listing("patterns-concurrency-distributed/samples/ch12/hashing_test.go", first: 26, last: 62, caption: [Go, a one-of-four join moves a quarter of keys, and only to the new node])
 
@@ -119,7 +124,7 @@ modules.
 
 Adding a fourth node to three moves 10000 keys by roughly 2500, all
 of them landing on the new node, no key ever shuffling between
-survivors, and the six exact lanes say it is 2303 for this
+survivors, and the seven exact lanes say it is 2303 for this
 generator. Removal symmetrically relocates only the departed node's
 keys, 705 of them here. That is the whole sales pitch of the ring,
 and the same test walk checks balance, four nodes within a band
@@ -173,22 +178,26 @@ finalizer:
 The dry run: the raw hash universe, 13 inputs through fnv64a plus
 the mix64 finalizer.
 
-- the six new trees pin the exact decimals: alpha
+- the seven new trees pin the exact decimals: alpha
   8596495612706370024, beta 17294041484173018516, n1
   17934566338607214163, n2 13970388862098144604, n3
   4545224107033280897, n4 12077200234615595018, user:7
   977887655448102184, and the routing keys A through F
 - the go lane's frozen tests pin no raw hash at all, they pin the
-  behavior the hashes produce, so the raw universe is the six
+  behavior the hashes produce, so the raw universe is the seven
   trees' contract
 - javascript keeps src on limb pairs and converts to BigInt only in
   the test to state the constants exactly, lua parses every pin
   from a decimal string because a decimal literal past 2^63 lexes
-  as a float, and java carries the pins above 2^63 through
+  as a float, java carries the pins above 2^63 through
   `Long.parseUnsignedLong` on the identical decimal string because
-  no positive long literal reaches past `Long.MAX_VALUE`
+  no positive long literal reaches past `Long.MAX_VALUE`, and
+  rust's `u64` literals hold the full unsigned range straight to
+  2^64 minus 1, no parsing detour anywhere
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch12/hash.c", first: 20, last: 37, caption: [C, mix64 after fnv, the outputs are the pinned decimals])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch12/hash.rs", first: 15, last: 32, caption: [Rust, mix64 with every multiply named `wrapping_mul`, the pinned decimals written as plain u64 literals])
 
 #listing("patterns-concurrency-distributed/samples/ch12/hashing.go", first: 11, last: 31, caption: [Go, fnv then splitmix-style mix: placement hashes need avalanche in every bit])
 
@@ -205,7 +214,9 @@ the mix64 finalizer.
 The finalizer is where the carriers separate most. C, c\#, go, and
 lua multiply unsigned 64-bit values that wrap by construction, c
 and lua because the types wrap, c\# because `ulong` overflow wraps
-silently, go because `uint64` is defined to. Java's signed `long`
+silently, go because `uint64` is defined to, rust by naming the
+wrap, `wrapping_mul` on every multiply, because a plain overflow is
+a debug-build panic. Java's signed `long`
 overflow wraps silently the same way, so the recurrence is one
 line, and the lane meters avalanche as an exact unsigned interval
 through `Long.compareUnsigned`. Python masks by hand after every
@@ -244,17 +255,19 @@ Rendezvous hashing reaches the same minimal-movement property with
 no ring and no vnodes: rank every node by `hash(node, key)` and take
 the maximum:
 
-The dry run: exact winners and exact movement, five trees against
+The dry run: exact winners and exact movement, seven trees against
 the go lane's bands.
 
 - user:0..5 rank n2,n3,n2,n2,n2,n3 over {n1,n2,n3} and flip to
-  n2,n4,n4,n4,n2,n4 once n4 joins, pinned by the six new trees
+  n2,n4,n4,n4,n2,n4 once n4 joins, pinned by the seven new trees
 - the join moves exactly 1010 of 4000 keys, every mover captured by
-  n4, exact in the six new trees
-- all seven lanes assert moved equal to gained inside the band
+  n4, exact in the seven new trees
+- all eight lanes assert moved equal to gained inside the band
   500..1500
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch12/rendezvous.c", first: 58, last: 82, caption: [C, the score is hash over node, a real NUL byte, then key, matching go's join byte for byte])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch12/rendezvous.rs", first: 52, last: 69, caption: [Rust, the score pushes a real zero byte onto a Vec, the max tracked as an Option, u64 compares unsigned by construction])
 
 #listing("patterns-concurrency-distributed/samples/ch12/hashing.go", first: 123, last: 150, caption: [Go, one hash per node per key, winner owns it])
 
@@ -269,8 +282,9 @@ the go lane's bands.
 #listing("patterns-concurrency-distributed/samples-lua/ch12_rendezvous.lua", first: 34, last: 60, caption: [Lua, ukey flips the sign bit so the max is unsigned])
 
 The join every lane hashes is `node`, one NUL byte, `key`, byte
-identical in all seven, go and javascript through the `\x00`
-escape, c by building the buffer with a real zero byte, c\# and
+identical in all eight, go and javascript through the `\x00`
+escape, c by building the buffer with a real zero byte, rust by
+pushing a real zero byte onto a Vec, c\# and
 python through their own spellings, lua through `\0`, java by
 an xor against a literal 0 between the two strings.
 Unsigned comparison is the only trap left, and two lanes pay it
@@ -327,17 +341,19 @@ key either stays or moves to bucket n, never between old buckets:
 
 The dry run: the table and the two properties.
 
-- rows across bucket counts 1..5 are pinned byte-exact by the six
+- rows across bucket counts 1..5 are pinned byte-exact by the seven
   new trees: k=2 [0,0,0,3,3], k=3 [0,0,2,3,3], k=4 [0,1,1,1,1],
   k=5 [0,1,1,1,4], k=6 [0,1,2,2,2], k=8 [0,0,0,0,4], k=9
-  [0,0,2,2,2], and the c, java, python, and lua lanes pin the full
-  table, all-zero rows k=0, k=1, and k=7 included
+  [0,0,2,2,2], and the c, rust, java, python, and lua lanes pin the
+  full table, all-zero rows k=0, k=1, and k=7 included
 - growing 3 to 4 buckets over k=1..500 never moves a key anywhere
-  but the new bucket, all seven lanes
+  but the new bucket, all eight lanes
 - 10000 keys over 5 buckets land 2001/1996/2002/2005/1996, exact
-  in the six new trees, band 1300..2700 in all seven
+  in the seven new trees, band 1300..2700 in all eight
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch12/jump.c", first: 21, last: 30, caption: [C, the ladder with j held in int64_t, a windows long is 32 bits and the rung passes 2^31])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch12/jump.rs", first: 15, last: 24, caption: [Rust, the rung held in i64, the key multiply named `wrapping_mul`, the division on f64 ieee doubles])
 
 #listing("patterns-concurrency-distributed/samples/ch12/hashing.go", first: 153, last: 160, caption: [Go, the o(log n) ladder, moving only what must move])
 
@@ -352,7 +368,8 @@ The dry run: the table and the two properties.
 #listing("patterns-concurrency-distributed/samples-lua/ch12_jump.lua", first: 11, last: 19, caption: [Lua, the 2147483648.0 division forces the float, tointeger rounds the rung])
 
 The ladder's arithmetic is a portability contract of its own: the
-division must be IEEE double in every lane, c's `double`, c\#'s
+division must be IEEE double in every lane, c's `double`, rust's
+`f64`, c\#'s
 `double`, java's ieee `double` with the rung held in a `long` for
 the same reason c holds `int64_t`, python's float, javascript's
 Number, lua forcing the fraction through a 2147483648.0 literal so
@@ -414,7 +431,7 @@ not for membership across machines.
   edge((3.1, -1.5), (6.2, -1.5), "-|>"),
 )
 
-== across the seven languages
+== across the eight languages
 
 The build sizes count non-comment source lines, the go column the
 chapter's one frozen file:
@@ -425,6 +442,8 @@ chapter's one frozen file:
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [454], [libc],
   [strcmp tiebreaks, int64_t rung past 2^31, the join built with a real NUL],
+  [rust], [471], [stdlib],
+  [wrapping named on every multiply, u64 literals to 2^64 minus 1, a NUL pushed onto a Vec, the rung in i64],
   [go], [126], [stdlib],
   [frozen lane pinning movement bands where the siblings pin exact decimals],
   [java], [460], [jdk 27 stdlib],
@@ -447,8 +466,10 @@ Transactions on Networking 1998, for the HRW formulation,
 Thatcher, "Rendezvous Hashing Explained", for the walkthrough,
 Lamping and Veach, "A Fast, Minimal Memory, Consistent Hash
 Algorithm", arXiv 1406.2294, for jump hash and its growth rule,
-accessed 2026-09-08. Verified by the seven chapter legs: 4 C
-programs with 4745 embedded checks, `go test` at 6 tests in
+accessed 2026-09-08. Verified by the eight chapter legs: 4 C
+programs with 4745 embedded checks, the rust runner's 4745 checks
+across 4 programs in `samples-rust/src/Ch12`, `go test` at 6 tests
+in
 `patternsbook/ch12`, the java runner's 63 checks across 4 programs
 in `samples-java/src/Ch12`, 13 xunit facts, node's 10 cases across
 4 suites in `test/ch12.test.mjs`, the python runner's 55 checks

@@ -1,4 +1,4 @@
-// book 10, chapter 14: the 2025 world finals. twelve problems, a
+// book 11, chapter 15: the 2025 world finals. twelve problems, a
 // through l, seven languages each, listings sliced from the landed files
 #import "../../theme/lib.typ": listing, callout, xref-to, diagram, cdraw
 
@@ -26,7 +26,7 @@ the self-check simulators the walkthroughs name where they occur.
 Four helper kits are year-local to this chapter, the match, moat, and
 wheels engines plus the go package's shared scan cursor, and
 everything else the year's solvers import comes from the wave 1
-toolbox chapters 2 through 8. The C solvers parse through the c
+toolbox chapters 2 through 9. The C solvers parse through the c
 tree's `Ch11/ch11_scan.h` beside the chapter 2 io header rather
 than a year-local twin, so both print in their own chapters and
 only go adds a file for parsing here. Each kit states its contract and
@@ -123,7 +123,7 @@ The scan kit is the go package's io contract, one file the whole
 year shares: `scan13` walks the input buffer with a whitespace
 `token`, a signed `nextInt`, its 64-bit twin `nextInt64`, and
 `line` for the fixed-line judge files, the same cursor design
-chapter 13 printed as scan12. All twelve go solvers parse through
+chapter 14 printed as scan12. All twelve go solvers parse through
 it:
 
 #listing("icpc/samples-go/ch13/ch13.go", first: 5, last: 42, caption: [go, scan13: token skips whitespace over the shared buffer, nextInt folds a signed value, nextInt64 the same in 64 bits])
@@ -202,7 +202,7 @@ impossible
 
 Recognition: n at 2e5 under the 2 second limit buys about 1e8 cheap operations, and the reconstruction needs only n log n of them, each node's interleave touching nothing but the shorter side, about 3.6e6 element moves for the whole build.
 
-The statement prints the growth rule in full, inserting x swaps the root's children and descends left when y < x and re-roots when y > x, then hands over the finished tree and asks for the lexicographically minimal and the maximal permutation building exactly it: a deterministic forward process identified by its final state, the shape to run backwards. Problem A is the 2025 face of the inverting a deterministic process family. Chapter 08 problem G is the other half of the inverting a deterministic process pair.
+The statement prints the growth rule in full, inserting x swaps the root's children and descends left when y < x and re-roots when y > x, then hands over the finished tree and asks for the lexicographically minimal and the maximal permutation building exactly it: a deterministic forward process identified by its final state, the shape to run backwards. Problem A is the 2025 face of the inverting a deterministic process family. Chapter 9 problem G is the other half of the inverting a deterministic process pair.
 
 Searching forward is the priced-out alternative: the candidate permutations run to (2e5)!, and even a backward splice that walks the long side at every node costs (2e5)^2 = 4e10 moves against the limit, four orders past it.
 
@@ -358,7 +358,7 @@ judge their own outputs.
 
 Recognition: t at 40 with the sum of n capped at 1e7 against the 1 second limit leaves no room for per-n work above the engine's cutoff, and below it the retry machine stays small: n = 200 builds about 370 prime-multiple edges, one kuhn pass costs on the order of 200 × 370 ≈ 7e4 augment steps, and the at most 100 even deletions keep a whole verdict under 1e7 steps.
 
-The cue sits in the win condition, any even opening move that belongs to a winning strategy: an opening wins exactly when every opponent reply can be met with a matched partner forever, a matching-avoidance question on the prime-multiple graph. Problem B is the 2025 face of the bipartite assignment feasibility family. The bipartite assignment feasibility family collects chapter 09 problem C, chapter 12 problem X, and chapter 14 problem F. A secondary thread, semiprime certificate for large n, covers the primality test the opening move reduces to.
+The cue sits in the win condition, any even opening move that belongs to a winning strategy: an opening wins exactly when every opponent reply can be met with a matched partner forever, a matching-avoidance question on the prime-multiple graph. Problem B is the 2025 face of the bipartite assignment feasibility family. The bipartite assignment feasibility family collects chapter 10 problem C, chapter 13 problem X, and chapter 15 problem F. A secondary thread, semiprime certificate for large n, covers the primality test the opening move reduces to.
 
 Game-tree search on the move graph is the priced-out alternative, 2^(1e7) positions at the cap, and even memoized retrograde analysis must hold the whole graph in memory where one maximum matching per deletion answers outright.
 
@@ -378,11 +378,11 @@ above n/4 and at most n/3, opening 2p leaves the six semiprimes 2p,
 the book cuts over at n = 200, the pdf noting any cutoff between about
 200 and 1e5 serves
 (#link("https://worldfinals.icpc.global/problems/2025/finals/problems/problemset.pdf")[statement],
-solutions.pdf pp. 2-3). Book 9's chapter 38, network flows ii, builds
+solutions.pdf pp. 2-3). Book 10's chapter 38, network flows ii, builds
 kuhn's augmenting-path matching that the small-n engine runs here.
-Book 9's chapter 40, game theory and scheduling, collects the
+Book 10's chapter 40, game theory and scheduling, collects the
 games-on-graphs strategy arguments the matching criterion
-instantiates. Book 9's chapter 28, advanced number theory, carries the
+instantiates. Book 10's chapter 28, advanced number theory, carries the
 primality testing behind the Bertrand prime hunt, and the c engine
 opens the walkthrough.
 
@@ -543,7 +543,7 @@ expected output:
 
 Recognition: s at 1e4 with d at 2e4 and at most 10 outputs per duct bounds one dual propagation at the duct count plus the output count, about 2e5 operations along the altitude order the numbering hands over for free, and the nested simplex searches at about 70 outer and 50 inner probes budget 3500 × 2e5 ≈ 7e8 operations inside the 12 second limit.
 
-The task sentence's shape, the largest possible minimum percentage, names a single scalar objective whose level the propagation prices directly, so the answer is one point on a searched axis rather than a combinatorial object. Problem C is the 2025 face of the one-dimensional answer-space search family. The one-dimensional answer-space search family also collects chapter 09 problem E and chapter 10 problem F. A secondary thread, linear programming duality, covers the equalized-tank target the split converges to.
+The task sentence's shape, the largest possible minimum percentage, names a single scalar objective whose level the propagation prices directly, so the answer is one point on a searched axis rather than a combinatorial object. Problem C is the 2025 face of the one-dimensional answer-space search family. The one-dimensional answer-space search family also collects chapter 10 problem E and chapter 11 problem F. A secondary thread, linear programming duality, covers the equalized-tank target the split converges to.
 
 Modeling the ducts as a max-flow network is the tempting wrong tool and the statement breaks it itself: a duct may forward as little as 1 percent and keep the rest, so conservation fails at every station, and a generic lp over the 2e4 duct variables carries no budget the nested searches do not.
 
@@ -561,7 +561,7 @@ r = 2 is a one-dimensional search over the single free weight, and
 r = 3 nests one more level on the simplex, about 200 iterations per
 level holding the error near 1e-9
 (#link("https://worldfinals.icpc.global/problems/2025/finals/problems/problemset.pdf")[statement],
-solutions.pdf p. 3). Book 9's chapter 36, numerical methods, develops
+solutions.pdf p. 3). Book 10's chapter 36, numerical methods, develops
 the lp duality and dual weights this reduction rests on together with
 the ternary and golden-section searches that scan the reservoir
 simplex.
@@ -678,7 +678,7 @@ expected output:
 
 Recognition: r and c at 200 bound the walk's footprint, the log at 1e4 letters, and only 24 orders exist, so the survivor filter costs 24 × 1e4 = 2.4e5 first-feasible checks against the 2 second limit, microseconds of work, and the whole difficulty is the reset rule.
 
-The cue is the word fewest: the log is an observation stream that a handful of faults must explain, and the consistent world is recovered by intersecting survivor sets and paying one fault whenever the intersection empties. Problem D is the 2025 face of the consistency under a faulty oracle family. Consistency under a faulty oracle ties chapter 12 problem W and chapter 13 problem A together.
+The cue is the word fewest: the log is an observation stream that a handful of faults must explain, and the consistent world is recovered by intersecting survivor sets and paying one fault whenever the intersection empties. Problem D is the 2025 face of the consistency under a faulty oracle family. Consistency under a faulty oracle ties chapter 13 problem W and chapter 14 problem A together.
 
 Guessing the actual order schedule is the priced-out alternative: 24^10000 candidate sequences dwarf the log, and a dynamic program over order subsets pays 2^24 states times the log where one monotone intersection pass decides.
 
@@ -831,7 +831,7 @@ expected output:
 
 Recognition: n at 2e5 cities doubled to 4e5 vertices and m at 4e5 hires against the 12 second limit rule out any per-hire traversal, 4e5 hires × 4e5 vertices = 1.6e11 visits, while the union-find with small-into-large merging plus the signature table runs O(m log^2 n), about 4e5 × 17^2 ≈ 1.2e8 table operations.
 
-The asked-for count, city pairs that can exchange packages in both directions, is a connectivity closure quantity: it only moves when components weld, and the morning-noon doubling turns every hire into one edge, the cue that the answer lives on the components. Problem E is the 2025 face of the component structure and connectivity family. The component structure and connectivity family runs through chapter 10 problem B, chapter 11 problem E, chapter 11 problem H, chapter 12 problem R, and chapter 14 problem G.
+The asked-for count, city pairs that can exchange packages in both directions, is a connectivity closure quantity: it only moves when components weld, and the morning-noon doubling turns every hire into one edge, the cue that the answer lives on the components. Problem E is the 2025 face of the component structure and connectivity family. The component structure and connectivity family runs through chapter 11 problem B, chapter 12 problem E, chapter 12 problem H, chapter 13 problem R, and chapter 15 problem G.
 
 Rebuilding the component map per hire is the tempting alternative and the arithmetic kills it, the 1.6e11 visits above, and recomputing the pair count from scratch per hire adds another factor of n the incrementally maintained score already carries.
 
@@ -980,7 +980,7 @@ no
 
 Recognition: the sums of n and m over all tests cap at 2e5 each and the total like count at 5e5 against the 2 second limit, and the two conditions cost one pass over the cats then one sorted pass over the lower bounds, about 5e5 log 5e5 ≈ 1e7 steps, so the budget is trivial next to the model.
 
-The cue is the placement question, whether some placement of varieties into pots makes every cat stop exactly at its target: feasibility under per-pot intersection quotas and per-prefix counts, Hall's condition in prefix form. Problem F is the 2025 face of the bipartite assignment feasibility family. The bipartite assignment feasibility family collects chapter 09 problem C, chapter 12 problem X, and chapter 14 problem B.
+The cue is the placement question, whether some placement of varieties into pots makes every cat stop exactly at its target: feasibility under per-pot intersection quotas and per-prefix counts, Hall's condition in prefix form. Problem F is the 2025 face of the bipartite assignment feasibility family. The bipartite assignment feasibility family collects chapter 10 problem C, chapter 13 problem X, and chapter 15 problem B.
 
 Running an explicit variety-to-pot matching is the priced-out alternative: 5e5 likes through a matching engine cost hundreds of millions of augment steps where two linear scans decide, and a greedy pot-by-pot fill without the prefix test can reject placements that exist.
 
@@ -995,7 +995,7 @@ because filling pots left to right always leaves a legal variety for
 the next pot. Both are checkable in one sorted pass, O(n + m + K log K)
 with K the total like count
 (#link("https://worldfinals.icpc.global/problems/2025/finals/problems/problemset.pdf")[statement],
-solutions.pdf pp. 4-5). Book 9's chapter 38, network flows ii, states
+solutions.pdf pp. 4-5). Book 10's chapter 38, network flows ii, states
 hall's theorem in exactly this prefix form and proves it, the
 matching argument the two conditions encode.
 
@@ -1132,7 +1132,7 @@ impossible
 
 Recognition: n summed at 50000 with m near 2n, about 1e5 triangle cuts, against the 4 second limit: the offline sweep hangs each cut's lifetime on a segment tree over at most 5e4 level intervals and unwinds every union, O(n log^2 n), about 5e4 × 17^2 ≈ 1.4e7 logged unions.
 
-The cue is the constant elevation: the moat is one level curve crossing west to east, so the whole task lives on the components the cuts form while the level moves, connectivity under edge lifetimes. Problem G is the 2025 face of the component structure and connectivity family. The component structure and connectivity family runs through chapter 10 problem B, chapter 11 problem E, chapter 11 problem H, chapter 12 problem R, and chapter 14 problem E.
+The cue is the constant elevation: the moat is one level curve crossing west to east, so the whole task lives on the components the cuts form while the level moves, connectivity under edge lifetimes. Problem G is the 2025 face of the component structure and connectivity family. The component structure and connectivity family runs through chapter 11 problem B, chapter 12 problem E, chapter 12 problem H, chapter 13 problem R, and chapter 15 problem E.
 
 Rebuilding the level-curve graph per candidate elevation is the priced-out alternative: 5e4 anchor levels × 1e5 cuts is 5e9 segment insertions, and even sorting events per level pays n^2 log n where the segment tree touches each cut log n times in total.
 
@@ -1146,7 +1146,7 @@ tracks each component's total length as a linear function a + b*h plus
 west and east border flags. The answer for an anchor vertex is the
 cheapest component touching both borders, O(n log^2 n)
 (#link("https://worldfinals.icpc.global/problems/2025/finals/problems/problemset.pdf")[statement],
-solutions.pdf p. 5). Book 9's chapter 31, sqrt decomposition and
+solutions.pdf p. 5). Book 10's chapter 31, sqrt decomposition and
 offline queries, builds this offline dynamic connectivity from
 scratch, the segment tree over time carrying the edge lifetimes and
 the rollback union-find holding the growing chains. Two solved teams
@@ -1299,7 +1299,7 @@ expected output:
 
 Recognition: m at 1e18 with only 10 generators of size at most 1000 kills every value-indexed table: the split sieves below about 1e6 or 1e7 and runs a digit dp over 19 positions by g by 10 states, at most about 2e6 sieve marks plus 2e5 dp cells against the 2 second limit.
 
-The cue is the purchase order, the fewest signs able to display every score reachable at any moment: the reachable set is a capped semigroup, and the per-digit maxima come from a hand-built state space of digit position, residue mod g, and tightness against m's digits. Problem H is the 2025 face of the dp over an engineered state space family. The dp over an engineered state space family spans chapter 10 problem J, chapter 11 problem I, chapter 12 problem S, and chapter 13 problem J.
+The cue is the purchase order, the fewest signs able to display every score reachable at any moment: the reachable set is a capped semigroup, and the per-digit maxima come from a hand-built state space of digit position, residue mod g, and tightness against m's digits. Problem H is the 2025 face of the dp over an engineered state space family. The dp over an engineered state space family spans chapter 11 problem J, chapter 12 problem I, chapter 13 problem S, and chapter 14 problem J.
 
 Enumerating the reachable scores is the priced-out alternative: past the Frobenius region every multiple of g is reachable, so the count approaches 5e17 values below 1e18, and the sieve tier only exists because the digit dp cannot start below the bound.
 
@@ -1316,7 +1316,7 @@ value mod g per position tracking the best count of the target digit,
 with m's own length staying tight along m's digits, a sieve to about
 2e6 plus 9 digits by 19 lengths by g by 10 in the dp
 (#link("https://worldfinals.icpc.global/problems/2025/finals/problems/problemset.pdf")[statement],
-solutions.pdf pp. 5-6). Book 9's chapter 35, combinatorics, carries
+solutions.pdf pp. 5-6). Book 10's chapter 35, combinatorics, carries
 the frobenius numerical-semigroup bound this split rides on.
 
 The worked run: trace the model on sample 1, m = 1000 with the values 60, 100, 222, and 650. The generators share gcd 2, and m sits inside the sieve tier, so the reachable scores are enumerated outright and the nine counts read off their witnesses, the table. The cap itself is reachable, 1000 = 10 × 100, and supplies three 0 signs, 222 with its multiples 444 and 666 supplies three 2s, 4s, and 6s, 770 = 650 + 2 × 60 supplies two 7s, 888 = 4 × 222 supplies three 8s, and no reachable score repeats a 1, a 3, or a 5, the repeated-1 candidates 110 through 118 all missing from the semigroup and 1100 sitting past the cap, so those digits peak at one sign, and the trace ends at the printed answer `8 3`.
@@ -1588,7 +1588,7 @@ impossible
 
 Recognition: n at 2e5 cups and h at 4e10 under the 2 second limit rule out both search over orders and any height-indexed table: the achievable set is proved in closed form, 2n-1 through n^2 except the single hole n^2-2, the construction emits the order in one pass, and n at most 5 brute-forces the remainder.
 
-The cue is the exact favorite height, a placement order whose final tower spans exactly h: a characterization question, which heights are achievable at all, answered by an interval-with-one-hole theorem plus a canonical witness. Problem J is the 2025 face of the constructive closed-form characterization family. The constructive closed-form characterization family holds chapter 12 problem U and chapter 13 problem B.
+The cue is the exact favorite height, a placement order whose final tower spans exactly h: a characterization question, which heights are achievable at all, answered by an interval-with-one-hole theorem plus a canonical witness. Problem J is the 2025 face of the constructive closed-form characterization family. The constructive closed-form characterization family holds chapter 13 problem U and chapter 14 problem B.
 
 Trying orders is the priced-out alternative, (2e5)! permutations, and even a dynamic program over the values of h needs 4e10 states where the interval theorem answers in one comparison.
 
@@ -1757,7 +1757,7 @@ impossible
 
 Recognition: n and m at 3e5 with k at 3e5 against the 4 second limit: the row-column graph holds at most n + m = 6e5 nodes and k = 3e5 edges, and one breadth-first sweep per component decides feasibility, treasure depth, and shifting all at once, linear work.
 
-The cue is the interpolation rule, whichever diagonal triangulation you interpolate over the result must come out the same: that forces every depth to the form r_i + c_j, pairwise additive constraints with exactly one free value per component, fixed by any known cell and propagated. Problem K is the 2025 face of the one free value per component family. One free value per component is the trick behind chapter 12 problem P and chapter 13 problem G.
+The cue is the interpolation rule, whichever diagonal triangulation you interpolate over the result must come out the same: that forces every depth to the form r_i + c_j, pairwise additive constraints with exactly one free value per component, fixed by any known cell and propagated. Problem K is the 2025 face of the one free value per component family. One free value per component is the trick behind chapter 13 problem P and chapter 14 problem G.
 
 Filling the grid square by square is the priced-out alternative: (n-1) × (m-1) runs to 9e10 cells before any consistency check, and a linear program over the same cells pays a solver where six-int arithmetic per edge settles it.
 
@@ -1899,7 +1899,7 @@ expected output:
 
 Recognition: n at 1e5 rectangles under the 2 second limit: sorting the y-projections and merging costs n log n ≈ 1.7e6 comparisons in one pass, and the arithmetic on the walk's own span is constant, so the budget is trivial.
 
-The cue is the asymmetry sentence, horizontal movement and northward movement are always free: x never matters, the walk collapses onto the y-axis, and the answer is one descent minus one union of sorted intervals, a single sweep over a sorted axis. Problem L is the 2025 face of the event sweep over a sorted axis family. The same event sweep over a sorted axis cue drives chapter 10 problem A, chapter 10 problem H, chapter 11 problem D, and chapter 11 problem J.
+The cue is the asymmetry sentence, horizontal movement and northward movement are always free: x never matters, the walk collapses onto the y-axis, and the answer is one descent minus one union of sorted intervals, a single sweep over a sorted axis. Problem L is the 2025 face of the event sweep over a sorted axis family. The same event sweep over a sorted axis cue drives chapter 11 problem A, chapter 11 problem H, chapter 12 problem D, and chapter 12 problem J.
 
 Building the rectangle geometry is the priced-out alternative: pairwise checks over the rectangles cost n^2 = 1e10 crossings, and any shortest-path model over the free space pays far more than the one merge pass the collapse licenses.
 

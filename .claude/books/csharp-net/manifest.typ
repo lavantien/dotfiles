@@ -1,6 +1,6 @@
-// book 5 manifest: chapter registry used by cross references and stubs
+// book 6 manifest: chapter registry used by cross references and stubs
 #let csharpnet = (
-  num: 5,
+  num: 6,
   volume: false,
   title: "c# 15, f# 11, and .net 11",
   meta: (
@@ -8,7 +8,7 @@
     subtitle: "a complete c# manual with an f# tour",
     author: "Raeliosol",
     version: "5.0",
-    volume-label: "book 5",
+    volume-label: "book 6",
   ),
   chapters: (
     (id: "toolchain", num: 1, title: "toolchain and project model"),

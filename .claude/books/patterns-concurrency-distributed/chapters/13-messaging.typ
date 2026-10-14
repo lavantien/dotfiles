@@ -9,7 +9,7 @@ order, and what happens when it arrives twice. The first has only
 one honest answer in practice, at least once, because
 acknowledgments can be lost after delivery just as deliveries can be
 lost after sending. Everything else in this chapter is engineering
-on top of that fact, and the seven trees all learn it the same way:
+on top of that fact, and the eight trees all learn it the same way:
 the crash is a parameter, the duplicate is a fixture, and no lane
 waits on a scheduler to observe either.
 
@@ -31,12 +31,14 @@ The dry run: the dedup contract and which lanes pin each row.
 - a full replay of a delivered stream applies nothing new, effects
   keep first-delivery order, a row the C, java, and python lanes
   pin, while C\# and lua pin the single envelope and partial
-  replays, and java redrives the whole stream twice over, 24
-  consume calls for 6 effects
-- the frozen go test pins `[2, 2]` itself, the six sibling trees
+  replays, and java and rust redrive the whole stream twice over,
+  24 consume calls for 6 effects
+- the frozen go test pins `[2, 2]` itself, the seven sibling trees
   pin the same literal against the shared contract
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch13/consumer.c", first: 29, last: 64, caption: [C, the applied memory is a bitmap over dense ids, deliver is a function the relay calls back])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch13/consumer.rs", first: 23, last: 73, caption: [Rust, the applied memory a HashSet, the duplicator a struct owning the log that takes the consumer by `&mut`])
 
 #listing("patterns-concurrency-distributed/samples/ch13/messaging.go", first: 94, last: 118, caption: [Go, the consumer remembers applied ids, duplicates observed and suppressed])
 
@@ -55,13 +57,15 @@ redelivery costs one membership test and the effect happens once.
 The shape of the memory is the idiom row: C indexes a `bool` array
 by the id itself, legal because the fixture's ids are dense and
 small, C\# keeps a `HashSet` behind a lock and counts calls outside
-it, go a map behind a mutex, java a `HashSet` with no lock because
+it, go a map behind a mutex, java and rust a `HashSet` with no lock
+because
 the walk is single-threaded, javascript a `Set`, python a `set`,
 and lua a plain table keyed by id, with `Deliver` returning `false`
 on the duplicate so the transport can observe what it carried. The
-duplicator is a function wrapper in every language, a function
+duplicator is a function wrapper in most languages, a function
 pointer taking the sink in C and a closure over the consume callable
-everywhere else.
+in the dynamic trees, while rust's is a struct owning the log that
+takes the consumer by `&mut`, no callable indirection at all.
 
 The idempotency key is the design decision that decides whether any
 of this works. It must be stable across retries, which rules out
@@ -111,6 +115,8 @@ transport that duplicates every third id.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch13/outbox.c", first: 30, last: 66, caption: [C, enqueue into a fixed array, the crash is a false return mid-loop])
 
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch13/outbox.rs", first: 36, last: 80, caption: [Rust, a VecDeque popped at the front, the crash threshold an `Option` read by `is_some_and`, the sink a generic `FnMut` closure])
+
 #listing("patterns-concurrency-distributed/samples/ch13/messaging.go", first: 19, last: 40, caption: [Go, enqueue alongside the state, drain independently])
 
 #listing("patterns-concurrency-distributed/samples/ch13/messaging.go", first: 43, last: 92, caption: [Go, drain, crash mid-flight, resume, redelivery is expected])
@@ -126,7 +132,8 @@ transport that duplicates every third id.
 #listing("patterns-concurrency-distributed/samples-lua/ch13_outbox.lua", first: 8, last: 49, caption: [Lua, table.remove pops the head, the crash returns false with a message])
 
 The crash is a value in every lane, which is what makes the walk
-scriptable: a false return in C, a boolean false in java too, a
+scriptable: a false return in C, a boolean false in java too, the
+crash threshold an `Option` checked by `is_some_and` in rust, a
 `RelayCrashedException` in C\#, `ErrCrashed` in go, a thrown
 `CrashError` in javascript, a raised `RelayCrashed` in python, and
 lua's multiple return, `false` plus the message, the standing error
@@ -135,7 +142,7 @@ relay is a fresh instance over the same queue, so redelivery is
 structural, and the consumer from the previous section turns the
 duplicates into single effects. This chapter is an exact-lane
 chapter: the frozen go tests pin the counts and the crash-resume
-shape, the six sibling trees pin the full ordered effect sequence,
+shape, the seven sibling trees pin the full ordered effect sequence,
 and the cross-verification that tied the two together rode go
 overlays against the frozen implementation, re-run at closeout.
 
@@ -178,11 +185,13 @@ The dry run: 3 lanes, 6 keys, 40 rounds.
   lane 0, F to lane 1
 - 240 events total, every key's processing sequence exactly 0
   through 39
-- the lane map literals are pinned by the six new trees, the
+- the lane map literals are pinned by the seven new trees, the
   frozen go test asserts stability and per-key order without
   pinning the map
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch13/lanes.c", first: 112, last: 160, caption: [C, one rendezvous channel per lane over mtx and cnd, thrd_join publishes the orders])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch13/lanes.rs", first: 65, last: 95, caption: [Rust, `sync_channel(0)` is the rendezvous in the stdlib, send blocks until a receiver takes it, dropping the senders closes the lanes])
 
 #listing("patterns-concurrency-distributed/samples/ch13/messaging.go", first: 136, last: 163, caption: [Go, one channel and one worker per lane, the placement hash picks the lane])
 
@@ -208,7 +217,10 @@ edge. C builds the lane out of chapter 8's strict rendezvous shape,
 a mutex and two condition variables per slot, and `thrd_join`
 publishes. Java gets the same rendezvous shape from the stdlib, one
 `ArrayBlockingQueue` of capacity 1 per lane closed by a poison
-pill, `join` the publish edge. Javascript keeps a per-lane array
+pill, `join` the publish edge, and so does rust, `sync_channel(0)`
+being a zero-capacity rendezvous channel, the senders dropped to
+close the lanes, scoped threads joining inside the scope to
+publish the borrowed order slices. Javascript keeps a per-lane array
 plus a wake callback, the worker a promise that parks when its
 queue is empty. Python's walk is the pure function itself,
 single-threaded, lane assignment and order deterministic facts
@@ -272,7 +284,7 @@ diagram and the decision, not a fixture.
   edge((5.7, 0), (7.8, 0), "-|>", label: [budget spent]),
 )
 
-== across the seven languages
+== across the eight languages
 
 The build sizes count non-comment source lines, the go column the
 chapter's one frozen file:
@@ -283,6 +295,8 @@ chapter's one frozen file:
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [389], [libc plus threads.h],
   [fixed-array outbox, a lane a mutex plus two cnd, thrd_join publishes],
+  [rust], [438], [stdlib],
+  [a HashSet consumer, the VecDeque outbox with an Option crash threshold, sync_channel(0) lanes],
   [go], [145], [stdlib],
   [channel and worker per lane over the frozen hash, ErrCrashed, WaitGroup joins],
   [java], [310], [jdk 27 stdlib],
@@ -300,9 +314,10 @@ chapter's one frozen file:
 sources: Heller, "Reliable Pattern: Outbox", for the dual-write
 problem, Kleppmann, "Designing Data-Intensive Applications", chapter
 8 for delivery semantics and the exactly-once-as-effect framing,
-accessed 2026-09-08. Verified by the seven chapter legs: 3 Ch13 C
-programs with 548 embedded checks, `go test` at 3 tests in
-`patternsbook/ch13`, the java runner's 48 checks across 3 programs
+accessed 2026-09-08. Verified by the eight chapter legs: 3 Ch13 C
+programs with 548 embedded checks, the rust runner's 548 checks
+across 3 programs in `samples-rust/src/Ch13`, `go test` at 3 tests
+in `patternsbook/ch13`, the java runner's 48 checks across 3 programs
 in `samples-java/src/Ch13`, 6 xunit facts, node's 3 cases in
 `test/ch13.test.mjs`, 3 python modules with 32 embedded checks, and
 the lua runner's 12 ch13 rows.

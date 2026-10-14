@@ -9,7 +9,7 @@ hand work. The arithmetic partners are chapter 16's modpow and
 modinv, #xref-to("dsa", "numtheory") cross-named once and used
 throughout, and the exactness ruling is the same one the rest of the
 book runs on: elimination over the prime field Z~p~ with p = 1e9+7
-gives answers all seven languages pin digit for digit, and integer
+gives answers all eight languages pin digit for digit, and integer
 determinants travel fraction-free so no rounding ever enters. Six
 tools make the chapter: gauss-jordan over a prime field, the
 bareiss determinant and rank, cramer on the small systems, matrix
@@ -33,7 +33,7 @@ found one. O(n^3).
 The dry run: the fixture is the 3x3 system with rows 1, 2, 3, 4, 5,
 6, and 7, 8, 10 against 6, 15, 25, whose solution 1, 1, 1 the C\#
 suite asserts together with its plug-back, identical in the other
-five.
+seven.
 
 + Column 0 opens with pivot 1 in place and eliminates 4 and 7
   copies of row 0: row 1 lands 0, -3, -6 | -9 with 5 - 4 × 2 = -3,
@@ -61,9 +61,11 @@ five.
 )
 
 The 1, 1, 1 closes the walk as pinned, and the listings below run
-the same column walk in seven languages.
+the same column walk in eight languages.
 
 #listing("dsa/samples-c/src/Ch34/gauss.c", first: 55, last: 80, caption: [c, the column walk, swap, inverse normalize, elimination, the column-to-row map])
+
+#listing("dsa/samples-rust/src/Ch34/gauss.rs", first: 43, last: 75, caption: [rust, the column walk, swap, inverse normalize, elimination, the column-to-row map])
 
 #listing("dsa/samples-go/ch34/gauss.go", first: 47, last: 73, caption: [go, the loop with modinv inline, the where map read at the end])
 
@@ -89,8 +91,7 @@ as underdetermined against 2, 4, no solution emitted either way. The
 edges run the 1x1 system 2x = 4 to x = 2 and the identity returning
 its right-hand side untouched.
 
-The application is icpc world finals 2022 problem P (book 10,
-chapter 11), turning red, where lights and buttons form a linear
+The application is icpc world finals 2022 problem P (book 11, chapter 13), turning red, where lights and buttons form a linear
 system over Z~3~, each light one equation in the press counts
 and each press contributing its color's shift. The official
 solution propagates per connected component because each variable
@@ -146,7 +147,7 @@ pivot count, valid over the rationals for integer matrices.
 
 The dry run: the fixtures are det of 1, 2, 3, 4 at -2 and the
 singular 1, 2, 3 by 4, 5, 6 by 7, 8, 9 at det 0, rank 2, both
-asserted by the C\# suite, identical in the other six.
+asserted by the C\# suite, identical in the other seven.
 
 + The 2x2 pivots on 1 with prev = 1, so the exact division divides
   silently: det = 1 × 4 - 2 × 3 = -2 at rank 2.
@@ -185,9 +186,11 @@ asserted by the C\# suite, identical in the other six.
 })
 
 The -2 and the rank-2 zero land as pinned, and the listings below
-run bareiss in seven languages.
+run bareiss in eight languages.
 
 #listing("dsa/samples-c/src/Ch34/determinant.c", first: 27, last: 67, caption: [c, the bareiss function, cross products divided by the previous pivot, det and rank out])
+
+#listing("dsa/samples-rust/src/Ch34/determinant.rs", first: 17, last: 61, caption: [rust, bareiss over i64 cells, cross products divided by the previous pivot, det and rank out])
 
 #listing("dsa/samples-go/ch34/determinant.go", first: 9, last: 50, caption: [go, bareiss with the pivot search, the permutation expansion below])
 
@@ -216,8 +219,7 @@ system. Nine of the ten are plus or minus 1 or 2, and the triple
 holding the first, second, and fifth rows gives 3, one more than
 the icpc problem statement's parenthetical claims.
 
-The application is icpc world finals 2023 problem A (book 10,
-chapter 12), riddle of the sphinx, whose solvability after any
+The application is icpc world finals 2023 problem A (book 11, chapter 14), riddle of the sphinx, whose solvability after any
 single lie is exactly this argument: whichever answer is false, the
 surviving three rows stay independent, so the system always solves.
 
@@ -266,12 +268,12 @@ expansions are three products each and the answer stays exact in
 integers. The cross-language value is the reduced fraction pair:
 each component travels as a numerator and denominator reduced by
 their gcd with the denominator kept positive, so a negative
-determinant flips both signs and all seven languages assert identical
+determinant flips both signs and all eight languages assert identical
 pairs. det 0 reports no unique solution.
 
 The dry run: the fixture is the 2x2 system 2, 3, 4, 5 against 7, 9,
 whose determinant -2 and answers -4 and 5 the C\# suite asserts as
-reduced pairs, identical in the other six.
+reduced pairs, identical in the other seven.
 
 + The denominator comes first: det(A) = 2 × 5 - 3 × 4 = -2.
 + Replacing column 0 by b reads 7, 3, 9, 5: det = 7 × 5 - 3 × 9 =
@@ -312,9 +314,11 @@ reduced pairs, identical in the other six.
 })
 
 The -4 and the 5 land as pinned, and the listings below solve both
-sizes in seven languages.
+sizes in eight languages.
 
 #listing("dsa/samples-c/src/Ch34/cramer.c", first: 50, last: 89, caption: [c, the 2x2 and 3x3 minors, the fraction assembly with the gcd reduce])
+
+#listing("dsa/samples-rust/src/Ch34/cramer.rs", first: 51, last: 92, caption: [rust, det2, det3, and cramer emitting reduced fraction pairs over a Frac struct])
 
 #listing("dsa/samples-go/ch34/cramer.go", first: 20, last: 64, caption: [go, the fraction pair reduce and the cramer driver over both sizes])
 
@@ -341,7 +345,7 @@ fractions back into A x = b exactly. The singular pair 1, 2, 2, 4
 against 3, 6 reads det 0 and refuses.
 
 The application is the same icpc world finals 2023 problem A
-(book 10, chapter 12): once the lie is identified, the surviving
+(book 11, chapter 14): once the lie is identified, the surviving
 3x3 is solved exactly this way, and the answer's fractions stay
 honest because no division ever rounds.
 
@@ -416,7 +420,7 @@ sum of all entries counts them everywhere.
 The dry run: the fixtures are the walk digraph 0 to 1, 0 to 2, 1 to
 2, 2 to 0 with its square and fourth power pinned entry for entry
 by the C\# suite, and fib(50) = 12586269025 off the companion
-matrix, identical in the other six.
+matrix, identical in the other seven.
 
 + The adjacency matrix reads A = 0, 1, 1 over 0, 0, 1 over 1, 0, 0,
   four 1s, one per directed edge.
@@ -458,9 +462,11 @@ matrix, identical in the other six.
 })
 
 The 5, the 9, and the 12586269025 land as pinned, and the listings
-below raise matrices in seven languages.
+below raise matrices in eight languages.
 
 #listing("dsa/samples-c/src/Ch34/matpow.c", first: 27, last: 62, caption: [c, the triple-loop multiply with its optional mod, the square-and-multiply power])
+
+#listing("dsa/samples-rust/src/Ch34/matpow.rs", first: 20, last: 58, caption: [rust, matmul with its optional mod, the exact road as wrapping ops for the wasted final squaring, the power loop])
 
 #listing("dsa/samples-go/ch34/matpow.go", first: 5, last: 48, caption: [go, matmul and matpow, the top-bit squaring skip spelled out])
 
@@ -548,7 +554,7 @@ from its own small integer determinant.
 
 The dry run: the fixture is the triangle with edge 0-1 doubled,
 whose count 5 the C\# suite asserts against brute enumeration, the
-plain triangle's 3 alongside, identical in the other six.
+plain triangle's 3 alongside, identical in the other seven.
 
 + The doubled edge gives degrees 3, 3, 2, so the laplacian reads
   3, -2, -1 over -2, 3, -1 over -1, -1, 2, the doubled edge visible
@@ -591,9 +597,11 @@ plain triangle's 3 alongside, identical in the other six.
 })
 
 The 5 and the 3 land as pinned, and the listings below count
-spanning trees in seven languages.
+spanning trees in eight languages.
 
 #listing("dsa/samples-c/src/Ch34/kirchhoff.c", first: 59, last: 78, caption: [c, the laplacian assembly and the minor feeding the in-file bareiss det])
+
+#listing("dsa/samples-rust/src/Ch34/kirchhoff.rs", first: 52, last: 70, caption: [rust, the laplacian assembly and the minor feeding the in-file bareiss det])
 
 #listing("dsa/samples-go/ch34/kirchhoff.go", first: 7, last: 31, caption: [go, the assembly over the edge list, bareiss below])
 
@@ -617,7 +625,7 @@ counted while the 2-cycle they form alone is rejected, the bowtie,
 two triangles sharing vertex 0, counts 3 times 3 = 9, and the
 disconnected trio counts 0, the singular minor reading exactly
 that. The counts stay small exact integers identical across all
-seven languages, O(n^3):
+eight languages, O(n^3):
 
 #diagram([K4 with its laplacian grid, the 3x3 minor framed, det 16 annotated as the tree count with three of the sixteen trees drawn], length: 13pt, {
   // K4 graph
@@ -683,7 +691,7 @@ metric, and an exact integer solution simply stops moving.
 
 The dry run: the fixture is 2, 1, 1, 1 against 14, 13 over p = 3,
 whose climb 1, 0 then 1, 3 then 1, 12 the C\# suite asserts with
-its mod 27 plug-back, identical in the other six.
+its mod 27 plug-back, identical in the other seven.
 
 + Mod 3 the system reads 2x + y = 2 and x + y = 1, since 14 and 13
   reduce to 2 and 1: subtracting gives x = 1, then y = 0.
@@ -710,9 +718,11 @@ its mod 27 plug-back, identical in the other six.
 )
 
 The 1, 12 closes the climb as pinned, and the listings below lift
-systems in seven languages.
+systems in eight languages.
 
 #listing("dsa/samples-c/src/Ch34/zpk.c", first: 83, last: 109, caption: [c, the lift loop, residual, divided rhs, correction solve])
+
+#listing("dsa/samples-rust/src/Ch34/zpk.rs", first: 80, last: 108, caption: [rust, the lift loop, residual, divided rhs, correction solve])
 
 #listing("dsa/samples-go/ch34/zpk.go", first: 10, last: 49, caption: [go, the loop with the divisibility check made loud])
 
@@ -749,8 +759,7 @@ the 3 by 3 grid 2, 2, 0 by 2, 2, 0 by 0, 0, 0, re-derived by
 direct enumeration of all 8 subsets. The valuation family pins the
 minima: 1, 1, 2 and 1, 2, 1 at 0, and 2, 4, 6 and 4, 2, 6 at 1.
 
-The application is icpc world finals 2022 problem Z (book 10,
-chapter 11), archaeological recovery, whose state multisets over
+The application is icpc world finals 2022 problem Z (book 11, chapter 13), archaeological recovery, whose state multisets over
 Z~3~^k^, projected residue counts, and subset-sum convolutions
 are exactly this machinery, with the full recovery algorithm
 living in the icpc book.
@@ -790,7 +799,7 @@ living in the icpc book.
   cdraw.content((19.0, 2.9), [O(n^3 + k n^2) per system], size: 6pt)
 })
 
-== across the seven languages
+== across the eight languages
 
 Featured build size counted as non-blank, non-comment lines of the
 chapter's six sample files per language, go test files excluded:
@@ -800,6 +809,7 @@ chapter's six sample files per language, go test files excluded:
   inset: 4pt,
   table.header([*language*], [*build sloc*], [*container dependency*], [*boundary note*]),
   [c], [843], [static matrices, u64 residues], [plain 64-bit products at 1e9+7, add p before subtracting to stay positive, kirchhoff carries its own det],
+  [rust], [973], [rust 1.99 std], [residues as u64 with p added before every modular subtraction, the un-modded fib ladder's wasted final squaring past u64 as explicit wrapping ops, cramer pairs as a Frac struct],
   [go], [385], [slices, no imports beyond fmt], [hensel refuses loudly when the residual is not divisible, matrix ops as free functions],
   [java], [832], [jdk 27 stdlib, long residues], [p added before every modular subtraction, cramer pairs as a two-field Frac class, the exact fib ladder rides long to fib(78)],
   [c\#], [305], [jagged longs, tuples, linq], [reuses the ch16 modpow and the ch34 determinant across files, cramer pairs as value tuples],
@@ -822,8 +832,10 @@ cp-algorithms.com/graph/kirchhoff-theorem.html, all accessed
 cp-algorithms carries no cramer or hensel article; those sections
 cite the icpc world finals 2023 problem A and 2022 problem Z
 solutions as their application sources, and cramer's rule as
-standard linear algebra. Sample behavior verified by the seven suite
-gates scoped to chapter 34: c 6 files and 90 checks, go 24 test
+standard linear algebra. Sample behavior verified by the eight suite
+gates scoped to chapter 34: c 6 files and 90 checks, rust 6 files
+and 90 checks under run-rust-samples in books/dsa/samples-rust,
+go 24 test
 functions, java 6 files and 90 checks under run-java-samples, c\# 28
 facts, javascript 24 tests and 69 asserts, python 6
 files and 86 asserts, lua 24 checks, zero skipped.

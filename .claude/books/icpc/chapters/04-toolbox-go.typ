@@ -543,12 +543,12 @@ this toolbox owns and what the standard library already did well:
   [coords, deltas, neighbors], [built, `grid.go`], [4 tests, index round trip pinned],
   [big integer wrappers], [built, `big.go`], [over `math/big`, from-scratch limbs in #xref-to("icpc", "toolbox-c")],
   [mulmod, modpow, crt], [built, `num.go`], [`math/bits` halves, inverse via `ModInverse`],
-  [md5], [cited], [`crypto/md5`, from-scratch in chapters 2 and 8],
+  [md5], [cited], [`crypto/md5`, from-scratch in chapters 2 and 9],
   [json decode and walk], [built, `json.go`], [over `encoding/json`, typed shapes via tags],
   [gcd, lcm, sieve], [built where puzzle-shaped], [full treatment in #xref-to("dsa", "numtheory")],
 )
 
-Java's chapter 4 splits the same way this one does: thin over the
+Java's chapter 5 splits the same way this one does: thin over the
 library, `Math.multiplyHigh` standing where `math/bits.Mul64` stands
 here, the wide product built from library halves rather than refused
 or delegated.

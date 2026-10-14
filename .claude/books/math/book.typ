@@ -1,4 +1,4 @@
-// book 7: written map is complete from the scaffold, chapters land as
+// book 2: written map is complete from the scaffold, chapters land as
 // overwrites of their stub files wave by wave
 #import "../theme/lib.typ": book
 #import "manifest.typ": mathbook

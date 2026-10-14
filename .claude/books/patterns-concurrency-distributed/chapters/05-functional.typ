@@ -7,9 +7,10 @@ Go is not a functional language and does not try to be: no curried
 syntax, no monadic chaining, no tail call guarantee. But functions
 are values, generics arrived in 1.18, and a surprising share of the
 classic pattern vocabulary reduces to passing and returning
-functions. The same reduction runs through all seven trees, and the
+functions. The same reduction runs through all eight trees, and the
 per-language spelling is the chapter's real content: the trio is
-one generic away in go and C\#, three plain loops in C, hand-rolled
+one generic away in go and C\#, std iterator adapters behind plain
+functions in rust, three plain loops in C, hand-rolled
 walks over int arrays in java, an array method in javascript, a
 comprehension in python, a table walk in lua. The chapter builds
 that toolkit and, just as carefully, marks the line where the
@@ -22,20 +23,23 @@ saying what six handwritten loops would repeat:
 
 The dry run: the fixture is 1 through 6. Map doubling lands 2 4 6 8
 10 12, Filter keeping the evens lands 2 4 6, Reduce summing from 0
-lands 21, and all seven lanes assert these exact values. Map of
+lands 21, and all eight lanes assert these exact values. Map of
 empty stays a real empty container, never nil or null, and Reduce of
 empty hands back its init, pinned at 9.
 
 + Map preserves positions, Filter shrinks, Reduce collapses to one
   value carrying the init through.
 + The empty contracts: map of empty is an allocated zero-length
-  slice in go, a real buffer in C, a real zero-length array in
+  slice in go, a real buffer in C, an empty Vec in rust, a real
+  zero-length array in
   java, a fresh array in javascript, a list in python, a table in
   lua.
 + Reduce of empty never calls the fold, so the init comes back
   untouched, the identity every lane pins at 9.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch05/trio.c", first: 20, last: 49, caption: [C, the trio over int arrays, a function pointer per element, map of empty still returns a real buffer])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch05/trio.rs", first: 13, last: 35, caption: [Rust, the trio as free functions over an int slice, std iterators inside, an empty Vec out of empty])
 
 #listing("patterns-concurrency-distributed/samples/ch05/functional.go", first: 6, last: 30, caption: [Go, map, filter, reduce over any slice])
 
@@ -58,7 +62,10 @@ The moment composition, not iteration, is the point, chapter 4's
 instead of allocating intermediate slices. The sibling trees land
 where their grain puts them: go and C\# write the generic
 shape#xref-to("go", "generics") once and reuse it for every element
-type, C specializes to int arrays with function pointers because
+type, rust's stdlib is already the trio, `iter().map().collect()`,
+so its sample writes the three as plain functions over `&[i32]` to
+pin the contracts the adapters assume, C specializes to int arrays
+with function pointers because
 its generics are macros and the honest sample is just loops, java
 hand-rolls `mapInts`, `filterInts`, and `reduceInts` over `int[]`,
 borrowing `IntPredicate` and `IntUnaryOperator` from
@@ -104,6 +111,8 @@ implementation.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch05/compose.c", first: 21, last: 69, caption: [C, a closure is a struct plus a function pointer, the pipe a list of them])
 
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch05/compose.rs", first: 13, last: 50, caption: [Rust, the pipe a Vec of boxed steps, the counter a cell moved into its closure alone])
+
 #listing("patterns-concurrency-distributed/samples/ch05/functional.go", first: 33, last: 56, caption: [Go, pipe left to right, partial application, a closure with private state])
 
 #listing("patterns-concurrency-distributed/samples-java/src/Ch05/Compose.java", first: 22, last: 50, caption: [Java, Function composition, the counter's cell a one-element array because lambdas capture values only])
@@ -119,9 +128,11 @@ implementation.
 C spells the closure out loud, a function pointer plus a state
 pointer, because it has nothing to hide it behind, and the counter
 closure becomes a `counter_state` struct the caller allocates. The
-other six get the closure for free, C\# lambdas, javascript arrows,
+other seven get the closure for free, C\# lambdas, javascript arrows,
 python nested `def`s where `nonlocal` marks the writable cell, lua
-upvalues, with java one step aside: its lambdas capture values, not
+upvalues, rust moving the counter's cell into the closure so two
+counters share nothing because nothing is reachable,
+with java one step aside: its lambdas capture values, not
 variables, so the counter's writable cell is a one-element array
 each constructor call allocates. The pipe itself is the same fold
 everywhere, apply the list in order and return the last output, and
@@ -155,11 +166,13 @@ every closure capturing `i` in a loop observed the final value,
 after, each observes its own:
 
 The dry run: the fixture is 5 handlers, and the fixed lane pins
-handler k returning k in all seven trees. The trap lanes are
+handler k returning k in all eight trees. The trap lanes are
 per-language truth: javascript's `var` lane returns 5 for every
 handler, python's late-binding lambdas return 4 for every handler,
 lua's deliberately shared local behind a while loop returns 6, C's
-shared-pointer lane returns 4, and java's smuggled static field
+shared-pointer lane returns 4, rust's shared `Rc<Cell>` lane
+answers 4 because a move capture cannot dangle the binding at all,
+and java's smuggled static field
 answers 4 five times because capturing the reassigned local does
 not compile at all. The go lane's frozen test pins the fixed lane
 only.
@@ -173,6 +186,8 @@ only.
   included.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch05/loopvar.c", first: 20, last: 36, caption: [C, no closures, the per-slot copy beside the shared-pointer trap, both written out])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch05/loopvar.rs", first: 16, last: 44, caption: [Rust, move capture is per-iteration by default, the trap rebuilt as one shared `Rc<Cell>`])
 
 #listing("patterns-concurrency-distributed/samples/ch05/functional.go", first: 59, last: 66, caption: [Go, each handler keeps the i of its own iteration])
 
@@ -198,7 +213,11 @@ list is the same trap through late binding with the default
 argument as the museum's exit, lua's numeric for never had the bug
 so the sample builds it on purpose with a while loop over one
 local, C stores a copy per slot because a pointer to the loop
-variable dies with the iteration, java makes the bug a compile
+variable dies with the iteration, rust sits beside java at the
+compile-error exit from the other side, a closure must own or
+borrow what it captures so `move` gives the per-iteration copy and
+the trap has to be rebuilt as an `Rc<Cell>` all five handlers
+share, java makes the bug a compile
 error, a lambda cannot capture a local the loop reassigns, so the
 effectively-final copy is the sibling's per-slot fix made mandatory
 and the trap lane has to smuggle its cell through a static field,
@@ -237,9 +256,9 @@ The dry run: the wrapper holds a squaring function, 9 answers 81
 twice and 12 answers 144 with the underlying function running
 exactly 2 times. Recursive fib lands fib(5) = 5 at exactly 9 calls,
 fib(10) = 55 at 19, and fib(40) = 102334155 at 79, the 2n-1 spine
-the six new trees pin exactly. The go lane's frozen test pins the
+the seven new trees pin exactly. The go lane's frozen test pins the
 fib(40) value, bounds the calls under 2n, and checks the count is
-deterministic across instances, the 9 and 19 counts are the six
+deterministic across instances, the 9 and 19 counts are the seven
 new trees' lane.
 
 + The wrapper guards only the map, the wrapped call runs outside
@@ -247,10 +266,13 @@ new trees' lane.
 + A memoized fib from an empty cache costs exactly 2n-1 calls, the
   spine down to the base cases plus one hit per level.
 + Concurrent callers hammer one wrapper and every answer is the
-  function's, 50 goroutines in go, 4 threads in C, 20 virtual
+  function's, 50 goroutines in go, 4 threads in C, 4 scoped threads
+  in rust, 20 virtual
   threads in java, 20 threads in python, 50 coroutines in lua.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch05/memoize.c", first: 23, last: 53, caption: [C, fixed-array cache behind one mutex, the call runs outside the lock])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch05/memoize.rs", first: 19, last: 48, caption: [Rust, the cache a Mutex over a Vec of Options, the wrapped call runs between the two holds])
 
 #listing("patterns-concurrency-distributed/samples/ch05/functional.go", first: 68, last: 85, caption: [Go, generic memoize, lock guarded, last write wins])
 
@@ -267,7 +289,10 @@ new trees' lane.
 The lock is coarse by design: it protects the map, not the wrapped
 call, so concurrent misses may both compute, last write wins, and
 correctness holds because the function is pure. The test hammers it
-from 50 goroutines under `-race`. The dynamic lanes state their own
+from 50 goroutines under `-race`, and rust's `Memo` splits the same
+seam, the lookup and the store each take the lock while the wrapped
+call runs between the two holds, four scoped threads hammering it
+for every answer `plus_one`. The dynamic lanes state their own
 boundary: javascript needs no lock because one realm runs one
 thread, python's lock is real because the GIL switches threads
 between bytecodes, and lua's cooperative scheduler cannot interrupt
@@ -291,9 +316,13 @@ keys, a determinism the preemptive lanes cannot promise.
 Recursive memoization exposes a real limit of closures: a function
 cannot call its own memoized name, only the raw one, and raw
 recursion skips the cache. Every tree reaches the same answer, a
-named holder whose fields are the cache and the call counter:
+named holder whose fields are the cache and the call counter, rust
+fusing both into one locked tuple so the count and the cache move
+together:
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch05/memoize.c", first: 73, last: 108, caption: [C, the named struct holds the cache array and the call counter])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch05/memoize.rs", first: 50, last: 81, caption: [Rust, the named Fib owns cache and counter in one locked tuple, the lock dropped before each recursion])
 
 #listing("patterns-concurrency-distributed/samples/ch05/functional.go", first: 90, last: 116, caption: [Go, fib as a type with its own cache, calls counted])
 
@@ -352,7 +381,7 @@ instances, which is what makes the test a test.
   cdraw.content((11, 0.85), [FlatMap over error, lazy evaluator frameworks], size: 6pt)
 })
 
-== across the seven languages
+== across the eight languages
 
 The build sizes count non-comment source lines, the go column the
 chapter's one frozen file:
@@ -362,6 +391,7 @@ chapter's one frozen file:
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [327], [libc plus threads.h], [closures become state structs, the trio specialized to int arrays, fib's counter inside the named struct],
+  [rust], [267], [std only, no crates], [move-captured counter cells, the shared `Rc<Cell>` trap rebuilt by hand, mutex-guarded memo with the call outside the lock],
   [go], [92], [stdlib], [frozen reference lane, the generic trio and wrapper, fib's under-2n bound with the 2n-1 exactness landing in the six new trees],
   [java], [263], [jdk 27 stdlib], [one-element arrays as closure cells, the effectively-final copy made mandatory, 20 virtual threads on the memo],
   [c\#], [136], [bcl], [lambdas and generics mirror go, foreach fixed since C\# 5 with the for loop shown beside],
@@ -373,8 +403,10 @@ chapter's one frozen file:
 sources: go.dev/doc/go1.22 for per-iteration loop variables and
 integer range, go.dev/ref/spec function literals and capture,
 go.dev/blog/intro-generics for the type parameter syntax, accessed
-2026-09-08. Verified by the seven chapter legs: 4 Ch05 C programs
-with 35 embedded checks, `go test -race` at 7 tests in
+2026-09-08. Verified by the eight chapter legs: 4 Ch05 C programs
+with 35 embedded checks, 4 Ch05 rust programs in `samples-rust/src`
+with 28 embedded checks under `run-rust-samples`, `go test -race`
+at 7 tests in
 `patternsbook/ch05`, 4 Ch05 java programs with 30 checks under
 `run-java-samples`, 15 C\# facts over `PatternsBook.slnx`, 10
 `node --test` cases, 30 Python checks across 4 files, and 18 Lua

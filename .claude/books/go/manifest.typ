@@ -1,6 +1,6 @@
-// book 3 manifest: chapter registry used by cross references and stubs
+// book 4 manifest: chapter registry used by cross references and stubs
 #let gobook = (
-  num: 3,
+  num: 4,
   volume: false,
   title: "go 1.27",
   meta: (
@@ -8,7 +8,7 @@
     subtitle: "a complete language manual",
     author: "Raeliosol",
     version: "7.0",
-    volume-label: "book 3",
+    volume-label: "book 4",
   ),
   chapters: (
     (id: "toolchain", num: 1, title: "toolchain and modules"),

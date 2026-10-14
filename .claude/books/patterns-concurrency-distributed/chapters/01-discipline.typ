@@ -5,16 +5,16 @@
 
 The classic pattern vocabulary was written for languages with classes,
 inheritance, and virtual dispatch. Go has none of the three, and
-neither do four of the seven languages asking the question beside it in
+neither do five of the eight languages asking the question beside it in
 this book. The first engineering decision is not which pattern to
 apply but which patterns survive translation at all: some collapse
 into a function, some into a struct literal or a plain table, and the
 ones that remain take a different shape in each language's grain.
 
-This book asks in seven voices. The go lane stays the frozen reference:
+This book asks in eight voices. The go lane stays the frozen reference:
 one module, `patternsbook` on go 1.27, living at
 `patterns-concurrency-distributed/samples/`, its listings and tests
-untouched while six sibling trees grew around it, and every shared
+untouched while seven sibling trees grew around it, and every shared
 fixture in those trees cross-verified against its implementation. The
 siblings carry the same samples, one concept per file, each in its own
 spelling:
@@ -24,6 +24,7 @@ spelling:
   inset: 4pt,
   table.header([*tree*], [*shape*], [*verify leg*]),
   [`samples-c/`], [one standalone `main` per file, libc plus C23 `<threads.h>` and `<stdatomic.h>`], [`verify-c`],
+  [`samples-rust/`], [one standalone `main` per file, std only, edition 2024 on the pinned rustc 1.99], [`verify-rust`],
   [`samples/`], [one go module, go 1.27, the frozen reference lane], [`verify-go`, race leg included],
   [`samples-java/`], [one public class per file, checks printed as `ok N name` on the pinned jdk 27], [`verify-java`],
   [`samples-cs/`], [one net solution, sources beside xunit test projects], [`verify-csharp`],
@@ -36,6 +37,7 @@ Every leg also runs chapter scoped, the form the dry runs in this
 book assume:
 
 + C: `-SampleRoot books/patterns-concurrency-distributed/samples-c/src -Chapter ChNN`
++ rust: `-SampleRoot books/patterns-concurrency-distributed/samples-rust/src -Chapter ChNN` under `run-rust-samples`
 + go: `go test ./chNN`
 + java: `-SampleRoot books/patterns-concurrency-distributed/samples-java/src -Chapter ChNN` under `run-java-samples`
 + C\#: `dotnet test` filtering the solution to `FullyQualifiedName~ChNN`
@@ -44,9 +46,9 @@ book assume:
 + lua: the runner always reads the whole suite, each chapter's rows kept in order
 
 The caption contract for everything that follows: every featured
-section shows all seven listings, labeled with their language, in
-corpus order c, go, java, c\#, javascript, python, lua. Go is one
-voice among seven, the reference the others are checked against, no
+section shows all eight listings, labeled with their language, in
+corpus order c, rust, go, java, c\#, javascript, python, lua. Go is one
+voice among eight, the reference the others are checked against, no
 longer the book's default. The chapter 16 raft capstone and the
 chapter 17 appendices stay go only, single-language capstones on
 purpose.
@@ -56,14 +58,17 @@ name attached to a recurring tradeoff, never a folder of boilerplate.
 When the language makes the tradeoff disappear, the pattern goes with
 it, and saying so is more useful than imitating java.
 
-== the seven execution models
+== the eight execution models
 
 Most of the patterns ahead are concurrency patterns, so the map worth
 pinning once is the execution model under each tree. C spawns real
 operating system threads through C23 `<threads.h>` and shares state
 through `<stdatomic.h>`: the kernel preempts, the scheduler lives
 outside the program, and every claim about interleaving has to survive
-that. Go multiplexes goroutines onto a pool,
+that. Rust spawns the same real threads through `std::thread` and
+moves half the sharing question into the type system, `Send` and
+`Sync` gating what may cross a thread boundary and ownership transfer
+replacing hidden aliasing. Go multiplexes goroutines onto a pool,
 #xref-to("go", "runtime") opens the scheduler they ride, and the
 culture hands data through native channels. Java rides virtual
 threads, cheap threads the jvm multiplexes onto a carrier pool, with
@@ -82,7 +87,7 @@ this book is a scripted coroutine under a deterministic driver,
 #xref-to("lua", "coroutines") builds on that model.
 
 The testing discipline follows from the map, and it is the same in all
-seven trees. Where the lesson is what happens when operations
+eight trees. Where the lesson is what happens when operations
 interleave, the test drives the interleaving itself: scripted
 state-machine walks, coroutine schedulers, async queue pumps, a
 patched clock. Where the lesson needs real threads, the test asserts
@@ -106,12 +111,15 @@ chapter 3 and 4 need nothing but a new type wrapping an old one.
 
 The dry run: the prefix logger records exactly `app: hello`, the null
 object emits nothing and satisfies anyway, and a value without the
-method fails the shape check, at build time in go, C, C\#, and java,
-at run time in javascript, python, and lua. The literal is pinned by
-the six new trees, the frozen go test asserts the fresh-empty start
-and the Discard null object, both against the same implementation.
+method fails the shape check, at build time in go, C, rust, C\#, and
+java, at run time in javascript, python, and lua. The literal is pinned
+by the seven new trees, the frozen go test asserts the fresh-empty
+start and the Discard null object, both against the same
+implementation.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch01/satisfaction.c", first: 19, last: 55, caption: [C, the interface is a vtable, the proof a static initializer that stops building when a slot goes missing])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch01/satisfaction.rs", first: 13, last: 35, caption: [Rust, satisfaction is the impl block, the proof a const function item the compiler checks and the binary never carries])
 
 #listing("patterns-concurrency-distributed/samples/ch01/discipline.go", first: 5, last: 24, caption: [Go, one method, two implementors, one of them the null object])
 
@@ -142,7 +150,11 @@ has no build-time method-set check, so its honest proof is the
 `isLogger` predicate, runnable by any caller and by tests. Python's
 `runtime_checkable` Protocol moves go's compile error to an
 `isinstance` in the checks, method presence only, signatures stay the
-type checker's job. Lua has no check to move: the lookup happens at
+type checker's job. Rust's satisfaction is nominal, the `impl` block
+is the declaration, and its dead-code proof is go's blank assignment
+translated, `const _: fn(&mut PrefixLogger, &str) = Logger::log`, a
+function item coerced at build time and dropped before linking. Lua
+has no check to move: the lookup happens at
 the call, one lookup too late to save you, so the row table pins that
 a bare table throws.
 
@@ -175,11 +187,13 @@ an object holding a duck-typed inner in the dynamic three.
 
 The dry run: one call carrying an embedded newline lands at the inner
 logger as `svc: line one line two` and the wrapper's counter reads
-exactly 1, numbers that pin in all seven lanes. Stacking two
+exactly 1, numbers that pin in all eight lanes. Stacking two
 sanitizers composes with only the innermost recording, a row the
-C\#, java, python, and lua lanes pin.
+rust, C\#, java, python, and lua lanes pin.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch01/decorator.c", first: 44, last: 73, caption: [C, the decorator holds the next interface value, the wrap is a function plus its state struct])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch01/decorator.rs", first: 34, last: 57, caption: [Rust, the decorator is generic over the logger it owns by value, no trait object anywhere])
 
 #listing("patterns-concurrency-distributed/samples/ch01/discipline.go", first: 34, last: 49, caption: [Go, decorator number one: sanitize before forwarding])
 
@@ -197,8 +211,11 @@ C\#, java, python, and lua lanes pin.
 `*SanitizingLogger` with its own extra methods. The reverse shape, a
 function returning an interface, hides the concrete type and forces
 assertions on every caller that wants more. C keeps the distinction
-cheap by returning the concrete struct by value, C\# and java by
-returning the class, and in javascript, python, and lua the returned
+cheap by returning the concrete struct by value, rust the same way one
+generic deeper, `SanitizingLogger<L: Logger>` hands back a type whose
+parameter already fixed the inner logger at build time, C\# and java
+by returning the class, and in javascript, python, and lua the
+returned
 object already
 carries everything it has, so the go row mostly evaporates and the
 samples say so instead of imitating a cast. There is a place for
@@ -226,12 +243,14 @@ Effective Go's phrasing is exact: when an embedded method is invoked,
 the receiver is the inner type, not the outer one.
 
 The dry run: `d.Name()` resolves to the outer override in every
-language. `d.Describe()` prints `i am base` in go and in C, and
+language. `d.Describe()` prints `i am base` in go, C, and rust, and
 `i am derived` in C\#, java, javascript, python, and lua. That split
 is the whole section, and each lane's name counter proves which call
 actually ran.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch01/embedding.c", first: 19, last: 45, caption: [C, derived embeds base as a member, the forward into base's code is written out by hand])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch01/embedding.rs", first: 15, last: 55, caption: [Rust, derived holds base by value, describe forwards into it, and Deref promotes base methods with the inner receiver])
 
 #listing("patterns-concurrency-distributed/samples/ch01/discipline.go", first: 51, last: 68, caption: [Go, derived overrides name, but describe never notices])
 
@@ -248,7 +267,11 @@ actually ran.
 C matches go by construction: embedding a base struct as the first
 member and forwarding `derived_describe` into `base_describe` is
 exactly what go's promotion generates, and neither runtime
-re-dispatches through the outer type. The five class-dispatch
+re-dispatches through the outer type. Rust joins them by ownership:
+`Derived` holds `Base` as a plain field, `describe` is a one line
+forward into `self.base.describe()`, and `Deref` is the promotion
+itself, `d.call_count()` compiles only because the borrow derefs to
+the inner value. The five class-dispatch
 languages agree with each other instead: `Describe` is one virtual
 call away from the override. C\#'s file carries both behaviors in one
 language, virtual `Name` for the contrast and the `new`-hiding
@@ -260,9 +283,11 @@ receiver, the trap rebuilt by hand.
 
 The test side is half the fixture, and each tree answers with its own
 test artifact: the frozen go test file, the xunit and node test files,
-and the check regions of the C, java, python, and lua modules.
+and the check regions of the C, rust, java, python, and lua modules.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch01/embedding.c", first: 47, last: 70, caption: [C, the check region: promotion reads the outer name, describe stays base, the counter catches it])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch01/embedding.rs", first: 57, last: 94, caption: [Rust, the check region: the outer name wins, the forward runs base's code, deref still reaches the inner counter])
 
 #listing("patterns-concurrency-distributed/samples/ch01/discipline_test.go", first: 27, last: 44, caption: [Go, the outer method wins by name, the inner body sees only the inner receiver])
 
@@ -330,19 +355,20 @@ The wider question is what each tree changes about every shape, and
 the answer is one line per language, the cards this book keeps
 filling in:
 
-#diagram([seven rule cards, one language each, the idiom summary every chapter returns to], length: 13pt, {
+#diagram([eight rule cards, one language each, the idiom summary every chapter returns to], length: 13pt, {
   let card = (x, y, lang, line) => {
     cdraw.rect((x, y), (x + 10.9, y + 2.6), fill: luma(235), radius: 0.02)
     cdraw.content((x + 5.45, y + 2.05), lang, size: 6.5pt)
     cdraw.content((x + 5.45, y + 0.9), line, size: 6pt)
   }
   card(0, 6.2, [c], [vtables, closures as state structs, threads by hand])
-  card(11.1, 6.2, [go], [satisfaction, embedding, errors are values])
-  card(0, 3.1, [java], [implements clauses, virtual dispatch, virtual threads])
-  card(11.1, 3.1, [c\#], [nominal interfaces, virtual dispatch, channels in the bcl])
-  card(0, 0.0, [javascript], [prototypes, duck typing, one loop per realm])
-  card(11.1, 0.0, [python], [protocols, self dispatches, GIL bounds threads])
-  card(0, -3.1, [lua], [metatables, coroutines by hand, tables do the rest])
+  card(11.1, 6.2, [rust], [traits and impl blocks, deref promotion, moves carry ownership])
+  card(0, 3.1, [go], [satisfaction, embedding, errors are values])
+  card(11.1, 3.1, [java], [implements clauses, virtual dispatch, virtual threads])
+  card(0, 0.0, [c\#], [nominal interfaces, virtual dispatch, channels in the bcl])
+  card(11.1, 0.0, [javascript], [prototypes, duck typing, one loop per realm])
+  card(0, -3.1, [python], [protocols, self dispatches, GIL bounds threads])
+  card(11.1, -3.1, [lua], [metatables, coroutines by hand, tables do the rest])
 })
 
 The table this book keeps repeating, set once here in its go spelling:
@@ -377,7 +403,7 @@ The table this book keeps repeating, set once here in its go spelling:
   }
 })
 
-== across the seven languages
+== across the eight languages
 
 The build sizes count non-comment source lines, the go column the
 chapter's one frozen file:
@@ -388,6 +414,8 @@ chapter's one frozen file:
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [171], [libc],
   [vtable of function pointers with void self, embedding a one-line forward],
+  [rust], [224], [std only, no crates],
+  [impl blocks satisfy traits, const fn items prove it, Deref is embedding by hand],
   [go], [38], [stdlib],
   [satisfaction needs no declaration, the promoted Describe forwards into base],
   [java], [181], [jdk 27 stdlib],
@@ -404,8 +432,10 @@ chapter's one frozen file:
 
 sources: go.dev/doc/effective_go for satisfaction, embedding, and
 receiver semantics, go.dev/doc/go1.27 for generic methods and literal
-selector keys, accessed 2026-09-08. Verified by the seven chapter
-legs: 3 Ch01 C programs with 16 embedded checks, `go test` at 4 tests
+selector keys, accessed 2026-09-08. Verified by the eight chapter
+legs: 3 Ch01 C programs with 16 embedded checks, 3 Ch01 rust programs
+in `samples-rust/src` with 18 embedded checks under
+`run-rust-samples`, `go test` at 4 tests
 in `patternsbook/ch01`, the java runner's 22 Ch01 checks under
 `run-java-samples`, 9 xunit facts, node's 8 cases in
 `test/ch01.test.mjs`, 3 python modules with 25 embedded checks,

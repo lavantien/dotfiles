@@ -67,9 +67,10 @@ with the same values pinned in C.
 
 The period-7 block and the xor verdicts land identically in every
 suite, and the listings below build the mex table and the nim
-analysis in seven languages.
+analysis in eight languages.
 
 #listing("dsa/samples-c/src/Ch40/grundy.c", first: 24, last: 59, caption: [c, the mex table build and the nim verdict with its winning move])
+#listing("dsa/samples-rust/src/Ch40/grundy.rs", first: 13, last: 49, caption: [rust, the mex table build over a seen vec, the nim verdict with its winning move])
 #listing("dsa/samples-go/ch40/grundy.go", first: 5, last: 45, caption: [go, the table over sorted moves, the nim analysis])
 #listing("dsa/samples-java/src/Ch40/Grundy.java", first: 21, last: 58, caption: [java, the mex table build over a seen array, the nim verdict with its winning move])
 #listing("dsa/samples/src/Ch40/Grundy.cs", first: 9, last: 37, caption: [c\#, the option set and its mex, the move from the pile that drops])
@@ -83,7 +84,7 @@ flips, and for nim specifically the strategy changes exactly when
 every pile is of size 1, where the parity of the pile count decides.
 Everything before that point plays identically.
 
-The fixture families pin identical values in all seven languages. The
+The fixture families pin identical values in all eight languages. The
 table above and its period. The nim positions: (3, 4, 5) xors to 2,
 first wins by cutting the pile of 3 down to 1, (1, 2, 3) xors to 0 and
 the second player wins, a lone pile of 7 moves to 0, the twin piles
@@ -94,8 +95,8 @@ g(9) = 0, both grundy numbers being 0 there, and g(9) xor g(9) = 0,
 first exactly when the cell is nonzero. The edges close it: the empty
 position xors to 0 and loses by convention, and a single pile of 1
 moves to 0. The c suite asserts the 3, 4, 5 verdict twice in a row, a
-literal duplicate, and the java port drops the second copy, 33 grundy
-checks where c counts 34.
+literal duplicate, the java port drops the second copy, 33 grundy
+checks where c counts 34, and the rust port keeps both like c.
 
 #diagram([the subtraction grundy ladder with the period-7 block boxed, beside the 3, 4, 5 nim piles and the 3 to 1 winning move], length: 13pt, {
   // left: the grundy ladder n = 0..15
@@ -172,9 +173,10 @@ mutations, asserted by the C\# suite and pinned the same way in C.
 )
 
 D, D, D, W, L, L, D, D is the pinned string, and the listings below
-run the sweep in seven languages.
+run the sweep in eight languages.
 
 #listing("dsa/samples-c/src/Ch40/graphgames.c", first: 47, last: 75, caption: [c, the retrograde loop, reverse arcs, degree counting])
+#listing("dsa/samples-rust/src/Ch40/graphgames.rs", first: 69, last: 103, caption: [rust, the retrograde loop, reverse arcs, degree counting])
 #listing("dsa/samples-go/ch40/graphgames.go", first: 20, last: 52, caption: [go, the outcome enum, terminals seeded, predecessors decided])
 #listing("dsa/samples-java/src/Ch40/Graphgames.java", first: 46, last: 75, caption: [java, the retrograde loop, reverse arcs, degree counting])
 #listing("dsa/samples/src/Ch40/GraphGames.cs", first: 9, last: 53, caption: [c\#, the same sweep, the draw assignment at the end])
@@ -235,8 +237,7 @@ itself is the kuhn section of #xref-to("dsa", "flows2").
   cdraw.content((6.0, 0.2), [one sweep, o(v + e)], size: 6pt)
 })
 
-The application is icpc world finals 2025 problem B (book 10, chapter
-13), blackboard game, the prime-multiple graph whose openings are
+The application is icpc world finals 2025 problem B (book 11, chapter 15), blackboard game, the prime-multiple graph whose openings are
 decided by the matching characterization stated above, with the kuhn
 solver of chapter 38 doing the matching.
 
@@ -299,9 +300,10 @@ answers.
 
 The 19 equals the brute optimum and the window verdicts reproduce
 2017 problem H, and the listings below ship the four machines in
-seven languages.
+eight languages.
 
 #listing("dsa/samples-c/src/Ch40/scheduling.c", first: 149, last: 195, caption: [c, the phase 1 sweep, the as-late chain pushed out of regions, the forbidden marking])
+#listing("dsa/samples-rust/src/Ch40/scheduling.rs", first: 156, last: 215, caption: [rust, the phase 1 sweep, the as-late chain pushed out of regions, the forbidden marking, the region merge])
 #listing("dsa/samples-go/ch40/scheduling.go", first: 163, last: 209, caption: [go, the release sweep, the tightest-deadline batch, the marking])
 #listing("dsa/samples-java/src/Ch40/Scheduling.java", first: 139, last: 185, caption: [java, the phase 1 sweep, the as-late chain pushed out of regions, the forbidden marking, a byte-for-byte port of the c loop])
 #listing("dsa/samples/src/Ch40/Scheduling.cs", first: 83, last: 120, caption: [c\#, the same sweep, adjust down, the region merge, the greedy below])
@@ -385,15 +387,14 @@ neither at a span of 3.
   cdraw.content((11.2, -0.5), [the schedule that works: 1-3, 4-6, 6-8], size: 6pt)
 })
 
-The application is icpc world finals 2017 problem H (book 10, chapter
-8), scenery, where the garey-johnson-simons-tarjan two-phase machine
+The application is icpc world finals 2017 problem H (book 11, chapter 10), scenery, where the garey-johnson-simons-tarjan two-phase machine
 is exactly the fourth solver, and the shipped seven-language solvers of
 the icpc book are its contest-grade siblings. When an instance
 outruns every exact solver, the next tier over surrenders on purpose
 and keeps a number: #xref-to("dsa", "approximation") and its proven
 ratios.
 
-== across the seven languages
+== across the eight languages
 
 Featured build size counted as non-blank, non-comment lines of the
 chapter's three sample files per language, go test files excluded:
@@ -403,6 +404,7 @@ chapter's three sample files per language, go test files excluded:
   inset: 4pt,
   table.header([*language*], [*build sloc*], [*container dependency*], [*boundary note*]),
   [c], [440], [static arrays, insertion sorts], [all four machines in one file, the judge-verified windows answers pinned, 65 checks],
+  [rust], [577], [rust 1.99 std], [all four machines in one file like c, the grundy port keeping both copies of the duplicated verdict check, insertion sorts hand-rolled],
   [go], [328], [slices, sort], [the johnson brute as ground truth, the outcome enum for retrograde],
   [java], [447], [jdk 27 stdlib], [the phase 1 window machine a byte-for-byte port of the c loop, the grundy port drops the c suite's one duplicated verdict check, insertion sorts hand-rolled],
   [c\#], [225], [linq ordering throughout], [the window machine as one method, phase comments mirroring the shipped solver],
@@ -421,8 +423,10 @@ and "Optimal schedule of jobs given their deadlines and durations",
 cp-algorithms.com/schedules/schedule-with-completion-duration.html,
 all accessed 2026-09-20, cc by-sa 4.0, our own words and code
 throughout. Application sources: icpc world finals 2025 problem B and
-2017 problem H (book 10, chapters 13 and 8). Sample behavior verified
-by the seven suite gates scoped to chapter 40: c 3 files and 65 checks, go 12 test
+2017 problem H (book 11, chapters 15 and 10). Sample behavior verified
+by the eight suite gates scoped to chapter 40: c 3 files and 65 checks,
+rust 3 files and 65 checks under run-rust-samples in
+books/dsa/samples-rust, go 12 test
 functions, java 3 files and 64 checks under run-java-samples, c\# 12
 facts, javascript 12 tests and 47 asserts, python 3 files and 41
 asserts, lua 12 checks, zero skipped.

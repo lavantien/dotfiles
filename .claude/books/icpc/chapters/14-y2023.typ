@@ -1,4 +1,4 @@
-// book 10, chapter 13: icpc world finals 2023, problems A through K,
+// book 11, chapter 14: icpc world finals 2023, problems A through K,
 // seven languages per problem, listings sliced from the frozen solver
 // files under books/icpc/samples*
 #import "../../theme/lib.typ": listing, callout, xref-to, diagram, cdraw
@@ -7,7 +7,7 @@
 
 The 47th world finals were played in Luxor concurrently with the 46th,
 which is why this set of 11 problems lettered A through K shares five
-problem names with the 2022 set of chapter 12 under different letters,
+problem names with the 2022 set of chapter 13 under different letters,
 A doubling 2022's W, C doubling V, D doubling T, G doubling P, and J
 doubling S. The problemset is
 #link("https://icpc.global/worldfinals/problems/2023-ICPC-World-Finals/icpc2023.pdf")[icpc2023.pdf],
@@ -29,14 +29,14 @@ the official judge data held locally under `ref/icpc/`.
 Five helper kits are year-local to this chapter, one per problem
 that wanted one, plus the go package's shared scan cursor, and
 everything else the year's solvers import comes from the wave 1
-toolbox chapters 2 through 8. Each kit states its contract and
+toolbox chapters 2 through 9. Each kit states its contract and
 prints its twin files below in the book's fixed language order, and
 java joins all five families as package-private classes compiled
 beside the solvers, Sphinx through Kmp. The
-C solvers parse through chapter 12's `ch11_scan.h` rather than a
-year-local twin, so that cursor prints in chapter 12's helper
+C solvers parse through chapter 13's `ch11_scan.h` rather than a
+year-local twin, so that cursor prints in chapter 13's helper
 section and only go adds a new file for it here. The go judge lane
-`pjfast.go`, the twin of chapter 12's `psfast.go`, stays
+`pjfast.go`, the twin of chapter 13's `psfast.go`, stays
 deliberately unlisted: it is problem J's measured engine, not a
 helper.
 
@@ -46,7 +46,7 @@ problem: the file names the true leg counts, the lying round, and
 the additive lie, and `ask` simulates her five answers so the
 deduction core stays a pure function of the answer vector. C
 carries the struct and its two calls in `Ch12/ch12_sphinx.h` on top
-of chapter 12's scan header, javascript exports a factory
+of chapter 13's scan header, javascript exports a factory
 returning the ask closure, python and java classes whose
 constructors parse the fixed file, and lua a module whose
 init walks the file bytes itself. C\# and go carry no twin file:
@@ -156,7 +156,7 @@ closure builds its table inline.
 The scan kit is the go package's io contract, one file the whole
 year shares: `scan12` walks the input buffer with a whitespace
 `token`, a signed `nextInt`, and `line` for the fixed-line judge
-files, the same cursor design chapter 11 named and chapter 12
+files, the same cursor design chapter 12 named and chapter 13
 printed for C. Ten of the eleven go solvers parse through it,
 everything but the sphinx's four-line fixed file, which `SolveA`
 splits directly.
@@ -230,7 +230,7 @@ outright lie and you do not know which one: the consistent world is
 recovered by excluding each suspect round in turn and keeping the
 one hypothesis whose survivors all agree. Problem A is the 2023
 face of the consistency under a faulty oracle family. Consistency
-under a faulty oracle ties chapter 12 problem W and chapter 14
+under a faulty oracle ties chapter 13 problem W and chapter 15
 problem D together.
 
 Searching the triple space is the tempting tool and the numbers
@@ -251,7 +251,7 @@ legs by Cramer's rule and the other survivors cross-check them, and
 exactly one hypothesis survives, the argument on the solutions pdf
 page 2, problem at
 #link("https://icpc.global/worldfinals/problems/2023-ICPC-World-Finals/icpc2023.pdf")[icpc2023.pdf].
-Book 9's chapter 34, linear algebra, builds the determinant screen
+Book 10's chapter 34, linear algebra, builds the determinant screen
 and the small-system solve this lie isolation rests on. The last row
 is not negotiable: replacing (1,2,3) with (1,1,2) or (0,1,2) creates
 dependent triples and breaks the guarantee. The deduction is O(1)
@@ -429,7 +429,7 @@ a closed-form characterization, prove exactly which isolations are
 achievable at all, then emit one canonical block. Problem B is the
 2023 face of the constructive closed-form characterization family.
 The constructive closed-form characterization family holds chapter
-11 problem U and chapter 14 problem J.
+12 problem U and chapter 15 problem J.
 
 Searching week by week is priced out by counting alone: each week
 admits 2^n member choices with n up to 1e4, a number with 3000
@@ -455,7 +455,7 @@ lexicographic order, team 1 taking the largest, and repeat the block
 cyclically to w weeks, `O(n*k)` after a tiny binomial search, the
 construction on the solutions pdf pages 2 and 3, problem at
 #link("https://icpc.global/worldfinals/problems/2023-ICPC-World-Finals/icpc2023.pdf")[icpc2023.pdf].
-Book 9's chapter 35, combinatorics, teaches the binomial search
+Book 10's chapter 35, combinatorics, teaches the binomial search
 over ordered selections that pins this k. Descending lex is the
 canonical output every suite pins.
 
@@ -592,7 +592,7 @@ distribution over face values, so both queries are constrained
 optima over one shared achievable set, the cue that the set is a
 convex hull and each query a halfplane cut on it. Problem C is the
 2023 face of the convex hull of achievable points family. Chapter
-11 problem V is the other convex hull of achievable points twin.
+12 problem V is the other convex hull of achievable points twin.
 
 Enumerating D3 as multisets of the input face values is the
 tempting tool and it is wrong before it is slow: the winning mixes
@@ -774,8 +774,8 @@ and corner configurations attain it, the cue that turns a
 continuous path search into critical-point enumeration. Problem D
 is the 2023 face of the geometric critical-point enumeration
 family. Geometric critical-point enumeration is the shared shape
-of chapter 12 problem T, chapter 09 problem A, chapter 09 problem
-D, chapter 10 problem E, and chapter 10 problem G.
+of chapter 13 problem T, chapter 10 problem A, chapter 10 problem
+D, chapter 11 problem E, and chapter 11 problem G.
 
 Numerically sweeping entry and exit points on a fine grid is the
 priced-out alternative: 1e-6 resolution over 1e5-sized coordinates
@@ -978,8 +978,8 @@ index into a lexicographic enumeration is unranking, and unranking
 a family far too large to list is counting without enumeration.
 Problem E is the 2023 face of the counting and expectation without
 enumeration family. Counting and expectation without enumeration
-is the shared core of chapter 10 problem D, chapter 10 problem I,
-chapter 12 problem Q, and chapter 13 problem K.
+is the shared core of chapter 11 problem D, chapter 11 problem I,
+chapter 13 problem Q, and chapter 14 problem K.
 
 Listing the cards in order until index n is the priced-out
 alternative: sample 2's card 1235 already generates 22377 at its
@@ -1153,8 +1153,8 @@ every move: after compaction the only freedom left is cyclic
 rotation within each corner's cell cycle, the cue that the
 reachability question is string rotation. Problem F is the 2023
 face of the string borders, rotations, and automata family.
-String borders, rotations, and automata connect chapter 09
-problem K and chapter 11 problem G; a secondary thread, pairwise
+String borders, rotations, and automata connect chapter 10
+problem K and chapter 12 problem G; a secondary thread, pairwise
 congruence consistency, covers the cycle-length compatibility the
 rotation match must satisfy.
 
@@ -1176,7 +1176,7 @@ string to the end string, which is the end string searched inside the
 doubled start cycle, every match at offset a yielding the congruence
 n = a (mod m) for m the cycle length, problem at
 #link("https://icpc.global/worldfinals/problems/2023-ICPC-World-Finals/icpc2023.pdf")[icpc2023.pdf].
-Book 9's chapter 33, string algorithms ii, builds the rotation match
+Book 10's chapter 33, string algorithms ii, builds the rotation match
 on the doubled cycle, z-function and all, that this coset search
 runs on. Two contracts the sketch leaves open, and every porting
 language hits both. First, the congruences, per cycle the valid
@@ -1186,7 +1186,7 @@ lcm, the accumulator was observed overflowing 64-bit at 1.9e18 and
 then by a factor of 185. Keep one canonical residue per distinct
 modulus and check every pair with the gcd of the two moduli dividing
 the difference of the two residues, which is a chinese-remainder
-consistency check in plain text, no constructed solution. Book 9's
+consistency check in plain text, no constructed solution. Book 10's
 chapter 16, number theory and modular arithmetic, develops the
 chinese-remainder residue merge over shared prime groups that this
 pairwise check stands in for. Moduli divide their cycle lengths, so
@@ -1343,8 +1343,8 @@ the red, green, blue cycle, so each light is one equation over at
 most two unknowns mod 3, the cue that turns the house wiring into
 per-component propagation with one free value. Problem G is the
 2023 face of the one free value per component family. One free
-value per component is the trick behind chapter 12 problem P and
-chapter 14 problem K.
+value per component is the trick behind chapter 13 problem P and
+chapter 15 problem K.
 
 Searching press vectors directly is priced out at 3^b = 3^400000
 worlds, and integer shortest paths or flows cannot express the
@@ -1501,8 +1501,8 @@ local feasibility window per gap, the cue that a provably safe
 local rule, take the full-gap sleep whenever it strictly extends
 the awake horizon, then repair, orders the whole schedule. Problem
 H is the 2023 face of the greedy with a safety proof family.
-Greedy with a safety proof is the family of chapter 09 problem H,
-chapter 10 problem K, and chapter 11 problem A.
+Greedy with a safety proof is the family of chapter 10 problem H,
+chapter 11 problem K, and chapter 12 problem A.
 
 A dp over the minute timeline is priced out by the coordinates
 alone, 1e10 minutes, and a dp over gap subsets costs (2e5)^2 = 4e10
@@ -1661,7 +1661,7 @@ equal-height bands over a full rotation: spherical zone area is
 proportional to height, so every band covers the same surface
 fraction at every step, the cue that one proportionality collapses
 the whole task to a plain average. Problem I is the 2023 face of
-the invariant collapse family. Chapter 11 problem Y is the other
+the invariant collapse family. Chapter 12 problem Y is the other
 invariant collapse member.
 
 Spherical zone areas are proportional to height, the cylindrical
@@ -1775,7 +1775,7 @@ Recognition: n <= 1e4 and c <= 1e4 under the 4 second limit price
 an exact state machine, not a smarter formula: the (k, g, l) space
 holds 5e7 to 3.5e8 live states on the judge secrets, and the
 shipped engines visit each state once at O(1) amortized, which is
-what the limit buys, the same ratification chapter 12 measured.
+what the limit buys, the same ratification chapter 13 measured.
 
 The statement's cue is the torch ledger: every crossing and every
 return changes who stands where, and the optimum turns on the
@@ -1783,15 +1783,15 @@ contiguous block of banked fast walkers, the cue that the state
 must be engineered by hand rather than read off the input. Problem
 J is the 2023 face of the dp over an engineered state space
 family. The dp over an engineered state space family spans chapter
-11 problem S, chapter 10 problem J, chapter 11 problem I, and
-chapter 14 problem H.
+12 problem S, chapter 11 problem J, chapter 12 problem I, and
+chapter 15 problem H.
 
 The classic c = 2 greedy shuffle is the tempting rule and the
 year's own judge data prices it out: secrets 054 through 102 are
 tagged wrong-greedy torture cases, and the shuffle misprices every
 one of them, while the exact sweep fits the same limit.
 
-Every language here ships the engine chapter 12 ratified for the 2022
+Every language here ships the engine chapter 13 ratified for the 2022
 original, and the exact state is (k, g, l), the k slowest delivered,
 the far side banking exactly walkers g through g+l-1, torch near.
 The structure the solutions pdf page 8 proves keeps the machine
@@ -1804,15 +1804,15 @@ n/c, so the states run O(n^2/c) with O(c) transitions each and the
 real cost is O(n^2) after pruning unreachable states, and the judges
 warn the implementation is tricky, problem at
 #link("https://icpc.global/worldfinals/problems/2023-ICPC-World-Finals/icpc2023.pdf")[icpc2023.pdf].
-The c solver parses through chapter 12's `ch11_scan.h` and go
-through the package's own `ch12.go` twin, and chapter 12's helper
+The c solver parses through chapter 13's `ch11_scan.h` and go
+through the package's own `ch12.go` twin, and chapter 13's helper
 section prints the scan cursor this solver includes.
 The 2023 secrets 054 through 102 are tagged wrong-greedy torture
 cases, the classic c=2 shuffle is not enough. Two engine shapes
 cover the seven languages, the pull-based row sweep with lazy window
 heaps in c and java and the diagonal sweep with sliding-window
 materialization in go, javascript, python, and lua, and the C\# and
-javascript entries literally delegate to their chapter 12 engines.
+javascript entries literally delegate to their chapter 13 engines.
 Java's port keeps c's struct discipline in its own coin: the C
 engine's heap entries are structs grown by realloc, java's are
 pooled Ent objects copied by value so the candidate slots stay
@@ -1970,9 +1970,9 @@ play, or impossible: an expectation over an enormous implicit
 outcome tree, priced by a fixed point over the lock states rather
 than by listing plays. Problem K is the 2023 face of the counting
 and expectation without enumeration family. Counting and
-expectation without enumeration is the shared core of chapter 10
-problem D, chapter 10 problem I, chapter 12 problem Q, and chapter
-12 problem E.
+expectation without enumeration is the shared core of chapter 11
+problem D, chapter 11 problem I, chapter 13 problem Q, and chapter
+13 problem E.
 
 Enumerating play sequences is the priced-out alternative: each
 round branches 63 starring choices into up to 6^6 = 46656 roll
@@ -1997,7 +1997,7 @@ shortcut can freeze early when refinements with larger distances pop
 late, and the pdf itself notes every contest team used value
 iteration, problem at
 #link("https://icpc.global/worldfinals/problems/2023-ICPC-World-Finals/icpc2023.pdf")[icpc2023.pdf].
-Book 9's chapter 32, dynamic programming ii, develops this style of
+Book 10's chapter 32, dynamic programming ii, develops this style of
 value iteration over the word-multiset states.
 
 The worked run: trace the model on sample 1. The five printed dice

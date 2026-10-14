@@ -1,4 +1,4 @@
-// book 11 topic coverage matrix: pattern or mechanism, the chapter
+// book 12 topic coverage matrix: pattern or mechanism, the chapter
 // that owns it, the guarantee or cost it carries, and the stdlib
 // counterpart to reach for in production code.
 #let topics = (

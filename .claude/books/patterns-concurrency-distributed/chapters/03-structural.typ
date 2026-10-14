@@ -7,8 +7,8 @@ Structural patterns wire values together, and the wrapper mechanism
 is each tree's own. Go's structural interfaces make a wrapper type
 declaring the same method set an adapter, decorator, or proxy before
 any framework shows up, C folds the same shape into a struct holding
-the next function table, java declares the interface once and
-implements it on the wrapper side alone, C\# declares the interface
+the next function table, rust and java declare the interface once
+and implement it on the wrapper side alone, C\# declares the interface
 once and implements it on both sides, and the dynamic three wrap duck
 typed objects without asking anyone's permission. The wiring is the
 cheap
@@ -22,7 +22,7 @@ The adapter exists to satisfy an interface a type cannot be edited to
 satisfy, third party code, generated code, or a stable legacy api:
 
 The dry run: the fixture is 72 fahrenheit reading as the exact double
-22.22222222222222, byte for byte across the six sibling lanes,
+22.22222222222222, byte for byte across the seven sibling lanes,
 computed as `(f - 32) * 5 / 9` with no epsilon anywhere. The go
 lane's frozen test pins its own input, 212 boiling to 100 through a
 1e-9 tolerance on its own constant, an anchor the sibling trees pin
@@ -34,6 +34,8 @@ beside the shared literal, both verified against the same conversion.
   the adapter is the only new code either side sees.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch03/adapter.c", first: 18, last: 31, caption: [C, the adapter embeds the legacy struct and converts through its accessor])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch03/adapter.rs", first: 23, last: 39, caption: [Rust, the adapter implements the trait, the legacy struct never learns it, the boundary takes dyn])
 
 #listing("patterns-concurrency-distributed/samples/ch03/structural.go", first: 14, last: 31, caption: [Go, fahrenheit sensor behind a celsius interface])
 
@@ -54,7 +56,10 @@ class language this pattern needs an interface declaration on both
 sides plus an adapter class, in go it is 8 lines, which is why
 adapters in go code are usually anonymous local types or function
 values, seldom named citizens. C is the same economy with the
-function table folded into the struct, java pays the one interface
+function table folded into the struct, rust pays the one trait
+declaration and hands the adapter over as `&dyn CelsiusSensor`, the
+legacy field still reached by its own accessor, java pays the one
+interface
 declaration and proves the legacy side stays outside with an
 `instanceof` check in the checks, C\# pays the one interface
 declaration and gets the compiler checking both sides, and the
@@ -85,10 +90,13 @@ denied request never reaches it.
 + Ordering is behavior: with the log outermost, a denied request is
   still counted as a hit, and the token layer's 401 is the response.
 + The fold runs outside in, the first middleware in the list sees the
-  request first. C and java pin the swapped order, a denial the log
-  never sees, and lua pins the fold order as one, two, three, inner.
+  request first. C, rust, and java pin the swapped order, a denial
+  the log never sees, and lua pins the fold order as one, two,
+  three, inner.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch03/middleware.c", first: 29, last: 63, caption: [C, a handler is a function pointer plus receiver, a middleware wraps one into another, the state struct is the closure go hides])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch03/middleware.rs", first: 25, last: 70, caption: [Rust, middleware as boxed closures over boxed handlers, the counters riding `Rc<Cell>`, the fold over rev])
 
 #listing("patterns-concurrency-distributed/samples/ch03/structural.go", first: 35, last: 66, caption: [Go, middleware chain: log outermost, token inside, inner handler last])
 
@@ -105,7 +113,10 @@ denied request never reaches it.
 `Chain` folds the list outside in, so the first middleware in the
 slice sees the request first, and every language above writes the
 same fold with its own function-value grain: C writes the closure by
-hand as a state struct beside the function pointer, java stacks
+hand as a state struct beside the function pointer, rust stacks boxed
+closures whose hit and denial counters ride `Rc<Cell<i64>>`, shared
+mutable state the borrow checker only allows behind a cell, java
+stacks
 lambdas through `UnaryOperator<Handler>`, C\# composes delegates,
 javascript stacks arrow closures, python nests three closures, lua
 returns closures from closures. `http.HandlerFunc` is
@@ -136,7 +147,7 @@ The dry run: each failing step surfaces with its step name, the
 fetch wrap carrying the url, parse and validate naming themselves,
 and the happy path returning the parsed items a, b, c. The frozen go
 test pins the fetch wrap, the parse and validate step names are
-pinned by the six new trees, both against the same implementation.
+pinned by the seven new trees, both against the same implementation.
 
 + One call, three injected steps, fetch, parse, validate, each a
   strategy object from chapter 4 in miniature.
@@ -144,6 +155,8 @@ pinned by the six new trees, both against the same implementation.
   wrap and the cause readable inside it.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch03/facade.c", first: 61, last: 88, caption: [C, step function pointers in a struct, load wraps each failure with its step name])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch03/facade.rs", first: 41, last: 54, caption: [Rust, plain fn pointers as injected fields, map_err prefixes each step's failure at the question mark])
 
 #listing("patterns-concurrency-distributed/samples/ch03/structural.go", first: 68, last: 93, caption: [Go, three injected steps, one wrapped error surface])
 
@@ -162,7 +175,9 @@ the only logic the caller actually wants, sequence plus error
 wrapping with `%w`, the wrapping chain #xref-to("go", "errors")
 grounds, so a failure is attributable to its step and matchable
 downstream. The siblings wrap in their own idiom: C returns the
-prefixed reason through an error buffer, java catches the `StepError`
+prefixed reason through an error buffer, rust threads `Result`
+through `map_err`, the prefix composed in the closure at each `?`,
+java catches the `StepError`
 and rethrows a new one carrying the prefix, C\# composes the string,
 javascript chains `Error` with `cause`, python raises `from` the
 caught step, lua concatenates onto `nil`. What every lane keeps is
@@ -201,6 +216,8 @@ same recursion.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch03/composite.c", first: 20, last: 69, caption: [C, one width slot in the struct, row and stack dispatch through it recursively])
 
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch03/composite.rs", first: 15, last: 53, caption: [Rust, the trait on leaf and container alike, children as `Rc<dyn Widget>`, nesting shared nodes])
+
 #listing("patterns-concurrency-distributed/samples/ch03/structural.go", first: 95, last: 123, caption: [Go, label is a leaf, row sums, stack maxes, nesting is free])
 
 #listing("patterns-concurrency-distributed/samples-java/src/Ch03/Composite.java", first: 19, last: 58, caption: [Java, a record Label and two container classes, one width method over them all])
@@ -215,9 +232,12 @@ same recursion.
 
 `Row` and `Stack` hold `[]Widget`, which can contain further rows and
 stacks, and the recursion bottoms out at `Label` with no type
-switches anywhere. The seven spellings differ only in how the one
+switches anywhere. The eight spellings differ only in how the one
 method is found, a function pointer slot in the C struct, an
-interface method in go, java, and C\#, a method on the class in the
+interface method in go, java, and C\#, a trait method behind
+`Rc<dyn Widget>` in rust, where one node can sit in two containers
+because the pointer count allows the sharing, a method on the class
+in the
 dynamic three, with lua collapsing the whole pattern into one
 recursive function over tagged tables. Tree shaped problems, layout,
 ASTs,
@@ -253,10 +273,12 @@ costs exactly 1 real call while the cache holds 1 entry.
   an unpermitted key never reaches the store and its error wraps the
   sentinel with the key.
 + The permitted key pays the real store once, the second read is the
-  cache. C, java, C\#, python, and lua also pin a permitted key the
-  store lacks surfacing the store's own error uncached.
+  cache. C, rust, java, C\#, python, and lua also pin a permitted key
+  the store lacks surfacing the store's own error uncached.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch03/proxy.c", first: 53, last: 101, caption: [C, the allow list gates, the cache rides a mutex, only permitted misses pay the store])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch03/proxy.rs", first: 39, last: 71, caption: [Rust, the allow list gates, the cache rides a Mutex, the miss question-marks the store's own error through])
 
 #listing("patterns-concurrency-distributed/samples/ch03/structural.go", first: 127, last: 177, caption: [Go, permission gate in front, memoization behind])
 
@@ -274,14 +296,18 @@ costs exactly 1 real call while the cache holds 1 entry.
 match it with `errors.Is` while still reading which key failed. The
 siblings match in their own idiom, the exception types in java,
 C\#, and python, the shared `Error` instance through `cause` in
-javascript, the message text in C and lua. The memo map is guarded
+javascript, the message text in C, rust, and lua. The memo map is
+guarded
 by a mutex
 because proxies at api boundaries see concurrent callers, the
-locking rules of chapter 7 applied where they matter, and the
+locking rules of chapter 7 applied where they matter, rust locking
+the lookup and the store windows separately so the wrapped call runs
+outside the hold, and the
 single-threaded lanes need no lock at all. The test pins the
 contract from the outside: a forbidden key never reaches the real
 store, the underlying call counter stays at zero, and a permitted
-key fetched twice costs one underlying call.
+key fetched twice costs one underlying call, a bill rust's four
+threaded readers over the warmed cache keep at one.
 
 #flow(
   [proxy get: policy first, cache second, real store last],
@@ -312,7 +338,8 @@ a subsystem of its own.
   silently. Wrapping code is trusted code. The sibling idioms carry
   the same duty, the rethrown exception type in java,
   `InnerException` in C\#, `cause` in javascript, `raise from` in
-  python, the concatenated message in C and lua.
+  python, the question mark forwarding verbatim in rust, the
+  concatenated message in C and lua.
 ])
 
 #flow(
@@ -335,7 +362,7 @@ a subsystem of its own.
   edge((4.4, -0.9), (6.6, -0.9), "-|>"),
 )
 
-== across the seven languages
+== across the eight languages
 
 The build sizes count non-comment source lines, the go column the
 chapter's one frozen file:
@@ -346,6 +373,8 @@ chapter's one frozen file:
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [454], [libc plus threads.h],
   [composite widths through vtable slots, only the proxy cache takes a mutex],
+  [rust], [450], [std only, no crates],
+  [boxed-closure middleware with `Rc<Cell>` counters, `Rc<dyn Widget>` trees sharing nodes, the proxy cache under a Mutex],
   [go], [142], [stdlib],
   [Middleware as func(http.Handler) http.Handler, sentinels wrapped for errors.Is],
   [java], [359], [jdk 27 stdlib],
@@ -363,8 +392,10 @@ chapter's one frozen file:
 sources: go.dev/pkg/net/http for `HandlerFunc` and middleware
 conventions, go.dev/pkg/errors for sentinel wrapping with `Is`,
 go.dev/doc/effective_go embedding for why none of these wrappers need
-inheritance, accessed 2026-09-08. Verified by the seven chapter legs:
-5 Ch03 C programs with 31 embedded checks, `go test` at 5 tests in
+inheritance, accessed 2026-09-08. Verified by the eight chapter legs:
+5 Ch03 C programs with 31 embedded checks, 5 Ch03 rust programs in
+`samples-rust/src` with 31 embedded checks under `run-rust-samples`,
+`go test` at 5 tests in
 `patternsbook/ch03`, 5 Ch03 java programs with 33 checks under
 `run-java-samples`, 14 xunit facts, node's 8 cases in
 `test/ch03.test.mjs`, 5 python modules with 36 embedded checks,

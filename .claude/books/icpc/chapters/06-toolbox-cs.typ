@@ -423,7 +423,7 @@ tests, and a strict rule for what did not get rebuilt:
 The from-scratch bigint and md5 stories live in
 #xref-to("icpc", "toolbox-c") and #xref-to("icpc", "toolbox-lua"),
 which need them because their standard libraries do not ship them.
-Java's chapter 4 sits at this chapter's pole too, BigInteger native,
+Java's chapter 5 sits at this chapter's pole too, BigInteger native,
 and still builds the 128-bit roads by hand beside the object,
 `Math.multiplyHigh` plus the shift-subtract lane, because the
 mechanism is the lesson.

@@ -11,13 +11,13 @@ never a comparison between whole keys, and no hash can do any of it.
 
 Each node is a map from one byte to the next node, and a key is the
 path spelling its bytes. End markers turn shared paths into distinct
-keys. Several of the seven builds carry a subtree size on every node,
+keys. Several of the eight builds carry a subtree size on every node,
 which is what makes count queries constant after the walk.
 
 The dry run: the fixture is cat, car, cart, asserted by the C\#
 suite, while C, JavaScript, and Lua build cat car cart dog done do
-and walk the same queries, and Java walks a four-key cat car cart dog
-with the size counters on every node.
+and walk the same queries, and Java and Rust walk a four-key cat car
+cart dog with the size counters on every node.
 
 + Insert cat: root grows c, a, t, the end marker lands on t,
   count 1.
@@ -60,6 +60,11 @@ The count landing at 2 with cart intact is the pinned pair, and
 the listings below build and unbuild the same paths.
 
 #listing("dsa/samples-c/src/Ch09/trie.c", first: 40, last: 71, caption: [c, a 26-wide child array from a static pool, insert, walk, the three queries])
+
+Rust pools the nodes and keeps the subtree counters the same way,
+one count array parallel to the children:
+
+#listing("dsa/samples-rust/src/Ch09/trie.rs", first: 45, last: 87, caption: [rust, a 26-wide child array over an index pool, insert with subtree counters, walk, the three queries])
 
 #listing("dsa/samples-go/ch09/trie.go", first: 23, last: 59, caption: [go, insert, search, starts-with, count by recursion])
 
@@ -123,7 +128,7 @@ way.
   is fast and enormous, as a dictionary it is compact with one more
   indirection. The version here uses the dictionary form and the
   collect sorts children explicitly rather than trusting dictionary
-  iteration order, a lesson from book 5's collection semantics.
+  iteration order, a lesson from book 6's collection semantics.
 ])
 
 == the prefix scan
@@ -136,8 +141,8 @@ is sorted by construction and a word always precedes its own
 extensions.
 
 The dry run: the fixture is banana, band, bandana, bar, bee,
-asserted by the C\# suite, while C, Java, JavaScript, and Lua scan
-cat car cart dog done do and Go pins app apple apron under ap.
+asserted by the C\# suite, while C, Rust, Java, JavaScript, and Lua
+scan cat car cart dog done do and Go pins app apple apron under ap.
 
 + Build the five keys; nothing is sorted anywhere yet.
 + The scan under ban walks root, b, a, n and lands on the ban
@@ -183,6 +188,11 @@ scan, and the listings below emit it without sorting anything.
 
 #listing("dsa/samples-c/src/Ch09/prefixscan.c", first: 62, last: 85, caption: [c, depth-first emit over the a-to-z child array, scan walks to the prefix])
 
+Rust's child array is already a to z, the walk emits lexicographic
+by construction with a shared path buffer:
+
+#listing("dsa/samples-rust/src/Ch09/prefixscan.rs", first: 59, last: 88, caption: [rust, depth-first emit over the ordered child array, scan walks to the prefix])
+
 #listing("dsa/samples-go/ch09/prefixscan.go", first: 9, last: 31, caption: [go, the closure scan, edges sorted so map order cannot leak])
 
 #listing("dsa/samples-java/src/Ch09/Prefixscan.java", first: 42, last: 64, caption: [java, depth-first emit over the a-to-z child array, a shared StringBuilder path])
@@ -197,7 +207,7 @@ scan, and the listings below emit it without sorting anything.
 
 #listing("dsa/samples-lua/ch09_prefixscan.lua", first: 21, last: 44, caption: [lua, emit with a shared path buffer, sorted child keys])
 
-Measured across the suites: C, Java, JavaScript, and Lua scan a
+Measured across the suites: C, Rust, Java, JavaScript, and Lua scan a
 build inserted as cat car cart dog done do and pin car cart cat under
 ca, do dog done under do, and all six keys sorted under the empty
 prefix, the insertion order deliberately scrambled against the
@@ -247,7 +257,7 @@ gives an array where any substring query becomes a range of adjacent
 suffixes.
 
 The dry run: the fixtures are banana, aaaa, abab, and mississippi,
-asserted by all seven suites on the same two arrays. The tie contract
+asserted by all eight suites on the same two arrays. The tie contract
 runs the whole table on repeated characters, a before aa, and the
 Kasai walk is checked against direct adjacent-pair comparison
 everywhere.
@@ -301,6 +311,11 @@ is the reason it costs one pass, the listings below carry both.
 
 #listing("dsa/samples-c/src/Ch09/suffixarray.c", first: 23, last: 67, caption: [c, the length-aware suffix comparator, the sorted array, kasai])
 
+Rust keys the index sort by the borrowed suffix slices, the std Ord
+compares to the end and then by length, the same law for free:
+
+#listing("dsa/samples-rust/src/Ch09/suffixarray.rs", first: 15, last: 59, caption: [rust, the suffix sort keyed by borrowed str slices, kasai, the direct oracle])
+
 #listing("dsa/samples-go/ch09/suffixarray.go", first: 23, last: 70, caption: [go, index sort by full suffix order, kasai's walk])
 
 The other five languages build the same two arrays:
@@ -316,13 +331,14 @@ The other five languages build the same two arrays:
 #listing("dsa/samples-lua/ch09_suffixarray.lua", first: 7, last: 49, caption: [lua, byte-wise suffix order, the array, kasai over 0-based starts])
 
 Measured across the suites: banana lands 5, 3, 1, 0, 4, 2 with lcp
-1, 3, 0, 0, 2 in all seven languages. The six new trees also pin
+1, 3, 0, 0, 2 in all eight languages. The seven new trees also pin
 aaaa at 3, 2, 1, 0 with lcp 1, 2, 3 plus the abab and mississippi
 tables, and every tree recomputes each adjacent-pair lcp by direct
 character comparison and asserts it equals Kasai's output, the h-1
 invariant on trial. The comparators compare characters to the end
 and then length, so on repeated characters the shorter suffix with an
-equal prefix sorts first.
+equal prefix sorts first. Rust gets that law from the std Ord on
+borrowed slices where every other tree spells it by hand.
 
 Every build here sorts indices with full suffix comparison, honest
 about its worst case, quadratic comparisons, right for teaching
@@ -369,7 +385,7 @@ the run of suffixes that start with the pattern.
 
 The dry run: the fixtures are ana, the whole word, nab, and the
 empty pattern over banana, aa over aaaa, and the, th, xyz over the
-long text, asserted by all seven suites. Hits come out in suffix
+long text, asserted by all eight suites. Hits come out in suffix
 order everywhere, never ascending position, and the hit set is
 checked against a naive contains scan.
 
@@ -414,6 +430,11 @@ same two phases on the longer text against IndexOf.
 
 #listing("dsa/samples-c/src/Ch09/suffixsearch.c", first: 41, last: 76, caption: [c, the bounded suffix compare, the lower bound, the run])
 
+Rust bounds the compare at the shared length, the length difference
+decides the rest:
+
+#listing("dsa/samples-rust/src/Ch09/suffixsearch.rs", first: 24, last: 64, caption: [rust, the bounded suffix compare, the lower bound, the run])
+
 #listing("dsa/samples-go/ch09/suffixsearch.go", first: 3, last: 54, caption: [go, suffix versus pattern, the lower bound, the prefix run])
 
 The other five languages run the same two phases:
@@ -431,8 +452,8 @@ The other five languages run the same two phases:
 Each probe compares the pattern against a suffix, so a search costs
 pattern length times log of text length. Measured across the suites:
 ana emits 3 then 1 for the pinned suffix order and the empty pattern
-returns the whole array in all seven languages, and the six new trees
-also pin aaaa's double a at 2, 1, 0 and the long text's 41-entry
+returns the whole array in all eight languages, and the seven new
+trees also pin aaaa's double a at 2, 1, 0 and the long text's 41-entry
 array with the runs for the and th in suffix order. Every tree checks
 the hit set against a naive scan, IndexOf in C\#, while the emission
 order stays suffix order, and the degenerate empty pattern, which
@@ -467,7 +488,7 @@ questions. Databases build b-tree range indexes, routers build
 tries, search engines and genome tools live in suffix arrays, and
 the capstone's prefix scans ride the trie in this listing.
 
-== across the seven languages
+== across the eight languages
 
 The build sizes count non-comment source lines over this chapter's
 four featured files per language. Every child map here is the
@@ -478,6 +499,7 @@ language's own table type, no trie shipped from anyone's stdlib:
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [395], [libc only], [26-wide child arrays from a 64-node static pool, lower-case words, checks share the file with main, 45 of them],
+  [rust], [489], [rust 1.99 std], [26-wide child arrays over a 64-node index pool with subtree counters, the suffix sort keys borrowed str slices through the std Ord, a duplicate insert counts again like java, 45 checks in 4 files],
   [go], [183], [slices for sorting], [map of byte to node, counts by recursion, duplicate inserts ignored by Len, 13 tests],
   [java], [365], [jdk 27 stdlib], [26-wide child arrays like c with subtree counters on every node, a duplicate insert counts again, the empty-pattern search pinned at the whole array by a naive-scan oracle],
   [c\#], [165], [bcl only], [byte-wise Dictionary children, remove supported, subtree sizes, the suffix array rides the same file, 11 tests],
@@ -491,8 +513,10 @@ semantics, `MemoryExtensions.SequenceCompareTo` and `StartsWith`
 span pages, accessed 2026-09-08, plus the kasai and suffix array
 literature cited in the chapter text. Sample behavior verified by
 `make verify-csharp`, 11 tests in chapter 9 of the samples suite.
-The seven-language layer verifies the same way: 4 C programs with 45
-embedded checks under `make verify-c`, 13 Go tests, the java runner's
+The eight-language layer verifies the same way: 4 C programs with 45
+embedded checks under `make verify-c`, 4 rust programs under
+`run-rust-samples` with 45 Ch09 checks over `samples-rust/src`, 13
+Go tests, the java runner's
 45 Ch09 checks over 4 files under `run-java-samples`, 17
 `node --test` cases, 62 Python checks across 4 files, and 20 Lua
 checks under `run.lua`.

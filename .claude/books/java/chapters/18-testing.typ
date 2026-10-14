@@ -148,7 +148,7 @@ sources: repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standa
 user guide, console launcher page (the execute subcommand, the option
 set, the 0, 1, 2, 3 exit codes), both accessed 2026-10-04,
 github.com/openjdk/jcstress for the concurrency torture tool the
-contention style borrows, and book 3 of this corpus, chapter 6, for
+contention style borrows, and book 4 of this corpus, chapter 6, for
 the go race detector contrast. Behavior verified live on
 `tools/jdk27/build/jdk-27` by the Ch18 samples under `pwsh
 tools/run-java-samples.ps1 -Chapter Ch18`: 13 checks, OkContract 12

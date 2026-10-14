@@ -7,12 +7,12 @@ Four failure modes own concurrent code: races, deadlocks,
 starvation, and leaks. Chapter 6 defined the first one and its cure
 in the large, and chapter 8 closed the leak account with one
 instrument per tree. This chapter makes the middle two concrete
-across seven trees, shows the code that survives each, and equips
+across eight trees, shows the code that survives each, and equips
 the reader with the detectors each toolchain actually ships: the go
 race detector, the contention instruments of the other lanes, the
 goroutine leak profile new in go 1.27, and `testing/synctest`, the
 fake-clock bubble that turns time dependent concurrency tests
-deterministic, plus the six portable rebuilds of that bubble the
+deterministic, plus the seven portable rebuilds of that bubble the
 sibling trees carry.
 
 == deadlock, and the cycle rule
@@ -23,7 +23,7 @@ program asleep with no possibility of waking, and reports it as
 `fatal error: all goroutines are asleep - deadlock!`. A partial
 deadlock, 2 of a thousand workers circling each other while the rest
 work, produces no message at all, just a counter that stops moving,
-and none of the seven runtimes here detects that one for you.
+and none of the eight runtimes here detects that one for you.
 
 The classic generator of the partial kind is dining philosophers
 with the naive rule, everyone picks up the left fork, then the
@@ -63,6 +63,8 @@ a coloring DFS over the rule itself before the live table eats its
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch09/dining.c", first: 70, last: 107, caption: [C, 5 mtx_t forks, first and second by fork number, the run wrapped in the guard below])
 
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch09/dining.rs", first: 56, last: 75, caption: [Rust, 5 Mutex forks over a zero-sized unit, scoped threads borrow the table, first and second by fork number, each fork back by drop])
+
 #listing("patterns-concurrency-distributed/samples/ch09/hazards.go", first: 22, last: 39, caption: [Go, first and second by fork number, the cycle cannot form])
 
 #listing("patterns-concurrency-distributed/samples-java/src/Ch09/Dining.java", first: 24, last: 67, caption: [Java, both rules as data, a coloring DFS over the wait graph proves the naive order cyclic and the ordered one acyclic])
@@ -75,12 +77,16 @@ a coloring DFS over the rule itself before the live table eats its
 
 #listing("patterns-concurrency-distributed/samples-lua/ch09_dining.lua", first: 59, last: 98, caption: [Lua, forks hand ownership to the head waiter, the ordering rule is the whole lesson, the window stands in for preemption])
 
-The seven lanes all carry the same rule and differ in what a fork
-is. C, go, java, and python hold real kernel locks, C through
-`mtx_t`, go through `sync.Mutex`, java through `synchronized` on a
+The eight lanes all carry the same rule and differ in what a fork
+is. C, rust, go, java, and python hold real kernel locks, C through
+`mtx_t`, rust through `std::sync::Mutex` over a zero-sized unit, go
+through `sync.Mutex`, java through `synchronized` on a
 plain object per fork, python through `threading.Lock`, and python's
 row is the honest one about scope: the GIL stops torn memory, it
-does nothing to a wait cycle, the graph logic is identical. C\#
+does nothing to a wait cycle, the graph logic is identical. Rust's
+scoped threads borrow the fork vector outright, no Arc indirection
+and no manual join, the borrow checker proving every seat outlives
+the table. C\#
 reaches for a binary `SemaphoreSlim` because C\# locks are
 monitor-bound to objects and a counting semaphore of 1 is the clean
 owned-exclusion primitive. Javascript builds the mutex as a promise
@@ -97,17 +103,23 @@ freezes reports nothing. `MustFinishWithin` converts a would-be hang
 into a failure with a stack.
 
 The dry run: an instant body passes everywhere. A stuck body trips
-the deadline in go, C, java, javascript, and python, each with a
-real timer of a few tens of milliseconds, the one real-time
+the deadline in go, C, rust, java, javascript, and python, each with
+a real timer of a few tens of milliseconds, the one real-time
 primitive those trees allow in an asserted path, and java's stuck
 body announces entry on its own latch, so a fired deadline is
-provably a stuck body, never one that never started. C\# pins only
+provably a stuck body, never one that never started. Rust's
+`Condvar::wait_timeout` carries a relative span, so the guard
+re-derives the remaining budget from an `Instant` deadline on every
+wake, where C's `cnd_timedwait` hands the kernel one absolute
+timespec. C\# pins only
 the pass path, tripping its guard would demand asserting on a real
 timed wait, which the tree's determinism policy refuses. Lua runs
 the whole contract on the virtual clock, a 30ms budget against a
 1000ms hang trips at clock 30 in zero real time.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch09/guard.c", first: 84, last: 97, caption: [C, the body on its own thread, a timed cond wait for the deadline, true only when the body returned])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch09/guard.rs", first: 53, last: 64, caption: [Rust, the body a moved closure on its own thread, the guard returns the JoinHandle so a tripped deadline can still release the body])
 
 #listing("patterns-concurrency-distributed/samples/ch09/hazards.go", first: 114, last: 128, caption: [Go, timeout guard: deadlocks fail the test instead of freezing the suite])
 
@@ -137,11 +149,15 @@ The dry run: 8 readers in an unbroken flood, 1 writer taking the
 write side 50 times, the writer completes 50 of 50 in every tree.
 Java pins the policy predicates pure before the flood runs, a
 waiting writer blocks new readers while active readers keep the
-writer out. The counter-lanes pin the failure mode: lua runs the
+writer out, and rust pins the same policy pre-flood, 3 serialized
+write acquisitions each holding the lock alone. The counter-lanes
+pin the failure mode: lua runs the
 same flood without the pending-writer rule and the writer's single
 acquisition lands only after all 1600 reader sections.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch09/starvation.c", first: 45, last: 77, caption: [C, the hand-rolled writer-preferring rwlock, readers wait while a writer is active or pending, the policy is the while condition])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch09/starvation.rs", first: 42, last: 92, caption: [Rust, the while condition is the same policy, ReadGuard and WriteGuard release in Drop so the paired unlock cannot be skipped])
 
 #listing("patterns-concurrency-distributed/samples/ch09/hazards.go", first: 44, last: 80, caption: [Go, 8 readers in a tight loop, one writer counting acquisitions])
 
@@ -165,7 +181,8 @@ forever. Choosing `RWMutex` over `Mutex` is choosing this scheduling
 policy as much as any performance. The policy is exactly what the
 hand-rolled lanes encode in their wait conditions, C and python
 because `threads.h` and the python stdlib ship no rwlock at all,
-java because `ReentrantReadWriteLock` documents no fencing of new
+rust and java because `std::sync::RwLock` and
+`ReentrantReadWriteLock` document no fencing of new
 readers behind a pending writer, so fairness becomes a policy you
 implement and can read off the while
 loop. C\# documents the same writer preference for
@@ -222,13 +239,21 @@ observed interleaving either scripted or invariant checked, the rule
 chapter 1 stated, restated here because this is the chapter where a
 detector would be missed most.
 
+Rust needs no runtime detector for the class: safe code rules data
+races out at compile time, `Send` and `Sync` gate what may cross a
+thread boundary and the borrow checker refuses two live writers to
+one location, so a race would have to come from `unsafe`, which no
+sample in the rust tree uses.
+
 The dry run: 8 workers x 5000 increments through one lock total
 exactly 40000, and every lane's contention instrument records at
-least one event. The six new trees pin the total itself, while the
+least one event. The seven new trees pin the total itself, while the
 frozen go test enables the mutex profile at rate 1 and asserts only
-a nonzero sample count. The six siblings count contention on an
+a nonzero sample count. The seven siblings count contention on an
 instrumented lock because their runtimes expose nothing finer: C
-counts trylocks that found the lock held, java counts tryLock
+counts trylocks that found the lock held, rust counts try_lock
+failures before blocking, its start window opened by the std
+`Barrier` the C lane rolls by hand, java counts tryLock
 failures on a ReentrantLock before blocking, C\# counts
 Monitor.TryEnter failures before blocking, javascript counts
 acquisitions that queued on the promise-queue mutex, python counts
@@ -240,6 +265,8 @@ airtight by construction, the release latch opens only after the
 probe latch proves the waiter already found the lock held.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch09/contention.c", first: 65, last: 79, caption: [C, the instrumented acquire, a trylock that finds the lock held counts one contention event before blocking])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch09/contention.rs", first: 19, last: 35, caption: [Rust, the instrumented acquire, a try_lock that comes back with the lock held counts one contention event before blocking, a std Barrier opens the window])
 
 #listing("patterns-concurrency-distributed/samples/ch09/hazards.go", first: 83, last: 111, caption: [Go, contended section as bait, mutex profile enabled at rate 1])
 
@@ -317,12 +344,14 @@ an extension of the toolchain's own testing discipline,
 The dry run: `Backoff(6, 10ms)` walks 6 tries, the ladder doubles
 10, 20, 40, 80, 160, 320, cumulative 10, 30, 70, 150, 310, 630,
 total 630ms, and the run costs zero real sleep. The contract is
-identical in all 7 trees. The bubble is go's tool and only go's: the
+identical in all 8 trees. The bubble is go's tool and only go's: the
 go lane runs inside `synctest.Test`, where the runtime refuses to
-advance the clock while any participant can still run. The six
+advance the clock while any participant can still run. The seven
 siblings rebuild the same rule by construction, C's discrete-event
 scheduler jumps time to the earliest wake only once every
-participant parks, java has no bubble and no coroutine to park
+participant parks, rust scripts each participant as a typed enum of
+Work and Wait steps swept by the same discrete clock, java has no
+bubble and no coroutine to park
 mid-function, so participants run as scripts of work and sleep
 steps and a discrete scheduler sweeps one step per participant
 while anyone still has work, jumping time to the earliest wake only
@@ -334,6 +363,8 @@ clock only when the event loop's ready deque is empty, lua parks
 lanes on a time-ordered event queue the runner pops in order.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch09/synctest.c", first: 60, last: 102, caption: [C, the bubble runner, someone still working holds time still, everyone parked jumps to the earliest wake])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch09/synctest.rs", first: 68, last: 115, caption: [Rust, the same bubble runner over a typed Step enum, someone still working holds time still, everyone parked jumps to the earliest wake])
 
 #listing("patterns-concurrency-distributed/samples/ch09/hazards.go", first: 131, last: 140, caption: [Go, exponential backoff, 6 attempts, all schedule and no sleep])
 
@@ -349,10 +380,12 @@ lanes on a time-ordered event queue the runner pops in order.
 
 The test side is half the fixture, and each tree answers with its
 own test artifact: the frozen go test's bubble, the xunit and node
-test files, and the check regions of the C, java, python, and lua
-modules.
+test files, and the check regions of the C, rust, java, python, and
+lua modules.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch09/synctest.c", first: 146, last: 165, caption: [C, the check region: the ladder and cumulative arrays exact, the clock advanced by exactly 630ms in 6 jumps])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch09/synctest.rs", first: 166, last: 203, caption: [Rust, the check region: ladder and cumulative matched element for element against want arrays, the clock at 630 in 6 advances])
 
 #listing("patterns-concurrency-distributed/samples/ch09/hazards_test.go", first: 65, last: 81, caption: [Go, inside the bubble the full backoff ladder runs and the clock reads exactly 630ms])
 
@@ -406,9 +439,11 @@ sleep hiding anywhere breaks the equality.
   detector to lean on, so their suites earn the same claims the
   other way, every interleaving scripted, every total exact, and
   the guards convert anything that might hang into a failure.
+  Rust's answer sits upstream of any suite, the borrow checker
+  refuses the racy program itself.
 ])
 
-== across the seven languages
+== across the eight languages
 
 The build sizes count non-comment source lines, the go column the
 chapter's one frozen file:
@@ -419,6 +454,8 @@ chapter's one frozen file:
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [707], [libc plus threads.h, stdatomic.h],
   [fork order under mtx_t, trylock failures counted, a discrete-event bubble],
+  [rust], [624], [stdlib],
+  [Mutex forks on scoped threads, the rwlock hand-rolled because std documents no fencing, an enum-scripted bubble],
   [go], [110], [stdlib],
   [frozen reference lane, synctest the bubble only go has, mutex profile at rate 1],
   [java], [575], [jdk 27 stdlib],
@@ -439,8 +476,9 @@ recursive read prohibition, go.dev/pkg/runtime for
 lookup, go.dev/doc/go1.27 for the goroutine leak profile GA,
 go.dev/pkg/testing/synctest for bubble semantics and `Sleep`,
 go.dev/doc/articles/race_detector for the detector's mechanics and
-limits, accessed 2026-09-08. Verified by the seven chapter legs: 5 C programs
-with 55 embedded checks, `go test` at 5 tests in
+limits, accessed 2026-09-08. Verified by the eight chapter legs: 5 C programs
+with 55 embedded checks, 5 rust programs with 54 embedded checks
+under `samples-rust/src/Ch09`, `go test` at 5 tests in
 `patternsbook/ch09`, 5 java programs with 42 embedded checks under
 `samples-java/src/Ch09`, 7 xunit facts, node's 5 cases in
 `test/ch09.test.mjs`, 5 python modules with 38 embedded checks, and

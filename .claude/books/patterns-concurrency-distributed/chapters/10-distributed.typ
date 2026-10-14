@@ -11,7 +11,7 @@ resilience, is engineering around those three facts. This chapter
 fixes the vocabulary and builds the two algorithmic primitives every
 later chapter leans on: logical clocks and quorum arithmetic. The
 three samples, lamport, vector, and quorum, are pure functions in
-all seven trees, no concurrency at all, and the shared fixtures land
+all eight trees, no concurrency at all, and the shared fixtures land
 as the same literals in every lane.
 
 == the fallacies, as constraints
@@ -22,7 +22,8 @@ network is secure, topology does not change, there is one
 administrator, transport cost is zero, the network is homogeneous,
 reads as a checklist of assumptions production systems violate
 weekly. Each tree's native error surface encodes the answers: go's
-`error` values and c's status codes carry network failure back to
+`error` values, rust's `Result`, and c's status codes carry network
+failure back to
 the caller without crashing anyone, c\# and python raise,
 javascript rejects a promise, lua returns nil plus a message,
 latency gets its deadline through the context objects of chapter 8,
@@ -67,7 +68,8 @@ follows: wall clocks are for humans reading logs, monotonic clocks
 (`time.Since`, read from the same machine) are for measuring
 durations, and logical clocks are for ordering events. Every tree
 keeps the same split with its own primitive, `clock_gettime` over a
-monotonic clock id in c, `Stopwatch` in c\#, `performance.now` in
+monotonic clock id in c, `std::time::Instant` in rust,
+`Stopwatch` in c\#, `performance.now` in
 javascript, `time.monotonic` in python, and nothing in lua, whose
 stdlib offers only wall `os.time` and cpu-time `os.clock`, so the
 lua lanes in this book carry time through the scheduler instead.
@@ -99,7 +101,7 @@ Lamport's 1978 insight: order does not have to come from time, it
 can come from communication. Each process keeps a counter, ticks it
 on every event, and folds the maximum on receive:
 
-The dry run: the same walk in all seven lanes.
+The dry run: the same walk in all eight lanes.
 
 - a leader's 100 local ticks leave its stamp at exactly 100, and a
   lagging clock receiving that stamp lands on 101, max then tick
@@ -110,6 +112,8 @@ The dry run: the same walk in all seven lanes.
   as expected behavior
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch10/lamport.c", first: 21, last: 41, caption: [C, the clock is a struct, tick, send, and receive are plain functions over it])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch10/lamport.rs", first: 15, last: 39, caption: [Rust, the clock is a bare u64 behind `&mut self` methods, the process name c carries is gone, receive folds the max then ticks])
 
 #listing("patterns-concurrency-distributed/samples/ch10/clocks.go", first: 10, last: 33, caption: [Go, tick, send, receive: the whole scheme in three methods])
 
@@ -123,13 +127,14 @@ The dry run: the same walk in all seven lanes.
 
 #listing("patterns-concurrency-distributed/samples-lua/ch10_lamport.lua", first: 7, last: 30, caption: [Lua, the clock is a table dispatched through its metatable])
 
-The counter's carrier is the only thing the seven trees disagree
+The counter's carrier is the only thing the eight trees disagree
 on: go keeps `count uint64` in a struct, c a `uint64_t` beside the
-process name, c\# a `ulong` property, javascript a private class
+process name, rust a `u64` behind `&mut self` methods with no name
+at all, c\# a `ulong` property, javascript a private class
 field, python an attribute on `self`, lua a table field reached
 through `__index`, java a `long` field in a final class. Receive is
 max then increment in every spelling, and because the scheme is
-pure arithmetic over one integer, all seven fixtures print the same
+pure arithmetic over one integer, all eight fixtures print the same
 numbers with no portability seam at all.
 
 #diagram([local events tick, receive takes the max then ticks, order is one way], length: 13pt, {
@@ -175,7 +180,7 @@ for deciding which write wins.
 To recover the true causal relation, each process records the latest
 stamp it has seen from every process:
 
-The dry run: the fork-merge fixture, identical in all seven lanes.
+The dry run: the fork-merge fixture, identical in all eight lanes.
 
 - 2 independent first ticks stamp {a:1} and {b:1} and compare
   concurrent
@@ -185,6 +190,8 @@ The dry run: the fork-merge fixture, identical in all seven lanes.
 - a clone of a stamp compares equal to the stamp it came from
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch10/vector.c", first: 41, last: 87, caption: [C, merge folds elementwise max then ticks, compare walks the slots of a fixed two-process stamp])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch10/vector.rs", first: 37, last: 82, caption: [Rust, the fixed two-slot universe as a Copy `[u64; 2]`, merge folds the max then ticks, compare a 4-arm match over the (less, greater) tuple])
 
 #listing("patterns-concurrency-distributed/samples/ch10/clocks.go", first: 36, last: 66, caption: [Go, stamp per process, elementwise merge, tick on the receive itself])
 
@@ -203,15 +210,18 @@ The dry run: the fork-merge fixture, identical in all seven lanes.
 The carrier widens from one integer to a map of them and the trees
 split by grain: go a `map[string]uint64`, c\# a
 `Dictionary<string, ulong>`, javascript a `Map`, python a `dict`,
-lua a plain table, and c and java a fixed two-slot array, honest
-about a fixture that only ever forks two processes. Compare walks
-the union of process names in all seven, sorted first in go, c\#,
+lua a plain table, and c, rust, and java a fixed two-slot array,
+honest about a fixture that only ever forks two processes, rust's
+carried as a usize slot index where c maps the process name to one.
+Compare walks
+the union of process names in all eight, sorted first in go, c\#,
 python, and lua, javascript settling for Set order over its Map
-keys, and c and java scanning their two slots, a missing name
+keys, and c, rust, and java scanning their two slots, a missing name
 reading zero through `TryGetValue`, `?? 0`, `.get(name, 0)`,
-`or 0`, and the c and java zeroed arrays. The relation itself is an
-enum in go, c, c\#, and java, java's carrying a name renderer for
-its check text, and a returned name in javascript, python, and lua,
+`or 0`, and the c, rust, and java zeroed arrays. The relation itself
+is an enum in go, c, rust, c\#, and java, java's and rust's carrying
+a name renderer for
+their check text, and a returned name in javascript, python, and lua,
 the same four outcomes either way.
 
 Comparison over the union of process ids yields exactly four
@@ -272,14 +282,16 @@ The dry run: quorum over cluster sizes 1 through 7 reads 1, 2, 2, 3,
 3, 4, 4 in every lane.
 
 - majority(2, 3) carries, majority(1, 3) does not, majority(3, 3)
-  carries, all seven, and the c, java, and python lanes add the
-  even cluster, where half is never enough
+  carries, all eight, and the c, rust, java, and python lanes add
+  the even cluster, where half is never enough
 - quorum(n) + quorum(n) > n, the overlap the raft chapters stand
   on, swept for n up to 20 by the lua lane and checked at 5 and 7
   by python and java, which also sweeps the failure tolerance,
-  f+1 yes of 2f+1 for f up to 3
+  f+1 yes of 2f+1 for f up to 3, a sweep rust runs too
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch10/quorum.c", first: 18, last: 22, caption: [C, two functions, the whole arithmetic])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch10/quorum.rs", first: 15, last: 21, caption: [Rust, the same two functions over usize, integer division floors on its own])
 
 #listing("patterns-concurrency-distributed/samples/ch10/clocks.go", first: 115, last: 118, caption: [Go, quorum and majority])
 
@@ -294,8 +306,8 @@ The dry run: quorum over cluster sizes 1 through 7 reads 1, 2, 2, 3,
 #listing("patterns-concurrency-distributed/samples-lua/ch10_quorum.lua", first: 6, last: 14, caption: [Lua, floor division, same formula])
 
 The formula survives translation because every language here floors
-its integer division: `n / 2 + 1` verbatim in c, go, java, and
-c\#, `n // 2 + 1` in python and lua, and `Math.floor(n / 2) + 1` in
+its integer division: `n / 2 + 1` verbatim in c, rust, go, java,
+and c\#, `n // 2 + 1` in python and lua, and `Math.floor(n / 2) + 1` in
 javascript, where `/` alone is real division and would hand back
 2.5 seats for a five-node cluster. The majority predicate is one
 comparison everywhere. The number itself does the work in the next
@@ -348,7 +360,7 @@ tests exercise exactly that stoppage.
   edge((3.0, 1.2), (6.0, 1.2), "-|>"),
 )
 
-== across the seven languages
+== across the eight languages
 
 The build sizes count non-comment source lines, the go column the
 chapter's one frozen file:
@@ -359,6 +371,8 @@ chapter's one frozen file:
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [178], [libc],
   [uint64_t clock, two-slot fixed vector stamps, an enum relation, n / 2 + 1],
+  [rust], [233], [stdlib],
+  [a u64 clock behind mut methods, Copy `[u64; 2]` stamps, a 4-arm match relation, n / 2 + 1],
   [go], [86], [stdlib],
   [frozen reference lane, map[string]uint64 stamps over the sorted union],
   [java], [202], [jdk 27 stdlib],
@@ -381,7 +395,9 @@ latency numbers and the Berkeley interactive latency guide for the
 orders of magnitude, Gilbert and Lynch, "Brewer's Conjecture and
 the Feasibility of Consistent, Available, Partition-Tolerant Web
 Services", 2002, for CAP, accessed 2026-09-08. Verified by the
-seven chapter legs: 3 C programs with 40 embedded checks, `go
+eight chapter legs: 3 C programs with 40 embedded checks, the rust
+runner's 40 checks across 3 programs in `samples-rust/src/Ch10`,
+`go
 test` at 5 tests in `patternsbook/ch10`, the java runner's 49
 checks across 3 programs in `samples-java/src/Ch10`, 10 xunit
 facts, node's 4 cases across 3 suites in `test/ch10.test.mjs`, the

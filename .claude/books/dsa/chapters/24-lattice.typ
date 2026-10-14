@@ -26,8 +26,8 @@ exact integers.
 
 The dry run: the fixture is the notch, a 6 by 4 block with a 2 by 2
 bite out of the top, asserted by the C\# and lua suites as the
-triple 40, 24, 9, while C runs a square and a pentagon, java a
-square, a legs-6 triangle, and a pentagon, python a
+triple 40, 24, 9, while C runs a square and a pentagon, rust and
+java a square, a legs-6 triangle, and a pentagon, python a
 4 by 3 rectangle, and javascript halves the sum early.
 
 + The walk circles counter clockwise from (0,0) through (6,0), (6,4),
@@ -58,9 +58,10 @@ square, a legs-6 triangle, and a pentagon, python a
 )
 
 The triple 40, 24, 9 is what both suites assert, and the listings
-below walk it in seven languages.
+below walk it in eight languages.
 
 #listing("dsa/samples-c/src/Ch24/shoelace.c", first: 21, last: 49, caption: [c, the doubled signed area, gcd, and the per-edge boundary sum])
+#listing("dsa/samples-rust/src/Ch24/shoelace.rs", first: 25, last: 54, caption: [rust, the doubled signed area, gcd, and the per-edge boundary sum, i64 points as copy structs])
 #listing("dsa/samples-go/ch24/shoelace.go", first: 8, last: 52, caption: [go, the same three functions, points borrowed from chapter 23])
 #listing("dsa/samples-java/src/Ch24/Shoelace.java", first: 16, last: 51, caption: [java, the record point, doubled area kept whole, gcd boundary, pick with the parity-exact division])
 #listing("dsa/samples/src/Ch24/Lattice.cs", first: 6, last: 38, caption: [c\#, shoelace, boundary points, pick in doubled units])
@@ -70,19 +71,20 @@ below walk it in seven languages.
 
 The anchor numbers agree across the fixture families. The 4 by 4
 square gives doubled area 32, the reversed walk gives -32, and
-pick's interior is 9 in c, c\#, java, and lua. C\# and lua share the
+pick's interior is 9 in c, rust, c\#, java, and lua. C\# and lua share the
 notch
 fixture, a 6 by 4 block with a 2 by 2 bite out of the top, and pin
 its doubled area 40, boundary 24, interior 9 as a triple. Python
 uses a 4 by 3 rectangle, doubled 24, boundary 14, interior 6, and
 cross-checks pick against a direct sweep of the bounding box that
 counts strictly interior lattice points, as does lua on three
-shapes. Java runs the square, a legs-6 right triangle at 36, 18,
-10, and a pentagon at 40, 16, 13, carries python's rectangle as a
-lane, and sweeps the box for the same strictly interior count. The
+shapes. Java and rust run the square, a legs-6 right triangle at
+36, 18, 10, and a pentagon at 40, 16, 13, java carrying python's
+rectangle as a lane and sweeping the box for the same strictly
+interior count, rust pinning the reversed walk at -36 beside it. The
 one structural difference is javascript, which halves
 the shoelace sum immediately and lets the half flow into pick,
-while the other six keep doubled units until the final division.
+while the other seven keep doubled units until the final division.
 
 #diagram([the notch fixture with its shoelace terms, boundary gcds, and pick's interior count], length: 13pt, {
   // notch: (0,0) (6,0) (6,4) (4,4) (4,2) (2,2) (2,4) (0,4), area2 40, B 24, I 9
@@ -126,8 +128,9 @@ on-boundary predicate or a stated convention, never a shrug.
 The dry run: the fixture is the notch again, five inside probes and
 five outside asserted by the C\# suite with the boundary cases
 separated by the exact predicate, while the siblings split over
-floats, integer division, and a third answer for the edge, java
-carrying the float and the third-answer lanes in one file.
+floats, integer division, and a third answer for the edge, rust
+beside c in the float camp, java carrying the float and the
+third-answer lanes in one file.
 
 + The probe (1,1) meets one straddling edge, the right wall, and its
   cross-multiplied test reads (1 - 6) × (-4) = 20 against 0: one
@@ -158,9 +161,10 @@ carrying the float and the third-answer lanes in one file.
 )
 
 The two east flips at (3,3) leave the hole honestly outside, and
-the listings below cast this ray in seven languages.
+the listings below cast this ray in eight languages.
 
 #listing("dsa/samples-c/src/Ch24/raycast.c", first: 21, last: 36, caption: [c, the crossing loop with the half-open y rule, float intersection x])
+#listing("dsa/samples-rust/src/Ch24/raycast.rs", first: 25, last: 38, caption: [rust, the crossing loop with the half-open y rule, f64 points and the float intersection x])
 #listing("dsa/samples-go/ch24/raycast.go", first: 5, last: 41, caption: [go, boundary declared inside up front, integer division for the crossing x])
 #listing("dsa/samples-java/src/Ch24/Raycast.java", first: 16, last: 63, caption: [java, the float cast and the py lane in one file, on-boundary returning null before the parity count])
 #listing("dsa/samples/src/Ch24/Lattice.cs", first: 47, last: 86, caption: [c\#, cross-multiplied comparison, no division anywhere, on-boundary separate])
@@ -175,11 +179,12 @@ crossing x with integer division but decides the boundary first.
 Python and lua both cast the ray through float division and refuse
 to let that decide the boundary, python's on-boundary test returns
 a third answer, none, and lua's is an exact integer cross with a
-min-max box, not a float equality cast. The c suite leans the other
-way on purpose, floats throughout with the boundary behavior stated
-as a convention: on the dented pentagon the apex reads inside while
-a top-edge midpoint reads outside, and the tests pin that
-asymmetry. Java carries both roads in one file, the same float cast
+min-max box, not a float equality cast. The c and rust suites lean
+the other way on purpose, f64 floats throughout with the boundary
+behavior stated as a convention: on the dented pentagon the apex
+reads inside while a top-edge midpoint reads outside, and their
+tests pin that asymmetry, rust also pinning the bottom-edge
+midpoint inside and a sliver triangle's centroid. Java carries both roads in one file, the same float cast
 pinning that same asymmetry, apex inside, top-edge midpoint outside,
 bottom-edge midpoint inside, beside a boundary-first lane whose
 on-boundary test returns null, and it runs python's L-shape sweep
@@ -227,7 +232,8 @@ the discovery order differs, and every suite pins that equality.
 
 The dry run: the fixture is the 3 by 5 land-water grid, asserted by
 the C\# and lua suites, while python paints a 5 by 4 with two
-pockets, c and java walk walled 4 by 4s, javascript pins visit
+pockets, c, rust, and java walk walled 4 by 4s, javascript pins
+visit
 order under
 fixed deltas, and go fills an int grid.
 
@@ -271,9 +277,10 @@ fixed deltas, and go fills an int grid.
 })
 
 The sizes 1, 1, 3, 4, 6 are the pinned family, and the listings
-below flood this grid in seven languages.
+below flood this grid in eight languages.
 
 #listing("dsa/samples-c/src/Ch24/floodfill.c", first: 33, last: 57, caption: [c, the bfs fill marking on enqueue, delta arrays above])
+#listing("dsa/samples-rust/src/Ch24/floodfill.rs", first: 37, last: 72, caption: [rust, the bfs fill marking on enqueue, the frontier two fixed ring arrays over i32 neighbor rows])
 #listing("dsa/samples-go/ch24/floodfill.go", first: 14, last: 38, caption: [go, the fill returns cells in discovery order, marked on enqueue])
 #listing("dsa/samples-java/src/Ch24/Floodfill.java", first: 36, last: 78, caption: [java, the ArrayDeque bfs and its dfs twin, one marking discipline, cells painted on enqueue])
 #listing("dsa/samples/src/Ch24/Lattice.cs", first: 88, last: 121, caption: [c\#, component sizes for every same-character region, ascending])
@@ -287,14 +294,17 @@ pinning that the bfs and dfs fills return identical grids. Python's
 5 by 4 grid carries two open pockets, 8 cells and 7 cells, and
 component sizes 7, 8, with the whole painted picture asserted cell
 by cell and dfs asserting the same. C walks a 4 by 4 with walls,
-and java walks its own walled 4 by 4 holding one 9-cell region and
-two isolated single-cell holes, its bfs and dfs twins pinned to the
-same painted footprint, deltas in parallel up, down, left, right
-arrays. Javascript pins visit orders under its fixed down, right,
+and java and rust walk their own walled 4 by 4s holding one 9-cell
+region and two isolated single-cell holes, their bfs and dfs twins
+pinned to the same painted footprint, java's deltas in parallel up,
+down, left, right arrays, rust's frontier two fixed 64-slot ring
+arrays with the neighbor rows computed on i32 so the border check
+never underflows. Javascript pins visit orders under its fixed
+down, right,
 up, left
 delta order, and go fills an int grid and returns the repainted
 cells in the order the queue found them. The invariant under all
-seven: mark on enqueue, never on dequeue, or a cell enters the
+eight: mark on enqueue, never on dequeue, or a cell enters the
 frontier twice and the fill loops or doubles.
 
 #diagram([python's 5 by 4 fixture, the left pocket of 8 painted by the fill, the right pocket of 7 untouched], length: 13pt, {
@@ -332,8 +342,9 @@ languages because only the visit order depends on it, never the
 reachable set.
 
 The dry run: the fixture is a 3 by 3 for the delta enumeration and
-three boxes for the 3d walks, asserted by the C\# suite, while C
-and java price the 5 by 5 edge counts, lua walks a slab, python
+three boxes for the 3d walks, asserted by the C\# suite, while C,
+rust, and java price the 5 by 5 edge counts, lua walks a slab,
+python
 blocks
 cells, and javascript walks down first.
 
@@ -390,9 +401,10 @@ cells, and javascript walks down first.
 })
 
 The 27 of the open cube is the pinned flood, and the listings below
-walk these tables in seven languages.
+walk these tables in eight languages.
 
 #listing("dsa/samples-c/src/Ch24/neighbors.c", first: 17, last: 51, caption: [c, both delta tables, in-bounds counting, and the recursive 3d flood])
+#listing("dsa/samples-rust/src/Ch24/neighbors.rs", first: 15, last: 42, caption: [rust, both delta tables as const arrays of i32, in-bounds counting through the signed guard])
 #listing("dsa/samples-go/ch24/neighbors.go", first: 3, last: 23, caption: [go, east-first deltas, the bounds guard, walk3d below])
 #listing("dsa/samples-java/src/Ch24/Neighbors.java", first: 21, last: 54, caption: [java, the two delta tables pinned cell by cell, the recursive 3d flood, walks keyed by packed longs])
 #listing("dsa/samples/src/Ch24/Lattice.cs", first: 168, last: 191, caption: [c\#, the three delta arrays, neighbors filtered in delta order])
@@ -400,21 +412,25 @@ walk these tables in seven languages.
 #listing("dsa/samples-py/src/Ch24/neighbors.py", first: 13, last: 34, caption: [python, tuple deltas, a stack walk over a seen set])
 #listing("dsa/samples-lua/ch24_neighbors.lua", first: 6, last: 29, caption: [lua, the tables and the bounds-checked emitter])
 
-The c and java suites pin the arithmetic the others skip: over
+The c, rust, and java suites pin the arithmetic the others skip: over
 a 5 by 5 grid the 4-neighborhood sums to 80 directed edges and the
-8-neighborhood to 144, a corner keeps 2 of 4 and 3 of 8, java also
-pricing an edge cell at 3 and 5. The 3d
-walks agree on the volumes: all seven languages flood a box and
+8-neighborhood to 144, a corner keeps 2 of 4 and 3 of 8, rust and
+java also pricing an edge cell at 3 and 5. The 3d
+walks agree on the volumes: all eight languages flood a box and
 count
 the visited cells, c pins 27 for the open 3 by 3 by 3, 26 with the
 center blocked, and 9 when a full plane splits the cube into
-halves, java pinning those same three counts and carrying python's
-2 by 2 by 2 lanes, the center hole at 7 and the wall slab at 4, lua
+halves, rust and java pinning those same three counts, java
+carrying python's
+2 by 2 by 2 lanes, the center hole at 7 and the wall slab at 4,
+rust's flood a recursive method over two three-deep fixed bool
+cubes, lua
 pins 8, 27, and 6 for a 1 by 2 by 3 slab, python works
 a 2 by 2 by 2 with a center hole, 7 of 8 visited, and a wall slab
 cutting the count to 4. Delta order differs per language, c lists
 up, down, left, right, go starts east, javascript walks down first,
 java matching c's up, down, left, right in parallel delta arrays,
+rust in the same order as const arrays of i32 pairs,
 and the floodfill fixtures above prove the order never changes the
 region.
 
@@ -445,7 +461,7 @@ region.
   cdraw.content((17.5, 0.7), [on the delta listing order], size: 6pt)
 })
 
-== across the seven languages
+== across the eight languages
 
 Featured build size counted as non-blank, non-comment lines of the
 chapter's four sample files, test scripts included where the
@@ -456,6 +472,7 @@ language embeds them:
   inset: 4pt,
   table.header([*language*], [*build sloc*], [*container dependency*], [*boundary note*]),
   [c], [319], [fixed char arrays, int deltas], [float ray intersection with boundary conventions stated, long long shoelace],
+  [rust], [433], [rust 1.99 std], [f64 ray casting with the boundary stated as a convention beside c, the 3d flood a recursive method over two three-deep fixed bool cubes],
   [go], [191], [slices, `ch23.Point` reuse], [integer division crossing x, boundary declared inside up front],
   [java], [442], [jdk 27 stdlib], [the float cast and the null boundary lane in one ray file, 3d walks keyed by coordinates packed into a long, component sizes sorted descending],
   [c\#], [156], [tuples, `Queue`, `Stack`], [the one fully cross-multiplied ray cast, on-boundary separate],
@@ -469,8 +486,10 @@ for package layout and `min` and `max` builtins, developer.mozilla
 .org for `Array.prototype.shift`, docs.python.org for `enumerate`
 and floor division, lua.org for `table.unpack` and `math.abs`, and
 the pick's theorem statement as standard lattice geometry, accessed
-2026-09-14. Sample behavior verified by the seven suite gates scoped
-to chapter 24: c 4 files and 63 checks, c\# 12 tests, go 12 tests,
+2026-09-14. Sample behavior verified by the eight suite gates scoped
+to chapter 24: c 4 files and 63 checks, rust 4 files and 63 checks
+under `run-rust-samples` over `samples-rust/src`, c\# 12 tests, go
+12 tests,
 java 4 files and 94 checks, javascript 12 tests, python 4 files and
 36 asserts, lua 16 checks,
 zero skipped.

@@ -1,6 +1,6 @@
-// book 10 topic matrix: the wave 1 toolbox chapters, the six finals
+// book 11 topic matrix: the wave 1 toolbox chapters, the six finals
 // chapters, and the fast arithmetic chapter: one row per problem, 68
-// problems across 2017-2025, plus five chapter 14 topics
+// problems across 2017-2025, plus five chapter 16 topics
 #let topics = (
   (topic: "bigint, sign-magnitude 1e9 limbs", chapter: "toolbox-c", cost: "O(n) add, O(n^2) mul", bcl: "n/a"),
   (topic: "fnv-1a open map with tombstones", chapter: "toolbox-c", cost: "O(1) avg", bcl: "n/a"),

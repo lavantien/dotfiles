@@ -8,7 +8,7 @@ and the chinese remainder theorem. Every algorithm here is a dozen
 lines or less, and the chapter's real subject is the boundary each
 language draws around its integers, because modular arithmetic is
 exactly where silent overflow turns a right algorithm into a wrong
-answer. Seven suites, one pinned anchor per family, five different
+answer. Eight suites, one pinned anchor per family, six different
 roads through the multiplication problem.
 
 == gcd, lcm, and the binary variant
@@ -26,7 +26,7 @@ then shift the saved twos back in.
 
 The dry run: the fixtures are gcd(48, 18), the sign pair, and
 lcm(4, 6), asserted by the C\# suite, Go cross-checks its binary
-variant row by row, and C and Lua pin the 4 000 000 000 by
+variant row by row, and C, Rust, and Lua pin the 4 000 000 000 by
 3 000 000 000 lcm through the divide-first formula.
 
 + Euclid stops at 6 on (48, 18), with the zero conventions beside
@@ -68,9 +68,11 @@ variant row by row, and C and Lua pin the 4 000 000 000 by
 })
 
 The 6 and the divide-first 12 are the suite's pins, and the
-listings below run both variants in seven languages.
+listings below run both variants in eight languages.
 
 #listing("dsa/samples-c/src/Ch16/gcdlcm.c", first: 17, last: 59, caption: [c, euclid, stein, and the divide-first lcm over unsigned long long])
+
+#listing("dsa/samples-rust/src/Ch16/gcdlcm.rs", first: 15, last: 60, caption: [rust, euclid, stein, and the divide-first lcm over u64, the swap a std::mem::swap away])
 
 #listing("dsa/samples-go/ch16/gcdlcm.go", first: 6, last: 60, caption: [go, both gcd variants on int64, abs applied at the edges])
 
@@ -88,11 +90,13 @@ Every suite pins the same fixture family, gcd(48, 18) = 6, gcd(7,
 13) = 1 on the coprime pair, and the zero conventions, gcd(0, n) = n
 and gcd(0, 0) = 0. The binary variant is cross-checked against
 euclid everywhere, over the shared fixtures and over a full sweep in
-C, Java, Lua, and Python, Java's sweep also asserting the gcd times
+C, Rust, Java, Lua, and Python, Java's and Rust's sweeps also
+asserting the gcd times
 lcm equals a times b identity on every pair. Its stein loop runs on
 `long` but compares the swap through `Long.compareUnsigned`, the
-unsigned law C gets from its type and every other suite gets from
-its runtime. C and Lua pin lcm(4 000 000 000, 3 000 000 000)
+unsigned law C gets from its type, Rust from u64 by construction,
+and every other suite from
+its runtime. C, Rust, and Lua pin lcm(4 000 000 000, 3 000 000 000)
 recomputed through the divide-first formula, the case where
 multiplying first would wrap. JavaScript runs the whole file on
 BigInt for the same reason in the other direction, its comment pins
@@ -177,9 +181,11 @@ split only on where the crossing starts, 2p against p squared.
 })
 
 The 25 with 91 stamped 7 is the pinned pair, and the listings
-below sieve in seven languages.
+below sieve in eight languages.
 
 #listing("dsa/samples-c/src/Ch16/sieve.c", first: 16, last: 43, caption: [c, crossing from 2p so the spf table fills in the same pass])
+
+#listing("dsa/samples-rust/src/Ch16/sieve.rs", first: 15, last: 54, caption: [rust, the same 2p crossing inside a struct of fixed arrays, spf stamped first-writer-wins])
 
 #listing("dsa/samples-go/ch16/sieve.go", first: 3, last: 50, caption: [go, the p-squared sieve, then spf as a second recording])
 
@@ -193,9 +199,10 @@ below sieve in seven languages.
 
 #listing("dsa/samples-lua/ch16_sieve.lua", first: 9, last: 34, caption: [lua, one table pass filling flags and spf together])
 
-All seven suites pin pi(100) = 25, the opening run 2, 3, 5, 7, the
+All eight suites pin pi(100) = 25, the opening run 2, 3, 5, 7, the
 close on 97, and that 91 is composite despite looking prime, it is 7
-times 13. The crossing start splits by purpose: C, Java, and Lua
+times 13. The crossing start splits by purpose: C, Rust, Java, and
+Lua
 walk multiples from 2p because the spf table wants to catch every
 composite with its smallest prime, C\# starts at p squared and still
 fills spf in the same pass since every composite sits at or above
@@ -276,9 +283,11 @@ holding the expanded list rebuilds the input from it.
 })
 
 The 2, 2, 2, 3, 3, 5 of 360 is the pinned peel, and the listings
-below divide seven ways.
+below divide eight ways.
 
 #listing("dsa/samples-c/src/Ch16/factors.c", first: 20, last: 47, caption: [c, the (prime, exponent) pairs, then the expanded list])
+
+#listing("dsa/samples-rust/src/Ch16/factors.rs", first: 15, last: 53, caption: [rust, the (prime, exponent) pairs as a copyable struct, then the expanded list])
 
 #listing("dsa/samples-go/ch16/factors.go", first: 9, last: 41, caption: [go, trial division with the early stop, then the flat list])
 
@@ -329,13 +338,13 @@ the exponent in binary: square at every bit, multiply into the
 result only when the bit is set, reduce after every operation. One
 hundred multiplications collapse to seven squarings and three
 multiplies, and the anchor lands everywhere: 2^100 mod 1e9+7 is
-976371285 in all seven suites. The chapter's hard problem is hiding
+976371285 in all eight suites. The chapter's hard problem is hiding
 inside that innocent sentence, because squaring a residue near 1e9
 makes a product near 1e18, and every language draws its own line
 there.
 
 The dry run: the anchor is 2^100 mod 1e9+7 = 976371285, pinned by
-all seven suites, the ladder walks C's small pin 3^4 mod 10^6 = 81,
+all eight suites, the ladder walks C's small pin 3^4 mod 10^6 = 81,
 and the identity family is the C\# suite's.
 
 + The exponent reads in binary from the bottom: 4 is 100, one set
@@ -373,10 +382,12 @@ and the identity family is the C\# suite's.
   cdraw.content((7.2, 0.2), [6e9 × 6e9 lands 1764 via -42], size: 6pt)
 })
 
-The 976371285, pinned seven times over, is the chapter's anchor
-number, and the listings below climb the ladder seven ways.
+The 976371285, pinned eight times over, is the chapter's anchor
+number, and the listings below climb the ladder eight ways.
 
 #listing("dsa/samples-c/src/Ch16/modpow.c", first: 21, last: 48, caption: [c, mulmod by add-and-double after the `__uint128` link failure])
+
+#listing("dsa/samples-rust/src/Ch16/modpow.rs", first: 17, last: 41, caption: [rust, the same add-and-double, u128 was native and link-free here but the twin mirrors c])
 
 #listing("dsa/samples-go/ch16/modpow.go", first: 5, last: 31, caption: [go, the 128-bit product from bits.Mul64, bits.Div64])
 
@@ -390,12 +401,16 @@ number, and the listings below climb the ladder seven ways.
 
 #listing("dsa/samples-lua/ch16_modpow.lua", first: 11, last: 38, caption: [lua, the wrap proof beside the doubling mulmod])
 
-#callout("warning", "five roads through one multiplication", [
+#callout("warning", "six roads through one multiplication", [
   C probed `__uint128_t` first: it compiles, but the link step needs
   compiler-rt's `__umodti3` helper for a 128-bit remainder and this
   toolchain does not ship it, so the landed mulmod adds and doubles
   with a remainder after every step and no product of two 64-bit
-  values ever forms. Go gets the same 128 bits as a first-class
+  values ever forms. Rust is the road C wanted and could not link,
+  `u128` multiplies and remainders natively with no runtime helper
+  at all, but the landed twin still mirrors C's add-and-double
+  decomposition because no fixture distinguishes the two and the
+  side-by-side stays honest. Go gets the same 128 bits as a first-class
   operation, `math/bits.Mul64` hands back the high and low words and
   `bits.Div64` reduces them. Java is the road C could not take,
   actually run: `Math.multiplyHigh` yields the 128-bit product's
@@ -411,8 +426,8 @@ number, and the listings below climb the ladder seven ways.
 
 Every suite also pins the identity family, exponent zero gives 1,
 exponent one gives the base, modulus 1 collapses everything to 0,
-and Fermat's little theorem, 2 to the 1e9+6 is 1 mod 1e9+7. C and
-Lua share one more fixture worth reading: 6e9 times 6e9 wraps any
+and Fermat's little theorem, 2 to the 1e9+6 is 1 mod 1e9+7. C, Rust,
+and Lua share one more fixture worth reading: 6e9 times 6e9 wraps any
 64-bit product, but since 1e9 is congruent to minus 7 mod 1e9+7, the
 reduced answer is 36 times 49, which is 1764, and the add-and-double
 mulmod lands it, Java's 128-bit mulmod landing the same 1764 with
@@ -462,8 +477,8 @@ times k equals 1 means a times x is 1 mod m.
 
 The dry run: the fixtures are the small inverses asserted by the
 C\# suite, 3 to 4 mod 11, 10 to 12 mod 17, 7 to 15 mod 26, the big
-inverse 333333336 pinned by Lua, and C pins the bezout bonus on
-(240, 46).
+inverse 333333336 pinned by Lua, and C and Rust pin the bezout bonus
+on (240, 46).
 
 + The check is multiply back to 1: 3 × 4 = 12, and 12 - 11 = 1
   mod 11.
@@ -500,9 +515,11 @@ inverse 333333336 pinned by Lua, and C pins the bezout bonus on
 })
 
 The 333333336 multiplied back to 1 is the biggest pin, and the
-listings below invert seven ways.
+listings below invert eight ways.
 
 #listing("dsa/samples-c/src/Ch16/modinv.c", first: 46, last: 93, caption: [c, fermat inverse, extended euclid, zero on non-coprime])
+
+#listing("dsa/samples-rust/src/Ch16/modinv.rs", first: 41, last: 82, caption: [rust, fermat inverse, extended euclid returning the bezout tuple, zero on non-coprime])
 
 #listing("dsa/samples-go/ch16/modinv.go", first: 5, last: 41, caption: [go, both roads, errors carry the refusal])
 
@@ -518,12 +535,13 @@ listings below invert seven ways.
 
 The fixture families agree on the small primes, 3 inverts to 4 mod
 11 and 10 inverts to 12 mod 17, and Lua pins the big one, 3 inverse
-mod 1e9+7 is 333333336, verified by multiplying back to 1. C, Java,
-and Python sweep every unit mod 97 and check both roads agree. The
-refusal channel is the per-language story: C and Java return 0, Go
+mod 1e9+7 is 333333336, verified by multiplying back to 1. C, Rust,
+Java, and Python sweep every unit mod 97 and check both roads agree.
+The refusal channel is the per-language story: C, Rust, and Java
+return 0, Go
 returns an error naming the shared factor, JavaScript and Python
 return null and None, Lua returns nil, and C\# throws
-`InvalidOperationException`. Six conventions across seven suites,
+`InvalidOperationException`. Six conventions across eight suites,
 one mathematical fact, a non-coprime pair has no inverse, and the
 gcd guard fires before any of them is reached. Java's inverse file
 also drops the chapter's 128-bit mulmod on purpose: with the modulus
@@ -565,7 +583,7 @@ The dry run: the fixture is the sun tzu triple, 2 mod 3, 3 mod 5,
 2 mod 7, pinned at 23 mod 105 by every suite, the walk follows
 the C\# pairwise fold with each lift spelled as the steps C's
 search would take, and Python refuses the non-coprime merge the
-other six accept.
+other seven accept.
 
 + Fold 2 mod 3 with 3 mod 5: the moduli share nothing, and the
   lift steps the first modulus twice, 2 + 3 = 5 then 5 + 3 = 8,
@@ -604,9 +622,11 @@ other six accept.
 })
 
 The 23 mod 105 is the pinned fold, and the listings below combine
-seven ways.
+eight ways.
 
 #listing("dsa/samples-c/src/Ch16/crt.c", first: 31, last: 47, caption: [c, the consistency check, then a step search over the lcm])
+
+#listing("dsa/samples-rust/src/Ch16/crt.rs", first: 28, last: 42, caption: [rust, the same step search over the lcm, Option carries the pair back and None refuses])
 
 #listing("dsa/samples-go/ch16/crt.go", first: 10, last: 45, caption: [go, extGCD drives the lift, the error names the shared factor])
 
@@ -625,13 +645,15 @@ seven ways.
   Python refuses every non-coprime system, and its own comment says
   so: consistent non-coprime systems exist, they combine mod the lcm
   instead of the product, and the implementation stays out of scope.
-  Go, C\#, JavaScript, Java, Lua, and C accept them when the residues
+  Go, C\#, JavaScript, Java, Lua, Rust, and C accept them when the
+  residues
   agree modulo the shared factor, merging mod the lcm, and reject
   them when they do not, Go and C\# with an error that names the
-  shared factor, JavaScript and Java with null, Lua with nil, C with
+  shared factor, JavaScript and Java with null, Rust with None, Lua
+  with nil, C with
   a return code.
   The 23 mod 105 anchor holds everywhere, but 1 mod 6 with 3 mod 10
-  is 13 mod 30 in six suites and a refusal in the seventh. This is
+  is 13 mod 30 in seven suites and a refusal in the eighth. This is
   the exact shape of bug a shared library papers over and a handbook
   has to name.
 ])
@@ -639,8 +661,8 @@ seven ways.
 The mechanism under the fold: the difference of residues must be
 divisible by the gcd of the moduli or no x satisfies both, and when
 it is, the extended euclid inverse of one modulus over the other,
-taken mod the shared-factor quotient, sizes the jump. C and Java
-are the honest exceptions, they step the first congruence through
+taken mod the shared-factor quotient, sizes the jump. C, Rust, and
+Java are the honest exceptions, they step the first congruence through
 the lcm and look for the second, fine at book sizes and free of any
 inverse subtlety. The residue bookkeeping returns with real workload sizes
 where bus schedules are congruences
@@ -678,7 +700,7 @@ and existence is the whole answer.
   cdraw.content((9.5, 0.8), [disagree: refuse, python refuses both ways], size: 6pt)
 })
 
-== across the seven languages
+== across the eight languages
 
 The build sizes count non-comment source lines over this chapter's
 six featured files per language, checks included where they share
@@ -689,6 +711,7 @@ the file:
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [407], [libc only], [`__uint128` compiles but `__umodti3` fails to link, so mulmod adds and doubles with a remainder every step],
+  [rust], [524], [rust 1.99 std], [u128 multiplies and remainders natively with no runtime helper, but the landed mulmod mirrors c's add-and-double so no fixture distinguishes the two roads],
   [go], [212], [math/bits], [mulmod through Mul64 and Div64, a real 128-bit product, errors carry the refusals],
   [java], [498], [jdk 27 stdlib], [mulmod runs the true 128-bit product via Math.multiplyHigh with a 128-step unsigned shift-subtract remainder, BigInteger.modPow the referee, modinv drops back to plain long under its 2^63 ceiling],
   [c\#], [152], [bcl only], [plain long products, modulus contract caps at 3 037 000 499 so squares fit, crt throws on contradiction],
@@ -703,8 +726,10 @@ go.dev/pkg/math/bits for `Mul64` and `Div64`, developer.mozilla.org
 for BigInt arithmetic, accessed 2026-09-14, and the sun tzu
 remainder problem plus the CLRS number theory treatments cited in
 the chapter text. Sample behavior verified by `make verify-csharp`,
-17 tests in chapter 16 of the samples suite. The seven-language
+17 tests in chapter 16 of the samples suite. The eight-language
 layer verifies the same way: 6 C programs with 119 embedded checks
-under `make verify-c`, 6 Ch16 java programs with 113 checks under
+under `make verify-c`, 6 rust programs under `run-rust-samples`
+with 119 Ch16 checks over `samples-rust/src`, 6 Ch16 java programs
+with 113 checks under
 `run-java-samples`, 24 Go tests, 21 `node --test` cases, 63 Python
 checks across 6 files, and 28 Lua checks under `run.lua`.

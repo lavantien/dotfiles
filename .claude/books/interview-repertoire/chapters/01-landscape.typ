@@ -87,10 +87,10 @@ questions that recur across loops, stacked into 158 index rows across the 40
 practice chapters, each with working code where code is the honest answer and
 a drilled script where talking is. Depth questions, the
 ones that separate a practitioner from a memorizer, cross reference the
-handbooks: the language manuals for books 3 through 7 floor the syntax
+handbooks: the language manuals for books 5 through 8 floor the syntax
 questions, #xref-to("dsa", "analysis") and its neighbors floor the
 complexity claims, #xref-to("infrastructure", "jetstream") floors the
-streaming answers, and the defense cookbook, book 15, owns the resume
+streaming answers, and the defense cookbook, book 16, owns the resume
 itself. Part 3, chapters 23 through 31, is that promise kept in reverse:
 the algorithm whiteboard staples gated under tdd in two go workspaces, and
 seven spoken-answer chapters floored on the handbooks they name, the
@@ -106,7 +106,7 @@ carries a drilled answer here.
 
 #flow([every depth question has an owner, the frequent sixty or so stay here],
   node((0, 0), [a depth question]),
-  node((4.6, 1.65), [syntax floors#linebreak()books 3 to 7]),
+  node((4.6, 1.65), [syntax floors#linebreak()books 5 to 8]),
   node((4.6, 0.55), [complexity claims#linebreak()the dsa volume]),
   node((4.6, -0.55), [streaming answers#linebreak()infrastructure]),
   node((4.6, -1.65), [the resume itself#linebreak()defense cookbook]),

@@ -1,6 +1,6 @@
-// book 14 manifest: chapter registry used by cross references and stubs
+// book 15 manifest: chapter registry used by cross references and stubs
 #let gamesystems = (
-  num: 14,
+  num: 15,
   volume: false,
   title: "game systems and architecture",
   meta: (
@@ -8,7 +8,7 @@
     subtitle: "an engineering handbook",
     author: "Raeliosol",
     version: "3.0",
-    volume-label: "book 14",
+    volume-label: "book 15",
   ),
   chapters: (
     (id: "gameloop", num: 1, title: "the game loop and time"),

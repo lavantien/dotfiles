@@ -78,7 +78,7 @@ every lane that is not deliberately duckdb stays compiler-free.
 
 The single place that owns a compiler is the toolchain. `make sqlite-tools`
 builds SQLite 3.53.4 and LuaJIT from pinned source with mingw, the same
-compiler that builds Lua 5.5 for book 8, and `make duckdb-tools` fetches
+compiler that builds Lua 5.5 for book 9, and `make duckdb-tools` fetches
 the duckdb 1.5.5 cli and libduckdb with sha256 pins against
 install.duckdb.org, warming the sqlite extension into the home cache for
 the attach chapter. The outputs live in `tools/sqlite/build/`,
@@ -135,7 +135,7 @@ download fails the build instead of producing a quietly different engine.
 
 == lua, two runtimes, never crossed
 
-Book 8 teaches Lua 5.5 from the manual and its runner is a 5.5 interpreter
+Book 9 teaches Lua 5.5 from the manual and its runner is a 5.5 interpreter
 built from lua.org source. This book adds LuaJIT for exactly one job, the
 sqlite wrapper in the persistence chapters, and LuaJIT speaks Lua 5.1. The
 split is a rule the make targets enforce: the 5.5 runner never executes FFI
@@ -147,7 +147,7 @@ later.
   cdraw.rect((0.0, 3.6), (10.2, 8.0), fill: luma(235), radius: 0.02)
   cdraw.content((5.1, 7.5), [lua 5.5 runner], size: 6.5pt)
   cdraw.content((5.1, 6.4), [built from lua.org source], size: 6pt)
-  cdraw.content((5.1, 5.3), [runs the book 8 samples], size: 6pt)
+  cdraw.content((5.1, 5.3), [runs the book 9 samples], size: 6pt)
   cdraw.content((5.1, 4.2), [never executes ffi code], size: 6pt)
 
   cdraw.line((11.0, 1.4), (11.0, 8.0), stroke: luma(100))

@@ -17,8 +17,8 @@ and sifts down against the smaller child.
 
 The dry run: the fixture is 5, 3, 8, 1, 9, 2, 7 drained to sorted
 order plus the descending storm, asserted by the C\# suite, while
-C, Java, JavaScript, and Lua push 5, 3, 8, 1, 9, 2 and pop 1, 2, 3,
-5, 8, 9 with the property re-asserted after every operation.
+C, Rust, Java, JavaScript, and Lua push 5, 3, 8, 1, 9, 2 and pop 1,
+2, 3, 5, 8, 9 with the property re-asserted after every operation.
 
 + Add 5, then 3: 3 < 5 swaps up, the array reads 3, 5.
 + Add 8 under the root: 8 > 3 stays put, 3, 5, 8.
@@ -64,6 +64,11 @@ pinned pair, and the listings below meter every swap of it.
 
 #listing("dsa/samples-c/src/Ch08/heap.c", first: 26, last: 66, caption: [c, both sifts, push, peek, pop, and the invariant checker])
 
+Rust keeps the 64-slot heap as one fixed array and re-asserts the
+property after every operation:
+
+#listing("dsa/samples-rust/src/Ch08/heap.rs", first: 29, last: 79, caption: [rust, both sifts, push, peek, pop, and the invariant checker over a fixed array])
+
 #listing("dsa/samples-go/ch08/heap.go", first: 14, last: 57, caption: [go, push sifts up, pop moves the tail to the root and sifts down, errors as values])
 
 #listing("dsa/samples-java/src/Ch08/Heap.java", first: 27, last: 69, caption: [java, both sifts, push, peek, pop, and the invariant checker over one static array])
@@ -88,8 +93,8 @@ and iteration order is meaningless. Lua shifts every formula by one
 because its arrays start at 1, parent at `i//2`, children at `2i` and
 `2i+1`, the one translation that touches every line.
 
-Measured across the suites: the C, Java, JavaScript, and Lua files
-push 5 3 8 1 9 2 and pop 1 2 3 5 8 9 with the property re-asserted
+Measured across the suites: the C, Rust, Java, JavaScript, and Lua
+files push 5 3 8 1 9 2 and pop 1 2 3 5 8 9 with the property re-asserted
 after every operation, 29 checks on the C side. Python pins 5 1 4 2
 8 0 to 0 1 2 4 5 8 and refuses the empty pop with IndexError. Go
 pushes a shuffled 1 to 9 and checks the property on a snapshot after
@@ -128,8 +133,8 @@ the root is the maximum.
 
 The dry run: the fixture is the theory row 5, 3, 8, 1, 9, 2, 7
 sorted in place, asserted by the C\# suite against the ordered
-copy, while C, Java, JavaScript, and Lua sort the pi fixture 3, 1,
-4, 1, 5, 9, 2, 6, 5 and Python returns its build peak of 9.
+copy, while C, Rust, Java, JavaScript, and Lua sort the pi fixture
+3, 1, 4, 1, 5, 9, 2, 6, 5 and Python returns its build peak of 9.
 
 + Heapify walks backward from index 2: node 8 already dominates
   its children 2 and 7, no swap.
@@ -164,6 +169,11 @@ whole sort, and the listings below run it on every shape.
 
 #listing("dsa/samples-c/src/Ch08/heapsort.c", first: 24, last: 45, caption: [c, max-heap sift-down, heapify backward, extract to the end])
 
+Rust walks the heapify index down as i64 because a usize cannot drop
+below zero:
+
+#listing("dsa/samples-rust/src/Ch08/heapsort.rs", first: 13, last: 43, caption: [rust, max-heap sift-down, heapify backward over an i64 index, extract to the end])
+
 #listing("dsa/samples-go/ch08/heapsort.go", first: 7, last: 34, caption: [go, heapsort and its max-heap sift-down])
 
 #listing("dsa/samples-java/src/Ch08/Heapsort.java", first: 24, last: 46, caption: [java, max-heap sift-down, heapify backward, extract to the end])
@@ -182,8 +192,8 @@ in place with no merge-sort auxiliaries, and slower than both on
 typical data because sift-down touches memory with poor locality.
 Nobody allocates: each version repairs the one array it was handed.
 
-Measured across the suites: C, Java, JavaScript, and Lua sort the pi
-fixture 3 1 4 1 5 9 2 6 5 to 1 1 2 3 4 5 5 6 9 and prove the
+Measured across the suites: C, Rust, Java, JavaScript, and Lua sort
+the pi fixture 3 1 4 1 5 9 2 6 5 to 1 1 2 3 4 5 5 6 9 and prove the
 permutation with sum and xor, the two 1s and two 5s counted one by
 one. Go runs five shapes from reversed to empty against slices.Sort
 ground truth plus a count map, Python returns the build-phase maximum
@@ -224,10 +234,10 @@ shape every leaderboard, heavy-hitter counter, and recommendation
 pre-pass reduces to.
 
 The dry run: the fixture is the stream 4, 9, 1, 7, 3, 8, 6, 5, 2
-at k = 3, asserted by the C\# suite, while Java pins the same 9 8 7
-with the equal-value, short-stream, and k = 1 edge laws, Go pins the
-same 9 8 7 on its own shuffle, and Python meters four skips and one
-eviction on its own stream.
+at k = 3, asserted by the C\# suite, while Rust and Java pin the same
+9 8 7 with the equal-value, short-stream, and k = 1 edge laws, Go
+pins the same 9 8 7 on its own shuffle, and Python meters four skips
+and one eviction on its own stream.
 
 + Fill on 4, 9, 1: the heap reads 1, 9, 4 with 1 at the root, the
   entry ticket now that the heap is full.
@@ -268,6 +278,10 @@ way.
 
 #listing("dsa/samples-c/src/Ch08/topk.c", first: 45, last: 73, caption: [c, begin, feed with fill and evict, drain descending])
 
+Rust drains the k survivors through an insertion sort, k is tiny:
+
+#listing("dsa/samples-rust/src/Ch08/topk.rs", first: 53, last: 76, caption: [rust, feed with fill and evict, the k-slot result drained descending])
+
 #listing("dsa/samples-go/ch08/topk.go", first: 17, last: 41, caption: [go, add against the weakest survivor, best drains largest first])
 
 #listing("dsa/samples-java/src/Ch08/Topk.java", first: 46, last: 74, caption: [java, begin, feed with fill and evict, drain descending])
@@ -280,8 +294,9 @@ way.
 
 #listing("dsa/samples-lua/ch08_topk.lua", first: 31, last: 55, caption: [lua, feed, evict at the root, result sorted descending])
 
-Measured across the suites: C, C\#, Java, JavaScript, and Lua stream
-4 9 1 7 3 8 6 5 2 with k = 3 and pin 9 8 7, the root settling at 7,
+Measured across the suites: C, C\#, Rust, Java, JavaScript, and Lua
+stream 4 9 1 7 3 8 6 5 2 with k = 3 and pin 9 8 7, the root settling
+at 7,
 the k-th largest so far. Go pins the same 9 8 7 over its own shuffled
 1 to 9, and Python's tracker meters the mechanics on 8 3 9 1 7 2 6 5,
 four skips and one eviction, the root sequence 3 3 7 7 7 7. Three
@@ -332,7 +347,7 @@ element, and each extraction yields the global minimum then reinserts
 the cursor if its run has more.
 
 The dry run: the fixture is the tie pair, both runs holding 1 2 3,
-asserted by all seven suites, and the six new trees add the pinned
+asserted by all eight suites, and the seven new trees add the pinned
 deterministic set, the four-run grid, the empty and lone runs, and
 the uneven tails, each checked by an oracle lane against the sorted
 concatenation of the runs.
@@ -382,6 +397,11 @@ and the listings below are the merges that produced it.
 
 #listing("dsa/samples-c/src/Ch08/kway.c", first: 76, last: 114, caption: [c, the cursor merge loop and its sorted-concatenation oracle])
 
+Rust orders its Copy cursors by a function that breaks ties on run
+index, borrowed run slices in, one flat buffer out:
+
+#listing("dsa/samples-rust/src/Ch08/kway.rs", first: 91, last: 137, caption: [rust, the cursor merge loop and its sorted-concatenation oracle, ties by run index])
+
 #listing("dsa/samples-go/ch08/kway.go", first: 61, last: 84, caption: [go, k-way over the cursor heap, ties keyed by run index])
 
 The other five languages build the same merge on the chapter's own
@@ -398,7 +418,7 @@ heap, Java's cursors records breaking ties by run index:
 #listing("dsa/samples-lua/ch08_kway.lua", first: 42, last: 65, caption: [lua, the merge loop and the sorted-concatenation oracle])
 
 Measured across the suites: the tie pair drains to 1 1 2 2 3 3 with
-run 0 leading every tie in all seven languages. The six new trees
+run 0 leading every tie in all eight languages. The seven new trees
 also merge the four-run grid to 0 through 13, pass the empty runs and
 the lone run straight through with empty input to empty output, and
 interleave the uneven tails to 1 2 3 10 20 100, each fixture checked
@@ -548,7 +568,7 @@ one fused call, then b at 20 among 10, 20, 30.
 The b leaving first after its 20 became 1 is the pinned emulation,
 the trade the table above prices at O(n).
 
-== across the seven languages
+== across the eight languages
 
 The build sizes count non-comment source lines over this chapter's
 four featured files per language. Where a language bundles its
@@ -560,6 +580,7 @@ priority queue appears anywhere in the featured code:
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [417], [libc only], [fixed static capacity, 64 heap slots, 16 top-k slots, 8 merge cursors, checks share the file with main, 65 of them],
+  [rust], [472], [rust 1.99 std], [std BinaryHeap named as the stdlib counterpart and left unused, heapify walks its start index down as i64 because a usize cannot go below zero, checks share the file with main, 65 of them],
   [go], [190], [fmt for errors], [container/heap named as the stdlib counterpart and left unused, tests in separate files, errors returned not thrown, 12 tests],
   [java], [405], [jdk 27 stdlib], [java.util.PriorityQueue named as the stdlib counterpart and left unused, heaps over one static array, cursors as records breaking ties by run index, 65 checks in 4 files],
   [c\#], [201], [bcl only], [the k-way merge and the streaming top-k ride the file set, 17 tests],
@@ -574,8 +595,10 @@ class remarks on the quaternary heap and fifo caveats,
 page, what's new in .NET 9 libraries for the decrease-key notes,
 accessed 2026-09-08. Sample behavior verified by
 `make verify-csharp`, 17 tests in chapter 8 of the samples suite.
-The seven-language layer verifies the same way: 4 C programs with 65
-embedded checks under `make verify-c`, 12 Go tests, the java runner's
+The eight-language layer verifies the same way: 4 C programs with 65
+embedded checks under `make verify-c`, 4 rust programs under
+`run-rust-samples` with 65 Ch08 checks over `samples-rust/src`, 12
+Go tests, the java runner's
 65 Ch08 checks over 4 files under `run-java-samples`, 14
 `node --test` cases, 43 Python checks across 4 files, and 18 Lua
 checks under `run.lua`.

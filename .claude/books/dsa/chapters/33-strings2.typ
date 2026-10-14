@@ -77,9 +77,11 @@ other six suites pin the same array.
 })
 
 The array lands 7, 0, 1, 0, 3, 0, 1 exactly as pinned, and the
-listings below build it in seven languages.
+listings below build it in eight languages.
 
 #listing("dsa/samples-c/src/Ch33/zfunc.c", first: 26, last: 66, caption: [c, the z-box build loop, the brute twin, and the separator search])
+
+#listing("dsa/samples-rust/src/Ch33/zfunc.rs", first: 17, last: 44, caption: [rust, the z-box build loop over u8 slices, the min cap spelled out, the brute twin below])
 
 #listing("dsa/samples-go/ch33/zfunc.go", first: 7, last: 45, caption: [go, the build with the min cap spelled out, the search, the rotation test below])
 
@@ -102,7 +104,7 @@ kmp of #xref-to("dsa", "stringmatching") fills with borders. The
 rotation test follows: t is a rotation of s exactly when s occurs in
 t + t, so one separator search over the doubled text decides it.
 
-The fixtures pin the same arrays in all seven languages: z(aaaaa) =
+The fixtures pin the same arrays in all eight languages: z(aaaaa) =
 5, 4, 3, 2, 1; z(abacaba) = 7, 0, 1, 0, 3, 0, 1; z(aabaa) = 5, 1, 0,
 2, 1; z(ababab) = 6, 0, 4, 0, 2, 0; z(abab) = 4, 0, 2, 0;
 z(acacacb) = 7, 0, 4, 0, 2, 0, 0. The search family pins ab in
@@ -114,8 +116,7 @@ nowhere, and a in aaaa at 0, 1, 2, 3. The rotation family pins
 of a as 1, z of aa as 2, 1, and every suite keeps a brute
 longest-common-prefix-per-position twin agreeing on the whole batch.
 
-The application is icpc world finals 2023 problem F (book 10,
-chapter 12), tilting tiles, whose per-cycle reasoning matches a
+The application is icpc world finals 2023 problem F (book 11, chapter 14), tilting tiles, whose per-cycle reasoning matches a
 pattern against the
 doubled cycle, exactly the separator search shape, with the chapter
 15 kmp as the alternate machine for the same job.
@@ -223,9 +224,11 @@ other six.
 })
 
 The 0, 1, 0, 3, 0, 1 array and the 11 are pinned across the suites,
-and the listings below run both passes in seven languages.
+and the listings below run both passes in eight languages.
 
 #listing("dsa/samples-c/src/Ch33/manacher.c", first: 26, last: 52, caption: [c, the odd pass and the even pass side by side over the same string])
+
+#listing("dsa/samples-rust/src/Ch33/manacher.rs", first: 28, last: 64, caption: [rust, the odd pass and the even pass side by side over the same bytes])
 
 #listing("dsa/samples-go/ch33/manacher.go", first: 9, last: 48, caption: [go, both passes inside one function, total and longest computed after])
 
@@ -358,9 +361,11 @@ other six.
 })
 
 The 5 states and the 7 close the build exactly as pinned, and the
-listings below extend the automaton in seven languages.
+listings below extend the automaton in eight languages.
 
 #listing("dsa/samples-c/src/Ch33/suffixautomaton.c", first: 38, last: 67, caption: [c, the build with the clone split, the per-character loop])
+
+#listing("dsa/samples-rust/src/Ch33/suffixautomaton.rs", first: 34, last: 72, caption: [rust, the build with the clone split, the clone copying q's 26-way array in one assignment])
 
 #listing("dsa/samples-go/ch33/suffixautomaton.go", first: 26, last: 67, caption: [go, the loop with the clone branch inside])
 
@@ -384,7 +389,7 @@ processing states in decreasing len order pushes every count into its
 link parent, after which walking the transitions for any t lands on
 the state whose count is the number of occurrences, with membership
 as count above zero. The fixtures pin the canonical machine, identical
-in all seven languages: abab builds 5 states and 7 distinct substrings
+in all eight languages: abab builds 5 states and 7 distinct substrings
 with occurrences a 2, b 2, ab 2 and its reversal 1, aba 1, bab 1,
 abab 1, and abc 0; aab builds 4 states, 5 distinct; banana builds 10 states, 15
 distinct, with a 3, an 2, ana 2, na 2, nan 1, ban 1, banana 1, nab 0;
@@ -446,7 +451,7 @@ suffix of s + '\$' in order, and whenever a walk stops in the middle
 of an edge label, split the edge at that character and hang both
 tails off the new node. Nodes hold a child map keyed by the first
 character of each edge, edges hold (l, r) index pairs into s, and no
-substring is ever copied, which is what keeps seven implementations of
+substring is ever copied, which is what keeps eight implementations of
 the same insertion order byte-identical in their node counts. The
 terminal character makes the tree explicit, no suffix is a prefix of
 another, so every leaf ends a full suffix and the tree has exactly
@@ -504,9 +509,11 @@ identical in the other six.
 })
 
 The 8 nodes, the 12, and the depth-2 ab close the run as pinned,
-and the listings below insert the suffixes in seven languages.
+and the listings below insert the suffixes in eight languages.
 
 #listing("dsa/samples-c/src/Ch33/suffixtree.c", first: 52, last: 77, caption: [c, the suffix insertion walk with the mid-edge split])
+
+#listing("dsa/samples-rust/src/Ch33/suffixtree.rs", first: 52, last: 80, caption: [rust, insert_suffix with the mid-edge split, child vecs keyed by first character])
 
 #listing("dsa/samples-go/ch33/suffixtree.go", first: 36, last: 65, caption: [go, insertSuffix with the edge relabel on split])
 
@@ -644,9 +651,11 @@ abacaba stays with the figure below, this run takes the duel.
 })
 
 The survivor 5 and its abanan are pinned by every suite, and the
-listings below carry all three tools in seven languages.
+listings below carry all three tools in eight languages.
 
 #listing("dsa/samples-c/src/Ch33/lyndon.c", first: 28, last: 47, caption: [c, duval's three-pointer loop, the factor closing at the fall])
+
+#listing("dsa/samples-rust/src/Ch33/lyndon.rs", first: 15, last: 35, caption: [rust, duval's three-pointer loop over the bytes, the factor closing at the fall])
 
 #listing("dsa/samples-go/ch33/lyndon.go", first: 8, last: 26, caption: [go, duval, reset k to i on a strict rise])
 
@@ -691,8 +700,7 @@ families: every duel checked inside checkRotation against the
 minimum over all rotations, every repetition table against the
 independent enumerator.
 
-The application is icpc world finals 2022 problem Y (book 10,
-chapter 11), compression, where a square-free reachability argument is the contest
+The application is icpc world finals 2022 problem Y (book 11, chapter 13), compression, where a square-free reachability argument is the contest
 face of repetition detection; the problem's answer reasoning stays
 with the icpc book.
 
@@ -738,7 +746,7 @@ with the icpc book.
   cdraw.content((16.2, 1.85), [length >= 2p per repetition], size: 6pt)
 })
 
-== across the seven languages
+== across the eight languages
 
 Featured build size counted as non-blank, non-comment lines of the
 chapter's five sample files per language, go test files excluded:
@@ -748,6 +756,7 @@ chapter's five sample files per language, go test files excluded:
   inset: 4pt,
   table.header([*language*], [*build sloc*], [*container dependency*], [*boundary note*]),
   [c], [848], [static arrays, 26-way transition table], [z and manacher over fixed buffers, the sam child array per state, insertion-order suffix tree],
+  [rust], [971], [rust 1.99 std], [strings walked as u8 byte slices, the sam clone copying q's [usize; 26] in one assignment, the len order an index insertion sort],
   [go], [404], [slices, `sort.Slice`], [sam link-tree order sorted by len, the duel and scan as free functions],
   [java], [805], [jdk 27 stdlib, String.charAt walks], [per-state int[26] sam transitions cloned by array copy, the \\x01 separator as a char constant, insertion-order suffix tree over child arrays],
   [c\#], [397], [`List<Dictionary<char,int>>`, linq], [long z arrays, occurrence counts precomputed in the constructor],
@@ -769,9 +778,11 @@ and the least-rotation duel, and "Finding repetitions",
 cp-algorithms.com/string/main_lorentz.html, the O(n log n) reference
 for the period scan, all accessed 2026-09-20, cc by-sa 4.0, our own
 words and code throughout. Application sources: icpc world finals
-2023 problem F and 2022 problem Y (book 10). Sample behavior verified
-by the seven suite gates scoped to chapter 33: c 5 files and 147
-checks, go 16 test functions, java 5 files and 147 checks under
+2023 problem F and 2022 problem Y (book 11). Sample behavior verified
+by the eight suite gates scoped to chapter 33: c 5 files and 147
+checks, rust 5 files and 129 checks under run-rust-samples in
+books/dsa/samples-rust,
+go 16 test functions, java 5 files and 147 checks under
 run-java-samples, c\# 24 facts, javascript 19 tests and
 119 asserts, python 5 files and 333 asserts, lua 19 checks, zero
 skipped.

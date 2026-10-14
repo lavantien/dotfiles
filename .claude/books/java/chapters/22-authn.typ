@@ -262,7 +262,7 @@ the pinned build's own sources, `tools/jdk27/build/jdk-27/lib/src.zip`,
 oracle jdk 27 ga build 27+35-2325, as was `Mac`'s contract. The
 pbkdf2 construction is chapter 17's, verified against rfc 8018
 there. The go contrasts, argon2id, sessions, refresh rotation,
-cookies, against book 3, chapter 21. Verified live 2026-10-05 by the
+cookies, against book 4, chapter 21. Verified live 2026-10-05 by the
 `javabook.authn` tests under the vendored junit 6.1.3 lane, 16 tests
 green three consecutive runs in a module of 92: the frozen token
 vector, tamper and wrong-key rejection, second-precise expiry, the

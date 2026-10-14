@@ -1,4 +1,4 @@
-// book 10, chapter 2: the c toolbox. ten modules over eleven
+// book 11, chapter 2: the c toolbox. ten modules over eleven
 // headers in books/icpc/samples-c/src/Ch02/, one test program per
 // module, all listings sliced from the landed files
 #import "../../theme/lib.typ": listing, callout, xref-to, diagram, cdraw
@@ -959,16 +959,20 @@ the conversation.
   cdraw.content((10.0, 1.2), [1 + 2 + 3.5 - 4 = 2.5], size: 6.5pt, fill: luma(100))
 })
 
-== across the seven languages
+== across the eight languages
 
 This chapter owns C, and the honest close is the same table every
 toolbox chapter closes with, the structure, how C builds it, how Lua
-builds it, and why they differ. The other five languages carry their
+builds it, and why they differ. The other six languages carry their
 own chapters, and their rows join the comparison there. Java's
-chapter 4 sits at the opposite pole and still teaches the same seam:
+chapter 5 sits at the opposite pole and still teaches the same seam:
 BigInteger ships in its library, but its kit builds the wide product
 from `Math.multiplyHigh` plus a 128-step shift-subtract remainder
 lane beside it, add-and-double with a machine that cooperates.
+Rust's chapter 3 mirrors this one module for module, and the one row
+above that dissolves there is modular num: `u128` is a first-class
+type, the wide product and its remainder are one expression, and
+add-and-double never starts.
 
 #table(
   columns: (1.2fr, 1.6fr, 1.6fr, 1.6fr),
@@ -993,6 +997,6 @@ sources: R. Rivest, RFC 1321, The MD5 Message-Digest Algorithm, April
 1992, the K table, shift schedule, and the test vectors this suite
 pins; the FNV-1a constants from the Fowler, Noll, Vo reference hash
 page; the `__umodti3` link outcome is the machine fact recorded by
-the chapter 16 probe in book 9 and reconfirmed by this suite's gate
+the chapter 16 probe in book 10 and reconfirmed by this suite's gate
 run, 2026-09-14. The Lua comparisons cite the landed
 `books/icpc/samples-lua/` modules read the same day.

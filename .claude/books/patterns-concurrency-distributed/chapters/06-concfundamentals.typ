@@ -3,14 +3,16 @@
 
 = concurrency fundamentals and the memory model
 
-Book 3 toured the syntax of goroutines and channels. This chapter is
+Book 4 toured the syntax of goroutines and channels. This chapter is
 about what the language actually promises when two goroutines touch
 the same memory, because the promise is narrower than most
 programmers assume and everything later in this book, the sync
 primitives, the hazards chapter, the raft capstone, is built on its
-edges. The question now runs in seven voices, and the voices disagree
+edges. The question now runs in eight voices, and the voices disagree
 about the substrate before they agree about anything else: real
-operating system threads in C, goroutines in go, virtual threads on
+operating system threads in C, the same real threads with the borrow
+checker auditing every share in rust, goroutines in go, virtual
+threads on
 the jvm in java, pool tasks in C\#, one event loop plus
 message-passing workers in javascript, threads under the GIL plus
 asyncio in python, coroutines in lua. The fixtures stay identical
@@ -41,7 +43,11 @@ Each sibling tree faces its own model instead. C's is the C11 one:
 plain racy accesses are undefined, and the doors are thread
 creation, join, mutex and condition variables, and the stdatomic
 ordering ladder. #xref-to("c-os-cloud", "threads") puts C23
-`<threads.h>` and the win32 layer beneath it side by side. C\#, go,
+`<threads.h>` and the win32 layer beneath it side by side. Rust
+moves the floor earlier, its safe subset rules data races out at
+compile time, `Send` and `Sync` deciding what may cross a thread
+boundary, so the lane writes every fixture in this chapter without a
+single `unsafe`. C\#, go,
 and java promise the
 same DRF-SC shape over tasks, goroutines, and virtual threads, and
 java names the same ordering ladder stdatomic.h walks through
@@ -146,6 +152,12 @@ are edges, and the `stdatomic.h` ordering ladder is the fine-grained
 one, #xref-to("c-os-cloud", "atomics") traces that ladder and the
 single-producer ring it is asked to justify.
 
+The rust row leans on the same edges C names, a joined
+`thread::scope` is an edge, `Mutex` and `Condvar` are edges, and the
+atomics carry the same ladder with `Relaxed` and `SeqCst` named at
+each call, while the borrow checker keeps plain access off shared
+cells entirely.
+
 The C\# row keeps the channel shape native: `System.Threading.Channels`
 makes completion an edge and bounded capacity a counting rule,
 #xref-to("csharp-net", "stdlib2") is where the BCL surface lives.
@@ -171,7 +183,7 @@ makes every unlocked partial write visible:
 The dry run: 1 through 10001 totals 50015001 under all 5
 partitionings, parts 1, 2, 7, 100, and 5000, and the empty input
 totals 0. The chunk ladder pins at 10001, 5001, 1429, 101, and 3,
-asserted by the six new trees, the go lane's frozen test pins the
+asserted by the seven new trees, the go lane's frozen test pins the
 totals and the nil case without the ladder.
 
 + Each partial slot has exactly one writer, and the wait is ordered
@@ -185,6 +197,8 @@ totals and the nil case without the ladder.
   last done waking the parked total lane in lua.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch06/waitgroup.c", first: 20, last: 52, caption: [C, the waitgroup by hand, one mutex and one condition, the wait loop rechecking the count])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch06/waitgroup.rs", first: 15, last: 46, caption: [Rust, the waitgroup by hand over a Mutex and one Condvar, wait hands the guard back for the recheck])
 
 #listing("patterns-concurrency-distributed/samples/ch06/memorymodel.go", first: 11, last: 46, caption: [Go, waitgroup parallel sum: partial writes become visible at wait])
 
@@ -205,6 +219,8 @@ and demands the exact total every time. That determinism is DRF-SC
 paying off: under a race the same code is wrong in unbounded ways.
 The sibling trees build the wait
 out of their own substrate, mutex plus condition in C and python,
+the same mutex and condvar in rust with `thread::scope` lending the
+partials by reference so no Arc climbs into the fixture,
 `synchronized` plus `notifyAll` in java, task completion in C\#, a
 promise registry in javascript, and a parked-coroutine list in lua,
 the same 20-line scheduler shape every lua lane in this chapter
@@ -217,7 +233,7 @@ bounce is causally ordered, the count can be neither lost nor
 doubled:
 
 The dry run: 1000 round trips count exactly 1000 and a single
-round trip counts 1, all seven lanes pinning both counts. The
+round trip counts 1, all eight lanes pinning both counts. The
 degenerate shapes are per-tree lanes, zero rounds counting zero and
 an odd 17 holding in java and python, and the logged walk strictly
 alternating sent and received, 16 entries for 8 trips, in lua.
@@ -232,6 +248,8 @@ alternating sent and received, 16 entries for 8 trips, in lua.
   and the counts agree anyway.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch06/rendezvous.c", first: 20, last: 70, caption: [C, two threads over one mutex and two condition variables, every wait guaranteed a partner])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch06/rendezvous.rs", first: 22, last: 73, caption: [Rust, C's exact shape, one Mutex over the turn and two Condvars, scope joining both lanes])
 
 #listing("patterns-concurrency-distributed/samples/ch06/memorymodel.go", first: 49, last: 73, caption: [Go, strict alternation through two unbuffered channels])
 
@@ -253,7 +271,10 @@ is the unbuffered channel native, `put` returning only when a
 no rebuilding. C builds the same binary
 handoff from a mutex and two condition variables, where the
 zero-waiter forgetfulness trap from chapter 15 of the C book cannot
-bite because every wait is guaranteed a partner. The dynamic three
+bite because every wait is guaranteed a partner. Rust builds C's
+exact shape, one `Mutex` over a turn enum and two `Condvar`s, and
+`thread::scope` joins both lanes before the counts are read. The
+dynamic three
 park continuations instead of threads, javascript resolvers,
 python asyncio waits, lua parked coroutines, and the alternation
 comes from the queue edges themselves.
@@ -266,7 +287,8 @@ it:
 
 The dry run: the exact 100000 total pins in every lane with real
 shared memory, go's goroutines, C's threads over an `_Atomic` cell,
-java's threads over an `AtomicLong`, C\#'s workers over
+rust's scoped threads over an `AtomicI64`, java's threads over an
+`AtomicLong`, C\#'s workers over
 `Interlocked`, javascript's workers over one `SharedArrayBuffer`
 cell. The two coroutine lanes state their
 boundary the honest way: a scripted 2 by 5 read, pause, write walk
@@ -285,6 +307,8 @@ the whole section is atomic.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch06/atomics.c", first: 20, last: 42, caption: [C, an atomic long long with fetch_add, the relaxed ordering stated where it is chosen])
 
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch06/atomics.rs", first: 18, last: 36, caption: [Rust, fetch_add under Relaxed where only the arithmetic needs atomicity, the same rung C names])
+
 #listing("patterns-concurrency-distributed/samples/ch06/memorymodel.go", first: 76, last: 85, caption: [Go, atomic adds are linearizable, lost updates impossible])
 
 #listing("patterns-concurrency-distributed/samples-java/src/Ch06/Atomics.java", first: 25, last: 59, caption: [Java, VarHandle aims every access mode at one field, the plain payload published by a release flag])
@@ -299,7 +323,10 @@ the whole section is atomic.
 
 C names the ordering it wants, `memory_order_relaxed` for the count
 where only the arithmetic needs to be atomic, the ladder chapter 16
-of the C book walks in full. Java walks the same ladder through
+of the C book walks in full. Rust names the same rung, the counter's
+`fetch_add` carries `Ordering::Relaxed` at the call site, one of the
+five orderings the atomic types demand you choose every time. Java
+walks the same ladder through
 `VarHandle` access modes, plain, opaque, release and acquire,
 volatile, with `AtomicLong` as the counter and `Thread.onSpinWait`
 the hint the acquire spin rides. C\#'s `Interlocked` is the same
@@ -351,6 +378,8 @@ the observed peak never passes 3.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch06/channels.c", first: 24, last: 63, caption: [C, the bounded channel over one mutex and one condition, close broadcasts])
 
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch06/channels.rs", first: 20, last: 68, caption: [Rust, the same channel over a Mutex and one Condvar, a VecDeque for the ring, close wakes every waiter])
+
 #listing("patterns-concurrency-distributed/samples/ch06/memorymodel.go", first: 87, last: 117, caption: [Go, close orders the terminal receive, capacity C bounds C workers])
 
 #listing("patterns-concurrency-distributed/samples-java/src/Ch06/Channels.java", first: 32, last: 77, caption: [Java, the channel hand-rolled over ReentrantLock and one Condition, close broadcasts, recv answers false once drained])
@@ -365,7 +394,9 @@ the observed peak never passes 3.
 
 C's channel is one mutex, one condition, a ring of integers, and a
 closed flag, the chapter 7 bounded queue arriving one chapter early
-in miniature. Java rolls the same channel by hand on
+in miniature. Rust rolls the same shape over `Mutex` and `Condvar`
+with a `VecDeque` for the ring, and its gate is the same permits
+count under its own condvar. Java rolls the same channel by hand on
 `ReentrantLock` and one `Condition`, and parks its stdlib lanes
 beside it: `Semaphore` is the gate and `ArrayBlockingQueue` the
 buffered channel minus the close. C\# gets both edges from the BCL
@@ -388,7 +419,9 @@ pointer through a plain field may surface a non-nil pointer with
 stale contents. The document's own advice ends the argument: if you
 must read the rest of the model to understand your program, you are
 being too clever. Don't be clever. The sibling trees inherit the
-same graves: C's data race is undefined behavior with no floor, and
+same graves: C's data race is undefined behavior with no floor,
+rust's safe code cannot write the race at all, the borrow checker
+rejecting the aliasing before the program runs, and
 the cooperative lanes can only exhibit the bug by building it, which
 is the strongest argument for never shipping it.
 
@@ -404,7 +437,7 @@ is the strongest argument for never shipping it.
   cdraw.content((11, 1.05), [a non-nil pointer with stale contents can surface], size: 6pt)
 })
 
-== across the seven languages
+== across the eight languages
 
 The build sizes count non-comment source lines, the go column the
 chapter's one frozen file:
@@ -414,6 +447,7 @@ chapter's one frozen file:
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [411], [libc plus threads.h, stdatomic.h], [waitgroup, channel, and semaphore by hand over mtx and cnd, relaxed ordering named at the add],
+  [rust], [376], [std only, no crates], [waitgroup, rendezvous, channel, and gate rolled over Mutex and Condvar, thread::scope lending without Arc, Relaxed named at the add],
   [go], [91], [stdlib], [frozen reference lane, the five fixtures this chapter's contracts derive from],
   [java], [354], [jdk 27 stdlib], [the VarHandle ladder named rung by rung, SynchronousQueue the native rendezvous, waitgroup and channel rolled by hand],
   [c\#], [134], [bcl], [WhenAll waits, SemaphoreSlim rendezvous, Interlocked counters, Channels for close and capacity],
@@ -424,8 +458,10 @@ chapter's one frozen file:
 
 sources: go.dev/ref/mem for the definition of data race, every
 synchronization edge quoted above, DRF-SC, and the broken idioms,
-accessed 2026-09-08. Verified by the seven chapter legs: 4 Ch06 C
-programs with 327 embedded checks, `go test -race` at 6 tests in
+accessed 2026-09-08. Verified by the eight chapter legs: 4 Ch06 C
+programs with 327 embedded checks, 4 Ch06 rust programs in
+`samples-rust/src` with 25 embedded checks under `run-rust-samples`,
+`go test -race` at 6 tests in
 `patternsbook/ch06`, 4 Ch06 java programs with 37 checks under
 `run-java-samples`, 10 C\# facts over `PatternsBook.slnx`, 9
 `node --test` cases, 23 Python checks across 4 files, and 17 Lua

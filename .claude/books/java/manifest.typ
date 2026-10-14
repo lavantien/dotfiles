@@ -1,6 +1,6 @@
-// book 4 manifest: chapter registry used by cross references and stubs
+// book 5 manifest: chapter registry used by cross references and stubs
 #let javabook = (
-  num: 4,
+  num: 5,
   volume: false,
   title: "java 27",
   meta: (
@@ -8,7 +8,7 @@
     subtitle: "a complete language manual",
     author: "Raeliosol",
     version: "1.0",
-    volume-label: "book 4",
+    volume-label: "book 5",
   ),
   chapters: (
     (id: "toolchain", num: 1, title: "toolchain and the jdk"),

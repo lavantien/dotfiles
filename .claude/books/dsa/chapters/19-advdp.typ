@@ -21,8 +21,8 @@ translation of chapter 17's table weighs every copy count at every
 cell.
 
 The dry run: the fixture is one item of weight 4, value 5, count 2
-against capacity 8, asserted the same way in C, Go, Java, C\#,
-JavaScript, Python, and Lua, with the count 3 variant against 12,
+against capacity 8, asserted the same way in C, Rust, Go, Java,
+C\#, JavaScript, Python, and Lua, with the count 3 variant against 12,
 fixture A at 31 and fixture B at 25, and the brute walk over every
 multiplicity tuple riding along as the oracle in each suite.
 
@@ -63,10 +63,12 @@ multiplicity tuple riding along as the oracle in each suite.
 })
 
 The 15 consults close at the pinned 10, and the listings below
-carry the naive pass, the pieces, and the reused 0/1 walk in seven
+carry the naive pass, the pieces, and the reused 0/1 walk in eight
 languages.
 
 #listing("dsa/samples-c/src/Ch19/bounded.c", first: 22, last: 60, caption: [c, the copy scan with its per-k meter, then the binary pieces])
+
+#listing("dsa/samples-rust/src/Ch19/bounded.rs", first: 18, last: 58, caption: [rust, the copy scan with its per-k meter behind an Option, the brute oracle in the same file])
 
 #listing("dsa/samples-go/ch19/bounded.go", first: 8, last: 48, caption: [go, the naive scan behind a meter struct, the pieces beside it])
 
@@ -92,12 +94,12 @@ to 13, each item collapses to a logarithmic number of 0/1 pieces,
 and the chapter 17 backward pass does the rest. The pieces always
 reassemble, the suite checks every count from 1 to 40.
 
-The six new lanes answer from the same literals: 10 and 15 on the
+The seven new lanes answer from the same literals: 10 and 15 on the
 single item, 31 on fixture A and 25 on fixture B, the pieces of 13
 reading 1, 2, 4, 6 and of 7 reading 1, 2, 4 with the 1 to 40
 reassembly lane beside them. The meter granularity splits by tree:
-C, Java, Python, and Lua record the per-k counts 9, 5, 1 next to
-the 15 total, Go and JavaScript count the 15 alone, and every tree
+C, Rust, Java, Python, and Lua record the per-k counts 9, 5, 1 next
+to the 15 total, Go and JavaScript count the 15 alone, and every tree
 keeps the multiplicity brute force as its oracle. The scaled pieces
 multiply weight and value together in all six, and a piece scaled
 on weight alone would fail the oracle lanes.
@@ -153,7 +155,7 @@ collapses to a window maximum, subtract j*v from the previous row,
 keep the max of the last count+1 entries, add j*v back.
 
 The dry run: the fixture is the same single item, weight 4, value 5,
-count 2 against capacity 8, asserted by all seven suites with both
+count 2 against capacity 8, asserted by all eight suites with both
 meters attached, 9 window consults against the count scan's 15 on
 the same answer 10.
 
@@ -198,9 +200,11 @@ the same answer 10.
 })
 
 The 9 against 15 on the same answer 10 is the pinned pair, and the
-listings below run the class walk in seven languages.
+listings below run the class walk in eight languages.
 
 #listing("dsa/samples-c/src/Ch19/window.c", first: 78, last: 111, caption: [c, the g value helper, the deque per residue class, one consult per cell])
+
+#listing("dsa/samples-rust/src/Ch19/window.rs", first: 96, last: 143, caption: [rust, the g helper, the deque a fixed array under head and tail cursors, one consult per cell])
 
 #listing("dsa/samples-go/ch19/window.go", first: 3, last: 36, caption: [go, one class per residue, the deque holding plain prev indices])
 
@@ -226,11 +230,11 @@ it, from the front when it slides past the count, so the total work
 is items times capacity whatever the counts say, and the C\# suite's
 25 seeded instances agree with the naive exactly.
 
-The six new lanes pin the same 9 against 15 pair, and the
+The seven new lanes pin the same 9 against 15 pair, and the
 agreement lane widens it: window, count scan, and binary
 decomposition answer 31 on fixture A and 25 on fixture B, and the
 window matches the count scan at every capacity from 0 to 12 of
-fixture A. C and Java score their candidates through a g helper,
+fixture A. C, Rust, and Java score their candidates through a g helper,
 Go, JavaScript, and Python close over the previous row inside the
 walk, and JavaScript alone keeps that row by swapping two arrays
 where the others copy. Lua carries the lane furthest with 39
@@ -299,7 +303,7 @@ chose between skipping and taking, and an unreachable marker carries
 the budgets no option fits.
 
 The dry run: the fixture is the three-group menu against capacity
-10, asserted by all seven suites, the groups reading 2 or 4 at 20 or
+10, asserted by all eight suites, the groups reading 2 or 4 at 20 or
 40, 3 or 6 at 30 or 60, 5 or 1 at 50 or 10, with the capacity 7
 answer of 60 and the infeasible capacities 5 and 3 at -1 pinned
 beside it.
@@ -349,10 +353,12 @@ beside it.
 })
 
 The table serves all three groups at 100 with the bar exactly full,
-and the listings below carry the build and its rebuild in seven
+and the listings below carry the build and its rebuild in eight
 languages.
 
 #listing("dsa/samples-c/src/Ch19/grouped.c", first: 30, last: 72, caption: [c, capacity ascending then options ascending, the choice table read back])
+
+#listing("dsa/samples-rust/src/Ch19/grouped.rs", first: 27, last: 81, caption: [rust, capacity ascending then options ascending, the choice table read back, unreachable at i64::MIN / 4])
 
 #listing("dsa/samples-go/ch19/grouped.go", first: 17, last: 65, caption: [go, min int over 4 marking unreachable, picks rebuilt from the choice grid])
 
@@ -379,8 +385,8 @@ Every lane pins the same three landings: 100 with the picks 0, 0,
 0 at capacity 10, 60 with the picks 0, 0, 1 at capacity 7 where
 the light 1 for 10 option replaces the heavy 5 for 50, and -1 at
 capacities 5 and 3 where the minimum load of 6 cannot fit. The
-unreachable marker is where the trees part: C and Java guard a long
-min over 4, Go a min int over 4, JavaScript minus infinity, Python
+unreachable marker is where the trees part: C, Rust, and Java guard
+a min over 4, Go a min int over 4, JavaScript minus infinity, Python
 a none flag that skips the arithmetic, Lua nil. The readback lands
 the same picks everywhere because the scans run capacity ascending
 then options ascending and only a strictly greater candidate
@@ -441,7 +447,7 @@ decreasing and the queries only move right, exactly the contract of
 a pointer hull.
 
 The dry run: the fixture is 1, 2, 3 with constant 10, asserted by
-all seven suites at 38, with constant 0 at 14, 3, 1, 4, 1, 5 at
+all eight suites at 38, with constant 0 at 14, 3, 1, 4, 1, 5 at
 constant 2 at 62, and 2, 2, 2, 2 at constant 3 at 28, the naive
 split scan agreeing in every tree, and the C\# suite alone running
 the seeded n = 200 meters.
@@ -488,10 +494,12 @@ the seeded n = 200 meters.
 })
 
 The 38 is the small pinned landing and 400 the metered big one, and
-the listings below drive the recurrence through the hull in seven
+the listings below drive the recurrence through the hull in eight
 languages.
 
 #listing("dsa/samples-c/src/Ch19/cht.c", first: 33, last: 76, caption: [c, the cross-multiplied overtaken test, add, query, the partition loop])
+
+#listing("dsa/samples-rust/src/Ch19/cht.rs", first: 43, last: 90, caption: [rust, the cross-multiplied overtaken test in i64, add, query, the partition loop, meters riding the hull])
 
 #listing("dsa/samples-go/ch19/cht.go", first: 36, last: 77, caption: [go, the forward pointer, the overtaken test, the recurrence and its naive twin])
 
@@ -515,9 +523,9 @@ after the 2. Dominated lines pop on arrival and the query pointer
 never walks backward, so each line and each query is touched once,
 which is what the counters assert.
 
-The six new lanes hold the same envelope. The overtaken test
+The seven new lanes hold the same envelope. The overtaken test
 cross-multiplies in 64-bit integers and reads <= in every tree,
-long long in C, long in Java with every product exact, int64 in Go,
+long long in C, i64 in Rust, long in Java with every product exact, int64 in Go,
 Lua integers, Python's native ints, and JavaScript numbers exact at
 these magnitudes, and the query
 pointer only walks forward. The counter lane agrees everywhere, 3
@@ -587,7 +595,7 @@ array, replaces the first tail it cannot extend and links its
 parent, or appends and grows the run.
 
 The dry run: the fixture is 10, 9, 2, 5, 3, 7, 101, 18, asserted by
-all seven suites with the 2, 2, 2 pair and the 1, 2, 2, 3 pair beside
+all eight suites with the 2, 2, 2 pair and the 1, 2, 2, 3 pair beside
 it, the n = 1000 meter a C\# lane, and the pairs table oracle
 carried in every tree.
 
@@ -636,9 +644,11 @@ carried in every tree.
 
 The length 4 with its rebuilt indices is the pinned landing, and the
 listings below carry the tails, the parents, and the slack variant
-in seven languages.
+in eight languages.
 
 #listing("dsa/samples-c/src/Ch19/tails.c", first: 19, last: 65, caption: [c, the strict lower bound with parent links, the upper bound variant])
+
+#listing("dsa/samples-rust/src/Ch19/tails.rs", first: 17, last: 70, caption: [rust, the strict lower bound with parent links over index tails, the upper bound variant one comparison away])
 
 #listing("dsa/samples-go/ch19/tails.go", first: 6, last: 52, caption: [go, the strict walk with its probe meter, parents rebuilt backward])
 
@@ -672,8 +682,8 @@ it, and on 2, 2, 2 that is 1 against 3. The Go lane pins the
 strict witness index of 2, 2, 2 at [2], the last of the three
 equals, where the other trees assert the length there, and the
 n^2 pairs table agrees on length in every suite. JavaScript, Java,
-and Lua roll the binary search by hand so the emitted indices match
-the other lanes exactly.
+Lua, and Rust roll the binary search by hand so the emitted indices
+match the other lanes exactly.
 
 #diagram([longest increasing subsequence on 10 9 2 5 3 7 101 18, the tails after each element, replaced tails shaded, appended tails stroked], length: 13pt, {
   // one row per element: the value, the tails array, the cell written this step
@@ -722,9 +732,9 @@ prices the difference in code, six table relaxations against six
 permutations, but the table keeps winning as cities are added.
 
 The dry run: the fixture is the four-city matrix, 10, 15, 20
-against 35, 25, 30, pinned by the C, Go, Java, JavaScript, Python,
-and Lua suites at tour cost 80, the C\# build predating the topic,
-and the
+against 35, 25, 30, pinned by the C, Rust, Go, Java, JavaScript,
+Python, and Lua suites at tour cost 80, the C\# build predating the
+topic, and the
 walk reads the C suite's table cells.
 
 + The seed is mask 0001 at city 0, value 0: home alone.
@@ -737,7 +747,7 @@ walk reads the C suite's table cells.
 + Closing the loop adds the 15 home: 65 + 15 = 80, and the mirror
   0, 2, 3, 1, 0 costs the same.
 + The brute sweep over the six inner orderings agrees at 80, the
-  cross-check C, Go, JavaScript, Python, and Lua all carry.
+  cross-check C, Rust, Go, JavaScript, Python, and Lua all carry.
 
 #diagram([the mask table filling by population count, the pinned cells shaded from the seed down to the full mask, the close home at 80], length: 13pt, {
   // levels: 0001@0; 0011@1, 0101@2, 1001@3; 1011@3, 1011@1; 1111@2; close
@@ -770,9 +780,11 @@ walk reads the C suite's table cells.
 })
 
 The tour closes at the pinned 80, and the listings below fill this
-table in six languages plus the C\# assignment build it grows from.
+table in seven languages plus the C\# assignment build it grows from.
 
 #listing("dsa/samples-c/src/Ch19/bitmask.c", first: 26, last: 48, caption: [c, the mask table, relax into unvisited cities, close the loop])
+
+#listing("dsa/samples-rust/src/Ch19/bitmask.rs", first: 25, last: 56, caption: [rust, the mask table, relax into unvisited cities, close the loop, table cells pinned beside the brute])
 
 #listing("dsa/samples-go/ch19/bitmask.go", first: 10, last: 49, caption: [go, the relax loop, then the tour rebuilt by walking the table])
 
@@ -787,12 +799,13 @@ table in six languages plus the C\# assignment build it grows from.
 #listing("dsa/samples-lua/ch19_bitmask.lua", first: 14, last: 48, caption: [lua, 0-based masks over 1-based tables, maxinteger for infinity])
 
 The four-city fixture is the classic symmetric matrix, 10, 15, 20
-against 35, 25, 30, and the tour cost 80 pins in C, Go, Java,
+against 35, 25, 30, and the tour cost 80 pins in C, Rust, Go, Java,
 JavaScript, Python, and Lua, with two mirror tours both optimal, 0
 to 1 to 3 to 2 and back, 10 plus 25 plus 30 plus 15. Python and
 Lua accept either mirror in their order checks, Go rebuilds the
 actual tour by walking the table backwards asking which predecessor
-still adds up, C and Java brute-force the six inner permutations to
+still adds up, C, Rust, and Java brute-force the six inner
+permutations to
 confirm the table, and Java carries Python's arbitrary-matrix walk
 beside it, a two-city pair at 2 and the 3, 4, 5 triangle at 12.
 The C\# suite predates the topic, so its listing is the assignment
@@ -836,8 +849,8 @@ a prefix goes loose every digit is free, which is what collapses a
 count over N into a table over the digits of N.
 
 The dry run: the fixture is the hand-count staircase under 99,
-asserted by the C\# suite with C, Go, JavaScript, and Lua pinning
-the same seven-counts, while Python and Java count weakly
+asserted by the C\# suite with C, Rust, Go, JavaScript, and Lua
+pinning the same seven-counts, while Python and Java count weakly
 increasing digits instead, 26 at 30 and 54 at 99.
 
 + Below 7 nothing qualifies, count 0, and 7 alone makes 1.
@@ -868,9 +881,11 @@ increasing digits instead, 26 at 30 and 54 at 99.
 })
 
 The staircase rests at 19 under 99 and 271 at the thousand, and the
-listings below walk the numeral in seven languages.
+listings below walk the numeral in eight languages.
 
 #listing("dsa/samples-c/src/Ch19/digitdp.c", first: 38, last: 62, caption: [c, loose and tight rows, the has-7 property, per position])
+
+#listing("dsa/samples-rust/src/Ch19/digitdp.rs", first: 28, last: 51, caption: [rust, loose and tight rows over the has-7 property, the numeral split by division not strings])
 
 #listing("dsa/samples-go/ch19/digitdp.go", first: 12, last: 61, caption: [go, the memoized walk keyed by position, flags, state])
 
@@ -884,8 +899,8 @@ listings below walk the numeral in seven languages.
 
 #listing("dsa/samples-lua/ch19_digitdp.lua", first: 20, last: 43, caption: [lua, string-keyed memo, the tight prefix never cached])
 
-The properties split, and both are the real technique: C, Go, Java,
-C\#, JavaScript, and Lua count numbers containing the digit 7,
+The properties split, and both are the real technique: C, Rust, Go,
+Java, C\#, JavaScript, and Lua count numbers containing the digit 7,
 with the anchor 19 numbers up to 99 and the staircase of hand
 counts below it, 7 alone, 8 at 70, 15 at 77, while Python counts
 weakly increasing digits and pins 54 up to 99 with the climb from
@@ -939,7 +954,7 @@ is a valid order and no recursion is needed at all.
 
 The dry run: the fixtures are cbbd at 2 and bbbab at 4 with their
 interior cells, asserted by the C\# suite and pinned the same way in
-C, Go, Java, JavaScript, Python, and Lua.
+C, Rust, Go, Java, JavaScript, Python, and Lua.
 
 + Span 1 seeds the diagonal: c, b, b, d each score 1.
 + Span 2: cb and bd differ at the ends and keep 1, while bb matches
@@ -984,9 +999,11 @@ C, Go, Java, JavaScript, Python, and Lua.
 })
 
 The corner lands at 2 over cbbd and 4 over bbbab, and the listings
-below fill the table in seven languages.
+below fill the table in eight languages.
 
 #listing("dsa/samples-c/src/Ch19/intervaldp.c", first: 19, last: 32, caption: [c, the table by increasing span, interior cells pinned])
+
+#listing("dsa/samples-rust/src/Ch19/intervaldp.rs", first: 15, last: 38, caption: [rust, the table by increasing span over byte slices, interior cells pinned])
 
 #listing("dsa/samples-go/ch19/intervaldp.go", first: 3, last: 29, caption: [go, ends match: wrap by two, else the better shrinking])
 
@@ -1003,7 +1020,7 @@ below fill the table in seven languages.
 The anchors hold in every suite that carries the topic: `bbbab`
 gives 4, `agbdba` gives 5 with `abdba` rebuilt in Python and Java,
 `cbbd` gives 2, and the degenerate family, empty, single, two
-equal, two different, pins alongside. C, C\#, and Java read
+equal, two different, pins alongside. C, Rust, C\#, and Java read
 interior cells out of the table,
 the `bab` slice of `bbbab` scoring 3 against its own reading, Java
 property-checks its rebuilt witnesses, a palindrome and a
@@ -1034,10 +1051,10 @@ agree with.
   cdraw.content((17.4, 1.5), [the table is its own proof], size: 6pt)
 })
 
-== across the seven languages
+== across the eight languages
 
 The build sizes count non-comment source lines over this chapter's
-8 featured files per language in the six younger trees, the mask
+8 featured files per language in the seven younger trees, the mask
 walk, the digit walk, the interval table, bounded, window, grouped,
 hull, and tails. The C\# row is its 3 files, the deepened original
 carrying the bounded, window, grouped, hull, and tails builds plus
@@ -1048,6 +1065,7 @@ the digit and interval walks:
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [767], [libc only], [tsp masks as 1 \<\< v, digit rows carried by hand, per-k consult meters, cross-multiplied overtaken tests],
+  [rust], [987], [rust 1.99 std], [every table a fixed array, the window deque a fixed array under head and tail cursors, the per-k meter rides an Option, digits split by division],
   [go], [429], [strconv, math], [FormatInt splits the numeral, memo keys are arrays, meters as one-field structs, min int over 4 unreachable],
   [java], [932], [jdk 27 stdlib], [every table an exact long, the hull's line and query meters ride the nested Hull class, both digit-dp properties in one file, memo keys packed into a long],
   [c\#], [348], [bcl only], [the deepened original plus the digit and interval walks, lis with parents, no tsp build],
@@ -1060,8 +1078,10 @@ sources: learn.microsoft.com, `List<T>` behind the pieces and the
 tails, `Array.Copy` snapshotting the previous item row,
 `Array.Resize` growing the hull, accessed 2026-09-12. Sample
 behavior verified by `make verify-csharp`, 19 tests in chapter 19 of
-the samples suite. The seven-language layer verifies the same way:
-8 C programs with 110 embedded checks under `make verify-c`, 8 Ch19
+the samples suite. The eight-language layer verifies the same way:
+8 C programs with 110 embedded checks under `make verify-c`, 8 rust
+programs under `run-rust-samples` with 110 Ch19 checks over
+`samples-rust/src`, 8 Ch19
 java programs with 133 checks under `run-java-samples`, 28 Go
 tests, 33 `node --test` cases, 110 Python checks across 8 files,
 and 42 Lua checks under `run.lua`.

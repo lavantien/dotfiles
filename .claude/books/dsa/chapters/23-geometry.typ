@@ -21,7 +21,7 @@ the line.
 The dry run: the fixture is the right triangle (0,0), (4,0), (4,3)
 with its swap and a collinear triple, plus one billion-scale pair,
 asserted by the C\# suite with lua pinning the billion value again,
-the other five settling for unit arms and their own segment shapes.
+the other six settling for unit arms and their own segment shapes.
 
 + Cross of (0,0), (4,0), (4,3) reads 4 × 3 - 0 × 4 = 12, twice the
   triangle's area, and the turn is counter clockwise.
@@ -44,9 +44,10 @@ the other five settling for unit arms and their own segment shapes.
 )
 
 The 999999999999999999, the value a double rounds away, is what the
-listings below keep exact in seven integer types.
+listings below keep exact in eight integer types.
 
 #listing("dsa/samples-c/src/Ch23/orientation.c", first: 21, last: 49, caption: [c, the sign of the cross, on-segment by bounding box, the four-orientation predicate])
+#listing("dsa/samples-rust/src/Ch23/orientation.rs", first: 25, last: 58, caption: [rust, the sign of the exact i64 cross from two comparisons, on-segment by bounding box, the four-orientation predicate])
 #listing("dsa/samples-go/ch23/orientation.go", first: 27, last: 58, caption: [go, the bounding-box helper and the straddle predicate over orientation signs])
 #listing("dsa/samples-java/src/Ch23/Orientation.java", first: 17, last: 50, caption: [java, the record point, `Long.signum` off the exact cross, the four-orientation predicate with bounding-box containment])
 #listing("dsa/samples/src/Ch23/Geometry.cs", first: 19, last: 36, caption: [c\#, cross product, orientation sign, collinear containment])
@@ -66,19 +67,20 @@ dropped hull corner or a missed crossing. In longs, coordinates in a
 billion-wide box keep each product under 1e18 and the cross under
 2e18, far inside the long ceiling of 9.22e18.
 
-The seven listings agree on the shape and on the answers. Every suite
-computes the sign in integer arithmetic, c in long long, go in
+The eight listings agree on the shape and on the answers. Every suite
+computes the sign in integer arithmetic, c in long long, rust in
+i64 with the sign from two comparisons, go in
 int64, java in long through `Long.signum`, lua in its native int64
 and pins the billion-scale cross at
 999999999999999999 with `math.type` reporting integer, the same
 fixture and the same number as the c\# paragraph above. The segment
 predicate is the same four orientations plus a bounding-box test in
-all seven languages, and the crossing X, (0,0)-(4,4) against
-(0,4)-(4,0) meeting at (2,2), is pinned true in c, go, java,
+all eight languages, and the crossing X, (0,0)-(4,4) against
+(0,4)-(4,0) meeting at (2,2), is pinned true in c, rust, go, java,
 javascript, python, and lua, while the c\# suite meets its crossings
 through
-the sweep section below. The c, go, and java suites all add the T
-shape
+the sweep section below. The c, rust, go, and java suites all add
+the T shape
 with a gap at the crossbar, parallel segments that never meet, and
 collinear pairs both disjoint and overlapping, java pinning the
 shared endpoint lane beside them, and lua pins its
@@ -129,7 +131,8 @@ lexicographically smallest point.
 
 The dry run: the fixture is the seven point set, the 4 by 3
 rectangle with (1,2), (2,1), and (3,2) inside, asserted by the C\#
-suite, while C and java run their own squares, go adds an exterior
+suite, while C, rust, and java run their own squares, go adds an
+exterior
 nub at (5,2), python pins a hexagon, and lua checks two properties.
 
 + Sorted by x then y the sweep enters (0,0), (0,3), (1,2), (2,1),
@@ -160,9 +163,10 @@ nub at (5,2), python pins a hexagon, and lua checks two properties.
 )
 
 The four corners (0,0), (4,0), (4,3), (0,3) are the pinned cycle,
-and the listings below build them in seven languages.
+and the listings below build them in eight languages.
 
 #listing("dsa/samples-c/src/Ch23/hull.c", first: 36, last: 60, caption: [c, two chain sweeps, popping on a non-left turn])
+#listing("dsa/samples-rust/src/Ch23/hull.rs", first: 29, last: 56, caption: [rust, two chain sweeps over Vecs, popping on a non-left turn, cross \<= 0])
 #listing("dsa/samples-go/ch23/hull.go", first: 12, last: 47, caption: [go, monotone chain, exact duplicates dropped before the sweep])
 #listing("dsa/samples-java/src/Ch23/Hull.java", first: 20, last: 51, caption: [java, the record point, the monotone chain over ArrayLists, cross \<= 0 pops])
 #listing("dsa/samples/src/Ch23/Geometry.cs", first: 38, last: 69, caption: [c\#, monotone chain, two passes, strict turns pop collinear points])
@@ -181,12 +185,13 @@ per chain, so after the n log n sort the walk is linear.
 
 Every suite pops on cross <= 0, so collinear edge points vanish and
 the hull cycle carries only corners, and the c\# shape above is the
-same code in the other six languages. The fixtures push in different
-directions: c's square with three interior points returns its four
+same code in the other seven languages. The fixtures push in
+different directions: c's square with three interior points returns
+its four
 corners and a fully collinear input degenerates to two endpoints,
-java carries that square, that collinear degenerate, python's
-centered square and six vertex hull, and its own pentagon with one
-interior point, go
+java and rust carry that square and that collinear degenerate, rust
+adding its own pentagon with one interior point, python's
+centered square and six vertex hull and its own pentagon, go
 adds an exterior nub at (5,2) to the square and pins the five vertex
 cycle, python pins a six vertex hexagon and proves duplicates
 collapse before the sweep, and lua checks two properties instead of
@@ -260,8 +265,9 @@ at most 7 others can sit above a point inside the window.
 
 The dry run: the fixture is (0,0), (3,4), (10,10), (10,9), (2,2),
 asserted by the C\# suite with lua pinning the same pair, while C,
-go, and java land diagonal neighbors, javascript floats on hypot to
-Math.SQRT2, and every suite cross-checks a brute double loop.
+rust, go, and java land diagonal neighbors, javascript floats on
+hypot to Math.SQRT2, and every suite cross-checks a brute double
+loop.
 
 + Sorted by x the array reads (0,0), (2,2), (3,4), (10,9), (10,10),
   and the top split lands after (3,4), the midpoint at x = 3.
@@ -304,9 +310,10 @@ Math.SQRT2, and every suite cross-checks a brute double loop.
 })
 
 The squared 1 between (10,9) and (10,10) is the pinned answer, and
-the listings below find it in seven languages.
+the listings below find it in eight languages.
 
 #listing("dsa/samples-c/src/Ch23/closestpair.c", first: 36, last: 74, caption: [c, the recursion with the strip insertion-sorted by y])
+#listing("dsa/samples-rust/src/Ch23/closestpair.rs", first: 36, last: 88, caption: [rust, the recursion with the strip insertion-sorted by y, squared i64 throughout, split_at_mut halves])
 #listing("dsa/samples-go/ch23/closestpair.go", first: 25, last: 78, caption: [go, y order merged through the recursion, the textbook n log n])
 #listing("dsa/samples-java/src/Ch23/Closestpair.java", first: 19, last: 64, caption: [java, squared long distances, the strip y-sorted by a comparator, the break when dy squared passes the best])
 #listing("dsa/samples/src/Ch23/Geometry.cs", first: 71, last: 126, caption: [c\#, divide and conquer closest pair, the strip scanned in y with the break])
@@ -323,19 +330,21 @@ merge instead of merging y order through the recursion, so it is
 n log^2 n against the textbook n log n, and the packing bound
 survives either way.
 
-The strip handling is where the seven builds differ, and
+The strip handling is where the eight builds differ, and
 every variant is honest about it. Go merges y order through the
-recursion and is the textbook n log n, c re-sorts the strip with an
+recursion and is the textbook n log n, c and rust re-sort the strip
+with an
 insertion sort, java re-sorts it with a plain comparator over
 squared longs, and python and lua carry a y-sorted list through the
 split, python by filtering it and lua by membership. The distance
-type splits the same way: c, java, python, and lua compare squared
+type splits the same way: c, rust, java, python, and lua compare
+squared
 integers, go keeps the int64 products but accumulates the best as a
 float64, and javascript is the one float suite, `Math.hypot`
 distances with the fixture answer asserted as exactly `Math.SQRT2`.
 Fixtures overlap where it matters: lua pins the same vertical pair
-(10,9)-(10,10) at squared distance 1 as c\#, c, go, and java all
-land on
+(10,9)-(10,10) at squared distance 1 as c\#, c, rust, go, and java
+all land on
 a squared 2 answer from diagonal neighbors, java adding a unit
 5 by 5 grid pinning 1 and a vertical line whose 4 gap squares to
 16, and every suite
@@ -401,7 +410,7 @@ compare an inserted segment against its immediate neighbors and to
 compare the pair an erasure makes newly adjacent.
 
 The dry run: the clean fixtures are asserted with identical
-literals by all seven suites, the answers are (min, max) index
+literals by all eight suites, the answers are (min, max) index
 pairs with none for a disjoint input, and the error lanes reject
 vertical segments and triple points, each tree picking its own
 instance of three non-vertical segments through one point.
@@ -433,13 +442,14 @@ instance of three non-vertical segments through one point.
   10.5), answer (0, 1).
 + The error lanes mirror the C\# ArgumentException per tree: Go
   returns an error, JavaScript and Lua raise, Python raises
-  ValueError, C reports a rejected input, Java returns minus one,
+  ValueError, C and Rust report a rejected input, Java returns
+  minus one,
   each with its own valid
   triple point instance.
 + The oracle lane: the O(n^2) pairwise orientation test agrees on
   the yes/no answer of every clean fixture, in every suite.
 + Per-tree honesty: the C\# suite pins the crossing, the disjoint
-  pair, the touch, and the seeded agreement, and the six sibling
+  pair, the touch, and the seeded agreement, and the seven sibling
   suites pin all five clean fixtures plus both error lanes.
 
 #table(
@@ -453,7 +463,7 @@ instance of three non-vertical segments through one point.
 )
 
 The pair (0, 1) at the crossing X is the pinned answer, and the
-C\# listing below sweeps it in full, the six sibling windows
+C\# listing below sweeps it in full, the seven sibling windows
 further down picking the walk up at the status.
 
 #listing("dsa/samples/src/Ch23/Geometry.cs", first: 128, last: 181, caption: [shamos-hoey sweep, endpoint events, status by height, neighbor checks])
@@ -469,11 +479,13 @@ status is a plain list, so an insertion costs a shift and the worst
 case is quadratic, and the discipline the chapter keeps is neighbors
 only, never all pairs.
 
-The six sibling builds now carry the full sweep themselves. The
+The seven sibling builds now carry the full sweep themselves. The
 windows below pick it up at the status walk, and the event sort
 sits a few lines above in each file:
 
 #listing("dsa/samples-c/src/Ch23/sweep.c", first: 185, last: 228, caption: [c, the status walk over a fixed array, binary insert by height, neighbor checks on insert, erase, and removal])
+
+#listing("dsa/samples-rust/src/Ch23/sweep.rs", first: 210, last: 254, caption: [rust, the status walk over a Vec of indices, binary insert by height, neighbor checks on insert, erase, and removal])
 
 #listing("dsa/samples-go/ch23/sweep.go", first: 81, last: 109, caption: [go, the status slice with insert and delete by height, the removal adjacency check])
 
@@ -487,18 +499,22 @@ sits a few lines above in each file:
 
 The substrate splits along the same lines as the rest of the
 chapter. C shifts the status with memmove inside a fixed array,
+Rust binary-inserts into a Vec of segment indices and finds its
+erasures by a linear scan,
 Go inserts and deletes through the slices package, Java
 binary-inserts into an ArrayList of segment indices and finds its
 erasures by indexOf, JavaScript
 splices and Python inserts into a list, both with the binary
 search inlined, and Lua moves table positions. The height compare
 and the binary insert sit in helper functions just above the
-window in C, Go, Java, and Lua, and every height compare stays an
+window in C, Rust, Go, Java, and Lua, and every height compare
+stays an
 exact
 cross multiplication, the same integer predicate the orientation
 section opened with. The triple point detector needs crossings
 as reduced fractions so distinct points never collide, integer
-triple keys in C, Go, and Python, string keys in JavaScript and
+triple keys in C, Go, and Python, a three-long tuple key in Rust,
+string keys in JavaScript and
 Lua, a tuple key in the C\# original, and in Java the reduced
 fraction carried as a three-long array compared elementwise. Each
 tree picked its
@@ -548,7 +564,7 @@ lane, so the instance differs while the contract does not.
   cdraw.content((17.3, 0.75), [the test sees whole segments], size: 6pt)
 })
 
-== across the seven languages
+== across the eight languages
 
 Featured build size counted as non-blank, non-comment lines of the
 chapter's four matrix topics, the c\# file covering all four in
@@ -559,6 +575,7 @@ one file:
   inset: 4pt,
   table.header([*language*], [*build sloc*], [*container dependency*], [*boundary note*]),
   [c], [487], [`qsort` + fixed arrays], [long long coordinates, every fixture cross-checked by brute force, the sweep over event structs and memmove shifts],
+  [rust], [598], [rust 1.99 std], [i64 points as copyable structs, split_at_mut hands the halves to the recursion, the sweep status a Vec of indices under a binary insert, rejection by minus one],
   [go], [326], [`slices`, `cmp`], [merges y order through the recursion, int64 products into a float64 best, the sweep on slices insert and delete],
   [java], [488], [jdk 27 stdlib], [records for the points and events, segments as long arrays in the sweep, `Long.signum` off the cross, the strip re-sorted by a comparator, not one double in the chapter],
   [c\#], [228], [`List<T>`, `Enumerable.OrderBy`], [one file for the whole chapter, seeded 500-point agreement],
@@ -571,10 +588,10 @@ The sweep line section measured the same way, the c\# column
 counting its region of the shared `Geometry.cs`:
 
 #table(
-  columns: (1.7fr, auto, auto, auto, auto, auto, auto, auto),
+  columns: (1.7fr, auto, auto, auto, auto, auto, auto, auto, auto),
   inset: 4pt,
-  table.header([*section*], [*c*], [*c\#*], [*go*], [*java*], [*javascript*], [*python*], [*lua*]),
-  [the sweep line], [240], [126], [175], [218], [140], [136], [190],
+  table.header([*section*], [*c*], [*rust*], [*c\#*], [*go*], [*java*], [*javascript*], [*python*], [*lua*]),
+  [the sweep line], [240], [293], [126], [175], [218], [140], [136], [190],
 )
 
 The sweep is the widest section in every tree, the status
@@ -588,8 +605,10 @@ sorting the hull input, clrs third edition chapter 33 for the sweep
 and the strip argument, go.dev for `slices.SortFunc` and `cmp.Compare`,
 developer.mozilla.org for `Math.hypot`, docs.python.org for `sorted`
 and `set`, lua.org for `table.sort` and `math.type`, accessed
-2026-09-12 and 2026-09-14. Sample behavior verified by the seven suite
-gates scoped to chapter 23: c 4 files and 51 checks, c\# 11 tests,
+2026-09-12 and 2026-09-14. Sample behavior verified by the eight
+suite gates scoped to chapter 23: c 4 files and 51 checks, rust 4
+files and 51 checks under `run-rust-samples` over `samples-rust/src`,
+c\# 11 tests,
 go 13 tests, java 4 files and 72 checks, javascript 16 tests, python
 4 files and 41 asserts, lua
 21 checks, zero skipped.

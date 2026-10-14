@@ -61,9 +61,11 @@ BigInt past its 2^53 ceiling.
 )
 
 The 120, the 159835829, and the 3 are the asserted landings, and the
-listings below build all four roads in seven languages.
+listings below build all four roads in eight languages.
 
 #listing("dsa/samples-c/src/Ch35/binom.c", first: 43, last: 78, caption: [c, both table builds, the O(1) query, the legendre sum])
+
+#listing("dsa/samples-rust/src/Ch35/binom.rs", first: 75, last: 118, caption: [rust, both table builds over two primes, the O(1) queries, the legendre sum])
 
 #listing("dsa/samples-go/ch35/binom.go", first: 28, last: 54, caption: [go, the cached table pair, the query, the 128-bit exact ladder below])
 
@@ -87,23 +89,27 @@ C(30,15) = 155117520. Exact and boundary: C(62,31) =
 465428353255261088; C(66,33) = 7219428434016265740 is the last
 central binomial under 2^63 and C(67,33) = 14226520737620288370
 crosses, java pinning it through Long.parseUnsignedLong with the
-identical decimal string and comparing unsigned, with javascript's
+identical decimal string and comparing unsigned while rust's u64
+holds the same value natively, unsigned being the type's whole
+shape, with javascript's
 own ceiling at n = 56, C(56,28) =
 7648690600760440, the last under 2^53, its ladder riding BigInt from
 there. Log and p-adic: ln C(1000,500) = 689.467261567851 within
 1e-9, the cumulative table and the lgamma road agreeing to 9e-13
 where the language has lgamma, java's stdlib shipping none so its
-twin runs a nine-coefficient lanczos series and agrees with the
+twin runs a nine-coefficient lanczos series, and rust in the same
+seat: its f64 has no lgamma either, so the twin hand-rolls the
+lanczos approximation at g = 7 and agrees with the
 summed table to 1e-9; v2 of C(100,50) = 3, read as 97 - 2
 times 47 by legendre, and the exact 30-digit value 1008913445455641
 93334812497256 pins as 2^3 times an odd number with residue
 538992043 mod 1e9+7.
 
 Two finals problems ride this section. Icpc world finals 2018
-problem D (book 10, chapter 9), gem island, prices its drop recursion
+problem D (book 11, chapter 11), gem island, prices its drop recursion
 in floats from an lnfact table because the raw binomials near
 C(999,500) overflow doubles before the division. Icpc world finals
-2023 problem B (book 10, chapter 12), schedule, searches for the
+2023 problem B (book 11, chapter 14), schedule, searches for the
 smallest k with C(k-1, ceil(k/2)) at least n, the modular road with
 the search loop living in the k-subset section below.
 
@@ -176,9 +182,11 @@ own exact ladder, C(40, 20) = 137846528820 over 21.
 })
 
 The 14, the 42, and the 6564120420 are the pinned landings, and the
-listings below build both roads in seven languages.
+listings below build both roads in eight languages.
 
 #listing("dsa/samples-c/src/Ch35/catalan.c", first: 50, last: 81, caption: [c, the closed form, the table anchors, the recurrence sweep and agreement check])
+
+#listing("dsa/samples-rust/src/Ch35/catalan.rs", first: 37, last: 63, caption: [rust, the table build, the closed form by fermat inverse, the recurrence sweep in main])
 
 #listing("dsa/samples-go/ch35/catalan.go", first: 6, last: 32, caption: [go, closed form, exact form, the recurrence])
 
@@ -203,7 +211,7 @@ which needs no division at all, and lua carries the exact ladder
 inline, C(40,20) = 137846528820 divided by 21 landing the same
 6564120420. This is a general technique section, the counting shape
 beneath the bracket section and the nesting facet of icpc world
-finals 2019 problem D (book 10, chapter 10).
+finals 2019 problem D (book 11, chapter 12).
 
 #diagram([triangulations of a convex (n+2)-gon count as C~n~: the hexagon's 14 (C~4~) with one fan drawn], length: 13pt, {
   // hexagon with a fan from vertex 0
@@ -276,9 +284,11 @@ counting the same tuples.
 )
 
 Both bounded answers, 66 and 286, survive their brute twins, and the
-listings below build the three counters in seven languages.
+listings below build the three counters in eight languages.
 
 #listing("dsa/samples-c/src/Ch35/starsbars.c", first: 51, last: 80, caption: [c, the two identities, the bounded IE loop in modular arithmetic])
+
+#listing("dsa/samples-rust/src/Ch35/starsbars.rs", first: 52, last: 88, caption: [rust, the two identities, the bounded IE loop adding p before the negative terms])
 
 #listing("dsa/samples-go/ch35/starsbars.go", first: 5, last: 33, caption: [go, the same three over the cached tables])
 
@@ -301,7 +311,7 @@ w = 30 with each at most 10 gives 286 as C(33,3) - 4 C(22,3) +
 read k = 1 as 1 exactly when n fits the cap, n = 0 into k parts as
 the one all-zero tuple, and x + y = 5 each at most 2 as 0, the
 impossible bound. The application is icpc world finals 2018 problem
-D (book 10, chapter 9) again, whose drop allocations are compositions
+D (book 11, chapter 11) again, whose drop allocations are compositions
 walking this bounded and unbounded ladder in log space.
 
 #diagram([10 stars cut by 2 bars into one of the 66 arrangements, a bounded row struck out by the IE term], length: 13pt, {
@@ -379,9 +389,11 @@ out term by term as its own check.
 })
 
 The 44, the 26, and the 61 are the pinned landings, and the listings
-below run these families in seven languages.
+below run these families in eight languages.
 
 #listing("dsa/samples-c/src/Ch35/incexc.c", first: 46, last: 72, caption: [c, the subfactorial sum and recurrence, the recurrence's agreement loop in main])
+
+#listing("dsa/samples-rust/src/Ch35/incexc.rs", first: 40, last: 66, caption: [rust, the subfactorial sum and recurrence, the agreement loop in main])
 
 #listing("dsa/samples-go/ch35/incexc.go", first: 26, last: 67, caption: [go, the derangement recurrence and the subset-sum coprime count with overflow skip])
 
@@ -404,7 +416,7 @@ terms reading 100 - 50 - 33 - 20 + 16 + 10 + 6 - 3. Squarefree up to
 empty prime set leaving all 100, a single prime leaving 100 minus
 100 over p, and the exactly-r profile on two sets of sizes 20 and 15
 sharing 8: union 27, A-only 12, B-only 7. The application is icpc
-world finals 2017 problem K (book 10, chapter 8), tarot sham boast,
+world finals 2017 problem K (book 11, chapter 10), tarot sham boast,
 which ranks predictions by first-order inclusion-exclusion terms that
 turn out identical for all strings of one length, the differences
 coming only from self-overlaps.
@@ -450,7 +462,7 @@ table of the 24 rotations.
 
 The dry run: the fixtures are the necklace and bracelet anchors,
 asserted by the C\# suite with brute canonical forms agreeing; the
-seven languages share the counts, lua by generating the rotation group
+eight languages share the counts, lua by generating the rotation group
 itself.
 
 + The bracelet fork on (6, 2) starts from the rotation half, six
@@ -493,9 +505,11 @@ itself.
 })
 
 The 13 and the 57 land with their brute twins agreeing, and the
-listings below average the group in seven languages.
+listings below average the group in eight languages.
 
 #listing("dsa/samples-c/src/Ch35/burnside.c", first: 37, last: 53, caption: [c, the necklace sum by gcd classes, the bracelet reflection families])
+
+#listing("dsa/samples-rust/src/Ch35/burnside.rs", first: 33, last: 52, caption: [rust, the necklace sum by gcd classes, the bracelet reflection families])
 
 #listing("dsa/samples-go/ch35/burnside.go", first: 3, last: 29, caption: [go, both sums in modular arithmetic through the chapter tables])
 
@@ -586,9 +600,11 @@ the k = 6 office strings, asserted by the C\# suite.
 )
 
 The 20, the reset, and the ten strings are the pinned landings, and
-the listings below run the walk in seven languages.
+the listings below run the walk in eight languages.
 
 #listing("dsa/samples-c/src/Ch35/ksubset.c", first: 55, last: 78, caption: [c, next-combination, the emit turning a tuple into the office string])
+
+#listing("dsa/samples-rust/src/Ch35/ksubset.rs", first: 61, last: 90, caption: [rust, next_comb, the emit turning a tuple into the office string])
 
 #listing("dsa/samples-go/ch35/ksubset.go", first: 9, last: 52, caption: [go, the advance and the string walk over it])
 
@@ -603,7 +619,7 @@ the listings below run the walk in seven languages.
 #listing("dsa/samples-lua/ch35_ksubset.lua", first: 9, last: 43, caption: [lua, the advance and the office strings emitted descending])
 
 The 2023/B construction rides the same walk. Icpc world finals 2023
-problem B (book 10, chapter 12), schedule, builds its candidate
+problem B (book 11, chapter 14), schedule, builds its candidate
 strings as length-k binary strings with first bit 0 and exactly
 ceil(k/2) ones among the remaining k - 1 bits, and it needs the n
 largest compatible strings. The walk over the one-positions emits
@@ -703,9 +719,11 @@ n = 2 walk below are hand-derived off the pinned 6.
 })
 
 The 6, the row 2, 3, 6, 20, 168, and the 6-set layer are the pinned
-landings, and the listings below run the brute in seven languages.
+landings, and the listings below run the brute in eight languages.
 
 #listing("dsa/samples-c/src/Ch35/sperner.c", first: 32, last: 68, caption: [c, the dedekind brute over family bitmasks, the middle layer, the antichain test])
+
+#listing("dsa/samples-rust/src/Ch35/sperner.rs", first: 24, last: 70, caption: [rust, the dedekind brute over family bitmasks with a labeled break, the middle layer, the antichain test])
 
 #listing("dsa/samples-go/ch35/sperner.go", first: 36, last: 72, caption: [go, the antichain test and the dedekind brute over set maps])
 
@@ -729,7 +747,7 @@ and never asserted as a derived number, the brute being 2^32
 families out of sample reach. The pinned counterexample reads the
 chain of the empty set inside {1} as not an antichain. The
 application is the optimality half of icpc world finals 2023
-problem B (book 10, chapter 12): its compatibility condition makes
+problem B (book 11, chapter 14): its compatibility condition makes
 the strings an antichain, so C(k-1, ceil(k/2)) is not just reachable
 but the maximum, which is why the search of the previous section is
 exactly optimal.
@@ -803,9 +821,11 @@ with the pair formula cross-checked against the sieve.
 )
 
 The 7, the four gaps, and the conductor 8 are the pinned landings,
-and the listings below run the sieve in seven languages.
+and the listings below run the sieve in eight languages.
 
 #listing("dsa/samples-c/src/Ch35/frobenius.c", first: 37, last: 72, caption: [c, the sieve with the cap, the gap scan, the conductor])
+
+#listing("dsa/samples-rust/src/Ch35/frobenius.rs", first: 24, last: 59, caption: [rust, the sieve with the cap, the gap scan, the conductor])
 
 #listing("dsa/samples-go/ch35/frobenius.go", first: 14, last: 53, caption: [go, the closed form, the sieve, the gap list])
 
@@ -827,7 +847,7 @@ gaps, conductor 44, the gap list itself pinned digit for digit. The
 edges refuse gcd(4,6) = 2 loudly, report -1 when a generator is 1
 and everything is reachable, and assert the bound: every fixture's
 conductor sits under p~max~ squared plus p~max~. The application is
-icpc world finals 2025 problem H (book 10, chapter 13), score values,
+icpc world finals 2025 problem H (book 11, chapter 15), score values,
 whose reachable scores are exactly this semigroup capped at the
 score ceiling, and past the frobenius region, bounded by the square
 of the largest denomination, exactly the multiples of the gcd
@@ -899,9 +919,11 @@ pinning the 10^9 anchor on both fast roads.
 )
 
 The standing 3 and the 926258176 are the pinned landings, and the
-listings below run all three roads in seven languages.
+listings below run all three roads in eight languages.
 
 #listing("dsa/samples-c/src/Ch35/josephus.c", first: 19, last: 31, caption: [c, the recurrence loop, the closed form by top-bit scan])
+
+#listing("dsa/samples-rust/src/Ch35/josephus.rs", first: 15, last: 29, caption: [rust, the recurrence loop, the closed form by top-bit scan])
 
 #listing("dsa/samples-go/ch35/josephus.go", first: 5, last: 21, caption: [go, the recurrence, the closed form from the top bit])
 
@@ -1105,9 +1127,11 @@ walk are hand-derived off the recurrence.
 )
 
 The full row 1, 16, 92, 232, 260, 112, 16 is the pinned landing, and
-the listings below run the dp in seven languages.
+the listings below run the dp in eight languages.
 
 #listing("dsa/samples-c/src/Ch35/bishops.c", first: 46, last: 71, caption: [c, the rolling dp over the length staircase, the color combine])
+
+#listing("dsa/samples-rust/src/Ch35/bishops.rs", first: 40, last: 66, caption: [rust, the rolling dp over the length staircase, the color combine])
 
 #listing("dsa/samples-go/ch35/bishops.go", first: 5, last: 44, caption: [go, the dp over the sorted lengths, the diagonal length frame])
 
@@ -1205,9 +1229,11 @@ four-pair strings, asserted by the C\# suite.
 )
 
 The ()((())) and the 6 are the pinned landings, and the listings
-below price the order in seven languages.
+below price the order in eight languages.
 
 #listing("dsa/samples-c/src/Ch35/brackets.c", first: 55, last: 95, caption: [c, the ballot difference, rank, unrank over the same ledger])
+
+#listing("dsa/samples-rust/src/Ch35/brackets.rs", first: 68, last: 101, caption: [rust, the ballot ledger, rank, unrank over the same tables])
 
 #listing("dsa/samples-go/ch35/brackets.go", first: 5, last: 50, caption: [go, ballot, the generator, and the rank walk])
 
@@ -1229,7 +1255,7 @@ on all 14 in both directions. Validity is the running depth that
 never dips below zero and ends at zero, the profile of () reading 0,
 1, 0, with ) ( and (() pinned invalid and unrank(0, 0) the empty
 string. The application is icpc world finals 2019 problem D (book
-9, chapter 10), circular dna, which decides per-type nesting under
+11, chapter 12), circular dna, which decides per-type nesting under
 rotation: a type is nested at the cut p exactly when its balance at
 p - 1 equals its running minimum, the depth rule of this section
 evaluated around the circle.
@@ -1309,9 +1335,11 @@ brute, asserted by the C\# suite; C carries the same row.
 })
 
 The 728 rung and the 686310291 are the pinned landings, and the
-listings below run the recurrence in seven languages.
+listings below run the recurrence in eight languages.
 
 #listing("dsa/samples-c/src/Ch35/labeled.c", first: 54, last: 74, caption: [c, the power of two over pairs, the recurrence loop modular])
+
+#listing("dsa/samples-rust/src/Ch35/labeled.rs", first: 61, last: 81, caption: [rust, the power of two over pairs, the recurrence loop adding p before the subtraction])
 
 #listing("dsa/samples-go/ch35/labeled.go", first: 13, last: 44, caption: [go, one recurrence parameterized by modulus, zero meaning exact])
 
@@ -1359,7 +1387,7 @@ the native integer, O(n^2) modular beyond.
   cdraw.content((14.6, 3.3), [O(n^2) modular], size: 6pt)
 })
 
-== across the seven languages
+== across the eight languages
 
 Featured build size counted as non-blank, non-comment lines of the
 chapter's twelve sample files per language, go test files excluded:
@@ -1369,6 +1397,7 @@ chapter's twelve sample files per language, go test files excluded:
   inset: 4pt,
   table.header([*language*], [*build sloc*], [*container dependency*], [*boundary note*]),
   [c], [1296], [static tables, family bitmasks], [modular binomials everywhere, dedekind over family bitmasks with long long, exact catalan through u64],
+  [rust], [1520], [rust 1.99 std], [C(67,33) held natively in u64 where java parses it unsigned, the lgamma road hand-rolled as a lanczos series at g = 7 where c leans on libm, dedekind over family bitmasks with a labeled break],
   [go], [621], [slices, cached table maps], [one recurrence parameterized by modulus for labeled graphs, exact binomials through bits.Div64],
   [java], [1289], [jdk 27 stdlib], [C(67,33) pinned through Long.parseUnsignedLong compared unsigned, the lgamma twin as a nine-coefficient lanczos series, sperner's dedekind over long family bitmasks],
   [c\#], [526], [linq, value tuples, class reuse], [binom, ksubset, and the ch16 and ch28 classes composed across files, dedekind refusing past n = 4],
@@ -1404,10 +1433,12 @@ carries no sperner or frobenius article; the sperner section cites
 Sperner's 1928 theorem and the LYM inequality by name, and the
 frobenius conductor bound is stated as the classical schur-type
 result. Application sources: icpc world finals 2018 problem D (book
-9, chapter 9), 2023 problem B (book 10, chapter 12), 2017 problem K
-(book 10, chapter 8), 2025 problem H (book 10, chapter 13), and 2019
-problem D (book 10, chapter 10). Sample behavior verified by the seven
-suite gates scoped to chapter 35: c 12 files and 216 checks, go 39
+11, chapter 11), 2023 problem B (book 11, chapter 14), 2017 problem K
+(book 11, chapter 10), 2025 problem H (book 11, chapter 15), and 2019
+problem D (book 11, chapter 12). Sample behavior verified by the eight
+suite gates scoped to chapter 35: c 12 files and 216 checks, rust 12
+files and 216 checks under run-rust-samples in books/dsa/samples-rust,
+go 39
 test functions, java 12 files and 216 checks under run-java-samples,
 c\# 57
 facts, javascript 36 tests and 150 asserts
