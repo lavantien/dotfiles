@@ -53,7 +53,8 @@
     "microsoft-docs@claude-plugins-official": true,
     "postman@claude-plugins-official": true,
     "claude-security@claude-plugins-official": true,
-    "math-olympiad@claude-plugins-official": true
+    "math-olympiad@claude-plugins-official": true,
+    "math-proof@claude-plugins-official": true
   },
   "alwaysThinkingEnabled": true,
   "autoUpdatesChannel": "latest",
