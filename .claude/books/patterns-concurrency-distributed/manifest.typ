@@ -1,14 +1,14 @@
-// book 11 manifest: chapter registry used by cross references and stubs
+// book 12 manifest: chapter registry used by cross references and stubs
 #let patterns = (
-  num: 11,
+  num: 12,
   volume: false,
   title: "design patterns, concurrency, and distributed systems",
   meta: (
     title: "design patterns, concurrency, and distributed systems",
     subtitle: "an engineering handbook",
     author: "Raeliosol",
-    version: "4.0",
-    volume-label: "book 11",
+    version: "5.0",
+    volume-label: "book 12",
   ),
   chapters: (
     (id: "discipline", num: 1, title: "pattern discipline"),

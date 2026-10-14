@@ -208,9 +208,9 @@ grep.
   q([the transfer method, what transfers between languages]), loc([transfer-answers, ch 40], [the transfer method]), lab([DRILL]),
   q([our shop is java: jvm gc, virtual threads, streams, checked exceptions, spring]), loc([transfer-answers, ch 40], [java section]), lab([DRILL]),
   q([our shop is rust: ownership, option and result, no gc, the traps]), loc([transfer-answers, ch 40], [rust and traps sections]), lab([DRILL]),
-  table.cell(colspan: 3)[*the performance floor: one problem, eight lanes*],
+  table.cell(colspan: 3)[*the performance floor: one problem, nine lanes*],
   q([the billion-row aggregation, the output contract, the exact integer-tenths arithmetic]), loc([onebrc, ch 41], [exact arithmetic, sqlite lane, full-scale table sections]), lab([TDD]),
-  q([the eight-lane decision ladders, hash map versus table, windowed chunk scans, the parallel junctions]), loc([onebrc, ch 41], [the seven lane sections]), lab([EWC]),
+  q([the nine-lane decision ladders, hash map versus table, windowed chunk scans, the parallel junctions]), loc([onebrc, ch 41], [the eight lane sections]), lab([EWC]),
 )
 
 #diagram([every question maps to a label; a missing row is a visible gap], length: 13pt, {
@@ -269,7 +269,7 @@ grep.
   [ch41-js], [onebrc buffer scan, windowed worker shards], [node \-\-test], [25],
 )
 
-The ch41 c, java, lua, and sqlite lanes gate through `tools/run-1brc.ps1`
+The ch41 c, rust, java, lua, and sqlite lanes gate through `tools/run-1brc.ps1`
 byte diffs, and its python lane's 60 plain asserts in `test_onebrc.py` ride
 the same runner's py leg, counts this table does not carry.
 

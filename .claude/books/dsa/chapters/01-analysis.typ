@@ -19,9 +19,9 @@ copies directly, one growth policy at a time.
 
 The dry run: the fixture is doubling growth from capacity 1, the
 step-4 contrast from capacity 4, and the all-pairs loop, asserted by
-the C, Java, JavaScript, and Lua suites with the same numbers, Python
-walks the same counters with step 1, and C\# and Go state the closed
-forms and hold counted runs to them.
+the C, Rust, Java, JavaScript, and Lua suites with the same numbers,
+Python walks the same counters with step 1, and C\# and Go state the
+closed forms and hold counted runs to them.
 
 + Nine pushes from capacity 1 grow at sizes 1, 2, 4, 8, and the
   counter folds 1 + 2 = 3, 3 + 4 = 7, 7 + 8 = 15.
@@ -50,14 +50,19 @@ forms and hold counted runs to them.
 )
 
 The 1984 against 124 is the contrast the meters pin, and the
-listings below count the same copies in seven languages.
+listings below count the same copies in eight languages.
 
 #listing("dsa/samples-c/src/Ch01/countops.c", first: 17, last: 44, caption: [c, copy totals under doubling and constant-step growth])
 
 The C suite pins the contrast from its main: 128 pushes into a
 capacity 4 buffer copy 1984 elements when capacity grows by 4 each
-time, and 124 when it doubles. Go keeps the counted doubling loop
-beside the closed form that predicts it:
+time, and 124 when it doubles. Rust folds the same three counters
+into u64 functions and names every pin at the call site:
+
+#listing("dsa/samples-rust/src/Ch01/countops.rs", first: 13, last: 45, caption: [rust, the three counters in u64, every fixture named in the check call])
+
+Go keeps the counted doubling loop beside the closed form that
+predicts it:
 
 #listing("dsa/samples-go/ch01/countops.go", first: 31, last: 45, caption: [go, the counted doubling loop and the closed form that predicts it])
 
@@ -84,7 +89,8 @@ factors the idea into a reusable counter plus closed-form cost models:
 #listing("dsa/samples-lua/ch01_countops.lua", first: 7, last: 30, caption: [lua, the two counters as local functions])
 
 Measured across the suites: the counted loops cost 15 lines in Go, 28
-in C, 34 in Java, 28 in JavaScript, 20 in Python, and 24 in Lua. The
+in C, 33 in Rust, 34 in Java, 28 in JavaScript, 20 in Python, and 24
+in Lua. The
 fixture families differ on purpose. C, Java, JavaScript, and Lua grow
 from capacity 4 with step 4, pinning 128 pushes at 1984 copied
 elements against doubling's 124. Python grows from capacity 1 and
@@ -139,7 +145,7 @@ Instrumenting the loop to count probes turns the claim into an
 inequality every index must satisfy. C hands the count back through
 an out parameter.
 
-The dry run: the fixture is 1024 sorted slots, and all seven suites
+The dry run: the fixture is 1024 sorted slots, and all eight suites
 pin the same anchors, worst present key 11 probes, absence below the
 range 10, absence above it 11.
 
@@ -177,9 +183,14 @@ range 10, absence above it 11.
 })
 
 The 10 against 11 is the anchored asymmetry, and the listings below
-carry the instrument in seven languages.
+carry the instrument in eight languages.
 
 #listing("dsa/samples-c/src/Ch01/probebin.c", first: 17, last: 33, caption: [c, floor-mid search with the probe count as an out parameter])
+
+Rust keeps the out parameter as a mutable reference and reads the
+array as a borrowed slice:
+
+#listing("dsa/samples-rust/src/Ch01/probebin.rs", first: 13, last: 29, caption: [rust, floor-mid search over a borrowed slice, the probe count through a mutable reference])
 
 #listing("dsa/samples-go/ch01/probebin.go", first: 6, last: 25, caption: [go, the probed loop and the worst-case sweep it feeds])
 
@@ -210,10 +221,11 @@ The other three languages carry the same instrument:
 
 #listing("dsa/samples-lua/ch01_probebin.lua", first: 7, last: 22, caption: [lua, two return values over one-based bounds])
 
-All seven suites pin the same anchors on 1024 slots: the worst present
+All eight suites pin the same anchors on 1024 slots: the worst present
 key costs 11 probes, absence below the range costs 10, absence above
-costs 11. C, Java, JavaScript, and Lua pin the path as well, first
-probe at 511, second at 767. Python pins that exactly one key pays the
+costs 11. C, Rust, Java, JavaScript, and Lua pin the path as well,
+first probe at 511, second at 767. Python pins that exactly one key
+pays the
 full 11, and adds an 8-slot array that resolves its low extreme in 3
 probes and an absent key in 4. Go keeps the instrument inside one
 function that reports only what the sweep needs. The return shapes
@@ -268,7 +280,7 @@ cannot avoid, Python tracemalloc snapshots. Time has
 jitter, thread switches, frequency scaling. Bytes do not.
 
 The dry run: the fixtures are the headers id+721 and seq+999 plus the
-malformed id+7x2, asserted by all seven suites on the same parse
+malformed id+7x2, asserted by all eight suites on the same parse
 values. Each tree meters the allocation lane its own honest way, and
 no lane fakes a count.
 
@@ -288,6 +300,9 @@ no lane fakes a count.
   escapes to the heap instead of staying on the stack.
 + Java counts the substring road's unavoidable fresh strings, exactly
   1 per parse, and the in-place walk leaves the counter untouched.
++ Rust counts the substring road's one heap String the same way, one
+  increment against none, std exposes no allocator hook to differencing
+  around.
 + C\# differences the thread's allocated byte count around each parse,
   strictly above 0 for the substring road and exactly 0 for the walk.
 + Python compares tracemalloc snapshots and asserts the slice road
@@ -327,6 +342,11 @@ listings below are the meters that produced it, one per tree:
 
 #listing("dsa/samples-c/src/Ch01/allocs.c", first: 53, last: 85, caption: [c, counted mallocs split the substring road from the walk])
 
+Rust has no malloc to hook either, so the substring road counts its
+own fresh String and the walk folds the borrowed bytes in place:
+
+#listing("dsa/samples-rust/src/Ch01/allocs.rs", first: 54, last: 77, caption: [rust, the substring road's one String counted by hand, the walk reads the borrowed bytes in place])
+
 #listing("dsa/samples-go/ch01/allocs.go", first: 84, last: 119, caption: [go, the sink that keeps the substring allocation observable, then both parses])
 
 The other five languages carry the same two roads with the meter each
@@ -343,11 +363,12 @@ runtime can honestly support:
 #listing("dsa/samples-lua/ch01_allocs.lua", first: 50, last: 68, caption: [lua, substring against byte walk, values and rejection only])
 
 Measured across the suites: both roads parse id+721 to 721 in all
-seven languages and seq+999 to 999 in the six new trees, and every
+eight languages and seq+999 to 999 in the seven new trees, and every
 walk rejects id+7x2.
 The meter lanes stay honest per tree. C counts mallocs, 1 against 0.
 Go pins AllocsPerRun at exactly 1 against 0. Java counts the
-substring road's fresh string as one call the walk never makes. C\#
+substring road's fresh string as one call the walk never makes. Rust
+counts that String by hand the same way. C\#
 differences the GC byte counter, strictly positive against exactly 0.
 Python's tracemalloc shows the slice road allocating strictly more
 than the walk. JavaScript and Lua stop at the values, nothing they
@@ -455,7 +476,7 @@ array costs O(1) on average.
 The 64-copy call inside the 1.27 average is what the three questions
 expose, and chapter 3 runs the same argument on real meters.
 
-== across the seven languages
+== across the eight languages
 
 The build sizes count non-comment source lines over this chapter's
 featured files. Where a language bundles its checks into the same
@@ -467,6 +488,7 @@ test project it does not, which is most of the C and Lua gap:
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [257], [libc only], [checks share the file with main, 66 of them, counters are unsigned long long],
+  [rust], [310], [rust 1.99 std], [checks share the file with main too, 66 of them, counters in u64, std exposes no allocation meter so the substring road counts its own String],
   [go], [151], [errors, strconv, strings], [the closed form shifts 1 << m inside int64, a documented sink keeps the substring road's one allocation observable],
   [java], [250], [jdk 27 stdlib], [no malloc to hook and no exposed allocation byte counter, the meter hand-counts the substring road's one fresh string, long exact since every count sits far below 2^63],
   [c\#], [85], [bcl only], [gc byte counting stays the finest meter of the seven, each tree asserts what its runtime honestly exposes],
@@ -479,8 +501,10 @@ sources: learn.microsoft.com, `GC.GetAllocatedBytesForCurrentThread`
 and `Stopwatch` api pages, `Memory<T> and Span<T>` usage guidelines,
 benchmarkdotnet docs at benchmarkdotnet.org, accessed 2026-09-08.
 Sample behavior verified by `make verify-csharp`, 10 tests in chapter
-1 of the samples suite. The seven-language layer verifies the same
-way: 3 C programs with 66 embedded checks under `make verify-c`, 17
+1 of the samples suite. The eight-language layer verifies the same
+way: 3 C programs with 66 embedded checks under `make verify-c`, 3
+rust programs under `run-rust-samples` with 66 Ch01 checks over
+`samples-rust/src`, 17
 Go tests, the java runner's 66 Ch01 checks over 3 files under
 `run-java-samples`, 20 `node --test` cases, 51 Python checks across
 3 files, and 19 Lua checks under `run.lua`.

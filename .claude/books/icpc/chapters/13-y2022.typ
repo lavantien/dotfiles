@@ -1,4 +1,4 @@
-// book 10, chapter 12: icpc world finals 2022, problems P through Z,
+// book 11, chapter 13: icpc world finals 2022, problems P through Z,
 // seven languages per problem, listings sliced from the frozen solver
 // files under books/icpc/samples*
 #import "../../theme/lib.typ": listing, callout, xref-to, diagram, cdraw
@@ -71,7 +71,7 @@ whitespace cursor over the whole buffer, skip, a signed int64
 reader, and one strtod double. C carries it as `Ch11/ch11_scan.h`,
 imported by ten of the year's eleven solvers, everything but the
 one-line Y, and it is the book's one helper that crosses years:
-chapter 13's solvers and its sphinx header and chapter 14's twelve
+chapter 14's solvers and its sphinx header and chapter 15's twelve
 solvers include it through `../Ch11/ch11_scan.h` paths, twenty-two
 importers beyond this chapter. Go keeps the same cursor once per
 package as the `scan11` struct inside the solver files, javascript,
@@ -176,7 +176,7 @@ two unknowns mod 3, the cue that turns the house wiring into an
 auxiliary graph where buttons sharing a light chain into components.
 Problem P is the 2022 face of the one free value per component
 family, and one free value per component is the trick behind
-chapter 13 problem G and chapter 14 problem K.
+chapter 14 problem G and chapter 15 problem K.
 
 The tempting alternative, Gaussian elimination over all b = 4e5
 unknowns, prices out at 4e5 cubed, 6.4e16 operations, and brute
@@ -192,7 +192,7 @@ the solver tries the consistent root values and keeps the cheapest
 press total, linear in lights plus buttons, the model the solutions
 pdf sketches on its page 2, problem at
 #link("https://icpc.global/worldfinals/problems/2022-ICPC-World-Finals/icpc2022.pdf")[icpc2022.pdf].
-Book 9's chapter 34, linear algebra, develops the gaussian
+Book 10's chapter 34, linear algebra, develops the gaussian
 elimination that solves exactly this shape of small modular system,
 of which the component propagation below is the sparse special case.
 The seven walks below all propagate with a BFS over a CSR adjacency,
@@ -345,9 +345,9 @@ answer has to come from linearity, each container's shuffles
 counted separately, the cue that asks for a membership count
 instead of a simulation. Problem Q is the 2022 face of the counting
 and expectation without enumeration family, and counting and
-expectation without enumeration is the shared core of chapter 10
-problem D, chapter 10 problem I, chapter 13 problem E, and chapter
-12 problem K.
+expectation without enumeration is the shared core of chapter 11
+problem D, chapter 11 problem I, chapter 14 problem E, and chapter
+13 problem K.
 
 Simulating placements prices out at 2^n, and any dp over joint
 stack orders inherits the same exponent, so the half-counted
@@ -515,9 +515,9 @@ the tunnel graph: what any arrangement can reach is decided by how
 the enclosures decompose, bridges against 2-edge-connected pieces,
 not by planning moves. Problem R is the 2022 face of the component
 structure and connectivity family, and the component structure and
-connectivity family runs through chapter 10 problem B, chapter 11
-problem E, chapter 11 problem H, chapter 14 problem E, and chapter
-13 problem G.
+connectivity family runs through chapter 11 problem B, chapter 12
+problem E, chapter 12 problem H, chapter 15 problem E, and chapter
+14 problem G.
 
 Search over arrangements prices out immediately, the target alone
 is one of up to (4e5)! permutations, so dropping bridges and
@@ -534,7 +534,7 @@ parity of the required relabeling automatic whenever a type repeats.
 Linear in vertices plus edges, per the solutions pdf pages 3 and 4,
 problem at
 #link("https://icpc.global/worldfinals/problems/2022-ICPC-World-Finals/icpc2022.pdf")[icpc2022.pdf].
-Book 9's chapter 39, graph connectivity and decomposition, builds
+Book 10's chapter 39, graph connectivity and decomposition, builds
 the bridge-finding and 2-edge-connected decomposition this
 drop-bridges step runs on. The seven walks find
 bridges with one iterative low-link DFS each, then part ways on the
@@ -684,8 +684,8 @@ contiguous block of banked fast walkers, the cue that the state
 must be engineered by hand rather than read off the input. Problem
 S is the 2022 face of the dp over an engineered state space
 family, and the dp over an engineered state space family spans
-chapter 13 problem J, chapter 10 problem J, chapter 11 problem I,
-and chapter 14 problem H.
+chapter 14 problem J, chapter 11 problem J, chapter 12 problem I,
+and chapter 15 problem H.
 
 The tempting alternative, Dijkstra over crossing schedules, pays
 the same state space again with a log factor on top, and any
@@ -903,8 +903,8 @@ configurations attain it, the cue that turns a continuous path
 search into enumeration over unfold-straights and corner bends.
 Problem T is the 2022 face of the geometric critical-point
 enumeration family, and geometric critical-point enumeration is the
-shared shape of chapter 13 problem D, chapter 09 problem A, chapter
-08 problem D, chapter 10 problem E, and chapter 10 problem G.
+shared shape of chapter 14 problem D, chapter 10 problem A, chapter
+11 problem D, chapter 11 problem E, and chapter 11 problem G.
 
 The tempting alternative, a dense mesh with Dijkstra over it,
 prices out at 1e6 nodes before any accuracy argument and still
@@ -925,7 +925,7 @@ base corners with each end leg minimized independently by a grid
 sweep plus ternary refinement under segment validity, plus the 16
 two-corner chains. The completion was validated against a dense
 two-parameter sweep reference on 60 random pyramid pairs with a
-worst difference of 4e-14. Book 9's chapter 36, numerical methods,
+worst difference of 4e-14. Book 10's chapter 36, numerical methods,
 builds the ternary-search refinement those corner legs are minimized
 with. Every predicate is a cross product from
 the year-local geo kit, endpoints shrink by a relative 1e-9 before
@@ -1082,7 +1082,7 @@ shape of a closed-form characterization, prove exactly which totals
 are achievable, then emit one canonical loop. Problem U is the 2022
 face of the constructive closed-form characterization family, and
 the constructive closed-form characterization family holds chapter
-12 problem B and chapter 14 problem J.
+13 problem B and chapter 15 problem J.
 
 Search prices out at 4^200000 turn sequences before
 self-avoidance even enters, and a dp over grid shapes has no budget
@@ -1270,7 +1270,7 @@ to a tie-or-beat constraint: choosing D3 is choosing a distribution
 over face values, so both queries are constrained optima over one
 achievable set, the cue that the set is a convex hull and each
 query a halfplane cut on it. Problem V is the 2022 face of the
-convex hull of achievable points family, and chapter 13 problem C
+convex hull of achievable points family, and chapter 14 problem C
 is the other convex hull of achievable points twin.
 
 Enumerating dice prices out at unbounded multisets over values to
@@ -1431,7 +1431,7 @@ recovered by excluding each suspect row in turn and keeping the one
 hypothesis whose survivors all agree, the cue of a faulty-oracle
 consistency problem. Problem W is the 2022 face of the consistency
 under a faulty oracle family, and consistency under a faulty oracle
-ties chapter 13 problem A and chapter 14 problem D together.
+ties chapter 14 problem A and chapter 15 problem D together.
 
 The tempting alternative, spending rounds hunting the lie before
 naming legs, breaks the five-question budget the deduction needs,
@@ -1638,8 +1638,8 @@ pins and bans, and the question after every action is exactly
 whether a perfect matching still exists, the cue of a
 feasibility-as-matching shape. Problem X is the 2022 face of the
 bipartite assignment feasibility family, and the bipartite
-assignment feasibility family collects chapter 09 problem C,
-chapter 14 problem B, and chapter 14 problem F.
+assignment feasibility family collects chapter 10 problem C,
+chapter 15 problem B, and chapter 15 problem F.
 
 Enumerating deals prices out at 32! over (8!)^4, about 1e17, and
 tracking one candidate deal goes wrong the first time a denial
@@ -1657,7 +1657,7 @@ everything, and the first failing action is the answer, with the
 matching cost 32 cards per action through augmenting paths, per the
 solutions pdf pages 7 and 8, problem at
 #link("https://icpc.global/worldfinals/problems/2022-ICPC-World-Finals/icpc2022.pdf")[icpc2022.pdf].
-Book 9's chapter 38, network flows ii, builds kuhn's
+Book 10's chapter 38, network flows ii, builds kuhn's
 augmenting-path bipartite matching this feasibility test runs once
 per action. Directly visible contradictions, denying a card visibly held,
 handing a card held elsewhere, laying a quartet containing someone
@@ -1800,7 +1800,7 @@ characters never change, no value dies, and the end state admits
 no further deletion, meaning square-free, and binary square-free
 strings stop at length 3, so one invariant collapses the task to
 three cases with no search at all. Problem Y is the 2022 face of
-the invariant collapse family, and chapter 13 problem I is the
+the invariant collapse family, and chapter 14 problem I is the
 other invariant collapse twin.
 
 Greedy deletion orders price out at exponentially many choice
@@ -1810,7 +1810,7 @@ to hang on, so the invariant is the only budget that closes.
 The first and last characters can never change, no character value vanishes
 entirely, and the final string admits no further deletion, meaning
 it is square-free, and binary square-free strings have length at
-most 3. Book 9's chapter 33, string algorithms ii, finds the square
+most 3. Book 10's chapter 33, string algorithms ii, finds the square
 repetitions a square-free string must avoid. So the answer is the
 single character when the input is
 uniform, the two endpoints when they differ, and the endpoints
@@ -1964,7 +1964,7 @@ list: the multiset of 2^n sums is pinned by residues mod 3 over a
 into Z_3^k and the levers are read off its projections. Problem Z
 is the 2022 face of the algebraic reduction to a small universe
 family, and algebraic reduction to a small universe covers chapter
-08 problem I and chapter 11 problem K.
+11 problem I and chapter 12 problem K.
 
 Enumerating lever lists prices out at 3^(n·k) = 3^200, and fitting
 the multiset by simulating 2^40 settings per candidate is equally
@@ -1987,7 +1987,7 @@ summing to v, which shifts the whole multiset uniformly onto the
 input, with the work dominated by 3^k times n plus 3^k, per the
 solutions pdf pages 9 and 10, problem at
 #link("https://icpc.global/worldfinals/problems/2022-ICPC-World-Finals/icpc2022.pdf")[icpc2022.pdf].
-Book 9's chapter 34, linear algebra, carries the linear-system
+Book 10's chapter 34, linear algebra, carries the linear-system
 machinery over Z_p^k this reconstruction runs on.
 Zero teams solved it in contest.
 

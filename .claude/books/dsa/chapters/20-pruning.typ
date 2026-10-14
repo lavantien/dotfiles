@@ -22,7 +22,8 @@ that may revisit cells and would loop forever without the cycle
 guard.
 
 The dry run: the fixtures are the open 3 by 3 and 4 by 4 grids,
-asserted by the C\# suite, with C carrying the call meter, 19 naive
+asserted by the C\# suite, with C, Rust, and Java carrying the call
+meter, 19 naive
 calls against 9 memoized on the 3 by 3.
 
 + The memo seeds the top row 1, 1, 1, one way into each cell, then
@@ -67,9 +68,11 @@ calls against 9 memoized on the 3 by 3.
 })
 
 The corner lands 6 both ways and the listings below build the memo,
-the pruned walk, and the simple-path count in seven languages.
+the pruned walk, and the simple-path count in eight languages.
 
 #listing("dsa/samples-c/src/Ch20/memo_vs_prune.c", first: 25, last: 50, caption: [c, naive with a call meter against the memoized walk])
+
+#listing("dsa/samples-rust/src/Ch20/memo_vs_prune.rs", first: 44, last: 72, caption: [rust, naive with a static atomic meter against the seen-flag memo])
 
 #listing("dsa/samples-go/ch20/memo_vs_prune.go", first: 38, last: 73, caption: [go, the pruned dfs, unmark on the way out is the whole trick])
 
@@ -83,18 +86,22 @@ the pruned walk, and the simple-path count in seven languages.
 
 #listing("dsa/samples-lua/ch20_memo_vs_prune.lua", first: 7, last: 44, caption: [lua, the memo table, then the dfs with its guard])
 
-The open 3 by 3 grid pins the anchor everywhere: 6 paths. C and
-Java carry the meter that makes the map a table of numbers, 19
+The open 3 by 3 grid pins the anchor everywhere: 6 paths. C, Rust,
+and Java carry the meter that makes the map a table of numbers, 19
 naive calls against 9 memoized on the 3 by 3, and on the 10 by 10
 the split is 184755 against exactly 100, one call per cell, for the
-same 48620 paths, Java adding the walled 3 by 3 to the meter table,
+same 48620 paths, Java and Rust adding the walled 3 by 3 to the
+meter table,
 9 naive calls against 8 memoized, the blocked cell returning before
 the count. With the center blocked every suite still agrees on 2,
 and
 the C\# suite adds the case the memo cannot serve, four-direction
 simple paths between two cells, where the visited set is
 load-bearing because the walk can turn back into itself: 12 simple
-paths on the open 3 by 3 against the 6 monotone ones.
+paths on the open 3 by 3 against the 6 monotone ones. Rust's fourth
+lane is the flood fill over the same seen array, 9 cells reached on
+the open grid and 8 past the wall, reachability instead of
+enumeration.
 
 #diagram([the pruning map on one grid, the memo keeps one value per cell, the visited set guards the cycle the memo cannot], length: 13pt, {
   cdraw.content((5.6, 7.8), [the same 3x3, two tools], size: 6.5pt)
@@ -137,7 +144,8 @@ board itself never exists, three flag arrays hold the whole state,
 and the undo is three assignments.
 
 The dry run: the fixture is n = 4, whose 2 solutions the C\# suite
-pins alongside 10 at n = 5 and 92 at n = 8, and C captures the
+pins alongside 10 at n = 5 and 92 at n = 8, and C, Rust, and Java
+capture the
 first placement at columns 1, 3, 0, 2.
 
 + Row 0 tries column 0 first, its branch dies below, and the first
@@ -178,9 +186,11 @@ first placement at columns 1, 3, 0, 2.
 })
 
 Two at n = 4 is the pinned count and the listings below place,
-check, and undo in seven languages.
+check, and undo in eight languages.
 
 #listing("dsa/samples-c/src/Ch20/nqueens.c", first: 24, last: 54, caption: [c, the three flag arrays, the raw permutation tree for contrast])
+
+#listing("dsa/samples-rust/src/Ch20/nqueens.rs", first: 40, last: 77, caption: [rust, the three flag arrays as struct fields, the antidiagonal written row + size - 1 - c, the raw tree for contrast])
 
 #listing("dsa/samples-go/ch20/nqueens.go", first: 8, last: 31, caption: [go, col, diag, antidiag slices, mark and unmark])
 
@@ -197,9 +207,11 @@ check, and undo in seven languages.
 The 92 anchor holds in every suite: eight queens have exactly 92
 solutions, with the small boards pinned alongside, 1, 0, 0, 2, 10,
 4 for n = 1 through 6. Lua reaches past the headline and pins 7 at
-40 and 9 at 352, Java pins 7 at 40 too, Python and Java return the
+40 and 9 at 352, Java and Rust pin 7 at 40 too, Python and Java
+return the
 actual solutions and check every one peaceful plus duplicate-free,
-with the lexicographically first pinned, and C and Java keep the
+with the lexicographically first pinned, and C, Rust, and Java keep
+the
 first 4-queens placement, columns 1, 3, 0, 2, and measure the prune
 against the raw permutation tree, 1957 nodes at n = 6 against far
 fewer pruned.
@@ -282,9 +294,11 @@ The dry run: the fixture is weights 2, 3, 4, 5 against values 3, 4,
 })
 
 Best 7 in 5 nodes against 16 brute-force subsets, and the listings
-below sort, bound, and prune in seven languages.
+below sort, bound, and prune in eight languages.
 
 #listing("dsa/samples-c/src/Ch20/bandb.c", first: 38, last: 75, caption: [c, the fractional relaxation, the dfs it gates, the dp oracle])
+
+#listing("dsa/samples-rust/src/Ch20/bandb.rs", first: 55, last: 88, caption: [rust, the fractional relaxation, the dfs it gates, the bound-disabled twin one flag away])
 
 #listing("dsa/samples-go/ch20/bandb.go", first: 17, last: 67, caption: [go, slice the item that does not fit, nodes counted])
 
@@ -299,16 +313,19 @@ below sort, bound, and prune in seven languages.
 #listing("dsa/samples-lua/ch20_bandb.lua", first: 8, last: 47, caption: [lua, the same walk, hand-traced node counts pinned])
 
 The optimums pin exactly where the suite traces them by hand. C\#,
-C, and Java hold the classic capacity-50 fixture at 220 with the
-chapter 17 dynamic program as the cross-check, C's and Java's
+C, Rust, and Java hold the classic capacity-50 fixture at 220 with
+the
+chapter 17 dynamic program as the cross-check, C's, Rust's, and
+Java's
 second fixture, four items at capacity 29, landing 135. Lua
 hand-traces its trees: weights 2, 3, 4, 5 at capacity 5 answers 7
 in exactly 5 nodes, root, two takes, two bound-pruned rejections,
 and the capacity-50 fixture in 12. JavaScript pins the same shape,
 optimum 7 in 5 nodes against 16 brute-force leaves, and Python and
 Java pin 90 in 6 nodes with the bound arithmetic exposed, the root
-bound exact at 90.0 and the one below it at 88.75. Java also runs
-its own raw twin with the bound switched off, asserting the pruned
+bound exact at 90.0 and the one below it at 88.75. Java and Rust
+also run
+their own raw twin with the bound switched off, asserting the pruned
 tree never costs a node against it. Node counts beyond the
 hand-traced ones are asserted by
 inequality only, pruned below raw and raw below the full tree,
@@ -393,6 +410,8 @@ run both walks with the leaf meter.
 
 #listing("dsa/samples-c/src/Ch20/alphabeta.c", first: 27, last: 71, caption: [c, plain minimax, then the min side stopping at alpha])
 
+#listing("dsa/samples-rust/src/Ch20/alphabeta.rs", first: 25, last: 73, caption: [rust, plain minimax, then the min side stopping at alpha, leaves metered by a static atomic])
+
 #listing("dsa/samples-go/ch20/alphabeta.go", first: 26, last: 61, caption: [go, fail-low breaks the row scan, the value unchanged])
 
 #listing("dsa/samples-java/src/Ch20/Alphabeta.java", first: 19, last: 73, caption: [java, plain minimax, then the min side stopping at alpha, every leaf metered])
@@ -409,7 +428,8 @@ The pinned tree is three groups of three leaves, 3, 12, 8, 2, 4, 6,
 14, 5, 2, with root value 3, and the meter is the lesson: plain
 minimax reads all 9 leaves, alpha-beta reads 7, the second group
 dies after its first leaf because 2 already fails low against the
-root's alpha of 3. Java adds two orderings beside the pinned tree,
+root's alpha of 3. Java and Rust add two orderings beside the pinned
+tree,
 a rising one where the window prunes nothing at all and a tied one
 where five leaf reads suffice, the child-order sensitivity stated
 as numbers. The deeper fixture agrees everywhere it pins: 27
@@ -445,7 +465,7 @@ two algorithms return the same value whatever the tree.
   cdraw.content((18.2, 0.3), [only the work shrinks], size: 6pt)
 })
 
-== across the seven languages
+== across the eight languages
 
 The build sizes count non-comment source lines over this chapter's
 four featured files per language, checks included where they share
@@ -456,6 +476,7 @@ the file:
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [325], [libc only], [flag arrays sized by constants, the raw permutation tree kept as the contrast, node counts by inequality],
+  [rust], [465], [rust 1.99 std], [meters as static atomics, flags as struct fields with the antidiagonal written row + size - 1 - c, the bound-disabled twin one flag away, the fourth lane a flood fill],
   [go], [198], [slices], [slices.SortFunc orders by density, closures carry the dfs, the brute enumerates 2^n leaves],
   [java], [585], [jdk 27 stdlib], [the raw tree beside every prune, first solutions captured, the set-based queens solver with a local Walker class, two extra alpha-beta orderings],
   [c\#], [199], [bcl only], [HashSet for the visited set, the simple-paths case the memo cannot serve, 27 and 21 hand traced],
@@ -468,8 +489,10 @@ sources: learn.microsoft.com, `HashSet<T>` for the visited set,
 `Array.Sort` comparison overloads, accessed 2026-09-08, plus the
 CLRS branch-and-bound and the Knuth alpha-beta treatment cited in
 the chapter text. Sample behavior verified by `make verify-csharp`,
-9 tests in chapter 20 of the samples suite. The seven-language
+9 tests in chapter 20 of the samples suite. The eight-language
 layer verifies the same way: 4 C programs with 51 embedded checks
-under `make verify-c`, 4 Ch20 java programs with 81 checks under
+under `make verify-c`, 4 rust programs under `run-rust-samples`
+with 51 Ch20 checks over `samples-rust/src`, 4 Ch20 java programs
+with 81 checks under
 `run-java-samples`, 9 Go tests, 8 `node --test` cases, 33 Python
 checks across 4 files, and 14 Lua checks under `run.lua`.

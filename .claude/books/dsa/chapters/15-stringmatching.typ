@@ -5,7 +5,7 @@
 Finding a pattern in text has a naive quadratic answer and a family
 of linear and near-linear machines that each precompute something
 about the pattern: borders, skip tables, rolling hashes, or a whole
-automaton. This chapter builds them in order, seven languages deep,
+automaton. This chapter builds them in order, eight languages deep,
 ending with the multi-pattern machine that scans once for every
 pattern at once.
 
@@ -20,7 +20,7 @@ two immediate mismatches, 14 total, and the overlapping hits at 0, 2,
 and 4 all surface because nothing is ever skipped.
 
 The dry run: the C\# fixture is `abc` over `abcabcabc` with the meter
-pinned at 13, and C, JavaScript, and Lua pin the same rule on the
+pinned at 13, and C, Rust, JavaScript, and Lua pin the same rule on the
 overlapping anchor, `abab` in `abababab` at 14.
 
 + Seven windows open over `abcabcabc`.
@@ -51,9 +51,11 @@ overlapping anchor, `abab` in `abababab` at 14.
 })
 
 The 13 with its 12 twin is the pinned meter pair, and the listings
-below count the same walk in seven languages.
+below count the same walk in eight languages.
 
 #listing("dsa/samples-c/src/Ch15/naive.c", first: 20, last: 36, caption: [c, every alignment tried, comparisons counted globally])
+
+#listing("dsa/samples-rust/src/Ch15/naive.rs", first: 16, last: 38, caption: [rust, every alignment tried over byte slices, the comparison meter a static atomic because a static mut needs unsafe])
 
 #listing("dsa/samples-go/ch15/naive.go", first: 5, last: 19, caption: [go, whole-window substring compare, the ground truth list])
 
@@ -69,8 +71,8 @@ below count the same walk in seven languages.
 
 Measured across the suites: every language pins the overlapping
 anchor, `abab` in `abababab` at 0, 2, and 4. The comparison meter
-splits three ways. C, Java, JavaScript, and Lua pin the 14 for that
-fixture, C\# pins the same counting rule on its own fixtures, 13 for
+splits three ways. C, Rust, Java, JavaScript, and Lua pin the 14 for
+that fixture, C\# pins the same counting rule on its own fixtures, 13 for
 `abc` in `abcabcabc` and 12 for `abc` in `abababab`, and Go compares
 whole substrings so it pins positions only. Python cross-checks every
 hit list against `str.find` advanced one past each hit, the same
@@ -149,9 +151,11 @@ that every suite carries.
 })
 
 The 0, 2, 4 off eight forward reads is the pinned scan, and the
-listings below build the table in seven languages.
+listings below build the table in eight languages.
 
 #listing("dsa/samples-c/src/Ch15/kmp.c", first: 18, last: 49, caption: [c, the failure table, then the single-pass scan])
+
+#listing("dsa/samples-rust/src/Ch15/kmp.rs", first: 15, last: 51, caption: [rust, the failure table, then the scan, the pattern length hoisted once where c called strlen inside the loop])
 
 #listing("dsa/samples-go/ch15/kmp.go", first: 3, last: 43, caption: [go, the table builder and the scan that never backs up])
 
@@ -173,8 +177,9 @@ ground-truth test cross-checks against `IndexOf` scanning.
 Every suite pins the same two anchors: the `ababa` table 0 0 1 2 3
 and the overlapping hits 0, 2, 4. The ground-truth partner differs
 by ecosystem, C\# and Python replay `IndexOf` and `str.find`, C,
-Java, and Lua carry a private naive counter, and Go and JavaScript
-hold the scan against table-driven window lists. After a hit every
+Rust, Java, and Lua carry a private naive counter, and Go and
+JavaScript hold the scan against table-driven window lists. After a
+hit every
 version
 sets the matched length to its own border rather than zero, which is
 what keeps the overlapping occurrences arriving.
@@ -237,7 +242,7 @@ lengths.
 The dry run: the C\# anchor returns first indexes only, 10 for
 `ababd` in its text, so the walk follows the C suite's skip fixture,
 `abc` over `abdbcabc`, every shift and comparison pinned, with the
-Python and Lua twins carrying the same numbers.
+Rust, Python, and Lua twins carrying the same numbers.
 
 + The table charges `a` 2 and `b` 1, absent characters the whole 3,
   the same rule as the pinned `abab` twin, `a` 1, `b` 2, else 4.
@@ -278,9 +283,11 @@ Python and Lua twins carrying the same numbers.
 })
 
 The 5 comparisons with shifts 3 then 2 is the pinned ledger, and the
-listings below carry the after-hit split in seven languages.
+listings below carry the after-hit split in eight languages.
 
 #listing("dsa/samples-c/src/Ch15/horspool.c", first: 20, last: 58, caption: [c, the skip table, tail-aligned compare, shifts recorded])
+
+#listing("dsa/samples-rust/src/Ch15/horspool.rs", first: 21, last: 63, caption: [rust, the skip table and tail compare, comparisons and shifts riding one mutable meter struct])
 
 #listing("dsa/samples-go/ch15/horspool.go", first: 8, last: 46, caption: [go, bad character table, then the stats-bearing scan])
 
@@ -295,14 +302,15 @@ listings below carry the after-hit split in seven languages.
 #listing("dsa/samples-lua/ch15_horspool.lua", first: 9, last: 45, caption: [lua, table of 256 chars, tail compare leftward])
 
 The suites disagree on purpose about what happens after a hit, and
-the disagreement is worth reading twice. C, Java, Python, and Lua
-keep shifting by the tail character's table entry even after a full
-match, so `abab` in `abababab` reports the overlapping 0, 2, 4 at 12
-comparisons, Java through a mismatch-style exit that reuses the tail
-rule after every hit. Go and JavaScript advance the whole pattern
+the disagreement is worth reading twice. C, Rust, Java, Python, and
+Lua keep shifting by the tail character's table entry even after a
+full match, so `abab` in `abababab` reports the overlapping 0, 2, 4
+at 12 comparisons, Java through a mismatch-style exit that reuses the
+tail rule after every hit, an exit C writes as a dead `j = 1` store
+the Rust twin simply drops. Go and JavaScript advance the whole pattern
 after a hit, the classic textbook advance, so the same fixture
 yields 0 and 4 and the skip counts pin instead. C\# returns the
-first hit index only. On the miss side all seven agree: an absent
+first hit index only. On the miss side all eight agree: an absent
 tail character jumps
 the full pattern length, and the pinned skip sequences, like 3 then
 2 for `abc` in `abdbcabc`, are the whole point of the table.
@@ -346,8 +354,8 @@ it is the multi-pattern and two-dimensional workhorse for the same
 rolling reason.
 
 The dry run: the C\# suite pins index agreement with `IndexOf` on its
-own text, so the walk follows the C and Lua hand-computed anchor,
-`abab` under the 1e9+7 modulus, every number below pinned.
+own text, so the walk follows the C, Rust, and Lua hand-computed
+anchor, `abab` under the 1e9+7 modulus, every number below pinned.
 
 + The pattern hash is a polynomial in base 256:
   ((97 x 256 + 98) x 256 + 97) x 256 + 98 = 1633837410, and one
@@ -385,10 +393,12 @@ own text, so the walk follows the C and Lua hand-computed anchor,
 })
 
 The 633837403 with three verifications and none spurious is the
-pinned ledger, and the listings below roll the same window in seven
+pinned ledger, and the listings below roll the same window in eight
 languages.
 
 #listing("dsa/samples-c/src/Ch15/rabinkarp.c", first: 30, last: 65, caption: [c, modulus 1e9+7, products stay under 2^64, verify on hit])
+
+#listing("dsa/samples-rust/src/Ch15/rabinkarp.rs", first: 25, last: 69, caption: [rust, the same modulus on u64, the roll adds the prime back before the subtract, exact by construction])
 
 #listing("dsa/samples-go/ch15/rabinkarp.go", first: 13, last: 60, caption: [go, mersenne 2^61-1 modulus, mulmod through bits.Mul64])
 
@@ -403,8 +413,8 @@ languages.
 #listing("dsa/samples-lua/ch15_rabinkarp.lua", first: 8, last: 49, caption: [lua, small modulus keeps every product below 2^62])
 
 The rolling hash is the chapter's first real integer-semantics
-checkpoint, and the seven suites take four different roads through
-it. C and Lua hold the modulus at 1e9+7, where both operands of
+checkpoint, and the eight suites take four different roads through
+it. C, Rust, and Lua hold the modulus at 1e9+7, where both operands of
 every product stay below about 1e9 and the product below 2^62, so a
 plain multiply and remainder is safe, in Lua specifically because
 its integers wrap silently at 64 bits. C\# and Java run the same
@@ -414,7 +424,7 @@ prefers the Mersenne prime 2^61-1, which needs a genuine 128-bit
 product from `math/bits.Mul64`. JavaScript puts the entire hash on
 BigInt with a comment at the boundary, because base 256 to the
 window length passes 2^53 after a handful of characters. Python
-needs no ceremony at all. C, Java, and Lua pin the same
+needs no ceremony at all. C, Rust, Java, and Lua pin the same
 hand-computed hash, `abab` at 1633837410 reducing to 633837403, and
 every suite reports 3 verifications and 0 spurious hits on the
 overlapping fixture.
@@ -455,9 +465,9 @@ chapter 9, plus failure links computed breadth first, which are
 exactly KMP borders generalized to the trie.
 
 The dry run: the machine is `he`, `she`, `his`, `hers` over
-`ushershehished`, all eight hits pinned by the C\# suite, and the C
-and Lua twins pin the machine itself, 10 nodes and the four named
-failure links.
+`ushershehished`, all eight hits pinned by the C\# suite, and the C,
+Rust, and Lua twins pin the machine itself, 10 nodes and the four
+named failure links.
 
 + The text reads u s h e r s h e h i s h e d, and the walk opens at
   the root with no output until the first e.
@@ -493,9 +503,11 @@ failure links.
 })
 
 The 8 hits with he inside she at all three of its stops is the pinned
-pass, and the listings below build the machine in seven languages.
+pass, and the listings below build the machine in eight languages.
 
 #listing("dsa/samples-c/src/Ch15/aho.c", first: 41, last: 73, caption: [c, the trie, then breadth-first failure links])
+
+#listing("dsa/samples-rust/src/Ch15/aho.rs", first: 55, last: 101, caption: [rust, the trie and breadth-first failure links as methods over a fixed 16-node pool])
 
 #listing("dsa/samples-go/ch15/aho.go", first: 21, last: 56, caption: [go, the trie build and map-carrying nodes])
 
@@ -517,14 +529,14 @@ This is the spam filter, virus scanner, and censorship library
 algorithm, and it is the last structure the capstone's key index
 could borrow from, prefix queries over a dictionary of stored keys.
 
-All seven suites build `he`, `she`, `his`, `hers` and pin the same
+All eight suites build `he`, `she`, `his`, `hers` and pin the same
 eight hits over `ushershehished`. The output machinery splits two
-ways, and both are correct: C, Java, JavaScript, and Lua walk the
-fail chain at search time looking for nodes that end patterns, while
-C\#, Go, and Python fold the fail node's output list into the node
-during the build, buying a flat scan with one append per link. C,
-Java, and Lua also pin the machine itself, 10 nodes and the four
-named failure links, and Python borrows `collections.deque` for the
+ways, and both are correct: C, Rust, Java, JavaScript, and Lua walk
+the fail chain at search time looking for nodes that end patterns,
+while C\#, Go, and Python fold the fail node's output list into the
+node during the build, buying a flat scan with one append per link.
+C, Rust, Java, and Lua also pin the machine itself, 10 nodes and the
+four named failure links, and Python borrows `collections.deque` for the
 breadth-first queue, the one supporting container in the chapter.
 
 #diagram([aho-corasick, a trie with failure links, one pass reports every pattern including he inside she], length: 13pt, {
@@ -585,7 +597,7 @@ breadth-first queue, the one supporting container in the chapter.
   cdraw.content((11.5, -0.75), [dashed: failure links, shaded nodes inherit their fail node's outputs], size: 6pt)
 })
 
-== across the seven languages
+== across the eight languages
 
 The build sizes count non-comment source lines over this chapter's
 five featured files per language, checks included where they share
@@ -597,6 +609,7 @@ separate test project carries them:
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [363], [libc only], [unsigned char casts index the 256-slot skip table, counts in long long, 83 checks ride in main],
+  [rust], [554], [rust 1.99 std], [byte slices carry their length so the scan hoists what c called strlen to find, the meters static atomics because static mut needs unsafe, 83 checks ride in main],
   [go], [199], [math/bits], [rabin karp mods the mersenne 2^61-1, mulmod through bits.Mul64, a match advances the whole pattern],
   [java], [476], [jdk 27 stdlib], [the 1e9+7 hash stays on plain long, every product under 2^63, the indexOf referee is non-empty-needles-only because it clamps an empty needle],
   [c\#], [190], [bcl only], [the rolling hash runs on long and adds the prime back after a subtract, horspool returns the first index],
@@ -611,8 +624,10 @@ accessed 2026-09-08, go.dev/pkg/math/bits for `Mul64`, accessed
 2026-09-14, plus the KMP, Boyer-Moore, and Aho-Corasick literature
 cited in the chapter text. Sample behavior verified by
 `make verify-csharp`, 11 tests in chapter 15 of the samples suite.
-The seven-language layer verifies the same way: 5 C programs with 83
-embedded checks under `make verify-c`, 5 Ch15 java programs with 83
+The eight-language layer verifies the same way: 5 C programs with 83
+embedded checks under `make verify-c`, 5 rust programs under
+`run-rust-samples` with 83 Ch15 checks over `samples-rust/src`, 5
+Ch15 java programs with 83
 checks under `run-java-samples`, 17 Go tests, 20 `node --test`
 cases, 49 Python checks across 5 files, and 21 Lua checks under
 `run.lua`.

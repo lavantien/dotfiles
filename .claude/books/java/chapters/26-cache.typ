@@ -259,5 +259,5 @@ fills against 1 single-flight fill, 990 of 1,000 hits over 10 keys)
 printed by the `javabook.cache` tests under the vendored junit 6.1.3
 lane, dated 2026-10-05 on tools/jdk27/build/jdk-27, 20 reported
 cores, 14 tests green three consecutive runs. The ttl, lru, and
-invalidation framing follows the go book's cache chapter, book 3,
+invalidation framing follows the go book's cache chapter, book 4,
 chapter 25, read for the parallel contracts.

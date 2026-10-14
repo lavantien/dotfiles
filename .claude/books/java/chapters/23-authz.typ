@@ -306,7 +306,7 @@ Sheet and Access Control Cheat Sheet, at cheatsheetseries.owasp.com,
 for the IDOR class and the deny-by-default guidance, and RFC 9110
 sections 15.5.1 to 15.5.4 for the 401, 403, and 404 semantics,
 accessed 2026-10-05. The go contrasts, the handler-side owner check,
-the field-level projection, and the mux-driven audit, against book 3,
+the field-level projection, and the mux-driven audit, against book 4,
 chapter 22. Verified live 2026-10-05 by the `javabook.authz` tests
 under the vendored junit 6.1.3 lane, 8 tests green three consecutive
 runs in a module of 92, covering the twelve matrix cells, the code

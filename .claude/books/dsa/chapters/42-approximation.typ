@@ -37,7 +37,7 @@ just a number.
 
 The dry run: the fixtures are the 2 exact lanes whose optima every
 ratio in this chapter divides, the 3-disjoint-edge vertex cover and
-the capacity 18 knapsack, asserted by all 6 suites with the oracles
+the capacity 18 knapsack, asserted by all 7 suites with the oracles
 built in-test.
 
 + The cover lane holds nodes a through f with edges (a, b), (c, d),
@@ -56,9 +56,10 @@ built in-test.
   the algorithm under test.
 
 The oracles pin the denominators, cover 3 and knapsack 1300, and the
-listings below build the cover lane in 7 languages.
+listings below build the cover lane in 8 languages.
 
 #listing("dsa/samples-c/src/Ch42/ratio.c", first: 35, last: 61, caption: [c, the 3 disjoint edges, the cover test, subsets in size order])
+#listing("dsa/samples-rust/src/Ch42/ratio.rs", first: 31, last: 64, caption: [rust, the 3 disjoint edges, the cover test, subsets in size order])
 #listing("dsa/samples-go/ch42/ratio.go", first: 17, last: 42, caption: [go, the mask oracle, k ascending, ones count filtering each size])
 #listing("dsa/samples-java/src/Ch42/Ratio.java", first: 35, last: 62, caption: [java, the 3 disjoint edges, the cover test, subsets in size order])
 #listing("dsa/samples/src/Ch42/Ratio.cs", first: 56, last: 80, caption: [c\#, the subset search, size then lexicographic, first cover wins])
@@ -87,7 +88,7 @@ alg x rho greater than or equal opt, cross-multiplied integers, so
 no floating point value ever sits inside an assert.
 
 The dry run: the fixtures are the tight family and the near miss,
-asserted by all 6 suites as feasibility first and ratio second.
+asserted by all 7 suites as feasibility first and ratio second.
 
 + On the 3 disjoint edges the greedy maximal matching takes all 3
   edges, the cover is both endpoints of each, 6 nodes, and the oracle
@@ -137,9 +138,10 @@ asserted by all 6 suites as feasibility first and ratio second.
 
 The 6 over 3 and the 1290 under 1300 are the 2 pinned shapes, and
 the listings below carry the exact lanes and the contract checks in
-7 languages.
+8 languages.
 
 #listing("dsa/samples-c/src/Ch42/ratio.c", first: 63, last: 90, caption: [c, the matching cover, feasibility, then 6 against 2 x 3 exactly])
+#listing("dsa/samples-rust/src/Ch42/ratio.rs", first: 66, last: 90, caption: [rust, the matching cover, feasibility, then 6 against 2 x 3 exactly])
 #listing("dsa/samples-go/ch42/ratio.go", first: 44, last: 56, caption: [go, the dp knapsack lane, 1300 in 13 lines])
 #listing("dsa/samples-java/src/Ch42/Ratio.java", first: 63, last: 95, caption: [java, the matching cover, feasibility, then 6 against 2 x 3 exactly])
 #listing("dsa/samples/src/Ch42/Ratio.cs", first: 27, last: 54, caption: [c\#, the mask knapsack oracle, withinMin, the cross-multiplied withinMax])
@@ -167,7 +169,7 @@ endpoints, so the optimum is at least the matching size, and the
 returned cover is exactly 2 matching edges' worth of vertices, 2
 per edge, hence at most twice the optimum.
 
-The dry run: the fixtures are the 4 pinned graphs, asserted by all 6
+The dry run: the fixtures are the 4 pinned graphs, asserted by all 7
 suites with feasibility, the brute oracle, and the ratio as separate
 checks.
 
@@ -234,9 +236,10 @@ checks.
 })
 
 The table and the figure agree with every suite, and the listings
-below run the scan in 7 languages.
+below run the scan in 8 languages.
 
 #listing("dsa/samples-c/src/Ch42/vc.c", first: 68, last: 90, caption: [c, the scan over the 4 pinned cases, feasibility, oracle, ratio])
+#listing("dsa/samples-rust/src/Ch42/vc.rs", first: 105, last: 133, caption: [rust, the scan over the 4 pinned cases, feasibility, oracle, ratio])
 #listing("dsa/samples-go/ch42/vc.go", first: 3, last: 21, caption: [go, the whole engine, cover as a bool slice, matched edges beside it])
 #listing("dsa/samples-java/src/Ch42/Vc.java", first: 66, last: 90, caption: [java, the scan over the 4 pinned cases, feasibility, oracle, ratio])
 #listing("dsa/samples/src/Ch42/Vc.cs", first: 14, last: 34, caption: [c\#, the greedy maximal matching returning cover and matching])
@@ -251,8 +254,9 @@ k disjoint edges and the in-order path, both shown above, and the
 second one matters more than the first because it needs only 4 nodes
 and an unlucky order. The maximum matching counterweight is its own
 lane in the python and lua suites, the middle-first path pinning
-maximal 1 against maximum 2 there, while the other 4 trees name the
-contrast and pin the maximal side alone. The same word pair returns
+maximal 1 against maximum 2 there, while the other five trees name the
+contrast and pin the maximal side alone, and rust, comment-free, pins
+the maximal side alone. The same word pair returns
 in section 10 where the locally best partition is not the best
 partition.
 
@@ -267,7 +271,7 @@ wide sets A and B wait behind it, and A with B cover everything in 2
 picks.
 
 The dry run: the fixture is the telescoping family, asserted by all
-6 suites with the per-step coverage table, the union of the picks as
+7 suites with the per-step coverage table, the union of the picks as
 feasibility, and the brute-force optimum over family subsets.
 
 + Step 1, 15 uncovered: G1 covers 8, G2 4, G3 2, G4 1, A 8, B 7. G1
@@ -335,9 +339,10 @@ feasibility, and the brute-force optimum over family subsets.
 })
 
 The 4 against 2 is the pinned landing, and the listings below run
-the greedy loop and the subset oracle in 7 languages.
+the greedy loop and the subset oracle in 8 languages.
 
 #listing("dsa/samples-c/src/Ch42/setcover.c", first: 82, last: 104, caption: [c, the greedy loop over bitmasks, the pinned coverages 8, 4, 2, 1])
+#listing("dsa/samples-rust/src/Ch42/setcover.rs", first: 75, last: 93, caption: [rust, the greedy loop over bitmasks, the pinned coverages 8, 4, 2, 1])
 #listing("dsa/samples-go/ch42/setcover.go", first: 24, last: 42, caption: [go, coverage counts as popcounts over the uncovered mask])
 #listing("dsa/samples-java/src/Ch42/Setcover.java", first: 76, last: 99, caption: [java, the greedy loop over bitmasks, the pinned coverages 8, 4, 2, 1])
 #listing("dsa/samples/src/Ch42/Setcover.cs", first: 13, last: 56, caption: [c\#, greedy with the per-step coverage table recorded beside the picks])
@@ -378,7 +383,7 @@ strict improvement so the lowest index pair wins ties, hierholzer
 from vertex 0 always taking the first unused arc, then the shortcut.
 
 The dry run: the fixtures are the 3 metric instances, asserted by
-all 6 suites with the mst, the permutation check, the recomputed
+all 7 suites with the mst, the permutation check, the recomputed
 tour length, and the ratio against the permutation oracle. The
 euler walk weights 28, 32, and 88 are pinned by 5 of the 6 trees,
 and c carries them as comments beside the pinned lengths.
@@ -452,9 +457,12 @@ and c carries them as comments beside the pinned lengths.
 })
 
 The ring collapses to its own optimum, the hex pays 1.2, and the
-listings below double the tree and walk it in 7 languages.
+listings below double the tree and walk it in 8 languages. Rust
+doubles the tree into vecs of half-edges carrying the parallel ids
+2k and 2k + 1, the multigraph c holds in fixed arrays.
 
 #listing("dsa/samples-c/src/Ch42/tsp2x.c", first: 111, last: 157, caption: [c, the doubled multigraph with parallel edge ids, hierholzer, the shortcut])
+#listing("dsa/samples-rust/src/Ch42/tsp2x.rs", first: 133, last: 186, caption: [rust, the doubled multigraph with parallel edge ids, hierholzer, the shortcut])
 #listing("dsa/samples-go/ch42/tsp2x.go", first: 55, last: 103, caption: [go, the arc list euler tour and the shortcut over first visits])
 #listing("dsa/samples-java/src/Ch42/Tsp2x.java", first: 111, last: 153, caption: [java, the doubled multigraph with parallel edge ids, hierholzer, the shortcut])
 #listing("dsa/samples/src/Ch42/Tsp2x.cs", first: 123, last: 166, caption: [c\#, the euler walk on a stack of arcs, the shortcut keeping first visits])
@@ -499,7 +507,7 @@ as consecutive elements, the lexicographically first minimum wins,
 and 720 orderings are nothing.
 
 The dry run: the fixtures are the same 3 metric instances, asserted
-by all 6 suites with the odd set, the matching weight, the tour, and
+by all 7 suites with the odd set, the matching weight, the tour, and
 the ratio as 2 x length less than or equal 3 x opt.
 
 + The ring: mst 14, a path with endpoints 6 and 7 odd, matching
@@ -575,9 +583,10 @@ the ratio as 2 x length less than or equal 3 x opt.
 
 All 3 fixtures land on their optima here, which is the honest
 reading of 1.5 at these sizes, and the listings below build the
-matching and the union in 7 languages.
+matching and the union in 8 languages.
 
 #listing("dsa/samples-c/src/Ch42/christofides.c", first: 109, last: 130, caption: [c, the minimum perfect matching over odd-set permutations])
+#listing("dsa/samples-rust/src/Ch42/christofides.rs", first: 132, last: 157, caption: [rust, the minimum perfect matching over odd-set permutations])
 #listing("dsa/samples-go/ch42/christofides.go", first: 12, last: 41, caption: [go, fix the smallest odd vertex, try every partner ascending])
 #listing("dsa/samples-java/src/Ch42/Christofides.java", first: 109, last: 130, caption: [java, the minimum perfect matching over odd-set permutations])
 #listing("dsa/samples/src/Ch42/Christofides.cs", first: 16, last: 55, caption: [c\#, the matching recursion, pairs off consecutive elements of the permutation])
@@ -607,10 +616,10 @@ of the 2 must hold at least half of it, and the returned witness is
 at least that one.
 
 The dry run: the fixture is the capacity 18 knapsack against the dp
-oracle 1300. All 6 suites assert the cross-multiplied bound, the
-density order array is pinned by the c\#, javascript, and python
-trees, the picks by every tree but c, and c pins the values and
-the k = 2 seed mask.
+oracle 1300. All 7 suites assert the cross-multiplied bound, the
+density order array is pinned by the c\#, javascript, python, and
+rust trees, the picks by every tree but c and rust, and c and rust
+pin the values and the k = 2 seed mask.
 
 + The density order pins as 9, 5, 2, 4, 8, 7, 0, 3, 1, 6, the 80 of
   item 9, the 75 of item 5, and the tied 70s by index 2, 4, 8.
@@ -642,9 +651,10 @@ the k = 2 seed mask.
 
 The 1290 under 1300 and the k = 2 recovery are pinned in every
 tree, and the listings below build the density order, the fill, and
-the enumeration in 7 languages.
+the enumeration in 8 languages.
 
 #listing("dsa/samples-c/src/Ch42/ptas.c", first: 44, last: 77, caption: [c, the cross-multiplied insertion sort, the fill from a seeded subset])
+#listing("dsa/samples-rust/src/Ch42/ptas.rs", first: 46, last: 83, caption: [rust, the cross-multiplied insertion sort, the fill from a seeded subset])
 #listing("dsa/samples-go/ch42/ptas.go", first: 12, last: 57, caption: [go, the exact comparator and the greedy with its refinement])
 #listing("dsa/samples-java/src/Ch42/Ptas.java", first: 44, last: 80, caption: [java, the cross-multiplied insertion sort in long, the fill from a seeded subset])
 #listing("dsa/samples/src/Ch42/Ptas.cs", first: 19, last: 69, caption: [c\#, density order by insertion, the fill, the best-single refinement])
@@ -678,7 +688,7 @@ over den, so the bound check, value x den at least (den - num) x
 opt, stays integer too.
 
 The dry run: the fixtures are the big instance at 4 epsilons and
-the near-tie instance at the same 4, asserted by all 6 suites with
+the near-tie instance at the same 4, asserted by all 7 suites with
 k, the value, feasibility, and the bound per eps.
 
 + On the big instance every eps is exact: eps 1 scales by k = 70,
@@ -741,9 +751,10 @@ k, the value, feasibility, and the bound per eps.
 })
 
 The ladders are the pinned values of both instances, and the
-listings below run the scaled table in 7 languages.
+listings below run the scaled table in 8 languages.
 
 #listing("dsa/samples-c/src/Ch42/ptas.c", first: 110, last: 157, caption: [c, the fptas whole: k from the eps pair, scaled profits, dp2, rebuild])
+#listing("dsa/samples-rust/src/Ch42/ptas.rs", first: 116, last: 170, caption: [rust, the fptas whole: k from the eps pair, scaled profits, dp2, rebuild])
 #listing("dsa/samples-go/ch42/ptas.go", first: 125, last: 160, caption: [go, the scale factor, the fill, the largest feasible s])
 #listing("dsa/samples-java/src/Ch42/Ptas.java", first: 118, last: 164, caption: [java, the fptas whole: k from the eps pair as num over den, scaled profits, dp2, the rebuild])
 #listing("dsa/samples/src/Ch42/Ptas.cs", first: 144, last: 190, caption: [c\#, the min-weight table over scaled profit, the backward rebuild])
@@ -774,7 +785,7 @@ pair, and first fit decreasing lands within 11/9 of the optimum plus
 2/3, Johnson's ratio with Dosa's tight constant.
 
 The dry run: the fixtures are the 5 pinned instances, asserted by
-all 6 suites as bin counts. The c tree adds the pinned ffd loads
+all 7 suites as bin counts. The c and rust trees add the pinned ffd loads
 and the factor 2 bounds, and the other 5 check that loads conserve
 the items and stay under the cap on every bin.
 
@@ -829,9 +840,10 @@ the items and stay under the cap on every bin.
 })
 
 The 6 against 5 and the pinned loads carry the section, and the
-listings below ship the 3 heuristics and the oracle in 7 languages.
+listings below ship the 3 heuristics and the oracle in 8 languages.
 
 #listing("dsa/samples-c/src/Ch42/binpack.c", first: 30, last: 75, caption: [c, first fit, the stable decreasing sort, next fit])
+#listing("dsa/samples-rust/src/Ch42/binpack.rs", first: 71, last: 122, caption: [rust, first fit, the stable decreasing sort, next fit])
 #listing("dsa/samples-go/ch42/binpack.go", first: 7, last: 43, caption: [go, the scans and the stable non-increasing sort])
 #listing("dsa/samples-java/src/Ch42/Binpack.java", first: 27, last: 77, caption: [java, first fit, the stable decreasing sort, next fit])
 #listing("dsa/samples/src/Ch42/Binpack.cs", first: 15, last: 54, caption: [c\#, the 3 scans over a growing bin list])
@@ -860,7 +872,7 @@ m, and it needs nothing but the stop condition, no order, no
 restarts, no schedule.
 
 The dry run: the fixture is k5 minus the edges a to d and d to e, 8
-edges over 5 vertices, asserted by all 6 suites with the flip count,
+edges over 5 vertices, asserted by all 7 suites with the flip count,
 the side, the oracle over all 32 assignments, and the bound.
 
 + All 5 vertices start on one side, cut 0, and the first pass flips
@@ -912,9 +924,10 @@ the side, the oracle over all 32 assignments, and the bound.
 })
 
 The 5 against 6 with the bound intact is the pinned landing, and the
-listings below run the flip driver in 7 languages.
+listings below run the flip driver in 8 languages.
 
 #listing("dsa/samples-c/src/Ch42/maxcut.c", first: 30, last: 73, caption: [c, the oracle over 32 sides, the flip loop with its guard, the checks])
+#listing("dsa/samples-rust/src/Ch42/maxcut.rs", first: 24, last: 79, caption: [rust, the oracle over 32 sides, the flip loop with its guard, the checks])
 #listing("dsa/samples-go/ch42/maxcut.go", first: 7, last: 33, caption: [go, the same driver, the order a parameter, the brute beside it])
 #listing("dsa/samples-java/src/Ch42/Maxcut.java", first: 28, last: 70, caption: [java, the oracle over 32 sides, the flip loop with its guard, the checks])
 #listing("dsa/samples/src/Ch42/Maxcut.cs", first: 25, last: 47, caption: [c\#, the pass over the fixed order, keep the flip only when it gains])
@@ -1101,25 +1114,25 @@ against an oracle in the same test, and a result that cannot say
 both of those things about itself is not an approximation, it is a
 guess.
 
-== across the seven languages
+== across the eight languages
 
 Featured build size counted as non-blank, non-comment source lines
 of the chapter's 8 sample files per language in the c, go, java,
-javascript, python, and lua trees, the c\# row counting non-blank
-lines of its 8 files, go test files excluded:
+javascript, python, and lua trees, the c\# and rust rows counting
+non-blank lines of their 8 files, go test files excluded:
 
 #table(
-  columns: (auto, auto, auto, auto, auto, auto, auto, auto, 1.6fr),
+  columns: (auto, auto, auto, auto, auto, auto, auto, auto, auto, 1.6fr),
   inset: 4pt,
-  table.header([*stem*], [*c*], [*go*], [*java*], [*c\#*], [*javascript*], [*python*], [*lua*], [*note*]),
-  [ratio], [109], [44], [112], [76], [48], [55], [90], [serves sections 1 and 2, oracle half and contract half],
-  [vc], [80], [15], [80], [46], [20], [59], [105], [go leans on ratio.go for the oracle and feasibility],
-  [setcover], [102], [62], [94], [89], [43], [57], [113], [bitmask ground in c and go, sets elsewhere],
-  [tsp2x], [182], [97], [174], [172], [121], [106], [181], [matrices restated per file in c, python, lua],
-  [christofides], [218], [54], [208], [92], [56], [115], [218], [c\# and js import the tsp2x and ch41 helpers],
-  [ptas], [182], [152], [183], [187], [115], [127], [183], [serves sections 7 and 8, greedy and both tables],
-  [binpack], [115], [63], [119], [85], [56], [72], [121], [the oracle is branch and bound at n up to 9],
-  [maxcut], [58], [43], [56], [64], [39], [57], [73], [the thinnest stem, one driver and one oracle],
+  table.header([*stem*], [*c*], [*rust*], [*go*], [*java*], [*c\#*], [*javascript*], [*python*], [*lua*], [*note*]),
+  [ratio], [109], [128], [44], [112], [76], [48], [55], [90], [serves sections 1 and 2, oracle half and contract half],
+  [vc], [80], [126], [15], [80], [46], [20], [59], [105], [go leans on ratio.go for the oracle and feasibility],
+  [setcover], [102], [104], [62], [94], [89], [43], [57], [113], [bitmask ground in c, go, and rust, sets elsewhere],
+  [tsp2x], [182], [217], [97], [174], [172], [121], [106], [181], [matrices restated per file in c, python, lua],
+  [christofides], [218], [275], [54], [208], [92], [56], [115], [218], [c\# and js import the tsp2x and ch41 helpers],
+  [ptas], [182], [206], [152], [183], [187], [115], [127], [183], [serves sections 7 and 8, greedy and both tables],
+  [binpack], [115], [170], [63], [119], [85], [56], [72], [121], [the oracle is branch and bound at n up to 9],
+  [maxcut], [58], [73], [43], [56], [64], [39], [57], [73], [the thinnest stem, one driver and one oracle],
 )
 
 The small numbers are sharing. Go's vc is 15 source lines because
@@ -1137,6 +1150,9 @@ and the run.lua check rows on top. Java restates the same way, every
 stem standalone, prim and the euler walk rebuilt inside tsp2x and
 christofides rather than imported, and its density and ratio
 comparisons ride long products cross-multiplied, never doubles.
+Rust restates the same way, every stem standalone, prim and the
+euler walk rebuilt inside tsp2x and christofides, the doubled
+multigraph as vecs of half-edge slots.
 
 The corpus placement is honest silence: the icpc book's mined
 finals problems all yielded to exact algorithms, so no chapter
@@ -1183,8 +1199,9 @@ O. Regev, "Vertex cover might be hard to approximate to within
 2-epsilon", STOC 2003, and S. Khot, G. Kindler, E. Mossel, and
 R. O'Donnell, "Optimal inapproximability results for MAX-CUT and other
 2-variable CSPs?", FOCS 2004, the 2 conditional thresholds the
-release's direct proofs replace. Sample behavior verified by the 7
+release's direct proofs replace. Sample behavior verified by the 8
 suite gates scoped to chapter 42: c 8 files and 92 checks, go 17 test
-functions, java 8 files and 224 checks under run-java-samples,
-c\# 24 facts, javascript 24 tests across 8 suites, python 8 files and
+functions, java 8 files and 224 checks under run-java-samples, rust
+8 files and 225 checks under run-rust-samples in
+books/dsa/samples-rust, c\# 24 facts, javascript 24 tests across 8 suites, python 8 files and
 184 checks, lua 37 checks, zero skipped.

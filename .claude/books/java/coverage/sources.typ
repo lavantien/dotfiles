@@ -1,4 +1,4 @@
-// official sources pinned for book 4, consolidated from the chapters'
+// official sources pinned for book 5, consolidated from the chapters'
 // own sources paragraphs, with the access dates each chapter recorded
 #let sources = (
   (topic: "java language spec, se 27, chapter 3 (lexical, keywords)", url: "https://docs.oracle.com/javase/specs/jls/se27/html/jls-3.html", accessed: "2026-10-04"),

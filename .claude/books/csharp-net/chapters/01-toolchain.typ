@@ -200,7 +200,7 @@ Top level statements are a convenience with rules: only one file per
 project may have them, any classes must come after the statements, and the
 compiler synthesizes a `Main` under the hood. For programs that grow, the
 ordinary shape with an explicit `Program.Main` returns, and that shape gets
-its full treatment in the structure chapter of book 3's Go material for
+its full treatment in the structure chapter of book 4's Go material for
 comparison, and in the idioms chapter here.
 
 == how this book verifies claims

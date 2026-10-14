@@ -16,9 +16,9 @@ copies. C keeps the whole anatomy in one struct and grows with a hand
 copy loop.
 
 The dry run: the fixture is 33 pushes into a vector born at capacity
-4, snapshotted at every growth, asserted by the C, Java, JavaScript,
-and Lua suites. Go stops the ladder at 32 pushes and 28 copies,
-Python at 16 and 12.
+4, snapshotted at every growth, asserted by the C, Rust, Java,
+JavaScript, and Lua suites. Go stops the ladder at 32 pushes and 28
+copies, Python at 16 and 12.
 
 + Pushes 1 through 4 fill the first block: size 4, capacity 4, no
   copies.
@@ -51,9 +51,14 @@ Python at 16 and 12.
 })
 
 The 60 copies over 33 pushes and the 2^5 - 1 case are pinned, and
-the listings below build the vector seven ways.
+the listings below build the vector eight ways.
 
 #listing("dsa/samples-c/src/Ch03/vector.c", first: 18, last: 41, caption: [c, the struct, the init, and the push with its grow path])
+
+Rust keeps a Vec as the backing store but grows it by hand into a
+fresh zeroed block, so the copy count stays honest:
+
+#listing("dsa/samples-rust/src/Ch03/vector.rs", first: 13, last: 45, caption: [rust, the struct, the hand-copied grow path, push])
 
 #listing("dsa/samples-go/ch03/vector.go", first: 23, last: 39, caption: [go, grow doubles and records, push rides on append])
 
@@ -132,15 +137,15 @@ Three more languages build the same structure:
 
 #listing("dsa/samples-lua/ch03_vector.lua", first: 6, last: 21, caption: [lua, init and push over a table that copies anyway])
 
-The capacity ladder is the shared anchor. C, Java, JavaScript, and
-Lua snapshot every growth, capacity 4, 8, 16, 32, 64 at sizes 4, 5,
-9, 17, 33 with cumulative copies 0, 4, 12, 28, 60, and all four pin
-the first-capacity-1 case where 31 pushes copy exactly 2^5 - 1.
+The capacity ladder is the shared anchor. C, Rust, Java, JavaScript,
+and Lua snapshot every growth, capacity 4, 8, 16, 32, 64 at sizes 4,
+5, 9, 17, 33 with cumulative copies 0, 4, 12, 28, 60, and all five
+pin the first-capacity-1 case where 31 pushes copy exactly 2^5 - 1.
 Go pins capacities 4, 8, 16, 32 with 28 copies over 32 pushes.
 Python pins caps 4, 8, 16 with 12 copies at 9 pushes, its insert
 riding spare capacity with no growth. Interior insert differs in
-mechanism, C, Java, JavaScript, and Lua push then bubble back, Go,
-Python, and C\# shift the tail, and every suite pins the same
+mechanism, C, Rust, Java, JavaScript, and Lua push then bubble back,
+Go, Python, and C\# shift the tail, and every suite pins the same
 resulting order.
 
 == the doubling argument
@@ -149,9 +154,9 @@ Chapter 1 stated the identity, this chapter runs it. C runs the two
 policies side by side, one counter each.
 
 The dry run: the fixture is the side-by-side table from capacity 4,
-row by row, asserted by the C, Java, JavaScript, and Lua suites. C\#
-exhibits 4096 appends, Python records a cost per append, Go
-cross-checks both totals.
+row by row, asserted by the C, Rust, Java, JavaScript, and Lua
+suites. C\# exhibits 4096 appends, Python records a cost per append,
+Go cross-checks both totals.
 
 + One push and four pushes copy nothing: both policies still inside
   the first block.
@@ -179,9 +184,14 @@ cross-checks both totals.
 )
 
 The 4095 copies under one per append is the exhibit the tests pin
-exactly, and the listings below run the race in seven languages.
+exactly, and the listings below run the race in eight languages.
 
 #listing("dsa/samples-c/src/Ch03/growth.c", first: 17, last: 42, caption: [c, both counters, doubling against constant step])
+
+Rust walks the table row by row, both counters as while loops over
+u64:
+
+#listing("dsa/samples-rust/src/Ch03/growth.rs", first: 13, last: 35, caption: [rust, both counters, doubling against constant step])
 
 #listing("dsa/samples-go/ch03/growth.go", first: 9, last: 34, caption: [go, both policies as plain counted loops])
 
@@ -241,8 +251,9 @@ Three more languages run the same race:
 
 #listing("dsa/samples-lua/ch03_growth.lua", first: 6, last: 28, caption: [lua, both counters in while loops])
 
-The numbers line up wherever the topic runs. C, Java, JavaScript,
-and Lua pin the side-by-side table, 28 against 40 copies at 17
+The numbers line up wherever the topic runs. C, Rust, Java,
+JavaScript, and Lua pin the side-by-side table, 28 against 40 copies
+at 17
 appends, 124 against 544 at 65, and the bound, doubling never above
 4 copies per append up to 200 while step growth pays 1984 for 128
 appends. Python records a cost per append, 4 then 8 on the doubling
@@ -339,7 +350,7 @@ pins its final order.
 The 124750 against 500 is the trade at the test's scale, arrays
 first until elements move by reference.
 
-== across the seven languages
+== across the eight languages
 
 Build sizes count non-comment source lines over the featured files;
 bundled checks count where the language puts them in the same file:
@@ -349,6 +360,7 @@ bundled checks count where the language puts them in the same file:
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [138], [libc + malloc], [the grow path hand copies and frees, copy totals in unsigned long long],
+  [rust], [164], [rust 1.99 std], [the grow path hand copies into a fresh zeroed Vec, the std type's own growth would hide the taught count, 31 checks in 2 files],
   [go], [76], [fmt for errors], [append does the copy, the count still records len at each grow],
   [java], [127], [jdk 27 stdlib], [ArrayList left out because it hides the taught growth, the vec is a static class with long counters, insert rides push then bubble],
   [c\#], [92], [bcl only], [generic vector, the (uint) cast folds the negative check into the bound],
@@ -361,7 +373,9 @@ sources: learn.microsoft.com, `List<T>` api page including the growth
 remarks, `ArrayPool<T>`, `Array.Resize`, capacity management guidance
 in the performance docs, accessed 2026-09-08. Sample behavior
 verified by `make verify-csharp`, 9 tests in chapter 3 of the samples
-suite. The seven-language layer verifies the same way: 2 C programs
-under `make verify-c`, 8 Go tests, the java runner's 31 Ch03 checks
+suite. The eight-language layer verifies the same way: 2 C programs
+under `make verify-c`, 2 rust programs under `run-rust-samples` with
+31 Ch03 checks over `samples-rust/src`, 8 Go tests, the java runner's
+31 Ch03 checks
 over 2 files under `run-java-samples`, 6 `node --test` cases, 20
 Python checks across 2 files, and 8 Lua checks under `run.lua`.

@@ -5,8 +5,9 @@
 
 Creation gravitates toward the plain in every tree this book runs. Go
 builds a struct literal with named fields, C an aggregate initializer,
-java a constructor over plain fields, C\# an object initializer,
-javascript and lua a literal object or table, python a call with
+rust a struct expression that names every field, java a constructor
+over plain fields, C\# an object initializer, javascript and lua a
+literal object or table, python a call with
 keyword arguments, and each form is constructor, builder, and
 configuration file in one. The creational
 patterns that earn their keep are the ones solving a problem the plain
@@ -19,7 +20,8 @@ collapsing duplicates of unbounded input.
 The `New` prefix convention is the whole factory story for most go
 types. A function, unlike a constructor in a class language, can
 refuse, and every tree refuses in its own grain, a `(T, error)` pair
-in go, a reason string beside an untouched out struct in C, a thrown
+in go, a reason string beside an untouched out struct in C, a
+`Result` carrying the reason in rust, a thrown
 exception in java, C\#, javascript, and python, nil with a message in
 lua. Nothing stops a type from having several:
 
@@ -70,6 +72,8 @@ both verified against the same implementation.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch02/options.c", first: 27, last: 73, caption: [C, no closures, an option is an apply function pointer beside its captured argument])
 
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch02/options.rs", first: 21, last: 65, caption: [Rust, an option is a boxed closure returning Result, the fold wraps refusal in the server name])
+
 #listing("patterns-concurrency-distributed/samples/ch02/creational.go", first: 20, last: 30, caption: [Go, an option is a closure over one field])
 
 #listing("patterns-concurrency-distributed/samples/ch02/creational.go", first: 46, last: 56, caption: [Go, defaults in one place, options applied in order])
@@ -89,7 +93,11 @@ reports why it cannot, and `NewServer` seeds the defaults and folds
 the options in, so partial application is impossible to get wrong. C
 has no closures, so its option is an apply function pointer beside a
 pointer to the caller-owned argument, the captured state a closure
-would hide written out by hand. C\# mirrors go one to one because a
+would hide written out by hand. Rust has closures but one static type
+per function, so heterogeneous options meet in a
+`Box<dyn Fn(&mut Server) -> Result<(), String>>`, one allocation and
+one virtual call per knob buying the single signature the fold needs.
+C\# mirrors go one to one because a
 lambda over the parameter is the same closure, and java is one lane
 over: its `Option` is a single-method interface, so the lambda is the
 option, returning null when applied or the reason when refusing. The
@@ -129,7 +137,7 @@ The dry run: the fixture walks `Method("")` then `URL("ftp://x")`
 into one build that fails with a single error naming both the empty
 method and the refused url, while a good build lands its method and
 url with the unset header and body fields left at zero. The
-both-names reading is pinned by the six new trees, the frozen go
+both-names reading is pinned by the seven new trees, the frozen go
 test pins that the join exists and that the url reason rides it,
 both verified against the same implementation.
 
@@ -139,6 +147,8 @@ both verified against the same implementation.
   ride along, and build stays the single validation point.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch02/builder.c", first: 48, last: 91, caption: [C, issues collect in a fixed array, build joins them into one message])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch02/builder.rs", first: 37, last: 81, caption: [Rust, each step takes self by value and hands it back, build joins the issue vec with a semicolon])
 
 #listing("patterns-concurrency-distributed/samples/ch02/creational.go", first: 90, last: 109, caption: [Go, collect issues, validate once at build])
 
@@ -156,8 +166,12 @@ both verified against the same implementation.
 The siblings spell the same join in their own error idioms,
 `String.join` inside a thrown `BuildError` in java, `string.Join`
 over the issue list in C\#, `table.concat` in lua, a `BuildError`
-carrying every issue in python, arrays of strings in C and message
-arrays joined with a newline in javascript. What never varies is the
+carrying every issue in python, a `Vec<String>` folded into one
+`Err` string with `join("; ")` in rust, arrays of strings in C and
+message arrays joined with a newline in javascript. Rust's chain also
+consumes itself, every step takes `self` by value and returns it, so
+a half-built builder cannot be branched to a second use the way a
+shared mutable one can. What never varies is the
 round trip: all the mistakes, one error, one fix cycle.
 
 #flow(
@@ -180,7 +194,8 @@ Lazy creation is `sync.OnceValue` since go 1.21, and it replaced a
 page of double checked locking boilerplate with one call. Every tree
 has a native once or builds one from a lock: C's `call_once` over a
 `once_flag` is the standard's own, the same C23 threads.h discipline
-#xref-to("c-os-cloud", "threads") teaches, java ships no
+#xref-to("c-os-cloud", "threads") teaches, rust's `OnceLock` takes
+the initializer inline as `get_or_init`, java ships no
 `OnceValue`, so its `Once<T>` is one synchronized method over a done
 flag, C\# wraps `Lazy<T>` in `ExecutionAndPublication` mode,
 javascript's memo closure needs no lock because one realm runs one
@@ -191,8 +206,9 @@ until the value exists:
 The dry run: the parse runs on the first call and never again, and
 every later caller reads the same payload, alpha 0, beta 1, gamma 2.
 The concurrent half is pinned by the threaded lanes and lua's
-scripted overlap, 8 callers in C, 8 more behind a `CyclicBarrier` in
-java, 20 racing tasks in C\#, 20 behind a barrier in python, 20
+scripted overlap, 8 callers in C, 8 scoped threads in rust, 8 more
+behind a `CyclicBarrier` in java, 20 racing tasks in C\#, 20 behind a
+barrier in python, 20
 overlapping coroutines in lua, all at exactly one parse.
 The frozen go test pins the sequential once-only property, the
 concurrent walks and their counting are pinned by the six new
@@ -206,6 +222,8 @@ trees.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch02/lazy.c", first: 27, last: 46, caption: [C, call_once over a once_flag, the payload built under the flag, every caller reads it])
 
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch02/lazy.rs", first: 22, last: 50, caption: [Rust, OnceLock::get_or_init runs the parse once, the static hands every caller the same reference])
+
 #listing("patterns-concurrency-distributed/samples/ch02/creational.go", first: 111, last: 119, caption: [Go, parse happens on first call, never again, concurrent callers safe])
 
 #listing("patterns-concurrency-distributed/samples-java/src/Ch02/Lazy.java", first: 20, last: 50, caption: [Java, no OnceValue in the jdk, a generic Once whose synchronized call holds a done flag and the value])
@@ -218,9 +236,11 @@ trees.
 
 #listing("patterns-concurrency-distributed/samples-lua/ch02_lazy.lua", first: 61, last: 87, caption: [Lua, idle, running, done, overlapping callers park and wake holding the value])
 
-The seven spellings differ in who owns the hard part: go and C\#
+The eight spellings differ in who owns the hard part: go and C\#
 delegate it to the runtime, `OnceValue` and `Lazy<T>`, C carries
-`call_once` out of threads.h, java pays a monitor it writes itself,
+`call_once` out of threads.h, rust hands the closure to `OnceLock`
+and the payload out as `&'static`, java pays a monitor it writes
+itself,
 one `synchronized` on the call, python pays a lock it writes itself,
 javascript gets correctness free from the single thread, and lua's
 scheduler turns once into a state machine. The replay contract is
@@ -249,8 +269,10 @@ holds it.
 == prototype as an explicit clone
 
 There is no clone protocol in go, no `MemberwiseClone`, no copy
-constructor, and none of the six sibling trees ships one either.
-The prototype pattern survives as a hand written method, and the
+constructor, and rust is the one sibling that ships one, its `Clone`
+trait derived when fields copy and written by hand when they
+reference. The prototype pattern survives elsewhere as a hand written
+method, and the
 only interesting part is depth:
 
 The dry run: a server clone renamed to core with retries pushed to 9
@@ -267,6 +289,8 @@ every lane re-copies by hand.
   whose writes do leak through the shared list or array.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch02/prototype.c", first: 26, last: 53, caption: [C, the value struct clones by assignment, the pointer array by hand])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch02/prototype.rs", first: 15, last: 34, caption: [Rust, derive Clone for the value struct, the pool's manual impl re-copies its Vec])
 
 #listing("patterns-concurrency-distributed/samples/ch02/creational.go", first: 158, last: 172, caption: [Go, copy the struct, then fix every reference field by hand])
 
@@ -285,7 +309,11 @@ reference ones, slices, maps, pointers, and the other class trees
 meet the same rule one level down: a field-by-field java copy would
 alias the same `List`, javascript's spread and slice copy exactly
 one level, python's assignment shares every mutable field, and lua's
-tables are references. For value shaped types with no
+tables are references. Rust makes the leak unrepresentable: cloning a
+`Vec<String>` is a deep copy by definition, so the villain the other
+lanes stage cannot be written without reaching for a shared handle,
+which is exactly what the sample's `Rc` lane demonstrates instead.
+For value shaped types with no
 reference fields, plain assignment is the clone and a method is
 ceremony, which is why the C lane's server clone is `return *s`.
 
@@ -335,6 +363,8 @@ value equality everywhere.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch02/flyweight.c", first: 21, last: 52, caption: [C, the canonical pointer is the handle, one allocation per distinct word])
 
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch02/flyweight.rs", first: 15, last: 52, caption: [Rust, `Rc<str>` is the handle, the table hands every equal word the same allocation])
+
 #listing("patterns-concurrency-distributed/samples/ch02/creational.go", first: 137, last: 152, caption: [Go, interning strings through globally unique handles])
 
 #listing("patterns-concurrency-distributed/samples-java/src/Ch02/Flyweight.java", first: 18, last: 41, caption: [Java, add returns the first-seen reference, so equal words compare true under ==])
@@ -349,7 +379,8 @@ value equality everywhere.
 
 `unique.Make` returns the same `Handle[string]` for equal strings,
 and the handle comparison is pointer shaped, not string shaped: C
-compares canonical pointers, java `==` over the first-seen
+compares canonical pointers, rust runs `Rc::ptr_eq` over the shared
+`Rc<str>` allocation, java `==` over the first-seen
 references, C\# `ReferenceEquals` over interned strings, python the
 `is` operator over interned objects, javascript value equality
 because the string already is the handle, lua identity of the one
@@ -359,6 +390,8 @@ runtime cannot know when the last handle dies, so this is for long
 lived duplicates, plugin names, cache keys, tag sets, not for
 unbounded user input. The C lane owns its table and frees it, the
 one spelling where the flyweight's lifetime stays the programmer's.
+Rust's `Rc` counts its holders, so the handle dies with its last
+user and lifetime rides the value instead of the table.
 Chapter 14's metrics dedup uses the same trick for label values.
 
 #diagram([equal values converge on one handle, the map holds the distinct few], length: 13pt, {
@@ -384,7 +417,8 @@ Chapter 14's metrics dedup uses the same trick for label values.
   unzeroed, `bytes.Buffer` works unzeroed, `http.Client` works
   unzeroed. The siblings have their own free starts, field defaults
   in C\#, undefined until assigned in javascript, class attributes in
-  python, the empty table in lua, but go is the one that turns the
+  python, the empty table in lua, the opt-in `Default` trait in rust,
+  but go is the one that turns the
   stance into a stated rule. The best creational pattern is often a
   constructor that does nothing but document that.
 ])
@@ -401,7 +435,7 @@ Chapter 14's metrics dedup uses the same trick for label values.
   cdraw.content((16.75, 1.3), [only documents this], size: 6pt)
 })
 
-== across the seven languages
+== across the eight languages
 
 The build sizes count non-comment source lines, the go column the
 chapter's one frozen file:
@@ -412,6 +446,8 @@ chapter's one frozen file:
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [444], [libc plus threads.h],
   [call_once over once_flag, clones by assignment, references re-copied by hand],
+  [rust], [454], [std only, no crates],
+  [boxed-closure options refusing with Result, OnceLock lazies, Clone as the one protocol, `Rc<str>` handles],
   [go], [132], [stdlib],
   [Option closures, OnceValue lazy, unique.Make hands the flyweight its handle],
   [java], [354], [jdk 27 stdlib],
@@ -429,8 +465,10 @@ chapter's one frozen file:
 sources: go.dev/pkg/sync for the `Once` family, go.dev/pkg/unique for
 handle semantics and the interning cost note, go.dev/pkg/errors for
 `Join`, go.dev/doc/effective_go composite literals, accessed
-2026-09-08. Verified by the seven chapter legs: 5 Ch02 C programs
-with 64 embedded checks, `go test` at 7 tests in
+2026-09-08. Verified by the eight chapter legs: 5 Ch02 C programs
+with 64 embedded checks, 5 Ch02 rust programs in `samples-rust/src`
+with 36 embedded checks under `run-rust-samples`, `go test` at 7
+tests in
 `patternsbook/ch02`, 5 Ch02 java programs with 35 checks under
 `run-java-samples`, 16 xunit facts, node's 12 cases in
 `test/ch02.test.mjs`, 5 python modules with 40 embedded checks, and

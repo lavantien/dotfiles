@@ -33,7 +33,7 @@ backward twin at the odd neighbor, so xor with 1 always finds the
 reverse arc.
 
 The dry run: the fixture is the pinch network, source 0, sink 6, its
-arcs and answers pinned word for word by all seven suites, and the walk
+arcs and answers pinned word for word by all eight suites, and the walk
 replays the phases on those capacities.
 
 + The first bfs levels the graph: 1 and 2 land level 1, 3 and 4 land
@@ -81,10 +81,11 @@ replays the phases on those capacities.
   cdraw.content((9.6, -1.0), [cut side {0, 1, 2, 3, 4} at value 13], size: 6pt)
 })
 
-The 13 with the cut side {0, 1, 2, 3, 4} is the seven-suite pin, and
-the listings below run these phases in seven languages.
+The 13 with the cut side {0, 1, 2, 3, 4} is the eight-suite pin, and
+the listings below run these phases in eight languages.
 
 #listing("dsa/samples-c/src/Ch38/dinic.c", first: 47, last: 93, caption: [c, the level bfs, the blocking dfs with the pointer, the phase loop])
+#listing("dsa/samples-rust/src/Ch38/dinic.rs", first: 63, last: 108, caption: [rust, the level bfs, the blocking dfs with the xor-1 twin arcs, the phase loop in maxflow])
 #listing("dsa/samples-go/ch38/dinic.go", first: 30, last: 82, caption: [go, levels by bfs, blocking flow by recursion over the level graph])
 #listing("dsa/samples-java/src/Ch38/Dinic.java", first: 45, last: 93, caption: [java, the level bfs, the blocking dfs with the pointer, the phase loop])
 #listing("dsa/samples/src/Ch38/Flow2.cs", first: 31, last: 82, caption: [c\#, the same phase loop, the nested dfs abandons each dead arc once])
@@ -96,7 +97,7 @@ The min cut falls out of the last residual graph: the set of vertices
 still reachable from the source is exactly the source side of a
 minimum cut, and every solver here reports it.
 
-The fixture families pin identical numbers in all seven languages. The
+The fixture families pin identical numbers in all eight languages. The
 pinch network, source 0, sink 6, arcs (0,1,10), (0,2,10), (1,3,4),
 (1,4,8), (2,3,9), (2,4,6), (3,6,10), (4,6,3), flows 13 with the cut
 side {0,1,2,3,4}: the arc 4 to 6 of capacity 3 is the pinch. Parallel
@@ -149,8 +150,7 @@ negative once the state crosses 2^31 and the arc list drifts.
   cdraw.content((16.4, 2.6), [cut side: residual-reachable], size: 6pt)
 })
 
-The application is icpc world finals 2017 problem J (book 10, chapter
-8), son of pipe stream, whose water-equivalent network is answered by
+The application is icpc world finals 2017 problem J (book 11, chapter 10), son of pipe stream, whose water-equivalent network is answered by
 four dinic runs over exactly this residual machinery, and the F3
 fixture above is its crafted sample.
 
@@ -169,7 +169,7 @@ everything that arrives, and the excess at the sink is the flow value.
 
 The dry run: the fixture is the parallel network, twin arcs (0,1,3)
 and (0,1,4) folding onto one dense cell of 7 against the 5 bottleneck,
-pinned at 5 by all seven suites; the edge family splits after it, python
+pinned at 5 by all eight suites; the edge family splits after it, python
 carrying the unreachable sink at 0 and the single arc of capacity 7.
 
 + Saturation pushes the whole folded 7 onto vertex 1 and leaves the
@@ -214,10 +214,11 @@ carrying the unreachable sink at 0 and the single arc of capacity 7.
   cdraw.content((6.0, -0.7), [sink excess 5, conservation restored], size: 6pt)
 })
 
-The 5 with the stranded units walked home is the seven-suite pin, and
-the listings below discharge the same fixtures in seven languages.
+The 5 with the stranded units walked home is the eight-suite pin, and
+the listings below discharge the same fixtures in eight languages.
 
 #listing("dsa/samples-c/src/Ch38/pushrelabel.c", first: 46, last: 96, caption: [c, saturate the source, the fifo discharge loop, relabel to 1 + the min neighbor height])
+#listing("dsa/samples-rust/src/Ch38/pushrelabel.rs", first: 61, last: 115, caption: [rust, saturate the source, the fifo discharge loop over the ring queue, relabel to 1 + the min neighbor height])
 #listing("dsa/samples-go/ch38/pushrelabel.go", first: 22, last: 70, caption: [go, saturate, discharge, relabel, the dense capacity matrix folding parallel arcs])
 #listing("dsa/samples-java/src/Ch38/Pushrelabel.java", first: 44, last: 96, caption: [java, saturate the source, the fifo discharge loop, relabel to 1 + the min neighbor height])
 #listing("dsa/samples/src/Ch38/Flow2.cs", first: 143, last: 172, caption: [c\#, the same discharge loop, the relabel as a linq minimum])
@@ -287,11 +288,11 @@ production upgrade and stays prose.
 
 The dry run: the fixture is the layered network, arcs (0,1,3,1),
 (0,2,2,1), (1,3,3,1), (2,3,2,2), (3,4,4,1), (1,4,1,4), pinned at
-(5, 19) by all seven suites.
+(5, 19) by all eight suites.
 
 + Round 1 prices the route 0, 1, 3, 4 at 1 + 1 + 1 = 3, the
   bottleneck min(3, 3, 4) = 3 fills 0 to 1 and 1 to 3 exactly, and
-  the round books 3 × 3 = 9.
+  the round books 4 × 3 = 9.
 + Round 2 rides 0, 2, 3, 4 at 1 + 2 + 1 = 4, where the 3 to 4 arc is
   down to 4 - 3 = 1, so the push caps at 1 and the books read
   9 + 4 = 13.
@@ -315,10 +316,11 @@ The dry run: the fixture is the layered network, arcs (0,1,3,1),
   [3], [0-2-3-1-4], [1], [6], [19],
 )
 
-The (5, 19) with its forced expensive unit is the seven-suite pin, and
-the listings below run these rounds in seven languages.
+The (5, 19) with its forced expensive unit is the eight-suite pin, and
+the listings below run these rounds in eight languages.
 
 #listing("dsa/samples-c/src/Ch38/mcmf.c", first: 53, last: 98, caption: [c, the spfa loop and the augmentation walk, flow times path cost accumulated])
+#listing("dsa/samples-rust/src/Ch38/mcmf.rs", first: 73, last: 125, caption: [rust, the spfa loop and the augmentation walk, flow times path cost accumulated])
 #listing("dsa/samples-go/ch38/mcmf.go", first: 35, last: 84, caption: [go, spfa over the residual, the two walks that push and account])
 #listing("dsa/samples-java/src/Ch38/Mcmf.java", first: 53, last: 96, caption: [java, the spfa loop and the augmentation walk, flow times path cost accumulated])
 #listing("dsa/samples/src/Ch38/Costs2.cs", first: 34, last: 82, caption: [c\#, the same rounds, the bottleneck pushed along the parent-arc chain])
@@ -369,8 +371,7 @@ the demands transform below handles honestly.
   cdraw.content((16.8, 2.2), [o(f v e) per spfa round], size: 6pt)
 })
 
-The application is icpc world finals 2018 problem C (book 10, chapter
-9), conquer the world, a min-cost flow on a tree whose finals solution
+The application is icpc world finals 2018 problem C (book 11, chapter 11), conquer the world, a min-cost flow on a tree whose finals solution
 runs a convex dp with heaps. This section pins the direct flow
 formulation the dp replaces.
 
@@ -390,7 +391,7 @@ Recovery reads each arc's true flow off its backward twin plus l.
 
 The dry run: the fixture is the three-arc chain with bounds
 \[1,2\], \[1,3\], \[2,2\] from source 0 to sink 3, feasible with every
-arc forced to 2, asserted by all seven suites.
+arc forced to 2, asserted by all eight suites.
 
 + The lower bounds strip out of the capacities first: 2 - 1 = 1,
   3 - 1 = 2, 2 - 2 = 0, the last arc now fixed at its floor.
@@ -440,10 +441,11 @@ arc forced to 2, asserted by all seven suites.
   cdraw.content((6.35, 0.0), [tightened chain: need 2, got 1, refused], size: 6pt)
 })
 
-The forced 2 on every arc is the seven-suite pin, and the listings
-below run this transform in seven languages.
+The forced 2 on every arc is the eight-suite pin, and the listings
+below run this transform in eight languages.
 
 #listing("dsa/samples-c/src/Ch38/demands.c", first: 100, last: 137, caption: [c, the transform, the deficit ledger, the feasibility check and flow recovery])
+#listing("dsa/samples-rust/src/Ch38/demands.rs", first: 128, last: 169, caption: [rust, the transform, the deficit ledger, the feasibility check and flow recovery])
 #listing("dsa/samples-go/ch38/demands.go", first: 30, last: 68, caption: [go, excess bookkeeping, the arc transplant into dinic, recovery by the residual])
 #listing("dsa/samples-java/src/Ch38/Demands.java", first: 101, last: 136, caption: [java, the transform, the deficit ledger, the feasibility check and flow recovery])
 #listing("dsa/samples/src/Ch38/Costs2.cs", first: 92, last: 123, caption: [c\#, the same transform over the chapter's dinic, lower bounds added back at the end])
@@ -506,7 +508,7 @@ side that contains vertex 0, complemented when the phase cut named the
 other side.
 
 The dry run: the fixture is the two weight-10 triangles joined by
-weight-2 bridges, cut 4 on the side {0,1,2}, asserted by all seven
+weight-2 bridges, cut 4 on the side {0,1,2}, asserted by all eight
 suites.
 
 + Phase 1 pulls triangle members after triangle members, the ordering
@@ -535,10 +537,11 @@ suites.
   [5], [0, 1], [20], [4],
 )
 
-The 4 on {0,1,2} is the seven-suite pin, and the listings below run
-these phases in seven languages.
+The 4 on {0,1,2} is the eight-suite pin, and the listings below run
+these phases in eight languages.
 
 #listing("dsa/samples-c/src/Ch38/stoerwagner.c", first: 43, last: 90, caption: [c, the maximum adjacency ordering, the phase cut, the merge of the last two])
+#listing("dsa/samples-rust/src/Ch38/stoerwagner.rs", first: 30, last: 72, caption: [rust, the maximum adjacency ordering, the phase cut, the merge of the last two])
 #listing("dsa/samples-go/ch38/stoerwagner.go", first: 28, last: 79, caption: [go, the ascending scan keeps the order deterministic, the merge folds weights])
 #listing("dsa/samples-java/src/Ch38/Stoerwagner.java", first: 46, last: 89, caption: [java, the maximum adjacency ordering, the phase cut, the merge of the last two])
 #listing("dsa/samples/src/Ch38/Cuts.cs", first: 22, last: 63, caption: [c\#, the same phase loop, linq summing the incident weight])
@@ -603,7 +606,7 @@ unique.
 
 The dry run: the fixture is the 2017 problem C crate layer, rows
 {0,1} against columns {0,2}, the one place the suites pin the owner
-array itself, and all seven agree on (1, -1, 0) at size 2.
+array itself, and all eight agree on (1, -1, 0) at size 2.
 
 + Row 0 opens on column 0, finds it free, and takes it: one match.
 + Row 1 opens on column 0 too: owned, so the current owner is asked
@@ -653,10 +656,11 @@ array itself, and all seven agree on (1, -1, 0) at size 2.
   cdraw.content((9.6, 1.6), [column 1 contested by nobody, size 2], size: 6pt)
 })
 
-The owner array beside the size 2 is the seven-suite pin, and the
-listings below ripple these asks in seven languages.
+The owner array beside the size 2 is the eight-suite pin, and the
+listings below ripple these asks in eight languages.
 
 #listing("dsa/samples-c/src/Ch38/kuhn.c", first: 39, last: 61, caption: [c, the recursive try and the driver, the deterministic owner array])
+#listing("dsa/samples-rust/src/Ch38/kuhn.rs", first: 51, last: 77, caption: [rust, the recursive try and the driver, the deterministic owner array])
 #listing("dsa/samples-go/ch38/kuhn.go", first: 12, last: 37, caption: [go, kuhn full, the right-side owner array returned for pinning])
 #listing("dsa/samples-java/src/Ch38/Kuhn.java", first: 40, last: 63, caption: [java, the recursive try and the driver, the deterministic owner array])
 #listing("dsa/samples/src/Ch38/Match.cs", first: 10, last: 34, caption: [c\#, the local try function, first-free-or-reassign])
@@ -718,12 +722,11 @@ complete 3 by 3 at 3.
   cdraw.content((6.6, 0.4), [delete 4 or 6: drops to 2], size: 6pt)
 })
 
-The applications are icpc world finals 2017 problem C (book 10,
-chapter 8), mission improbable, one matching per distinct crate height
+The applications are icpc world finals 2017 problem C (book 11, chapter 10), mission improbable, one matching per distinct crate height
 with m + n minus match piles left standing, icpc world finals 2022
-problem X (book 10, chapter 11), quartets, re-testing the 32-slot
+problem X (book 11, chapter 13), quartets, re-testing the 32-slot
 matching after every action and reporting the first failure, and icpc
-world finals 2025 problem B (book 10, chapter 13), blackboard game,
+world finals 2025 problem B (book 11, chapter 15), blackboard game,
 whose openings are decided by whether some maximum matching avoids the
 erased vertex.
 
@@ -743,7 +746,7 @@ commits along the parent links, and the matching grows by one.
 
 The dry run: the fixture is the 3 × 3 matrix 4, 1, 3 over 2, 0, 5
 over 3, 2, 2, cost 5 on the unique assignment (1, 0, 2), asserted by
-all seven suites.
+all eight suites.
 
 + Row 0 grows over slacks 4, 1, 3: the smallest sits at column 1, the
   delta is 1, and the free column commits at once.
@@ -769,10 +772,11 @@ all seven suites.
   [2], [2], [column 2, free at once], [2],
 )
 
-The cost 5 on the unique assignment (1, 0, 2) is the seven-suite pin,
-and the listings below grow these trees in seven languages.
+The cost 5 on the unique assignment (1, 0, 2) is the eight-suite pin,
+and the listings below grow these trees in eight languages.
 
 #listing("dsa/samples-c/src/Ch38/hungarian.c", first: 35, last: 73, caption: [c, one row's tree growth, the delta adjustment, the augmenting commit])
+#listing("dsa/samples-rust/src/Ch38/hungarian.rs", first: 45, last: 99, caption: [rust, one row's tree growth, the delta adjustment, the augmenting commit])
 #listing("dsa/samples-go/ch38/hungarian.go", first: 14, last: 62, caption: [go, the shortest-slack column, the delta, the commit])
 #listing("dsa/samples-java/src/Ch38/Hungarian.java", first: 36, last: 74, caption: [java, one row's tree growth, the delta adjustment, the augmenting commit])
 #listing("dsa/samples/src/Ch38/Hungarian.cs", first: 18, last: 64, caption: [c\#, the same row loop, way links the parents, the commit walk])
@@ -834,7 +838,7 @@ out.
 The dry run: the fixtures are the forbidden matrix, 4, 1e9, 6 over
 7, 3, 5 over 6, 5, 4 with worker 0 barred from task 1, and the 3 × 5
 rectangle, the unique cost 11 and the 9 over real tasks {0, 1, 2},
-asserted by all seven suites.
+asserted by all eight suites.
 
 + The 1e9 at cell (0, 1) never turns tight: it prices past every
   delta the tree ever pays, so the solver walks around it and the
@@ -876,10 +880,11 @@ asserted by all seven suites.
   cdraw.content((10.6, 2.8), [3 × 5 at 9, real tasks {0, 1, 2}], size: 6pt)
 })
 
-The 11 around the ban and the 9 over real tasks are the seven-suite
-pins, and the listings below model these matrices in seven languages.
+The 11 around the ban and the 9 over real tasks are the eight-suite
+pins, and the listings below model these matrices in eight languages.
 
 #listing("dsa/samples-c/src/Ch38/assign.c", first: 83, last: 92, caption: [c, the rectangle squared by zero padding, forbidden pairs enter as the 1e9 constant])
+#listing("dsa/samples-rust/src/Ch38/assign.rs", first: 111, last: 119, caption: [rust, the rectangle squared by zero padding, forbidden pairs entered as the 1e9 constant])
 #listing("dsa/samples-go/ch38/assign.go", first: 3, last: 24, caption: [go, the forbidden constant, the square and rectangle wrappers])
 #listing("dsa/samples-java/src/Ch38/Assign.java", first: 85, last: 92, caption: [java, the rectangle squared by zero padding, forbidden pairs enter as the 1e9 constant])
 #listing("dsa/samples/src/Ch38/Hungarian.cs", first: 87, last: 105, caption: [c\#, the assign facet over the solver, dummy cells at zero])
@@ -937,7 +942,7 @@ least q items carry L at most q, checked by sorting the bounds and
 scanning, with the first violated q reported.
 
 The dry run: the fixtures are the four 2025 problem F bound families
-plus the seeded agreement family, asserted by all seven suites, and the
+plus the seeded agreement family, asserted by all eight suites, and the
 walk runs the prefix form.
 
 + Sorted, the feasible family 2, 2, 1, 1 reads 1, 1, 2, 2: the
@@ -964,10 +969,11 @@ walk runs the prefix form.
   [2, 2, 2], [3], [2, 2, 2], [0, 3, 3], [fails at q = 1],
 )
 
-The two holds and the two q = 1 failures are the seven-suite pins, and
-the listings below sweep subsets and prefixes in seven languages.
+The two holds and the two q = 1 failures are the eight-suite pins, and
+the listings below sweep subsets and prefixes in eight languages.
 
 #listing("dsa/samples-c/src/Ch38/hall.c", first: 64, last: 98, caption: [c, the bitmask sweep and the prefix scan, first violated q out])
+#listing("dsa/samples-rust/src/Ch38/hall.rs", first: 79, last: 120, caption: [rust, the bitmask sweep and the prefix scan, first violated q out])
 #listing("dsa/samples-go/ch38/hall.go", first: 5, last: 48, caption: [go, the subset form, bitcount, the prefix form])
 #listing("dsa/samples-java/src/Ch38/Hall.java", first: 64, last: 98, caption: [java, the bitmask sweep and the prefix scan, first violated q out, bitCount from the stdlib])
 #listing("dsa/samples/src/Ch38/Match.cs", first: 43, last: 71, caption: [c\#, both checkers, popcount on the unioned neighbors])
@@ -1015,13 +1021,12 @@ holds, and 2, 2, 2 over m = 3 fails at q = 1 again.
   cdraw.content((14.2, 2.9), [the counting face of matching], size: 6pt)
 })
 
-The application is icpc world finals 2025 problem F (book 10, chapter
-13), herding cats, where variety lower bounds L(z) and the prefix
+The application is icpc world finals 2025 problem F (book 11, chapter 15), herding cats, where variety lower bounds L(z) and the prefix
 sufficiency check are the whole solution. Hall has no dedicated
 cp-algorithms article, and the sources below cite the kuhn article
 where the theorem section lives.
 
-== across the seven languages
+== across the eight languages
 
 Featured build size counted as non-blank, non-comment lines of the
 chapter's nine sample files per language, c\# spread over its five
@@ -1032,6 +1037,7 @@ family files, go test files excluded:
   inset: 4pt,
   table.header([*language*], [*build sloc*], [*container dependency*], [*boundary note*]),
   [c], [1118], [static arc arrays, paired residuals], [long long capacities, xor-1 twins, per-file mains printing ok N],
+  [rust], [1498], [rust 1.99 std], [paired residual arcs over vecs with the xor-1 twin law intact, i64 capacities, one standalone file per facet like c],
   [go], [563], [slices, no imports beyond fmt and sort], [shared helpers per package, the deterministic stoer-wagner scan documented],
   [java], [1156], [jdk 27 stdlib], [cap[e ^ 1] paired arcs port directly on int arc ids, the seeded lcg draws through Integer.remainderUnsigned, each file standalone like c],
   [c\#], [465], [lists, linq, tuples], [five family files, the demands solver reuses the chapter dinic through accessors],
@@ -1055,9 +1061,10 @@ algorithm", cp-algorithms.com/graph/hungarian-algorithm.html, and
 "Assignment problem", cp-algorithms.com/graph/Assignment-problem-min-flow.html,
 all accessed 2026-09-20, cc by-sa 4.0, our own words and code
 throughout. Application sources: icpc world finals 2017 problems C and
-J, 2018 problem C, 2022 problem X, and 2025 problems B and F (book 10).
-Sample behavior verified by the seven suite gates scoped to chapter
-38: c 9 files and 83 checks, go 26 test functions, java 9 files and
+J, 2018 problem C, 2022 problem X, and 2025 problems B and F (book 11).
+Sample behavior verified by the eight suite gates scoped to chapter
+38: c 9 files and 83 checks, rust 9 files and 83 checks under
+run-rust-samples in books/dsa/samples-rust, go 26 test functions, java 9 files and
 83 checks under run-java-samples, c\# 28 facts,
 javascript 29 tests and 66 asserts across its two split files, python
 9 files and 83 asserts, lua 33 checks, zero skipped.

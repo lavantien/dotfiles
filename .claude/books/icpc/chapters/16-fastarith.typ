@@ -1,4 +1,4 @@
-// book 10, chapter 15: fast big integer arithmetic, the ladder the finals
+// book 11, chapter 16: fast big integer arithmetic, the ladder the finals
 // never needed but the education does. a dynamic bigint core, karatsuba,
 // exact ntt, complex fft plain and split, and knuth algorithm d division,
 // from scratch in seven languages, every measured number from the ch14
@@ -43,7 +43,7 @@ bigint, but its twelve fixed slots, 108 digits of headroom, cannot host
 a karatsuba recursion that needs dynamically sized halves down the
 tree, and its zero convention, sign +1 with one zero limb, disagrees
 with the Lua toolbox's sign-0 zero of #xref-to("icpc", "toolbox-lua"),
-so chapter 15 grows one new canonical core rather than importing
+so chapter 16 grows one new canonical core rather than importing
 either sibling. The language mappings keep contest discipline: C packs
 `struct {int sign; int n; unsigned limb[4096];}` with `BIG_MAX 4096`
 limbs, 36864 decimal digits, static arrays, assert guards, no malloc.
@@ -132,7 +132,7 @@ C 237 checks, javascript 12 tests, python 293 checks, lua 7 named
 checks, beside the anchor `123456789 * 987654321 = 121932631112635269`
 that chapter 2 already pins on the schoolbook.
 
-#diagram([memory layout: the chapter 15 core as one sign cell plus exactly the limbs it needs, beside the ch2 toolbox's twelve fixed slots], length: 12pt, {
+#diagram([memory layout: the chapter 16 core as one sign cell plus exactly the limbs it needs, beside the ch2 toolbox's twelve fixed slots], length: 12pt, {
   cdraw.content((9.6, 8.5), [ch2 toolbox: 12 fixed slots, 108 digits], size: 6.5pt)
   for i in range(12) {
     let x = 0.6 + i * 1.52
@@ -920,7 +920,7 @@ checks plus a 52-check chain, 4 anchors and 48 ladder equalities, lua
 28 named checks across five modules plus a 23-assertion chain, the run
 suite 303 green from a 275 baseline at 0.42 seconds median. The java
 tree numbers its chapter dir post-renumber, Ch15 matching the book's
-chapter 15 while the six sibling trees keep their historical Ch14
+chapter 16 while the six sibling trees keep their historical Ch14
 dirs, and its file headers cross-cite the dsa chapter 29 bigint
 family, the teaches-the-mechanism law that keeps BigInteger out of
 every listing above.

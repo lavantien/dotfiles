@@ -1,15 +1,16 @@
-// chapter 41: one problem in eight lanes, byte-identical output, the
+// chapter 41: one problem in nine lanes, byte-identical output, the
 // corpus method turned on a performance question
 #import "../../theme/lib.typ": listing, callout, xref-to, diagram, cdraw
 
 = the one billion row challenge
 
-One problem, eight lanes, one line of output. The 1brc challenge
+One problem, nine lanes, one line of output. The 1brc challenge
 aggregates a billion `station;temperature` rows into a single sorted
 map of minimum, mean, and maximum per station, and this chapter runs
-it in c, go, java, c sharp, javascript, python, lua, and sqlite,
-stdlib only in every lane, 21 variants in all, with identical output
-bytes on every artifact any of them is pinned against. Every claim
+it in c, rust, go, java, c sharp, javascript, python, lua, and
+sqlite, stdlib only in every lane, 24 variants in all, with
+identical output bytes on every artifact any of them is pinned
+against. Every claim
 elsewhere in this book was proven with a test. Here the test still
 comes first, a byte diff against a pinned oracle for every variant,
 and only then a stopwatch explains what correctness already bought.
@@ -17,7 +18,7 @@ and only then a stopwatch explains what correctness already bought.
 The order is the order the work demands. The contract and its
 arithmetic come first, because one wrong rounding rule costs more
 than any speedup. The sqlite lane follows, where the aggregate lives
-in a query instead of a loop. Then the seven program lanes in the
+in a query instead of a loop. Then the eight program lanes in the
 corpus canonical order, each walking its own decision ladder with
 the measured ratios attached. The full-scale table closes, where the
 memory shape of each road decides who finishes at all.
@@ -87,8 +88,8 @@ ladder.
 Every lane gates the same way: byte diff against the committed
 fixtures, the comparison trimming the line terminator on both sides
 because text-mode stdio on windows ends the line with `\r\n` in
-nine of the variants, a split the divergence paragraph below pins. The
-c, java, lua, and sqlite variants ride `tools/run-1brc.ps1`, which
+ten of the variants, a split the divergence paragraph below pins. The
+c, rust, java, lua, and sqlite variants ride `tools/run-1brc.ps1`, which
 compiles or invokes each lane, diffs stdout against all three
 fixtures, and adds two must-fail legs: every runner variant has to
 reject `edges-malformed.txt` with a nonzero exit and empty stdout,
@@ -352,8 +353,64 @@ would adopt mid-wave when their whole-file roads hit the wall:
   cdraw.line((13.9, 2.3), (2.1, 2.3), stroke: luma(100))
   cdraw.line((2.1, 2.3), (2.1, 3.0), stroke: luma(100), mark: (end: ">"))
   cdraw.content((11.7, 1.7), [c fread, go Read, java readNBytes, cs FileStream, js readSync,], size: 6pt)
-  cdraw.content((11.7, 1.0), [py read, lua read: the same shape in every lane], size: 6pt)
+  cdraw.content((11.7, 1.0), [rust read, py read, lua read: the same shape in every lane], size: 6pt)
 })
+
+== rust: byte walks and an even table [EWC]
+
+The rust naive road, 109 sloc, is `fs::read_to_string` plus `lines()`
+plus `split_once` into a `HashMap<&str, _>` folded through the entry
+api, the whole file in one `String`, the java naive memory shape:
+0.599 s at 10^7. The arithmetic is integer tenths on the slow road
+too, and the value parser is strict from the first cut, digits, one
+dot, one fractional digit, then the row end, anything else dies
+loudly.
+
+The tuned road, 337 sloc, is the chapter's shared window in rust
+form, and the window carries the lane's own language cost: std
+exposes no memchr, so the newline and the semicolon walks are plain
+byte loops over the window slice, a scan c, go, c sharp, and
+javascript ride a library call for while rust and java hand-roll it,
+neither standard library shipping a byte search:
+
+#listing("interview-repertoire/samples/ch41-rust/onetuned.rs", first: 159, last: 194, caption: [the window walk: position loops for the newline and the semicolon, copy_within carrying the tail, the doubling escape for a line longer than the window, the final line without its newline])
+
+The dictionary is the chapter's open-addressing table, FNV-1a over
+the raw name bytes with `wrapping_mul`, linear probing, an
+append-only name arena, insert-or-find only because a station is
+never deleted, growth at 70 percent load by rebuilding the slot array
+over entries whose arena spans never move:
+
+#listing("interview-repertoire/samples/ch41-rust/onetuned.rs", first: 33, last: 74, caption: [insert-or-find with fnv probing and linear steps, the name appended to the arena once on first sight, grow rebuilding the slots at 70 percent load])
+
+The dictionary junction was measured both ways, the go lane's
+discipline. The scan and parse swap bought 11 percent, 0.599 s down
+to 0.532 s over the std map keyed by the raw name bytes under the
+default SipHash hasher, and the FNV table landed at 0.528 s, inside
+box noise of the map. At 10k stations a probe is one touch either
+way and the byte walks dominate, so the dictionary choice is not
+where rust's time goes at this tier, the same conclusion the go lane
+drew from its two orderings: measure, do not assert.
+
+Two mechanism notes the other lanes hand-roll. Rust's `/` truncates
+toward zero like c's, and the mean folds through `i64::div_euclid`,
+floor division shipped in std, the `neg` station's bump without
+hand-writing it. And both sorts are byte comparisons by
+construction: std's `Ord for str` is
+`as_bytes().cmp(other.as_bytes())` in the pinned 1.99.0 source, the
+tuned lane sorts the raw name slices the same way, and utf-8 byte
+order is codepoint order, the astral battery's gate proof.
+
+The final junction is `--parallel`. Nominal cuts snap forward past
+newlines with 4 KiB probes, one `thread::scope` worker per
+`available_parallelism` slot opens its own `File`, seeks to its
+start, and feeds the same `scan` through a `take(end - start)`
+reader, so the shard road reuses the serial scan unchanged, and the
+master absorbs shard tables by exact integer sums so arrival order
+cannot move a byte. Measured: 0.088 s wall at 10^7, 6.8x over naive,
+spending 0.906 s of cpu, wall bought with cpu like every parallel
+row. Both variants write raw bytes, `println!` and `write_all` do no
+windows newline translation, so the lane ends `}\n` top to bottom.
 
 == go: map against table, measured [EWC]
 
@@ -620,6 +677,7 @@ aggregator. Wall seconds, sloc is non-comment non-blank:
   align: (left, right, right, right, right, right, center),
   table.header[*lane*][*naive s*][*tuned s*][*tuned:naive*][*parallel s*][*parallel:naive*][*sloc n/t*],
   [c], [5.473], [0.423], [12.9x], [-], [-], [100/186],
+  [rust], [0.599], [0.528], [1.1x], [0.088], [6.8x], [109/337],
   [go], [0.670], [0.378], [1.8x], [0.057], [11.8x], [110/325],
   [java], [1.557], [0.159], [9.8x], [(same build)], [(same)], [63/236],
   [c sharp], [0.921], [0.363], [2.5x], [0.114], [8.1x], [88/288],
@@ -629,12 +687,15 @@ aggregator. Wall seconds, sloc is non-comment non-blank:
   [sqlite], [13.9], [14.5], [0.96x], [-], [-], [44/46],
 )
 
-Three rows carry footnotes. The java tuned figure is the 20-thread
+Four rows carry footnotes. The java tuned figure is the 20-thread
 junction already on, the 10^7 file clears the 4 MiB threshold. The
 go tuned figure is the table variant, with the map intermediate at
 0.326 s. The sqlite figures are one-process totals, with the
 import and query halves measured separately at 5.39 plus 9.20 for
-naive and 7.24 plus 4.13 for tuned, the query alone at 0.45x. C
+naive and 7.24 plus 4.13 for tuned, the query alone at 0.45x. The
+rust row is the one block not sharing the re-measure day: the lane
+joined at the rust wave, measured on the wave 4 box with the same
+warmup plus best-of-3 protocol, std-map intermediate 0.532 s. C
 sharp rows are Release builds, the Debug numbers on the stream-day
 box for the record are 117.8, 104.5, and 9.8.
 
@@ -683,6 +744,8 @@ the hardened binaries, where lua's added validation costs about 6
 percent, isolated against the pre-validation binary in
 back-to-back runs on the same box, and the c and java guards run
 once per file and the comparators once per station, below noise.
+The rust lane joined after measurement day and carries no 10^9 row
+here.
 
 #callout("pitfall", "the tier a gate never sees", [
   The tuned c sharp and javascript roads originally read the whole
@@ -705,10 +768,10 @@ Malformed input is out of contract, and the fleet's answer to it
 is pinned rather than assumed. Structurally broken rows, a missing
 semicolon, a value with no dot, a row longer than a fixed window,
 die loudly everywhere: the runner's must-fail leg holds a nonzero
-exit and empty stdout for all ten variants it gates, and the c
+exit and empty stdout for all thirteen variants it gates, and the c
 sharp and javascript suites carry the same cases. Value text that
 violates only the shape splits the fleet, and the split is the
-lesson: the oracle, python, and go reject `1.20` outright,
+lesson: the oracle, python, go, and rust reject `1.20` outright,
 javascript and lua tuned reject it after the hardening, while the
 c, java, and c sharp tuned roads fold it to 1.2 and sqlite reads
 only the final digit, so the one-fractional-digit rule is enforced
@@ -725,10 +788,10 @@ keep it as data. A leading BOM is stripped by c sharp naive's
 `File.ReadLines` while every byte lane keeps it in the first
 name. So the chapter pins LF-terminated, BOM-free files as the
 input shape it teaches. The final newline splits by stdout mode:
-nine variants write through windows text-mode streams and end
-`}\r\n` when redirected, c both, java naive, python both, lua
+ten variants write through windows text-mode streams and end
+`}\r\n` when redirected, c both, java naive, python all three, lua
 both, and sqlite both, while the byte-writing lanes, tuned java,
-go, c sharp, and javascript, end `}\n` like every official
+go, c sharp, javascript, and rust, end `}\n` like every official
 sample. That is why the gate's diff trims the terminator on both
 sides and why the byte claim in this chapter's opening lives on
 the payload.
@@ -739,7 +802,9 @@ verbatim from 1brc.dev and github.com/gunnarmorling/1brc at main,
 both accessed 2026-10-08, kept under `tools/1brc/ref/` with sha256
 records. sqlite behavior was probed directly on the corpus-pinned
 3.53.4 shell rather than read from documentation, the lua collation
-claim was verified by file probe, and every language claim in the
+claim was verified by file probe, the rust `str` ordering claim was
+read from the std source of the pinned rustc 1.99.0 toolchain, and
+every language claim in the
 lane sections is pinned by the lane's own source under
 `samples/ch41-*/` and its gate. No other online source was
 consulted for this chapter.

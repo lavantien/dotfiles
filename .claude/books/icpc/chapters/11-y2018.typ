@@ -1,4 +1,4 @@
-// book 10, chapter 10: the icpc world finals 2018, eleven problems A
+// book 11, chapter 11: the icpc world finals 2018, eleven problems A
 // through K, seven languages each, listings sliced from the landed
 // solver files under books/icpc/samples*/
 #import "../../theme/lib.typ": listing, callout, xref-to, diagram, cdraw
@@ -25,7 +25,7 @@ attribution.
 Four helper kits are year-local to 2018, each named in the year spec
 with a one-line contract and none duplicating a wave 1 toolbox
 module, and everything else the year's solvers import comes from the
-toolbox chapters 2 through 8. Each kit states its contract and
+toolbox chapters 2 through 9. Each kit states its contract and
 prints its twin files below in the book's fixed language order.
 
 The lnfact kit backs problem D and exists for the year's overflow
@@ -175,9 +175,9 @@ all constraints about a journey read backwards from the deadline k,
 so each station carries one scalar, its onward success
 probability, refreshed by the events that pass it. Problem A is
 the 2018 face of the event sweep over a sorted axis family, and
-the same event sweep over a sorted axis cue drives chapter 10
-problem H, chapter 11 problem D, chapter 11 problem J, and chapter
-13 problem L.
+the same event sweep over a sorted axis cue drives chapter 11
+problem H, chapter 12 problem D, chapter 12 problem J, and chapter
+14 problem L.
 
 The tempting alternative, a forward grid over time instants, dies
 on k <= 10^18, and enumerating journeys prices out at 2^1000000
@@ -344,9 +344,9 @@ positional, sentence-initial and sentence-final, so what propagates
 is a property of word positions in the separator graph, not of the
 text layout. Problem B is the 2018 face of the component structure
 and connectivity family, and the component structure and
-connectivity family runs through chapter 11 problem E, chapter 11
-problem H, chapter 12 problem R, chapter 14 problem E, and chapter
-13 problem G.
+connectivity family runs through chapter 12 problem E, chapter 12
+problem H, chapter 13 problem R, chapter 15 problem E, and chapter
+14 problem G.
 
 Reapplying the two rewrite rules textually until quiescence is the
 priced-out alternative: one planted comma can force a change in
@@ -521,7 +521,7 @@ possible against per-route costs and per-nation minimums, supply
 and demand carried on a shared tree, the min-cost flow shape with
 all capacity sitting on the nodes. Problem C is the 2018 face of
 the flow modeling on a network family, and the same flow modeling
-on a network cue drives chapter 09 problem J.
+on a network cue drives chapter 10 problem J.
 
 The wrong tool is a literal min-cost flow with unit augmentations,
 10^6 armies each rerouted by an augmenting path over 250000 nodes
@@ -532,7 +532,7 @@ kill the alternatives together.
 
 With armies on the nodes of a weighted tree and a garrison requirement
 at every node, the task is a minimum-cost flow on a tree where only
-sources and sinks carry capacity. Book 9's chapter 38, network flows
+sources and sinks carry capacity. Book 10's chapter 38, network flows
 ii, develops the min-cost flow formulation this task reduces to. The
 shipped vehicle in all seven languages is the convex tree dp from the
 sketch: each subtree keeps
@@ -689,8 +689,8 @@ the shape a recurrence answers once every composition is known to
 be equally likely, the theorem the sketch proves by induction.
 Problem D is the 2018 face of the counting and expectation without
 enumeration family, and the same counting and expectation without
-enumeration cue drives chapter 10 problem I, chapter 12 problem Q,
-chapter 13 problem E, and chapter 13 problem K.
+enumeration cue drives chapter 11 problem I, chapter 13 problem Q,
+chapter 14 problem E, and chapter 14 problem K.
 
 The priced-out alternative is enumeration itself, of compositions
 or of the d split sequences, and Monte Carlo simulation is just as
@@ -709,7 +709,7 @@ memoized recursion over states with `a+b <= n+d`, O(n^2 d) terms
 `coef(x) = C(a,x) C(b-1,a-x-1) / C(a+b-1,b)`. All seven languages
 evaluate it in floats with log-space binomials from a shared
 ln-factorial table, coefficients in [0,1] summing to 1, so the total
-error stays near 1e-11 against a 1e-6 bound. Book 9's chapter 35,
+error stays near 1e-11 against a 1e-6 bound. Book 10's chapter 35,
 combinatorics, builds the log-space binomial table and the
 stars-and-bars counts this recursion draws from.
 
@@ -853,9 +853,9 @@ components trade off, which hands each jump's feasibility to a
 quadratic in the takeoff angle, finitely many critical candidates
 per pair instead of a continuum of arcs. Problem E is the 2018
 face of the geometric critical-point enumeration family, and the
-same geometric critical-point enumeration cue drives chapter 09
-problem A, chapter 09 problem D, chapter 10 problem G, chapter 12
-problem T, and chapter 13 problem D; a secondary thread, bfs on
+same geometric critical-point enumeration cue drives chapter 10
+problem A, chapter 10 problem D, chapter 11 problem G, chapter 13
+problem T, and chapter 14 problem D; a secondary thread, bfs on
 the implicit jump graph, covers reaching the door once jump
 feasibility is known.
 
@@ -1052,8 +1052,8 @@ parameter whose every value runs one full greedy simulation, the
 one-dimensional answer-space search shape over the widths from the
 longest word upward. Problem F is the 2018 face of the
 one-dimensional answer-space search family, and the same
-one-dimensional answer-space search cue drives chapter 09 problem
-E and chapter 14 problem C.
+one-dimensional answer-space search cue drives chapter 10 problem
+E and chapter 15 problem C.
 
 The priced-out alternative is the unpruned sweep itself, every
 width from 81 to the whole text on one line each re-wrapping all
@@ -1214,8 +1214,8 @@ interior voronoi vertices and voronoi-polygon edge crossings, the
 enumerate-and-test shape over O(n^2) geometric candidates. Problem
 G is the 2018 face of the geometric critical-point enumeration
 family, and the same geometric critical-point enumeration cue
-drives chapter 09 problem A, chapter 09 problem D, chapter 10
-problem E, chapter 12 problem T, and chapter 13 problem D.
+drives chapter 10 problem A, chapter 10 problem D, chapter 11
+problem E, chapter 13 problem T, and chapter 14 problem D.
 
 Sampling the park instead is the priced-out wrong tool: a 2000 by
 2000 grid over the 10^4 coordinate range resolves 10-unit cells,
@@ -1232,7 +1232,7 @@ vertex's cell by clipping a box against the perpendicular bisectors of
 the other vertices, nearest first with a distance-ordered early break,
 then tests those two candidate families, O(n^2 log n) for the cell
 build and O(n^2) for the crossing tests (solutions.pdf pp. 7-9). Book
-7's chapter 37, computational geometry ii, develops the half-plane
+10's chapter 37, computational geometry ii, develops the half-plane
 intersection this per-vertex clipping rests on. This is the problem
 that forced a year-local geometry helper, cross products, ray-cast
 point-in-polygon, segment intersection, and the half-plane clip,
@@ -1384,9 +1384,9 @@ arc once the boundary is unrolled onto a perimeter circle, and it
 splits exactly the wires with one anchor strictly inside, so the
 whole task becomes one sweep over sorted anchor positions. Problem
 H is the 2018 face of the event sweep over a sorted axis family,
-and the same event sweep over a sorted axis cue drives chapter 10
-problem A, chapter 11 problem D, chapter 11 problem J, and chapter
-13 problem L.
+and the same event sweep over a sorted axis cue drives chapter 11
+problem A, chapter 12 problem D, chapter 12 problem J, and chapter
+14 problem L.
 
 The priced-out alternative is treating cuts as arbitrary segments
 and searching a minimum line cover over 10^6 wires, pairwise
@@ -1572,8 +1572,8 @@ triangles, and the sheared-grid recurrence turns it into run
 lengths plus an order statistic with scheduled removals. Problem I
 is the 2018 face of the counting and expectation without
 enumeration family, and the same counting and expectation without
-enumeration cue drives chapter 10 problem D, chapter 12 problem Q,
-chapter 13 problem E, and chapter 13 problem K.
+enumeration cue drives chapter 11 problem D, chapter 13 problem Q,
+chapter 14 problem E, and chapter 14 problem K.
 
 Brute force prices out plainly: every corner at every size is
 `r*c*min(r,c) = 5.4*10^10` candidate triangles at the bound, each
@@ -1743,8 +1743,8 @@ visitation kind, vertical jump pattern, canonicalized
 connectivity, whose values fall into a cycle `v(n+P) = v(n)+A` once
 the window is deep enough. Problem J is the 2018 face of the dp
 over an engineered state space family, and the same dp over an
-engineered state space cue drives chapter 11 problem I, chapter 12
-problem S, chapter 13 problem J, and chapter 14 problem H.
+engineered state space cue drives chapter 12 problem I, chapter 13
+problem S, chapter 14 problem J, and chapter 15 problem H.
 
 The priced-out alternative is running that profile dp at judge
 time or searching tours directly, and the contest itself priced
@@ -1921,8 +1921,8 @@ out the n-2 spare degree increments cheapest-first, a local rule
 made safe by the exchange argument that any kept set of size k
 costs at least the k cheapest increments. Problem K is the 2018
 face of the greedy with a safety proof family, and the same greedy
-with a safety proof cue drives chapter 09 problem H, chapter 11
-problem A, and chapter 13 problem H.
+with a safety proof cue drives chapter 10 problem H, chapter 12
+problem A, and chapter 14 problem H.
 
 The priced-out alternative is searching over subsets of nodes to
 keep, `2^10000` subsets, or building the tree by min-cost flow with

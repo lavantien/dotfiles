@@ -56,9 +56,14 @@ and the handshake 8.
 })
 
 The 5 and 5 are the pinned counts, and the listings below build the
-store seven ways.
+store eight ways.
 
 #listing("dsa/samples-c/src/Ch10/build.c", first: 21, last: 47, caption: [c, fixed V-by-V lists with degrees and in-degrees, one build for both readings])
+
+Rust seeds the same store from a const edge table, one build call for
+either reading:
+
+#listing("dsa/samples-rust/src/Ch10/build.rs", first: 13, last: 40, caption: [rust, fixed V-by-V lists over a const edge table, degrees and in-degrees, one build for both readings])
 
 #listing("dsa/samples-go/ch10/build.go", first: 10, last: 27, caption: [go, undirected and directed builders over edge structs])
 
@@ -78,8 +83,8 @@ over neighbors touches every vertex. The sparse list wastes nothing
 on absent edges, the same array-versus-hash trade as chapter 6 in
 another coat.
 
-Measured across the suites: C, Go, Java, JavaScript, and Lua build
-the same four edges, 0-1, 0-2, 1-2, 2-3, and pin identical reads,
+Measured across the suites: C, Rust, Go, Java, JavaScript, and Lua
+build the same four edges, 0-1, 0-2, 1-2, 2-3, and pin identical reads,
 undirected degrees 2 2 3 1 with the handshake sum 8, directed out
 2 1 1 0 against in 0 1 2 1. Python pins its own edge set with the
 same handshake discipline, and the C\# suite pins counts on its
@@ -163,9 +168,14 @@ layers on the diamond with the rebuilt path 0 1 3 4.
 })
 
 The 0 1 1 2 3 with the order a b c d e is the pinned pair, and the
-listings below run the queue in seven languages.
+listings below run the queue in eight languages.
 
 #listing("dsa/samples-c/src/Ch10/bfs.c", first: 27, last: 48, caption: [c, the ring-buffer queue, distances, parents, visit order])
+
+Rust walks a plain array queue with a head cursor, unreachable stays
+minus one:
+
+#listing("dsa/samples-rust/src/Ch10/bfs.rs", first: 44, last: 67, caption: [rust, the array queue with a head cursor, distances, parents, visit order])
 
 #listing("dsa/samples-go/ch10/bfs.go", first: 7, last: 27, caption: [go, slice-as-queue, -1 marks unreachable])
 
@@ -182,9 +192,9 @@ array queue:
 
 #listing("dsa/samples-lua/ch10_bfs.lua", first: 16, last: 35, caption: [lua, 1-based queue with a head cursor])
 
-Measured across the suites: C, Java, and Lua walk an undirected
+Measured across the suites: C, Rust, Java, and Lua walk an undirected
 diamond plus tail and Go and JavaScript its directed twin, and all
-five pin the same numbers, distances 0 1 1 2 3, parents with vertex
+six pin the same numbers, distances 0 1 1 2 3, parents with vertex
 3 discovered through 1, and the rebuilt path 0 1 3 4. Python runs a
 six-vertex fixture, distances 0 1 1 2 3 3 with the path to 5 reading
 0 1 3 5, and checks both lanes to a tie. The C\# suite walks its
@@ -271,9 +281,14 @@ preorder 0 1 3 4 2 with the iterative twin agreeing.
 })
 
 The preorder a b d e c is the pinned walk, and the listings below
-carry the stack in seven languages.
+carry the stack in eight languages.
 
 #listing("dsa/samples-c/src/Ch10/dfs.c", first: 25, last: 57, caption: [c, recursive three-color dfs and the explicit-stack twin])
+
+Rust colors the vertices 0, 1, 2 and pushes the stack twin's
+neighbors in reverse:
+
+#listing("dsa/samples-rust/src/Ch10/dfs.rs", first: 41, last: 81, caption: [rust, recursive three-color dfs and the explicit-stack twin pushing neighbors reversed])
 
 #listing("dsa/samples-go/ch10/dfs.go", first: 6, last: 45, caption: [go, recursive and iterative dfs, reversed pushes match the preorder])
 
@@ -306,8 +321,8 @@ Three more languages carry the walk:
 
 #listing("dsa/samples-lua/ch10_dfs.lua", first: 17, last: 54, caption: [lua, nested functions carry the walk state])
 
-Measured across the suites: C, Go, Java, JavaScript, and Lua walk
-the same dag, 0 to 1 and 2, both into 3, then 4, and pin the
+Measured across the suites: C, Rust, Go, Java, JavaScript, and Lua
+walk the same dag, 0 to 1 and 2, both into 3, then 4, and pin the
 preorder 0 1 3 4 2 with the iterative walk matching the recursive
 one exactly, the same 2 3 4 from a mid start, and a back edge 2 to
 1 plus a self loop both flagged. Python sorts each adjacency list
@@ -353,8 +368,8 @@ which must exist in a dag, and queues the vertices it releases. A
 queue that drains before the whole graph is the cycle verdict.
 
 The dry run: the fixture is the same labeled dag, asserted by the
-C\# suite edge by edge, and C, Java, Lua, and Python pin the exact
-order 4 5 2 0 3 1 on the classic six-vertex fixture.
+C\# suite edge by edge, and C, Rust, Java, Lua, and Python pin the
+exact order 4 5 2 0 3 1 on the classic six-vertex fixture.
 
 + The five arcs leave in-degrees a 0, b 1, c 1, d 2, e 1, and the
   sum 0 + 1 + 1 + 2 + 1 = 5 matches the edge count.
@@ -379,9 +394,13 @@ order 4 5 2 0 3 1 on the classic six-vertex fixture.
 )
 
 The 5 of 5 drain against the empty refusal is the pinned pair, and
-the listings below drain the queue in seven languages.
+the listings below drain the queue in eight languages.
 
 #listing("dsa/samples-c/src/Ch10/topo.c", first: 25, last: 41, caption: [c, the in-degree queue, emitted count below V means a cycle])
+
+Rust reuses one work array as the queue, head and tail cursors:
+
+#listing("dsa/samples-rust/src/Ch10/topo.rs", first: 38, last: 64, caption: [rust, the in-degree queue over one work array, emitted count below V means a cycle])
 
 #listing("dsa/samples-go/ch10/topo.go", first: 6, last: 27, caption: [go, kahn over in-degrees, drained flag returned])
 
@@ -395,12 +414,12 @@ the listings below drain the queue in seven languages.
 
 #listing("dsa/samples-lua/ch10_topo.lua", first: 17, last: 33, caption: [lua, 1-based work queue, count-out contract])
 
-Measured across the suites: C, Java, Lua, and Python run the classic
-six-vertex fixture, 5 to 2 and 0, 4 to 0 and 1, 2 to 3, 3 to 1, and
-pin the exact order 4 5 2 0 3 1 under the fifo ready queue seeded in
-ascending id order,
-with two cycles holding all but the chain 2 3 hostage in C, Java,
-and Lua and a three-cycle draining to nothing in Python. Go and
+Measured across the suites: C, Rust, Java, Lua, and Python run the
+classic six-vertex fixture, 5 to 2 and 0, 4 to 0 and 1, 2 to 3, 3 to
+1, and pin the exact order 4 5 2 0 3 1 under the fifo ready queue
+seeded in ascending id order,
+with two cycles holding all but the chain 2 3 hostage in C, Rust,
+Java, and Lua and a three-cycle draining to nothing in Python. Go and
 JavaScript pin the forced order 0 1 2 3 on the diamond, check every
 edge points forward on the dag, and flag the cycle by an empty
 drain. The C\# suite pins its order and throws on the cycle.
@@ -425,8 +444,8 @@ unvisited vertex. The method builds the symmetric adjacency on the
 fly rather than mutating the directed store.
 
 The dry run: the fixture is the mixed store a to b to c, d to e,
-and f alone, asserted by all seven suites. The six new trees pin the
-exact ids in vertex first-seen order and run a union-find oracle over
+and f alone, asserted by all eight suites. The seven new trees pin
+the exact ids in vertex first-seen order and run a union-find oracle over
 the same edges, and their isolation lane adds z with no edges.
 
 + Stored directed, the graph holds three arcs, a to b, b to c, d to
@@ -470,6 +489,11 @@ listings below are the flood fills that produced them.
 
 #listing("dsa/samples-c/src/Ch10/components.c", first: 50, last: 82, caption: [c, symmetrize both directions, stack fill, ids in insertion order])
 
+Rust keeps string labels like its java twin, the fill over
+first-seen name ids:
+
+#listing("dsa/samples-rust/src/Ch10/components.rs", first: 54, last: 98, caption: [rust, symmetrize both directions, stack fill, ids in first-seen order])
+
 #listing("dsa/samples-go/ch10/components.go", first: 37, last: 69, caption: [go, recursive flood over the symmetrized map, ids in name order])
 
 The other five languages fill the same islands, Java's component
@@ -485,10 +509,10 @@ file switching to string labels over a first-seen id map:
 
 #listing("dsa/samples-lua/ch10_components.lua", first: 38, last: 63, caption: [lua, the flood over symmetrized tables, ids in order])
 
-Measured across the suites: all seven agree a, b, c share one id,
+Measured across the suites: all eight agree a, b, c share one id,
 d and e a second, f a third, 3 components over 6 vertices, and that
 a single directed edge still joins its endpoints when direction is
-ignored. The six new trees pin the exact numbering, 0, 1, 2 in
+ignored. The seven new trees pin the exact numbering, 0, 1, 2 in
 first-seen order, check the union-find oracle on every pair and on
 the count, and run the isolation lane, z with no edges stays
 untouched by any traversal from a. That is the connectivity question
@@ -528,7 +552,7 @@ with a heap instead of a fifo, chapter 11, Kruskal and Prim build
 spanning trees from component walks and heap orders, chapter 12, and
 the capstone's segment merge graph is a dag by construction.
 
-== across the seven languages
+== across the eight languages
 
 The build sizes count non-comment source lines over this chapter's
 five featured files per language. The C\# file carries the labeled
@@ -541,6 +565,7 @@ language has no separate test project:
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [451], [libc only], [fixed V-by-V adjacency with degree counters, both readings from one build, checks share the file with main, 62 of them],
+  [rust], [575], [rust 1.99 std], [fixed V-by-V adjacency with degree counters like c seeded from const edge tables, the components file switches to string labels over a first-seen id map like java, 62 checks in 5 files],
   [go], [227], [none], [integer vertices, tests in separate files, HasCycleDirected returns the three-color verdict, 15 tests],
   [java], [469], [jdk 27 stdlib], [fixed V-by-V adjacency like c, one build for both readings, the components file alone switches to string labels over a first-seen id map],
   [c\#], [160], [bcl only], [string labels and Dictionary adjacency, forest stamps and components in the same file, 11 tests],
@@ -553,8 +578,10 @@ sources: learn.microsoft.com, `Dictionary<TKey,TValue>` and
 `Queue<T>` pages used by the implementation, `HashSet<T>` set
 operations, accessed 2026-09-08. Sample behavior verified by
 `make verify-csharp`, 11 tests in chapter 10 of the samples suite.
-The seven-language layer verifies the same way: 5 C programs with 62
-embedded checks under `make verify-c`, 15 Go tests, the java runner's
+The eight-language layer verifies the same way: 5 C programs with 62
+embedded checks under `make verify-c`, 5 rust programs under
+`run-rust-samples` with 62 Ch10 checks over `samples-rust/src`, 15
+Go tests, the java runner's
 62 Ch10 checks over 5 files under `run-java-samples`, 16
 `node --test` cases, 43 Python checks across 5 files, and 21 Lua
 checks under `run.lua`.

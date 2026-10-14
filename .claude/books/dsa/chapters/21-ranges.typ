@@ -12,7 +12,7 @@ handles point updates against prefix sums, the segment tree when
 the query or the update hits whole ranges, the sparse table when
 nothing changes at all, and two monotonic scans when the window
 moves one step at a time. The four matrix structures and the two
-monotonic scans are built seven languages deep.
+monotonic scans are built eight languages deep.
 
 == prefix sums
 
@@ -25,7 +25,7 @@ subtracts the overlap, and a rectangle query takes four corners.
 
 The dry run: the fixtures are 1, 2, 3, 4, 5 for the 1d pass and the
 grid 1 through 9 by rows for the table, asserted by the C\#, C,
-Java, and Python suites.
+Rust, Java, and Python suites.
 
 + The 1d pass seeds P[0] = 0 and folds one element in per step:
   0 + 1 = 1, 1 + 2 = 3, 3 + 3 = 6, 6 + 4 = 10, 10 + 5 = 15.
@@ -70,10 +70,12 @@ Java, and Python suites.
   cdraw.content((18.0, 0.3), [far corner ends at 45], size: 6pt)
 })
 
-The 45 and the 28 are asserted by all four suites, and the
-listings below build these two tables in seven languages.
+The 45 and the 28 are asserted by all five suites, and the
+listings below build these two tables in eight languages.
 
 #listing("dsa/samples-c/src/Ch21/prefix.c", first: 22, last: 47, caption: [c, the 1d pass, then the 2d table and its four-corner query])
+
+#listing("dsa/samples-rust/src/Ch21/prefix.rs", first: 18, last: 45, caption: [rust, the 1d pass, then the 2d table and its four-corner query, fixtures as consts])
 
 #listing("dsa/samples-go/ch21/prefix.go", first: 8, last: 47, caption: [go, both builds, the rectangle read from four corners])
 
@@ -180,7 +182,7 @@ sums the first five elements, and the build is Go's O(n) pass.
 )
 
 The whole array closes the walk at one read, 31, and the listings
-below build and query this same table in seven languages.
+below build and query this same table in eight languages.
 
 #listing("dsa/samples/src/Ch21/Ranges.cs", first: 3, last: 34, caption: [point add climbs by lowbit, prefix strips it, reads counted per query])
 
@@ -193,9 +195,11 @@ reads four. Two hundred seeded random ops interleaving adds and
 range sums then match a running array exactly, the cross-check
 that climbing and stripping agree.
 
-The six sibling builds keep the same contract in their own shape:
+The seven sibling builds keep the same contract in their own shape:
 
 #listing("dsa/samples-c/src/Ch21/fenwick.c", first: 21, last: 33, caption: [c, add climbs by lowbit, prefix strips it, a naive twin cross-checks])
+
+#listing("dsa/samples-rust/src/Ch21/fenwick.rs", first: 30, last: 59, caption: [rust, add climbs by lowbit through wrapping_neg, prefix strips it, a shadow array cross-checks])
 
 #listing("dsa/samples-go/ch21/fenwick.go", first: 6, last: 44, caption: [go, the struct, O(n) build from the array, range as two prefixes])
 
@@ -211,12 +215,14 @@ The fixture family splits exactly as the history of the book does.
 C\#, JavaScript, Python, and Lua share 3, 1, 4, 1, 5, 9, 2, 6 and
 pin the same three numbers, prefix 5 at 14, range 2 to 5 at 19, the
 whole array at 31, and Python watches a shadow list agree after
-every add. Go builds 2, 4, 1, 6, 3 and pins every prefix, and C and
-Java load 1 through 8 and pin the triangular prefixes 1, 3, 6, 10,
-28. The inside-outside indexing split is worth one read: C, C\#,
+every add. Go builds 2, 4, 1, 6, 3 and pins every prefix, and C,
+Rust, and Java load 1 through 8 and pin the triangular prefixes 1,
+3, 6, 10, 28. The inside-outside indexing split is worth one read:
+C, Rust, C\#,
 Go, and Java keep the 1-based indexing inside the structure, Lua
 and Python shift a 0-based public face down to the 1-based table,
-and the C and Java suites keep a naive twin answering every prefix,
+and the C, Rust, and Java suites keep a naive twin answering every
+prefix,
 the cross-check that climbing and stripping never drift.
 
 #diagram([the fenwick tree above the flat array it lives in, node j responsible for the run ending at j, one prefix walk of three reads shaded], length: 13pt, {
@@ -271,10 +277,12 @@ force. The figure runs the same story on 1 through 8: an
 AddRange(0,3,10) then SumRange(2,6) lands on covers 2-3, 4-5 and
 6-6, which sum to 45.
 
-The six sibling builds drop the lazy tags and answer the matrix
+The seven sibling builds drop the lazy tags and answer the matrix
 contract instead, point update with range sum and range min:
 
 #listing("dsa/samples-c/src/Ch21/segtree.c", first: 22, last: 55, caption: [c, sum and min trees in one build, both queries])
+
+#listing("dsa/samples-rust/src/Ch21/segtree.rs", first: 42, last: 78, caption: [rust, sum and min trees in one struct over 4n arrays, both queries, a linear-scan agreement lane])
 
 #listing("dsa/samples-go/ch21/segtree.go", first: 40, last: 83, caption: [go, set, sum, min, one fold drives both])
 
@@ -294,12 +302,13 @@ carry sum and min arrays straight down. JavaScript's is the odd
 shape worth a second look, an iterative tree over doubled indices
 with no recursion at all, and Lua builds one engine and hands it
 the sum fold with identity 0 and the min fold with maxinteger.
-Fixtures differ per suite, C and Java over 2, 1, 5, 3, 4, Go over
+Fixtures differ per suite, C, Rust, and Java over 2, 1, 5, 3, 4, Go
+over
 2, 4, 1, 6, 3, Python back on 3, 1, 4, 1, 5, 9, 2, 6 with
 whole-range 31 and range 2 to 5 at 19 again, Java running that same
 fixture through the iterative bottom-up shape as a nested class,
 and every suite cross-checks every query against a linear scan,
-Python and Java after each of their updates.
+Python, Rust, and Java after each of their updates.
 
 #diagram([a lazy segment tree in two frames, the parked add moving down one level only when the shaded query descends], length: 13pt, {
   // two 8-leaf trees over 1..8, left after addrange 0-3, right after sumrange 2-6
@@ -380,9 +389,11 @@ two 4-wide covers anchored at 1 and 3, overlapping at 3 and 4, and
 every range of seeded arrays up to 64 elements agrees with brute
 force.
 
-The six sibling builds stack the same doubling levels:
+The seven sibling builds stack the same doubling levels:
 
 #listing("dsa/samples-c/src/Ch21/sparsetable.c", first: 23, last: 55, caption: [c, level k over level k - 1, the two-cover query])
+
+#listing("dsa/samples-rust/src/Ch21/sparsetable.rs", first: 20, last: 56, caption: [rust, level k over level k - 1, the query anchored at b + 1 - len so usize never underflows, the index back])
 
 #listing("dsa/samples-go/ch21/sparsetable.go", first: 9, last: 37, caption: [go, the doubling build, the query by two covers])
 
@@ -396,8 +407,10 @@ The six sibling builds stack the same doubling levels:
 
 The C\# and Lua suites share the fixture 5, 2, 8, 1, 9, 3, 7, 4,
 and both pin queries at 1, 1, 3, and 9 for the single element at
-index 4. Python and Java open their levels to inspection, level 0
-the array itself and level 1 the pair minima, C and Java run 5, 2,
+index 4. Python, Rust, and Java open their levels to inspection,
+level 0
+the array itself and level 1 the pair minima, C, Rust, and Java
+run 5, 2,
 4, 1, 3, 7, 6, 8 and pin rmq(0, 3) at 3 for the value 1, Go runs
 5, 2, 4, 1, 3 with seven pinned queries, and JavaScript's table
 carries the level exponent alongside. Every suite keeps the linear
@@ -462,7 +475,7 @@ a new arrival evicts every smaller or equal index off the back,
 and the front retires by index distance when it slides out.
 
 The dry run: the fixture is 1, 3, -1, -3, 5, 3, 6, 7 with k = 3,
-the same literals in all seven suites, and the meters count one push
+the same literals in all eight suites, and the meters count one push
 per arrival with both eviction kinds summed into the pops.
 
 + The classic run outputs 3, 3, 5, 5, 6, 7 over 8 pushes and 7
@@ -492,10 +505,12 @@ once, pushes plus pops never reach past 16 for the whole scan. The
 nested while loop only looks quadratic, every eviction was paid
 for by the push that preceded it.
 
-The six sibling builds keep the same deque contract over six
+The seven sibling builds keep the same deque contract over seven
 substrates:
 
 #listing("dsa/samples-c/src/Ch21/maxima.c", first: 19, last: 47, caption: [c, the deque in a fixed array under head and tail cursors, both eviction kinds metered, the trace through an out parameter])
+
+#listing("dsa/samples-rust/src/Ch21/maxima.rs", first: 17, last: 54, caption: [rust, the deque in a fixed array under head and tail cursors, both eviction kinds metered, the trace through an Option])
 
 #listing("dsa/samples-go/ch21/maxima.go", first: 13, last: 41, caption: [go, one slice grown at the back and shortened at both ends, the meter passed beside])
 
@@ -507,7 +522,8 @@ substrates:
 
 #listing("dsa/samples-lua/ch21_maxima.lua", first: 7, last: 33, caption: [lua, a back eviction nils the last slot, aging removes position 1, the trace snapped per output])
 
-The deque substrate is where the six builds differ. C and Java
+The deque substrate is where the seven builds differ. C, Rust, and
+Java
 never move an element, they walk two cursors through one fixed
 array and hand the teaching trace out through a parameter, Go
 grows a slice and shortens it from either end, JavaScript pops the
@@ -517,8 +533,9 @@ position 1, Java carrying the ArrayDeque substrate as a second lane
 beside its cursor build. The
 meter arithmetic lands the same everywhere, 8 pushes with 7 pops
 on the classic run, 4 with 3 on the ties lane, and the 2n ceiling
-on the combined count. The trace lane splits by reach, C, Java,
-Python, and Lua record it inside the walk, JavaScript keeps a twin
+on the combined count. The trace lane splits by reach, C, Rust,
+Java, Python, and Lua record it inside the walk, JavaScript keeps a
+twin
 walker in the same file for it, and Go checks every output against
 a brute window maximum instead.
 
@@ -563,7 +580,7 @@ the left array identically, and whatever survives a scan keeps
 its -1.
 
 The dry run: the answers are indices with -1 when no greater
-element exists, and only a strictly greater value pops. The six
+element exists, and only a strictly greater value pops. The seven
 sibling suites assert the family below with identical literals,
 and the C\# suite pins the first row together with its seeded
 brute agreement.
@@ -591,10 +608,12 @@ seeded arrays. This scan is a workhorse beyond its own question:
 histogram rectangles, stock spans and trapping rainwater all
 reduce to it.
 
-The six sibling builds carry the two directional scans plus a
+The seven sibling builds carry the two directional scans plus a
 circular walk the C\# ground truth stops short of:
 
 #listing("dsa/samples-c/src/Ch21/nextgreater.c", first: 19, last: 51, caption: [c, one stack pass per direction, the circular walk over 2n - 1 steps])
+
+#listing("dsa/samples-rust/src/Ch21/nextgreater.rs", first: 17, last: 62, caption: [rust, one dir-flagged stack pass for both directions, the circular walk pushing only during the first lap])
 
 #listing("dsa/samples-go/ch21/nextgreater.go", first: 22, last: 65, caption: [go, the directional scan and the circular wrap, strict greater pops])
 
@@ -610,14 +629,15 @@ Every tree runs the same discipline twice, one pass left to right
 for the right array and one right to left for the left array, and
 the circular variant repeats the walk over 2n - 1 steps, pushing
 only during the first lap so a second visit never answers itself.
-C, Go, Java, JavaScript, and Python pick the visit index from a
+C, Rust, Go, Java, JavaScript, and Python pick the visit index from
+a
 direction flag, Lua from a backward flag, and the Go window leaves
 out only the wrapper that fills the two answer arrays, it sits a
 few lines above the scan in the same file. Lua alone shifts its
 1-based stack positions back to 0-based answers, and its meter
 row pins the push count at one per index per pass, 10 over both
 directions of the 5 element fixture. The circular lane belongs to
-the six sibling trees alone, and every brute oracle agrees with
+the seven sibling trees alone, and every brute oracle agrees with
 every answer they give.
 
 #diagram([next greater both ways, the stack under each arrival, every pop recording one answer], length: 13pt, {
@@ -669,12 +689,12 @@ every answer they give.
   cdraw.content((16.0, -1.1), [one pass per side, linear in total], size: 6pt)
 })
 
-== across the seven languages
+== across the eight languages
 
 The build sizes count non-comment source lines over this chapter's
 six featured files per language. The C\# row is its whole
 `Ranges.cs`, including the lazy segment tree with range updates the
-other six replace with point-update builds and the monotonic
+other seven replace with point-update builds and the monotonic
 deque with both scans, plus the prefix sums file:
 
 #table(
@@ -682,6 +702,7 @@ deque with both scans, plus the prefix sums file:
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [471], [libc only], [static tables sized 4n and log n, a naive twin answers every query, sum and min trees in one build, the deque under two cursors],
+  [rust], [638], [rust 1.99 std], [every table a fixed array, lowbit through wrapping_neg, the sparse-table query anchored at b + 1 - len because a usize b - len underflows in debug, the deque under two cursors],
   [go], [247], [none], [zero imports, the O(n) fenwick build, one fold drives sum and min queries, the deque resliced off both ends],
   [java], [717], [jdk 27 stdlib], [both segment tree shapes in one file, the recursive 4n arrays beside the iterative nested class, the fenwick shadow array re-checked after every op, rmq answering with indices],
   [c\#], [221], [bcl only], [the lazy range-add tree is the deep cut, meters count reads and nodes, BitOperations behind the level counts, prefix sums aboard],
@@ -695,14 +716,14 @@ column counting each region of the one shared `Ranges.cs` and the
 shared Meter booked on the maxima row:
 
 #table(
-  columns: (1.7fr, auto, auto, auto, auto, auto, auto, auto),
+  columns: (1.7fr, auto, auto, auto, auto, auto, auto, auto, auto),
   inset: 4pt,
-  table.header([*section*], [*c*], [*c\#*], [*go*], [*java*], [*javascript*], [*python*], [*lua*]),
-  [sliding window maxima], [92], [37], [32], [141], [33], [60], [72],
-  [next greater, both sides], [113], [31], [54], [119], [33], [72], [105],
+  table.header([*section*], [*c*], [*rust*], [*c\#*], [*go*], [*java*], [*javascript*], [*python*], [*lua*]),
+  [sliding window maxima], [92], [93], [37], [32], [141], [33], [60], [72],
+  [next greater, both sides], [113], [152], [31], [54], [119], [33], [72], [105],
 )
 
-The next greater spread carries the circular walk, the 6 sibling
+The next greater spread carries the circular walk, the 7 sibling
 files ship it and the C\# region stops at the two directional
 scans, which is most of the distance down to 31.
 
@@ -711,8 +732,10 @@ substrate, `Stack<int>` for the scans, `BitOperations.Log2` and
 `PopCount` behind the level and read counts, `Array.Fill`,
 accessed 2026-09-12. Sample behavior verified by
 `make verify-csharp`, 17 tests in chapter 21 of the samples suite.
-The seven-language layer verifies the same way: 6 C programs with
-108 embedded checks under `make verify-c`, 6 Ch21 java programs
+The eight-language layer verifies the same way: 6 C programs with
+108 embedded checks under `make verify-c`, 6 rust programs under
+`run-rust-samples` with 108 Ch21 checks over `samples-rust/src`, 6
+Ch21 java programs
 with 135 checks under `run-java-samples`, 18 Go tests, 18
 `node --test` cases, 93 Python checks across 6 files, and 29 Lua
 checks under `run.lua`.

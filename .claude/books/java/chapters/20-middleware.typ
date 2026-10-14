@@ -267,7 +267,7 @@ from the pinned build's own sources
 must-answer-if-you-stop-the-chain rule from `Filter.java`.
 `System.Logger` from `java.lang` of the same build. The go
 contrasts, the statusWriter wrapper, `ErrAbortHandler`, and the
-timeout layer's goroutine rule, against book 3, chapter 19.
+timeout layer's goroutine rule, against book 4, chapter 19.
 Accessed and verified live 2026-10-04 by the `javabook.middleware`
 tests under the vendored junit 6.1.3 lane, 9 tests, run green three
 times consecutively as a stability check: the three id births, the

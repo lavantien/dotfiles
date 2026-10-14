@@ -48,9 +48,11 @@ and Go its 1 2 2 2 5 7 twin.
 )
 
 The 1 and the 4 around the count 3 are the pinned triple, and the
-listings below run the same two loops in seven languages.
+listings below run the same two loops in eight languages.
 
 #listing("dsa/samples-c/src/Ch14/bounds.c", first: 18, last: 45, caption: [c, the two half-open walks, count by subtraction])
+
+#listing("dsa/samples-rust/src/Ch14/bounds.rs", first: 13, last: 41, caption: [rust, the same pair over a borrowed slice, usize brackets, count by subtraction])
 
 #listing("dsa/samples-go/ch14/bounds.go", first: 8, last: 42, caption: [go, the same pair, insertion point as an alias])
 
@@ -69,15 +71,17 @@ carries useful information instead of a bare -1.
 
 #listing("dsa/samples-lua/ch14_bounds.lua", first: 6, last: 23, caption: [lua, 1-based walk, answer shifted back to 0-based])
 
-Measured across the suites: C, Java, Lua, and Python share the
+Measured across the suites: C, Java, Lua, Python, and Rust share the
 fixture 1 3 3 3 5 7 and pin the run of 3s at lower 1, upper 4, count
 3, the absent 4 inserting at 4 and out-of-range keys at 0 and 6, C,
-Java, and Lua sweeping every target against a linear partition
+Java, Lua, and Rust sweeping every target against a linear partition
 check. Go runs the same boundary story on 1 2 2 2 5 7, three copies
 of 2, and JavaScript cross-checks both bounds against linear scans
 target by target. The frozen C\# suite adds leftmost and rightmost
-on top of the same subtraction. Every loop is the same half-open
-walk, one comparison character apart.
+on top of the same subtraction. Rust types the bracket usize over
+the borrowed slice, so the count is a usize subtraction and the
+off-end answers read 0 and len with no sentinel. Every loop is the
+same half-open walk, one comparison character apart.
 
 #diagram([the boundary loops on one duplicate heavy array, lower is the first at least, upper the first greater, count is the difference], length: 13pt, {
   // 2 4 4 4 7 9 9 12 against t = 4: lower 1, upper 4, count 3; t = 8 absent: lo 5
@@ -164,9 +168,11 @@ the same rule on 4 5 6 7 0 1 2.
 })
 
 The 3 for the 1 with the 4 one probe behind is the pinned pair, and
-the listings below cover both halves in seven languages.
+the listings below cover both halves in eight languages.
 
 #listing("dsa/samples-c/src/Ch14/rotated.c", first: 18, last: 42, caption: [c, which half is sorted, the target inside it or the other])
+
+#listing("dsa/samples-rust/src/Ch14/rotated.rs", first: 13, last: 34, caption: [rust, the same rule over a signed bracket, cast to usize only at the probe])
 
 #listing("dsa/samples-go/ch14/rotated.go", first: 6, last: 27, caption: [go, endpoint comparison picks the sorted half])
 
@@ -180,13 +186,16 @@ the listings below cover both halves in seven languages.
 
 #listing("dsa/samples-lua/ch14_rotated.lua", first: 5, last: 28, caption: [lua, 1-based indices, answer shifted back])
 
-Measured across the suites: C, Go, Java, JavaScript, Lua, and Python
-all pin indices on 4 5 6 7 0 1 2, every member at its slot, 0 at
-index 4, the absent 3, 8, and -1 refused, then sweep rotation zero,
-rotated by one, rotated by four, and the single element. The frozen
-C\# suite pins its own fixture under the same rule. The discipline
-is one line everywhere: a[lo] <= a[mid] names the sorted half, and
-the target either lies inside it or forces the other.
+Measured across the suites: C, Go, Java, JavaScript, Lua, Python,
+and Rust all pin indices on 4 5 6 7 0 1 2, every member at its slot,
+0 at index 4, the absent 3, 8, and -1 refused, then sweep rotation
+zero, rotated by one, rotated by four, and the single element. The
+frozen C\# suite pins its own fixture under the same rule. Rust
+rides a signed i64 bracket because hi steps down to mid minus one
+and a usize cannot go below zero, casting only at the probe and the
+returned index. The discipline is one line everywhere: a[lo] <=
+a[mid] names the sorted half, and the target either lies inside it
+or forces the other.
 
 #diagram([the two logarithmic walks, the rotated array asks which half is sorted, the answer space binary searches a monotone predicate], length: 13pt, {
   // left: (4 5 6 7 1 2 3), t = 5, two probes; right: capacity 8..18, answer 9
@@ -281,9 +290,11 @@ chapter's cross-language anchor, 1 8 2 4 3 in 3 days landing 9.
 })
 
 The 15 as the first feasible capacity is the pinned landing, and the
-listings below bisect the same predicate in seven languages.
+listings below bisect the same predicate in eight languages.
 
 #listing("dsa/samples-c/src/Ch14/answerspace.c", first: 20, last: 47, caption: [c, the greedy day count, the feasibility test, the bisect])
+
+#listing("dsa/samples-rust/src/Ch14/answerspace.rs", first: 15, last: 46, caption: [rust, the greedy day count, the feasibility test, the bisect, the weights a const array])
 
 #listing("dsa/samples-go/ch14/answerspace.go", first: 9, last: 41, caption: [go, days needed, min capacity over the bracket])
 
@@ -302,8 +313,11 @@ anchor, weights 1 8 2 4 3 in 3 days, and every language lands 9. The
 day counts agree around it, 4 days at capacity 8 and 2 at 9, the
 bracket opens at the heaviest single weight, 8, and closes at the
 total, 18, and the monotonicity check, feasible once means feasible
-forever, runs in suite after suite. Python adds the edges: 5 days
-drops the answer to 8, one day forces the full 18.
+forever, runs in suite after suite. Rust keeps the weights in a
+const array, rides the monotone sweep over the half-open range
+maxw..total, and shares the 1000 overflow sentinel with Java and Lua.
+Python adds the edges: 5 days drops the answer to 8, one day forces
+the full 18.
 
 #diagram([the answer space, a monotone predicate over capacities, false then true, bisection finds the transition], length: 13pt, {
   // the capacity band 8..18: 8 infeasible, 9 and up feasible
@@ -349,7 +363,7 @@ pass.
 
 The dry run: the fixture is -2, 1, -3, 4, -1, 2, 1, -5, 4, asserted
 by every suite against a double-loop brute, the one fixture all
-seven share.
+eight share.
 
 + The scan seeds on -2, and the first arrival already restarts:
   -2 + 1 = -1 loses to the 1 alone, so the span reopens at index 1
@@ -381,10 +395,11 @@ seven share.
 )
 
 The 6 over 3 through 6 with the brute agreeing is the pinned
-champion, and the listings below run the same scan in seven
+champion, and the listings below run the same scan in eight
 languages.
 
 #listing("dsa/samples-c/src/Ch14/kadane.c", first: 21, last: 38, caption: [c, the loop, restart beats extend, the champion span tracked])
+#listing("dsa/samples-rust/src/Ch14/kadane.rs", first: 13, last: 39, caption: [rust, the scan folded into a struct, restart beats extend, the champion span tracked])
 #listing("dsa/samples-go/ch14/kadane.go", first: 6, last: 35, caption: [go, the scan and the empty-allowed wrapper])
 #listing("dsa/samples-java/src/Ch14/Kadane.java", first: 20, last: 39, caption: [java, the loop, restart beats extend, the champion span tracked in statics])
 #listing("dsa/samples/src/Ch14/Searching.cs", first: 116, last: 143, caption: [c\#, the same loop, the empty-allowed variant one max away])
@@ -397,9 +412,12 @@ nothing, and the empty-allowed variant is the max of the best with 0,
 stated rather than shipped twice. The classic fixture -2, 1, -3, 4,
 -1, 2, 1, -5, 4 peaks at 6 over indices 3 through 6, and every suite
 brute-checks the champion span with the double loop before pinning
-it. All-negative input keeps the nonempty best, -1 at index 1 of -3,
--1, -2, and the empty-allowed variant reads 0. A single 5 is its own
-span, and 2, 3, 1 spans everything at 6.
+it. Rust folds the c statics into a struct, its brute returning the
+champion triple as a tuple, and the empty-allowed read is
+best.max(0) where c spells a ternary. All-negative input keeps the
+nonempty best, -1 at index 1 of -3, -1, -2, and the empty-allowed
+variant reads 0. A single 5 is its own span, and 2, 3, 1 spans
+everything at 6.
 
 #diagram([the fixture as bars with the winning span shaded and the running best ending here drawn beneath], length: 13pt, {
   let a = (-2, 1, -3, 4, -1, 2, 1, -5, 4)
@@ -480,9 +498,10 @@ carried by the integer suites.
 })
 
 The 3 beside the off-the-end 6 is the pinned pair, and the listings
-below run both forms in seven languages.
+below run both forms in eight languages.
 
 #listing("dsa/samples-c/src/Ch14/mex.c", first: 24, last: 46, caption: [c, the seen array and first-false scan, the prefix table below])
+#listing("dsa/samples-rust/src/Ch14/mex.rs", first: 15, last: 47, caption: [rust, the seen table handed in as a mutable bool array, both forms])
 #listing("dsa/samples-go/ch14/mex.go", first: 7, last: 38, caption: [go, the scan, the prefix table over a presence map])
 #listing("dsa/samples-java/src/Ch14/Mex.java", first: 24, last: 50, caption: [java, the seen array and first-false scan, the advancing-marker prefix table])
 #listing("dsa/samples/src/Ch14/Searching.cs", first: 153, last: 181, caption: [c\#, both forms, the marker advancing inside the stream loop])
@@ -496,7 +515,8 @@ The pinned family reads: mex of the empty list is 0, of 0 is 1, of 1,
 0, 2, 1, 0, 5 runs 1, 1, 3, 3, 3, the marker stepping twice and
 stalling. The edges: mex of 0 through k minus 1 is k itself, pinned
 at k = 6, an empty stream has no prefixes, and negatives never move
-the marker.
+the marker. Rust clears its handed-in bool array slot by slot where
+c memsets an int array pressed into flag duty.
 
 #diagram([the value axis 0 through 6 under the prefix fixture, seen slots darkening and the mex marker stepping], length: 13pt, {
   let steps = ((0, 1), (2, 1), (1, 3), (0, 3), (5, 3))
@@ -529,7 +549,7 @@ The application is general technique, and the grundy numbers of
 #xref-to("dsa", "games") are the named kin: a game position's value is
 the mex of its options, computed by this scan.
 
-== across the seven languages
+== across the eight languages
 
 The build sizes count non-comment source lines over this chapter's
 five featured files per language, the three search topics plus the
@@ -541,6 +561,7 @@ file:
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [319], [libc only], [overflow sentinels 1000 for days, the kadane brute rides along, checks share the file with main, 70 of them],
+  [rust], [375], [rust 1.99 std], [one file per topic like c, the rotated bracket rides signed i64 because a usize cannot go below zero, the empty-allowed kadane reads best.max(0), checks share the file with main, 70 of them],
   [go], [143], [none], [insertion point as a named alias, degenerate rotations swept, the empty-allowed kadane wrapper, tests in separate files, 14 tests],
   [java], [338], [jdk 27 stdlib], [one file per topic, the bounds partition-swept linearly, 1000 as the overflow sentinel, the kadane brute a record pair, 63 checks in 5 files],
   [c\#], [153], [bcl only], [leftmost and rightmost ride the bounds, kadane and mex as static classes, 10 tests],
@@ -557,8 +578,9 @@ cp-algorithms.com/others/maximum_average_segment.html, and "MEX task
 cp-algorithms.com/sequences/mex.html, both accessed 2026-09-20, cc
 by-sa 4.0, our own words and code throughout. Sample behavior
 verified by `make verify-csharp`, 10 tests in chapter 14 of the
-samples suite. The seven-language layer verifies the same way: 5 C
-programs with 70 embedded checks under `make verify-c`, 14 Go tests,
-the java runner's 63 Ch14 checks over 5 files under
-`run-java-samples`, 14 `node --test` cases, 50 Python checks across
-5 files, and 18 Lua checks under `run.lua`.
+samples suite. The eight-language layer verifies the same way: 5 C
+programs with 70 embedded checks under `make verify-c`, 5 rust
+programs under `run-rust-samples` with 70 Ch14 checks over
+`samples-rust/src`, 14 Go tests, the java runner's 63 Ch14 checks
+over 5 files under `run-java-samples`, 14 `node --test` cases, 50
+Python checks across 5 files, and 18 Lua checks under `run.lua`.

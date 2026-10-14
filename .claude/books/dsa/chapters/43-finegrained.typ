@@ -14,7 +14,7 @@ given an N x D matrix times a D x N matrix with N at least D^18 and at
 most N^2 / sqrt(D) wanted entries, all wanted entries are computable
 deterministically in O(N^2 / D^0.063) time, polynomially less than
 one operation per entry of the full product. The chapter builds that
-engine in 8 steps, each pinned by fixtures in 7 languages: the
+engine in 8 steps, each pinned by fixtures in 8 languages: the
 lopsided triangle home problem, Schoenhage's ten-multiplication
 identity, the recursion on strings, the tiling that shares encodings,
 the pruned recursion with its leaf-count lemmas, the boxes data
@@ -56,7 +56,7 @@ arithmetic that shares work across queries, which is where
 Schoenhage's identity enters in the next section.
 
 The dry run: the fixture is n = 6, D = 4, 8 query pairs drawn by the
-corpus generator, asserted by all 7 suites against the pinned count
+corpus generator, asserted by all 8 suites against the pinned count
 vector.
 
 + Randomness follows the corpus law everywhere in this chapter: the
@@ -128,9 +128,10 @@ vector.
 })
 
 The 18 under 32 under 144 and the word growth to its right are the
-pinned trade, and the listings below buy it in seven languages.
+pinned trade, and the listings below buy it in eight languages.
 
 #listing("dsa/samples-c/src/Ch43/baselines.c", first: 174, last: 220, caption: [c, solver 2 as one AND word plus popcount against the dense thin product, three solvers cross-checked])
+#listing("dsa/samples-rust/src/Ch43/baselines.rs", first: 172, last: 218, caption: [rust, solver 2 as one AND u64 with count_ones against the dense thin product, three solvers cross-checked])
 #listing("dsa/samples-go/ch43baselines/baselines.go", first: 110, last: 155, caption: [go, scan then pack helpers, empty middle lists pin as nil, the canonical empty slice])
 #listing("dsa/samples-java/src/Ch43/Baselines.java", first: 79, last: 128, caption: [java, the scan sized in two passes then arraycopy-trimmed, `Long.bitCount` reads the AND word])
 #listing("dsa/samples/src/Ch43/Baselines.cs", first: 99, last: 146, caption: [c\#, the scan as a where-filter over the range, solvers as pure functions over pinned arrays])
@@ -140,7 +141,10 @@ pinned trade, and the listings below buy it in seven languages.
 
 The corpus generator is where the trees diverge first. C, go, java,
 c\#, and lua multiply and add in native 64-bit integers that wrap mod
-2^64 for free. Java's historical trap is the draw itself: casting
+2^64 for free, and rust joins them but names the wrap, wrapping_mul
+and wrapping_add at the LCG step, because plain rustc compiles with
+overflow checks on and a silent wrap would panic the binary. Java's
+historical trap is the draw itself: casting
 `(int)(state >>> 32)` sign-extends when bit 63 is set, so the java
 draws stay unsigned until after every modulo, the same
 `Integer.remainderUnsigned` discipline the bloom hashes of chapter 25
@@ -153,7 +157,10 @@ its popcount never worries about words(D) at any D. Lua runs the LCG
 on native 64-bit integers with a logical shift, and its tables keep
 the fixture 0-based, paying a +1 offset at every access so the pinned
 indices survive translation. Go dedupes the drawn pairs with a map
-keyed on the pair struct and pins the empty middle lists as nil.
+keyed on the pair struct and pins the empty middle lists as nil. Rust
+reads its popcount off the u64 count_ones method, against c's
+`__builtin_popcountll`, and dedupes the drawn pairs with a linear scan
+over the fixed array.
 
 == Schoenhage's ten-multiplication identity
 
@@ -191,7 +198,7 @@ tiling of section 4 exploits: outputs nobody wants carry error
 nobody has to compute.
 
 The dry run: the fixture is seed 4302, 14 signed draws in [-9, 9],
-pinned in all 7 trees, with the identity checked three ways,
+pinned in all 8 trees, with the identity checked three ways,
 numerically, structurally, and symbolically.
 
 + x = \[-6, 1, -4\], p = \[-4, -1, 0, 1\], y = \[-7, 4, 9\],
@@ -275,9 +282,10 @@ numerically, structurally, and symbolically.
 })
 
 Ten multiplications against 13 is the whole saving at L = 1, and the
-listings below state the identity in seven languages.
+listings below state the identity in eight languages.
 
 #listing("dsa/samples-c/src/Ch43/schoenhage.c", first: 264, last: 309, caption: [c, encode, the ten multiplies, decode, c\[z_0\] checked against the schoolbook inner product])
+#listing("dsa/samples-rust/src/Ch43/schoenhage.rs", first: 248, last: 288, caption: [rust, left and right packed into 7-vectors, eval_form the ten multiplies, the decode copying m\[:9\] and summing all ten into z_0, checked against the schoolbook dot])
 #listing("dsa/samples-go/ch43schoenhage/schoenhage.go", first: 162, last: 183, caption: [go, forms as map int to int merged in init, apply returning the ten products and the decode])
 #listing("dsa/samples-java/src/Ch43/Schoenhage.java", first: 225, last: 257, caption: [java, the ten products then the z_0 sum, M_9 pinned as -(x1+x2+x3)(y1+y2+y3)])
 #listing("dsa/samples/src/Ch43/Schoenhage.cs", first: 150, last: 171, caption: [c\#, form as a required-init record with eval, apply building the decode array])
@@ -289,7 +297,9 @@ The identity is stated once and checked three ways, and the trees
 differ in how they hold a linear form. C packs each form as 3 variable
 indices with 3 coefficients, the sparse struct the recursion reuses
 as compile-time tables in the next sections. Java mirrors the struct
-with small arrays. Go and c\# keep dictionary shapes, go merging
+with small arrays, and so does rust, a Form of three variable slots
+and three coefficients merged at build time. Go and c\# keep
+dictionary shapes, go merging
 coefficients into map[int]int during init, c\# exposing each form as a
 record with required variable and coefficient arrays. Javascript and
 python use Map and dict literals, and lua uses 0-based table maps so
@@ -380,9 +390,10 @@ against two independent oracles.
 })
 
 One run returning a whole family of products is the recursion's
-contract, and the listings below run it in seven languages.
+contract, and the listings below run it in eight languages.
 
 #listing("dsa/samples-c/src/Ch43/recursion.c", first: 113, last: 153, caption: [c, Full verbatim, slice, ten children, decode into nine zij slices plus the z_0 sum])
+#listing("dsa/samples-rust/src/Ch43/recursion.rs", first: 122, last: 164, caption: [rust, Full verbatim over slice windows, the ten children as fixed stack arrays, decode into nine zij slices plus the summed z_0])
 #listing("dsa/samples-go/ch43recursion/recursion.go", first: 98, last: 146, caption: [go, the recursion as a closure over the leaf counter, slices handed down and copied back])
 #listing("dsa/samples-java/src/Ch43/Recursion.java", first: 68, last: 105, caption: [java, a static leaf counter, the decode summing the z_0 column, the 148-int stream digest pinned])
 #listing("dsa/samples/src/Ch43/Recursion.cs", first: 121, last: 166, caption: [c\#, Full returning leaf count and output as a tuple, Rec a local function])
@@ -392,8 +403,10 @@ contract, and the listings below run it in seven languages.
 
 The recursion is where the leaf plumbing divides the trees. C and java
 allocate the ten child inputs on fixed-size stack arrays and recurse
-with raw pointers or array references. Go, c\#, and javascript build
-the children as fresh slices or arrays per level. Python states the
+with raw pointers or array references, and rust sits beside them, its
+ten children fixed 49-entry stack arrays recursed as slices. Go, c\#,
+and javascript build the children as fresh slices or arrays per level.
+Python states the
 slicing as comprehensions and its packing as a dictionary walk over
 itertools.product digit tuples, the same algorithm with the index
 arithmetic delegated to tuples. Lua threads 1-based tables through
@@ -405,6 +418,7 @@ the seed meter stick pins the first 8 raw outputs with a
 148-value stream is pinned element by element in c, java, c\#, and
 python, and by its sha256 digest in java, go, c\#, javascript, and
 python, the chapter's digest rule of decimal integers, one per line.
+Rust builds the same stream and pins only its 148-value length.
 
 == tiling and the shared encoding
 
@@ -473,10 +487,11 @@ pinned element by element and by digest.
 })
 
 Four shared encodings against four full-leaf runs is the whole
-mechanism, and the listings below tile the product in seven
+mechanism, and the listings below tile the product in eight
 languages.
 
 #listing("dsa/samples-c/src/Ch43/tiling.c", first: 186, last: 235, caption: [c, one phi per row band and one psi per column band, the tile loop reading only the 9 wanted strings])
+#listing("dsa/samples-rust/src/Ch43/tiling.rs", first: 244, last: 300, caption: [rust, one phi per row band and one psi per column band into fixed 100-entry buffers, the tile loop accumulating only the 9 wanted strings])
 #listing("dsa/samples-go/ch43tiling/tiling.go", first: 160, last: 191, caption: [go, tile returning the assembled product and the leaf count, bands = N/N0/K0])
 #listing("dsa/samples-java/src/Ch43/Tiling.java", first: 148, last: 196, caption: [java, encodings once per band, every leaf of the run multiplied, t1 \< 9 summed into the outputs])
 #listing("dsa/samples/src/Ch43/Tiling.cs", first: 140, last: 189, caption: [c\#, band encodings as a tuple-returning pass, tile sharing them across the grid])
@@ -487,13 +502,14 @@ languages.
 The tiling code is nearly identical across the trees, because the
 mechanism is index arithmetic. The differences are representational:
 c computes into a fixed 49-entry band array and reads the encodings
-from 100-entry buffers, go and c\# return the band encodings as
-slices and tuples, javascript fills fresh arrays per level, python
-builds each band array by digit arithmetic into a zero list, and lua
-pays its +1 offsets at every band access. Every tree pins the same
-counted row, 4 encodings and 400 leaf multiplications against 144
-schoolbook multiplies, so the honesty claim is cross-checked by
-construction, one loss measured seven ways.
+from 100-entry buffers, rust joins it on the same fixed 49-entry band
+arrays and 100-entry encoding buffers, go and c\# return the band
+encodings as slices and tuples, javascript fills fresh arrays per
+level, python builds each band array by digit arithmetic into a zero
+list, and lua pays its +1 offsets at every band access. Every tree
+pins the same counted row, 4 encodings and 400 leaf multiplications
+against 144 schoolbook multiplies, so the honesty claim is
+cross-checked by construction, one loss measured eight ways.
 
 == pruning the recursion and counting leaves
 
@@ -599,9 +615,10 @@ one stream, plus the paper's own arithmetic pinned as tables.
 })
 
 The pruned values agree with two oracles on every wanted string, and
-the listings below prune in seven languages.
+the listings below prune in eight languages.
 
 #listing("dsa/samples-c/src/Ch43/pruned.c", first: 392, last: 439, caption: [c, suffix sets sliced by leading digit, frame-local child buffers, the z_0 suffix summing every live child])
+#listing("dsa/samples-rust/src/Ch43/pruned.rs", first: 446, last: 501, caption: [rust, suffix sets sliced by leading digit into fixed frame-local arrays, the ten children merged and deduped in one pass, only nonempty children recursed, Stats threaded for c's globals])
 #listing("dsa/samples-go/ch43pruned/pruned.go", first: 358, last: 404, caption: [go, mergeDedup children, values found by sort.SearchInts inside the closure])
 #listing("dsa/samples-java/src/Ch43/Pruned.java", first: 256, last: 296, caption: [java, ArrayList slices, Arrays.binarySearch reading each child value, the 39378-int stream digest pinned])
 #listing("dsa/samples/src/Ch43/Pruned.cs", first: 211, last: 260, caption: [c\#, the recursion as a local function in PrunedRun, Array.BinarySearch over merged suffixes])
@@ -611,18 +628,26 @@ the listings below prune in seven languages.
 
 The suffix machinery separates the imperative trees from the
 declarative ones. C merges the two sorted slices by hand into
-frame-local arrays and reads child values back with a linear scan.
+frame-local arrays and reads child values back with a linear scan,
+and rust keeps both, the merge into fixed frame-local arrays and the
+linear read-back. C's file-scope recursion globals move into the
+calls, the two encoding pointers as parameters and the three
+counters as a threaded Stats struct, each regime reporting its own
+formatted ok line.
 Go, java, and c\# keep the same merge but read values back by binary
 search, sort.SearchInts, Arrays.binarySearch, Array.BinarySearch.
 Javascript spreads two arrays into a Set and sorts numerically,
 python sorts a set comprehension, and lua dedupes through a seen
 table before table.sort. The regime tables are where the integer
 widths divide the trees: the (38, 2) betas reach 38 digits and pass
-64 bits, so c hand-rolls a base-10^9 bignum, lua a base-10^4 one, go
-rides math/big, java BigInteger, c\# System.Numerics.BigInteger,
-javascript BigInt, and python pins the full integers natively, the
-only tree that compares them as numbers, with the decimal strings
-pinned beside them for the others.
+64 bits, so c hand-rolls a base-10^9 bignum, rust hand-rolls the
+same base-10^9 Big over 48 u64 limbs with wrapping accumulation
+mirroring c's unsigned carries, lua a base-10^4 one, go rides
+math/big, java BigInteger, c\# System.Numerics.BigInteger, javascript
+BigInt, and python pins the full integers natively, the only tree
+that compares them as numbers, with the decimal strings pinned
+beside them for the others. Rust compares its Big values by limb and
+pins the betas as decimal strings.
 
 == boxes, the online data structure
 
@@ -703,10 +728,11 @@ pinned by digest with spot rows pinned element by element.
 })
 
 One query priced at 19 reads against 100 is the structure's contract
-at toy scale, and the listings below build the lattice in seven
+at toy scale, and the listings below build the lattice in eight
 languages.
 
 #listing("dsa/samples-c/src/Ch43/boxes.c", first: 238, last: 286, caption: [c, the DP inline in the enumeration, zero-star boxes as leaf products, others expanding the highest star])
+#listing("dsa/samples-rust/src/Ch43/boxes.rs", first: 293, last: 348, caption: [rust, the DP inline in the enumeration over the threaded Ctx, zero-star boxes as leaf products, others expanding the highest star])
 #listing("dsa/samples-go/ch43boxes/boxes.go", first: 288, last: 325, caption: [go, boxes grouped by star count in a map, the base-11 index keying the value slice])
 #listing("dsa/samples-java/src/Ch43/Boxes.java", first: 241, last: 273, caption: [java, byStars lists per star count, the 1751-int stream digest pinned beside the spot rows])
 #listing("dsa/samples/src/Ch43/Boxes.cs", first: 246, last: 283, caption: [c\#, a byStars dictionary walked in Keys.Order, the star count taken by LINQ])
@@ -716,9 +742,12 @@ languages.
 
 The box enumeration is the same recursion everywhere, and the value
 store splits the trees. C and java index a flat array by the base-11
-reading of the box, digits 0 through 9 plus the star symbol. Go keeps
-the flat slice with the same index but groups boxes by star count in
-a map first. C\# groups in a Dictionary and walks Keys.Order.
+reading of the box, digits 0 through 9 plus the star symbol. Rust
+keeps the same flat Vec under the base-11 index, with c's file-scope
+arrays threaded through a Ctx struct and c's two qsort calls turned
+into Vec::sort. Go keeps the flat slice with the same index but
+groups boxes by star count in a map first. C\# groups in a Dictionary
+and walks Keys.Order.
 Javascript keeps the flat array with a Map for grouping. Python keys
 a dict by the box tuple itself and splices the highest star with
 slice arithmetic, the most literal reading of the lemma. Lua runs the
@@ -812,9 +841,10 @@ brute O(n^3) as the oracle throughout.
 })
 
 The reduction is exact and its constants are countable, and the
-listings below build the road in seven languages.
+listings below build the road in eight languages.
 
 #listing("dsa/samples-c/src/Ch43/extriangle.c", first: 111, last: 158, caption: [c, x\[a\] and y\[b\] as bitmasks over piece times label positions, acceptance one AND])
+#listing("dsa/samples-rust/src/Ch43/extriangle.rs", first: 126, last: 163, caption: [rust, x\[v\] and y\[v\] as u32 masks over piece times label positions, acceptance one AND, the Inst record a Vec without c's write-only rho field])
 #listing("dsa/samples-go/ch43/extriangle.go", first: 204, last: 243, caption: [go, uint32 label masks, the witness scan in instance order with named fields])
 #listing("dsa/samples-java/src/Ch43/Extriangle.java", first: 110, last: 158, caption: [java, masks at ci x p + label, chunks of n^2/s pairs, the 772-int stream digest pinned])
 #listing("dsa/samples/src/Ch43/Extriangle.cs", first: 155, last: 195, caption: [c\#, tuple lists and a goto done exiting the witness scan, the road as a record])
@@ -823,16 +853,21 @@ listings below build the road in seven languages.
 #listing("dsa/samples-lua/ch43_extriangle.lua", first: 108, last: 149, caption: [lua, (x[v] or 0) folds building the masks, 1-based piece ranges])
 
 The instances are built identically everywhere, and the masks divide
-the trees by width. C uses unsigned words, go uint32, java and c\#
-and javascript int, python arbitrary precision, lua native 64-bit.
+the trees by width. C uses unsigned words, go and rust uint32, java
+and c\# and javascript int, python arbitrary precision, lua native
+64-bit. Rust's Inst record drops c's write-only rho field and the
+MAXINST cap, the instances a plain Vec, because -D warnings rejects a
+dead field.
 The witness scan exits by flag, break, or jump in the sample corpus: c sets a
 found flag, go and java break through labeled state, c\# jumps to a
 goto label, javascript breaks a labeled outer loop, python breaks
 out of nested loops with witness checks, lua walks with explicit
-breaks. Java and go pin the whole 772-value stream by sha256 digest,
-the same decimal-per-line rule as every stream in this chapter, while
-c, c\#, and lua pin representative rows, and python pins both rows
-and digest.
+breaks, rust while-guards the scan on a minus-one witness sentinel.
+Java and go
+pin the whole 772-value stream by sha256 digest, the same
+decimal-per-line rule as every stream in this chapter, while c, rust,
+c\#, and lua pin representative rows, and python pins both rows and
+digest.
 
 == consequences: 3SUM, min-plus products, and bridges
 
@@ -976,9 +1011,10 @@ paper's own constants.
 
 Two witnesses, both real, one road paying 48 times the baseline at
 toy scale, and the exponents where the win lives, all pinned, and the
-listings below close the chapter in seven languages.
+listings below close the chapter in eight languages.
 
 #listing("dsa/samples-c/src/Ch43/minplus.c", first: 225, last: 261, caption: [c, one greedy bridge level, walks recovered within a horizon, cycles erased, greedy hitting over bitmasks])
+#listing("dsa/samples-rust/src/Ch43/minplus.rs", first: 305, last: 357, caption: [rust, one greedy bridge level, walks recovered within a horizon, cycles erased, greedy hitting over u32 masks, the Level record returned whole])
 #listing("dsa/samples-go/ch43/minplus.go", first: 291, last: 328, caption: [go, the scan closure shared by both directions, road A's bound 2n x |B| x horizon returned beside the picks])
 #listing("dsa/samples-java/src/Ch43/Minplus.java", first: 233, last: 258, caption: [java, bridgeLevel with a scan helper, the 601-int stream digest pinned with the stage table])
 #listing("dsa/samples/src/Ch43/Minplus.cs", first: 299, last: 334, caption: [c\#, the bridge level as a BridgeResult record over uint masks, greedy hitting inline])
@@ -988,12 +1024,19 @@ listings below close the chapter in seven languages.
 
 The min-plus lane leans on the floyd-warshall habits of chapter 11 and
 differs mostly in storage. C and java flatten the bounded dp into one
-array indexed k, u, v. Go keeps the flat slice behind a Di helper.
-C\# and python nest lists, python's d\[k\]\[u\]\[v\] with row aliases pulled
-out per level. Lua walks 1-based indices through the same layout. The
-witness discipline is shared: every finite entry names an argmin k
-that reproduces the entry as a two-hop sum, checked for all 576
-entries. The 3SUM chain is stated once per tree with the baseline and
+array indexed k, u, v. Go keeps the flat slice behind a Di helper and
+rust a Vec behind the same dbps_idx spelling, sized to the 353 horizon
+levels. C\# and python nest lists, python's d\[k\]\[u\]\[v\] with row
+aliases pulled out per level. Lua walks 1-based indices through the
+same layout. The witness discipline is shared: every finite entry
+names an argmin k that reproduces the entry as a two-hop sum, checked
+for all 576 entries. Rust threads c's file-scope statics through the
+calls as parameters, checks each bridge stage with its own formatted
+ok line, and pins the whole 576-entry distance matrix as a const in
+the main file, no sibling module like lua's. Its 3SUM instances keep
+only the accepted pairs, c's stored chunk records turning write-only
+and dropping once the acceptance scan doubles as the oracle count.
+The 3SUM chain is stated once per tree with the baseline and
 the road in the same function so the op counts are comparable by
 construction, and the baseline's hash table is the plain dictionary
 of every corpus language, chapter 6's structure doing the honest
@@ -1217,9 +1260,10 @@ from the paper's arithmetic.
 })
 
 One kernel priced to its last op and one induction run as a checker,
-and the listings below state both in seven languages.
+and the listings below state both in eight languages.
 
 #listing("dsa/samples-c/src/Ch43/strassen.c", first: 80, last: 145, caption: [c, the 7-product recursion with the 10 block sums and the decode assembling the 4 quarters])
+#listing("dsa/samples-rust/src/Ch43/strassen.rs", first: 125, last: 170, caption: [rust, the 10 block sums, 7 products, the decode assembling the quarters, the Ops counters threaded through every call])
 #listing("dsa/samples-go/ch43strassen/strassen.go", first: 135, last: 174, caption: [go, Strassen recursing through mAdd and mSub with the Ops counter threaded by pointer])
 #listing("dsa/samples-java/src/Ch43/Strassen.java", first: 134, last: 172, caption: [java, the ten sums, seven products, decode into quarters, counters in a mutable Ops])
 #listing("dsa/samples/src/Ch43/Strassen.cs", first: 182, last: 244, caption: [c\#, Run with MAdd and MSub over range slices, ClosedForm returning the 3 closed forms as a tuple])
@@ -1228,6 +1272,7 @@ and the listings below state both in seven languages.
 #listing("dsa/samples-lua/ch43_strassen.lua", first: 95, last: 136, caption: [lua, the recursion over 0-based tables, block_add and block_sub charging the shared counters])
 
 #listing("dsa/samples-c/src/Ch43/profile.c", first: 45, last: 93, caption: [c, the axiom checker over a function pointer, the chain certifier, the min step slack])
+#listing("dsa/samples-rust/src/Ch43/profile.rs", first: 81, last: 129, caption: [rust, the axiom checker over a native fn type, symmetry, unit row, concavity, tripling, the min step slack])
 #listing("dsa/samples-go/ch43profile/profile.go", first: 42, last: 125, caption: [go, CheckAxioms over a table function, Chain rows, the cube trick in int64])
 #listing("dsa/samples-java/src/Ch43/Profile.java", first: 43, last: 84, caption: [java, axioms over a Table interface, chainCertifies with the running product])
 #listing("dsa/samples/src/Ch43/Profile.cs", first: 45, last: 114, caption: [c\#, the Axioms record struct, ChainCertifies and MinStepSlack over the delegate])
@@ -1238,48 +1283,55 @@ and the listings below state both in seven languages.
 The strassen lanes differ in where the counters live: c keeps 3
 file-scope longs and mallocs its blocks, go, c\#, and javascript carry
 an ops object through the calls, java a mutable Ops class, python an
-Ops class with a row helper, lua one module-level table. Every tree
+Ops class with a row helper, lua one module-level table, rust a
+derive(Default) Ops threaded as a mutable borrow with fresh Vec
+blocks per node, its op-table rows each pinned by a formatted ok line
+inside the size loop. Every tree
 asserts the closed form locally before pinning the table, so the pins
 answer to the math, never to each other. The digest lanes repeat the
 chapter rule: java, go, c\#, javascript, and python pin the stream and
-product digests, c and lua pin element rows instead, the first,
+product digests, c, rust, and lua pin element rows instead, the first,
 middle, and last product rows beside the spot entries.
 
 The profile lanes hold no randomness, so every tree computes the same
-doubles: sqrt and log agree across the 7 libms far inside the 1e-9 pin
-tolerance, and the pins carry 9 decimals. The integer lanes stay in 64
+doubles: sqrt and log agree across the 8 trees far inside the 1e-9 pin
+tolerance, rust computing its t_a row with f64 ln among them, and the
+pins carry 9 decimals. The integer lanes stay in 64
 bits throughout, the cube trick's largest product 48 times 145^3 about
 1.5 x 10^8, no bignum this time. The table abstraction splits the
-trees thinly: a function pointer in c, a delegate in c\#, an interface
+trees thinly: a function pointer in c, native fn types in rust, a
+delegate in c\#, an interface
 in java, plain function values in go, javascript, python, and lua.
 
-== across the seven languages
+== across the eight languages
 
 Featured build size counted as non-blank, non-comment source lines of
-the chapter's 10 sample files per language in the c, go, java, c\#,
-javascript, python, and lua trees, go test files excluded:
+the chapter's 10 sample files per language in the c, rust, go, java,
+c\#, javascript, python, and lua trees, go test files excluded:
 
 #table(
-  columns: (auto, auto, auto, auto, auto, auto, auto, auto, 1.6fr),
+  columns: (auto, auto, auto, auto, auto, auto, auto, auto, auto, 1.6fr),
   inset: 4pt,
-  table.header([*stem*], [*c*], [*go*], [*java*], [*c\#*], [*javascript*], [*python*], [*lua*], [*note*]),
-  [baselines], [241], [125], [199], [107], [109], [151], [279], [three solvers and the work model, the thinnest stem],
-  [schoenhage], [421], [201], [327], [194], [138], [179], [368], [the identity, its forms, and the 490-triple gamma walk],
-  [recursion], [270], [167], [216], [224], [143], [319], [418], [one run of Full, 100 leaves, 18 outputs],
-  [tiling], [199], [152], [171], [200], [134], [182], [279], [4 shared encodings, the \[400, 144\] counted row],
-  [pruned], [656], [419], [536], [454], [270], [446], [870], [two instances, the paper table, the regime bignums],
-  [boxes], [536], [560], [558], [570], [422], [355], [633], [12393 boxes, lemmas 27 and 28, the query path],
-  [extriangle], [207], [222], [223], [183], [146], [236], [233], [theorem 17 end to end against brute force],
-  [minplus], [606], [451], [576], [442], [351], [606], [1200], [squaring, the bridge chain, the 3SUM chain, the pinned 576-entry matrix],
-  [strassen], [245], [192], [277], [228], [166], [192], [302], [the 7-product recursion instrumented, the closed forms, the measured slopes],
-  [profile], [146], [107], [152], [119], [107], [149], [207], [4 axiom laws, the induction certificate, the t_a convergence to 3/4],
+  table.header([*stem*], [*c*], [*rust*], [*go*], [*java*], [*c\#*], [*javascript*], [*python*], [*lua*], [*note*]),
+  [baselines], [241], [267], [125], [199], [107], [109], [151], [279], [three solvers and the work model, the thinnest stem],
+  [schoenhage], [421], [420], [201], [327], [194], [138], [179], [368], [the identity, its forms, and the 490-triple gamma walk],
+  [recursion], [270], [335], [167], [216], [224], [143], [319], [418], [one run of Full, 100 leaves, 18 outputs],
+  [tiling], [199], [297], [152], [171], [200], [134], [182], [279], [4 shared encodings, the \[400, 144\] counted row],
+  [pruned], [656], [869], [419], [536], [454], [270], [446], [870], [two instances, the paper table, the regime bignums],
+  [boxes], [536], [702], [560], [558], [570], [422], [355], [633], [12393 boxes, lemmas 27 and 28, the query path],
+  [extriangle], [207], [271], [222], [223], [183], [146], [236], [233], [theorem 17 end to end against brute force],
+  [minplus], [606], [761], [451], [576], [442], [351], [606], [1200], [squaring, the bridge chain, the 3SUM chain, the pinned 576-entry matrix],
+  [strassen], [245], [290], [192], [277], [228], [166], [192], [302], [the 7-product recursion instrumented, the closed forms, the measured slopes],
+  [profile], [146], [208], [107], [152], [119], [107], [149], [207], [4 axiom laws, the induction certificate, the t_a convergence to 3/4],
 )
 
 The heavy rows are the pins. Pruned carries the regime decimal
 strings, 446 lines in python and 870 in lua beside the base-10^4
 bignum and 1-based adjustments. Minplus's 576-entry distance matrix
-lands in full only in lua, a sibling pins module required by the
-main file and never listed by run.lua. c pins spot rows plus
+lands in full in lua and rust, lua through a sibling pins module
+required by the main file and never listed by run.lua, rust as a
+const inside the main file, extracted programmatically. c pins spot
+rows plus
 downstream values, and python anchors the stream by sha256 digest
 with the matrix pinned as a checksum, edge rows, and spot cells,
 landing beside the c twin at 606 lines. Go keeps the fixtures in
@@ -1289,10 +1341,15 @@ package. Javascript holds the whole
 chapter under 2000 lines by importing nothing and leaning on Number
 where the values provably fit, with the LCG state alone in bigint.
 The c tree carries the hand-rolled base-10^9 bignum in pruned at 656
-lines and the flat dp array in minplus at 606.
+lines and the flat dp array in minplus at 606. The rust column sums
+to 4420 lines over the 10 files against the c twin's 3527,
+schoenhage the one stem where rust comes in lighter, 420 against
+421, its hand-rolled base-10^9 Big riding pruned at 869.
 
-Sample behavior verified by the 7 suite gates scoped to chapter 43:
-c 10 files and 207 checks, go 9 packages and 89 test functions, java
+Sample behavior verified by the 8 suite gates scoped to chapter 43:
+c 10 files and 232 checks, rust 10 files and 232 checks under
+run-rust-samples over samples-rust/src, go 9 packages and 89 test
+functions, java
 10 files and 216 checks under run-java-samples, c\# 88 facts,
 javascript 10 suites and 105 tests, python 10 files and 232 checks,
 lua 10 modules and 81 checks inside the 1017-check full suite, zero

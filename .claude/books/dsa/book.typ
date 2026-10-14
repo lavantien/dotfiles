@@ -1,4 +1,4 @@
-// book 9: all 45 chapters written, the grey-stub map fully retired
+// book 10: all 45 chapters written, the grey-stub map fully retired
 #import "../theme/lib.typ": book
 #import "manifest.typ": dsabook
 

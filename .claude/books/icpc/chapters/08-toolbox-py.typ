@@ -2,7 +2,7 @@
 
 = the python toolbox
 
-Python carries the lightest toolbox of the seven languages, and that is
+Python carries the lightest toolbox of the eight languages, and that is
 the point: the standard library already won. A priority queue is
 `heapq`, a deque is `collections.deque`, memoization is one `@cache`
 line, the combinatorial loops are `itertools`, the parsing is `re`, and
@@ -12,7 +12,7 @@ boundary to respect. What this chapter builds is therefore not
 containers, it is fluency: 274 non-blank lines of idiom checks over 6
 files, 67 asserts, every pattern pinned to a fact, and every deeper
 treatment cited to the python book rather than repeated here. The other
-five toolboxes in this set exist because their languages made the
+six toolboxes in this set exist because their languages made the
  contest jobs hard. This one exists to show what it looks like when
 they are easy.
 
@@ -329,7 +329,7 @@ back to 1, in the listings below.
 
 #listing("icpc/samples-py/src/Ch06/num.py", first: 29, last: 41, caption: [divmod is the floored pair, int parses with base and separators])
 
-The anchors match the other six languages, `pow(2, 100, 1_000_000_007)`
+The anchors match the other seven languages, `pow(2, 100, 1_000_000_007)`
 is 976371285, and `pow(3, -1, 7)` is 5, verified in the next line by
 multiplying it back to 1. Parsing rides the same theme: `int` takes an
 explicit base from 2 to 36, accepts underscore separators, forgives
@@ -471,11 +471,13 @@ already ship:
   [digests and json walks], [stdlib, `digest.py`], [9 checks, #xref-to("python", "plumbing")],
 )
 
-The counterparts in the other six toolboxes are the comparison:
-the c, go, c\#, and javascript toolboxes hand-build heaps, deques,
+The counterparts in the other seven toolboxes are the comparison:
+the c and rust toolboxes hand-build the whole substrate and chapter
+3 names every module the standard library was allowed to cover, the
+go, c\#, and javascript toolboxes hand-build heaps, deques,
 big integers, modular arithmetic, and md5, and the lua toolbox adds
 a bigint and an md5 for the same reason. Python imports its way
-past all of it. Java's chapter 4 shows the other face of a rich
+past all of it. Java's chapter 5 shows the other face of a rich
 library: the imports exist, and the kit still measures the seams,
 Scanner at 1.4 to 1.6x the buffered pair on a quiet box (a 4154731-byte,
 420000-token fixture, 2.4 to 2.8x when the box is loaded) and

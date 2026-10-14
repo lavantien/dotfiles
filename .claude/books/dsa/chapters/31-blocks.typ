@@ -15,7 +15,7 @@ embed, the li chao tree answers online line queries by segment
 descent, the disjoint sparse table buys O(1) range folds for sums and
 other non-idempotent folds, and rollback dsu plus a segment tree
 over time answer dynamic connectivity offline. The last engine is the
-substrate of icpc world finals 2025 problem G (book 10, chapter 13).
+substrate of icpc world finals 2025 problem G (book 11, chapter 15).
 
 == sqrt decomposition
 
@@ -73,9 +73,10 @@ same sums in the C, Go, and Python suites.
 })
 
 The 28 at 3 blocks touched closes the walk, and the listings below
-run it in seven languages.
+run it in eight languages.
 
 #listing("dsa/samples-c/src/Ch31/sqrtblocks.c", first: 45, last: 62, caption: [c, the three-way sum walk and the touched meter, static arrays])
+#listing("dsa/samples-rust/src/Ch31/sqrtblocks.rs", first: 59, last: 83, caption: [rust, the three-way sum walk and the touched meter, block ids by integer division])
 #listing("dsa/samples-go/ch31/sqrtblocks.go", first: 48, last: 73, caption: [go, sum folds edges then blocks, touched beside])
 #listing("dsa/samples-java/src/Ch31/Sqrtblocks.java", first: 44, last: 63, caption: [java, the three-way sum walk and the touched meter, block ids by integer division])
 #listing("dsa/samples/src/Ch31/SqrtBlocks.cs", first: 38, last: 58, caption: [c\#, the same walk, partial edges commented, whole blocks from the sum array])
@@ -134,7 +135,8 @@ per block for O(q) blocks total in one direction, and the left
 pointer wanders at most b per query: O((n + q) sqrt n) all in, with
 the travel meter as the evidence. The sort must be a total order
 stable in the query index, c, go, and java break ties on the index
-explicitly, javascript leans on its stable sort, so all seven
+explicitly, rust breaks the tie inside its sort_by comparator, and
+javascript leans on its stable sort, so all eight
 languages process the same order and pin the same meter.
 
 The dry run: the fixture is 1, 2, 1, 3, 2, 1, 4, 1 with b = 3 and
@@ -170,9 +172,10 @@ by the C\# suite at 20 total pointer moves.
 )
 
 The six answers land 4, 3, 3, 1, 3, 1 in input order for the 20
-moves, and the listings below run the walk in seven languages.
+moves, and the listings below run the walk in eight languages.
 
 #listing("dsa/samples-c/src/Ch31/mos.c", first: 91, last: 115, caption: [c, the four while loops, travel counted per pointer move])
+#listing("dsa/samples-rust/src/Ch31/mos.rs", first: 89, last: 112, caption: [rust, the four while loops over the sort_by order, travel counted per pointer move])
 #listing("dsa/samples-go/ch31/mos.go", first: 51, last: 77, caption: [go, the walk with the add and remove closures above])
 #listing("dsa/samples-java/src/Ch31/Mos.java", first: 78, last: 103, caption: [java, the four while loops over the comparator-sorted order, travel per move])
 #listing("dsa/samples/src/Ch31/Mos.cs", first: 43, last: 73, caption: [c\#, the same walk over the sorted order, closure add and remove])
@@ -239,7 +242,7 @@ crosses it at most once per lifetime, so n operations cost O(n)
 total.
 
 The dry run: the fixture is the push run 5, 2, 7, 1, 4, asserted by
-the C\# suite, the same family in the other five suites.
+the C\# suite, the same family in the other seven suites.
 
 + Push 5 opens the stack with the pair 5, 5, value and running
   minimum agreeing, and min reads 5.
@@ -283,9 +286,10 @@ the C\# suite, the same family in the other five suites.
 })
 
 The recovered pair 2 then 5 is the pinned landing, and the listings
-below build stack and queue in seven languages.
+below build stack and queue in eight languages.
 
 #listing("dsa/samples-c/src/Ch31/minstack.c", first: 60, last: 83, caption: [c, the dequeue-with-transfer and the two-stack minimum])
+#listing("dsa/samples-rust/src/Ch31/minstack.rs", first: 61, last: 85, caption: [rust, the dequeue-with-transfer, the queue min an Option that refuses empty as None])
 #listing("dsa/samples-go/ch31/minstack.go", first: 63, last: 98, caption: [go, the transfer loop and the min switch over both tops])
 #listing("dsa/samples-java/src/Ch31/Minstack.java", first: 53, last: 76, caption: [java, the dequeue-with-transfer, min over both tops, the empty refusal by out-flag])
 #listing("dsa/samples/src/Ch31/MinStack.cs", first: 46, last: 73, caption: [c\#, dequeue refills from the inbox, min combines the two stack minima])
@@ -354,7 +358,7 @@ taking the max over the root-to-leaf path.
 
 The dry run: the fixture is the domain x in \[0, 8) with the four
 lines (1, 0), (0, 3), (-1, 5), (2, -4), asserted by the C\# suite,
-the domain and lines shared by all seven suites.
+the domain and lines shared by all eight suites.
 
 + y = x enters first and the empty root keeps it: the node over
   0..8 holds it.
@@ -409,9 +413,10 @@ the domain and lines shared by all seven suites.
 })
 
 The envelope 5, 4, 3, 3, 4, 6, 8, 10 is the pinned landing, and the
-listings below insert these four lines in seven languages.
+listings below insert these four lines in eight languages.
 
 #listing("dsa/samples-c/src/Ch31/lichao.c", first: 28, last: 52, caption: [c, the insert descent, midpoint winner kept, loser recursed one side])
+#listing("dsa/samples-rust/src/Ch31/lichao.rs", first: 39, last: 63, caption: [rust, the insert descent, the midpoint swap on the node's line, loser recursed one side])
 #listing("dsa/samples-go/ch31/lichao.go", first: 22, last: 46, caption: [go, insert keeps the midpoint winner and follows the loser])
 #listing("dsa/samples-java/src/Ch31/Lichao.java", first: 29, last: 53, caption: [java, the insert descent, midpoint winner kept, loser recursed one side])
 #listing("dsa/samples/src/Ch31/LiChao.cs", first: 26, last: 54, caption: [c\#, the same descent with tuple swaps, nullable query sentinel])
@@ -478,7 +483,7 @@ prefix(r), two cells, no overlap.
 
 The dry run: the fixture is the array 3, 1, 4, 1, 5, 9, 2, 6, 5, 3
 at n = 10 and 4 levels, asserted by the C\# suite, the same eight
-sums in all seven suites.
+sums in all eight suites.
 
 + Query 2 to 7 picks its level first: 2 and 7 differ first at bit 2,
   so level 2, whose aligned blocks run 4 cells with this block's
@@ -527,9 +532,10 @@ sums in all seven suites.
 })
 
 The 27 from two cells is the pinned landing, and the listings below
-build the levels in seven languages.
+build the levels in eight languages.
 
 #listing("dsa/samples-c/src/Ch31/disjointsparse.c", first: 28, last: 61, caption: [c, the level build's two half-scans and the two-cell query])
+#listing("dsa/samples-rust/src/Ch31/disjointsparse.rs", first: 35, last: 81, caption: [rust, the level build's two half-scans, the query level by the highest differing bit])
 #listing("dsa/samples-go/ch31/disjoint_sparse.go", first: 33, last: 66, caption: [go, buildLevel's half-scans, sum via bits.len])
 #listing("dsa/samples-java/src/Ch31/Disjointsparse.java", first: 27, last: 60, caption: [java, the build's two half-scans, the query level by first differing bit])
 #listing("dsa/samples/src/Ch31/DisjointSparse.cs", first: 24, last: 60, caption: [c\#, the build loop per level, sum by first differing bit])
@@ -630,9 +636,10 @@ labels over the suite's 0-based calls.
 )
 
 The count returns to 6 with the stack empty, and the listings below
-union and unwind in seven languages.
+union and unwind in eight languages.
 
 #listing("dsa/samples-c/src/Ch31/rollbackdsu.c", first: 45, last: 72, caption: [c, union pushes the pair, rollback unwinds it, snapshot is the depth])
+#listing("dsa/samples-rust/src/Ch31/rollbackdsu.rs", first: 40, last: 65, caption: [rust, union pushes the (child, parent) pair, rollback unwinds it, snapshot is the stack length])
 #listing("dsa/samples-go/ch31/rollbackdsu.go", first: 42, last: 70, caption: [go, union by size, rollback slicing the stack])
 #listing("dsa/samples-java/src/Ch31/Rollbackdsu.java", first: 44, last: 73, caption: [java, union pushes the pair, rollback unwinds it, snapshot is the depth])
 #listing("dsa/samples/src/Ch31/RollbackDsu.cs", first: 43, last: 67, caption: [c\#, union and rollback over the pair stack])
@@ -650,8 +657,7 @@ gives 6, and a duplicate union of a connected pair leaves the stack
 at depth 1. The hop-meter family builds the binomial merge shape on 8
 vertices, the worst union-by-size permits, and find from vertices 4,
 6, and 7 each walks exactly 2 hops against the log2 8 = 3 bound. This
-structure serves icpc world finals 2025 problem G (book 10, chapter
-13) through the engine below.
+structure serves icpc world finals 2025 problem G (book 11, chapter 15) through the engine below.
 
 #diagram([the union stack with snapshot ticks and one unwind restoring two components, beside the binomial 8-vertex shape with a 2-hop find path], length: 13pt, {
   // left: the stack after unions (1,2),(3,4),(2,4),(5,6) then (4,6), unwinding to tick 4
@@ -754,9 +760,10 @@ dsu agreeing cell by cell.
 })
 
 The sweep answers all eight times for the pinned 9 unions, and the
-listings below run the dfs in seven languages.
+listings below run the dfs in eight languages.
 
 #listing("dsa/samples-c/src/Ch31/offlinedynconn.c", first: 103, last: 123, caption: [c, the dfs: union on entry, answer at the leaf, unwind on exit])
+#listing("dsa/samples-rust/src/Ch31/offlinedynconn.rs", first: 113, last: 139, caption: [rust, the dfs over the intrusive per-node edge lists, union on entry, answer at the leaf, unwind on exit])
 #listing("dsa/samples-go/ch31/offlinedynconn.go", first: 50, last: 72, caption: [go, the dfs closure, components as vertices minus unions])
 #listing("dsa/samples-java/src/Ch31/Offlinedynconn.java", first: 107, last: 127, caption: [java, the dfs over intrusive per-node edge lists, union on entry, unwind on exit])
 #listing("dsa/samples/src/Ch31/OfflineDynConn.cs", first: 33, last: 54, caption: [c\#, the same dfs as a local function over the node lists])
@@ -774,9 +781,9 @@ cell. The negative family holds: 1 and 5 are never connected, vertex
 whole horizon, an empty interval, and a query at t = 0 before any
 edge. Java keeps the timeline tree's per-node edge lists as an
 intrusive singly linked list over int arrays, slot 0 the terminator,
-the c arrangement rather than the map the dynamic languages reach
-for. This engine is icpc world finals 2025 problem G (book 10,
-chapter 13), lava moat: the level sweep runs exactly this machine
+and rust does the same over usize vecs, the c arrangement rather
+than the map the dynamic languages reach
+for. This engine is icpc world finals 2025 problem G (book 11, chapter 15), lava moat: the level sweep runs exactly this machine
 over edge lifetimes with per-component length and border flags, at
 O(n log^2 n).
 
@@ -831,7 +838,7 @@ O(n log^2 n).
   cdraw.content((17.2, 1.8), [O(E log T log V)], size: 6pt)
 })
 
-== across the seven languages
+== across the eight languages
 
 Featured build size counted as non-blank, non-comment lines of the
 chapter's seven sample files per language, embedded test scripts
@@ -842,6 +849,7 @@ included:
   inset: 4pt,
   table.header([*language*], [*build sloc*], [*container dependency*], [*boundary note*]),
   [c], [792], [static arrays, qsort for mo], [block ids by integer division, the empty-pop and empty-min sentinel flags],
+  [rust], [1028], [rust 1.99 std], [mo order from a sort_by comparator breaking the index tie, the li chao empty query as a bool beside the value, the min queue refusal as None],
   [go], [419], [slices, maps, no imports beyond fmt and bits], [components computed as vertices minus unions, snake_case file for the sparse table],
   [java], [839], [jdk 27 stdlib, Arrays.sort comparator for mo], [the mo comparator breaks the index tie explicitly, intrusive int-array edge lists for the timeline tree, found-flag li chao sentinel],
   [c\#], [396], [arrays, tuples, dictionaries], [nullable long for the li chao sentinel, bitlength by hand and by clz],
@@ -865,9 +873,11 @@ cp-algorithms.com/data_structures/disjoint_set_union.html, the
 substrate of 31.6 whose rollback variant is likewise ours, all
 accessed 2026-09-20, cc by-sa 4.0, our own words and code throughout.
 The offline connectivity engine of 31.7 has no dedicated article
-there and cites icpc world finals 2025 problem G (book 10, chapter 13)
-as its application source. Sample behavior verified by the seven suite
-gates scoped to chapter 31: c 7 files and 136 checks, go 21 test
+there and cites icpc world finals 2025 problem G (book 11, chapter 15)
+as its application source. Sample behavior verified by the eight suite
+gates scoped to chapter 31: c 7 files and 136 checks, rust 7 files
+and 129 checks under run-rust-samples in books/dsa/samples-rust,
+go 21 test
 functions, java 7 files and 136 checks under run-java-samples, c\# 23
 facts, javascript 21 tests and 68 asserts, python 7
 files and 122 asserts, lua 21 checks, zero skipped.

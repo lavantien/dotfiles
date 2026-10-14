@@ -11,7 +11,8 @@ rate limiting, and the bulkhead, are the standard equipment, and the
 chapter's specific discipline is making all of them testable
 through injected clocks and sleeps, no test waits a real second.
 Every tree runs its timing through a clock it hands in: C advances
-a vclock struct, java advances a vclock long whose sleeps record
+a vclock struct, rust the same struct with every sleep recorded in
+a Vec, java advances a vclock long whose sleeps record
 themselves, C\# reads a `TimeProvider` and takes the sleep as a
 delegate, javascript queues timers on a fake clock whose advance
 fires them after pumping the microtask queue, python records sleeps
@@ -29,7 +30,7 @@ full jitter, sleep uniform in `[0, cap)` with the cap doubling per
 attempt, with the sleep and the draw both injected so the schedule
 is an observation, not a wait.
 
-The dry run: all seven lanes pin the same schedules.
+The dry run: all eight lanes pin the same schedules.
 
 - 4 attempts succeeding on the 3rd, jitter pinned to the cap:
   sleeps `[10ms, 20ms]`
@@ -38,9 +39,11 @@ The dry run: all seven lanes pin the same schedules.
 - realized full jitter, corpus LCG seed 42 over caps `[10, 20, 40,
   80]`: draws `[5, 4, 16, 50]` ms, sum 75
 - the frozen go test pins the first two walks plus a draw-under-cap
-  property, the realized vector is pinned by the 6 new trees
+  property, the realized vector is pinned by the 7 new trees
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch15/retry.c", first: 47, last: 86, caption: [C, the attempt is a function pointer, the outcome struct carries exhaustion and cause])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch15/retry.rs", first: 94, last: 126, caption: [Rust, jitter a `Jitter` enum matched in `draw`, the attempt an `FnMut` closure, sleeps through the injected clock, `RetryOut` mirrors c's outcome struct])
 
 #listing("patterns-concurrency-distributed/samples/ch15/resilience.go", first: 15, last: 52, caption: [Go, caps double, jitter draws under the cap, sleep injected])
 
@@ -58,15 +61,16 @@ Sleeps happen between attempts, never after the last, and the
 exhausted error names both facts in every lane: go joins
 `ErrRetriesExhausted` with the last real error so `errors.Is` finds
 either, C fills an outcome struct with the exhausted flag and the
-cause pointer, java the same shape, an `Out` with the flag and the
+cause pointer, rust the same struct with the cause an `Option`,
+java the same shape, an `Out` with the flag and the
 cause beside a message naming both, C\# throws
 `RetriesExhaustedException` carrying the last error as its
 `InnerException`, javascript and python build the exhaustion
 message around the carried cause, lua concatenates it into the
 returned message string. The jitter source is the other split: go
-draws from `rand/v2`, the 6 new lanes draw from chapter 11's corpus
+draws from `rand/v2`, the 7 new lanes draw from chapter 11's corpus
 LCG so the realized schedule is a pinned vector, and the AWS blend
-is the same shape in all seven, herds spread across the band
+is the same shape in all eight, herds spread across the band
 instead of stampeding in lockstep.
 
 Retries are only correct for idempotent operations, which is not a
@@ -117,8 +121,8 @@ the injected clock.
   consecutive failure opens
 - open rejects fast and the dependency's call count does not move,
   +2s stays open, the full +5s admits exactly one probe, a second
-  concurrent probe is rejected, java pinning the whole lifecycle's
-  dependency count at exactly 8
+  concurrent probe is rejected, java and rust pinning the whole
+  lifecycle's dependency count at exactly 8
 - a failed probe reopens with a fresh delay counted from the
   failure, a successful probe closes
 - the go lane's frozen walk advances 2s then 4s more, admitting its
@@ -126,6 +130,8 @@ the injected clock.
   implementation
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch15/breaker.c", first: 56, last: 98, caption: [C, allow claims the probe slot, report settles it, the clock is a long the test owns])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch15/breaker.rs", first: 51, last: 96, caption: [Rust, allow claims the probe slot, report settles it, the clock a `now_ms` value passed into each call, no stored pointer])
 
 #listing("patterns-concurrency-distributed/samples/ch15/resilience.go", first: 56, last: 104, caption: [Go, the breaker fields and constructor, allow admits one half-open probe, the clock injected])
 
@@ -143,12 +149,13 @@ the injected clock.
 
 Every transition in that walk is an assertion, and none of them
 took real time. The state itself is a string in go and lua, an enum
-in C and java, and the machine's edge conditions are identical: the
+in C, rust, and java, and the machine's edge conditions are
+identical: the
 delay comparison is `>=`, the half-open slot is claimed before the
 call, and a failed probe stamps a fresh `openedAt`. The threading
 row is quiet here, a mutex in go and C\# around fields that the
-scripted walks in C, java, javascript, python, and lua touch one
-step at a time.
+scripted walks in C, rust, java, javascript, python, and lua touch
+one step at a time.
 
 The design decision a breaker forces: failure threshold and reset
 delay are SLA statements. A threshold of 3 with a 5 second delay
@@ -163,7 +170,7 @@ second, allowing short bursts over the average rate, which is what
 makes it the default limiter shape. The refill is lazy, computed
 from elapsed time on each take, which is the property that keeps
 the limiter correct through idle periods with zero background
-cost, no ticker anywhere in any of the 7 trees.
+cost, no ticker anywhere in any of the 8 trees.
 
 The dry run: rate 10 per second, burst 4, the clock advanced by
 hand.
@@ -177,6 +184,8 @@ hand.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch15/bucket.c", first: 35, last: 74, caption: [C, lazy refill on read in doubles, the wait derives from the deficit])
 
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch15/bucket.rs", first: 41, last: 81, caption: [Rust, lazy refill on read in f64 capped at burst, `now_ms` handed in by value, the wait derived from the deficit])
+
 #listing("patterns-concurrency-distributed/samples/ch15/resilience.go", first: 141, last: 195, caption: [Go, lazy refill on read, burst cap, wait-take computes the deficit delay])
 
 #listing("patterns-concurrency-distributed/samples-java/src/Ch15/Bucket.java", first: 29, last: 77, caption: [Java, lazy refill in doubles capped at burst, waitTake computes the deficit delay and pushes the clock through it])
@@ -189,7 +198,7 @@ hand.
 
 #listing("patterns-concurrency-distributed/samples-lua/ch15_bucket.lua", first: 10, last: 52, caption: [Lua, floats appear exactly where the arithmetic needs them, elapsed seconds times rate])
 
-The arithmetic is float in all seven lanes and lands on the same
+The arithmetic is float in all eight lanes and lands on the same
 numbers because it is the same expression, elapsed seconds times
 rate, capped at burst, with the wait derived as deficit over rate.
 `WaitTake` loops: refill, draw if a full token is there, otherwise
@@ -242,6 +251,8 @@ The dry run: capacity 2, the wait a virtual 20ms.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch15/bulkhead.c", first: 31, last: 79, caption: [C, a counter and a clock burn, the guarded service only runs on a taken slot])
 
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch15/bulkhead.rs", first: 30, last: 75, caption: [Rust, a counter and a clock burn, the service borrows the bulkhead by `&mut`, fallback is `unwrap_or` on the Option])
+
 #listing("patterns-concurrency-distributed/samples/ch15/resilience.go", first: 199, last: 222, caption: [Go, buffered channel as a counting semaphore, timer-bounded entry])
 
 #listing("patterns-concurrency-distributed/samples-java/src/Ch15/Bulkhead.java", first: 40, last: 84, caption: [Java, a count and a waiter deque, the expiry burns the clock, leave hands the slot to an unexpired parked waiter])
@@ -262,7 +273,8 @@ provider, javascript races a slot promise against the fake clock's
 sleep promise and re-checks the count after the wake so a stolen
 slot cannot overfill the hold, python races an `asyncio.Event`
 against the timer heap, lua sleeps once virtually and re-checks, C
-runs single-threaded and just burns the clock, and java scripts the
+and rust run single-threaded and just burn the clock, and java
+scripts the
 rescue without threads at all, a parked waiter deque where `leave`
 hands the slot straight to a waiter whose deadline has not passed,
 the admit pinned at the release instant. Fallback completes
@@ -308,7 +320,7 @@ lines because the pattern is 2 lines.
   edge((5.7, 0), (3.8, -1.5), "-|>", bend: 20deg, label: [at the leaf]),
 )
 
-== across the seven languages
+== across the eight languages
 
 The build sizes count non-comment source lines, the go column the
 chapter's one frozen file:
@@ -319,6 +331,8 @@ chapter's one frozen file:
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [459], [libc],
   [single-threaded, timers through a virtual clock, the bulkhead just burns it],
+  [rust], [557], [stdlib],
+  [an enum jitter strategy, the clock passed by value into every breaker and bucket call, sleeps recorded in a Vec],
   [go], [188], [stdlib],
   [channel semaphore raced by select, rand.Int64N the jitter, timer-bounded entry],
   [java], [462], [jdk 27 stdlib],
@@ -337,8 +351,9 @@ sources: AWS Architecture Blog, "Exponential Backoff and Jitter",
 for full jitter against synchronized retries, Nygard, "Release
 It!", for circuit breakers and bulkheads, go.dev/pkg/time for the
 timer semantics used by the bulkhead wait, accessed 2026-09-08.
-Verified by the seven chapter legs: 4 Ch15 C programs with 90
-embedded checks, `go test` at 8 tests in `patternsbook/ch15`, the
+Verified by the eight chapter legs: 4 Ch15 C programs with 90
+embedded checks, the rust runner's 90 checks across 4 programs in
+`samples-rust/src/Ch15`, `go test` at 8 tests in `patternsbook/ch15`, the
 java runner's 90 checks across 4 programs in `samples-java/src/Ch15`,
 9 xunit facts, node's 9 cases in `test/ch15.test.mjs`, 4 python
 modules with 60 embedded checks, and the lua runner's 17 ch15 rows.

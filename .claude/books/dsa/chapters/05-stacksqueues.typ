@@ -15,7 +15,7 @@ an honest underflow, C first with refusal codes.
 
 The dry run: the fixture is the 1, 2, 3 run, asserted by the C\#
 suite, with the 1000 push growth exhibit in C\# and the capacity 8
-refusal in C, Java, JavaScript, and Lua.
+refusal in C, Rust, Java, JavaScript, and Lua.
 
 + Push 1, Push 2, Push 3 write at the count: the count is 3 and the
   top is 3.
@@ -39,9 +39,14 @@ refusal in C, Java, JavaScript, and Lua.
 )
 
 The 3, 2, 1 drain and the 999 off the 1000 push run are pinned, and
-the listings below build the stack seven ways.
+the listings below build the stack eight ways.
 
 #listing("dsa/samples-c/src/Ch05/stack.c", first: 21, last: 40, caption: [c, push, pop, peek over a bounded char array])
+
+Rust splits the refusal shapes, push reports its capacity refusal as
+a bool while pop and peek surface underflow as Option:
+
+#listing("dsa/samples-rust/src/Ch05/stack.rs", first: 13, last: 48, caption: [rust, push, pop, peek over a bounded char array, capacity refusal as bool, underflow as Option])
 
 #listing("dsa/samples-go/ch05/stack.go", first: 12, last: 30, caption: [go, push, pop, peek over a slice head])
 
@@ -62,11 +67,12 @@ The C\# class grows instead of refusing at the top end:
 #listing("dsa/samples-lua/ch05_stack.lua", first: 11, last: 29, caption: [lua, push, pop, peek, nil slots released on pop])
 
 Underflow refuses everywhere, never fabricates a value. C returns
-refusal codes, Go returns errors, C\# throws InvalidOperationException,
-Python raises IndexError, and Java, JavaScript, and Lua return null
-and nil. The top end differs: C, Java, JavaScript, and Lua run
-bounded stacks that also refuse at capacity 8, while C\#, Go, and
-Python grow without a bound, chapter 3's doubling doing the work.
+refusal codes, Rust returns Option on pop and peek, Go returns errors,
+C\# throws InvalidOperationException, Python raises IndexError, and
+Java, JavaScript, and Lua return null and nil. The top end differs:
+C, Rust, Java, JavaScript, and Lua run bounded stacks that also
+refuse at capacity 8, while C\#, Go, and Python grow without a bound,
+chapter 3's doubling doing the work.
 
 #diagram([the stack, one legal entry point: push writes at the count, pop reads and clears it], length: 13pt, {
   // vertical strip, index 0 at the bottom, three of four slots live
@@ -96,8 +102,8 @@ reads, the tail is where the next enqueue writes, and both wrap with
 a modulo. C keeps the whole story in 28 lines, grow included.
 
 The dry run: the fixture is Ring(4) across the seam, asserted by the
-C\# suite; C, Java, JavaScript, and Lua pin the same layout 5 6 3 4
-and the 4 element grow copy.
+C\# suite; C, Rust, Java, JavaScript, and Lua pin the same layout 5 6
+3 4 and the 4 element grow copy.
 
 + Enqueue 1, 2, 3, 4 fills to capacity: count 4, capacity still 4,
   head and tail both back at slot 0.
@@ -130,9 +136,14 @@ and the 4 element grow copy.
 })
 
 The 5 6 3 4 seam and the in-order drain are pinned, and the listings
-below build the ring in seven languages.
+below build the ring in eight languages.
 
 #listing("dsa/samples-c/src/Ch05/ringqueue.c", first: 30, last: 57, caption: [c, grow rebases to slot 0, enqueue and dequeue wrap])
+
+Rust grows through a scratch array, unwinding the seam back to slot 0
+before the capacity doubles:
+
+#listing("dsa/samples-rust/src/Ch05/ringqueue.rs", first: 34, last: 65, caption: [rust, the seam-unwinding grow, enqueue and dequeue wrap])
 
 #listing("dsa/samples-go/ch05/ringqueue.go", first: 24, last: 40, caption: [go, enqueue with the grow inlined and counted])
 
@@ -156,8 +167,8 @@ structure, and the interleaved test exists to keep it honest.
 
 #listing("dsa/samples-lua/ch05_ringqueue.lua", first: 9, last: 35, caption: [lua, grow, enqueue, dequeue over 1-based slots])
 
-The seam fixture pins identically in C, Java, JavaScript, and Lua:
-capacity 4, dequeue two, enqueue two, physical layout 5 6 3 4 with
+The seam fixture pins identically in C, Rust, Java, JavaScript, and
+Lua: capacity 4, dequeue two, enqueue two, physical layout 5 6 3 4 with
 head at slot 2, then growth copies 3 4 5 6 back to slot 0, 7 lands at
 slot 4, and the copy counter reads 4. Python runs the same story with
 letters, c d e f g across the seam and head 0 tail 5 after growth.
@@ -220,9 +231,14 @@ other six pin "([)]" false and "{[()]}" true instead.
 )
 
 The crossed false against the nested true is pinned by every suite,
-and the listings below build the matcher seven ways.
+and the listings below build the matcher eight ways.
 
 #listing("dsa/samples-c/src/Ch05/stack.c", first: 42, last: 65, caption: [c, the matcher over the same three primitives])
+
+Rust compares the popped opener through a match guard, the same
+every-non-opener-is-a-closer fork:
+
+#listing("dsa/samples-rust/src/Ch05/stack.rs", first: 50, last: 79, caption: [rust, the matcher over the same three primitives, the pop compared in a match guard])
 
 #listing("dsa/samples-go/ch05/stack.go", first: 38, last: 55, caption: [go, bracket match on the slice-backed stack])
 
@@ -236,12 +252,12 @@ and the listings below build the matcher seven ways.
 
 #listing("dsa/samples-lua/ch05_stack.lua", first: 31, last: 46, caption: [lua, table lookups for openers and closers])
 
-Every suite pins "([)]" false and the empty string true. C, Java,
-JavaScript, Lua, and Python pin "{[()]}" true, C\#'s positive fixture
-is "([]{})". One semantic fork the suites each state: C\#, Go, and
-Python ignore non-bracket characters and pin fixtures that use them,
-while the C, Java, JavaScript, and Lua matchers treat every non-opener
-as a closer, so foreign input fails there.
+Every suite pins "([)]" false and the empty string true. C, Rust,
+Java, JavaScript, Lua, and Python pin "{[()]}" true, C\#'s positive
+fixture is "([]{})". One semantic fork the suites each state: C\#, Go,
+and Python ignore non-bracket characters and pin fixtures that use
+them, while the C, Rust, Java, JavaScript, and Lua matchers treat
+every non-opener as a closer, so foreign input fails there.
 
 #diagram([bracket matching, the scan with the opener stack under each step], length: 13pt, {
   // input ( ( ) ) ) with the stack after consuming each char
@@ -312,9 +328,13 @@ beside it.
 })
 
 The 11 and the associativity 3 are the pinned pair, and the listings
-below run the yard in seven languages.
+below run the yard in eight languages.
 
 #listing("dsa/samples-c/src/Ch05/shunting.c", first: 61, last: 83, caption: [c, the yard over char and token arrays])
+
+Rust tags tokens with an enum kind and evaluates through a match:
+
+#listing("dsa/samples-rust/src/Ch05/shunting.rs", first: 84, last: 144, caption: [rust, precedence, the yard, and the value stack through match over enum-tagged tokens])
 
 #listing("dsa/samples-go/ch05/shunting.go", first: 25, last: 64, caption: [go, the yard with error returns for bad input])
 
@@ -341,11 +361,12 @@ Four more yards:
 
 #listing("dsa/samples-lua/ch05_shunting.lua", first: 37, last: 60, caption: [lua, the yard with table.remove as the pop])
 
-The associativity anchor holds in all seven: 8 - 3 - 2 emits
+The associativity anchor holds in all eight: 8 - 3 - 2 emits
 8 3 - 2 - and evaluates to 3. C, Go, and C\# pin the rendered string
-directly, Java, JavaScript, and Lua render through the same helper,
-Python pins 83-2- in single-character form. Division truncates toward
-zero in C, Go, Java, C\#, and JavaScript; Lua and Python floor, and
+directly, Rust, Java, JavaScript, and Lua render through the same
+helper, Python pins 83-2- in single-character form. Division
+truncates toward zero in C, Rust, Go, Java, C\#, and JavaScript; Lua
+and Python floor, and
 their fixtures stay positive and exact so the difference never shows.
 Go's tokenizer is the only one that rejects unexpected characters
 with an error.
@@ -398,8 +419,8 @@ chapter's mechanics: deque when both ends are active, ring when one
 end feeds and one drains, stack when only one end exists at all.
 
 The dry run: the fixture is RingDeque(8) across its four C\# tests,
-asserted by the C\# suite, with C, Java, JavaScript, and Lua running
-the same sequence over checked slots.
+asserted by the C\# suite, with C, Rust, Java, JavaScript, and Lua
+running the same sequence over checked slots.
 
 + PushBack 1, 2, 3 fill slots 0, 1, 2, then PushFront 0 steps the
   head back to slot 7: the read is 0, 1, 2, 3 at count 4.
@@ -434,11 +455,16 @@ the same sequence over checked slots.
 })
 
 The 9, 1, 2 wrap and the both-end refusals are pinned, and the
-listings below build the deque seven ways.
+listings below build the deque eight ways.
 
-All seven languages build the ring deque by hand, C first:
+All eight languages build the ring deque by hand, C first:
 
 #listing("dsa/samples-c/src/Ch05/deque.c", first: 23, last: 49, caption: [c, all four end operations over one head and a count])
+
+Rust steps the head back as head plus CAP minus one, a usize cannot
+carry the negative one:
+
+#listing("dsa/samples-rust/src/Ch05/deque.rs", first: 30, last: 63, caption: [rust, all four end operations over one head and a count, the backward step wrapped to stay unsigned])
 
 #listing("dsa/samples-go/ch05/deque.go", first: 61, last: 77, caption: [go, pop back and the rotate step])
 
@@ -452,8 +478,8 @@ All seven languages build the ring deque by hand, C first:
 
 #listing("dsa/samples-lua/ch05_deque.lua", first: 11, last: 37, caption: [lua, the four operations, modulo over 1-based slots])
 
-C, C\#, Java, JavaScript, and Lua share one fixture family: 0 1 2 3
-after both-end pushes, one rotate step turns it into 1 2 3 0, both
+C, C\#, Rust, Java, JavaScript, and Lua share one fixture family: 0 1
+2 3 after both-end pushes, one rotate step turns it into 1 2 3 0, both
 ends pop, and an empty deque refuses at both ends. Python rotates the
 other way, pop back into push front, pins a rotate by the full length
 as the identity, and watches growth run 2 to 4 to 8 under front
@@ -462,7 +488,7 @@ and its ring grows on demand like its queue. The BCL still ships no
 `Deque<T>`, so C\# builds the ring by hand too, chapter 4's sentinel
 ring in miniature.
 
-== across the seven languages
+== across the eight languages
 
 Build sizes count non-comment source lines over the featured files;
 bundled checks count where the language puts them in the same file:
@@ -472,6 +498,7 @@ bundled checks count where the language puts them in the same file:
   inset: 4pt,
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [384], [libc only], [four programs over static arrays, bounded stacks refuse at capacity 8, refusal codes instead of exceptions],
+  [rust], [478], [rust 1.99 std], [underflow surfaces as Option while the capacity refusal stays a bool, the deque's backward head step is spelled head plus CAP minus one because usize cannot go negative, division truncates toward zero like c],
   [go], [293], [fmt, strconv, strings], [the tokenizer rejects bad characters with errors, EvalInfix refuses division by zero],
   [java], [390], [jdk 27 stdlib], [ArrayDeque left out, the ring is hand-rolled, pops surface as null where c used a status flag, yard tokens are records evaluated through a switch expression, division truncates toward zero like c],
   [c\#], [197], [bcl only], [the frozen yard files plus the ring deque, no bcl deque exists, TryPop out-parameters refuse underflow],
@@ -485,7 +512,9 @@ including the circular-array remarks, generic collections in .NET
 listing the shipped container set, `System.Threading.Channels`
 overview, accessed 2026-09-08. Sample behavior verified by
 `make verify-csharp`, 16 tests in chapter 5 of the samples suite.
-The seven-language layer verifies the same way: 4 C programs under
-`make verify-c`, 12 Go tests, the java runner's 62 Ch05 checks over
+The eight-language layer verifies the same way: 4 C programs under
+`make verify-c`, 4 rust programs under `run-rust-samples` with 73
+Ch05 checks over `samples-rust/src`, 12 Go tests, the java runner's
+62 Ch05 checks over
 4 files under `run-java-samples`, 15 `node --test` cases, 42 Python
 checks across 4 files, and 14 Lua checks under `run.lua`.

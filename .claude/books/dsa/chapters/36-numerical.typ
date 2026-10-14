@@ -15,7 +15,7 @@ duality that turns one world finals flow problem into a one
 dimensional search. Simulated annealing closes the chapter in
 prose, the one heuristic in the neighborhood, kept honest by the
 same seeded determinism the coded sections use. The anchor
-application is icpc 2025 problem C (book 10, chapter 13), whose
+application is icpc 2025 problem C (book 11, chapter 15), whose
 reservoir model supplies the duality section end to end.
 
 == ternary search
@@ -27,7 +27,7 @@ the plateau rule, because equal probes say nothing about where a
 flat stretch ends. A short linear scan closes whatever window of
 3 or fewer cells survives. On doubles the same two probes run a
 fixed 200 iterations and return the midpoint. The fixed count is
-the whole trick for a seven-language book: no float comparison ever
+the whole trick for an eight-language book: no float comparison ever
 decides control flow differently in c than in lua, so the orbit
 of intervals is identical everywhere and the pinned outputs hold
 without any tolerance negotiation. The contract is strictly
@@ -37,7 +37,7 @@ documented as the safety net.
 
 The dry run: the fixtures are the valley 12, 9, 7, 3, 2, 5, 8, 11
 with its rising, falling, and plateau kin, asserted by the C\# suite
-and pinned at identical counts in all seven.
+and pinned at identical counts in all eight.
 
 + Round 1 on the valley, window 0 through 7: m1 = 0 + 7 / 3 = 2 and
   m2 = 7 - 7 / 3 = 5, the probes read 7 and 5, 7 > 5 keeps the right
@@ -67,10 +67,11 @@ and pinned at identical counts in all seven.
 )
 
 The 6 is the meter every suite pins on the valley, and the listings
-below run the integer loop and the 200-iteration real driver in seven
+below run the integer loop and the 200-iteration real driver in eight
 languages.
 
 #listing("dsa/samples-c/src/Ch36/ternary.c", first: 24, last: 59, caption: [c, the integer loop with the tie rule, then the fixed-count real driver])
+#listing("dsa/samples-rust/src/Ch36/ternary.rs", first: 13, last: 51, caption: [rust, the integer loop with the tie rule, then the fixed-count real driver over an fn pointer])
 #listing("dsa/samples-go/ch36/ternary.go", first: 7, last: 48, caption: [go, the switch form of the three-way probe outcome])
 #listing("dsa/samples-java/src/Ch36/Ternary.java", first: 21, last: 56, caption: [java, the integer loop with the tie rule, then the fixed-count real driver over DoubleUnaryOperator])
 #listing("dsa/samples/src/Ch36/Ternary.cs", first: 11, last: 54, caption: [c\#, the same pair, tuple return carrying the probe meter])
@@ -79,7 +80,7 @@ languages.
 #listing("dsa/samples-lua/ch36_ternary.lua", first: 8, last: 44, caption: [lua, the 0-based public face over 1-based tables])
 
 The probe meter is deterministic, so the integer fixtures pin
-identical counts in all seven suites. The valley 12, 9, 7, 3, 2, 5,
+identical counts in all eight suites. The valley 12, 9, 7, 3, 2, 5,
 8, 11 lands its argmin at index 4 on 6 probes, the rising array
 1, 2, 3, 4, 5 puts the minimum at the left edge index 0 on 4
 probes, and the falling array 9, 7, 5, 3 hits the right edge
@@ -127,10 +128,10 @@ and a ramp left of it, closes on 2.0 exactly on (0, 6).
   cdraw.content((14.6, 0.7), [no float decides control flow], size: 6pt)
 })
 
-The contest face is icpc 2025 problem C (book 10, chapter 13), where
+The contest face is icpc 2025 problem C (book 11, chapter 15), where
 the r = 2 case of the pipe model is exactly this driver over the
 free reservoir weight and r = 3 nests two of them, and icpc 2022
-problem T (book 10, chapter 11), which refines a grid answer with a
+problem T (book 11, chapter 13), which refines a grid answer with a
 ternary pass over each corner-bend leg. The monotone cousin,
 bisection over a boolean answer space, is
 #xref-to("dsa", "searching") territory and stays there.
@@ -147,7 +148,7 @@ the new one, and every step after the warm-up pair costs exactly
 one evaluation. The iteration count is pinned at 100, which
 shrinks the interval below 1e-19 of its width, far past any useful
 epsilon, so evaluation counts and final widths are identical
-doubles in all seven languages. The budget arithmetic is the
+doubles in all eight languages. The budget arithmetic is the
 selling point: 102 total evaluations against 400 for 200 ternary
 iterations.
 
@@ -184,10 +185,11 @@ evaluations, the width gate, and the phi constants.
 )
 
 The 102 is what every suite pins, half of ternary's 400 for the same
-job, and the listings below run the keep-and-replace loop in seven
+job, and the listings below run the keep-and-replace loop in eight
 languages.
 
 #listing("dsa/samples-c/src/Ch36/golden.c", first: 26, last: 50, caption: [c, the keep-and-replace loop, one new evaluation per step])
+#listing("dsa/samples-rust/src/Ch36/golden.rs", first: 15, last: 45, caption: [rust, the keep-and-replace loop, one new evaluation per step, width through a mutable out slot])
 #listing("dsa/samples-go/ch36/golden.go", first: 12, last: 31, caption: [go, the same multi-assign, evals and width returned])
 #listing("dsa/samples-java/src/Ch36/Golden.java", first: 24, last: 47, caption: [java, the keep-and-replace loop, one new evaluation per step])
 #listing("dsa/samples/src/Ch36/Golden.cs", first: 11, last: 36, caption: [c\#, the tuple swap keeps the interior point in one statement])
@@ -255,7 +257,7 @@ half the evaluations.
 
 Root finding by tangent lines. For f(x) = x^2 - 2 the update x
 \<- x - (x^2 - 2) / (2x) divides by the derivative, and from 1.0
-the iterates pin in all seven languages: 1, 1.5, 1.416666666666667,
+the iterates pin in all eight languages: 1, 1.5, 1.416666666666667,
 1.414215686274510, 1.414213562374690, 1.414213562373095, five
 updates to the residual bound 1e-12. The pinned error column shows
 quadratic convergence, each error roughly the square of the
@@ -268,7 +270,7 @@ updates to a measured final error of 2.6e-14.
 
 The dry run: the fixtures are the sqrt 2 ladder from 1.0 and the
 reciprocal of 7 from 0.2, iterates pinned by the C\# suite at 9
-decimals with the same ladders in all seven.
+decimals with the same ladders in all eight.
 
 + The first update is one fraction: at x = 1 the residual is -1 on a
   slope of 2, and 1 - (-1) / 2 = 1.5.
@@ -298,9 +300,10 @@ decimals with the same ladders in all seven.
 )
 
 Five updates close both ladders, and the listings below run the two
-loops in seven languages.
+loops in eight languages.
 
 #listing("dsa/samples-c/src/Ch36/newton.c", first: 24, last: 48, caption: [c, the two update loops, residual checked before each step])
+#listing("dsa/samples-rust/src/Ch36/newton.rs", first: 13, last: 38, caption: [rust, the two update loops, residual checked before each step, the value and update count returned together])
 #listing("dsa/samples-go/ch36/newton.go", first: 8, last: 39, caption: [go, the iterate slice returned whole for the ladder asserts])
 #listing("dsa/samples-java/src/Ch36/Newton.java", first: 21, last: 43, caption: [java, the two update loops, residual checked before each step])
 #listing("dsa/samples/src/Ch36/Newton.cs", first: 10, last: 42, caption: [c\#, both loops as iterate enumerables, the meter outside])
@@ -416,9 +419,10 @@ and Java.
 
 The erf reference holds both roads inside 1e-9, and the listings
 below ship the kernel, the composite weights, and the recursion in
-seven languages.
+eight languages.
 
 #listing("dsa/samples-c/src/Ch36/simpson.c", first: 26, last: 49, caption: [c, the 1/6 kernel, the composite weights, the adaptive accept-or-recurse])
+#listing("dsa/samples-rust/src/Ch36/simpson.rs", first: 29, last: 54, caption: [rust, the 1/6 kernel, the composite weights, the adaptive accept-or-recurse])
 #listing("dsa/samples-go/ch36/simpson.go", first: 18, last: 64, caption: [go, the closure recursion passing cached endpoint values down])
 #listing("dsa/samples-java/src/Ch36/Simpson.java", first: 31, last: 53, caption: [java, the 1/6 kernel, the composite weights, the adaptive accept-or-recurse])
 #listing("dsa/samples/src/Ch36/Simpson.cs", first: 9, last: 43, caption: [c\#, odd panel counts refused by exception, the recursive accept with correction])
@@ -436,7 +440,9 @@ path still prints the pinned digits. Java formats under
 Locale.ROOT so the decimal separator never goes locale-dependent,
 and Math ships no erf, so its reference constant comes from a
 60-term Maclaurin series asserted against the adaptive landing to
-1e-12.
+1e-12. Rust's f64 is in the same seat, no erf in std, and its twin
+computes the reference from a 25-term Maclaurin series inside the
+same gate.
 
 #diagram([e^-x^2 over (0, 1) with the first adaptive parabolas, split points accumulating where the curve bends], length: 13pt, {
   let m = (x, y) => (1.8 + x * 11.5, 0.8 + y * 5.2)
@@ -483,7 +489,7 @@ and Math ships no erf, so its reference constant comes from a
 
 No samples ship for this section, on purpose: annealing is a
 randomized heuristic whose every interesting claim is probabilistic,
-and a deterministic seven-language pin of a float walk would teach the
+and a deterministic eight-language pin of a float walk would teach the
 wrong lesson. The idea earns the page. Model the problem as an energy
 landscape, current solution plus a neighbor move, and walk with the
 Metropolis rule: a move that lowers energy is always taken, a move
@@ -496,7 +502,7 @@ exploit.
 The full treatment lives in #xref-to("dsa", "metaheuristics"), where
 the rule runs in an integer form a seeded generator can pin exactly,
 with counter-exact runs, cooling and reheat schedules, and restart
-budgets, all asserted by the seven language suites.
+budgets, all asserted by the eight language suites.
 
 == LP duality and dual weights
 
@@ -572,9 +578,10 @@ suite and cross-checked by Python's dense grid of 2000001 points.
 
 F1's 40.0000000000 with both ducts binding is the pinned landing,
 and the listings below run the bottom-up pass and the drivers in
-seven languages.
+eight languages.
 
 #listing("dsa/samples-c/src/Ch36/lpdual.c", first: 38, last: 75, caption: [c, the bottom-up dual evaluation feeding the ternary driver])
+#listing("dsa/samples-rust/src/Ch36/lpdual.rs", first: 18, last: 56, caption: [rust, the bottom-up dual evaluation over duct structs feeding the ternary driver])
 #listing("dsa/samples-go/ch36/lpdual.go", first: 22, last: 66, caption: [go, dual-eval on the duct structs, r = 1 shortcut at t = 1])
 #listing("dsa/samples-java/src/Ch36/Lpdual.java", first: 23, last: 58, caption: [java, the bottom-up dual evaluation over record ducts feeding the ternary driver])
 #listing("dsa/samples/src/Ch36/LpDual.cs", first: 14, last: 63, caption: [c\#, solve-dual over duct tuples, the optimum returning weights and t])
@@ -633,13 +640,13 @@ not of 1/2000, the grid is genuinely that dense.
   cdraw.content((13.8, 1.6), [r = 2: ternary over t, O(V) per eval], size: 6pt)
 })
 
-The application is icpc 2025 problem C (book 10, chapter 13), the
+The application is icpc 2025 problem C (book 11, chapter 15), the
 anchor for the whole construction: the primal formulation, the
 dual collapse to bottom-up max propagation on this dag, and the
 final one-dimensional search are all its solution's shape, and
 the icpc chapter carries the full recovery algorithm.
 
-== across the seven languages
+== across the eight languages
 
 Featured build size counted as non-blank, non-comment lines of
 the chapter's five sample files per language, embedded test
@@ -650,6 +657,7 @@ scripts included where the language embeds them:
   inset: 4pt,
   table.header([*language*], [*build sloc*], [*container dependency*], [*boundary note*]),
   [c], [422], [libc math only], [function pointers for the drivers, the golden pow pin asserted at tighter than 1e-12 relative],
+  [rust], [467], [rust 1.99 std], [plain fn(f64) -> f64 pointers where java needs DoubleUnaryOperator, f64 ships no erf so the reference runs a 25-term Maclaurin series],
   [go], [191], [fmt and math], [dual-eval errors returned not thrown, ternary real exported for the lpdual driver],
   [java], [402], [jdk 27 stdlib, java.util.function], [DoubleUnaryOperator where c takes function pointers, Math ships no erf so the reference runs a 60-term Maclaurin series, nine-decimal prints under Locale.ROOT, the golden width pinned at the double-ulp floor],
   [c\#], [205], [bcl only, tuples], [iterates as enumerables in newton, exceptions refuse odd simpson panels, long eval meter],
@@ -670,9 +678,11 @@ accessed 2026-09-20, cc by-sa 4.0, our own words and code
 throughout. Golden-section search has no cp-algorithms page and
 is derived here from the ternary article, cited as such. LP
 duality likewise has no cp-algorithms article. Application
-sources: icpc 2025 problem C (book 10, chapter 13) and icpc 2022
-problem T (book 10, chapter 11). Sample behavior verified by the
-seven suite gates scoped to chapter 36: c 5 files and 74 checks,
+sources: icpc 2025 problem C (book 11, chapter 15) and icpc 2022
+problem T (book 11, chapter 13). Sample behavior verified by the
+eight suite gates scoped to chapter 36: c 5 files and 74 checks,
+rust 5 files and 74 checks under run-rust-samples in
+books/dsa/samples-rust,
 go 15 test functions, java 5 files and 74 checks under
 run-java-samples, c\# 21 facts, javascript 19 tests and 56
 asserts, python 5 files and 59 asserts, lua 18 checks, zero

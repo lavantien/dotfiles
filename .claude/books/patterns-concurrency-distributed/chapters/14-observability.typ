@@ -8,7 +8,7 @@ why. The difference is structure: logs that carry attributes, metrics
 that carry labels, traces that carry causality, all attached while
 the code runs, never reconstructed after it fails. The go lane
 reads its three signals off the stdlib, `log/slog` and `expvar` and
-the raw material for spans, and the other six trees hand-roll the
+the raw material for spans, and the other seven trees hand-roll the
 same shapes in their own grain, so this chapter builds all three
 twice over in testable form: a capture handler per language, a
 labeled counter registry per language, a span tree per language,
@@ -23,15 +23,17 @@ list, attributes as a map. The gate placement is the lesson that
 survives translation, the check runs before the record exists, so a
 dropped line never pays for its arguments.
 
-The dry run: all seven lanes assert the same capture contract.
+The dry run: all eight lanes assert the same capture contract.
 
 - info and warn recorded, 2 records, attrs readable as a map
 - debug below min dropped before evaluation, the probe's side
   effect count stays 0
 - the frozen go test pins the 2 records and the attr map, the probe
-  literal is pinned by the 6 new trees
+  literal is pinned by the 7 new trees
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch14/capture.c", first: 74, last: 103, caption: [C, the emit path serializes one json line, the LOG macro is the gate the variadic signature buys elsewhere])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch14/capture.rs", first: 67, last: 88, caption: [Rust, the gate runs before the message closure is called, `impl FnOnce` is the laziness, no macro needed])
 
 #listing("patterns-concurrency-distributed/samples/ch14/observe.go", first: 19, last: 58, caption: [Go, capture handler: records in memory, level filter, attrs as a map])
 
@@ -51,10 +53,11 @@ assertable value: message, level, and attributes. The laziness idiom
 is where the languages spend differently. Go gets it from the
 variadic signature, `Enabled` is called early and the arguments of a
 dropped line are never built. C has no variadic evaluation to lean
-on, so the LOG macro is the gate, the only mechanism in the seven
+on, so the LOG macro is the gate, the only mechanism in the eight
 that hides the evaluation behind a branch. C\# gives `Debug` a
 `Func<Attr[]>` supplier that stays uncalled below the level, java
-gates the whole message behind a `Supplier<String>`, the same trick
+gates the whole message behind a `Supplier<String>`, and rust
+behind an `impl FnOnce() -> &'static str` parameter, the same trick
 without the macro. Javascript and python accept attrs as a function
 and call it only after the gate. Lua takes a whole thunk that
 builds the message and
@@ -82,10 +85,12 @@ bytes.
 The dry run: `Secret("hunter2token")` renders `secret(12 bytes)`,
 `Secret("api-key-0123456789")` renders `secret(18 bytes)`, and the
 raw token appears nowhere in the capture. The exact lengths are
-pinned by the 6 new trees, the frozen go test asserts the
+pinned by the 7 new trees, the frozen go test asserts the
 `secret(` prefix and the token's absence.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch14/capture.c", first: 68, last: 72, caption: [C, the render the serializer calls, length only])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch14/capture.rs", first: 38, last: 40, caption: [Rust, the render the emit path calls, length only])
 
 #listing("patterns-concurrency-distributed/samples/ch14/observe.go", first: 62, last: 70, caption: [Go, a secret that logs its length, never its bytes])
 
@@ -107,6 +112,7 @@ that skips it publishes raw secrets while appearing to respect the
 pattern. Every lane carries the same obligation at the same spot:
 C's serializer must call `secret_render`, C\#'s emit must check
 `ILogValue`, java's emit must go through the attr's own `render`,
+rust's emit must check the attr's `secret` flag,
 the one place the secret flag lives, javascript must go through
 `JSON.stringify` for `toJSON` to fire, python must probe for
 `log_value`, lua must run `redact` over the attrs. The fix is one
@@ -140,15 +146,17 @@ The dry run: 20 writers x 100 incs, every 10th inc also errors.
 
 - hits 2000, errors 200, exact under concurrency
 - render is `"errors 200\nhits 2000\n"`, sorted by name, the exact
-  string pinned by the 6 new trees while the frozen go test checks
+  string pinned by the 7 new trees while the frozen go test checks
   both lines
-- the writers are real threads in C, C\#, go, and python, 20
+- the writers are real threads in C, rust, C\#, go, and python, 20
   interleaved coroutines in lua, 20 async writers through the
   microtask queue in javascript, a cooperative round-robin in
   25-inc quanta on one thread in java, all asserting the same
   totals
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch14/registry.c", first: 39, last: 78, caption: [C, counters by name behind one mutex, the render walks the sorted name array])
+
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch14/registry.rs", first: 21, last: 56, caption: [Rust, counters in a `Mutex<BTreeMap>`, the map iterates already sorted, no sort step at render])
 
 #listing("patterns-concurrency-distributed/samples/ch14/observe.go", first: 73, last: 116, caption: [Go, counters by name, snapshot under lock, sorted text render])
 
@@ -166,7 +174,9 @@ The storage idiom splits three ways. C keeps a fixed array of
 counters walked in name order, so sorted render is the walk order
 and the registry never allocates. The map languages, go, java,
 C\#, javascript, python, and lua alike, key counters by name and
-sort at render time. The serialization boundary is where the
+sort at render time, while rust's `BTreeMap` is sorted on arrival,
+the iteration itself the render order. The serialization boundary
+is where the
 chapter's concurrency lesson cashes out: one mutex or lock around
 the increment is all the exact totals need, chapter 7 earning its
 keep again, and two lanes need no lock at all, lua because one
@@ -214,6 +224,8 @@ The dry run: hand-stamped stamps, no clock read anywhere.
 
 #listing("patterns-concurrency-distributed/samples-c/src/Ch14/traces.c", first: 41, last: 76, caption: [C, the parent is an explicit pointer parameter, the stamps are longs the caller hands in])
 
+#listing("patterns-concurrency-distributed/samples-rust/src/Ch14/traces.rs", first: 31, last: 77, caption: [Rust, the parent an `Option<usize>` index into one Vec of spans, the open-span sentinel an `Option`, the render recursive])
+
 #listing("patterns-concurrency-distributed/samples/ch14/observe.go", first: 122, last: 158, caption: [Go, span in the context, children attach to their parent, durations from an injectable clock])
 
 #listing("patterns-concurrency-distributed/samples-java/src/Ch14/Traces.java", first: 20, last: 55, caption: [Java, the parent a plain parameter, stamps handed in, an open span renders zero])
@@ -229,8 +241,9 @@ The dry run: hand-stamped stamps, no clock read anywhere.
 The context carrier is the idiom row. Go's `context.Value` is the
 one the chapter's pipeline chapters already threaded, C\#'s
 `AsyncLocal<Span>` flows with the async chain and needs no
-parameter at all, and the other five are honest explicit threads: a
-parent pointer in C, the parent as a plain parameter in java, the
+parameter at all, and the other six are honest explicit threads: a
+parent pointer in C, an `Option<usize>` index into one Vec of spans
+in rust, the parent as a plain parameter in java, the
 first parameter in javascript, a ctx dict in python, a ctx table in
 lua. The render contract is identical
 everywhere, indented lines, deepest last, durations from the stamps
@@ -285,7 +298,7 @@ different costume.
   cdraw.content((11.9, 0.5), [one signal alone means debugging by archaeology], size: 6pt)
 })
 
-== across the seven languages
+== across the eight languages
 
 The build sizes count non-comment source lines, the go column the
 chapter's one frozen file:
@@ -296,6 +309,8 @@ chapter's one frozen file:
   table.header([*language*], [*build SLOC*], [*dependency*], [*boundary note*]),
   [c], [336], [libc plus threads.h],
   [the registry under one mutex, the span parent an explicit pointer parameter],
+  [rust], [376], [stdlib],
+  [an FnOnce message gate, a `Mutex\<BTreeMap\>` registry sorted on arrival, an arena Vec of spans],
   [go], [121], [stdlib],
   [a slog.Handler over capture, expvar's one-line mount, spans ride context.Value],
   [java], [239], [jdk 27 stdlib],
@@ -314,8 +329,9 @@ sources: go.dev/pkg/log/slog for the Handler contract, `Enabled`
 timing, `LogValuer`, and `Value.Resolve`, go.dev/pkg/expvar for
 `NewInt` and the `/debug/vars` mount, go.dev/pkg/runtime/pprof for
 the profiles available alongside, accessed 2026-09-08. Verified by
-the seven chapter legs: 3 Ch14 C programs with 82 embedded checks,
-`go test` at 5 tests in `patternsbook/ch14`, the java runner's 37
+the eight chapter legs: 3 Ch14 C programs with 82 embedded checks,
+the rust runner's 82 checks across 3 programs in
+`samples-rust/src/Ch14`, `go test` at 5 tests in `patternsbook/ch14`, the java runner's 37
 checks across 3 programs in `samples-java/src/Ch14`, 10 xunit
 facts, node's 4 cases in `test/ch14.test.mjs`, 3 python modules
 with 34 embedded checks, and the lua runner's 14 ch14 rows.

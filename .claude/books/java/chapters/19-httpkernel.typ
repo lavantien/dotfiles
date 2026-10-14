@@ -385,7 +385,7 @@ executor-before-start rule from the same file, `RSPBODY_EMPTY` and
 `RSPBODY_CHUNKED` marked since 26 and the `-1` sentinel documented in
 `HttpExchange.java`, and `Filter.Chain` from `Filter.java`. RFC 8259
 for the json grammar. The go contrasts against
-the standard mux chapter of book 3 of this corpus. Accessed and
+the standard mux chapter of book 4 of this corpus. Accessed and
 verified live 2026-10-04 by the `javabook.httpx` and json tests over
 the kernel and json classes of the module at `books/java/api`, 24
 tests green under the vendored junit 6.1.3 lane, covering the exact

@@ -232,7 +232,7 @@ responses, at rfc-editor.org, accessed 2026-10-05. The Retry-After
 delay-seconds form from rfc 9110, section 10.2.3, same access date.
 `Semaphore` and monitor semantics inherited from chapter 10's jep
 444 and jep 491 verifications. The token bucket's lazy refill and
-burst semantics follow the go book's rate limiting chapter, book 3,
+burst semantics follow the go book's rate limiting chapter, book 4,
 chapter 26, read for the parallel contracts, and `x/time/rate`'s
 behavior was not re-measured here because nothing in this chapter
 depends on it. Verified live 2026-10-05 by the `javabook.limit`
