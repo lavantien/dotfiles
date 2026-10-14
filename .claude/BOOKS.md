@@ -92,7 +92,48 @@ toc:
 - 32 capstone: the arena game, verification (math/chapters/32-capstone-verify.typ)
 - 33 appendices: coverage and sources (math/chapters/33-appendices.typ)
 
-## go 1.27 (book 3, v7.0, go, 35 chapters)
+## rust 1.99 (book 3, v1.0, rust, 33 chapters)
+
+summary: a rust 1.99 language manual pinned to the stable toolchain: editions and the version ladder, lexical through traits, generics and macros, closures and iterators, errors, memory and smart pointers, concurrency, async, unsafe, testing, then a 13 chapter std-only http service with zero cargo dependencies, a hand-rolled parser and hmac jwt and wal store, closing with an async runtime capstone built from scratch. 33 chapters, coverage appendices track keywords, stdlib components, and pinned sources.
+capstone: async runtime from scratch (ch 32): a block_on executor, timer wheel, blocking pool bridge, readiness-polled net, and a concurrent server with graceful shutdown, 36 tests.
+walkthroughs: http service build kernel to suite (ch 19 to 31), async runtime capstone (ch 32), appendices: keywords, stdlib, sources (ch 33)
+toc:
+
+- 01 toolchain, cargo, and the rustup lane (rust/chapters/01-toolchain.typ)
+- 02 from edition 2015 to edition 2024 (rust/chapters/02-editions.typ)
+- 03 lexical structure (rust/chapters/03-lexical.typ)
+- 04 types and values (rust/chapters/04-types.typ)
+- 05 ownership and moves (rust/chapters/05-ownership.typ)
+- 06 borrowing and lifetimes (rust/chapters/06-borrowing.typ)
+- 07 structs, enums, and patterns (rust/chapters/07-adts.typ)
+- 08 traits and trait objects (rust/chapters/08-traits.typ)
+- 09 generics and macros (rust/chapters/09-generics-macros.typ)
+- 10 closures and iterators (rust/chapters/10-closures-iterators.typ)
+- 11 error handling (rust/chapters/11-errors.typ)
+- 12 memory and smart pointers (rust/chapters/12-memory.typ)
+- 13 concurrency: threads to atomics (rust/chapters/13-concurrency.typ)
+- 14 async: futures from first principles (rust/chapters/14-async.typ)
+- 15 the standard library (rust/chapters/15-stdlib.typ)
+- 16 crates, modules, and workspaces (rust/chapters/16-crates.typ)
+- 17 unsafe and ffi (rust/chapters/17-unsafe.typ)
+- 18 testing and idioms (rust/chapters/18-testing.typ)
+- 19 http kernel (rust/chapters/19-httpkernel.typ)
+- 20 middleware (rust/chapters/20-middleware.typ)
+- 21 the user resource (rust/chapters/21-users.typ)
+- 22 authn (rust/chapters/22-authn.typ)
+- 23 authz and rbac (rust/chapters/23-authz.typ)
+- 24 store (rust/chapters/24-store.typ)
+- 25 concurrency control (rust/chapters/25-conc.typ)
+- 26 caching (rust/chapters/26-cache.typ)
+- 27 rate limiting (rust/chapters/27-limit.typ)
+- 28 observability (rust/chapters/28-obs.typ)
+- 29 load and p99 (rust/chapters/29-load.typ)
+- 30 ship it (rust/chapters/30-shipit.typ)
+- 31 the test suite (rust/chapters/31-suite.typ)
+- 32 capstone: an async runtime from scratch (rust/chapters/32-capstone.typ)
+- 33 appendices: coverage and sources (rust/chapters/33-appendices.typ)
+
+## go 1.27 (book 4, v7.0, go, 35 chapters)
 
 summary: go 1.27 language manual: toolchain, types, generics, concurrency, runtime, allocation, profiling, stdlib tours, testing, idioms, then htmx and templ, a full service build, numerical statistics, and a capstone. 35 chapters. coverage appendices track keywords against the spec and stdlib components per chapter.
 capstone: concurrent crawler, indexer, and web ui (ch 34): a search engine front half, goroutine crawler under a semaphore cap, inverted index with uuid v7 documents, sqlite store with fts5, htmx/templ search ui, 32 tests.
@@ -135,7 +176,7 @@ toc:
 - 34 capstone: concurrent crawler, indexer, and web ui (go/chapters/34-capstone.typ)
 - 35 appendices: coverage and sources (go/chapters/35-appendices.typ)
 
-## java 27 (book 4, v1.0, java, 33 chapters)
+## java 27 (book 5, v1.0, java, 33 chapters)
 
 summary: a java 27 manual pinned to jdk 27 (ga 2026-09-15): toolchain, the version ladder from java 8 to 27 release by release, lexical through reflection and security, then a 13 chapter http service on jdk.httpserver with virtual threads, a hand-rolled rfc 8259 json writer, hmac jwt, and a file-backed wal store. 33 chapters, junit console discipline throughout, coverage appendices track keyword arrivals, the stdlib census, and 35 pinned sources.
 capstone: the line clone (ch 32): chat over a hand-rolled rfc 6455 websocket on a raw ServerSocketChannel, rooms with history, typing, and read state, an embeddable mini app runtime over the same wire with four apps (quick poll, rock paper scissors duel, sketchpad, 2048), and a mobile-first react 19.3 frontend, 131 junit plus 21 web tests and an e2e suite driving the real server through all four apps.
@@ -176,7 +217,7 @@ toc:
 - 32 capstone: line clone chat with mini apps (java/chapters/32-capstone.typ)
 - 33 appendices: coverage and sources (java/chapters/33-appendices.typ)
 
-## c# 15, f# 11, and .net 11 (book 5, v5.0, csharp-net, 36 chapters)
+## c# 15, f# 11, and .net 11 (book 6, v5.0, csharp-net, 36 chapters)
 
 summary: c# 15 manual on .net 11 with an f# 11 tour: type system, patterns, async, memory, allocation, profilers, reflection and source generators, linq, stdlib tours, functional programming, then a full api service build. 36 chapters. coverage appendices track 125 keywords plus stdlib components.
 capstone: a small language interpreter (ch 35): test-first interpreter with a ref struct span lexer, c# 15 union syntax tree through System.Text.Json, pattern-matching checker, async evaluator, source-generated builtin table, sqlite persistence, 54 xunit tests.
@@ -220,7 +261,7 @@ toc:
 - 35 capstone: a small language interpreter (csharp-net/chapters/35-capstone.typ)
 - 36 appendices: coverage and sources (csharp-net/chapters/36-appendices.typ)
 
-## javascript es2026 and typescript 7 (book 6, v6.1, javascript, 39 chapters)
+## javascript es2026 and typescript 7 (book 7, v6.1, javascript, 39 chapters)
 
 summary: covers javascript es2026 as a runtime across ch 1 to 10, adds the typescript 7 type layer, react 19 and svelte 5 frameworks, then a 13 chapter http service. the coverage appendix maps all 75 grammar keywords to chapters.
 capstone: the query engine, microfrontend: a document query engine in 3 faces, a plain no-compiler core, a typed layer, and a web microfrontend with react and svelte islands sharing one engine, driven by 63 tests.
@@ -267,7 +308,7 @@ toc:
 - 38 capstone: the query engine, microfrontend (javascript/chapters/38-capstone.typ)
 - 39 appendices: coverage and sources (javascript/chapters/39-appendices.typ)
 
-## python 3.14 (book 7, v4.0, python, 42 chapters)
+## python 3.14 (book 8, v4.0, python, 42 chapters)
 
 summary: a python 3.14 manual from toolchain and object model through cpython internals, pymalloc, profiling, concurrency, asyncio, and fastapi, then the numpy, pandas, pydantic stack and a 13 chapter http service. coverage topics carry measured costs and stdlib surface per chapter.
 capstone: ingest and analysis pipeline in 2 parts: part 1 builds async jsonl ingest with pydantic validation and dead letters, part 2 adds pandas and numpy aggregation, a canonical report, a cli, and a fastapi api, 78 tests over 9 modules.
@@ -317,7 +358,7 @@ toc:
 - 41 capstone: ingest and analysis pipeline, part 2 (python/chapters/41-capstone2.typ)
 - 42 appendices: coverage and sources (python/chapters/42-appendices.typ)
 
-## lua 5.5 (book 8, v5.0, lua, 33 chapters)
+## lua 5.5 (book 9, v5.0, lua, 33 chapters)
 
 summary: a lua 5.5 manual covering metatables, coroutines, the collector, and profiling, the stdlib in three passes, then the c api, ffi, and an allegro 5 host, closing with a 13 chapter http service. coverage maps every reserved word to its chapter.
 capstone: auto chess, human versus bot: a complete 2 player auto chess game in 10 pure lua modules with 34 tests, shops, gold, merges, deterministic combat, embedded in the allegro c host, scripted drivers pin whole games to one digest.
@@ -358,9 +399,9 @@ toc:
 - 32 capstone: auto chess, human versus bot (lua/chapters/32-capstone.typ)
 - 33 appendices: coverage and sources (lua/chapters/33-appendices.typ)
 
-## practical data structures and algorithms (book 9, v8.0, dsa, 45 chapters)
+## practical data structures and algorithms (book 10, v9.0, dsa, 45 chapters)
 
-summary: a data structures and algorithms handbook in 7 languages, from complexity analysis and arrays through hashing, trees, graphs, dynamic programming, geometry, flows, game theory, and fine-grained speedups that apply sparse matrix multiplication to triangle counting and subcubic apsp, pairing each structure with cost and library counterpart. the appendix tracks each topic with cost and library columns.
+summary: a data structures and algorithms handbook in 8 languages, from complexity analysis and arrays through hashing, trees, graphs, dynamic programming, geometry, flows, game theory, and fine-grained speedups that apply sparse matrix multiplication to triangle counting and subcubic apsp, pairing each structure with cost and library counterpart. the appendix tracks each topic with cost and library columns.
 capstone: storage engine toolkit: a log-structured storage engine with a crc-32 framed write-ahead log, bloom filters, crash recovery, prefix scans, and compaction, plus an htmx 4 web dashboard, every file under 260 lines.
 walkthroughs: geometry and lattices (ch 23 to 24), interpreter build (ch 26 to 27), big arithmetic (ch 28 to 29), fine-grained speedups via sparse matrix multiplication (ch 43)
 toc:
@@ -411,30 +452,31 @@ toc:
 - 44 capstone: storage engine toolkit (dsa/chapters/44-capstone.typ)
 - 45 appendices: topic matrix and sources (dsa/chapters/45-appendices.typ)
 
-## the icpc world finals (book 10, v5.0, icpc, 15 chapters)
+## the icpc world finals (book 11, v6.0, icpc, 16 chapters)
 
-summary: walks six icpc world finals (2017 to 2025), every problem solved in c, go, java, c#, javascript, python, and lua. chapters 2 to 8 build the language toolboxes, 9 to 14 the finals, 15 fast big arithmetic. the coverage matrix tracks all 68 problems.
-capstone: none: chapters 9 to 14 walk six world finals (2017 to 2025), every problem solved in all seven languages with year-local helper kits, chapter 15 closes on fast big arithmetic.
-walkthroughs: language toolboxes (ch 2 to 8), six world finals walkthroughs (ch 9 to 14)
+summary: walks six icpc world finals (2017 to 2025), every problem solved in c, go, java, c#, javascript, python, and lua, with an eighth rust toolbox lane. chapters 3 to 9 build the language toolboxes, 10 to 15 the finals, 16 fast big arithmetic. the coverage matrix tracks all 68 problems.
+capstone: none: chapters 10 to 15 walk six world finals (2017 to 2025), every problem solved in the seven solver languages with year-local helper kits, chapter 16 closes on fast big arithmetic.
+walkthroughs: language toolboxes (ch 3 to 9), six world finals walkthroughs (ch 10 to 15)
 toc:
 
 - 01 the contest and the house rules (icpc/chapters/01-contest.typ)
 - 02 the c toolbox (icpc/chapters/02-toolbox-c.typ)
-- 03 the go toolbox (icpc/chapters/03-toolbox-go.typ)
-- 04 the java toolbox (icpc/chapters/04-toolbox-java.typ)
-- 05 the c# toolbox (icpc/chapters/05-toolbox-cs.typ)
-- 06 the javascript toolbox (icpc/chapters/06-toolbox-js.typ)
-- 07 the python toolbox (icpc/chapters/07-toolbox-py.typ)
-- 08 the lua toolbox (icpc/chapters/08-toolbox-lua.typ)
-- 09 icpc world finals 2017 (icpc/chapters/09-y2017.typ)
-- 10 icpc world finals 2018 (icpc/chapters/10-y2018.typ)
-- 11 icpc world finals 2019 (icpc/chapters/11-y2019.typ)
-- 12 icpc world finals 2022 (icpc/chapters/12-y2022.typ)
-- 13 icpc world finals 2023 (icpc/chapters/13-y2023.typ)
-- 14 icpc world finals 2025 (icpc/chapters/14-y2025.typ)
-- 15 fast big arithmetic (icpc/chapters/15-fastarith.typ)
+- 03 the rust toolbox (icpc/chapters/03-toolbox-rust.typ)
+- 04 the go toolbox (icpc/chapters/04-toolbox-go.typ)
+- 05 the java toolbox (icpc/chapters/05-toolbox-java.typ)
+- 06 the c# toolbox (icpc/chapters/06-toolbox-cs.typ)
+- 07 the javascript toolbox (icpc/chapters/07-toolbox-js.typ)
+- 08 the python toolbox (icpc/chapters/08-toolbox-py.typ)
+- 09 the lua toolbox (icpc/chapters/09-toolbox-lua.typ)
+- 10 icpc world finals 2017 (icpc/chapters/10-y2017.typ)
+- 11 icpc world finals 2018 (icpc/chapters/11-y2018.typ)
+- 12 icpc world finals 2019 (icpc/chapters/12-y2019.typ)
+- 13 icpc world finals 2022 (icpc/chapters/13-y2022.typ)
+- 14 icpc world finals 2023 (icpc/chapters/14-y2023.typ)
+- 15 icpc world finals 2025 (icpc/chapters/15-y2025.typ)
+- 16 fast big arithmetic (icpc/chapters/16-fastarith.typ)
 
-## design patterns, concurrency, and distributed systems (book 11, v4.0, patterns-concurrency-distributed, 17 chapters)
+## design patterns, concurrency, and distributed systems (book 12, v5.0, patterns-concurrency-distributed, 17 chapters)
 
 summary: an engineering handbook: go pattern discipline, the creational, structural, behavioral, and functional catalogs, then concurrency fundamentals, primitives, patterns, and hazards, then distributed systems from raft to resilience. a topic matrix maps every mechanism to its chapter, cost, and stdlib counterpart.
 capstone: raft replicated configuration service: a small complete raft in go (randomized elections, log replication, persistence) plus a config service hiding leadership behind retries, 19 tests, tick-driven determinism.
@@ -459,7 +501,7 @@ toc:
 - 16 capstone: raft replicated configuration service (patterns-concurrency-distributed/chapters/16-capstone.typ)
 - 17 appendices: topic matrix and sources (patterns-concurrency-distributed/chapters/17-appendices.typ)
 
-## infrastructure: docker, databases, and testing (book 12, v2.1, infrastructure, 20 chapters)
+## infrastructure: docker, databases, and testing (book 13, v2.1, infrastructure, 20 chapters)
 
 summary: an engineering handbook pairing docker (toolchain, images, containers, compose, networking) with embedded databases: sqlite schemas through production, duckdb analytics, mongo aggregation, nats and jetstream messaging, and closes with docker-free testing, mocks, and test-driven migrations that name where every expected value comes from. the coverage matrix names each mechanism's running proof.
 capstone: two parts: part 1 builds six go services (chat, presence, notify, history, analytics, web) over nats, sqlite, mongo, and duckdb, each owning one store. part 2 adds the htmx chat ui and a gated suite proving the stack from one compose command.
@@ -487,7 +529,7 @@ toc:
 - 19 capstone part 1: services and topology (infrastructure/chapters/19-capstone1.typ)
 - 20 capstone part 2: chat and notifications, one click (infrastructure/chapters/20-capstone2.typ)
 
-## knowledge discovery (book 13, v2.0, kdd, 48 chapters)
+## knowledge discovery (book 14, v2.0, kdd, 48 chapters)
 
 summary: a c23 data mining volume: preprocessing, distance and similarity, pca and wavelets, olap, classifiers (trees, bayes, knn, neural nets, svm, ensembles), association rules, clustering, anomaly detection, hypothesis testing, rough sets, self-organizing maps. a c to go bridge leads into the go and duckdb capstone.
 capstone: a go and duckdb kdd pipeline: seeded corpus generator, embedded column store, chi2, cart, som, apriori, and lof miners, evaluator, and htmx results panel, one build tag splitting pure go and duckdb lanes, with live-computed coverage appendices.
@@ -543,7 +585,7 @@ toc:
 - 47 the bridge: c to go (kdd/chapters/47-bridge.typ)
 - 48 the capstone: a kdd pipeline on duckdb, with coverage appendices (kdd/chapters/48-capstone.typ)
 
-## game systems and architecture (book 14, v3.0, game-systems, 23 chapters)
+## game systems and architecture (book 15, v3.0, game-systems, 23 chapters)
 
 summary: covers engine systems in single-topic chapters: game loop, ecs theory plus a c# implementation, data oriented design, fsm and behavior trees, deterministic math, physics, terrain, saves, testing, lua hosting. a four part capstone then assembles them into a playable, balanced game.
 capstone: the battle engine in 4 parts: part 1 builds the tick stepped shell battle engine, part 2 the deterministic campaign core (gear, pets, expeditions), part 3 a kni window plus htmx playable frontend, part 4 monte carlo balance tuning.
@@ -574,11 +616,11 @@ toc:
 - 22 capstone part 4: balance by simulation (game-systems/chapters/22-capstone4.typ)
 - 23 appendices: topic matrix and sources (game-systems/chapters/23-appendices.typ)
 
-## the interview repertoire (book 16, v5.0, interview-repertoire, 42 chapters)
+## the interview repertoire (book 17, v6.0, interview-repertoire, 42 chapters)
 
-summary: answer bank for interview rounds across algorithms, javascript, react, go, databases, networks, distributed systems, security, and behavioral questions, plus a measured 1 billion row handling chapter, the 1brc in 8 stdlib lanes from c to sqlite with 21 byte-pinned variants. chapters drill frequent questions as [DRILL] definitional answers or [TDD] tested go and c# code under make verify, with sources pinned by access date.
+summary: answer bank for interview rounds across algorithms, javascript, react, go, databases, networks, distributed systems, security, and behavioral questions, plus a measured 1 billion row handling chapter, the 1brc in 9 stdlib lanes from c to sqlite with 24 byte-pinned variants. chapters drill frequent questions as [DRILL] definitional answers or [TDD] tested go and c# code under make verify, with sources pinned by access date.
 capstone: none: chapters instead drill question rounds and end in worked builds, like the test driven react listing page and the go storefront with live features.
-walkthroughs: react arc (ch 11 to 14), go build arc: rest apis, storefront, jetstream pipelines (ch 20 to 22), classics (ch 5 to 6), algorithms (ch 3 to 4 and 23 to 24), 1 billion row handling: the 1brc in 8 stdlib lanes from c to sqlite, 21 measured variants (ch 41)
+walkthroughs: react arc (ch 11 to 14), go build arc: rest apis, storefront, jetstream pipelines (ch 20 to 22), classics (ch 5 to 6), algorithms (ch 3 to 4 and 23 to 24), 1 billion row handling: the 1brc in 9 stdlib lanes from c to sqlite, 24 measured variants (ch 41)
 toc:
 
 - 01 the 2026 interview landscape (interview-repertoire/chapters/01-landscape.typ)
