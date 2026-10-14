@@ -24,7 +24,7 @@
 
 - Subagent fan-out is the default execution mode.
 - Before any execution, prepare a comprehensive task list with isolated concurrency in mind and proper dependency relationships.
-- All terminal commands always need to be async, especially with sub agents, so that they can communicate back when pinged and not went stuck unnoticed.
+- All terminal commands always need to be async, especially with sub agents, so that they can communicate back when pinged and not get stuck unnoticed. Always have resumable and async design in mind when spawning sub agents and shell processes: durably record progress so each one can restart from its last recorded point.
 - Quota guard: every 20 minutes fire a throwaway subagent to query the glm-plan-usage 5-hour window quota, and pause all development and fan-out at 95% until the window resets.
 - Memory guard: alongside the quota polling, run a cron-scheduled check every 5 minutes for the whole fan-out lifetime that enforces a hard cap on the combined working set of all project processes (compilers, test binaries, mutation, fuzz, e2e drivers, ...) at 16 GB RAM, read from the OS at runtime, from all the working repo's processes. On breach kill the least recently used's process tree, verify the OS process is gone, and rerun its task in the freed slot, never touch processes that are not originated from the working repo.
 - Progress watchdog: every agent schedules a recurring job that reports its current status every 20 minutes. If 30 minutes pass with no report, the agent is stuck: dispose of it per the disposal rules and relaunch its task from its last recorded progress.
@@ -75,7 +75,7 @@ TDD, fuzzy testing, mutation testing, and e2e testing are mandatory on every dev
 - No skipped tests. Detect and re-enable. Investigate root causes.
 - Atomic commits. Include tests and implementation in same commit.
 - Adversarial verification: before declaring work done, dispatch 2 independent agents to attack the change, neither seeing the other's work. Each must hunt counterexamples, break edge cases, and challenge assumptions. Fix every confirmed finding, then re-run the affected steps.
-- Oracle independence: derive expected values from the requirement or a reference system, never from the implementation under test, a suite fitted to the code certifies self-consistency only.
+- Expected-value independence: derive expected values from the requirement or a reference system, never from the implementation under test, a suite fitted to the code certifies self-consistency only.
 - Direction of fit: write the failing expectation before the passing code, a suite generated after the fact mirrors whatever the code does, bugs included.
 - Fixture origin: record where each fixture came from and when it was captured, an undocumented capture is indistinguishable from a hand-edit later.
 - Artifact over self-report: verify the physical artifact, binary, log, screenshot, or command output, whenever a tool or agent claims work is done, self-graded pass rates are not evidence.
@@ -138,7 +138,7 @@ Use only commas, periods, and colons. Never use em dashes, en dashes, or semicol
 
 ### 3. Style and sentence mechanics
 
-Write in plain, dense, casual American vernacular with simple is or has constructions. Use direct words with literal meaning, do not abuse synonyms or metaphors. Avoid academic prose, hype, and forced lexical variation. Never use parallel contrast formulas like not x but y, x rather than y, or lists of 3 adjectives. Avoid trailing participle clauses that end sentences with -ing verbs like highlighting, ensuring, or reflecting. Omit isolated transition words, sentence fragments, and canned section wrap ups like in summary, overall, despite challenges, or future outlook.
+Always use simple common words and phrases in explanations and writing, never fancy word choices. Write in plain, dense, casual American vernacular with simple is or has constructions. Use direct words with literal meaning, do not abuse synonyms or metaphors. Avoid academic prose, hype, and forced lexical variation. Never use parallel contrast formulas like not x but y, x rather than y, or lists of 3 adjectives. Avoid trailing participle clauses that end sentences with -ing verbs like highlighting, ensuring, or reflecting. Omit isolated transition words, sentence fragments, and canned section wrap ups like in summary, overall, despite challenges, or future outlook.
 
 ### 4. Banned words and phrases
 
@@ -146,7 +146,7 @@ Do not use:
 
 - Conversational and meta filler: great question, of course, certainly, you are right, let me know, hope this helps, would you like, say the word, as of, based on available sources, added coverage, improved attribution, independent coverage.
 - Tropes and framing cliches: think of this as, picture, imagine, at its core, let us unpack, usher in, nestled, undergird, overarching pillars, what it buys, and that matters.
-- Buzzwords and promotional jargon: delve, honestly, actually, additionally, consequently, notably, align with, boasts, bolstered, crucial, deep dive, emphasizing, enduring, enhance, fostering, garner, highlight, interplay, intricate, key, landscape, meticulously, pivotal, robust, showcase, tapestry, testament, underscore, valuable, vibrant, ventured into, offers, gap, blueprint, quietly, amid, toolkits, vital, fundamental, effortless, massive, shift, profound, genuine, promising, transform, significant, game changing, leap, empower, baseline, groundbreaking, rich, renowned, heavy lifting, load-bearing, footgun, provenance, spine, ground truth, diverse array, in the heart of, inventory, seams, ... (good writing practices in general are to be avoided).
+- Buzzwords and promotional jargon: delve, honestly, actually, additionally, consequently, notably, align with, boasts, bolstered, crucial, deep dive, emphasizing, enduring, enhance, fostering, garner, highlight, interplay, intricate, key, landscape, meticulously, pivotal, robust, showcase, tapestry, testament, underscore, valuable, vibrant, ventured into, offers, gap, blueprint, quietly, amid, toolkits, vital, fundamental, effortless, massive, shift, profound, genuine, promising, transform, significant, game changing, leap, empower, baseline, groundbreaking, rich, renowned, heavy lifting, load-bearing, footgun, provenance, spine, ground truth, diverse array, in the heart of, inventory, oracle, seams, ... (good writing practices in general are to be avoided).
 - Attribution and significance markers: stands as, serves as, reminder, indelible mark, deeply rooted, turning point, focal point, media outlets, profiled in, written by a leading expert, active social media presence, industry reports, observers cite, experts argue, some critics argue, several sources.
 
 ### 5. Delivery and consistency
