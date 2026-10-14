@@ -13,6 +13,12 @@
       "capstone_short": "the arena game in 3 parts",
       "walkthroughs": "sparse matrix systems, iterative solvers and conditioning (ch 23)"
     },
+    "rust": {
+      "summary": "a rust 1.99 language manual pinned to the stable toolchain: editions and the version ladder, lexical through traits, generics and macros, closures and iterators, errors, memory and smart pointers, concurrency, async, unsafe, testing, then a 13 chapter std-only http service with zero cargo dependencies, a hand-rolled parser and hmac jwt and wal store, closing with an async runtime capstone built from scratch. 33 chapters, coverage appendices track keywords, stdlib components, and pinned sources.",
+      "capstone": "async runtime from scratch (ch 32): a block_on executor, timer wheel, blocking pool bridge, readiness-polled net, and a concurrent server with graceful shutdown, 36 tests.",
+      "capstone_short": "async runtime from scratch",
+      "walkthroughs": "http service build kernel to suite (ch 19 to 31), async runtime capstone (ch 32), appendices: keywords, stdlib, sources (ch 33)"
+    },
     "go": {
       "summary": "go 1.27 language manual: toolchain, types, generics, concurrency, runtime, allocation, profiling, stdlib tours, testing, idioms, then htmx and templ, a full service build, numerical statistics, and a capstone. 35 chapters. coverage appendices track keywords against the spec and stdlib components per chapter.",
       "capstone": "concurrent crawler, indexer, and web ui (ch 34): a search engine front half, goroutine crawler under a semaphore cap, inverted index with uuid v7 documents, sqlite store with fts5, htmx/templ search ui, 32 tests.",
@@ -50,16 +56,16 @@
       "walkthroughs": "stdlib tour (ch 11 to 13), c embedding with ffi and allegro (ch 17 to 18), http service kernel to suite (ch 19 to 31)"
     },
     "dsa": {
-      "summary": "a data structures and algorithms handbook in 7 languages, from complexity analysis and arrays through hashing, trees, graphs, dynamic programming, geometry, flows, game theory, and fine-grained speedups that apply sparse matrix multiplication to triangle counting and subcubic apsp, pairing each structure with cost and library counterpart. the appendix tracks each topic with cost and library columns.",
+      "summary": "a data structures and algorithms handbook in 8 languages, from complexity analysis and arrays through hashing, trees, graphs, dynamic programming, geometry, flows, game theory, and fine-grained speedups that apply sparse matrix multiplication to triangle counting and subcubic apsp, pairing each structure with cost and library counterpart. the appendix tracks each topic with cost and library columns.",
       "capstone": "storage engine toolkit: a log-structured storage engine with a crc-32 framed write-ahead log, bloom filters, crash recovery, prefix scans, and compaction, plus an htmx 4 web dashboard, every file under 260 lines.",
       "capstone_short": "storage engine toolkit",
       "walkthroughs": "geometry and lattices (ch 23 to 24), interpreter build (ch 26 to 27), big arithmetic (ch 28 to 29), fine-grained speedups via sparse matrix multiplication (ch 43)"
     },
     "icpc": {
-      "summary": "walks six icpc world finals (2017 to 2025), every problem solved in c, go, java, c#, javascript, python, and lua. chapters 2 to 8 build the language toolboxes, 9 to 14 the finals, 15 fast big arithmetic. the coverage matrix tracks all 68 problems.",
-      "capstone": "none: chapters 9 to 14 walk six world finals (2017 to 2025), every problem solved in all seven languages with year-local helper kits, chapter 15 closes on fast big arithmetic.",
+      "summary": "walks six icpc world finals (2017 to 2025), every problem solved in c, go, java, c#, javascript, python, and lua, with an eighth rust toolbox lane. chapters 3 to 9 build the language toolboxes, 10 to 15 the finals, 16 fast big arithmetic. the coverage matrix tracks all 68 problems.",
+      "capstone": "none: chapters 10 to 15 walk six world finals (2017 to 2025), every problem solved in the seven solver languages with year-local helper kits, chapter 16 closes on fast big arithmetic.",
       "capstone_short": "none: six world finals walkthroughs",
-      "walkthroughs": "language toolboxes (ch 2 to 8), six world finals walkthroughs (ch 9 to 14)"
+      "walkthroughs": "language toolboxes (ch 3 to 9), six world finals walkthroughs (ch 10 to 15)"
     },
     "patterns-concurrency-distributed": {
       "summary": "an engineering handbook: go pattern discipline, the creational, structural, behavioral, and functional catalogs, then concurrency fundamentals, primitives, patterns, and hazards, then distributed systems from raft to resilience. a topic matrix maps every mechanism to its chapter, cost, and stdlib counterpart.",
@@ -86,10 +92,10 @@
       "walkthroughs": "campaign content arc (ch 14 to 17), ecs theory into a c# implementation (ch 2 to 3)"
     },
     "interview-repertoire": {
-      "summary": "answer bank for interview rounds across algorithms, javascript, react, go, databases, networks, distributed systems, security, and behavioral questions, plus a measured 1 billion row handling chapter, the 1brc in 8 stdlib lanes from c to sqlite with 21 byte-pinned variants. chapters drill frequent questions as [DRILL] definitional answers or [TDD] tested go and c# code under make verify, with sources pinned by access date.",
+      "summary": "answer bank for interview rounds across algorithms, javascript, react, go, databases, networks, distributed systems, security, and behavioral questions, plus a measured 1 billion row handling chapter, the 1brc in 9 stdlib lanes from c to sqlite with 24 byte-pinned variants. chapters drill frequent questions as [DRILL] definitional answers or [TDD] tested go and c# code under make verify, with sources pinned by access date.",
       "capstone": "none: chapters instead drill question rounds and end in worked builds, like the test driven react listing page and the go storefront with live features.",
       "capstone_short": "none: worked interview builds",
-      "walkthroughs": "react arc (ch 11 to 14), go build arc: rest apis, storefront, jetstream pipelines (ch 20 to 22), classics (ch 5 to 6), algorithms (ch 3 to 4 and 23 to 24), 1 billion row handling: the 1brc in 8 stdlib lanes from c to sqlite, 21 measured variants (ch 41)"
+      "walkthroughs": "react arc (ch 11 to 14), go build arc: rest apis, storefront, jetstream pipelines (ch 20 to 22), classics (ch 5 to 6), algorithms (ch 3 to 4 and 23 to 24), 1 billion row handling: the 1brc in 9 stdlib lanes from c to sqlite, 24 measured variants (ch 41)"
     }
   }
 }
