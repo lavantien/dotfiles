@@ -252,6 +252,41 @@ STUB
 	}
 }
 
+@test "pre-commit skips cargo gates for staged rust files with no manifest" {
+	setup_hook_repo
+	# bare rustc teaching tree: no Cargo.toml anywhere above the staged
+	# file, a failing cargo stub proves the gates never fire
+	printf 'fn main() {}\n' >"$REPO/notebook.rs"
+	git -C "$REPO" add notebook.rs
+	local stubbin
+	stubbin="$(mktemp -d)"
+	printf '#!/usr/bin/env bash\necho cargo must not run >&2\nexit 99\n' >"$stubbin/cargo"
+	chmod +x "$stubbin/cargo"
+	run env PATH="$stubbin:$PATH" git -C "$REPO" commit -q -m "fix: add teaching rust"
+	[ "$status" -eq 0 ]
+	rm -rf "$stubbin"
+}
+
+@test "pre-commit runs cargo check inside the nearest manifest" {
+	command -v cargo >/dev/null 2>&1 || skip "cargo not installed"
+	setup_hook_repo
+	mkdir -p "$REPO/crate/src"
+	cat >"$REPO/crate/Cargo.toml" <<'EOF'
+[package]
+name = "hookprobe"
+version = "0.1.0"
+edition = "2021"
+EOF
+	printf 'fn main( {}\n' >"$REPO/crate/src/main.rs"
+	git -C "$REPO" add crate
+	run git -C "$REPO" commit -q -m "fix: add broken crate"
+	[ "$status" -ne 0 ]
+	[[ "$output" == *"Cargo check failed (crate)."* ]] || {
+		echo "commit failed without the manifest-scoped cargo check message"
+		return 1
+	}
+}
+
 @test "absorbed checks skip cleanly when tools are missing" {
 	setup_hook_repo
 	# bad.sh would fail shellcheck, t.scala wants scalafmt, page.php wants

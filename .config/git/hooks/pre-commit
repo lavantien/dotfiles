@@ -42,9 +42,9 @@ fi
 # ============================================================================
 detect_projects() {
     local types=()
-    # Check from root
+    # Check from root; rust is not here, run_rust_checks keys on staged
+    # .rs files and the manifest above them instead of a root manifest
     [ -f "go.mod" ] && types+=("go")
-    [ -f "Cargo.toml" ] && types+=("rust")
     [ -f "package.json" ] && types+=("node")
     [ -f "pyproject.toml" ] && types+=("python")
     [ -f "requirements.txt" ] && types+=("python")
@@ -111,29 +111,54 @@ run_go_checks() {
     go vet ./... 2>/dev/null || echo -e "${YELLOW}Go vet found issues.${NC}"
 }
 
-# === RUST ===
+# === RUST (staged-keyed: each staged .rs resolves the manifest above it) ===
 run_rust_checks() {
+    local files=() f
+    while IFS= read -r -d '' f; do files+=("$f"); done < <(staged_files '\.rs$')
+    [ ${#files[@]} -eq 0 ] && return
     echo -e "\n${YELLOW}=== Rust ===${NC}"
-    local staged=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.rs$' | head -20 || true)
-    [ -z "$staged" ] && return
 
-    # Format: cargo fmt
-    echo "Running cargo fmt..."
-    if ! cargo fmt --check 2>/dev/null; then
-        cargo fmt
-        git add $staged 2>/dev/null || true
-        echo -e "${YELLOW}Files formatted. Please review.${NC}"
+    # Teaching trees compile under bare rustc with no manifest and must
+    # never see cargo fmt, and a monorepo can stage several crates at
+    # once: walk up from each staged file to its nearest Cargo.toml,
+    # deduped, and gate every manifest found, skip cleanly when none is
+    local roots=() d r dup
+    for f in "${files[@]}"; do
+        d=$(dirname "$f")
+        while [ "$d" != "." ] && [ ! -f "$d/Cargo.toml" ]; do
+            d=$(dirname "$d")
+        done
+        [ -f "$d/Cargo.toml" ] || continue
+        dup=0
+        for r in "${roots[@]}"; do [ "$r" = "$d" ] && dup=1; done
+        [ $dup -eq 0 ] && roots+=("$d")
+    done
+    if [ ${#roots[@]} -eq 0 ]; then
+        echo "no Cargo.toml above staged rust files, skipping cargo gates"
+        return
     fi
 
-    # Lint: cargo clippy
-    echo "Running cargo clippy..."
-    cargo clippy --quiet -- -D warnings 2>/dev/null || echo -e "${YELLOW}Clippy warnings found.${NC}"
+    for d in "${roots[@]}"; do
+        # cargo runs inside the manifest dir, the staged list stays
+        # repo-relative so the re-add after fmt keeps working
+        echo "Running cargo fmt in $d..."
+        if ! (cd "$d" && cargo fmt --check) 2>/dev/null; then
+            (cd "$d" && cargo fmt) 2>/dev/null || true
+            git add "${files[@]}" 2>/dev/null || true
+            echo -e "${YELLOW}Files formatted. Please review.${NC}"
+        fi
 
-    # Type check: cargo check
-    cargo check 2>/dev/null || {
-        echo -e "${RED}Cargo check failed.${NC}"
-        FAILED=1
-    }
+        # Lint: cargo clippy
+        echo "Running cargo clippy in $d..."
+        (cd "$d" && cargo clippy --quiet -- -D warnings) 2>/dev/null || echo -e "${YELLOW}Clippy warnings found.${NC}"
+
+        # Type check: cargo check
+        echo "Running cargo check in $d..."
+        if ! (cd "$d" && cargo check) 2>/dev/null; then
+            echo -e "${RED}Cargo check failed ($d).${NC}"
+            FAILED=1
+        fi
+    done
 }
 
 # === C/C++ ===
@@ -528,7 +553,6 @@ _pre_commit_main() {
     for project in "${PROJECTS[@]}"; do
         case $project in
             go) run_go_checks ;;
-            rust) run_rust_checks ;;
             c) run_c_checks ;;
             cpp) run_c_checks ;;
             node|node-frontend) cd frontend 2>/dev/null || cd .; run_node_checks; cd "$PROJECT_ROOT" ;;
@@ -540,6 +564,7 @@ _pre_commit_main() {
         esac
     done
 
+    run_rust_checks
     run_shell_checks
     run_lua_checks
     run_scala_format_check
