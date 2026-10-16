@@ -8,10 +8,10 @@ updated 10.06.2026, the companies index rolls the same company up to
 210, the footer links all 57 first-hand experiences, and the question
 list runs 17 pages, but no numeric round count and no numeric
 difficulty count appears anywhere on the page, the FAQ's prose is the
-whole characterization. This chapter maps that prose loop, works the
-page's 2 most engaged coding prompts test-first in go, the real-time
-top-k ranking system, the flagship at 441 likes and 5776 solved, and
-the k smallest squares of a sorted array, and walks 2 marketplace
+whole characterization. This chapter maps that prose loop, works 2
+coding prompts test-first in go, the real-time top-k ranking system,
+the flagship at 441 likes and 5776 solved, and the k smallest squares
+of a sorted array, and walks 2 marketplace
 design prompts in the #xref-to("repertoire", "design-prompts") voice,
 the real-time nearby-driver service and the data flow behind a food
 delivery app's restaurant list, because every preparation subtopic the
@@ -40,8 +40,8 @@ Learning 21, Behavioral & Leadership 19, Statistics & Math 18,
 Software Engineering Fundamentals 17. The coding bank alone outnumbers
 the next 3 categories combined, 157 against 103, and the
 analytics-and-experimentation bank sitting second at 46 is the
-marketplace's own signature, no other loop in this arc ranks
-experimentation above system design.
+marketplace's own signature, one of only 2 loops in this arc where
+experimentation outranks system design, meta's the other.
 
 Difficulty, prose only, the FAQ's characterization verbatim where it
 binds: questions `range from moderate to very challenging depending
@@ -173,8 +173,8 @@ in 5 narrated steps, tie order by id, rejection without state change
 for a non-positive delta and for the int64 overflow at MaxInt64. The
 red run came first, 11 of the 12 functions failing against a stub
 that compiled the fields and answered every call with a no-op, the
-12th audits an empty heap and passes vacuously, which is why the
-differential exists.
+12th, the squares brute-force differential, passing vacuously against
+the empty stub, which is why the differential exists.
 
 == the k smallest squares of a sorted array, worked [TDD]
 
@@ -238,7 +238,8 @@ beside it. Driver state at 64 bytes is 6.4 MB for the metro, one
 process's memory, which is why the shard boundary is the cell, not
 the machine. A 60 km by 40 km metro at 1 km cells is 2400 cells,
 about 40 drivers a cell on average, and a 3 km radius search touches
-at most 16 of them.
+the 29 cells whose centers lie inside it, 45 if the ring counts
+every cell it grazes.
 
 #flow(
   [fixes shard by cell on a consistent hash ring, searches fan out to the cells in radius],
@@ -254,7 +255,7 @@ at most 16 of them.
   edge((0, 2.4), (0, 3.6), "->"),
   edge((0, 3.6), (0, 4.8), "->"),
   edge((2.4, 2.4), (2.4, 3.6), "->"),
-  edge((2.4, 3.6), (0, 3.6), "->", label: [read 16 cells]),
+  edge((2.4, 3.6), (0, 3.6), "->", label: [read the cells in radius]),
 )
 
 The walk over hops: the driver phone emits a fix every 4 seconds, the

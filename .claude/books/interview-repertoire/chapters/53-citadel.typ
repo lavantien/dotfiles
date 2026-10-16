@@ -62,8 +62,8 @@ Algorithms 45, Statistics and Math 18, Machine Learning 16, every
 row at or above the intro's, the 2 surfaces measure different
 things and neither explains itself.
 
-Difficulty, from the page's spread block: 65 medium, 22 hard, 11
-easy. The FAQ's own characterization is worth keeping verbatim for
+Difficulty, from the intro paragraph and the FAQ: 65 medium, 22
+hard, 11 easy. The FAQ's own characterization is worth keeping verbatim for
 where the hard tail sits: `The hard entries cluster in Statistics & Math, including computing summary statistics from a frequency array, and in a behavioral prompt asking candidates to discuss a project they are proud of and how they work.`
 Coding problems are mostly medium and lean on classic structures,
 the FAQ's closing note, and the visible cards bear it out.

@@ -51,7 +51,7 @@ toc:
 - 40 the test suite (c-os-cloud/chapters/40-suite.typ)
 - 41 appendices: topic matrix and sources (c-os-cloud/chapters/41-appendices.typ)
 
-## mathematics for programmers (book 2, v2.1, math, 33 chapters)
+## mathematics for programmers (book 2, v2.2, math, 33 chapters)
 
 summary: mathematics for programmers in c23: floating point and error analysis, linear algebra, calculus, optimization and autodiff, logic with proofs as machine-checkable data against the lean 4 formalization share of published research results, algebra, and graphs, probability, statistics, numerical methods with sparse matrix systems solved by jacobi and gauss-seidel iteration, game theory, then functional patterns in c23. 33 chapters, the coverage appendix names the sample check proving each topic.
 capstone: the arena game in 3 parts: design (game spec, adt state, numerics budget, mixed-strategy plus mcts ai, two-lane bit-exact architecture), implementation (verlet physics, sat collision, group hashing, allegro host), verification (discipline-to-module audit, determinism pins).
@@ -399,7 +399,7 @@ toc:
 - 32 capstone: auto chess, human versus bot (lua/chapters/32-capstone.typ)
 - 33 appendices: coverage and sources (lua/chapters/33-appendices.typ)
 
-## practical data structures and algorithms (book 10, v9.0, dsa, 45 chapters)
+## practical data structures and algorithms (book 10, v9.1, dsa, 45 chapters)
 
 summary: a data structures and algorithms handbook in 8 languages, from complexity analysis and arrays through hashing, trees, graphs, dynamic programming, geometry, flows, game theory, and fine-grained speedups that apply sparse matrix multiplication to triangle counting and subcubic apsp, pairing each structure with cost and library counterpart. the appendix tracks each topic with cost and library columns.
 capstone: storage engine toolkit: a log-structured storage engine with a crc-32 framed write-ahead log, bloom filters, crash recovery, prefix scans, and compaction, plus an htmx 4 web dashboard, every file under 260 lines.
@@ -501,7 +501,7 @@ toc:
 - 16 capstone: raft replicated configuration service (patterns-concurrency-distributed/chapters/16-capstone.typ)
 - 17 appendices: topic matrix and sources (patterns-concurrency-distributed/chapters/17-appendices.typ)
 
-## infrastructure: docker, databases, and testing (book 13, v2.1, infrastructure, 20 chapters)
+## infrastructure: docker, databases, and testing (book 13, v2.2, infrastructure, 21 chapters)
 
 summary: an engineering handbook pairing docker (toolchain, images, containers, compose, networking) with embedded databases: sqlite schemas through production, duckdb analytics, mongo aggregation, nats and jetstream messaging, and closes with docker-free testing, mocks, and test-driven migrations that name where every expected value comes from. the coverage matrix names each mechanism's running proof.
 capstone: two parts: part 1 builds six go services (chat, presence, notify, history, analytics, web) over nats, sqlite, mongo, and duckdb, each owning one store. part 2 adds the htmx chat ui and a gated suite proving the stack from one compose command.
@@ -526,8 +526,9 @@ toc:
 - 16 testing without docker (infrastructure/chapters/16-testing.typ)
 - 17 mocks, seeding, contract tests (infrastructure/chapters/17-mocks.typ)
 - 18 migrations, test driven (infrastructure/chapters/18-migrations.typ)
-- 19 capstone part 1: services and topology (infrastructure/chapters/19-capstone1.typ)
-- 20 capstone part 2: chat and notifications, one click (infrastructure/chapters/20-capstone2.typ)
+- 19 version control at scale (infrastructure/chapters/19-vcs.typ)
+- 20 capstone part 1: services and topology (infrastructure/chapters/20-capstone1.typ)
+- 21 capstone part 2: chat and notifications, one click (infrastructure/chapters/21-capstone2.typ)
 
 ## knowledge discovery (book 14, v2.0, kdd, 48 chapters)
 
@@ -616,7 +617,7 @@ toc:
 - 22 capstone part 4: balance by simulation (game-systems/chapters/22-capstone4.typ)
 - 23 appendices: topic matrix and sources (game-systems/chapters/23-appendices.typ)
 
-## the interview repertoire (book 17, v6.0, interview-repertoire, 42 chapters)
+## the interview repertoire (book 17, v7.0, interview-repertoire, 54 chapters)
 
 summary: answer bank for interview rounds across algorithms, javascript, react, go, databases, networks, distributed systems, security, and behavioral questions, plus a measured 1 billion row handling chapter, the 1brc in 9 stdlib lanes from c to sqlite with 24 byte-pinned variants. chapters drill frequent questions as [DRILL] definitional answers or [TDD] tested go and c# code under make verify, with sources pinned by access date.
 capstone: none: chapters instead drill question rounds and end in worked builds, like the test driven react listing page and the go storefront with live features.
@@ -664,4 +665,16 @@ toc:
 - 39 offers and negotiation (interview-repertoire/chapters/39-negotiation-answers.typ)
 - 40 the transfer answer: java and rust shops (interview-repertoire/chapters/40-transfer-answers.typ)
 - 41 the one billion row challenge (interview-repertoire/chapters/41-onebrc.typ)
-- 42 appendices: question index and sources (interview-repertoire/chapters/42-appendices.typ)
+- 42 the loop at anthropic (interview-repertoire/chapters/42-anthropic.typ)
+- 43 the loop at openai (interview-repertoire/chapters/43-openai.typ)
+- 44 the loop at netflix (interview-repertoire/chapters/44-netflix.typ)
+- 45 the loop at meta (interview-repertoire/chapters/45-meta.typ)
+- 46 the loop at google (interview-repertoire/chapters/46-google.typ)
+- 47 the loop at amazon (interview-repertoire/chapters/47-amazon.typ)
+- 48 the loop at microsoft (interview-repertoire/chapters/48-microsoft.typ)
+- 49 the loop at apple (interview-repertoire/chapters/49-apple.typ)
+- 50 the loop at uber (interview-repertoire/chapters/50-uber.typ)
+- 51 the loop at doordash (interview-repertoire/chapters/51-doordash.typ)
+- 52 the loop at nvidia (interview-repertoire/chapters/52-nvidia.typ)
+- 53 the loop at citadel (interview-repertoire/chapters/53-citadel.typ)
+- 54 appendices: question index and sources (interview-repertoire/chapters/54-appendices.typ)

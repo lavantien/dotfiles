@@ -172,7 +172,7 @@ observed `Have`, and that field is the entire retry protocol: the
 caller re-attempts the swap with the reported value instead of
 guessing. The race test pins the contract:
 
-#listing("infrastructure/samples/ch19/refs_test.go", first: 113, last: 160, caption: [8 racers, one cas expectation, exactly one winner, every loser told the winner's value])
+#listing("infrastructure/samples/ch19/refs_test.go", first: 139, last: 186, caption: [8 racers, one cas expectation, exactly one winner, every loser told the winner's value])
 
 Eight goroutines race one expectation, exactly one wins, 7 read
 conflicts, and every conflict reports the winner's value, which is
@@ -220,7 +220,7 @@ touched a path. `Blame` assigns each path the id of its last writer.
 Every expected value in the suite is counted by hand from the fixture,
 the oracle discipline of #xref-to("infrastructure", "testing"):
 
-#listing("infrastructure/samples/ch19/query_test.go", first: 109, last: 128, caption: [the blame oracle: 3 snapshots over a 4 changeset chain, each map derived from the fixture by eye])
+#listing("infrastructure/samples/ch19/query_test.go", first: 138, last: 157, caption: [the blame oracle: 3 snapshots over a 4 changeset chain, each map derived from the fixture by eye])
 
 #callout("note", "path granularity, on purpose", [
   The sample's blame works at path granularity with whole-file

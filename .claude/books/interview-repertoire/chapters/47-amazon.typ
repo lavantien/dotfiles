@@ -249,8 +249,8 @@ retention.
 The arithmetic first, the method of
 #xref-to("repertoire", "estimation-answers"), and it settles the
 shape before any box is drawn. 5000 events a second at 200 bytes is
-1 megabyte a second of ingress. A day at the steady 1000 is 86
-gigabytes, the 7-day retention window about 600 gigabytes, one
+1 megabyte a second of ingress. A day at the steady 1000 is 17
+gigabytes, the 7-day retention window about 120 gigabytes, one
 broker's disk and a fraction of its throughput, so the broker is
 never the constraint and saying so aloud is the opening move. The
 hard parts are the edges: watch apis cap handles per process, so the
@@ -318,7 +318,7 @@ whole cart under stacked rules, and keep a session stable while the
 catalog moves underneath it. One number anyway, the
 #xref-to("repertoire", "estimation-answers") discipline: 10 million
 users with 5 percent holding a live cart, 50 lines each at 100
-bytes, is 250 megabytes of hot session state, any key-value store
+bytes, is 2.5 gigabytes of hot session state, any key-value store
 carries it, so the design work is entirely in the class boundaries
 and the round knows it.
 

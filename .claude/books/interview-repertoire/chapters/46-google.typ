@@ -41,8 +41,9 @@ the two coding-bearing stages.
 
 The header block frames the whole bank. Questions 636, updated
 10.06.2026, 63 added in the last 90 days, 3 questions tagged as
-AI-assisted rounds. The intro paragraph repeats 636 and 63 and
-three on its own, so those four survive a two-surface check. The
+AI-assisted rounds. The intro paragraph repeats 636, 63, and
+three on its own, so those three survive a two-surface check, the
+update date lives in the header alone. The
 first-hand experiences do not: the intro paragraph says 99, the
 footer link says all 146, and the honest statement is that the page
 carries at least 99 and links a fuller list. The question list

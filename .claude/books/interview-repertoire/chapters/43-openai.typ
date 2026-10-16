@@ -1,5 +1,3 @@
-// chapter 43: the openai loop, the page's own numbers, payments and
-// gpu scheduling as the design spine, two worked go prompts
 #import "../../theme/lib.typ": listing, callout, xref-to, diagram, cdraw, flow
 #import "@preview/fletcher:0.5.8": node, edge
 
@@ -12,9 +10,10 @@ the only one that ranks design above coding, and the same page says
  outright that its hard band sits in payments and streaming. This
 chapter reads the page the way the no-metrics law demands, every
 count named to the surface it came from because the surfaces
-disagree with each other, then works the two most-engaged coding
-cards test-driven in go, a fault-tolerant work queue and a
-spreadsheet engine with cycle detection, and drills two design
+disagree with each other, then works two coding cards test-driven in
+go, a fault-tolerant work queue and a spreadsheet engine with cycle
+detection, the two most-engaged unlocked cards once the locked
+topological-sort card steps aside, and drills two design
 walkthroughs in the #xref-to("repertoire", "design-prompts") voice,
 card payments with tips and nightly settlement, and a text-to-video
 GPU scheduler with fair queueing.
@@ -36,7 +35,7 @@ last 90 days. The question list runs 19 pages and shows 20 results
 on page 1. The rounds, from the FAQ block's own question about the
 loop: 179 questions tagged technical screen, 91 onsite, 12 from HR
 screens, 5 from online assessments. Screen-heavy is the reading to
-say aloud, 179 of the 287 tagged rounds are screens of one kind or
+say aloud, 196 of the 287 tagged rounds are screens of one kind or
 another, so the first live conversation decides most outcomes, and
 the onsite is where the design band lands.
 
