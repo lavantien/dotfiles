@@ -11,10 +11,10 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CORPUS="$HOME/dev/github/resume/books"
-PDF_SRC="$HOME/dev/github/resume/output/books"
-TYPO_TARGET="$SCRIPT_DIR/../.claude/books"
-PDF_TARGET="$SCRIPT_DIR/../books"
+CORPUS="${BOOKS_CORPUS:-$HOME/dev/github/resume/books}"
+PDF_SRC="${BOOKS_PDF_SRC:-$HOME/dev/github/resume/output/books}"
+TYPO_TARGET="${BOOKS_TYPO_TARGET:-$SCRIPT_DIR/../.claude/books}"
+PDF_TARGET="${BOOKS_PDF_TARGET:-$SCRIPT_DIR/../books}"
 ANNOTATIONS="$SCRIPT_DIR/books-index.json"
 
 die() {
@@ -54,8 +54,14 @@ while IFS= read -r dir; do INCLUDED+=("$dir"); done < <(
 if [[ ${#INCLUDED[@]} -eq 0 ]]; then
 	die "no included volumes found under $CORPUS, refusing to touch $TYPO_TARGET"
 fi
+declare -A PDF_NAME
 for dir in "${INCLUDED[@]}"; do
-	[[ -f "$CORPUS/$dir/manifest.typ" ]] || die "no manifest.typ in $dir"
+	manifest="$CORPUS/$dir/manifest.typ"
+	[[ -f "$manifest" ]] || die "no manifest.typ in $dir"
+	num="$(sed -n 's/^[[:space:]]*num:[[:space:]]*\([0-9][0-9]*\),.*$/\1/p' "$manifest" | head -n1)"
+	[[ -n "$num" ]] || die "no num in $dir manifest"
+	printf -v nn '%02d' "$((10#$num))"
+	PDF_NAME[$dir]="$nn-$dir.pdf"
 done
 
 mkdir -p "$TYPO_TARGET" "$PDF_TARGET"
@@ -116,33 +122,21 @@ done
 
 shopt -s nullglob
 for dir in "${INCLUDED[@]}"; do
-	hits=("$PDF_SRC/"[0-9][0-9]-"$dir".pdf)
-	if [[ ${#hits[@]} -eq 0 ]]; then
+	expected="${PDF_NAME[$dir]}"
+	if [[ ! -f "$PDF_SRC/$expected" ]]; then
 		echo "warning: no pdf for $dir in $PDF_SRC" >&2
 		continue
 	fi
-	for f in "${hits[@]}"; do
-		out="$PDF_TARGET/$(basename "$f")"
-		if [[ ! -f "$out" ]] || ! cmp -s "$f" "$out"; then
-			cp "$f" "$out"
-			pdfs=$((pdfs + 1))
-		fi
-	done
+	out="$PDF_TARGET/$expected"
+	if [[ ! -f "$out" ]] || ! cmp -s "$PDF_SRC/$expected" "$out"; then
+		cp "$PDF_SRC/$expected" "$out"
+		pdfs=$((pdfs + 1))
+	fi
 done
-shopt -u nullglob
 
-# Retired volumes leave no orphan PDF behind at the top level
-shopt -s nullglob
+# Only the manifest-numbered PDF of an included volume stays, renumbered and retired names go
 for f in "$PDF_TARGET"/*.pdf; do
-	base="$(basename "$f")"
-	keep=false
-	for dir in "${INCLUDED[@]}"; do
-		if [[ "$base" == [0-9][0-9]-"$dir".pdf ]]; then
-			keep=true
-			break
-		fi
-	done
-	if [[ "$keep" == false ]]; then
+	if ! list_has "$(basename "$f")" "${PDF_NAME[@]}"; then
 		rm "$f"
 		deleted=$((deleted + 1))
 	fi
