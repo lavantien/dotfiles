@@ -85,7 +85,7 @@ up  # Runs update-all
 | `.vscode/` | VS Code settings |
 | `assets/` | WezTerm background wallpapers, deployed to ~/assets |
 | `bootstrap/` | bootstrap.sh and bootstrap.ps1, per-platform install scripts, and lib/ helpers |
-| `books/` | The published corpus volumes as PDFs, numbered 01 through 14 plus 16 |
+| `books/` | The published corpus volumes as PDFs, numbered 01 through 15 plus 17 |
 | `home/` | Home-level configs: .bash_aliases, .zshrc, .gitconfig, Microsoft.PowerShell_profile.ps1, .dotfiles.config.yaml.example |
 | `lib/` | Shared script libraries: config parsing and JSON merge |
 | `playground/` | Scratch space for one-off programs, committed with the work unless it holds secrets |
@@ -177,7 +177,7 @@ If git hooks are not running, set `git config --global core.hooksPath ~/.config/
 
 ## Books corpus
 
-The corpus volumes are c-os-cloud, math, go, java, csharp-net, javascript, python, lua, dsa, icpc, patterns-concurrency-distributed, infrastructure, kdd, game-systems, and interview-repertoire. `.claude/books/` carries each volume's typst sources (manifest.typ, book.typ, chapters, coverage), and the typst files are the source of truth. `books/` holds each volume as a published PDF under the authoring repo's NN-name numbering, so the set runs 01 through 14 plus 16, with 15 held by defense-cookbook. The exclude list in `scripts/books-index.json` keeps analysis, defense-cookbook, theme, and theme-demo out of the corpus. The math volume's proof chapter grounds proofs as machine-checkable data against the lean 4 formalization share of published research results, and the infrastructure testing arc names where every expected value comes from.
+The corpus volumes are c-os-cloud, math, rust, go, java, csharp-net, javascript, python, lua, dsa, icpc, patterns-concurrency-distributed, infrastructure, kdd, game-systems, and interview-repertoire. `.claude/books/` carries each volume's typst sources (manifest.typ, book.typ, chapters, coverage), and the typst files are the source of truth. `books/` holds each volume as a published PDF under the authoring repo's NN-name numbering, so the set runs 01 through 15 plus 17, with 16 held by defense-cookbook. The exclude list in `scripts/books-index.json` keeps analysis, defense-cookbook, theme, and theme-demo out of the corpus. The math volume's proof chapter grounds proofs as machine-checkable data against the lean 4 formalization share of published research results, and the infrastructure testing arc names where every expected value comes from.
 
 `scripts/sync-book.sh` and `scripts/sync-book.ps1` refresh `.claude/books/` from the private authoring repo at `~/dev/github/resume` when it exists and skip otherwise. Deploy follows the same split: with `~/dev/github/resume` present, the deployed CLAUDE.md grounds directly on it, without it, deploy mirrors `.claude/books/` into `~/.claude/books` as is and CLAUDE.md grounds there. Implementation code behind the books (samples, capstones, api projects) falls back to the private repo.
 

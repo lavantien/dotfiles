@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file, newest first. One short line per release states what happened, with no detail enumeration, the commit history carries the detail. Versioning is major.minor. Unreleased work lands under an `## [Unreleased]` heading that is renamed to the version and date at release time.
 
+## [Unreleased]
+
+The readme corpus section names the rust volume and the 01 through 15 plus 17 pdf numbering.
+
 ## [6.7] - 2026-10-16
 
 The pre-commit rust gates are keyed on staged .rs files instead of a root Cargo.toml: each staged file resolves the nearest manifest above it, cargo runs inside that manifest, monorepo commits gate every manifest touched, and manifest-less teaching trees skip the cargo gates entirely.
