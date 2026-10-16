@@ -12,10 +12,10 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 $ScriptDir = $PSScriptRoot
-$Corpus = Join-Path $HOME 'dev/github/resume/books'
-$PdfSrc = Join-Path $HOME 'dev/github/resume/output/books'
-$TypstTarget = Join-Path (Split-Path -Parent $ScriptDir) '.claude/books'
-$PdfTarget = Join-Path (Split-Path -Parent $ScriptDir) 'books'
+$Corpus = if ($env:BOOKS_CORPUS) { $env:BOOKS_CORPUS } else { Join-Path $HOME 'dev/github/resume/books' }
+$PdfSrc = if ($env:BOOKS_PDF_SRC) { $env:BOOKS_PDF_SRC } else { Join-Path $HOME 'dev/github/resume/output/books' }
+$TypstTarget = if ($env:BOOKS_TYPO_TARGET) { $env:BOOKS_TYPO_TARGET } else { Join-Path (Split-Path -Parent $ScriptDir) '.claude/books' }
+$PdfTarget = if ($env:BOOKS_PDF_TARGET) { $env:BOOKS_PDF_TARGET } else { Join-Path (Split-Path -Parent $ScriptDir) 'books' }
 $AnnotationsPath = Join-Path $ScriptDir 'books-index.json'
 
 function Test-FileEqual {
@@ -47,8 +47,13 @@ $Included = @(
 [System.Array]::Sort($Included, [System.StringComparer]::Ordinal)
 
 if ($Included.Count -eq 0) { throw "no included volumes found under $Corpus, refusing to touch $TypstTarget" }
+$PdfName = @{}
 foreach ($dir in $Included) {
-	if (-not (Test-Path -LiteralPath (Join-Path $Corpus "$dir/manifest.typ") -PathType Leaf)) { throw "no manifest.typ in $dir" }
+	$manifest = Join-Path $Corpus "$dir/manifest.typ"
+	if (-not (Test-Path -LiteralPath $manifest -PathType Leaf)) { throw "no manifest.typ in $dir" }
+	$numLine = Select-String -LiteralPath $manifest -Pattern '^\s*num:\s*(\d+),' | Select-Object -First 1
+	if ($null -eq $numLine) { throw "no num in $dir manifest" }
+	$PdfName[$dir] = ('{0:d2}' -f [int]$numLine.Matches[0].Groups[1].Value) + "-$dir.pdf"
 }
 
 [System.IO.Directory]::CreateDirectory($TypstTarget) | Out-Null
@@ -117,28 +122,23 @@ foreach ($dir in $Included) {
 
 $hasPdfSrc = Test-Path -LiteralPath $PdfSrc -PathType Container
 foreach ($dir in $Included) {
-	$hits = @()
-	if ($hasPdfSrc) {
-		$hits = @(Get-ChildItem -LiteralPath $PdfSrc -File |
-			Where-Object { $_.Name -cmatch ('^\d\d-' + [regex]::Escape($dir) + '\.pdf$') })
-	}
-	if ($hits.Count -eq 0) {
+	$expected = $PdfName[$dir]
+	$srcFile = Join-Path $PdfSrc $expected
+	if (-not $hasPdfSrc -or -not (Test-Path -LiteralPath $srcFile -PathType Leaf)) {
 		[Console]::Error.WriteLine("warning: no pdf for $dir in $PdfSrc")
 		continue
 	}
-	foreach ($f in $hits) {
-		$outFile = Join-Path $PdfTarget $f.Name
-		if (-not (Test-Path -LiteralPath $outFile -PathType Leaf) -or -not (Test-FileEqual $f.FullName $outFile)) {
-			Copy-Item -LiteralPath $f.FullName -Destination $outFile -Force
-			$pdfCount++
-		}
+	$outFile = Join-Path $PdfTarget $expected
+	if (-not (Test-Path -LiteralPath $outFile -PathType Leaf) -or -not (Test-FileEqual $srcFile $outFile)) {
+		Copy-Item -LiteralPath $srcFile -Destination $outFile -Force
+		$pdfCount++
 	}
 }
 
-# Retired volumes leave no orphan PDF behind at the top level
-$keepPattern = '^\d\d-(' + (($Included | ForEach-Object { [regex]::Escape($_) }) -join '|') + ')\.pdf$'
+# Only the manifest-numbered PDF of an included volume stays, renumbered and retired names go
+$keepNames = @($Included | ForEach-Object { $PdfName[$_] })
 foreach ($f in @(Get-ChildItem -LiteralPath $PdfTarget -Filter '*.pdf' -File)) {
-	if ($f.Name -cnotmatch $keepPattern) {
+	if ($keepNames -cnotcontains $f.Name) {
 		Remove-Item -LiteralPath $f.FullName -Force
 		$deleted++
 	}
