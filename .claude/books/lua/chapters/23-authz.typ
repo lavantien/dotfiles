@@ -135,7 +135,7 @@ post state of both verbs: the scan substitutes the candidate role
 set for the stored one, and only a post state with some admin
 standing persists, so a rejected demotion leaves no trace:
 
-#listing("lua/service/users.lua", first: 366, last: 386, caption: [both verbs run the same guard on the post state])
+#listing("lua/service/users.lua", first: 370, last: 390, caption: [both verbs run the same guard on the post state])
 
 The frozen vector walks the story at store level and through the
 routes: demoting the only admin answers 409 conflict, last admin,

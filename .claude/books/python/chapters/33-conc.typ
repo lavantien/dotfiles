@@ -87,7 +87,7 @@ both, and the frozen vector 10 pins the single-tag case byte for
 byte: its If-None-Match is the digest of the body vector 09 carries,
 which the test computes rather than copies:
 
-#listing("python/api/pyapi/conc.py", first: 42, last: 50, caption: [the conditional get decision: no header, no resource, no match, then the 304]) // PIN: conditional get
+#listing("python/api/pyapi/conc.py", first: 45, last: 53, caption: [the conditional get decision: no header, no resource, no match, then the 304]) // PIN: conditional get
 
 #diagram([the conditional GET decision], length: 13pt, {
   let step(y, q, yes, no) = {
@@ -141,7 +141,7 @@ replays the 201 the first caller stored. A waiter whose row is still
 absent, because the first run failed or its save failed, runs fresh
 in the freed slot, exactly the no-op release the settle rule allows:
 
-#listing("python/api/pyapi/conc.py", first: 177, last: 200, caption: [run: replay a match, wait on the in-flight handoff, settle and release]) // PIN: keyed run
+#listing("python/api/pyapi/conc.py", first: 180, last: 203, caption: [run: replay a match, wait on the in-flight handoff, settle and release]) // PIN: keyed run
 
 #diagram([one key's life: first run, snapshot, replay], length: 13pt, {
   let node(x, y, t, l1) = {
@@ -189,7 +189,7 @@ settle path removes the entry from the map before it sets the event,
 so a caller arriving after the settle starts a new flight, never
 joins a dead one:
 
-#listing("python/api/pyapi/conc.py", first: 287, last: 300, caption: [claim: the registration seam, one critical section for lookup and creation]) // PIN: claim seam
+#listing("python/api/pyapi/conc.py", first: 290, last: 303, caption: [claim: the registration seam, one critical section for lookup and creation]) // PIN: claim seam
 
 #diagram([three requests arrive together, one origin read happens], length: 13pt, {
   cdraw.line((0.6, 1.0), (22.4, 1.0), stroke: luma(140))
@@ -232,7 +232,7 @@ free-threaded builds, officially supported in 3.14 under PEP 779,
 make the question sharper, not new. The canary at the end of this
 chapter exists to keep the claim tested:
 
-#listing("python/api/pyapi/conc.py", first: 333, last: 351, caption: [the lock story in two methods: shared state, one lock]) // PIN: counter
+#listing("python/api/pyapi/conc.py", first: 336, last: 354, caption: [the lock story in two methods: shared state, one lock]) // PIN: counter
 
 #diagram([each primitive, the guarantee it buys], length: 13pt, {
   let row(y, name, guarantee, costs) = {
@@ -274,7 +274,7 @@ together at a barrier of size limit exactly limit, and with a single
 worker the first error is the raised one and every item still queued
 is provably skipped:
 
-#listing("python/api/pyapi/conc.py", first: 374, last: 390, caption: [the worker: pull, skip when cancelled, latch the first error, always task done]) // PIN: pool worker
+#listing("python/api/pyapi/conc.py", first: 377, last: 393, caption: [the worker: pull, skip when cancelled, latch the first error, always task done]) // PIN: pool worker
 
 #diagram([the first error travels left through the cancel event], length: 13pt, {
   for x in (1.6, 6.4, 11.2, 16.0, 20.8) {

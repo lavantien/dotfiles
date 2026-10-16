@@ -342,7 +342,7 @@ The suite keeps a 10k-particle smoke with both checksums pinned, fast
 enough for every gate run, and the seed is printed by every bench run:
 
 #listing("lua/samples/ch09_collector.lua", first: 278, last: 286, caption: [the smoke: 10k particles, both checksums pinned])
-#listing("lua/samples/bench.lua", first: 12, last: 36, caption: [the opt-in scale run every number above came from])
+#listing("lua/samples/bench.lua", first: 14, last: 38, caption: [the opt-in scale run every number above came from])
 
 sources: lua.org manual 5.5 sections 2.5.1 through 2.5.4, 4.6
 (lua_Alloc, lua_gc, lua_newstate), 6.2 (collectgarbage), accessed

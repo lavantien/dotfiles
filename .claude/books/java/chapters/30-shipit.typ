@@ -156,7 +156,7 @@ uuids, the statuses, the header relations, and the byte-identical
 guarantees that must survive all three. The etag check is the sharpest
 one, recomputed over the wire bytes:
 
-#listing("java/api/integration/javabook/it/IntegrationTests.java", first: 113, last: 121, caption: [the strong etag rule recomputed over live bytes, not frozen ones])
+#listing("java/api/integration/javabook/it/IntegrationTests.java", first: 114, last: 121, caption: [the strong etag rule recomputed over live bytes, not frozen ones])
 
 Five tests cover the scenarios the contract names. Health and routing
 pins both probes and the two routing envelopes, including the 405
@@ -169,7 +169,7 @@ accounts, and the owner's read with its etag. The patch duel releases
 2 concurrent patches on one If-Match and demands exactly one 200 and
 one 412, then a 304 off the fresh etag and a stale 412:
 
-#listing("java/api/integration/javabook/it/IntegrationTests.java", first: 209, last: 231, caption: [the duel over the wire: one latch, 2 virtual-thread patchers, the collector concurrent])
+#listing("java/api/integration/javabook/it/IntegrationTests.java", first: 210, last: 232, caption: [the duel over the wire: one latch, 2 virtual-thread patchers, the collector concurrent])
 
 The remaining 2 are the exposition, read off the ops port the wired
 service binds it to, both series present with the route label the

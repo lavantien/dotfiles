@@ -47,7 +47,7 @@ who enters. The gate as one middleware layer refuses through the
 kernel's failure writer, so a 503 carries the standard envelope with
 the request id like every other failure:
 
-#listing("python/api/pyapi/load.py", first: 76, last: 93, caption: [the gate as a layer: nonblocking take, finally release, overload envelope at the cap])
+#listing("python/api/pyapi/load.py", first: 79, last: 96, caption: [the gate as a layer: nonblocking take, finally release, overload envelope at the cap])
 
 #diagram([latency versus in-flight: the hockey stick the gate cuts], length: 13pt, {
   cdraw.line((0.6, 0.7), (23.2, 0.7), stroke: luma(120))
@@ -88,7 +88,7 @@ waiting on handlers, and the gate's condition, `wait_empty`, is
 what actually waits, releasing the caller the moment the last slot
 goes back or the grace runs out:
 
-#listing("python/api/pyapi/load.py", first: 135, last: 146, caption: [Drain: readiness flips, listener closes, in-flight finish under the grace])
+#listing("python/api/pyapi/load.py", first: 138, last: 152, caption: [Drain: readiness flips, listener closes, in-flight finish under the grace])
 
 #diagram([SIGTERM to drain to exit, against the hard kill], length: 13pt, {
   let t(x0, w, title, fill) = {
@@ -122,7 +122,7 @@ a single log line. The result is the caller's to judge, never
 swallowed by the helper, which is the same discipline the kernel
 applies to failures: report, do not absorb:
 
-#listing("python/api/pyapi/load.py", first: 147, last: 153, caption: [the exit code: zero when drained, one when the grace expired with work inside])
+#listing("python/api/pyapi/load.py", first: 155, last: 161, caption: [the exit code: zero when drained, one when the grace expired with work inside])
 
 #diagram([the two exits and what each one claims], length: 13pt, {
   let st(x0, name, l1, l2, fill) = {
@@ -235,7 +235,7 @@ difference is the resolution a histogram throws away, stated in the
 table's source column instead of hidden in a footnote, and the
 units live in the header where a latency column cannot be misread:
 
-#listing("python/api/pyapi/load.py", first: 276, last: 292, caption: [summarize exact by nearest rank, bucket_summarize as the scraper sees it])
+#listing("python/api/pyapi/load.py", first: 284, last: 300, caption: [summarize exact by nearest rank, bucket_summarize as the scraper sees it])
 
 #diagram([p99 under offered-load steps: where the cliff shows in the table], length: 13pt, {
   cdraw.line((0.6, 0.7), (23.2, 0.7), stroke: luma(120))
@@ -269,7 +269,7 @@ go lane needed a runtime profile to say this, python says it with
 one function over the thread list, and the discipline is the same
 in both: leak nothing per run, or the numbers are fiction:
 
-#listing("python/api/pyapi/load.py", first: 264, last: 271, caption: [the census: threads alive now that were not in the snapshot])
+#listing("python/api/pyapi/load.py", first: 272, last: 279, caption: [the census: threads alive now that were not in the snapshot])
 
 #diagram([a thread lifecycle: born, joined, or leaked], length: 13pt, {
   let stage(x0, title, l1) = {

@@ -430,7 +430,7 @@ with the 0.25 spike. The two-number play: 0.175 bought by hitting
 every point, 0.106 bought by missing all of them on purpose, and 0.25
 versus 0.111 as the worst each risks anywhere.
 
-#listing("math/samples/src/Ch21/lsq.c", first: 128, last: 156, caption: [lsq.c, the degree 1 normal equations, residuals, and exact orthogonality in rationals])
+#listing("math/samples/src/Ch21/lsq.c", first: 131, last: 159, caption: [lsq.c, the degree 1 normal equations, residuals, and exact orthogonality in rationals])
 
 #callout("pitfall", "THE NORMAL EQUATIONS SQUARE THE CONDITION",
 ["cond"(bold(A)^top bold(A)) = "cond"(bold(A))^2, so the route this

@@ -277,7 +277,7 @@ through the composed stack with status, headers, and envelope
 asserted. No test sleeps, and the module reads no clock at
 all, the constructor refuses one:
 
-#listing("lua/service/limit.lua", first: 300, last: 316, caption: [the vector's numbers as a fixed-clock test, t0 plus 12, reset t0 plus 13])
+#listing("lua/service/limit.lua", first: 325, last: 341, caption: [the vector's numbers as a fixed-clock test, t0 plus 12, reset t0 plus 13])
 
 #diagram([the fixed-clock pipeline: constants in, draws through the bucket, literals out], length: 13pt, {
   let step(x0, title, l1) = {

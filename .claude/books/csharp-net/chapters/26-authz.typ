@@ -192,7 +192,7 @@ middleware sits in the pipeline after routing, reads the matched
 endpoint's method and raw pattern, and refuses any pattern missing
 from the table before a handler byte runs:
 
-#listing("csharp-net/api/src/CsharpBook.Api/Authz/AuthzGuard.cs", first: 17, last: 34, caption: [the guard: no table row, no response])
+#listing("csharp-net/api/src/CsharpBook.Api/Authz/AuthzGuard.cs", first: 17, last: 37, caption: [the guard: no table row, no response])
 
 The audit test closes the loop from the other side: every table row
 must resolve to a registered route with exactly that pattern, and

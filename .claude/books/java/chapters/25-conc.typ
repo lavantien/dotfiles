@@ -151,7 +151,7 @@ fairness gate. Both sit inside the access log and timing, so a shed
 request is logged as the 503 or 429 the client saw, the chapter 20
 order rule applied to two more layers:
 
-#listing("java/api/src/javabook/Main.java", first: 66, last: 75, caption: [the load-shedding pair in the stack, rate outside admission, both inside the log])
+#listing("java/api/src/javabook/Main.java", first: 84, last: 91, caption: [the load-shedding pair in the stack, rate outside admission, both inside the log])
 
 The permit count in the wiring is `max(64, 8 per core)`, a blocking
 handler holds its permit across io so the number wants headroom over
@@ -211,7 +211,7 @@ the go book made for the same route over the 428 the rfc merely
 suggests, and the header is checked against the current etag before
 the body is read:
 
-#listing("java/api/src/javabook/user/Users.java", first: 90, last: 125, caption: [existence, then the precondition, then the decode: the stale request never burns a parse])
+#listing("java/api/src/javabook/user/Users.java", first: 82, last: 125, caption: [existence, then the precondition, then the decode: the stale request never burns a parse])
 
 The invariant is the version member, and the comparison runs the
 rfc's If-Match rules, which differ from the If-None-Match two

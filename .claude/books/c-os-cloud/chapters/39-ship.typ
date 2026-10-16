@@ -162,7 +162,7 @@ real process on a fresh database. The banner names both listeners,
 the probes answer, and the scrape on the internal port renders the
 exposition chapter 37 froze:
 
-#listing("c-os-cloud/api/captures/2026-09-27-ch39-walkthrough.txt", first: 5, last: 22, caption: [the run's opening: two env names, the banner, the health probe])
+#listing("c-os-cloud/api/captures/2026-09-27-ch39-walkthrough.txt", first: 5, last: 23, caption: [the run's opening: two env names, the banner, the health probe])
 
 #diagram([the run's arc, one transcript behind every claim], length: 13pt, {
   let stage(x, w, title, sub) = {

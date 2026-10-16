@@ -154,7 +154,7 @@ b64url codec first with its own refusals, the padding character, the
 wrong alphabet, impossible lengths, then the exact envelope shape,
 then the id's uuid shape:
 
-#listing("lua/service/users.lua", first: 167, last: 177, caption: [strict decode: any miss is garbage, never a missing page])
+#listing("lua/service/users.lua", first: 168, last: 178, caption: [strict decode: any miss is garbage, never a missing page])
 
 The milliseconds parse as integer arithmetic, multiply by ten and
 add, which lua's 64-bit integers hold exactly where a float would
@@ -199,7 +199,7 @@ lock. Errors are strings, `not_found`, `conflict`, `version`,
 `last_admin`, mapped to the envelope by the handlers, so the store
 speaks outcomes and never statuses:
 
-#listing("lua/service/users.lua", first: 297, last: 317, caption: [create: bootstrap roles, then the binary-search insert])
+#listing("lua/service/users.lua", first: 298, last: 318, caption: [create: bootstrap roles, then the binary-search insert])
 
 The insert position comes from a binary search over the order array,
 so the array stays sorted across inserts. The bootstrap rule lives
@@ -234,7 +234,7 @@ admin reader gets the full order, everyone else gets the public four,
 id, display name, created_at, version, and no handler decides what to
 hide because the decision is not in any handler:
 
-#listing("lua/service/users.lua", first: 197, last: 210, caption: [the projection: one function, two orders])
+#listing("lua/service/users.lua", first: 198, last: 211, caption: [the projection: one function, two orders])
 
 The admin list is where this earns its keep. List rows for an admin
 are full records with email and roles, the same representation the

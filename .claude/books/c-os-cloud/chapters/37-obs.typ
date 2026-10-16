@@ -171,7 +171,7 @@ a loop over precisions, not a formatting library, and it is the one
 place a hand-rolled renderer most easily ships the wrong bytes, which
 is why the vector pins it:
 
-#listing("c-os-cloud/api/src/obs_metrics.c", first: 63, last: 78, caption: [the shortest fixed decimal that round trips, and the buffer that accounts for it])
+#listing("c-os-cloud/api/src/obs_metrics.c", first: 89, last: 104, caption: [the shortest fixed decimal that round trips, and the buffer that accounts for it])
 
 #diagram([one duration through the histogram and out as exposition lines], length: 13pt, {
   cdraw.content((4.0, 8.0), [observe 3.0s on /healthz], size: 6pt)
@@ -263,7 +263,7 @@ a wall clock on its own, nothing allocated, and every seam a test
 needed is a parameter, which is the chapter's whole test discipline:
 72 checks over literals, vectors, and seams, zero sleeps:
 
-#listing("c-os-cloud/api/tests/test_obs.c", first: 339, last: 360, caption: [the vector 15 replay: placeholder resolved, one observation, bytes compared])
+#listing("c-os-cloud/api/tests/test_obs.c", first: 490, last: 511, caption: [the vector 15 replay: placeholder resolved, one observation, bytes compared])
 
 #diagram([one request through every signal, one id quoted everywhere], length: 13pt, {
   cdraw.line((0.6, 4.0), (23.4, 4.0), stroke: luma(120))

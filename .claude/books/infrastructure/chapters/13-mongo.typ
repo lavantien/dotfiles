@@ -150,7 +150,7 @@ about which test proves what. The docker-free suite proves the
 plumbing against the go fake, whose Stats is a deliberate transcription
 of these stages. The real pipelines run in the docker gate:
 
-#listing("infrastructure/capstone/integration/stack_test.go", first: 96, last: 109, caption: [the docker-gated walk ends on the stats fragment, answered by real mongo aggregation])
+#listing("infrastructure/capstone/integration/stack_test.go", first: 97, last: 112, caption: [the docker-gated walk: notifications, mongo stats, then the duckdb analytics panel])
 
 #diagram([the two-gate contract: same questions, both must fill wire.Stats identically], length: 13pt, {
   cdraw.rect((0.0, 6.6), (6.6, 7.6), fill: luma(235), radius: 0.02)

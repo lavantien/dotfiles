@@ -100,7 +100,7 @@ value in `[0, 1)`.
 
 == streams
 
-#listing("game-systems/samples/src/Ch11/Rng.cs", first: 39, last: 54, caption: [fnv over the name, finalizer, fork])
+#listing("game-systems/samples/src/Ch11/Rng.cs", first: 39, last: 53, caption: [fnv over the name, finalizer, fork])
 
 One generator shared by every subsystem is a determinism bug with a
 delay fuse: fix the wind by drawing one extra number and the ai's

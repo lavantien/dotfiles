@@ -67,9 +67,9 @@ zero-dep law carried into the image: the lock holds exactly one
 package, nothing vendors, nothing resolves from the network, and a
 `--locked` build that drifts from the lock fails loudly instead of
 quietly updating it. The runtime copies one file, the release
-binary, measured at a 1.22 MB layer on this machine, against a
-119 MB image whose remainder is the trixie base, so the shipped
-thing is one executable and a libc. The user is numeric, 65532, the
+binary, measured 2026-10-15 at a 1.22 MB layer on this machine,
+against a 119 MB image whose remainder is the trixie base, so the
+shipped thing is one executable and a libc. The user is numeric, 65532, the
 same convention both siblings set, so the platform and the image
 agree on who runs the process without leaning on the base's user
 table. And `/data` is created and chowned in the builder then copied
@@ -235,7 +235,9 @@ The builder's base measured by reading `/etc/os-release` inside the
 pulled image, debian gnu/linux 13 trixie, and its `rustc --version`
 matching 1.99.0 `(b940084d7 2026-09-28)`, both 2026-10-14. The
 image and binary sizes from `docker images` and `docker history`
-the same day. Verified live 2026-10-14: `docker compose up -d
+the same day, re-measured 2026-10-15 through the lane with the
+numbers unchanged, 1.22 MB layer against a 119 MB image. Verified
+live 2026-10-14: `docker compose up -d
 --build --wait` healthy on this machine, both ports scraped from
 the host, the healthcheck's own probes counted on the ops port, and
 `docker compose down -v` clean. The make target quoted from the

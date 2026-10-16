@@ -160,7 +160,7 @@ span with 8 bytes of tail waste. The constants close the system:
 
 #listing("go/samples/ch10/sizeclasses-go127.txt", first: 76, last: 88, caption: [the boundaries: 32 kib small, 16 byte tiny, 8 kib pages])
 
-#listing("go/samples/ch10/classes_test.go", first: 25, last: 33, caption: [the 17-byte cost asserted as a measured heap slope])
+#listing("go/samples/ch10/classes_test.go", first: 27, last: 35, caption: [the 17-byte cost asserted as a measured heap slope])
 
 That test retained 65536 objects of 17 bytes and measured the heap
 grow by 24.000 bytes per object, 1572864 bytes total, the class 3
@@ -198,7 +198,7 @@ all but one sub-object dies, a bound the runtime chose because 8
 would waste nothing but combine nothing and 32 could waste 4x. The
 measured consequence on this machine:
 
-#listing("go/samples/ch10/classes_test.go", first: 35, last: 43, caption: [two 8-byte objects per 16-byte block, asserted as a slope])
+#listing("go/samples/ch10/classes_test.go", first: 37, last: 45, caption: [two 8-byte objects per 16-byte block, asserted as a slope])
 
 65536 retained 8-byte objects grew the heap by exactly 8.000 bytes
 per object, 524288 bytes, half the class 2 cost, the packing
@@ -208,7 +208,7 @@ per object and the race detector disables the tiny allocator
 entirely, a build mode visible in allocation counts. Above 32 KiB
 the size classes end and pages begin:
 
-#listing("go/samples/ch10/classes_test.go", first: 53, last: 63, caption: [the boundary: 32768 stays, 32769 pays five pages])
+#listing("go/samples/ch10/classes_test.go", first: 55, last: 65, caption: [the boundary: 32768 stays, 32769 pays five pages])
 
 #diagram([tiny packing below, page rounding above], length: 13pt, {
   cdraw.rect((0.3, 3.8), (11.3, 7.2), fill: luma(240), radius: 0.02)

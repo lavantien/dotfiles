@@ -8,7 +8,10 @@ Chapter 2 multiplied digit strings by the schoolbook grid and chapter
 above those floors, a dynamic bignum core, karatsuba's three-way
 split, exact convolution through a two-prime number-theoretic
 transform, complex fft with a measured drift cap, knuth's long
-division, and polynomials over a transform-friendly prime. Every
+division, and polynomials over a transform-friendly prime. Two short
+sections beside the ladder set its top against the openai/math
+release's below-n-log-n preprints, family 109 on integer
+multiplication and family 130 on the exact dft. Every
 constant quoted here, the two primes 998244353 and 754974721, the
 inverse 416537774, the 2^14 fft cap, the per-language karatsuba cuts,
 flows from the rulings of #xref-to("icpc", "fastarith"), the measured
@@ -267,6 +270,31 @@ applied exactly once.
   cdraw.content((1.6, 2.4), [O(n^1.585) against O(n^2)], size: 6pt, anchor: "west")
   cdraw.content((1.6, 1.75), [the base case counts la \* lb leaf multiplies], size: 6pt, anchor: "west")
 })
+
+== integer multiplication below n log n
+
+The ladder so far reads schoolbook n^2, karatsuba n^1.585, and the
+transform sections below at n log n, and the conjectured floor under
+that top broke on paper in 2026. The openai/math release, its context
+in #xref-to("dsa", "finegrained"), carries family 109: a preprint
+multiplying two n-bit integers exactly at every input length in
+deterministic worst-case time O(n (log n)^(1-kappa)) with kappa =
+2^(-182), on one fixed finite-alphabet Turing machine with finitely
+many one-dimensional tapes, stating outright that this disproves the
+Schonhage-Strassen n log n optimality conjecture in the ordinary
+multitape bit model.
+
+The tier is stated exactly: the family has no formal layer at all.
+The release's formalization catalog, a yaml that self-describes as a
+catalog of papers with a formalized main result, carries no entry of
+any kind for it, no sources row, no comparator declaration, and the
+lean docs directory holds no 109 page, so the claim is a released
+preprint with no formalization entry. Nothing moves in the code
+above: log n to the 2^(-182) puts the exponent saving past any
+feasible operand size, and the chapter's cuts and caps stay the
+practice. The local cache is
+ref/openai-math/family-109/paper-below-nlogn.pdf against the release
+overview at ref/openai-math/overview.tex, fetched 2026-10-15.
 
 == exact convolution with two primes
 
@@ -538,6 +566,42 @@ a wider type.
   cdraw.content((13.4, 1.3), [the guard, one doubling refused], size: 6pt, anchor: "west")
 })
 
+== the dft below n log n
+
+Both transforms above pay n log n, the exact two-prime ntt of 29.4
+and the guarded complex fft of 29.5, and the release's family 130
+claims the floor below that at every length: a deterministic
+length-n dft in O(n (log n)^(1-10^(-13))) operations for every n,
+under the n log n that the chapter's own lanes reach. No
+unconditional n log n lower bound stands behind that practice, the
+classical barriers assume bounded coefficients, so the claim is a
+beat, not a barrier break. This family sits on the release's strongest tier:
+both of its preprints appear in the formalization catalog's sources
+and the theorems are comparator-checked, the subsequential circuit
+statement as OAI.ExactFourier.main_theorem, the uniform dft and
+convolution pair as OAI.PowerSaving.transform_main and
+OAI.PowerSaving.convolution_main. The two statements split by length
+coverage: for every c above 0 and every cutoff, some length past the
+cutoff has an exact circuit below c n log2 n gates, and fixed
+deterministic programs cover every positive n at the uniform bound
+with root-order selection and scalar preparation counted in.
+
+What buys the saving is the model, and the release's overview and
+lean doc state it: exact complex arithmetic, unrestricted
+coefficients, a supplied root of unity, scalar preparation counted
+in the cost and logarithmic-word indexing per the overview entry.
+The subsequential statement is scoped by that
+doc itself, no all-length, bounded-coefficient, conditioning, or
+bit-complexity claim, and the uniform pair counts operations in the
+same exact model. The chapter's transforms run in the opposite
+regimes, finite-field butterflies inside 64-bit limbs and float64
+under the measured 2^14 cap with the 0.25 guard, and the new
+circuits spend unrestricted complex scalars freely, a liberty
+neither regime allows, so the drift engineering stands: the cap and
+the guard stay the practice. The local cache is
+ref/openai-math/family-130, both preprints and the lean doc, against
+the overview at ref/openai-math/overview.tex, fetched 2026-10-15.
+
 == long division, knuth algorithm d
 
 Division is the one operation where the schoolbook you learned by hand
@@ -614,7 +678,7 @@ sign matrix runs plus and minus 10^30 + 3 against plus and minus 10^15
 remainder 52 carrying the dividend's sign, and every cell asserts the
 invariants, q times b plus r equals a with the remainder's magnitude
 below the divisor's. The add-back families are the ones the icpc
-book's chapter 14 C\# stream discovered by exhaustive base-10 scan,
+book's chapter 16 C\# stream discovered by exhaustive base-10 scan,
 cross-named here: 2 B^2 over B^2 + 1 gives quotient 1 with remainder
 999999999999999999, and 3 B^2 over B^2 + 1 gives quotient 2 with
 remainder 999999999999999998, both forcing the branch. A divisor
@@ -655,7 +719,7 @@ refuses in every channel.
 Coefficient vectors over F_998244353 close the chapter, because the
 transform prime makes the polynomial ops ride the machinery above.
 Multiply picks its road by size, schoolbook for the short and sparse,
-the 29.3 transform once both operands reach 32 terms, dense and long.
+the 29.4 transform once both operands reach 32 terms, dense and long.
 Evaluation is horner at an arbitrary point, folding the coefficients
 from the top. Interpolation is lagrange at n + 1 distinct points, no
 more than 64 in the fixtures, built from prefix and suffix products,
@@ -808,16 +872,20 @@ our own words, accessed 2026-09-20: "Arbitrary-Precision Arithmetic"
 at cp-algorithms.com/algebra/big-integer.html for the 29.1 core and
 the 29.2 multiplication treatment, "Fast Fourier transform" at
 cp-algorithms.com/algebra/fft.html for its number theoretic transform
-section behind 29.3 and the complex transform behind 29.4, and
+section behind 29.4 and the complex transform behind 29.5, and
 "Operations on polynomials and series" at
-cp-algorithms.com/algebra/polynomial.html for 29.6. Karatsuba cites
+cp-algorithms.com/algebra/polynomial.html for 29.8. Karatsuba cites
 Karatsuba and Ofman, 1962, and division cites Knuth, The Art of
 Computer Programming volume 2, section 4.3.1, algorithm D, both
-exactly as the icpc book's chapter 14 sources row pins them. The
+exactly as the icpc book's chapter 16 sources row pins them. The
 measured constants quoted in the text, the two primes, INV, the 2^14
 drift cap with its ranges, and the karatsuba cuts, come from the
-icpc book's chapter 14 benches run 2026-09-19, and icpc 2018 problem
-C is named as the application. Sample behavior verified by the eight
+icpc book's chapter 16 benches run 2026-09-19, and icpc 2018 problem
+C is named as the application. The two release sections read the
+local caches at ref/openai-math/family-109 and family-130, preprints
+and lean doc verbatim, against the release overview at
+ref/openai-math/overview.tex, fetched 2026-10-15. Sample behavior
+verified by the eight
 suite gates scoped to chapter 29: c 6 files and 123 checks, rust 6
 files and 179 checks under run-rust-samples in
 books/dsa/samples-rust, go 19

@@ -118,7 +118,7 @@ live inside it.
 
 == collision without tunneling
 
-#listing("game-systems/samples/src/Ch08/Physics.cs", first: 55, last: 89, caption: [segment against heightfield, first crossing wins])
+#listing("game-systems/samples/src/Ch08/Physics.cs", first: 55, last: 89, caption: [segment against heightfield, first crossing wins, the launch column skipped])
 
 The flight step gives a segment from the old position to the new
 one, and the collision test walks that segment across every terrain

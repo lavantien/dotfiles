@@ -187,7 +187,7 @@ in 3 columns, independent against dependent, decided by one integer.
 
 #listing("math/samples/src/Ch05/independence.c", first: 166, last: 180, caption: [the fixtures, mml examples 2.14, 2.15 and the set A as fixed columns])
 
-#listing("math/samples/src/Ch05/independence.c", first: 182, last: 226, caption: [fixed-set verdicts, duplicates, the zero vector, and n+1 vectors losing in R^n])
+#listing("math/samples/src/Ch05/independence.c", first: 182, last: 226, caption: [fixed-set verdicts, duplicates, the zero vector beside (3,4), and n+1 vectors losing in R^n])
 
 #table(
   columns: (auto, auto, auto, auto, auto),

@@ -61,13 +61,13 @@ with an explicit flush per turn, never by abandoning the builder.
 
 #listing("icpc/samples-java/src/Ch04/Fastio.java", first: 53, last: 71, caption: [nextToken nulls at TT_EOF, hasNext peeks through pushBack, longs parse exactly])
 
-#listing("icpc/samples-java/src/Ch04/Fastio.java", first: 81, last: 101, caption: [the one-write writer, one StringBuilder, one flush, byte count known])
+#listing("icpc/samples-java/src/Ch04/Fastio.java", first: 82, last: 101, caption: [the one-write writer, one StringBuilder, one flush, byte count known])
 
 The timed main pins the law in checks rather than in prose: both
 readers must return the checksum, and the one-write flush must carry
 exactly the builder's bytes:
 
-#listing("icpc/samples-java/src/Ch04/Fastio.java", first: 157, last: 176, caption: [the timed comparison and the one-write check, min of 3 after warmup])
+#listing("icpc/samples-java/src/Ch04/Fastio.java", first: 158, last: 177, caption: [the timed comparison and the one-write check, min of 3 after warmup])
 
 == the token scanner discipline
 

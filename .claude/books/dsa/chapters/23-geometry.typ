@@ -1,4 +1,5 @@
 #import "../../theme/lib.typ": listing, snippet, callout, diagram, cdraw
+#import "../../theme/xref.typ": xref-to
 
 = computational geometry
 
@@ -564,6 +565,180 @@ lane, so the instance differs while the contract does not.
   cdraw.content((17.3, 0.75), [the test sees whole segments], size: 6pt)
 })
 
+== the 3sum-hard geometry family
+
+The four algorithms above are the fast side of the plane, each one
+within a sort of linear. A second family of everyday geometry
+questions sat at n^2 for three decades, and the reason was never a
+proof, only a number problem everyone believed was quadratic: 3SUM,
+given a set S of n integers, are there a, b, c in S with
+a + b + c = 0. Gajentaan and Overmars catalogued the family in
+1995 and this book has never connected it. Every reduction in the
+catalogue passes through collinearity, the same zero cross the
+orientation section opened with, so the family belongs in this chapter.
+
+Two reductions carry the catalogue. The first is GEOMBASE, theorem
+3.2 at journal page 169, and it splits before it draws. 3SUM' is
+the split form, three sets A, B, and C of total size n asked
+whether some a in A, b in B, and c in C satisfy a + b = c,
+equivalent to 3SUM by theorem 3.1 because the three sets can be
+pushed into disjoint ranges so any zero triple must draw one
+element from each. Then it draws: every a becomes the point (a, 0),
+every b the point (b, 2), every c the point (c/2, 1), coordinates
+on the three horizontal lines y = 0, y = 1, and y = 2, and the
+question is whether a non-horizontal line contains three of the
+points. A line crossing the three parallels meets them at heights
+0, 1, and 2, so its middle crossing is the average of the outer
+two, and the cross of (a, 0), (c/2, 1), (b, 2) reads
+(c/2 - a) × 2 - 1 × (b - a) = c - a - b, zero exactly when
+a + b = c. The horizontal ban enacts the split: three points on one
+parallel are always collinear on it, and banning the horizontal
+forces the line to take one point per level. The paper places the
+middle point at (c/2, 1) on its real RAM, and doubling every x
+coordinate, a at (2a, 0), c at (c, 1), b at (2b, 2), keeps the
+identical test with cross 2(c - a - b) in the integers this
+chapter keeps.
+
+The second reduction drops the three parallels. 3-POINTS-ON-LINE,
+theorem 4.1 at journal page 170, asks whether any line contains
+three of an unrestricted point set, and the map sends each element
+x of S to the point (x, x^3) on the cubic parabola. Both cubic
+differences factor, and the cross of (a, a^3), (b, b^3), (c, c^3)
+collapses to (b - a)(c - a)(c - b)(a + b + c). For three distinct
+values the difference factors are nonzero, so the predicate reads
+zero exactly when a + b + c = 0: on -1, 0, 1 the points (-1, -1),
+(0, 0), (1, 1) sit on the line y = x, and on -1, 0, 2 the cross
+reads 1 × 3 × 2 × 1 = 6. The identity suffices as stated: 3SUM asks
+for three elements of a set, distinct values, so the mapped points
+are duplicate-free and the difference factors are nonzero exactly as
+the proof needs.
+
+The hard family proper grows from one gadget, built for the
+separator theorem 5.1 at journal pages 171 and 172 and reused
+throughout the paper. Each point on the three parallels becomes a
+gap of radius 1/4 cut into a horizontal segment, and the paper
+checks that a line threading three gaps must pass through the three
+point positions exactly, gap radius 1/4 against integer spacing
+leaves the collinearity of the crossings no room to slip.
+Dualizing the segments turns a line missing them into a point
+covered by nothing, and theorem 6.1 at journal page 174 lands the
+first covering problem, STRIPS-COVER-BOX: given n strips and one
+axis-parallel box, does the union of the strips contain the box.
+
+Covering a triangle with triangles. TRIANGLES-COVER-TRIANGLE,
+section 6.1, theorems 6.2 through 6.4 at journal pages 174 and 175:
+given a set of triangles and one more triangle, does the union
+contain it. The box splits into two triangles, each strip cuts off
+at the target into a rectangle, and each rectangle splits on a
+diagonal, so strip coverage falls to triangle coverage. Theorems
+6.3 and 6.4 tie the question to HOLE-IN-UNION, whether a union of
+triangles has a hole: clipping the inputs into the target turns an
+uncovered spot into a hole, and triangulating between an enclosing
+triangle and the union's outer contour runs the other direction at
+an n log^2 n overhead, an equivalence up to that log factor.
+
+Area of the union of triangles. TRIANGLE-MEASURE, section 6.2,
+theorem 6.5 at journal page 175: given a set of triangles, compute
+the measure of their union. The reduction arrives from the cover
+question above: clip every triangle to the target t, splitting what
+survives into pieces inside t that cover it exactly as the
+originals did, and t is covered precisely when the clipped union's
+measure equals the measure of t. An exact measure algorithm decides
+coverage, so the measure question carries the same label.
+
+Point covering. POINT-COVERING, section 6.3, theorem 6.6 at journal
+page 176: given n halfplanes and a number k, is some point covered
+by at least k of them. The paper notes the answer is trivially yes
+for k under n/2. The reduction from STRIPS-COVER-BOX replaces each
+strip by the two halfplanes covering its complement, so a point
+outside every strip collects exactly one from each pair for n
+total, a point inside some strip collects nothing from that pair,
+and four halfplanes pointing inward from the box sides add their
+four: the strips miss a point of the box exactly when some point is
+covered by n + 4 halfplanes.
+
+Polygon containment is the one family member the 1995 paper does
+not carry. The word containment never occurs in either cached
+version of that paper, its section 6 ends at the covering problems
+above, and its section 8.1 generalizes toward motion planning with
+polygonal robots. The entry arrives through the 2026 paper's
+figure 1 on page 9, which lists polygon containment among the
+3sum-hard geometry problems and cites Barequet and Har-Peled 2001,
+polygon containment and translational min-Hausdorff distance
+between segment sets are 3sum-hard, with the 1995 sections 6 and
+8.1 the adjacent content.
+
+The classic claim, as it stood. Definition 3.1 at journal page 168
+makes the notion precise: a problem is 3sum-hard when 3SUM is
+f(n)-solvable using it with f(n) = o(n^2), and every reduction from
+3SUM in the paper costs O(n log n). The best 3SUM algorithm
+known was the quadratic sort and scan the paper itself works out at
+journal page 169, sorting two of the sets and sweeping the second,
+shifted once per element of the first, against the third, and every catalogued problem also has its
+O(n^2) arrangement walk, so the whole family sat at n^2 with a
+matching upper bound and a matching belief. The belief took its
+name later in fine-grained complexity, the 3SUM hypothesis, 3SUM on
+n integers of polynomial size requires n^2-o(1) time. The paper's
+own introduction carries the caveat that kept the claim honest:
+3sum-hard is not equivalence, the reductions only say at least as
+hard, and the label never forbade a subquadratic algorithm, it only
+said which problem to beat first. Section 9 with its figure 11, at
+journal page 183, draws the full dependency graph.
+
+== what the 2026 refutation changes
+
+In October 2026 the premise broke. Alman and Vassilevska Williams,
+arXiv 2610.06783, give a deterministic 3SUM algorithm for integers
+of polynomial size running in n^1.99923 and an exact triangle
+algorithm at O(n^2.9983), and that refutes the 3SUM hypothesis. The
+engine behind both exponents, thin matrix products that compute
+only a wanted sparse set of entries, is another chapter's whole
+walk: #xref-to("dsa", "finegrained") builds it in 8 pinned steps.
+This section follows only the consequences for the geometry family,
+and those split exactly along the direction of the 1995 arrows.
+
+The equivalent side inherits everything. Figure 1 of the 2026
+paper, page 9, draws a 3SUM class box marked pairwise equivalent
+under fine-grained reductions and truly subquadratic now, holding
+3SUM itself, GeomBase, convolution-3SUM, and counting 3SUM among
+others. GeomBase is the collinear-on-three-parallels form of this
+chapter's first reduction, and its place in that box is no accident:
+the 1995 theorem 3.2 runs in both directions, the one geometry
+problem in the catalogue proved an equivalence where the rest carry
+one-way arrows, and the 2026 speedup flows through exactly that
+equivalence. Subquadratic 3SUM is subquadratic geombase, with
+nothing left to prove. Real inputs get their own lane in the paper,
+a Las Vegas n^1.998 whose only operations on real numbers are
+comparisons, additions, and subtractions.
+
+The one-way side gets nothing and loses everything. The same figure
+splits the merely hard problems into gray boxes, its computational
+geometry row reading three collinear points, hence the
+minimum-area triangle, point covering, motion planning, and polygon
+containment, all under one-way arrows from the 3SUM class, and the
+caption notes the cited papers hold many more problems of the same
+kind, which is where the union area and triangle cover of this tour
+belong. The caption states
+the split verbatim: the new algorithm "gives no faster algorithms
+for them, but these reductions no longer give evidence of
+hardness". The old argument ran: 3SUM is believed quadratic, 3SUM
+reduces to the collinear triple, so the collinear triple is
+believed quadratic. With the premise gone, what remains is open on
+both ends, no subquadratic algorithm known for any of them and no
+hardness evidence left either. The paper says it on page 11: "it is
+now open whether one can find three collinear points among n points
+in the plane in truly subquadratic time", and its conclusion adds
+that the fastest known running time for the question is still
+O(n^2), without even polylogarithmic improvements.
+
+The closing lesson cuts both ways, and the abstract says it:
+"reductions are also algorithms". The geombase lane of this chapter
+is the demonstration in miniature. The 1995 theorem 3.2 was proved
+so that a fast geombase would mean a fast 3SUM, and in 2026 exactly
+that direction delivered. The one-way arrows that gave the family
+its name now give it nothing, which is the honest state of the art:
+not known hard, not known fast, open.
+
 == across the eight languages
 
 Featured build size counted as non-blank, non-comment lines of the
@@ -605,7 +780,20 @@ sorting the hull input, clrs third edition chapter 33 for the sweep
 and the strip argument, go.dev for `slices.SortFunc` and `cmp.Compare`,
 developer.mozilla.org for `Math.hypot`, docs.python.org for `sorted`
 and `set`, lua.org for `table.sort` and `math.type`, accessed
-2026-09-12 and 2026-09-14. Sample behavior verified by the eight
+2026-09-12 and 2026-09-14. The 3sum-hard family sections read Anka
+Gajentaan and Mark H. Overmars, on a class of O(n^2) problems in
+computational geometry, Computational Geometry 5 (1995) 165-185,
+definition 3.1 and the quadratic scan at journal pages 168 and 169,
+theorem 3.2 at 169, theorem 4.1 at 170, the gadget of theorem 5.1 at
+171 and 172, theorems 6.1 through 6.6 at 174 to 176, and section 9
+with figure 11 at 183, against the local cache at
+ref/gajentaan-overmars, and Josh Alman and Virginia Vassilevska
+Williams, truly subquadratic 3SUM and truly subcubic APSP via
+triangles in sparse lopsided graphs, arXiv 2610.06783v1, figure 1 on
+page 9 and the openness sentence on page 11, against the local copy
+at ref/2610.06783v1.pdf, its figure 1 citing Barequet and Har-Peled
+2001 for polygon containment, both caches accessed 2026-10-15.
+Sample behavior verified by the eight
 suite gates scoped to chapter 23: c 4 files and 51 checks, rust 4
 files and 51 checks under `run-rust-samples` over `samples-rust/src`,
 c\# 11 tests,

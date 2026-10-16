@@ -129,7 +129,7 @@ in variables, an inline lambda can never be removed because no
 reference to it survives. The return value of a multicast invocation is
 the last entry's return, earlier returns are discarded:
 
-#listing("csharp-net/samples/src/Ch07/Delegates.cs", first: 47, last: 57, caption: [combine, invoke in order, remove by instance])
+#listing("csharp-net/samples/src/Ch07/Delegates.cs", first: 47, last: 57, caption: [combine, invoke in order, remove by instance],)
 
 #diagram([the multicast chain, combine, invoke in order, remove by instance], length: 13pt, {
   // the invocation list at top, subtraction and the null edge below

@@ -405,10 +405,10 @@ length on the search, and because a container built once and tested
 once beats eight private re-derivations with eight private bugs.
 
 The measured size of the layer is part of the story. The C toolbox is
-11 header files, 1125 lines, in `books/icpc/samples-c/src/Ch02/`,
-tested by 10 programs with 251 internal checks. The Rust toolbox is
-11 files, 1362 non-blank lines, in `books/icpc/samples-rust/src/Ch03/`,
-with 278 checks through its runner. The Lua toolbox is 9
+11 header files, 1134 lines, in `books/icpc/samples-c/src/Ch02/`,
+tested by 10 programs with 257 internal checks. The Rust toolbox is
+11 files, 1380 non-blank lines, in `books/icpc/samples-rust/src/Ch03/`,
+with 283 checks through its runner. The Lua toolbox is 9
 modules, 1088 lines, in `books/icpc/samples-lua/`, with 45 checks
 through its runner. The other five languages carry their own chapters
 and their own counts. Those numbers are counted from the tree, not
@@ -463,5 +463,5 @@ in `ref/icpc/INDEX.md`. The solution sketches settle the algorithm
 and complexity claims made here, and the 2025 set postdates training
 data, so everything said about it derives from the cached pdfs. This
 chapter has no sample suite. The suites begin with chapter 2, whose
-gate line is 10 files and 251 internal checks, and chapter 9, whose
+gate line is 10 files and 257 internal checks, and chapter 9, whose
 runner reports 45 checks across 9 modules.

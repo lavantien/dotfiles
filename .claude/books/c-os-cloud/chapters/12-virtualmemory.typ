@@ -255,7 +255,7 @@ sample never asserts `Protect` on a reserve.
 The free side of the state machine is `VirtualFree`, and its trap is
 best read straight off the listing that springs it:
 
-#listing("c-os-cloud/samples/src/Ch12/valloc.c", first: 126, last: 139, caption: [stage 7, the failed partial release, the free run that merges with its neighbors])
+#listing("c-os-cloud/samples/src/Ch12/valloc.c", first: 127, last: 140, caption: [stage 7, the failed partial release, the free run that merges with its neighbors])
 
 #callout("pitfall", "release owns the whole region or fails", [
   The VirtualFree page is categorical: "If you specify this value,
@@ -280,7 +280,7 @@ page that is 10 MB into the region, the function will obtain a state
 of MEM_FREE and a size of 30 MB." The check therefore asserts state
 and a lower bound, and prints the run it saw.
 
-#listing("c-os-cloud/samples/src/Ch12/valloc.c", first: 141, last: 153, caption: [stage 8, the one-shot reserve plus commit of the malloc shape])
+#listing("c-os-cloud/samples/src/Ch12/valloc.c", first: 142, last: 154, caption: [stage 8, the one-shot reserve plus commit of the malloc shape])
 
 The one-shot `MEM_COMMIT | MEM_RESERVE` is what every higher
 allocator, `malloc` included, ultimately does for large blocks, and
@@ -363,7 +363,7 @@ page's warning that "After memory is released or decommited, you can
 never refer to the memory again", and the sample relearns the price
 on purpose:
 
-#listing("c-os-cloud/samples/src/Ch12/valloc.c", first: 111, last: 124, caption: [stages 5 and 6: decommit returns storage, recommit buys the fault again])
+#listing("c-os-cloud/samples/src/Ch12/valloc.c", first: 111, last: 125, caption: [stages 5 and 6: decommit returns storage, recommit buys the fault again])
 
 The address never changed. The decommitted page reads `MEM_RESERVE`,
 the charge drops a page, and the recommit of the same address starts

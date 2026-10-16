@@ -430,7 +430,7 @@ against engine 3.53.4 on node 26.10.0, re-measured 2026-10-04,
 persistence that costs about one scan of a
 fortieth of the corpus.
 
-#listing("javascript/capstone/core/profile.test.mjs", first: 14, last: 45, caption: [the in-suite smokes, a parsed child profile and an ordered histogram])
+#listing("javascript/capstone/core/profile.test.mjs", first: 14, last: 66, caption: [the in-suite smokes, a parsed child profile and an ordered histogram])
 
 The suite carries two deterministic smokes from this section, a
 child `--cpu-prof` run of the scan child parsed for the engine's own

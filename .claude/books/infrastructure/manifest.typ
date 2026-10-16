@@ -7,7 +7,7 @@
     title: "infrastructure: docker, databases, and testing",
     subtitle: "an engineering handbook",
     author: "Raeliosol",
-    version: "2.1",
+    version: "2.2",
     volume-label: "book 13",
   ),
   chapters: (
@@ -29,7 +29,8 @@
     (id: "testing", num: 16, title: "testing without docker"),
     (id: "mocks", num: 17, title: "mocks, seeding, contract tests"),
     (id: "migrations", num: 18, title: "migrations, test driven"),
-    (id: "capstone1", num: 19, title: "capstone part 1: services and topology"),
-    (id: "capstone2", num: 20, title: "capstone part 2: chat and notifications, one click"),
+    (id: "vcs", num: 19, title: "version control at scale"),
+    (id: "capstone1", num: 20, title: "capstone part 1: services and topology"),
+    (id: "capstone2", num: 21, title: "capstone part 2: chat and notifications, one click"),
   ),
 )

@@ -19,7 +19,7 @@ hook the service fires after a state change:
 
 #listing("interview-repertoire/samples/ch16-go/store.go", first: 10, last: 55, caption: [the store interface is the seam, open asserts the pinned engine])
 
-#listing("interview-repertoire/samples/ch16-go/service.go", first: 22, last: 58, caption: [validation, orchestration, domain errors, the callback fired on success only])
+#listing("interview-repertoire/samples/ch16-go/service.go", first: 17, last: 58, caption: [validation, orchestration, domain errors, the callback fired on success only])
 
 #diagram([four layers wired by constructor injection, no layer builds another], length: 13pt, {
   // handler over service over store, notifier beside the service that fires it

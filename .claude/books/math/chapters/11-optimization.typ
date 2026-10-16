@@ -120,7 +120,7 @@ gradient is $(-12, -26)$, so the step adds $1.02$ and $2.21$.
   [8], [1.206936], [0.015679], [-4.60364], [1.2803],
 )
 
-#listing("math/samples/src/Ch11/descent.c", first: 42, last: 77, caption: [the fixed-step ladder on the example 7.1 quadratic, iterates pinned against the precomputed column])
+#listing("math/samples/src/Ch11/descent.c", first: 42, last: 82, caption: [the fixed-step ladder on the example 7.1 quadratic, iterates pinned against the precomputed column])
 
 The step-size question has a hard edge. The eigenvalues of $bold(Q)$
 are $11 plus.minus sqrt(82)$, so the largest curvature is $L = 20.0554$
@@ -141,8 +141,8 @@ distance $1.27588449602$ after 60 steps, and the honest fixed $0.085$
 is far ahead at 1.06226e-4. Decay trades speed for survival when $L$
 is unknown.
 
-#listing("math/samples/src/Ch11/descent.c", first: 79, last: 101, caption: [the 2/L bound and the divergence ladder past it])
-#listing("math/samples/src/Ch11/descent.c", first: 103, last: 125, caption: [the decaying schedule rescuing an unsafe first step])
+#listing("math/samples/src/Ch11/descent.c", first: 84, last: 106, caption: [the 2/L bound and the divergence ladder past it])
+#listing("math/samples/src/Ch11/descent.c", first: 108, last: 130, caption: [the decaying schedule rescuing an unsafe first step])
 
 #callout("note", "STEP-SIZE IS THE LEARNING RATE", [mml's margin on section 7.1.1: "The step-size is also called the learning rate." Too small crawls, too large overshoots or diverges as pinned above, and adaptive methods rescale it per iteration. The 2/L analysis here is exact only for quadratics, but the qualitative edge is universal: curvature times step must stay under 2.])
 
@@ -159,7 +159,7 @@ note the second number exceeds $2\/L$: momentum extends the stability
 region. The sample derives both constants from $L$ and $l$ in code, no
 magic numbers, then pins the ladder.
 
-#listing("math/samples/src/Ch11/descent.c", first: 127, last: 166, caption: [optimal fixed step versus heavy ball, both parameterized by the eigenvalues])
+#listing("math/samples/src/Ch11/descent.c", first: 143, last: 182, caption: [optimal fixed step versus heavy ball, both parameterized by the eigenvalues])
 
 The two-number play: at step 30, plain descent with its own optimal
 fixed step sits $0.0163$ from the minimum while the heavy ball sits
@@ -236,8 +236,8 @@ $f(bold(x) + t bold(d)) <= f(bold(x)) + c t dot nabla f dot bold(d)$
 holds, here 4 rejections down to $t = 1\/16$ and $f = 271\/16 =
 16.9375$, above the exact search but found without knowing $bold(Q)$.
 
-#listing("math/samples/src/Ch11/newtonopt.c", first: 92, last: 115, caption: [the one-step hessian solve and the closed-form line search])
-#listing("math/samples/src/Ch11/newtonopt.c", first: 117, last: 130, caption: [armijo backtracking, 4 halvings to the accepted step])
+#listing("math/samples/src/Ch11/newtonopt.c", first: 101, last: 124, caption: [the one-step hessian solve and the closed-form line search])
+#listing("math/samples/src/Ch11/newtonopt.c", first: 126, last: 139, caption: [armijo backtracking, 4 halvings to the accepted step])
 
 The two-number play: after 6 newton steps the log error is $-15$, after
 8 fixed-gradient steps at $gamma = 0.008$ it is $-3.5$.

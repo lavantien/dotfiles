@@ -125,8 +125,7 @@ exactly on the decision boundary, one full slack deep. The closing line
 prices both streets, `margin 1/|w|=0.5; clean-pair hard margin w=1
 b=0 margin=1`: renting to the intruder halves the margin.
 
-#listing("kdd/samples/src/Ch22/margin.c", first: 98, last: 117,
-  caption: [the whole 801x801 grid priced in exact integers, 80000 G])
+#listing("kdd/samples/src/Ch22/margin.c", first: 98, last: 117, caption: [the whole 801x801 grid priced in exact integers, 80000 G])
 
 #listing("kdd/samples/src/Ch22/margin.c", first: 122, last: 143,
   caption: [the flat edge walk and the slacks at the pinned optimum])

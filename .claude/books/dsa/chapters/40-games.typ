@@ -10,11 +10,13 @@ tables and nim sums and the winning move that falls out of an xor. The
 second section moves the token onto an arbitrary directed graph, where
 win, lose, and draw are decided by one retrograde sweep from the
 terminals, and the matching characterization behind the 2025 blackboard
-game is stated in prose. The third section reframes the same
-minimax thinking as one player against time, four scheduling machines
-from the shortest-job-first baseline to the 2017 problem H window
-solver, and the chapter's fixtures reproduce that problem's
-judge-verified answers byte for byte.
+game is stated in prose. A short consequence section sets the
+openai/math release's quasipolynomial mean-payoff family against that
+sweep, tiers stated from the release's own catalog. The fourth
+section reframes the same minimax thinking as one player against
+time, four scheduling machines from the shortest-job-first baseline
+to the 2017 problem H window solver, and the chapter's fixtures
+reproduce that problem's judge-verified answers byte for byte.
 
 == sprague-grundy and nim
 
@@ -241,6 +243,44 @@ The application is icpc world finals 2025 problem B (book 11, chapter 15), black
 decided by the matching characterization stated above, with the kuhn
 solver of chapter 38 doing the matching.
 
+== quasipolynomial mean-payoff games
+
+The sweep above decides the plainest graph game there is, an
+unweighted token under reachability rules, one linear pass. Put
+signed integer rewards on the arcs and ask whether a player can hold
+the liminf average payoff nonnegative, and the same who-wins
+question becomes a mean-payoff game. The openai/math release, its
+context in #xref-to("dsa", "finegrained"), claims family 104 settles
+the weighted family in quasipolynomial time: deterministic
+algorithms at 2^(O((log(L+2))^2)) bit operations over binary input
+length L, computing exact values and optimal positional strategies
+for ordinary mean-payoff games, the nonnegative
+expectation-of-liminf value set for turn-based stochastic games, and
+the winning set for nonnegative liminf mean payoff conjoined with
+parity, with signed rewards, rational chance probabilities, and
+parity priorities unrestricted and binary-encoded.
+
+The tiers split three ways and the section states all three. The
+catalog's comparator entry belongs to the randomized variant alone:
+one randomized algorithm for the complete zero-threshold winning set
+of every finite mean-payoff game with signed binary weights,
+succeeding with probability at least 7/8 in quasipolynomial bit time
+on every random tape, checked as
+OAI.randomized_quasipolynomial_mean_payoff. The wider family is
+preprint-only: 4 preprints hang under the family and the catalog's
+sources list exactly one, the randomized paper, so the
+deterministic, turn-based stochastic, and parity results carry no
+formalization entry. And the release's own lean doc records a
+counterexample to a proposed optimization step, a finite instance
+where a specified two-step execution of Truffet's elimination
+procedure terminates with a feasible but nonoptimal output, carried as its own
+comparator and outside the catalog's main results. None of it
+retires the sweep: quasipolynomial in the bit length sits far above
+one linear pass, and the verdicts above stay O(V + E). The local
+cache is ref/openai-math/family-104, all 4 preprints and the lean
+doc, against the overview at ref/openai-math/overview.tex, fetched
+2026-10-15.
+
 == scheduling
 
 One player against time is still a game, lose only when the deadline
@@ -423,7 +463,10 @@ and "Optimal schedule of jobs given their deadlines and durations",
 cp-algorithms.com/schedules/schedule-with-completion-duration.html,
 all accessed 2026-09-20, cc by-sa 4.0, our own words and code
 throughout. Application sources: icpc world finals 2025 problem B and
-2017 problem H (book 11, chapters 15 and 10). Sample behavior verified
+2017 problem H (book 11, chapters 15 and 10). Release source: the
+openai/math family 104 cache at ref/openai-math/family-104 against
+the overview at ref/openai-math/overview.tex, fetched 2026-10-15.
+Sample behavior verified
 by the eight suite gates scoped to chapter 40: c 3 files and 65 checks,
 rust 3 files and 65 checks under run-rust-samples in
 books/dsa/samples-rust, go 12 test

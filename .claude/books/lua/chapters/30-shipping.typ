@@ -29,7 +29,7 @@ same six net functions and the same `handle(fd)` contract ported to
 berkeley sockets, and the discipline that keeps the port small is that
 the seam, not either host, is the contract:
 
-#listing("lua/service/docker/posix_host.c", first: 163, last: 181, caption: [the seam restated on posix, the same table the winsock host registers])
+#listing("lua/service/docker/posix_host.c", first: 164, last: 182, caption: [the seam restated on posix, the same table the winsock host registers])
 
 One divergence earns its comment at the send function: windows has no
 sigpipe, a dead peer is just a send error, while linux raises a signal

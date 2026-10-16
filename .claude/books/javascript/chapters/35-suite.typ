@@ -85,7 +85,7 @@ call at all fails the test, and the concurrency chapter's `refusingKeys` is eigh
 proving a negative, that the keyed runner never consults storage on the paths it does
 not govern:
 
-#listing("javascript/api/test/conc/guard.test.mjs", first: 19, last: 26, caption: [the strict fake: any call is unexpected, the guard proven clean-handed])
+#listing("javascript/api/test/conc/guard.test.mjs", first: 21, last: 28, caption: [the strict fake: any call is unexpected, the guard proven clean-handed])
 
 The ecosystem's habit is the reverse of this choice, `jest.fn()` and vitest's `vi.fn()`,
 `testdouble`, `sinon` with its spies and sandbox restore. All are taught as names and
@@ -250,14 +250,15 @@ still carries its experimental name in the v26 documentation, added in v19.7.0 a
 with `--test` since v20.1.0. Around it 26 ships a threshold family,
 `--test-coverage-lines`, `--test-coverage-branches`, and `--test-coverage-functions` turn
 a low percentage into a failure, and `--test-coverage-include` and `--test-coverage-exclude`
-scope the report. The lane is opt-in and stays out of the gate: `npm run verify` is the
-plain runner and the coverage command is typed when wanted, never wired into a script, on
-the ruling the go lane already made, a percentage measures the tree and the day, and a
-pinned number would be a lie with a date on it. No percentage appears in this book, the
+scope the report. The lane is opt-in and stays out of the gate: `npm run verify` chains
+the plain runner, the typed mirror, and the typecheck, and the coverage command is
+typed when wanted, never wired into a script, on the ruling the go lane already made,
+a percentage measures the tree and the day, and a pinned number would be a lie with a
+date on it. No percentage appears in this book, the
 report's one job is the gap scan before a chapter lands, the branches the new tests never
 reached:
 
-#listing("javascript/api/package.json", first: 9, last: 13, caption: [the gate: one script, the plain runner, coverage never wired in])
+#listing("javascript/api/package.json", first: 9, last: 14, caption: [the gate: both suites plus the typecheck, coverage never wired in])
 
 #diagram([the gate against the opt-in lane], length: 13pt, {
   let box(x, w, top, sub) = {
@@ -265,7 +266,7 @@ reached:
     cdraw.content((x + w / 2, 6.3), top, size: 6.5pt)
     cdraw.content((x + w / 2, 5.4), sub, size: 6pt)
   }
-  box(0.8, 5.2, [the gate], [#"npm run verify, plain runner"])
+  box(0.8, 5.2, [the gate], [#"npm run verify, both suites plus tsc"])
   box(7.0, 5.6, [the opt-in lane], [#"--experimental-test-coverage"])
   box(14.0, 5.2, [the thresholds], [lines, branches, functions])
   cdraw.line((6.1, 5.9), (6.9, 5.9), stroke: luma(100), mark: (end: ">>"))
@@ -317,4 +318,5 @@ the coverage table run over a family test file, `mock.module` absent without the
 and present under it, a bare `mock.timers.enable()` probed to take `setImmediate` and
 `Date`. The registry reads: fast-check at 4.10.2, express at 5.2.1, fastify at 5.12.5,
 accessed 2026-09-26, deliberately not adopted. Verified by the suite, 317 tests and 6
-describe suites under `npm run verify`, zero sleeps, every handle closed.
+describe suites on the plain lane plus 319 typed under `npm run verify`, zero sleeps,
+every handle closed.

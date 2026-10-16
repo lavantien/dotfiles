@@ -194,7 +194,7 @@ test first.
 
   cdraw.rect((16.6, 0.6), (23.4, 5.2), fill: luma(205), radius: 0.02)
   cdraw.content((20.0, 4.55), [the capstone], size: 6.5pt)
-  cdraw.content((20.0, 3.45), [ch 19-20], size: 6pt)
+  cdraw.content((20.0, 3.45), [ch 20-21], size: 6pt)
   cdraw.content((20.0, 2.35), [the chat and], size: 6pt)
   cdraw.content((20.0, 1.25), [notification suite], size: 6pt)
 

@@ -487,7 +487,7 @@ languages.
 
 #listing("dsa/samples/src/Ch25/Practical.cs", first: 364, last: 399, caption: [c\#, lane widths by count, sorted enumeration, one fresh flip per promotion])
 #listing("dsa/samples-js/src/ch25-skiplist.mjs", first: 14, last: 54, caption: [javascript, the tower is 1 plus trailing zeros of the key's fnv hash])
-#listing("dsa/samples-py/src/Ch25/skiplist.py", first: 17, last: 50, caption: [python, the ruler sequence drives promotion, splice per level])
+#listing("dsa/samples-py/src/Ch25/skiplist.py", first: 17, last: 50, caption: [python, the ruler sequence drives promotion, the walrus descent, splice per level])
 #listing("dsa/samples-lua/ch25_skiplist.lua", first: 9, last: 42, caption: [lua, promotion as a pure function of the value, divisibility by 4, 8, 16])
 
 The tests pin the statistics. One thousand inserts in shuffled

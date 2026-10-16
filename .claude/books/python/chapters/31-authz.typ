@@ -200,7 +200,7 @@ family mounts through refuses a route with no policy at wiring time,
 and wraps every registered handler with its policy once the router
 has filled the values:
 
-#listing("python/api/pyapi/authz.py", first: 125, last: 148, caption: [the guarded registrar: no table row, no route, the policy runs at dispatch])
+#listing("python/api/pyapi/authz.py", first: 127, last: 150, caption: [the guarded registrar: no table row, no route, the policy runs at dispatch])
 
 The audit test closes the loop from the other side: every table row
 must resolve to a registered route with exactly that method and
@@ -214,7 +214,7 @@ answers, not authorization verdicts.
 #diagram([the audit: table and registrar face each other, both directions checked], length: 13pt, {
   cdraw.rect((0.8, 5.4), (9.0, 8.2), fill: luma(235), radius: 0.02)
   cdraw.content((4.9, 7.6), [route table], size: 6.5pt)
-  cdraw.content((4.9, 6.6), [12 patterns,], size: 6pt)
+  cdraw.content((4.9, 6.6), [14 patterns,], size: 6pt)
   cdraw.content((4.9, 5.8), [one policy each], size: 6pt)
   cdraw.rect((14.0, 5.4), (22.2, 8.2), fill: luma(222), radius: 0.02)
   cdraw.content((18.1, 7.6), [registrar], size: 6.5pt)
@@ -235,7 +235,7 @@ regular user, admin, stranger on someone else's object, one expected
 status per cell, asserted in one table-driven test through the full
 guarded stack, the same path production traffic takes:
 
-#listing("python/api/tests/test_authz.py", first: 427, last: 447, caption: [the matrix rows: actor times route, one status each])
+#listing("python/api/tests/test_authz.py", first: 438, last: 458, caption: [the matrix rows: actor times route, one status each])
 
 Each row is a cell with a name that fails loudly. The grid runs the
 vector's last-admin chain alongside, so the 409 and the two 200s

@@ -124,7 +124,7 @@ the filler, every caller that arrives while the fill runs joins that
 same future, and when the fill lands the entry is stored and the
 future completes for everyone:
 
-#listing("java/api/src/javabook/cache/Cache.java", first: 46, last: 69, caption: [one future per key: the winner fills, riders join, failure is never stored])
+#listing("java/api/src/javabook/cache/Cache.java", first: 47, last: 83, caption: [one future per key: the winner fills, riders join, failure is never stored])
 
 Why not `computeIfAbsent` and be done: the map's own contract holds
 the bin lock through the mapping function, so a 150 ms fill pins

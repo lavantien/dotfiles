@@ -150,7 +150,7 @@ for the rect, and the shoelace formula for the triangle, whose pinned
 fixture (0,0), (4,0), (0,3) gives area 6 and sides 4, 5, 3, perimeter
 12, every one an exact double because the coordinates are integers.
 
-#listing("math/samples/src/Ch26/shape.c", first: 80, last: 93, caption: [tag first, then the one honest payload reading, per case])
+#listing("math/samples/src/Ch26/shape.c", first: 81, last: 94, caption: [tag first, then the one honest payload reading, per case])
 
 #callout("pitfall", "THE TAG IS THE ONLY WITNESS", [The union stores at most one member at a time, and cppreference states the rest plainly: "If the member used to access the contents of a union is not the same as the member last used to store a value, the object representation of the value that was stored is reinterpreted as an object representation of the new type (this is known as type punning)". The sample leans on this: after `circle(1)`, reading `s.rect.w` sees the same 8 bytes and returns 1.0, because both members start at union offset 0. Nothing in the bytes distinguishes a radius from a width. The tag byte is the only witness of which reading is honest, which is why every constructor sets it and every consumer switches on it before touching payload. Fetched 2026-09-22.])
 

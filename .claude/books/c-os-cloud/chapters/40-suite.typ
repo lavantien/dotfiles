@@ -156,7 +156,7 @@ rule, that no second parser exists: a depth-one member walk, string
 aware and brace matched, cuts the text into its pieces, and each piece
 goes through the one codec on its own:
 
-#listing("c-os-cloud/api/tests/tresource.h", first: 258, last: 276, caption: [the sliced docs, the war story in the declaration comment, each piece parsed on its own])
+#listing("c-os-cloud/api/tests/tresource.h", first: 263, last: 281, caption: [the sliced docs, the war story in the declaration comment, each piece parsed on its own])
 
 #diagram([one vector file, sliced into pieces, each through the one codec], length: 13pt, {
   cdraw.rect((0.6, 6.2), (23.4, 7.6), fill: luma(205), radius: 0.02)

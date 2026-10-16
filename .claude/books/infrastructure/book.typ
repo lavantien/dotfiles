@@ -21,8 +21,9 @@
   "testing": "chapters/16-testing.typ",
   "mocks": "chapters/17-mocks.typ",
   "migrations": "chapters/18-migrations.typ",
-  "capstone1": "chapters/19-capstone1.typ",
-  "capstone2": "chapters/20-capstone2.typ",
+  "vcs": "chapters/19-vcs.typ",
+  "capstone1": "chapters/20-capstone1.typ",
+  "capstone2": "chapters/21-capstone2.typ",
 )
 
 #book(infrastructure.meta, {

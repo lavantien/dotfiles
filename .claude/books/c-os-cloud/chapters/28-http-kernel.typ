@@ -118,7 +118,7 @@ path, joined in table order. The closed code set has no
 method-not-allowed member, so the message and the Allow header carry
 the distinction, the same ruling the go lane froze:
 
-#listing("c-os-cloud/api/src/router.c", first: 47, last: 59, caption: [the fixed table: method, pattern, handler, appended one row per family])
+#listing("c-os-cloud/api/src/router.c", first: 47, last: 78, caption: [the fixed table: method, pattern, handler, appended one row per family])
 
 #diagram([the match walk and the two refusals], length: 13pt, {
   pane(0.3, 8.4, 7.6, [the request], [#"PATCH /api/users/x"], [three segments])
@@ -239,7 +239,7 @@ lesson applied: the pusher wakes one waiter after the release, and the
 lost-wake trap stays closed because the count is rechecked under the
 lock:
 
-#listing("c-os-cloud/api/src/http_server.c", first: 208, last: 228, caption: [the fixed queue: push under the lock, wake one, refuse when full])
+#listing("c-os-cloud/api/src/http_server.c", first: 219, last: 241, caption: [the fixed queue: push under the lock, wake one, refuse when full])
 
 #diagram([accept hands to the queue, a worker takes it], length: 13pt, {
   cdraw.rect((0.3, 5.0), (6.3, 7.4), fill: luma(235), radius: 0.02)
@@ -259,8 +259,10 @@ lock:
 
 == the composition root
 
-The root is 18 lines and its shape is pinned for the rest of the part.
-The seams come first, `capi_default_seams` installing the real wall
+The root is 63 lines and its shape is pinned for the rest of the part.
+The config story comes first, the ship chapter's loader taking the
+database path from argv and the secret from the environment, then the
+seams, `capi_default_seams` installing the real wall
 clock, the uuid v7 source, and the rand filler. Then `capi_wire_kernel`
 fills any seam left null, validates the route table's patterns at
 startup, and refuses to serve if a row is malformed, because a broken
@@ -278,7 +280,7 @@ counter, the wall clock, and the process and thread ids, stepped by an
 interlocked counter through splitmix64. That is an id source, not a
 cryptographic one, and the authn chapter's tokens never draw from it:
 
-#listing("c-os-cloud/api/src/main.c", first: 1, last: 18, caption: [the root: seams, kernel wiring, families, listener last])
+#listing("c-os-cloud/api/src/main.c", first: 1, last: 63, caption: [the root: config story, seams, kernel wiring, families, listener last])
 
 #diagram([the pinned flow, families append in the middle], length: 13pt, {
   let stage(y, title, l1) = {

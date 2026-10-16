@@ -64,7 +64,7 @@ the same whole second does not, because both stored numbers still
 match. The mtime is compared to whole-second resolution, so a same-
 length edit inside one second is invisible to the check:
 
-#listing("python/samples/src/Ch12/pycache.py", first: 59, last: 72, caption: [the stale trap: same size, same second, the old bytecode still loads])
+#listing("python/samples/src/Ch12/pycache.py", first: 59, last: 74, caption: [the stale trap: same size, same second, the old bytecode still loads])
 
 #callout("pitfall", "the stale pyc is a real windows edit loop", [
   The trap fires exactly where developers work fastest: save a small

@@ -8,7 +8,7 @@ The module ends as a directory of tests unless it also ships. This chapter turns
 
 Two stages, one boundary. The builder stage is the stock golang image, which exists only to run the compiler, and the runtime stage is scratch, which exists only to run the binary. The copy across the boundary is a single file, and every property of the service module conspired to make that legal: the store engine is pure go, so CGO_ENABLED=0 builds a static binary with no c runtime to carry, the schema versions live in the store's own snapshot header, so the history ships inside the store files, and the configuration is environment variables, so no file needs mounting to start:
 
-#listing("go/api/Dockerfile", first: 1, last: 21, caption: [the whole image: builder, static binary, scratch runtime, non-root])
+#listing("go/api/Dockerfile", first: 1, last: 21, caption: [the whole image: builder stage, static binary, scratch runtime, non-root user])
 
 Four decisions in that file earn a second look. The go.mod copy precedes the source copy so the dependency download layer caches independently of code edits, the common multi-stage economy. The /data directory is created in the builder and copied with an owner, because a named volume inherits the image content's ownership on first mount, and a volume mounting onto a root-owned directory would deny the container user its database. The user is numeric, 65532, since scratch carries no /etc/passwd to resolve a name. And the build keeps its symbols: -trimpath strips local paths from the binary but -s -w, the size-shaving pair, is deliberately absent, because chapter 27 teaches profiling the live server and a stripped binary answers those profiles with addresses instead of function names.
 

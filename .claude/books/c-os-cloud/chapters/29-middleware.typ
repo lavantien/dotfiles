@@ -166,7 +166,7 @@ tests raise the exception in software, `RaiseException` with the
 access violation status, which exercises the exact handler path
 without tripping the sanitizer legs a real fault would poison:
 
-#listing("c-os-cloud/api/src/middleware.c", first: 122, last: 141, caption: [seh recover: filter first, envelope and crash log second, best effort stated])
+#listing("c-os-cloud/api/src/middleware.c", first: 128, last: 152, caption: [seh recover: filter first, envelope and crash log second, best effort stated])
 
 #diagram([fault unwind: one path to the log, one to the envelope, one rethrown], length: 13pt, {
   pane(0.3, 7.0, 7.6, [below the guard], [#"access violation, divide"], [by zero, alignment])
@@ -204,7 +204,7 @@ refuses to vouch for an answer that arrived past budget and replaces
 it with the 503 `overload` envelope. The work already ran, stated
 plainly, and the client still gets the truth:
 
-#listing("c-os-cloud/api/src/middleware.c", first: 85, last: 105, caption: [stamp the deadline, then refuse to vouch for a late answer])
+#listing("c-os-cloud/api/src/middleware.c", first: 91, last: 111, caption: [stamp the deadline, then refuse to vouch for a late answer])
 
 #diagram([two clocks: transport kills the connection, the deadline refuses the answer], length: 13pt, {
   cdraw.content((3.2, 8.1), [transport layer], size: 6.5pt)
@@ -304,7 +304,7 @@ end reads the pass order and the two log lines together, one crash
 line from the guard and one access line from the logger outside it,
 which is the wiring order proving itself in output:
 
-#listing("c-os-cloud/api/tests/test_middleware.c", first: 65, last: 75, caption: [a recorder layer: markers around the descent, the order is the assertion])
+#listing("c-os-cloud/api/tests/test_middleware.c", first: 66, last: 76, caption: [a recorder layer: markers around the descent, the order is the assertion])
 
 #diagram([every input is injected, every output is captured, no clock exists], length: 13pt, {
   let step(x0, title, l1) = {

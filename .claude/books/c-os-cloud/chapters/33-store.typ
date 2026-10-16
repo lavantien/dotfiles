@@ -196,7 +196,7 @@ adapter probes once: a missing row and a stale version are different
 facts, 404 against 412. Over http this is the precondition the next
 chapter's etag duel stages, one 200 and one 412, every run:
 
-#listing("c-os-cloud/api/src/store_user.c", first: 156, last: 178, caption: [the guard: check, bump, and write in one statement, zero changes is the refusal]) // PIN: cas update
+#listing("c-os-cloud/api/src/store_user.c", first: 209, last: 231, caption: [the guard: check, bump, and write in one statement, zero changes is the refusal]) // PIN: cas update
 
 #diagram([same race, two outcomes: silent loss versus a refused writer], length: 13pt, {
   pane(0.3, 10.6, 7.4, [before, blind writes], [both read name, version 1], [both write, both succeed], [one write vanished])
@@ -223,7 +223,7 @@ cursor codec renders the pair as the base64url shape the contract
 froze, and the suite asserts those bytes against vector 13's own
 field and walks page two onto linus with no cursor left:
 
-#listing("c-os-cloud/api/src/store_user.c", first: 180, last: 196, caption: [the walk: one row-value comparison, the first page binds the floor, the extra row is has more]) // PIN: keyset walk
+#listing("c-os-cloud/api/src/store_user.c", first: 233, last: 249, caption: [the walk: one row-value comparison, the first page binds the floor, the extra row is has more]) // PIN: keyset walk
 
 #diagram([one comparison per page, the index already in walk order], length: 13pt, {
   let step(x0, w, title, l1) = {

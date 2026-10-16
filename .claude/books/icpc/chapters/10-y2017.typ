@@ -1905,7 +1905,7 @@ lines, and the trace ends at the printed answer `1`.
 
 #listing("icpc/samples-js/src/ch08-pl-visual.mjs", first: 30, last: 63, caption: [javascript: rank map over both corner kinds, same sweep])
 
-#listing("icpc/samples-py/src/Ch08/pL.py", first: 66, last: 92, caption: [python: events as tuples, the inline fenwick's pred and later succ])
+#listing("icpc/samples-py/src/Ch08/pl.py", first: 66, last: 113, caption: [python: events as tuples, the inline fenwick's pred and later succ])
 
 #listing("icpc/samples-lua/ch08_pl.lua", first: 29, last: 63, caption: [lua: the tie order judge-verified on the secrets, the ch08 fenwick required])
 

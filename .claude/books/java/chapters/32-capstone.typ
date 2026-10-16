@@ -172,7 +172,7 @@ matching pong, and the close choreography where a peer close is
 echoed then tcp closed. The writer drains an outbound queue of
 pre-encoded frames:
 
-#listing("java/capstone/src/javabook/ws/WsConnection.java", first: 95, last: 145, caption: [the reader loop, opcode dispatch, the close choreography])
+#listing("java/capstone/src/javabook/ws/WsConnection.java", first: 98, last: 148, caption: [the reader loop, opcode dispatch, the close choreography])
 
 The queue is the fan-out decision and the capstone's most
 consequential design choice. A broadcast only enqueues, never writes,
@@ -185,7 +185,7 @@ caller's ordering and the queue serializes the writes.
 
 The drop path is where the locking story earns its care:
 
-#listing("java/capstone/src/javabook/ws/WsConnection.java", first: 182, last: 206, caption: [the overflow drop: fence, sentinel, kill the socket off thread])
+#listing("java/capstone/src/javabook/ws/WsConnection.java", first: 185, last: 209, caption: [the overflow drop: fence, sentinel, kill the socket off thread])
 
 A caller holding a room lock must never run `finish()` inline,
 because finish tells the handler, the handler reenters the hub, and
@@ -426,7 +426,7 @@ and normalization, no directory listing, an 8 MiB cap, content types
 for the shapes a frontend build produces, and `Connection: close` on
 every response:
 
-#listing("java/capstone/src/javabook/web/StaticSite.java", first: 67, last: 107, caption: [resolve and decode: strict, contained, windows aliases refused])
+#listing("java/capstone/src/javabook/web/StaticSite.java", first: 67, last: 113, caption: [resolve and decode: strict, contained, windows aliases refused])
 
 The containment rules earn their lines. Percent-decoding is strict,
 a bare percent, a short escape, a control or non-ascii or backslash

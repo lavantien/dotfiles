@@ -149,7 +149,7 @@ accumulates on the generator instance.
 Wiring it in is one project reference with `OutputItemType="Analyzer"`,
 a `netstandard2.0` target for the generator itself:
 
-#listing("csharp-net/samples/src/CsharpBook.Samples.csproj", first: 10, last: 16, caption: [an analyzer reference, no runtime assembly])
+#listing("csharp-net/samples/src/CsharpBook.Samples.csproj", first: 10, last: 17, caption: [an analyzer reference, no runtime assembly])
 
 The test is the proof. It was written first, failed to compile with
 CS1061 because `Widget.Describe` did not exist, and passed only after

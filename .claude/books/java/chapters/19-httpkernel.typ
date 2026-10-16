@@ -30,7 +30,7 @@ you a router and a codec, java hands you a socket and a choice.
 module, which is a jdk module outside `java.se`, so the first line of
 the service is a module declaration that requires it by name:
 
-#listing("java/api/src/module-info.java", first: 1, last: 13, caption: [the service module: jdk.httpserver by name, transitive because the kernel's api speaks its types, exports grow one line per family])
+#listing("java/api/src/module-info.java", first: 1, last: 26, caption: [the service module: jdk.httpserver by name, transitive because the kernel's api speaks its types, exports grow one line per family])
 
 The server itself is three calls. `HttpServer.create` binds the
 listening socket at construction, an `InetSocketAddress` of port 0

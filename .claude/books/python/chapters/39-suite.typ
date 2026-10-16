@@ -232,7 +232,7 @@ grid below is the loop hypothesis would own, 200 seeded actor picks against ever
 policy, admin passes everywhere, anonymous passes only the open set, no code outside
 the 401/403 pair, and an admin denial fails the test by name:
 
-#listing("python/api/tests/test_authz.py", first: 152, last: 177, caption: [the verdict grid: seeded actor populations against every policy, seed 3131])
+#listing("python/api/tests/test_authz.py", first: 154, last: 179, caption: [the verdict grid: seeded actor populations against every policy, seed 3131])
 
 #diagram([the declined column against what each would have owned], length: 13pt, {
   let col(x, name) = cdraw.content((x, 8.4), name, size: 6.5pt)

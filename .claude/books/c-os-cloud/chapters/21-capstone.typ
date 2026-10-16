@@ -195,7 +195,7 @@ opaque pointers, duckdb's types cross the boundary by value,
 `duckdb_query`, so the twin includes the engine's own `duckdb.h` and
 never hand-rolls a layout.
 
-#listing("c-os-cloud/samples/src/Ch21/rowcrunch_duckdb.c", first: 67, last: 93, caption: [the load: same discipline, one new rule, the handles close by pointer])
+#listing("c-os-cloud/samples/src/Ch21/rowcrunch_duckdb.c", first: 67, last: 111, caption: [the load: same discipline, one new rule, the handles close by pointer])
 
 The teardown rule is the one that costs an hour: `duckdb_close` and
 `duckdb_disconnect` take `duckdb_database *` and `duckdb_connection *`,
@@ -207,7 +207,8 @@ deprecated in 1.5.5 and hands back chunks whose doubles read as
 garbage. The live columnar api is `duckdb_fetch_chunk`, pulled until
 it returns null.
 
-#listing("c-os-cloud/samples/src/Ch21/rowcrunch_duckdb.c", first: 152, last: 172, caption: [ingestion without statements: the appender buffers whole chunks, end_row closes a row])
+#listing("c-os-cloud/samples/src/Ch21/rowcrunch_duckdb.c", first: 152, last: 172,
+  caption: [ingestion without statements: the appender buffers whole chunks, end_row closes a row])
 
 Ingestion drops the statement machinery. Nothing to prepare, no bind
 contract to get wrong: `duckdb_append_varchar` copies the station name
@@ -219,7 +220,8 @@ the chapter 20 harness and prints no percentiles. The wal still lands,
 and `duckdb_close` checkpoints it into the file, which is why the
 bench reads the db size after close.
 
-#listing("c-os-cloud/samples/src/Ch21/rowcrunch_duckdb.c", first: 189, last: 215, caption: [aggregation (a) read back columnar: one vector per column, 2048 rows per chunk, nullness a bitset])
+#listing("c-os-cloud/samples/src/Ch21/rowcrunch_duckdb.c", first: 189, last: 215,
+  caption: [aggregation (a) read back columnar: one vector per column, 2048 rows per chunk, nullness a bitset])
 
 The read side is the columnar lesson. A chunk is not a row set, it is
 one vector per column with 2048 rows contiguous in memory, doubles
@@ -268,7 +270,8 @@ names one row at a time out of materialized chunks. The 1BRC lesson is
 engine-shaped: a hand-rolled scan wins when the engine hands you one
 row at a time, and loses when it hands you vectors.
 
-#listing("c-os-cloud/samples/src/Ch21/rowcrunch_duckdb.c", first: 324, last: 343, caption: [the same parity the sqlite smoke asserts: station set, bitwise min and max, float-order averages])
+#listing("c-os-cloud/samples/src/Ch21/rowcrunch_duckdb.c", first: 324, last: 343,
+  caption: [the same parity the sqlite smoke asserts: station set, bitwise min and max, float-order averages])
 
 The smoke asserts the same parity on 1236 rows in `:memory:`, 13
 checks where the sqlite smoke carries 12, the extra one is the

@@ -131,7 +131,7 @@ invariant that matters lives where the only verb that can break it
 runs: a revoke that would leave the whole table without one admin
 throws, so the demotion is refused with nothing written:
 
-#listing("java/api/src/javabook/authz/MemGrants.java", first: 34, last: 58, caption: [the never-zero-admins invariant, checked before the row changes])
+#listing("java/api/src/javabook/authz/MemGrants.java", first: 44, last: 67, caption: [the never-zero-admins invariant, checked before the row changes])
 
 The admin routes are the grant surface, add one role, remove one
 role, answering the resulting set, and they are themselves governed
@@ -148,7 +148,7 @@ grants source whose first grant throws. Chapter 21's handlers and
 this chapter's table read the same wrapped store, and neither knows
 the rule ran:
 
-#listing("java/api/src/javabook/authz/FirstAdmin.java", first: 32, last: 38, caption: [the bootstrap rule as a decorator: the empty grants table mints the admin])
+#listing("java/api/src/javabook/authz/FirstAdmin.java", first: 33, last: 39, caption: [the bootstrap rule as a decorator: the empty grants table mints the admin])
 
 #diagram([the grant table: one column per user, the admin row must never empty], length: 13pt, {
   cdraw.content((4.0, 8.7), [ada, first], size: 6.5pt)
@@ -185,7 +185,7 @@ forgets its policy is loudly unreachable instead of quietly open.
 Requests that match no pattern at all fall through untouched, because
 404 and 405 are the kernel's answers, not authorization verdicts:
 
-#listing("java/api/src/javabook/authz/Policy.java", first: 87, last: 98, caption: [the production table: eight rows today, later chapters append, none ever edit])
+#listing("java/api/src/javabook/authz/Policy.java", first: 87, last: 99, caption: [the production table: nine rows today, later chapters append, none ever edit])
 
 #listing("java/api/src/javabook/authz/Guard.java", first: 35, last: 57, caption: [the guard: no row, no response, routing answers pass through])
 
@@ -203,7 +203,7 @@ walk it: every table row must resolve, through the kernel's own
 and every registered route, enumerated by the `App.routes()` inventory
 chapter 22 added, must carry a row. A route cannot exist unaudited, a
 row cannot point at nothing, and the counts face each other in the
-test, eight against eight today.
+test, nine against nine today.
 
 == the wiring
 
@@ -213,7 +213,7 @@ reads the store and the authn filter reads the grants, and one store
 instance wrapped in the bootstrap decorator serves registration,
 login, the policy table, and the admin routes alike:
 
-#listing("java/api/src/javabook/Main.java", first: 59, last: 70, caption: [the guarded wiring: table before filters, one store under everything])
+#listing("java/api/src/javabook/Main.java", first: 76, last: 94, caption: [the guarded wiring: table before filters, one store under everything])
 
 #diagram([the audit: table and route inventory face each other, both directions checked], length: 13pt, {
   cdraw.rect((0.8, 5.4), (9.0, 8.2), fill: luma(235), radius: 0.02)
@@ -249,7 +249,7 @@ expected status per cell, asserted in one table-driven test through
 the full guarded stack over a real socket, the same path production
 traffic takes. Each row is a cell with a name that fails loudly:
 
-#listing("java/api/test/javabook/authz/AuthzTests.java", first: 124, last: 150, caption: [the matrix rows: route times actor, one status each, the promoted cell last])
+#listing("java/api/test/javabook/authz/AuthzTests.java", first: 125, last: 151, caption: [the matrix rows: route times actor, one status each, the promoted cell last])
 
 #diagram([the matrix: routes one way, actors the other, statuses in the cells], length: 13pt, {
   let col(x, head) = cdraw.content((x, 8.8), head, size: 6pt)
@@ -312,5 +312,5 @@ under the vendored junit 6.1.3 lane, 8 tests green three consecutive
 runs in a module of 92, covering the twelve matrix cells, the code
 split with messages, the last-admin chain, the grant surface's 404
 and 422 lanes, the deny-by-default counterexample, the fail-safe
-bootstrap, the two direction audit at eight rows against eight
+bootstrap, the two direction audit at nine rows against nine
 routes, and the flat role set with the bootstrap grant.

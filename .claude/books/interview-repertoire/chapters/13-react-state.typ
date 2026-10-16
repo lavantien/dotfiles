@@ -58,7 +58,7 @@ Redux toolkit query is a request cache with dedupe, invalidation,
 and lifecycle flags. The workspace rebuilds the core of it in
 forty lines so the answer is not a product name:
 
-#listing("interview-repertoire/samples/ch12-react/src/state/store.js", first: 49, last: 84, caption: [dedupe by inflight promise, fresh cache, failure eviction, invalidation])
+#listing("interview-repertoire/samples/ch12-react/src/state/store.js", first: 41, last: 72, caption: [dedupe by inflight promise, fresh cache, failure eviction, invalidation])
 
 #diagram([the request cache state machine rtk query automates], length: 13pt, {
   // one key's lifecycle: empty, inflight with dedupe, fresh, evicted on failure
@@ -98,7 +98,7 @@ The n+1 question is arithmetic, and the workspace makes it count:
 ten users naive is one users query plus ten post queries, and
 batching the posts by user ids is two queries total:
 
-#listing("interview-repertoire/samples/ch12-react/src/state/store.js", first: 74, last: 90, caption: [the naive count, the batched count, and both loaders against the cache])
+#listing("interview-repertoire/samples/ch12-react/src/state/store.js", first: 74, last: 90, caption: [naive is eleven queries, batched is two, both loaders against the cache])
 
 #diagram([ten users naive is 11 queries, batched is 2], length: 13pt, {
   // left: one users query plus one posts query per user; right: both in two

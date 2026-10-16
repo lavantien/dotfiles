@@ -87,4 +87,13 @@
   (topic: "duckdb v2.0 cyanoptera preview artifacts channel, no tagged release",
    url: "https://artifacts.duckdb.org/v2.0-cyanoptera/",
    accessed: "2026-09-20"),
+  (topic: "anthropic engineering, redesigning source control, the scion post",
+   url: "https://www.anthropic.com/engineering/redesigning-source-control, published 2026-10-13, local cache ref/scion/post.md sha256 83543194",
+   accessed: "2026-10-15"),
+  (topic: "potvin and levenberg, why google stores billions of lines of code in a single repository",
+   url: "https://cacm.acm.org/practice/why-google-stores-billions-of-lines-of-code-in-a-single-repository/, cacm 59(7) july 2016, local cache ref/scion/piper.md",
+   accessed: "2026-10-15"),
+  (topic: "goode and bolin, sapling source control that scales, the meta post",
+   url: "https://engineering.fb.com/2022/11/15/open-source/sapling-source-control-scalable/, published 2022-11-15, local cache ref/scion/sapling.md",
+   accessed: "2026-10-15"),
 )

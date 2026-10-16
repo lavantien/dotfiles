@@ -146,7 +146,7 @@ ThreadingHTTPServer dispatches each request on its own thread and
 python threads interleave at every bytecode, so the map and the
 levels share one mutex the way the go lane's limiter shares one:
 
-#listing("python/api/pyapi/limit.py", first: 232, last: 249, caption: [per-key buckets, created on first use, swept on the lock the path already holds])
+#listing("python/api/pyapi/limit.py", first: 235, last: 252, caption: [per-key buckets, created on first use, swept on the lock the path already holds])
 
 #diagram([semaphore, queue, bucket: what each primitive actually carries], length: 13pt, {
   pane(0.4, 7.6, 7.4, [BoundedSemaphore], [whole slots, a count], [acquire(False): yes or no], [over-release: ValueError])
@@ -178,7 +178,7 @@ the envelope's message the frozen `too many login attempts`.
 The layer writes the three headers before the inner handler runs, so
 they ride on successes too:
 
-#listing("python/api/pyapi/limit.py", first: 251, last: 276, caption: [the layer: three headers always, Retry-After and the envelope on denial])
+#listing("python/api/pyapi/limit.py", first: 255, last: 280, caption: [the layer: three headers always, Retry-After and the envelope on denial])
 
 #diagram([a client that honors Retry-After: five through, one refused, the next at the reset instant], length: 13pt, {
   cdraw.line((0.6, 3.4), (23.2, 3.4), stroke: luma(120))
@@ -257,7 +257,7 @@ and message, and the request id checked for uuid v7 shape only,
 since this layer mints it fresh. No test sleeps, and the twenty tests
 run in milliseconds:
 
-#listing("python/api/tests/test_limit.py", first: 239, last: 257, caption: [the vector replay: frozen clock at t0+12s, five draws, then the frozen sixth over the app])
+#listing("python/api/tests/test_limit.py", first: 242, last: 260, caption: [the vector replay: frozen clock at t0+12s, five draws, then the frozen sixth over the app])
 
 #diagram([the fixed-vector pipeline: file in, draws through the layer, bytes out], length: 13pt, {
   let step(x0, title, l1) = {
@@ -291,7 +291,7 @@ and answers the contract's overload envelope the instant the slots
 run out. The semaphore and its 503 are chapter 37's to build, along
 with the drain it protects:
 
-#listing("python/api/pyapi/load.py", first: 50, last: 66, caption: [the gate's take and give back: nonblocking acquire, bounded release])
+#listing("python/api/pyapi/load.py", first: 50, last: 69, caption: [the gate's take and give back: nonblocking acquire, bounded release])
 
 #diagram([latency versus concurrency: the hockey stick the admission cap cuts off], length: 13pt, {
   cdraw.line((0.6, 0.7), (23.2, 0.7), stroke: luma(120))

@@ -81,7 +81,7 @@ formula divides by something that vanishes.
   cdraw.content((9.2, 5.1), [x^2], size: 6pt)
 })
 
-#listing("math/samples/src/Ch09/limits.c", first: 51, last: 75, caption: [delta for epsilon on x^2 and the removable hole, limits.c])
+#listing("math/samples/src/Ch09/limits.c", first: 51, last: 76, caption: [delta for epsilon on x^2 and the removable hole, limits.c])
 
 The two-number play: $delta = epsilon/7 = 1.43 times 10^-4$ leaves residual
 8.57e-4, while $delta = epsilon/100$ leaves 6.0e-5, the same epsilon bought
@@ -374,7 +374,7 @@ $x^2$ and $3x$ on $[0,2]$ with exact total $26/3$: the sum of the two
 midpoint sums equals the midpoint sum of the sum to the last bit at $n =
 128$, both 8.6666259765625.
 
-#listing("math/samples/src/Ch09/ftc.c", first: 112, last: 142, caption: [antiderivative table, the FTC identity both ways, linearity, ftc.c])
+#listing("math/samples/src/Ch09/ftc.c", first: 112, last: 142, caption: [antiderivative table, the FTC identity both ways, linearity at 26/3, ftc.c])
 
 #callout("pitfall", "exact ratios are a fixture property", [The midpoint error ratios reading exactly 4.0 hold because the error of this cubic on this interval is exactly $2\/n^2$ with no lower-order correction. For a generic smooth integrand the ratio approaches 4 from below as $n$ grows, so a check that demands exactly 4.0 on arbitrary fixtures fails. Pin the order with a tolerance, or pick a fixture whose error law you have derived.])
 
@@ -422,7 +422,7 @@ The dry run: the sweep at $x = 1.1$, target $f'(1.1) = 5.724$.
 + $k = 18$: error 4.56e-11, the bottom of the U, $h = 3.81 times 10^-6$.
 + $k = 22$: error 5.36e-10, twelve times worse than the bottom while $h$ is sixteen times smaller.
 
-#listing("math/samples/src/Ch09/deriv.c", first: 112, last: 135, caption: [the exact power-of-two ladder and the generic-point sweep to the argmin, deriv.c])
+#listing("math/samples/src/Ch09/deriv.c", first: 112, last: 137, caption: [the exact power-of-two ladder and the generic-point sweep to the argmin, deriv.c])
 
 #diagram([central difference error against h, the U with its floor], length: 13pt, {
   let pts = ((0.6, 0.55), (1.05, 1.00), (1.5, 1.44), (1.95, 1.89), (2.4, 2.33),

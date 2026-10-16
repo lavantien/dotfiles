@@ -221,9 +221,9 @@ One dimension up, $"GF"(8) = Z_2[x] \/ (x^3 + x + 1)$ on the eight polynomials o
   [$x+1$], [0], [$x+1$], [1], [$x$],
 )
 
-#listing("math/samples/src/Ch17/fields.c", first: 129, last: 147, caption: [fields.c, the pinned gf(4) multiplication table with the (x+1)^2 = x reduction on top])
+#listing("math/samples/src/Ch17/fields.c", first: 144, last: 162, caption: [fields.c, the pinned gf(4) multiplication table with the (x+1)^2 = x reduction on top])
 
-#listing("math/samples/src/Ch17/fields.c", first: 168, last: 197, caption: [fields.c, gf(8) one dimension up: the x^3 = x+1 rule pinned, the seven powers of x walking every nonzero element home, so every non-identity element has order 7])
+#listing("math/samples/src/Ch17/fields.c", first: 183, last: 212, caption: [fields.c, gf(8) one dimension up: the x^3 = x+1 rule pinned, the seven powers of x walking every nonzero element home, so every non-identity element has order 7])
 
 #diagram([the multiplicative group of gf(4) is a 3-cycle: multiplying by x walks x, x+1, 1 and closes], length: 13pt, {
   let node(x, y, t, dark) = {

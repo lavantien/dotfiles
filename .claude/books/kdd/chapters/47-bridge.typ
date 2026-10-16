@@ -189,7 +189,7 @@ which is why chapter #xref-to("kdd", "validation") cares about
 initialization and the icpc book's k-means chain in
 #xref-to("icpc", "y2017") probes exactly this failure mode.
 
-#listing("kdd/samples/src/Ch31/kmeans.c", first: 152, last: 176, caption: [the c side: the pass loop, lowest-index ties, the confirming pass returns])
+#listing("kdd/samples/src/Ch31/kmeans.c", first: 151, last: 175, caption: [the c side: the pass loop, lowest-index ties, the confirming pass returns])
 
 #listing("kdd/capstone/internal/kddcore/kmeans.go", first: 27, last: 41, caption: [the go side: the same loop shape, same tie rule in nearest])
 

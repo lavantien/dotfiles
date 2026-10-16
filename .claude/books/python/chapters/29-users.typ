@@ -72,7 +72,7 @@ the first two, answering 415 and 413 and 400. The third belongs to
 this package, because the stdlib `json.loads` answers any shape at
 all, so strictness is a walk over the parsed object:
 
-#listing("python/api/pyapi/users/routes.py", first: 74, last: 94, caption: [unknown members refuse with 400, every kept member a string])
+#listing("python/api/pyapi/users/routes.py", first: 75, last: 95, caption: [unknown members refuse with 400, every kept member a string])
 
 Rejecting unknown members is the strictness that pays rent. A client
 that sends a pet member against a contract with no pet gets a 400,
@@ -239,10 +239,10 @@ statuses. The get handler is the whole ladder in one screen: 401
 without an actor, 404 for an unknown id, 403 for a stranger touching
 someone else's record, then the etag work:
 
-#listing("python/api/pyapi/users/routes.py", first: 132, last: 143, caption: [the failure ladder before any body is written, 304 after it])
+#listing("python/api/pyapi/users/routes.py", first: 133, last: 143, caption: [the failure ladder before any body is written, 304 after it])
 
 After the ladder comes the one status that is not a failure, 304. If
-the client's If-None-Match equals the computed etag, the body it
+the client's If-None-Match names the computed etag, the body it
 already holds is current, and the service answers the header and
 nothing else. The order inside the ladder is a policy choice this
 chapter owns: the 404 answers before the 403, so an unknown id and a

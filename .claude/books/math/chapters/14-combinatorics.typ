@@ -94,7 +94,7 @@ The identities the rest of the book leans on, each CHECKed in both directions ag
 
 The play: a 5-card poker deal has $P(52,5) = 311875200$ orderings but only $C(52,5) = 2598960$ hands, and the ratio of the two pins is exactly $120 = 5!$, the orderings each hand was carrying (checks 4 to 6).
 
-#listing("math/samples/src/Ch14/binomial.c", first: 182, last: 200, caption: [binomial.c, the width ladder: uint64 dies between C(66,33) and C(68,34), the bit-precise types carry the ladder to row 128])
+#listing("math/samples/src/Ch14/binomial.c", first: 182, last: 200, caption: [binomial.c, the width ladder: uint64 dies between C(66,33) and C(68,34), the bit-precise types carry the ladder to C(128,64) at 125 bits])
 
 The width ladder continues past 64 bits on the C23 bit-precise integers, with widths stated: the central column is exact in uint64 through $binom(66,33) = 7219428434016265740$, but $binom(68,34) = 28453041475240576740$ leaves 64 bits and the final Pascal addition wraps to $10006297401531025124$ (checks 12 and 13). `_BitInt(128)` carries $binom(100,50) = 100891344545564193334812497256$ (97 bits) and tops out of this chapter's needs at $binom(128,64)$ with 125 bits, and `_BitInt(256)` holds $binom(200,100)$ with 196 bits, written as the `uwb` literal the C23 bit-precise suffix gives (cppreference, integer constants, fetched 2026-09-21). The Pascal recurrence holds at row 128 in the wide type (check 16), and since printf has no `_BitInt` conversion the digits come out by repeated division and round-trip against the decimal string (checks 17 and 18).
 
@@ -221,7 +221,7 @@ The growth ratio converges to the golden ratio $phi = (1 + sqrt(5)) \/ 2 = 1.618
 
 By $n = 90$ the ratio of two exact integers rounds to precisely the double of $phi$, the check comparing `f[91]/f[90]` against `(1 + sqrt(5))/2` for bit equality (checks 6 and 7). Binet's closed form $F(n) = (phi^n - psi^n) \/ sqrt(5)$ with $psi = 1 - phi$ evaluated in doubles lands $6765.000000000005$ at $n = 20$, five trillionths off the exact 6765 and close only because $psi^20$ is already $6.6 times 10^(-5)$ (check 8).
 
-#listing("math/samples/src/Ch14/recurrence.c", first: 70, last: 106, caption: [recurrence.c, the exact ladder to F(93), two identities, the ratio pins, and binet in doubles])
+#listing("math/samples/src/Ch14/recurrence.c", first: 70, last: 106, caption: [recurrence.c, the exact ladder to F(93), two identities, the ratio pin 1.48e-4 from phi, and binet in doubles])
 
 The Tower of Hanoi, $T(n) = 2 T(n-1) + 1$ with $T(1) = 1$: unfold it and each disk-doubling nests, $T(n) = 2^(n-1) T(1) + (2^(n-1) - 1) = 2^n - 1$. The induction that makes the last step legal is the vocabulary of #xref-to("math", "proof"). The sample checks the closed form $2^n - 1$ against the recurrence for every $n$ from 1 to 63, and then the endpoint: $T(64) = 2^64 - 1 = 18446744073709551615$, exactly uint64 max, the 64-disk tower is the entire unsigned range (checks 9 and 10).
 
@@ -320,7 +320,7 @@ The dry run: a two-urn table small enough to hold in your head. Urn A holds 2 re
 + Evidence: $2/6 + 1/6 = 3/6$, the sum rule over the two hypotheses.
 + Posterior: $p(A|"red") = (2/6) \/ (3/6) = 2/3$, computed in exact integer rationals, unreduced $72/108$, cross-multiplied against $2/3$ (check 16).
 
-#listing("math/samples/src/Ch14/recurrence.c", first: 176, last: 187, caption: [recurrence.c, bayes eq 6.23 on the two-urn table as exact rational arithmetic])
+#listing("math/samples/src/Ch14/recurrence.c", first: 176, last: 187, caption: [recurrence.c, bayes eq 6.23 on the two-urn table as exact rationals, posterior unreduced 72/108])
 
 The play: the posterior is $2/3$, three exact integers, where the same table in floating point would print $0.6666666666666666$ and hide that it is a ratio of small counts. This is the whole bridge: #xref-to("math", "probability") builds the continuous theory on top of these finite tables, and every distribution it introduces is a weighting scheme over a counted space.
 

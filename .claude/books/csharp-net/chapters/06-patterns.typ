@@ -170,7 +170,7 @@ A positional pattern calls the type's `Deconstruct` method and matches
 the results against nested patterns. Records deconstruct for free, so a
 record becomes a set of coordinates you can branch on:
 
-#listing("csharp-net/samples/src/Ch06/Flow.cs", first: 30, last: 40, caption: [a plane split by nested relational patterns])
+#listing("csharp-net/samples/src/Ch06/Flow.cs", first: 30, last: 40, caption: [a plane split by nested relational patterns],)
 
 #diagram([positional patterns, deconstructed coordinates split the plane], length: 13pt, {
   // the record feeds Deconstruct, the pair of values lands on a quadrant

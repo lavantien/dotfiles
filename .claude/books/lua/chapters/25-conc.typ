@@ -79,7 +79,7 @@ preconditions are pure functions over two strings, the header the
 client sent and the etag the resource wears, so the whole wire
 decision is testable as arithmetic:
 
-#listing("lua/service/idem.lua", first: 21, last: 32, caption: [the 304 ladder: absent, star, list membership, fresh])
+#listing("lua/service/idem.lua", first: 22, last: 33, caption: [the 304 ladder: absent, star, list membership, fresh])
 
 Four decisions in order. No header means an ordinary read. A header
 against a resource that is gone passes through, so the handler's own
@@ -134,7 +134,7 @@ included. A mismatch, the same key under a different hash, is the
 422 with details, the client misusing the contract, and the stored
 snapshot is untouched by the refusal:
 
-#listing("lua/service/idem.lua", first: 54, last: 65, caption: [three verdicts, and the expired row deletes itself on contact])
+#listing("lua/service/idem.lua", first: 55, last: 66, caption: [three verdicts, and the expired row deletes itself on contact])
 
 Two guardrails ride the store. Only outcomes under 400 become
 snapshots, because a retry after a validation error deserves a fresh

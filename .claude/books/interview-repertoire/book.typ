@@ -44,7 +44,19 @@
   "negotiation-answers": "chapters/39-negotiation-answers.typ",
   "transfer-answers": "chapters/40-transfer-answers.typ",
   "onebrc": "chapters/41-onebrc.typ",
-  "appendices": "chapters/42-appendices.typ",
+  "anthropic": "chapters/42-anthropic.typ",
+  "openai": "chapters/43-openai.typ",
+  "netflix": "chapters/44-netflix.typ",
+  "meta": "chapters/45-meta.typ",
+  "google": "chapters/46-google.typ",
+  "amazon": "chapters/47-amazon.typ",
+  "microsoft": "chapters/48-microsoft.typ",
+  "apple": "chapters/49-apple.typ",
+  "uber": "chapters/50-uber.typ",
+  "doordash": "chapters/51-doordash.typ",
+  "nvidia": "chapters/52-nvidia.typ",
+  "citadel": "chapters/53-citadel.typ",
+  "appendices": "chapters/54-appendices.typ",
 )
 
 #book(repertoire.meta, {

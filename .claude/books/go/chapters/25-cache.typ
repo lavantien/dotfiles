@@ -275,7 +275,7 @@ and never once says hit. The cheap check is the one worth keeping in
 the gate, because the day someone adds a cacheable row to the wrong
 route, this is the test that says which lane they put it in:
 
-#listing("go/api/internal/cache/cache_test.go", first: 273, last: 295, caption: [the exclusion test: no-store routes always pay the origin])
+#listing("go/api/internal/cache/cache_test.go", first: 274, last: 296, caption: [the exclusion test: no-store routes always pay the origin])
 
 #diagram([the exclusion list, each row with its reason], length: 13pt, {
   let row(y, route, reason) = {
