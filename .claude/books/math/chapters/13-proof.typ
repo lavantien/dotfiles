@@ -536,7 +536,14 @@ decoys, and 64 seeded byte mutations, all green.
 #listing("math/samples/checker/mmbound.c", first: 97, last: 117, caption: [mmbound.c, the cross-multiplication, each side's digits followed by the other side's number of zeros])
 
 The release's families touch several Clay millennium problems, and the
-trust grades decide what a book may claim from them. The stance rows:
+trust grades decide what a book may claim from them. The tier arbiter
+is the release's formalization catalogue, which self-describes as a
+catalogue of papers with a formalized main result, its scope partial
+progress, its review unchecked, so a tier records what the release
+formalized, never that anyone rechecked it. The first rows hold the
+millennium stances, the later ones the complexity and geometry families
+the corpus consumes, each naming the dsa chapter that restates it. The
+stance rows:
 
 #table(
   columns: (auto, auto, auto, auto),
@@ -545,6 +552,14 @@ trust grades decide what a book may claim from them. The stance rows:
   [002], [full BSD formula over $Q$ in Selmer corank 0 and 1, with Sha finiteness], [report, paper only], [absent from the formalized catalogue, no formal backing claimed],
   [032], [rational Hodge conjecture for CM abelian varieties], [report, paper only], [same gap, one of the release's two procedure exceptions],
   [003], [quasi-RH, Dirichlet L-functions zero-free for $Re(s) > 7/8$, companion proof at $11/12$], [Lean], [formalized with comparator `DirichletSevenEighths`, and the Riemann hypothesis itself stays open],
+  [104], [deterministic algorithms in $2^(O((log(L+2))^2))$ bit operations at complete binary input length $L$ for mean-payoff, turn-based stochastic, and parity games], [Lean, randomized variant only], [comparator `RandomizedMeanPayoff` covers the randomized mean-payoff theorem alone, the other 3 preprints have no catalogue entry, the release docs record a `TruffetCounterexample` to a proposed optimization step, restated in #xref-to("dsa", "games")],
+  [109], [exact $n$-bit multiplication in $O(n (log n)^(1 - 2^(-182)))$ on one fixed multitape machine, disproving the Schoenhage-Strassen $n log n$ optimality conjecture], [report, paper only], [absent from the formalized catalogue, no formal backing claimed, restated beside Karatsuba in #xref-to("dsa", "fastarith")],
+  [130], [deterministic DFT at every length $n$ in $O(n (log n)^(1 - 10^(-13)))$, exact complex arithmetic], [Lean], [both preprints in the catalogue with comparators `ExactFourier` and `UniformFourier`, the theorems stated as comparator-checked, restated beside the fft in #xref-to("dsa", "fastarith")],
+  [138], [randomized worst-case Subset Sum in $O(2^(0.49 n))$ word-RAM time, success at least $2/3$ on every input], [report, paper only], [absent from the formalized catalogue, no formal backing claimed, restated in #xref-to("dsa", "approximation")],
+  [166], [at least $c_d n^(2/d)$ distinct distances among $n$ points of $RR^d$ for every fixed $d >= 3$], [report, paper only], [absent from the formalized catalogue, no formal backing claimed, restated in #xref-to("dsa", "geometry2")],
+  [167], [weak pinned distances, all but $o(n)$ points of an $n$-point planar set see at least $n^(1 - epsilon)$ distances], [Lean, weak pinned only], [comparator `PinnedDistances` with declaration `OAI.WeakPinned.main` for the pinned theorem alone, the $O(n^(4/3 - delta))$ unit-distance bound documented in the release's lean docs with no catalogue entry, restated in #xref-to("dsa", "geometry2")],
+  [183], [planar halving lines at $O(n^(4/3 - epsilon))$ for sets with no three collinear, constants existential], [comparator, lean docs only], [`HalvingLines` comparator in the release's lean docs with no catalogue entry, restated in #xref-to("dsa", "geometry2")],
+  [191], [$n$ points in the unit square with every triangle at least $n^(-2 + c)$ in area for one absolute $c > 0$], [comparator, lean docs only], [the lean docs comparator `HeilbronnTriangle` covers an unbounded sequence of sizes only, strictly weaker than the paper's every sufficiently large $n$, the caveat rides every restatement in #xref-to("dsa", "geometry2")],
 )
 
 No P versus NP claim exists anywhere in the release. The complexity-side
@@ -596,6 +611,20 @@ entries 002, 003, 032, and 102, with formalization.yaml as the tier
 arbiter, its Dirichlet entry carrying declaration
 `OAI.DirichletCharacter.LFunction_ne_zero_of_seven_eighths_lt_re` and
 comparator config `ComparatorChallenges/DirichletSevenEighths.json`. The
+2026-10-15 wave adds the 8 complexity and geometry rows, families 104,
+109, 130, 138, 166, 167, 183, and 191, cached under
+ref/openai-math/family-NNN/ fetched 2026-10-15: each facts.md holds the
+verbatim preprint sha256 table, the transcribed overview claim, and the
+tier facts read off formalization.yaml verbatim, with the repo's lean
+docs cached alongside for 104, 130, 167, 183, and 191 and absent for
+109, 138, and 166. Gajentaan and Overmars, On a class of $O(n^2)$
+problems in computational geometry, Computational Geometry: Theory and
+Applications 5 (1995) 165-185, cached 2026-10-15 under
+ref/gajentaan-overmars/ as the mit journal copy, sha256
+632482cc713b4eb622d6f1f4f7d258c4fe08c48b778ebbc810cece3015f820cf, with
+the 1993 Utrecht tech report and text extractions beside it, the
+3SUM-hardness catalogue the dsa geometry chapter's reduction family
+restates. The
 f107 lane verified by `pwsh -NoProfile -File tools/verify-math-f107.ps1`:
 16 fixture field checks against the family README oracle, 8 mmbound
 verdicts over both fixtures, 16 tamper probes with the right verdict

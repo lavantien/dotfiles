@@ -41,7 +41,7 @@ idempotency bookkeeping. Both refill 1 token per second, so a client
 that trips the limit is back to full capacity 5 and 10 seconds later,
 the difference between a limit and a lockout:
 
-#listing("c-os-cloud/api/src/wire_ops.c", first: 21, last: 27, caption: [the contract's two rules as one constant table, numbers and messages verbatim])
+#listing("c-os-cloud/api/src/wire_ops.c", first: 21, last: 27, caption: [the contract's two rules as one constant table, numbers, messages, and key policy verbatim])
 
 #diagram([offered load versus what the service can carry, the cliff between them], length: 13pt, {
   cdraw.line((0.6, 0.7), (23.2, 0.7), stroke: luma(120))
@@ -133,7 +133,7 @@ with the bounded refusal, 1 retry second and
 the rule's limit, rather than allocating its way out: finiteness as a
 stated policy, not a hidden cliff:
 
-#listing("c-os-cloud/api/src/limit_gate.c", first: 71, last: 101, caption: [decide: sweep on the ttl boundary, find or create the slot, refuse new keys when the table is full])
+#listing("c-os-cloud/api/src/limit_gate.c", first: 72, last: 106, caption: [decide: sweep on the ttl boundary, find or create the slot, refuse new keys when the table is full])
 
 #diagram([one key through the fixed table: scan, create, or the bounded refusal], length: 13pt, {
   cdraw.content((11.5, 8.0), [key arrives], size: 6.5pt)
@@ -172,7 +172,7 @@ empty bucket: status 429, limit 5, remaining 0, reset 1790830813 which
 is exactly t0 plus 13 seconds, retry after 1. The test reads those
 values out of the vector file itself, so the file is the oracle:
 
-#listing("c-os-cloud/api/tests/test_limit.c", first: 421, last: 443, caption: [the vector replay: the file drives the clock, the pins, and the 5 setup draws])
+#listing("c-os-cloud/api/tests/test_limit.c", first: 520, last: 542, caption: [the vector replay: the file drives the clock, the pins, and the 5 setup draws])
 
 #diagram([a client that honors Retry-After: 5 through, 1 refused, the next at the reset instant], length: 13pt, {
   cdraw.line((0.6, 3.4), (23.2, 3.4), stroke: luma(120))
@@ -224,7 +224,7 @@ garbage cannot orbit the limit by being invalid, and a bracketed ipv6
 remote address loses its brackets and port. An overlong key truncates
 at 96 bytes rather than allocating:
 
-#listing("c-os-cloud/api/src/limit_gate.c", first: 106, last: 120, caption: [the login key: lowercase the email, empty or null into the one shared unparsed bucket])
+#listing("c-os-cloud/api/src/limit_gate.c", first: 111, last: 125, caption: [the login key: lowercase the email, empty or null into the one shared unparsed bucket])
 
 #diagram([key choice: the route decides what the bucket belongs to], length: 13pt, {
   cdraw.content((11.5, 8.0), [request arrives], size: 6.5pt)
@@ -298,7 +298,7 @@ ruling, and the condition-variable seam carries the lost wake lesson
 from chapter 16, which is exactly where a gate that sleeps workers
 instead of refusing requests would go wrong:
 
-#listing("c-os-cloud/api/src/limit_gate.c", first: 83, last: 90, caption: [the bounded refusal: a full table answers a new key instead of allocating or queueing])
+#listing("c-os-cloud/api/src/limit_gate.c", first: 84, last: 95, caption: [the bounded refusal: a full table answers a new key instead of allocating or queueing])
 
 #diagram([latency versus concurrency: the hockey stick the admission cap cuts off], length: 13pt, {
   cdraw.line((0.6, 0.7), (23.2, 0.7), stroke: luma(120))

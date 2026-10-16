@@ -64,7 +64,7 @@ walk stops there without an error, exactly what recovery wants. A
 torn tail is the crash artifact the design accepts, not a corruption
 event:
 
-#listing("java/api/src/javabook/store/Wal.java", first: 116, last: 140, caption: [the walk: every refusal is the same stop, the offset names where])
+#listing("java/api/src/javabook/store/Wal.java", first: 116, last: 141, caption: [the walk: every refusal is the same stop, the offset names where])
 
 The appender is the write side, one channel opened for append with
 groups written whole, one buffer per group in as few write calls as
@@ -80,9 +80,9 @@ begin and its matching commit, an orphan group whose commit never
 arrived is discarded whole, and the sequence resumes past the last
 begin seen so a reopened engine never reuses a committed number:
 
-#listing("java/api/src/javabook/store/Engine.java", first: 60, last: 80, caption: [open: snapshot first when one stands, then the committed groups replayed over it])
+#listing("java/api/src/javabook/store/Engine.java", first: 60, last: 90, caption: [open: snapshot first when one stands, then the committed groups replayed over it])
 
-#listing("java/api/src/javabook/store/Engine.java", first: 368, last: 392, caption: [replay: no marker pair, no application, the whole group dies together])
+#listing("java/api/src/javabook/store/Engine.java", first: 377, last: 401, caption: [replay: no marker pair, no application, the whole group dies together])
 
 The invariant is named in the test that proves it, exhaustively
 rather than by fuzz: for any truncation of a framed log, replaying
@@ -129,7 +129,7 @@ the group's frames, the begin marker, the ops, the commit marker, go
 out in one write, and only then does memory take the group, values
 copied so nothing aliases the caller's array:
 
-#listing("java/api/src/javabook/store/Engine.java", first: 187, last: 222, caption: [the commit order: the group's frames append in one write, then memory mutates])
+#listing("java/api/src/javabook/store/Engine.java", first: 196, last: 225, caption: [the commit order: the group's frames append in one write, then memory mutates])
 
 The order is the guarantee. The log is always at least as current as
 memory, so a crash between the append and the mutation recovers to
@@ -159,7 +159,7 @@ process restarts and recovers to the last whole group. Fail closed,
 stated plainly, because the alternative is the one inconsistency the
 design cannot repair.
 
-#listing("java/api/src/javabook/store/FileStore.java", first: 45, last: 57, caption: [the caller's shape: one tx, three ops, commit inside try-with-resources])
+#listing("java/api/src/javabook/store/FileStore.java", first: 47, last: 59, caption: [the caller's shape: one tx, three ops, commit inside try-with-resources])
 
 #diagram([a transaction's exits, every one of them clean], length: 13pt, {
   cdraw.rect((0.4, 5.4), (6.2, 7.2), fill: luma(235), radius: 0.02)
@@ -212,7 +212,7 @@ create fresh, remove `.old`. Every interruption of that order is
 recoverable by the open sequence, because the snapshot already
 subsumes everything the old log held:
 
-#listing("java/api/src/javabook/store/Engine.java", first: 248, last: 289, caption: [compact: force, atomic move, then the rotation whose recovery argument relies on the order])
+#listing("java/api/src/javabook/store/Engine.java", first: 257, last: 298, caption: [compact: force, atomic move, then the rotation whose recovery argument relies on the order])
 
 #callout("note", "the one loss the design accepts", [
   A snapshot that arrives torn despite the force is not trusted: the
@@ -244,7 +244,7 @@ where the creation millisecond rides sign-flipped fixed width hex
 beside the id, exactly the pair the pagination cursor carries, so
 storage order and keyset order are one notion of position:
 
-#listing("java/api/src/javabook/store/FileStore.java", first: 93, last: 100, caption: [the order key: sign-flipped millis keep ascending time ascending in hex, the id tiebreak beside it])
+#listing("java/api/src/javabook/store/FileStore.java", first: 125, last: 132, caption: [the order key: sign-flipped millis keep ascending time ascending in hex, the id tiebreak beside it])
 
 The stored form is not the wire form, and the split is worth naming.
 The record serializes all six components including the password hash,
@@ -257,7 +257,7 @@ deterministic, so the same record yields the same etag forever, and
 the restart test asserts the bytes did not move across a close and
 reopen:
 
-#listing("java/api/src/javabook/store/FileStore.java", first: 72, last: 91, caption: [the list walk: one view, the range after the cursor, the id tiebreak free from the key])
+#listing("java/api/src/javabook/store/FileStore.java", first: 104, last: 123, caption: [the list walk: one view, the range after the cursor, the id tiebreak free from the key])
 
 The grants ride the same engine under `r:grant:`, one json array per
 user in sorted order, with the never-zero-admins invariant checked

@@ -135,7 +135,7 @@ Real literals come in three precisions: `double` by default, `f` for 32 bit
 Character literals take a single character, a `\u` unicode escape, or a
 `\x` hex escape:
 
-#listing("csharp-net/samples/src/Ch02/Lexical.cs", first: 24, last: 25, caption: [char literal forms])
+#listing("csharp-net/samples/src/Ch02/Lexical.cs", first: 24, last: 25, caption: [char literal forms],)
 
 #diagram([literal inventory, bases, separators, suffixes, escapes], length: 13pt, {
   // one row per literal kind, example chips, the rule at the right

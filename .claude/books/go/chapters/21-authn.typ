@@ -123,7 +123,7 @@ port mirrors the user package's: an interface frozen here, the
 in-memory implementation in this chapter, the engine implementation
 in chapter 23:
 
-#listing("go/api/internal/authn/session.go", first: 47, last: 69, caption: [the session store port: five verbs, three errors])
+#listing("go/api/internal/authn/session.go", first: 47, last: 69, caption: [the session store port: five verbs, three errors, frozen for both stores])
 
 The lifetime rules stay with the caller, on purpose. The store knows
 structural state, which token is current, which session is revoked;

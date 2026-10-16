@@ -173,7 +173,7 @@ deterministic wire bytes come from the container that keeps
 insertion order, and the writer walks it with the grammar's
 escapes:
 
-#listing("rust/api/src/httpx.rs", first: 307, last: 316, caption: [seven variants, objects keep insertion order, ints and floats split by shape])
+#listing("rust/api/src/httpx.rs", first: 307, last: 316, caption: [seven variants behind a clone derive, objects keep insertion order, ints and floats split by shape])
 
 The reader is a byte-position recursive descent over the source,
 strict RFC 8259: whitespace only where allowed, no leading zeros,

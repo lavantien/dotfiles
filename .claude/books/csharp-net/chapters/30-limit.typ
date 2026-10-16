@@ -257,7 +257,7 @@ why they stay deterministic, and the one refill test uses a coarse
 rate so elapsed refill lands inside a bounded loop that polls the
 limiter's real state and never sleeps:
 
-#listing("csharp-net/api/tests/CsharpBook.Api.Tests/Limiting/RateLimitMiddlewareTests.cs", first: 60, last: 84, caption: [the vector replay: frozen clock at t0+12s, five draws, then the frozen sixth])
+#listing("csharp-net/api/tests/CsharpBook.Api.Tests/Limiting/RateLimitMiddlewareTests.cs", first: 61, last: 85, caption: [the vector replay: frozen clock at t0+12s, five draws, then the frozen sixth])
 
 #diagram([the fixed-vector pipeline: file in, draws through the gate, bytes out], length: 13pt, {
   let step(x0, title, l1) = {

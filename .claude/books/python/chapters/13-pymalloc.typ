@@ -370,7 +370,7 @@ repeats per the timeit doctrine. The crossover scan, `crossover
 
 #listing("python/samples/bench/captures/2026-09-13-particle-ladder.txt", first: 1, last: 15, caption: [the crossover scan: the tuple path holds the lead through 40 particles, the array path takes it at 50 and never gives it back])
 
-#listing("python/samples/bench/captures/2026-09-13-particle-ladder.txt", first: 16, last: 29, caption: [the ladder: soa cost dives with N then rises with cache misses, the tuple cost stays flat])
+#listing("python/samples/bench/captures/2026-09-13-particle-ladder.txt", first: 16, last: 30, caption: [the ladder, checksum line per run: soa cost dives with N then rises with cache misses, the tuple cost stays flat])
 
 The tuple cost sits near 210 to 240 ns a particle a step from 100
 particles through 100000, then climbs to 346 at a million and holds

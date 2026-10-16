@@ -22,7 +22,7 @@ on the same raw bits on every machine that runs the line.
 
 == Q31.32 in one struct
 
-#listing("game-systems/samples/src/Ch07/Fp.cs", first: 9, last: 33, caption: [one long, 31 integer bits, 32 fraction bits, checked everywhere])
+#listing("game-systems/samples/src/Ch07/Fp.cs", first: 9, last: 37, caption: [one long, 31 integer bits, 32 fraction bits, checked everywhere])
 
 Fixed point is just integers with a convention: the low 32 bits are
 fraction. Addition and subtraction are integer operations, exact.
@@ -102,7 +102,7 @@ and doing that in fixed point is its own exercise.
   cdraw.content((17, 3.0), [the atan table is frozen hex], size: 6pt)
 })
 
-#listing("game-systems/samples/src/Ch07/Fp.cs", first: 70, last: 90, caption: [integer newton square root, seeded above the answer])
+#listing("game-systems/samples/src/Ch07/Fp.cs", first: 76, last: 94, caption: [integer newton square root, seeded above the answer])
 
 Square root is newton iteration on integers, seeded at `2^48` which
 is above every root a legal raw value can have, so the iteration only

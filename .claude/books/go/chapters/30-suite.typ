@@ -278,7 +278,7 @@ test binaries execute, a fact written in the script's own header, and no percent
 anywhere in this book, because the figure moves with every edit and a pinned number would be a
 lie with a date on it:
 
-#listing("go/api/cover.sh", first: 16, last: 24, caption: [both legs, the merge, and the honest total printed once])
+#listing("go/api/cover.sh", first: 16, last: 24, caption: [both legs, the merge, and the honest total, the down -v trap armed before up])
 
 #diagram([two legs, two profiles, one merged summary], length: 13pt, {
   let box(x, w, top, sub) = {

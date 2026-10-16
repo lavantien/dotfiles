@@ -74,7 +74,7 @@ resource on top of it, and the order is the contract: the kernel's
 member 400, then the typed member read answers a 400 for a non-string
 value, and only then does validation see clean strings:
 
-#listing("java/api/src/javabook/user/Users.java", first: 41, last: 63, caption: [strict bind, typed members, every rule checked, then the store])
+#listing("java/api/src/javabook/user/Users.java", first: 42, last: 64, caption: [strict bind, typed members, every rule checked, then the store])
 
 The rules come from the contract, not from a library, because the jdk
 has no bean validation and the numbers should be greppable anyway:
@@ -85,7 +85,7 @@ approximation that accepts the addresses people hold. Every rule
 reports into one details array rather than failing on the first, so
 one round trip tells the client everything wrong:
 
-#listing("java/api/src/javabook/user/Validation.java", first: 34, last: 54, caption: [one detail per violated rule, in field order, nothing short-circuits])
+#listing("java/api/src/javabook/user/Validation.java", first: 33, last: 54, caption: [one detail per violated rule, in field order, nothing short-circuits])
 
 The 422 and the 409 are different animals and the boundary is worth
 stating. A rule violation is about the request alone, checkable
@@ -117,7 +117,7 @@ email map, and an order list kept sorted by the keyset key with a
 binary insertion, so `list` walks one sorted slice and reads live
 records through the map:
 
-#listing("java/api/src/javabook/user/MemStore.java", first: 22, last: 40, caption: [one monitor, two maps, a sorted order slice with binary insertion])
+#listing("java/api/src/javabook/user/MemStore.java", first: 23, last: 41, caption: [one monitor, two maps, a sorted order slice with binary insertion])
 
 Every method is `synchronized`, the whole locking story for a page
 this size. The chapter 10 concurrency material would replace the
@@ -168,7 +168,7 @@ anything outside 1..100 with a default of 20, and the list handler
 asks the store for `limit + 1` rows so the presence of one extra row
 is the whole has-more computation, no counts, no second query:
 
-#listing("java/api/src/javabook/user/Users.java", first: 105, last: 125, caption: [limit plus one read, one extra row means has-more, the cursor names the last row kept])
+#listing("java/api/src/javabook/user/Users.java", first: 170, last: 189, caption: [limit plus one read, one extra row means has-more, the cursor names the last row kept])
 
 #diagram([offset walks the whole prefix, keyset jumps to the remembered position], length: 13pt, {
   cdraw.content((2.6, 8.8), [offset], size: 6.5pt)
@@ -203,9 +203,9 @@ not plain string equality: a star matches any current
 representation, a comma list matches when the etag appears in it,
 and both comparisons are weak, so a `W/` prefix still counts:
 
-#listing("java/api/src/javabook/user/Users.java", first: 65, last: 80, caption: [404 or 304 or 200: the conditional read in sixteen lines])
+#listing("java/api/src/javabook/user/Users.java", first: 66, last: 80, caption: [404 or 304 or 200: the conditional read in fifteen lines])
 
-#listing("java/api/src/javabook/user/Users.java", first: 82, last: 104, caption: [noneMatch: star, list, and weak forms, the rfc 9110 rules])
+#listing("java/api/src/javabook/user/Users.java", first: 146, last: 168, caption: [noneMatch: star, list, and weak forms, the rfc 9110 rules])
 
 The 304 uses the `RSPBODY_EMPTY` constant from chapter 19, the
 no-body length the exchange api names, and the same etag string rides
@@ -225,7 +225,7 @@ differ only in the injected functions:
 
 #listing("java/api/test/javabook/user/UserResourceTests.java", first: 50, last: 59, caption: [the fixture: step clock, counted ids, fake hash, real routes])
 
-#listing("java/api/src/javabook/Main.java", first: 71, last: 76, caption: [the wiring table: kernel routes, then the user family, one register call per family as later chapters add theirs])
+#listing("java/api/src/javabook/Main.java", first: 96, last: 101, caption: [the wiring table: kernel routes, then the user family, one register call per family as later chapters add theirs])
 
 Exactness is the point. The page-walk test seeds five users and
 asserts the first page's whole body, byte for byte, including the

@@ -47,7 +47,7 @@ returns a `Response` of plain values, handlers raise `APIError`
 instead of writing a failure, and the adapter is the only code that
 touches `rfile` or `wfile`:
 
-#listing("python/api/pyapi/kernel.py", first: 377, last: 397, caption: [the adapter reads the wire into values and writes the response back])
+#listing("python/api/pyapi/kernel.py", first: 381, last: 417, caption: [the adapter reads the wire into values and writes the response back])
 
 The adapter caps its body read at one megabyte plus one byte, so a
 lying content length never buffers past the cap before the decode

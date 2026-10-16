@@ -301,7 +301,7 @@ most 1 in magnitude, and that is the whole mechanism.])
 
 #listing("math/samples/src/Ch06/gauss.c", first: 25, last: 56, caption: [partial pivoting, the largest magnitude entry leads the column, back substitution up the staircase])
 
-#listing("math/samples/src/Ch06/gauss.c", first: 138, last: 149, caption: [the disaster and the repair, one function, two row orders, errors 1.22 and 0])
+#listing("math/samples/src/Ch06/gauss.c", first: 141, last: 153, caption: [the disaster and the repair, one function, two row orders, errors 1.22 and 0])
 
 #diagram([row echelon form of Example 2.6, pivots shaded, zeros below the staircase, the last row decides solvability], length: 13pt, {
   let w = 1.5
@@ -371,9 +371,9 @@ sides, so the second through thirty-third solves are free riders, and
 the ratio widens like $n^3 \/ n^2 = n$: at $n = 1000$ the one
 factorization is worth 333 fresh right sides.
 
-#listing("math/samples/src/Ch06/gauss.c", first: 71, last: 104, caption: [lu3, the multipliers stored where the zeros came out, the permutation recorded alongside])
+#listing("math/samples/src/Ch06/gauss.c", first: 72, last: 105, caption: [lu3, the multipliers stored where the zeros came out, the permutation recorded alongside])
 
-#listing("math/samples/src/Ch06/gauss.c", first: 187, last: 218, caption: [two triangular sweeps and the flop ledger, counted units pinned at 5 and 3])
+#listing("math/samples/src/Ch06/gauss.c", first: 191, last: 222, caption: [two triangular sweeps and the flop ledger, counted units pinned at 5 and 3])
 
 #diagram([one array holds the record, multipliers below the diagonal, staircase above, two sweeps out], length: 13pt, {
   let cellv = (([9], [5], [-3]), ([$4/9$], [$-38/9$], [$-17/3$]), ([$2/9$], [$-17/38$], [$119/38$]))

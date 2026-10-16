@@ -15,7 +15,7 @@ hashes after every command.
 
 == the composition root
 
-#listing("game-systems/capstone/src/Campaign.cs", first: 29, last: 49, caption: [every stream forked once at construction, and the v2 sheet it all hangs on])
+#listing("game-systems/capstone/src/Campaign.cs", first: 32, last: 74, caption: [every stream forked once at construction, and the v2 sheet it all hangs on])
 
 Chapter 11's discipline at its widest: `"battle"`, `"loot"`,
 `"craft"`, and `"hatch"` fork at construction, battle seeds derive
@@ -43,7 +43,7 @@ folded into the state hash.
 
 == a stage becomes a battle
 
-#listing("game-systems/capstone/src/Campaign.cs", first: 408, last: 473, caption: [stats derive through the loadout, the stage arms the enemy, the seed derives])
+#listing("game-systems/capstone/src/Campaign.cs", first: 449, last: 514, caption: [stats derive through the loadout, the stage arms the enemy, the seed derives])
 
 `BeginStage` is where the systems meet: `ComposeStats` walks the
 loadout, scales each worn piece by its upgrade level, adds the
@@ -72,7 +72,7 @@ permanent progress rather than a streak.
 
 == the payout
 
-#listing("game-systems/capstone/src/Campaign.cs", first: 313, last: 341, caption: [loot rolls, gold and diamonds pay, xp crosses levels, the boss hatches a pet])
+#listing("game-systems/capstone/src/Campaign.cs", first: 354, last: 382, caption: [loot rolls, gold and diamonds pay, xp crosses levels, the boss hatches a pet])
 
 A won battle rolls the stage's weighted table through the `"loot"`
 stream, then the same stream rolls the gold between the stage's

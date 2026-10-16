@@ -211,6 +211,43 @@ grep.
   table.cell(colspan: 3)[*the performance floor: one problem, nine lanes*],
   q([the billion-row aggregation, the output contract, the exact integer-tenths arithmetic]), loc([onebrc, ch 41], [exact arithmetic, sqlite lane, full-scale table sections]), lab([TDD]),
   q([the nine-lane decision ladders, hash map versus table, windowed chunk scans, the parallel junctions]), loc([onebrc, ch 41], [the eight lane sections]), lab([EWC]),
+  table.cell(colspan: 3)[*the company loops: twelve companies, one method*],
+  q([greedy longest-match tokenization, the vocab ladder, the ambiguous-cut tie]), loc([anthropic, ch 42], [the greedy tokenization prompt]), lab([TDD]),
+  q([a buggy lru exposed by a write-ahead log, log then apply]), loc([anthropic, ch 42], [the lru and wal prompt]), lab([TDD]),
+  q([the batched inference service, and 500 gb of weights to 1,000 workers]), loc([anthropic, ch 42], [the two design sections]), lab([DRILL]),
+  q([the fault-tolerant work queue, lease, ack, reclaim]), loc([openai, ch 43], [the work queue prompt]), lab([TDD]),
+  q([the spreadsheet engine, dependencies, cycles, recalculation]), loc([openai, ch 43], [the spreadsheet engine prompt]), lab([TDD]),
+  q([coffee-shop card payments, and a text-to-video gpu job scheduler]), loc([openai, ch 43], [the two design sections]), lab([DRILL]),
+  q([the ttl store, lazy and proactive expiry]), loc([netflix, ch 44], [the ttl store prompt]), lab([TDD]),
+  q([the live playlist, windowed rotation, replay]), loc([netflix, ch 44], [the live playlist prompt]), lab([TDD]),
+  q([ad frequency capping at scale, and the ml job scheduler on a shared cluster]), loc([netflix, ch 44], [the two design sections]), lab([DRILL]),
+  q([the eight-direction clear path, ray walk with turn cost]), loc([meta, ch 45], [the clear path prompt]), lab([TDD]),
+  q([multi-head attention from scratch, scaled dot product, causal mask]), loc([meta, ch 45], [the attention prompt]), lab([TDD]),
+  q([people you may know, and notifications at scale]), loc([meta, ch 45], [the two design sections]), lab([DRILL]),
+  q([the url router, placeholders, precedence, registration-time conflicts]), loc([google, ch 46], [the url router prompt]), lab([TDD]),
+  q([islands as land arrives, union-find, count up one and down per real merge]), loc([google, ch 46], [the islands prompt]), lab([TDD]),
+  q([one million tests in ten minutes, and review summarization with attackers inside]), loc([google, ch 46], [the two design sections]), lab([DRILL]),
+  q([the lowest common manager, the org chart fold]), loc([amazon, ch 47], [the lowest common manager prompt]), lab([TDD]),
+  q([the frequency stack, most recent of the most frequent]), loc([amazon, ch 47], [the frequency stack prompt]), lab([TDD]),
+  q([a kafka file watcher for millions of files, and an object-oriented shopping cart]), loc([amazon, ch 47], [the two design sections]), lab([DRILL]),
+  q([the houses pick, allocation under constraints]), loc([microsoft, ch 48], [the houses pick prompt]), lab([TDD]),
+  q([the ai shortener bug hunt, shrinking the repro to the root cause]), loc([microsoft, ch 48], [the ai shortener prompt]), lab([TDD]),
+  q([the lab machine fleet monitor, and the windows app notification system with an ai assistant]), loc([microsoft, ch 48], [the two design sections]), lab([DRILL]),
+  q([unit ratio queries across independent families, modular inverse arithmetic]), loc([apple, ch 49], [the unit ratio prompt]), lab([TDD]),
+  q([first success under one global timeout, parallel calls on one clock]), loc([apple, ch 49], [the first success prompt]), lab([TDD]),
+  q([the centralized logging system, and the hotel room booking system]), loc([apple, ch 49], [the two design sections]), lab([DRILL]),
+  q([the real-time top-k ranking, positive deltas, worst-first heap, snapshot reads]), loc([uber, ch 50], [the top-k ranking prompt]), lab([TDD]),
+  q([the k smallest squares of a sorted array, the seam walk]), loc([uber, ch 50], [the squares prompt]), lab([TDD]),
+  q([the real-time nearby-driver service, and the data flow behind the restaurant list]), loc([uber, ch 50], [the two design sections]), lab([DRILL]),
+  q([courier pay across overlapping deliveries, stacked rates, peak multipliers, one floor]), loc([doordash, ch 51], [the courier pay prompt]), lab([TDD]),
+  q([the round-robin weight-blindness hunt, smooth weighted replacement, the vnode ring]), loc([doordash, ch 51], [the round-robin prompt]), lab([TDD]),
+  q([paying dashers while the payment service is down, and orders through a refund dag]), loc([doordash, ch 51], [the two design sections]), lab([DRILL]),
+  q([the multi-producer multi-consumer circular buffer, sequence slots, no count field]), loc([nvidia, ch 52], [the circular buffer prompt]), lab([TDD]),
+  q([streaming top-k frequent elements, space-saving, deterministic eviction]), loc([nvidia, ch 52], [the streaming top-k prompt]), lab([TDD]),
+  q([the autonomous-vehicle camera pipeline, and the compute cluster control plane]), loc([nvidia, ch 52], [the two design sections]), lab([DRILL]),
+  q([the order book, per-exchange bbo, cross-venue nbbo, lazy level deletion]), loc([citadel, ch 53], [the order book prompt]), lab([TDD]),
+  q([merge k timestamp-sorted feeds, the running price, the feed-order tie rule]), loc([citadel, ch 53], [the feed merge prompt]), lab([TDD]),
+  q([the low-latency trading system, and the low-latency metrics and alerting platform]), loc([citadel, ch 53], [the two design sections]), lab([DRILL]),
 )
 
 #diagram([every question maps to a label; a missing row is a visible gap], length: 13pt, {
@@ -267,13 +304,25 @@ grep.
   [ch41-go], [onebrc scan ladder, table against map, sharded merge], [go test], [15],
   [ch41-cs], [onebrc byte-key table, snapped parallel cuts], [dotnet], [28],
   [ch41-js], [onebrc buffer scan, windowed worker shards], [node \-\-test], [25],
+  [ch42-go], [tokenizer, wal-backed lru], [go test], [18],
+  [ch43-go], [lease-ack work queue, spreadsheet engine], [go test], [14],
+  [ch44-go, ch44-js], [ttl store, live playlist in go and js], [go test, node \-\-test], [8, 10],
+  [ch45-go, ch45-js], [clear path, attention forward in go and js], [go test, node \-\-test], [9, 13],
+  [ch46-go], [url router precedence, islands union-find], [go test], [22],
+  [ch47-go], [group lca org chart, frequency stack], [go test], [13],
+  [ch48-go, ch48-cs], [houses pick, ai shortener in go and c\#], [go test, dotnet], [6, 26],
+  [ch49-go], [unit ratios, first success under one timeout], [go test], [18],
+  [ch50-go], [concurrent top-k, seam-walk squares], [go test], [12],
+  [ch51-go], [courier pay sweep, smooth weighted rr, hash ring], [go test], [16],
+  [ch52-go], [sequence ring mpmc, space-saving counter], [go test], [9],
+  [ch53-go], [cross-venue order book, k-way feed merge], [go test], [13],
 )
 
 The ch41 c, rust, java, lua, and sqlite lanes gate through `tools/run-1brc.ps1`
 byte diffs, and its python lane's 60 plain asserts in `test_onebrc.py` ride
 the same runner's py leg, counts this table does not carry.
 
-#diagram([32 workspaces under three runners, one verify gate], length: 13pt, {
+#diagram([47 workspaces under three runners, one verify gate], length: 13pt, {
   // the three runner families with their workspace and test counts
   let col(cx, runner, ws, tests) = {
     cdraw.rect((cx - 3.4, 5.4), (cx + 3.4, 8.6), fill: luma(235), stroke: luma(120), radius: 0.02)
@@ -281,10 +330,10 @@ the same runner's py leg, counts this table does not carry.
     cdraw.content((cx, 7.05), [#ws], size: 6pt)
     cdraw.content((cx, 6.05), [#tests], size: 6pt)
   }
-  col(4.2, "go test", "18 workspaces", "236 tests")
-  col(12.0, "dotnet test", "5 workspaces", "104 tests")
-  col(19.8, "node --test", "9 workspaces", "188 tests")
-  cdraw.content((12.0, 3.4), [32 workspaces, 528 tests, one gate], size: 6pt)
+  col(4.2, "go test", "30 workspaces", "394 tests")
+  col(12.0, "dotnet test", "6 workspaces", "130 tests")
+  col(19.8, "node --test", "11 workspaces", "211 tests")
+  cdraw.content((12.0, 3.4), [47 workspaces, 735 tests, one gate], size: 6pt)
   cdraw.content((12.0, 2.4), [every suite runs in make verify], size: 6pt)
 })
 
@@ -301,22 +350,25 @@ verified:
   ..sources.map(s => (table.cell[#s.topic], table.cell[#link(s.url)[#s.url]], table.cell[#s.accessed])).flatten(),
 )
 
-#diagram([claims pinned with urls and access dates, 2026-09-09/10/29], length: 13pt, {
-  // the three verification dates with what each batch pinned
+#diagram([claims pinned with urls and access dates, 2026-09-09/10/29 and 2026-10-15], length: 13pt, {
+  // the four verification dates with what each batch pinned
   cdraw.content((11.5, 7.9), [every online claim carries its url], size: 6pt)
   cdraw.content((11.5, 6.9), [and the date it was verified], size: 6pt)
-  cdraw.content((4.6, 5.6), [5 rows: sqlite, go 1.26,], size: 6pt)
-  cdraw.content((4.6, 4.6), [react, signals, jetstream], size: 6pt)
-  cdraw.content((12.0, 5.6), [10 rows: the 2026 meta,], size: 6pt)
-  cdraw.content((12.0, 4.6), [interview ai claims], size: 6pt)
-  cdraw.content((19.4, 5.6), [12 rows: wcag, mdn, the security], size: 6pt)
-  cdraw.content((19.4, 4.6), [wave, jep, the rust book], size: 6pt)
+  cdraw.content((3.4, 5.6), [5 rows: sqlite, go 1.26,], size: 6pt)
+  cdraw.content((3.4, 4.6), [react, signals, jetstream], size: 6pt)
+  cdraw.content((9.5, 5.6), [10 rows: the 2026 meta,], size: 6pt)
+  cdraw.content((9.5, 4.6), [interview ai claims], size: 6pt)
+  cdraw.content((15.5, 5.6), [12 rows: wcag, mdn,], size: 6pt)
+  cdraw.content((15.5, 4.6), [jep, the security wave], size: 6pt)
+  cdraw.content((20.4, 5.6), [12 rows: prachub], size: 6pt)
+  cdraw.content((20.4, 4.6), [company pages], size: 6pt)
   cdraw.line((1.5, 3.4), (22.5, 3.4), stroke: luma(100), mark: (end: ">"))
-  for x in (4.6, 12.0, 19.4) {
+  for x in (3.4, 9.5, 15.5, 20.4) {
     cdraw.circle((x, 3.4), radius: 0.1, fill: luma(60))
   }
-  cdraw.content((4.6, 2.8), [2026-09-09], size: 6.5pt)
-  cdraw.content((12.0, 2.8), [2026-09-10], size: 6.5pt)
-  cdraw.content((19.4, 2.8), [2026-09-29], size: 6.5pt)
-  cdraw.content((11.5, 1.5), [27 rows, one per claim, all grep-able], size: 6pt)
+  cdraw.content((3.4, 2.8), [2026-09-09], size: 6.5pt)
+  cdraw.content((9.5, 2.8), [2026-09-10], size: 6.5pt)
+  cdraw.content((15.5, 2.8), [2026-09-29], size: 6.5pt)
+  cdraw.content((20.4, 2.8), [2026-10-15], size: 6.5pt)
+  cdraw.content((11.5, 1.5), [39 rows, one per claim, all grep-able], size: 6pt)
 })

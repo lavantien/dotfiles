@@ -391,7 +391,7 @@ gain against an old truth. The holdout gain must clear its floor. And
 the bootstrap interval's low end must sit strictly above 0, because a
 mean gain that could be zero is no gain:
 
-#listing("go/data/internal/fit/promote.go", first: 24, last: 46, caption: [the guard: finite weights, pinned baseline, gain floor, CI low above zero])
+#listing("go/data/internal/fit/promote.go", first: 24, last: 46, caption: [the guard: finite weights and interval, pinned baseline, gain floor, CI low above zero])
 
 The write path is shaped so refusal is provably harmless. Every check
 runs before any file is opened for writing, and the single rewrite

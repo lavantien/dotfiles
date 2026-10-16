@@ -121,7 +121,7 @@ hour expiry, lazily swept on read, and the reports route is deliberately not on 
 because its replay upgrades a stored 202 to the completed report, a
 sanctioned divergence that is the handler's own logic:
 
-#listing("go/api/internal/conc/idempotency.go", first: 70, last: 83, caption: [the guard: route and key resolved, everything keyed delegated])
+#listing("go/api/internal/conc/idempotency.go", first: 71, last: 84, caption: [the guard: route and key resolved, everything keyed delegated])
 
 The missing half was concurrency. A lookup that misses, a handler that
 runs, a save that lands only after the handler returns: two callers
@@ -136,7 +136,7 @@ release on the way in, a later caller waits on its channel and then
 reads the settled row, so the concurrent double submit replays the 201
 the first caller stored:
 
-#listing("go/api/internal/conc/idempotency.go", first: 149, last: 163, caption: [settle: first caller runs and releases, later callers wait and re-read the settled row])
+#listing("go/api/internal/conc/idempotency.go", first: 150, last: 164, caption: [settle: first caller runs and releases, later callers wait and re-read the settled row])
 
 #diagram([one key's life: first run, snapshot, replay], length: 13pt, {
   let node(x, y, title, l1) = {

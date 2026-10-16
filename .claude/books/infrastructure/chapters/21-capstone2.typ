@@ -22,7 +22,7 @@ the one pinned, and swapping the file breaks the page loudly instead
 of silently. The page itself is a template function with everything
 escaped through the html package:
 
-#listing("infrastructure/capstone/internal/web/page.go", first: 35, last: 70, caption: [the index: polling targets, the send form, user and room carried in the query])
+#listing("infrastructure/capstone/internal/web/page.go", first: 35, last: 74, caption: [the index: five polling targets, the send form, user and room carried in the query])
 
 Every fragment endpoint is one NATS request,
 #xref-to("infrastructure", "capstone1") showed the handler side. The
@@ -171,8 +171,8 @@ is where the running evidence lives, a test, a listing, or a gate.
   )).flatten(),
 )
 
-#diagram([where the 63 topics landed, none unmapped], length: 13pt, {
-  cdraw.content((11.0, 9.0), [63 topics, 20 chapters, 0 unmapped], size: 6.5pt)
+#diagram([where the 70 topics landed, none unmapped], length: 13pt, {
+  cdraw.content((11.0, 9.0), [70 topics, 21 chapters, 0 unmapped], size: 6.5pt)
   cdraw.line((0.5, 1.6), (22.0, 1.6), stroke: luma(100))
   let bar(x, h, count, label, hot) = {
     cdraw.rect((x, 1.6), (x + 3.0, 1.6 + h), fill: if hot { luma(205) } else { luma(235) }, radius: 0.02)
@@ -180,10 +180,11 @@ is where the running evidence lives, a test, a listing, or a gate.
     cdraw.content((x + 1.5, 0.4), [#label], size: 6pt)
   }
   bar(1.0, 3.1, [11], [containers], false)
-  bar(5.4, 6.4, [23], [engines], true)
-  bar(9.8, 3.9, [14], [stores], false)
-  bar(14.2, 3.1, [11], [testing], false)
-  bar(18.6, 1.1, [4], [capstone], false)
+  bar(4.55, 6.4, [23], [engines], true)
+  bar(8.1, 3.9, [14], [stores], false)
+  bar(11.65, 3.1, [11], [testing], false)
+  bar(15.2, 2.0, [7], [vcs], false)
+  bar(18.75, 1.1, [4], [capstone], false)
 })
 
 == pinned sources
@@ -195,7 +196,7 @@ is where the running evidence lives, a test, a listing, or a gate.
   ..sources.map(s => ([#s.topic], [#s.url], [#s.accessed])).flatten(),
 )
 
-#diagram([the 29 pinned sources by origin, each with its access date], length: 13pt, {
+#diagram([the 32 pinned sources by origin, each with its access date], length: 13pt, {
   let row(y, label, n) = {
     cdraw.content((3.8, y), [#label], size: 6pt)
     cdraw.rect((8.0, y - 0.35), (8.0 + n * 1.5, y + 0.35), fill: luma(235), radius: 0.02)
@@ -211,18 +212,22 @@ is where the running evidence lives, a test, a listing, or a gate.
   row(0.6, [artifacts.duckdb.org], 1)
   row(-0.5, [mongodb.com], 1)
   row(-1.6, [htmx.org], 1)
-  cdraw.content((14.0, -2.7), [29 sources, each with an access date], size: 6.5pt)
+  row(-2.7, [anthropic.com], 1)
+  row(-3.8, [cacm.acm.org], 1)
+  row(-4.9, [engineering.fb.com], 1)
+  cdraw.content((14.0, -6.0), [32 sources, each with an access date], size: 6.5pt)
 })
 
 #callout("note", "the two gates, closed", [
-  `make verify` runs this book's 103 docker-free go tests, 61 in the
-  capstone module and 42 in the probe module, the probes splitting
-  into 25 compiler-free tests under plain `go test ./...` and 17
+  `make verify` runs this book's 134 docker-free go tests, 61 in the
+  capstone module and 73 in the probe module, the probes splitting
+  into 56 compiler-free tests under plain `go test ./...` and 17
   duckdb-tagged tests behind the pinned dll, and it compiles every
   listing you have read against the files that passed them.
   `make verify-infra-docker` adds the linux race stage for the
   analytics module and runs the four tagged tests against the composed
-  system, absent daemon a red with instructions. Both were green on
-  2026-09-20, the day this chapter was updated, which is the only
-  kind of claim this series makes.
+  system, absent daemon a red with instructions. The docker-free lane
+  was green on 2026-10-16, the day this chapter was re-counted for the
+  vcs chapter's 28 new tests, and the docker lane on 2026-09-20, the
+  only kinds of claims this series makes.
 ])

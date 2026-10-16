@@ -191,7 +191,7 @@ The dry run: the four axis crossings, then the quadrant lie.
 The two-number play: 0.7854 versus -2.3562, the same ratio, two
 different points, and only the two-argument call can tell them apart.
 
-#listing("math/samples/src/Ch03/triangles.c", first: 23, last: 42, caption: [triangles.c, the atan2 axis walk, the atan versus atan2 quadrant lie, infinity cases, and principal folding])
+#listing("math/samples/src/Ch03/triangles.c", first: 23, last: 43, caption: [triangles.c, the atan2 axis walk, the atan versus atan2 quadrant lie, infinity cases, and principal folding])
 
 #diagram([the atan2 return map: four quadrants, four ranges, both coordinates kept], length: 13pt, {
   let cx = 4.2
@@ -312,9 +312,9 @@ with nothing after the decimal, while the 7-8-1 triangle carries a
 7.1e-15 gap between its two area routes. Integer sides plus a right
 angle are the only free lunch here, every other triangle pays rounding.
 
-#listing("math/samples/src/Ch03/triangles.c", first: 44, last: 61, caption: [triangles.c, the 3-4-5 angles, sine ratios, heron area, and the circumradius rule])
+#listing("math/samples/src/Ch03/triangles.c", first: 45, last: 62, caption: [triangles.c, the 3-4-5 angles, sine ratios, heron area, and the circumradius rule])
 
-#listing("math/samples/src/Ch03/triangles.c", first: 63, last: 76, caption: [triangles.c, the law of cosines round trip on the 7-8-1 triangle with the heron cross-check])
+#listing("math/samples/src/Ch03/triangles.c", first: 64, last: 77, caption: [triangles.c, the law of cosines round trip on the 7-8-1 triangle with the heron cross-check])
 
 #diagram([the 7-8-1 triangle to scale: gamma = 1 rad between a = 7 and b = 8, c = 7.2447 opposite], length: 13pt, {
   let ox = 1.2
@@ -363,7 +363,7 @@ The dry run:
 The two-number play: one ratio, 0.7, and sides 9.633 against 2.491, a
 factor of 3.87 between the two triangles that share it.
 
-#listing("math/samples/src/Ch03/triangles.c", first: 78, last: 101, caption: [triangles.c, the three SSA regimes and the supplementary pair with the heron cross-check])
+#listing("math/samples/src/Ch03/triangles.c", first: 79, last: 102, caption: [triangles.c, the three SSA regimes and the supplementary pair with the heron cross-check])
 
 #diagram([the ambiguous case: a = 5 swings an arc through the base ray at two points, two triangles share A = 30 degrees and b = 7], length: 13pt, {
   let ax = 1.0

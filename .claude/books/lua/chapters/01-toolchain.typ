@@ -49,9 +49,9 @@ establishes how this book proves anything at all.
 
 Samples live in `lua/samples/`, one module per chapter, each returning
 a list of named tests. There is no npm, no sdk, no test framework: the
-harness is 40 lines of lua, registry through exit code.
+harness is 43 lines of lua, registry through exit code.
 
-#listing("lua/samples/run.lua", first: 1, last: 40, caption: [the whole test runner])
+#listing("lua/samples/run.lua", first: 1, last: 43, caption: [the whole test runner])
 
 #flow(
   [the runner pipeline, chapter modules through pcall to the exit code],

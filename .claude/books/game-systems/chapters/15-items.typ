@@ -72,7 +72,7 @@ damage number cannot drift between builds.
 
 == the terrain remembers the weapon type
 
-#listing("game-systems/samples/src/Ch15/Items.cs", first: 59, last: 85, caption: [each kind is a fixed recipe over the terrain's own carve])
+#listing("game-systems/samples/src/Ch15/Items.cs", first: 63, last: 89, caption: [each kind is a fixed recipe over the terrain's own carve])
 
 #diagram([the four carve shapes on the same ground, same base radius], length: 13pt, {
   // sample one parabolic dip exactly the way Terrain.Carve does

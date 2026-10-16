@@ -258,7 +258,7 @@ holder's machine, and the contract picks the safe reading: the reuse
 revokes the whole family, the replay gets a 401, and the rotated
 token the thief did not use dies with it:
 
-#listing("c-os-cloud/api/tests/test_authn.c", first: 213, last: 224, caption: [the token's two forms pinned: 32 bytes, hex on the wire, the digest stored])
+#listing("c-os-cloud/api/tests/test_authn.c", first: 376, last: 387, caption: [the token's two forms pinned: 32 bytes, hex on the wire, the digest stored])
 
 The vector pair shows the whole story in three requests: the rotate
 answers 200 with new material, the replay of the superseded token
@@ -291,7 +291,7 @@ tier structurally, the encoded string carries 210000, which keeps the
 suite fast without lying about what production writes. Nothing
 sleeps, nothing dials, and every refusal path has its own check:
 
-#listing("c-os-cloud/api/tests/test_authn.c", first: 175, last: 186, caption: [the vector oracle: sign with the fixed secret, compare the whole token])
+#listing("c-os-cloud/api/tests/test_authn.c", first: 318, last: 329, caption: [the vector oracle: sign with the fixed secret, compare the whole token])
 
 The discipline is the same one the user resource chapter stated:
 frozen bytes are the oracle, drift means the code is wrong, and the

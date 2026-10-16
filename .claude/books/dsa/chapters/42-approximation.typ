@@ -16,9 +16,10 @@ ln n + 1, the double tree and christofides for metric tsp at 2 and
 1.5, the knapsack ladder from a greedy 1/2 through a ptas to a full
 fptas, the bin packing heuristics, and the single-flip discipline of
 #xref-to("dsa", "metaheuristics") coming back with a guarantee
-attached. Two prose sections close it, the barriers that make some
-ratios impossible and the decision table that picks the right
-surrender for a given instance size.
+attached. Four prose sections close it, the barriers that make some
+ratios impossible, the unique games release that closed the open
+spreads, the classification map it leaves behind, and the decision
+table that picks the right surrender for a given instance size.
 
 == np-hardness as an engineering boundary
 
@@ -1065,6 +1066,107 @@ their tests. The thresholds above close vertex cover, max-cut, and the
 additive bin packing line, and leave the rest of the map as section 11
 drew it.
 
+== the classification map, 2026
+
+Section 12 closed 3 thresholds and left the rest of the map as
+section 11 drew it. One table makes the whole map explicit, a row per
+classic problem, because the first question at any whiteboard is where
+the problem on it sits today. 13 rows follow, 6 moved in 2026 and 7
+stand still, 5 of the movers come from the release and 1 from a
+refutation outside it, and none of the movement separates P from NP,
+which the release does not prove and no row here claims.
+
+#table(
+  columns: (1.6fr, 1.2fr, 2.4fr, 1.6fr),
+  inset: 4pt,
+  table.header([*problem*], [*standing*], [*what 2026 moved*], [*evidence*]),
+  [sorting], [P], [nothing, theta(n log n) comparisons stands], [classic],
+  [shortest path], [P], [nothing, polynomial solvers stand], [classic],
+  [matrix multiplication], [P], [omega over C at most 9/4, O(n^(9/4+epsilon)) operations], [family 107, comparator-checked],
+  [3SUM], [P], [truly subquadratic, n^1.99923], [arXiv 2610.06783, preprint],
+  [mean-payoff, stochastic, parity games], [quasipolynomial, exact], [2^(O(log^2 L)) bit operations, 4 preprints], [family 104, split tier],
+  [satisfiability], [NP-complete], [nothing, the barrier stands], [classic],
+  [max clique], [NP-complete], [nothing, the barrier stands], [classic],
+  [traveling salesman], [NP-complete], [nothing, the metric 1.5 of section 6 stands], [classic],
+  [graph coloring], [NP-complete], [nothing, the barrier stands], [classic],
+  [hamilton cycle], [NP-complete], [nothing, the barrier stands], [classic],
+  [max cut approximation], [NP-hard past 0.8785676], [was UG-hard, now unconditional], [family 102, comparator-checked],
+  [vertex cover approximation], [NP-hard below 2], [was UG-hard, now unconditional], [family 102, comparator-checked],
+  [subset sum, exact], [weakly hard, the ladder of sections 7 and 8], [frontier 2^0.49n, under the 2^(n/2) of meet in the middle], [family 138, absent from the catalog],
+)
+
+The P side first, where 2 rows carry news. Matrix multiplication
+moved twice on paper in 2026, the public laser-method record stood
+at omega under 2.371177, Dupont et al, arXiv 2608.16884, and family 107
+of the release took the complex exponent to omega at most 9/4, giving
+O(n^(9/4+epsilon)) arithmetic operations. The tier is comparator-checked: the 9/4
+declaration and its comparator sit in the release catalog's main
+results, and the model caveat rides with it, the bound counts
+arithmetic operations over the complexes, additions, subtractions,
+and multiplications in finite division-free programs, and says
+nothing about bit complexity or practical crossover sizes.
+#xref-to("dsa", "finegrained") walks the full ladder and the profile
+argument behind the 9/4. 3SUM moved by refutation, not by release:
+arXiv 2610.06783 gives n^(2 - 1/1296), about n^1.99923, truly
+subquadratic, and the 3SUM hypothesis that stood behind a family of
+quadratic beliefs is gone. The mechanism and the consequence chain are
+#xref-to("dsa", "finegrained") territory, the row here only records
+the landing.
+
+The games row is a class of its own between P and NP-complete: exact
+values, no known polynomial algorithm, and now a quasipolynomial
+ceiling. Family 104 claims deterministic algorithms in
+2^(O((log(L+2))^2)) bit operations at complete binary input length L,
+computing exact values and optimal positional strategies in ordinary
+mean-payoff games, the nonnegative expectation-of-liminf value set in
+turn-based stochastic games, and the winning set for nonnegative
+liminf mean payoff conjoined with parity. The tier is split and the
+map states all 3 parts: of the family's 4 preprints only the
+randomized mean-payoff paper appears in the catalog, with its
+comparator, the deterministic, turn-based stochastic, and parity
+preprints carry no catalog entry, and the release's own Lean docs
+record a finite counterexample to a proposed optimization step of
+Truffet's elimination procedure, outside the catalog. The graph arena is the
+one #xref-to("dsa", "games") decides by retrograde sweeps for win,
+lose, and draw, valued here instead of colored.
+
+The NP-complete column is where nothing moved, on purpose.
+Satisfiability, max clique, the traveling salesman decision problem,
+graph coloring, and hamilton cycle sit where the classics placed them,
+the release proves no separation of P from NP, and section 11's first
+barrier still prices all 5 rows the same way. What collapsed is the
+column that used to sit beside them. Before 2026 a list of
+approximation thresholds were theorems only under the unique games
+conjecture, and section 12 recorded the release's proof of the
+conjecture itself, family 102. A proof of the conjecture is a proof
+that its distinguishing gap problem is NP-hard, the direct reduction
+the conjecture always asserted existed, so the unique
+games problem joins the NP-complete column and every UG-hard
+threshold becomes an unconditional NP-hardness statement with no
+conjecture in the chain. The 2 rows this chapter owns are max cut
+beyond 0.8785676, the semidefinite ratio of Goemans and Williamson,
+and vertex cover below factor 2, the exact boundary the matching
+cover of section 3 sits on. The mechanism, the reduction sketches,
+and the tier detail are section 12's, restated here and not re-proven:
+of family 102's 5 papers the unique games theorem, the max-cut
+hardness, and the vertex cover threshold appear in the catalog, and
+the Min-UnCut and directed feedback vertex set papers do not.
+
+The last row prices exactness. Subset sum is the weakly hard pole of
+the same family as knapsack, sections 7 and 8 walk its approximation
+ladder from greedy 1/2 through the ptas to the fptas, and its exact
+lane was the 2^(n/2) of meet in the middle. Family 138 claims the
+frontier under it, a uniform randomized classical algorithm for
+worst-case subset sum in O(2^0.49n) word-RAM time on polynomial-bit
+inputs, the time bound holding on every execution and success
+probability at least 2/3 on every input, n counting the integers.
+The tier is the floor of the map: the release catalog carries no
+formalization entry for family 138, no sources line, no comparator,
+and the claim rests on its preprints alone. Read against the pipeline
+of the next section, the row is the exact tier's new depth: when the
+fptas epsilon is not enough and the optimum itself is required, the
+walk is 2^0.49n states wide, modulo the preprint.
+
 == choosing the right surrender
 
 The corpus now holds every tier of the trade, and the choice is a
@@ -1189,7 +1291,16 @@ additive bin packing hardness with the modified integer round-up
 disproof, preprint results whose trust grades come from the release's
 catalogue of Lean 4 formalizations, the Unique Games theorem, the
 max-cut hardness, and the vertex cover factor-two papers among the
-formalized, and none of it peer reviewed. M. X. Goemans and
+formalized, and none of it peer reviewed. The classification map
+reads family 107 at ref/openai-math/family-107, fetched 2026-10-11,
+the complex 9/4 bound comparator-checked in the catalog's main
+results, families 104 and 138 at ref/openai-math/family-104 and
+ref/openai-math/family-138, fetched 2026-10-15, the quasipolynomial
+game family with only its randomized mean-payoff comparator in the
+catalog and a documented counterexample against a component, the
+subset sum family absent from the catalog entirely, and the 3SUM
+refutation arXiv 2610.06783v1 reached through the finegrained
+chapter's pin at ref/2610.06783v1.pdf. M. X. Goemans and
 D. P. Williamson, "Improved approximation algorithms for maximum cut
 and satisfiability problems using semidefinite programming", Journal
 of the ACM 42, 1995,

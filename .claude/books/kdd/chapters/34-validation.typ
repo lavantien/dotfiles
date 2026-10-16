@@ -261,8 +261,7 @@ took k, and the F12 elbow row reminds that the same rule read a
 different table three chapters ago and said 3, not 2. The metric is
 the metric; the data decides.
 
-#listing("kdd/samples/src/Ch34/validate.c", first: 328, last: 352,
-  caption: [the misassigned x5 row and the two borrowed reuse rows])
+#listing("kdd/samples/src/Ch34/validate.c", first: 328, last: 352, caption: [the misassigned x5 row and the two borrowed reuse rows])
 
 #diagram([one point dragged across the 204 gap: a explodes, b collapses, s goes negative], length: 12pt, {
   let px = (0.0, 0.5, 1.0, 1.5, 10.0, 10.5, 11.0, 11.5, 18.5, 19.0, 19.5, 20.0)

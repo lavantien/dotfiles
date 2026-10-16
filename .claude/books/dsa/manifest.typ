@@ -7,7 +7,7 @@
     title: "practical data structures and algorithms",
     subtitle: "an engineering handbook in eight languages",
     author: "Raeliosol",
-    version: "9.0",
+    version: "9.1",
     volume-label: "book 10",
   ),
   chapters: (

@@ -1402,7 +1402,7 @@ and the trace ends at the printed answer `8`.
 
 #listing("icpc/samples-js/src/ch12-pg-turningred.mjs", first: 69, last: 96, caption: [javascript, the same closure over chained edge arrays, touched cells reset afterwards])
 
-#listing("icpc/samples-py/src/Ch12/pg.py", first: 47, last: 93, caption: [python, anchored at the pin when one exists, three roots only for unpinned components])
+#listing("icpc/samples-py/src/Ch12/pg.py", first: 47, last: 93, caption: [python, three roots only for unpinned components, the pin anchors when one exists])
 
 #listing("icpc/samples-lua/ch12_pg.lua", first: 107, last: 142, caption: [lua, try_component with per-trial stamps, one-based queue like c])
 

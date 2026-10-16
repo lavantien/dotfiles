@@ -107,7 +107,7 @@ exact.
 
 == the weapon table
 
-#listing("game-systems/capstone/src/WeaponCatalog.cs", first: 15, last: 54, caption: [four elemental weapons plus the wind child, versioned with the binary])
+#listing("game-systems/capstone/src/WeaponCatalog.cs", first: 15, last: 54, caption: [four elemental weapons plus the wind child, each its own carve and window, versioned with the binary])
 
 The catalog is the balance half of the identity split: the config
 record carries seed, terrain shape, and power ceiling, everything a
@@ -152,7 +152,7 @@ and an on-hit toll that matches its element.
 
 == the hybrid ai
 
-#listing("game-systems/capstone/src/AiOpponent.cs", first: 26, last: 75, caption: [a selector tree over utility leaves, the sweep scores by expected damage])
+#listing("game-systems/capstone/src/AiOpponent.cs", first: 31, last: 85, caption: [a selector tree over utility leaves, the sweep scores by expected damage])
 
 Chapter 6's shape exactly: the tree owns priorities and the leaves
 own comparison. A hurt boss tries desperation earth first, a close

@@ -177,7 +177,7 @@ method prefix in this stack, so the label reads /healthz, empty for
 an unrouted request. The frozen vector pins every byte, one slow
 /healthz observation rendering exactly the eight lines froze:
 
-#listing("csharp-net/api/src/CsharpBook.Api/Observability/MetricsRegistry.cs", first: 167, last: 181, caption: [the exposition: counter family first, series sorted by label tuple])
+#listing("csharp-net/api/src/CsharpBook.Api/Observability/MetricsRegistry.cs", first: 171, last: 185, caption: [the exposition: counter family first, series sorted by label tuple])
 
 #listing("csharp-net/api/contract/testdata/15-metrics.txt", first: 1, last: 8, caption: [the frozen vector the exposition is checked against, byte for byte])
 

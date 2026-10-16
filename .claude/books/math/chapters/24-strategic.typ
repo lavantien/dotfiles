@@ -55,7 +55,7 @@ strict inequality somewhere. The fixture $[[2, 1], [2, 0]]$ has the first
 row weakly dominating the second, yet against column 1 both rows pay 2, so
 the weakly dominated row is still a best response there.
 
-#listing("math/samples/src/Ch24/normal.c", first: 37, last: 64, caption: [normal.c, strict dominance for both players and weak dominance, each one plain enumeration])
+#listing("math/samples/src/Ch24/normal.c", first: 38, last: 65, caption: [normal.c, strict dominance for both players and weak dominance, each one plain enumeration])
 
 #diagram([the prisoner's dilemma bimatrix, the defect row shaded as the strict dominant reply in both columns], length: 13pt, {
   let cell(x, y, t, hot) = {
@@ -116,7 +116,7 @@ the miscoordinated profiles paying (0, 0) to both.
   [battle of the sexes], [2], [$(3, 1)$, $(1, 3)$], [both miscoordinates fail],
 )
 
-#listing("math/samples/src/Ch24/normal.c", first: 78, last: 101, caption: [normal.c, pure nash enumeration: flag the column side's best replies down each row, then keep profiles where both sides are flagged])
+#listing("math/samples/src/Ch24/normal.c", first: 79, last: 102, caption: [normal.c, pure nash enumeration: flag the column side's best replies down each row, then keep profiles where both sides are flagged])
 
 #diagram([battle of the sexes deviation arrows, both miscoordinate profiles have a profitable unilateral move and drain into the two shaded equilibria], length: 13pt, {
   let prof(x, y, t, eq) = {

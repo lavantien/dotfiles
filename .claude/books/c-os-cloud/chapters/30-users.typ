@@ -82,7 +82,7 @@ is either exactly the bytes this service encoded or it is garbage, and
 garbage answers 422, never 404, because a mangled cursor is not a
 missing page, it is a broken request:
 
-#listing("c-os-cloud/api/src/users_cursor.c", first: 103, last: 114, caption: [the shape check: 36 characters, hex and dashes in their fixed lanes])
+#listing("c-os-cloud/api/src/users_cursor.c", first: 109, last: 120, caption: [the shape check: 36 characters, hex and dashes in their fixed lanes])
 
 The decoder around it accepts one spelling, `raw(member)` then digits
 then the id then the close brace, with the total length checked by
@@ -209,7 +209,7 @@ than counting from the front. The order is the pair, creation time
 then id, the cursor encodes the last row's position, and the next page
 is everything strictly after it:
 
-#listing("c-os-cloud/api/src/users_cursor.c", first: 87, last: 101, caption: [the cursor payload, two members, base64url without padding over the exact bytes])
+#listing("c-os-cloud/api/src/users_cursor.c", first: 93, last: 107, caption: [the cursor payload, two members, base64url without padding over the exact bytes])
 
 The payload is deliberately tiny, two members, because the cursor is a
 position, not a page number. Time is milliseconds since the epoch, the
@@ -253,7 +253,7 @@ adds its 412 rungs above the ladder, the missing If-Match and the
 stale one, and the walk's refusals answer 422 before any of it. The
 tests pin the refusal classes this core owns, one class per check:
 
-#listing("c-os-cloud/api/tests/test_users.c", first: 202, last: 218, caption: [the refusal classes: null on the name, wrong type, immutable members null or not])
+#listing("c-os-cloud/api/tests/test_users.c", first: 267, last: 283, caption: [the refusal classes: null on the name, wrong type, immutable members null or not])
 
 The order inside the ladder is a policy choice this chapter owns. The
 404 answers before the 403, so an unknown id and a stranger's id are

@@ -8,9 +8,9 @@ absence is a loud red. This chapter is what makes that split honest
 rather than aspirational, because the hard part is not the rule, it is
 building a system whose tests mostly do not want docker.
 
-The numbers first: the docker-free gate runs 103 go tests, 61 in the
-capstone module and 42 in the chapter probe module, and the probe
-module splits by lane, 25 compiler-free tests under plain
+The numbers first: the docker-free gate runs 131 go tests, 61 in the
+capstone module and 70 in the chapter probe module, and the probe
+module splits by lane, 53 compiler-free tests under plain
 `go test ./...` and 17 duckdb-tagged tests behind the pinned dll,
 zero skipped, and none of them ask for the engine. The docker gate
 runs 4 more that ask for nothing but the web port.
@@ -32,10 +32,10 @@ its real sql in the same one-process stack.
 
 With those three, the whole system assembles in one process. The web
 suite is the demonstration: real chat service with a real sqlite file,
-real presence and notify and history over the embedded broker, fake
-store behind history, real http handlers, real clients:
+real presence and notify and history and analytics over the embedded
+broker, fake store behind history, real http handlers, real clients:
 
-#listing("infrastructure/capstone/internal/web/web_test.go", first: 24, last: 52, caption: [the capstone minus containers: every service real except the mongo seam])
+#listing("infrastructure/capstone/internal/web/web_test.go", first: 27, last: 65, caption: [the capstone minus containers: every service real except the mongo seam])
 
 #diagram([the whole system in one process, one of the four a double], length: 13pt, {
   let quad(x0, y0, title, l1, l2) = {
@@ -227,5 +227,6 @@ independent of the implementation.
 
 sources: pkg.go.dev for the embedded nats server options and go's
 build constraints, accessed 2026-09-10. Verified by `make verify`,
-103 go tests green, and `make verify-infra-docker`, 4 tagged tests
-green, both run 2026-09-20.
+131 go tests green, re-counted for the ch 19 samples at the v2.2 wave,
+and `make verify-infra-docker`, 4 tagged tests
+green, run 2026-09-20.

@@ -101,6 +101,8 @@
   (topic: "andrew monotone chain hull", chapter: "geometry", cost: "O(n log n)", bcl: "n/a"),
   (topic: "closest pair, strip merge in y", chapter: "geometry", cost: "O(n log^2 n) as built", bcl: "n/a"),
   (topic: "shamos-hoey sweep, neighbor checks", chapter: "geometry", cost: "O(n log n) with a tree", bcl: "n/a"),
+  (topic: "3sum-hard family, geombase on three parallels, cubic parabola map, covering chain", chapter: "geometry", cost: "reductions O(n log n), all at n^2 by arrangement", bcl: "n/a"),
+  (topic: "the 2026 split, geombase subquadratic, the one-way family open", chapter: "geometry", cost: "n^1.99923 3sum, O(n^2.9983) exact triangle", bcl: "n/a"),
   (topic: "shoelace area with pick interior", chapter: "lattice", cost: "O(b) boundary walk", bcl: "n/a"),
   (topic: "ray casting point in polygon", chapter: "lattice", cost: "O(b) exact integer", bcl: "n/a"),
   (topic: "flood fill components", chapter: "lattice", cost: "O(cells)", bcl: "n/a"),

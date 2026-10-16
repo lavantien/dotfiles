@@ -150,7 +150,7 @@ groups, plus nil for a blanks-only page.
 Nine lines fold to three groups, and a blanks-only page returns
 nil, in the listings below.
 
-#listing("icpc/samples-go/input.go", first: 14, last: 25, caption: [drain an io.reader, one string per line, blanks kept])
+#listing("icpc/samples-go/input.go", first: 14, last: 21, caption: [drain an io.reader, one string per line, blanks kept])
 
 `ReadInts` is the column reader. Contest inputs hand out numbers one per line
 as often as several per line, so it splits each line on whitespace and

@@ -307,7 +307,7 @@ The bootstrap is deterministic or it cannot be pinned: a PCG stream
 seeded (seed, seed), a callback metric over row indices, one buffer
 reused across replicates, nearest-rank percentiles:
 
-#listing("interview-repertoire/samples/ch27-go/boot.go", first: 21, last: 46, caption: [the resample loop, the reused index buffer, the nearest-rank readout])
+#listing("interview-repertoire/samples/ch27-go/boot.go", first: 21, last: 46, caption: [the resample loop, the reused index buffer, the nearest-rank readout, one rounding division])
 
 Pinned from a real run: 4000 resamples of a 12-row sample summing to
 56, mean 4.67, seed 7, return the 95 percent interval [3, 6.833],

@@ -127,7 +127,7 @@ and proves nothing applies twice, reopens the database and proves the
 registry came back with it, then reads sqlite_master and asserts every
 table and index the contract's vocabulary names.
 
-#listing("python/api/pyapi/store/db.py", first: 162, last: 179, caption: [one version, one transaction, the ddl and the header bump land together, applied at most once]) // PIN: migrate loop
+#listing("python/api/pyapi/store/db.py", first: 186, last: 203, caption: [one version, one transaction, the ddl and the header bump land together, applied at most once]) // PIN: migrate loop
 
 #diagram([the version list only grows right], length: 13pt, {
   cdraw.line((0.6, 4.4), (22.0, 4.4), stroke: luma(140))
@@ -205,7 +205,7 @@ a superseded refresh token revokes the whole family inside the same
 write transaction and the SessionRevokedError answer is raised after the
 commit, so the family cannot be rolled back to life.
 
-#listing("python/api/pyapi/store/db.py", first: 183, last: 192, caption: [the write shape: begin immediate, body, and the with-block is the deferred rollback]) // PIN: with-tx shape
+#listing("python/api/pyapi/store/db.py", first: 207, last: 216, caption: [the write shape: begin immediate, body, and the with-block is the deferred rollback]) // PIN: with-tx shape
 
 #diagram([a transaction's exits, every one of them clean], length: 13pt, {
   cdraw.rect((0.4, 5.4), (6.2, 7.2), fill: luma(235), radius: 0.02)

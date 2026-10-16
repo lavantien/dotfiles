@@ -38,7 +38,7 @@ client more than it should know. The two-line happy path is the point:
 handlers read like functions, and every failure in the part flows
 through one `if`:
 
-#listing("go/api/internal/httpx/kernel.go", first: 103, last: 116, caption: [the adapter: handlers return errors, the kernel writes failures])
+#listing("go/api/internal/httpx/kernel.go", first: 103, last: 116, caption: [the adapter: handlers return errors, the kernel renders the failure envelope])
 
 #diagram([the request climbs down the stack, the failure climbs back up as a value], length: 13pt, {
   cdraw.content((5.2, 7.7), [request path], size: 6.5pt)
@@ -274,7 +274,7 @@ each later chapter's registration is two to five lines, a construction
 and a `Register` call, and the integrator applies them inside
 `wire.go`, the append-only wiring table the single `wire` call enters:
 
-#listing("go/api/cmd/api/main.go", first: 1, last: 20, caption: [main.go, pinned once: the ch29 health dispatch and the single wiring call])
+#listing("go/api/cmd/api/main.go", first: 1, last: 20, caption: [main.go, pinned once for the part: the ch29 health dispatch before the single wiring call])
 
 #diagram([the part's twelve packages stack on the kernel, the wiring table owns the order], length: 13pt, {
   cdraw.content((11.8, 8.5), [program map], size: 6.5pt)

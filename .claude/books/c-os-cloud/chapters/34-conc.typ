@@ -39,7 +39,7 @@ and both race into the same guarded update. Exactly one 200 and one
 412 every run, version 2 standing after, because the outcome is a
 fact about the where clause, not about the interleaving:
 
-#listing("c-os-cloud/api/tests/test_conc.c", first: 317, last: 329, caption: [the duel: read version 1, park at the gate, race the guard, one winner]) // PIN: duel racer
+#listing("c-os-cloud/api/tests/test_conc.c", first: 392, last: 404, caption: [the duel: read version 1, park at the gate, race the guard, one winner]) // PIN: duel racer
 
 #diagram([two patchers, one gate, one winner], length: 13pt, {
   cdraw.content((2.6, 7.4), [writer A], size: 6.5pt)

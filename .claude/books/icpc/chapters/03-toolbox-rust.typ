@@ -5,8 +5,8 @@
 Rust enters the contest third in the corpus reading order, between C
 and Go, and its toolbox is the eighth. Eleven files live in
 `books/icpc/samples-rust/src/Ch03/`, one module per file, each
-self-contained with its check harness embedded: 1362 non-blank lines
-carrying 278 checks, zero dependencies, every structure either std or
+self-contained with its check harness embedded: 1380 non-blank lines
+carrying 283 checks, zero dependencies, every structure either std or
 built here, compiled per file under a pinned rustc 1.99.0 with
 `--edition 2024 -D warnings`. The module list mirrors chapter 2 file
 for file, bigint through json, with one addition, the token scanner
@@ -500,10 +500,14 @@ exist:
   scan from x = 7 by steps of 10 finds 27, 27 mod 3 = 0, the pair (27,
   30). Its refusal twin, crt(9, 10, 0, 5), dies on the gcd test: 1 is
   not divisible by 5.
++ The 64-bit boundary: a zero modulus either side refuses before any
+  arithmetic, a coprime prime pair whose product passes u64 refuses
+  through the checked multiply, and 15 x 2^60, which fits, resolves at
+  l - 1, the last candidate of the counted loop.
 
-#listing("icpc/samples-rust/src/Ch03/num.rs", first: 80, last: 95, caption: [the residue difference normalized through u128, the scan to the combined class, None on conflict])
+#listing("icpc/samples-rust/src/Ch03/num.rs", first: 80, last: 98, caption: [the residue difference normalized through u128, the checked lcm, the counted scan, None on conflict, zero moduli, or a combined modulus past 64 bits])
 
-#listing("icpc/samples-rust/src/Ch03/num.rs", first: 154, last: 161, caption: [the showcase block: the square of max pinned in full, checked add refusing, the widening boundary])
+#listing("icpc/samples-rust/src/Ch03/num.rs", first: 173, last: 180, caption: [the showcase block: the square of max pinned in full, checked add refusing, the widening boundary])
 
 == md5 and json leaves
 
@@ -598,7 +602,7 @@ unchanged.
 
 == built here, cited elsewhere
 
-Eleven files, 1362 non-blank lines, 278 checks, zero dependencies, and
+Eleven files, 1380 non-blank lines, 283 checks, zero dependencies, and
 the split between what this toolbox builds and what it borrows:
 
 #table(
@@ -616,7 +620,7 @@ the split between what this toolbox builds and what it borrows:
   [mulmod, modpow, crt], [built, `num.rs`], [native u128, the residue normalized through u128],
   [md5], [built, `md5.rs`], [rfc 1321, wrapping adds at the round math],
   [json], [built, `json.rs`], [depth gate 128, rfc-narrow numbers vs strtod],
-  [size], [1362 non-blank, non-comment], [1523 raw lines, 11 files],
+  [size], [1380 non-blank, non-comment], [1542 raw lines, 11 files],
   [dependencies], [none], [per-file rustc, no Cargo.toml, std only],
   [the integer boundary], [`u128` native], [wrapping where c wraps, crt through u128, md5 the one wrap site],
 )
@@ -631,9 +635,9 @@ wide product from `Math.multiplyHigh` because the language stops at 64
 bits. Rust is the pole where the wide lane is simply there.
 
 Verified by `make verify-rust`, whose book-suite leg compiles and runs
-`books/icpc/samples-rust/src`: 11 files, 278 checks, rustc 1.99.0
+`books/icpc/samples-rust/src`: 11 files, 283 checks, rustc 1.99.0
 pinned, bigint 26, deque 20, grid 33, heap 30, io 17, json 32, map 38,
-md5 9, num 34, scan 19, vec 20.
+md5 9, num 39, scan 19, vec 20.
 
 sources: doc.rust-lang.org, the standard library pages for `Vec`,
 `VecDeque`, `BinaryHeap`, `BTreeMap`, and `BTreeSet`, accessed

@@ -387,7 +387,7 @@ map keys sort ascending so the bytes out are a pure function of the value
 in, and NaN and both infinities render as null because the artifact is a
 script tag and none of the three has a literal:
 
-#listing("go/data/internal/engine/js.go", first: 117, last: 153, caption: [the struct arm: declaration order, json names, omitempty, the dash tag and unexported fields skipped like the standard encoder])
+#listing("go/data/internal/engine/js.go", first: 118, last: 154, caption: [the struct arm: declaration order, json names, omitempty, the dash tag and unexported fields skipped like the standard encoder])
 
 The one function the whole parity contract rests on is smaller than its
 consequences. `RoundFixed` rounds a float by printing it at a fixed number
@@ -398,7 +398,7 @@ artifact ships, not the unrounded doubles that produced them. Without this
 function the Go side would average values the browser never saw, and the
 two scores would drift in the fourth decimal forever:
 
-#listing("go/data/internal/engine/js.go", first: 54, last: 61, caption: [RoundFixed: parse back exactly what fmtFixed printed, the artifact's digits are the truth])
+#listing("go/data/internal/engine/js.go", first: 55, last: 62, caption: [RoundFixed: parse back exactly what fmtFixed printed, the artifact's digits are the truth])
 
 #diagram([the type walk: one switch, six shapes, one panic], length: 13pt, {
   cdraw.content((11.5, 8.8), [jsValue(v)], size: 6.5pt)

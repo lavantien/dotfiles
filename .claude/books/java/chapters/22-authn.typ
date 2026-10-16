@@ -165,7 +165,7 @@ install the actor as an exchange attribute, and for a pattern that is
 not open and an actor that did not resolve, answer the 401 envelope
 with the rfc 9110 challenge header and stop the chain:
 
-#listing("java/api/src/javabook/authn/Authn.java", first: 59, last: 97, caption: [install the actor, close the closed routes, one message for missing and invalid alike])
+#listing("java/api/src/javabook/authn/Authn.java", first: 59, last: 98, caption: [install the actor, close the closed routes, one message for missing and invalid alike])
 
 Three decisions in those lines. A bad token on an open route is not
 a failure: it means no actor, exactly like a request that carried
@@ -199,7 +199,7 @@ open set names the routes that take anonymous traffic, the two
 probes, registration, and login itself, and everything else in the
 table now demands a bearer token:
 
-#listing("java/api/src/javabook/Main.java", first: 64, last: 76, caption: [the wiring: the filter stack in its order, login reading the same store registration writes])
+#listing("java/api/src/javabook/Main.java", first: 81, last: 100, caption: [the wiring: the filter stack in its order, login reading the same store registration writes])
 
 One store instance serves both families, stated in a comment because
 it is the one wiring mistake this chapter can make silently: a login

@@ -112,4 +112,13 @@
   (topic: "family 107 lean sources and comparator challenges", url: "ref/openai-math/family-107/lean-Main.lean, lean-AuxiliarySeparation-Main.lean, lean-ComparatorChallenges.lean, and doc-107.md, fetched 2026-10-11", accessed: "2026-10-11"),
   (topic: "staggered-extraction verification tree, sha256-pinned inputs and verifier", url: "ref/openai-math/family-107/staggered-verification/, scripts and data fetched 2026-10-11 from github.com/openai/math", accessed: "2026-10-11"),
   (topic: "family 107 verifier recheck outputs, native log and rational series modes", url: "ref/openai-math/family-107/recheck/, generated 2026-10-11 on this machine, provenance is the command lines in ref/openai-math/family-107/README.md", accessed: "2026-10-11"),
+  (topic: "family 104, quasipolynomial games, stance row and dsa games consumption", url: "4 preprints, local cache ref/openai-math/family-104/ with doc-104.md, fetched 2026-10-15", accessed: "2026-10-15"),
+  (topic: "family 109, integer multiplication below n log n, stance row", url: "local cache ref/openai-math/family-109/, fetched 2026-10-15", accessed: "2026-10-15"),
+  (topic: "family 130, exact dft power saving, stance row", url: "local cache ref/openai-math/family-130/ with doc-130.md, fetched 2026-10-15", accessed: "2026-10-15"),
+  (topic: "family 138, subset sum in 2^0.49n, stance row", url: "local cache ref/openai-math/family-138/, fetched 2026-10-15", accessed: "2026-10-15"),
+  (topic: "family 166, higher-dimensional distinct distances, stance row", url: "local cache ref/openai-math/family-166/, fetched 2026-10-15", accessed: "2026-10-15"),
+  (topic: "family 167, weak pinned distinct distances, stance row", url: "local cache ref/openai-math/family-167/ with doc-167.md, fetched 2026-10-15", accessed: "2026-10-15"),
+  (topic: "family 183, halving lines power saving, stance row", url: "local cache ref/openai-math/family-183/ with doc-183.md, fetched 2026-10-15", accessed: "2026-10-15"),
+  (topic: "family 191, heilbronn triangle lower bound, stance row", url: "local cache ref/openai-math/family-191/ with doc-191.md, fetched 2026-10-15", accessed: "2026-10-15"),
+  (topic: "gajentaan and overmars, the 3sum-hard geometry catalogue", url: "computational geometry 5 (1995) 165-185, journal copy sha256 632482cc plus the 1993 utrecht tech report, local cache ref/gajentaan-overmars/", accessed: "2026-10-15"),
 )

@@ -83,7 +83,7 @@ Every chapter carries one of three labels on its sections.
 == what this book is not
 
 It is not a problem archive. The inventory is the frequent sixty or so, the
-questions that recur across loops, stacked into 158 index rows across the 40
+questions that recur across loops, stacked into 204 index rows across the 52
 practice chapters, each with working code where code is the honest answer and
 a drilled script where talking is. Depth questions, the
 ones that separate a practitioner from a memorizer, cross reference the
@@ -102,7 +102,11 @@ security answers, estimation at the back of the envelope and four worked
 design prompts, and the human round, behavioral and the observed screen,
 take-homes and debugging, negotiation, and the java and rust transfer, so
 every stage of a real loop from the first screen to the signed offer
-carries a drilled answer here.
+carries a drilled answer here. Part 5, chapters 42 through 53, is the
+company door itself: twelve loops walked from their own published pages,
+the rounds, the banks, and the quirks each company's candidates actually
+report, two worked prompts and two design walkthroughs per door, floored
+on the same handbooks the first four parts built.
 
 #flow([every depth question has an owner, the frequent sixty or so stay here],
   node((0, 0), [a depth question]),

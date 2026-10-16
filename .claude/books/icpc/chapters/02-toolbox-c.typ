@@ -12,7 +12,7 @@ no translation units, no build file: a year chapter includes what it
 needs and compiles one file. Each module ships with a `_test.c`
 program that runs crafted fixtures with hand-computed answers, and the
 gate compiles all of them under `-Werror` with the format and address
-sanitizer legs on top. Ten programs, 251 internal checks, 1125 lines
+sanitizer legs on top. Ten programs, 257 internal checks, 1134 lines
 of header. This chapter walks each module with its test, and where a
 design decision has a story, the story is told here once so the year
 chapters can just cite it. The Lua twin of this chapter is
@@ -724,6 +724,9 @@ fold.
 + The non-coprime pair 1 mod 6 with 3 mod 10 resolves to 13 mod 30,
   asserted, and the contradiction is rejected by the gcd test with
   return 0.
++ The 64-bit boundary: a zero modulus either side and a coprime prime
+  pair whose product passes 2^64 return 0, and 15 x 2^60, which fits,
+  resolves at l - 1, the last candidate the counted scan visits.
 
 #table(
   columns: (auto, 1.7fr, auto),
@@ -753,7 +756,7 @@ chinese remainder theorem fixture is the classic, 2 mod 3, 3 mod 5,
 non-coprime pair, 1 mod 6 with 3 mod 10, resolving to 13 mod 30 and
 the inconsistent pair rejected by the gcd test.
 
-#listing("icpc/samples-c/src/Ch02/num.h", first: 87, last: 102, caption: [c: pairwise crt, the consistency check against gcd, and the scan to the combined residue])
+#listing("icpc/samples-c/src/Ch02/num.h", first: 87, last: 111, caption: [c: pairwise crt, the gcd consistency check, the counted scan, refusals on zero moduli and a combined modulus past 64 bits])
 
 The Lua twin arrives at the same add-and-double design from the
 opposite direction. C never reaches a wraparound, the 128-bit product
@@ -989,8 +992,8 @@ add-and-double never starts.
   [json], [node pool with tags], [plain tables, null sentinel], [c needs the tree, lua is the tree],
 )
 
-Verified by `make verify-c`: 10 programs, 251 internal checks, bigint
-36, deque 20, grid 33, heap 27, io 15, json 34, map 26, md5 9, num 31,
+Verified by `make verify-c`: 10 programs, 257 internal checks, bigint
+36, deque 20, grid 33, heap 27, io 15, json 34, map 26, md5 9, num 37,
 vec 20, plus the format and address-sanitizer legs of the gate.
 
 sources: R. Rivest, RFC 1321, The MD5 Message-Digest Algorithm, April

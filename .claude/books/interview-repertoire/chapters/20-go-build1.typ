@@ -132,7 +132,7 @@ the fake. `fakeClock.Sleep` never blocks, it advances `now` and
 appends the duration, so the assertions read the waits a client
 would have taken rather than the wall clock's patience:
 
-#listing("interview-repertoire/samples/ch20-go/clientlimit.go", first: 18, last: 49, caption: [the clock seam, the 60-second cap, the bounded attempts, the sentinel])
+#listing("interview-repertoire/samples/ch20-go/clientlimit.go", first: 18, last: 49, caption: [the clock seam, the cap at the smaller of header and minute, three attempts, the sentinel])
 
 The declarations carry the policy. `MaxRetryAfter` is 60 seconds, so
 a `Retry-After` of any size collapses to one minute.
@@ -140,7 +140,7 @@ a `Retry-After` of any size collapses to one minute.
 `ErrStillLimited` is the sentinel that ends a retry instead of a
 spin that hopes.
 
-#listing("interview-repertoire/samples/ch20-go/clientlimit.go", first: 76, last: 128, caption: [Wait sleeps the exact deficit, Do honors the capped Retry-After])
+#listing("interview-repertoire/samples/ch20-go/clientlimit.go", first: 76, last: 128, caption: [Wait sleeps the exact deficit outside the lock, Do honors the capped Retry-After])
 
 `Wait` is the server bucket's arithmetic with the opposite refusal
 policy: refill by elapsed time, and when the bucket is empty compute

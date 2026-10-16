@@ -287,7 +287,7 @@ replays the frozen vector, and the listener test serves the
 exposition over a loopback socket and asserts the body equals
 `render()`. Grep the id and every artifact answers:
 
-#listing("python/api/pyapi/obs.py", first: 426, last: 444, caption: [the recording layer: status off the Response value, both series ticked, the clock injected])
+#listing("python/api/pyapi/obs.py", first: 432, last: 450, caption: [the recording layer: status off the Response value, both series ticked, the clock injected])
 
 #diagram([one request id through every signal], length: 13pt, {
   let step(x0, title, l1) = {

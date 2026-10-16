@@ -1272,6 +1272,100 @@ family.
   cdraw.content((16.8, 2.3), [x = y maps to v = 0], size: 6pt)
 })
 
+== the 2026 landings in combinatorial geometry
+
+Four results of the 2026 openai/math release land on objects this
+chapter builds with, and each one changes a number the sections
+above treat as fixed. The release is introduced by
+#xref-to("dsa", "approximation"), which carries its unique games
+thresholds, and #xref-to("dsa", "finegrained") walks its matrix
+multiplication ladder: a GitHub publication dated 2026-10-06, 719
+manuscripts in 372 result families, no peer review behind any of
+them. The release's own catalog is what grades the claims below:
+formalization.yaml calls itself a catalog of papers with a
+formalized main result, marks its scope partial progress, and its
+review unchecked, so every result here carries the tier it actually
+sits at.
+
+Halving lines, beside the sweep. A halving line passes through 2 of
+the n points and leaves the remaining n - 2 split evenly, n even,
+and their count has stood at Dey's O(n^(4/3)) since 1998, the same
+barrier his k-set bound O(n(k+1)^(1/3)) sits at. Family 183
+improves the planar halving-line bound to O(n^(4/3-eps)) over sets
+with no three collinear, an absolute eps > 0, and more generally
+bounds strictly separable k-subsets by O(n(k+1)^(1/3-eps_0)) over
+1 <= k <= n/2, constants and exponents nonquantitative. The duality
+is exact: the ottmann sweep reports every crossing of an
+arrangement, the standard point-line dual sends the n points to n
+lines, and the halving lines are precisely the crossings on the
+median level of that dual arrangement, the level with (n - 2) / 2
+lines below, so the theorem caps how many of the sweep's events can
+land on one level. Tier: the comparator exists in the release's
+lean docs, HalvingLines.lean, halving pairs bounded by Cn^(4/3-eps)
+for every sufficiently large even n over no-three-collinear sets,
+the constants existential, but the preprint has no entry in the
+formalization catalog, so comparator-checked in the lean docs.
+
+Distinct distances, the Erdos 1946 pair of questions, which the
+release answers from 2 sides. The global planar count Guth and Katz
+pinned at Omega(n/log n) says nothing about any single point, and
+the pinned question asks what one point must see: family 167 proves
+the weak pinned distance theorem, for every fixed eps > 0 all but
+o(n) points of any n-point planar set determine at least n^(1-eps)
+distinct nonzero distances, the per-pin reading of the distance
+lists the voronoi section clips into cells, one bisector per other
+site. The complementary side pushes unit distances below the
+Cn^(4/3) cap Spencer, Szemeredi, and Trotter proved in 1984: at
+most O(n^(4/3-delta)) unit pairs for an absolute delta > 0. The
+tier splits inside the family: the weak-pinned preprint sits in the
+catalog sources with the registered comparator OAI.WeakPinned.main,
+comparator-checked, while the unit-distance bound is documented in
+the release docs only, its comparator in the lean docs and its
+preprint absent from the catalog.
+
+Family 166 leaves the plane every section of this chapter works in
+and settles the same question once dimension climbs: for every
+fixed d >= 3, any n >= 2 distinct points in R^d determine at least
+c_d n^(2/d) distinct distances, c_d > 0 depending only on the
+dimension, which matches the integer-grid order and closes the
+higher-dimensional Erdos distinct-distances conjecture at a
+constant factor. The exponent is forced from above, the
+d-dimensional grid's n points carry only order n^(2/d) distinct
+distances, so no larger floor can hold in any dimension. Tier: the
+release catalog carries no formalization entry of any kind for this
+family, no sources row and no lean doc, a released preprint alone.
+
+Heilbronn's triangle problem, beside the empty-region discipline.
+The question places n points in the unit square and asks how large
+a floor can be guaranteed for the smallest triangle any 3 of them
+determine, and the standing belief was almost n^(-2), the optimum
+n^(-2) up to subpolynomial factors. Family 191 constructs, for
+every sufficiently large n, n points in the unit square where every
+determined triangle has area at least n^(-2+eta) for one absolute
+eta > 0, which disproves the almost-n^(-2) belief outright. The
+chapter's arithmetic is already in place:
+#xref-to("dsa", "geometry")'s orientation cross computes twice each
+triangle's signed area, the primitive every triple here rides on,
+and the delaunay section's empty-circumcircle criterion is the same
+every-triple discipline asked of circles instead of areas. Tier,
+with the lean docs' caveat carried verbatim: the comparator
+HeilbronnTriangle.lean states "The linked construction is for an
+unbounded sequence of sizes; the paper's statement for every
+sufficiently large n is broader", so the formalized construction
+covers an unbounded sequence of sizes and is strictly weaker than
+the paper's claim, and the preprint itself has no formalization
+catalog entry.
+
+None of the 4 moves an algorithm in this chapter. The sweeps,
+clips, calipers, and cells keep their bounds and their pinned
+fixtures, and what changes is the arithmetic above them: fewer
+median-level crossings than 1998 allowed, richer distance lists for
+almost every pin, a tight n^(2/d) floor in every dimension from 3
+up, and a Heilbronn floor above n^(-2). The tier travels with each
+theorem, and the 4 families here span the catalog's whole range, a
+registered comparator, a lean-docs comparator, a bound documented
+in the docs only, and no formalization entry at all.
+
 == across the eight languages
 
 Featured build size counted as non-blank, non-comment lines of the
@@ -1326,7 +1420,22 @@ section cites "Search for a pair of intersecting segments" for the
 neighbor-ordering groundwork plus the same clrs chapter for the
 full sweep. Application sources: icpc 2018 problem G (book 11, chapter 11) for the half-plane, voronoi, and planar-faces sections,
 and icpc 2017 problem A (book 11, chapter 10) cross-named as the
-calipers kin. Sample behavior verified by the eight suite gates
+calipers kin. 2026 landings sources: OpenAI, "Sharing AI progress
+in mathematics", https://openai.com/index/sharing-ai-progress-in-mathematics/,
+published 2026-10-06, the repository github.com/openai/math fetched
+2026-10-15, families 166, 167, 183, and 191 read against the local
+caches under ref/openai-math/, each family's facts.md carrying the
+overview claim, the formalization.yaml status, and the lean docs
+comparators, none of it peer reviewed. The classic bounds the
+landings move past: P. Erdos, "On sets of distances of n points",
+American Mathematical Monthly 53, 1946, the distinct-distances and
+unit-distance questions. T. K. Dey, "Improved bounds for planar
+k-sets and related problems", Discrete and Computational Geometry
+19, 1998, the O(n^(4/3)) halving barrier. J. Spencer, E. Szemeredi,
+and W. T. Trotter, "Unit distances in the Euclidean plane", 1984,
+the Cn^(4/3) unit-distance cap. L. Guth and N. Katz, "On the Erdos
+distinct distances problem in the plane", Annals of Mathematics
+181, 2015, the global planar floor. Sample behavior verified by the eight suite gates
 scoped to chapter 37: c 10 files and 113 checks, rust 10 files
 and 113 checks under run-rust-samples in books/dsa/samples-rust,
 go 31 test

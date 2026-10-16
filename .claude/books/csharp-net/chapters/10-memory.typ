@@ -261,7 +261,7 @@ samples assembly:
 
 The relaxations in one slice of the real sample:
 
-#listing("csharp-net/samples/src/CsharpBook.Preview/MemorySafety.cs", first: 10, last: 35, caption: [pointer existence, address-of, fixed, sizeof, stackalloc to pointer, all in safe code])
+#listing("csharp-net/samples/src/CsharpBook.Preview/MemorySafety.cs", first: 10, last: 35, caption: [pointer existence, address-of, fixed, sizeof, stackalloc to pointer, all in safe code],)
 
 #diagram([the boundary moved, pointer existence is safe, access is not], length: 13pt, {
   // the operations at top, safe side left, unsafe side right
@@ -297,7 +297,7 @@ cannot classify safety itself. The bigger half of the model, caller
 unsafe obligations and the assembly opt in, is not enforced at RC1:
 marking a member `unsafe` currently has no effect on its callers:
 
-#listing("csharp-net/samples/src/CsharpBook.Preview/MemorySafety.cs", first: 37, last: 57, caption: [the unsafe expression form, in a return and in a field initializer])
+#listing("csharp-net/samples/src/CsharpBook.Preview/MemorySafety.cs", first: 37, last: 57, caption: [the unsafe expression form, in a return and in a field initializer],)
 
 == what .NET 10 and 11 changed
 
@@ -338,7 +338,7 @@ dropped after an empty span guard. Those are release note claims too,
 the pattern to apply is the one this chapter keeps repeating, write
 the plain shape and let the JIT close the gap.
 
-#listing("csharp-net/samples/src/CsharpBook.Preview/MemorySafety.cs", first: 59, last: 65, caption: [the runtime async toggle demo, plain await shape under runtime-async=on])
+#listing("csharp-net/samples/src/CsharpBook.Preview/MemorySafety.cs", first: 59, last: 65, caption: [the runtime async toggle demo, plain await shape under runtime-async=on],)
 
 sources: learn.microsoft.com, fundamentals of garbage collection,
 workstation and server gc, background gc, the large object heap,

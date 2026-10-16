@@ -149,16 +149,17 @@ rows, which the digest discipline needs. Loading goes through the
 driver's appender, one row per call, NaN masked values crossed to sql
 NULL on the way in. A file stamped with a newer schema version is
 refused rather than guessed at, the analytics precedent from
-#xref-to("infrastructure", "duckdb"). The transform stage is three
+#xref-to("infrastructure", "duckdb"). The transform stage is four
 views: `v_customers_clean` imputes age and income with the global
 median, `v_items_clean` joins each masked price to its product's
-median sale price, and `v_features` and `v_bins` min-max normalize and
+median sale price with the list price as the last fallback, and
+`v_features` and `v_bins` min-max normalize and
 equal-width bin the cleaned columns. The miners never mutate the
 loaded corpus, they read views.
 
-#listing("kdd/capstone/internal/store/load.go", first: 84, last: 94, caption: [the appender loop: one row per call, NaN to NULL at the boundary])
+#listing("kdd/capstone/internal/store/load.go", first: 91, last: 101, caption: [the appender loop: one row per call, NaN to NULL at the boundary])
 
-#listing("kdd/capstone/internal/store/views.go", first: 23, last: 30, caption: [the price imputation view: each masked row joins its product's median sale price])
+#listing("kdd/capstone/internal/store/views.go", first: 27, last: 34, caption: [the price imputation view: product median first, the list price as the last fallback])
 
 #diagram([the data path, wide boxes are tables and views, the appender is the only writer], length: 13pt, {
   let box(x, y, w, label, fillv) = {

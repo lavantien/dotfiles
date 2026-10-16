@@ -182,7 +182,7 @@ that timing travels outward through the stack, as an attribute and a
 log line, where the access log outside it picks the number up for
 its own line:
 
-#listing("java/api/src/javabook/middleware/Timing.java", first: 27, last: 35, caption: [nanoTime around the chain, micros published as the attribute and logged])
+#listing("java/api/src/javabook/middleware/Timing.java", first: 26, last: 35, caption: [nanoTime around the chain, micros published as the attribute and logged])
 
 #diagram([two ways a duration can travel: the header lane is closed at commit, the attribute lane is open], length: 13pt, {
   cdraw.content((6.4, 8.2), [the header lane], size: 6.5pt)
