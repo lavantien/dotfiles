@@ -4,7 +4,7 @@ All notable changes to this project are documented in this file, newest first. O
 
 ## [Unreleased]
 
-The readme corpus section names the rust volume and the 01 through 15 plus 17 pdf numbering.
+The readme corpus section names the rust volume and the 01 through 15 plus 17 pdf numbering, the books corpus section moved after neovim, and the release process section is gone.
 
 ## [6.7] - 2026-10-16
 
