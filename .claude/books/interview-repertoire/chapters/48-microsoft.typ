@@ -9,9 +9,10 @@ same company up to 173, updated 09.30.2026 with 17 added in the last
 90 days, and its loop leaks code into every stage: the FAQ records
 lowest common ancestor and merge intervals put to machine learning
 engineers in the HR screen, a boundary no other page in this arc
-records. This chapter maps that loop, works its 2 most engaged coding
-prompts test-first, a binary-searched houses pick in go and an
-ai-generated url shortener bug hunt in c sharp, and walks its 2 most
+records. This chapter maps that loop, works 2 coding prompts
+test-first, the ai-generated url shortener bug hunt in c sharp, the
+page's most engaged coding card at 94 likes and 633 solvers, and
+beside it a binary-searched houses pick in go, and walks its 2 most
 microsoft-distinctive design prompts in the
 #xref-to("repertoire", "design-prompts") voice, a lab machine fleet
 monitor with hang detection and remote reboot, and a windows app
@@ -54,8 +55,8 @@ Leadership 33, Machine Learning 21, Software Engineering
 Fundamentals 21, ML System Design 17, every row higher, so the 2
 surfaces measure different things and neither explains itself.
 
-Difficulty, from the page's spread block: 171 medium, 41 hard, 20
-easy. The FAQ's own characterization is worth keeping verbatim for
+Difficulty, from the intro paragraph and the FAQ: 171 medium, 41
+hard, 20 easy. The FAQ's own characterization is worth keeping verbatim for
 its shape: `Expect standard-shaped algorithm problems asked cleanly rather than exotic ones.` Seniority, FAQ block: 188 General, 34 Senior+,
 10 intern or new grad, a set weighted to the generalist.
 
@@ -260,7 +261,8 @@ payload: that is 5000 over 1200 seconds, about 4 dispatches a second
 steady and 20 at a 5x morning peak when nightly runs finish.
 Payloads at 2 GB each, os and game images are heavy, fetched from
 content-addressed storage at an 80 percent hit rate, so the miss
-stream is 0.8 fetches a second steady and 1.6 GB per second at peak,
+stream is 0.8 fetches a second steady, 1.6 GB per second at that
+steady rate and 8 GB per second at the 5x morning peak,
 which is why machines pull and the scheduler never ships bytes.
 Heartbeats every 10 seconds per machine are 500 tiny writes a second.
 The fleet state is 5000 records at 4 KB, 20 MB, one process's
@@ -339,7 +341,7 @@ The assistant is the cost center: on-device triage with a small
 quantized model gates everything, and one cloud digest per hour per
 opted-in user, assume 10 million opted in, is about 2.8k model calls
 a second at 2k input tokens each, roughly 6 million input tokens a
-second at peak, a spend line that dictates the split.
+second sustained, a spend line that dictates the split.
 
 #flow(
   [local render free, on-device triage gating a metered cloud digest],

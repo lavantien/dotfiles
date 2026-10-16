@@ -218,10 +218,10 @@ grep.
   q([the fault-tolerant work queue, lease, ack, reclaim]), loc([openai, ch 43], [the work queue prompt]), lab([TDD]),
   q([the spreadsheet engine, dependencies, cycles, recalculation]), loc([openai, ch 43], [the spreadsheet engine prompt]), lab([TDD]),
   q([coffee-shop card payments, and a text-to-video gpu job scheduler]), loc([openai, ch 43], [the two design sections]), lab([DRILL]),
-  q([the ttl store, lazy and proactive expiry]), loc([netflix, ch 44], [the ttl store prompt]), lab([TDD]),
+  q([the ttl store, lazy expiry with the sweeper declined]), loc([netflix, ch 44], [the ttl store prompt]), lab([TDD]),
   q([the live playlist, windowed rotation, replay]), loc([netflix, ch 44], [the live playlist prompt]), lab([TDD]),
   q([ad frequency capping at scale, and the ml job scheduler on a shared cluster]), loc([netflix, ch 44], [the two design sections]), lab([DRILL]),
-  q([the eight-direction clear path, ray walk with turn cost]), loc([meta, ch 45], [the clear path prompt]), lab([TDD]),
+  q([the eight-direction clear path, unit-cost bfs with turn accounting]), loc([meta, ch 45], [the clear path prompt]), lab([TDD]),
   q([multi-head attention from scratch, scaled dot product, causal mask]), loc([meta, ch 45], [the attention prompt]), lab([TDD]),
   q([people you may know, and notifications at scale]), loc([meta, ch 45], [the two design sections]), lab([DRILL]),
   q([the url router, placeholders, precedence, registration-time conflicts]), loc([google, ch 46], [the url router prompt]), lab([TDD]),
@@ -276,11 +276,11 @@ grep.
   inset: 5pt,
   align: (left, left, center, center),
   table.header[*workspace*][*contents*][*runner*][*tests*],
-  [ch02-go, ch02-cs], [paradigms in go and c\#], [go test, dotnet], [7, 12],
+  [ch02-go, ch02-cs], [paradigms in go and c\#], [go test, dotnet], [7, 9],
   [ch03-go, ch03-cs], [the seven structures], [go test, dotnet], [25, 22],
   [ch04-go], [graph traversal and topo sort], [go test], [10],
-  [ch05-go, ch05-cs], [classics part 1], [go test, dotnet], [17, 29],
-  [ch06-go, ch06-cs], [classics part 2], [go test, dotnet], [10, 13],
+  [ch05-go, ch05-cs], [classics part 1], [go test, dotnet], [17, 13],
+  [ch06-go, ch06-cs], [classics part 2], [go test, dotnet], [10, 9],
   [ch07-js], [js core demos], [node \-\-test], [22],
   [ch08-js], [js dom demos, styles, the centering choice], [node \-\-test], [16],
   [ch09-js], [from-scratch implementables and the combinator ladder], [node \-\-test], [40],
@@ -295,15 +295,15 @@ grep.
   [ch22-go], [jetstream pipeline over embedded nats], [go test], [3],
   [ch23-go], [window, pointers, search, greedy, backtracking, bits], [go test], [13],
   [ch24-go], [dijkstra, union-find, kruskal, prim], [go test], [12],
-  [ch27-go], [exact binomial, midranks, auc, bootstrap, holm and bh], [go test], [26],
+  [ch27-go], [exact binomial, midranks, auc, bootstrap, holm and bh], [go test], [27],
   [ch28-go], [cosine neighbors, naive bayes, the levelwise pass], [go test], [22],
   [ch32-js], [css engine models and styles], [node \-\-test], [14],
   [ch33-js], [pipeline, a11y, contrast models], [node \-\-test], [10],
   [ch34-js], [security answer models, xss csrf cors sql headers], [node \-\-test], [14],
   [ch36-go], [base62 codec, windowed counter allocator], [go test], [11],
   [ch41-go], [onebrc scan ladder, table against map, sharded merge], [go test], [15],
-  [ch41-cs], [onebrc byte-key table, snapped parallel cuts], [dotnet], [28],
-  [ch41-js], [onebrc buffer scan, windowed worker shards], [node \-\-test], [25],
+  [ch41-cs], [onebrc byte-key table, snapped parallel cuts], [dotnet], [29],
+  [ch41-js], [onebrc buffer scan, windowed worker shards], [node \-\-test], [35],
   [ch42-go], [tokenizer, wal-backed lru], [go test], [18],
   [ch43-go], [lease-ack work queue, spreadsheet engine], [go test], [14],
   [ch44-go, ch44-js], [ttl store, live playlist in go and js], [go test, node \-\-test], [8, 10],
@@ -318,7 +318,10 @@ grep.
   [ch53-go], [cross-venue order book, k-way feed merge], [go test], [13],
 )
 
-The ch41 c, rust, java, lua, and sqlite lanes gate through `tools/run-1brc.ps1`
+The tests column counts one convention across all 47 workspaces: go
+test functions, xunit Fact and Theory methods, and top-level node
+test cases, never expanded parameter cases. The ch41 c, rust, java,
+lua, and sqlite lanes gate through `tools/run-1brc.ps1`
 byte diffs, and its python lane's 60 plain asserts in `test_onebrc.py` ride
 the same runner's py leg, counts this table does not carry.
 
@@ -330,10 +333,10 @@ the same runner's py leg, counts this table does not carry.
     cdraw.content((cx, 7.05), [#ws], size: 6pt)
     cdraw.content((cx, 6.05), [#tests], size: 6pt)
   }
-  col(4.2, "go test", "30 workspaces", "394 tests")
-  col(12.0, "dotnet test", "6 workspaces", "130 tests")
-  col(19.8, "node --test", "11 workspaces", "211 tests")
-  cdraw.content((12.0, 3.4), [47 workspaces, 735 tests, one gate], size: 6pt)
+  col(4.2, "go test", "30 workspaces", "395 tests")
+  col(12.0, "dotnet test", "6 workspaces", "108 tests")
+  col(19.8, "node --test", "11 workspaces", "221 tests")
+  cdraw.content((12.0, 3.4), [47 workspaces, 724 tests, one gate], size: 6pt)
   cdraw.content((12.0, 2.4), [every suite runs in make verify], size: 6pt)
 })
 

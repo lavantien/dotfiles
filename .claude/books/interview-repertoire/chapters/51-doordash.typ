@@ -10,10 +10,11 @@ it is the only page in this arc where a data category outranks coding:
 Analytics and Experimentation holds 74 questions against Coding and
 Algorithms at 65. The bank splits almost evenly between Software
 Engineer and Data Scientist, the loop leans on working services over
-one-function algorithms, and the refund thread runs through a dozen
-cards. This chapter maps that loop, works its 2 most engaged coding
-prompts test-first in go, courier pay across overlapping deliveries
-with peak multipliers and the round-robin debug that ends in
+one-function algorithms, and the refund thread runs through 5 cards
+on page 1, 11 counting the whole pay and payment family. This
+chapter maps that loop, works 2 coding prompts test-first in go,
+courier pay across overlapping deliveries with peak multipliers and
+the round-robin debug that ends in
 consistent hashing, and walks its 2 most doordash-distinctive design
 prompts in the #xref-to("repertoire", "design-prompts") voice,
 paying dashers reliably while the payment service is down, and
@@ -62,8 +63,8 @@ Leadership 45, Software Engineering Fundamentals 34, Data
 Manipulation 28, every row at or above the intro's, so the 2
 surfaces measure different things and neither explains itself.
 
-Difficulty, from the page's spread block: 181 medium, 76 hard, 20
-easy, about a quarter of the set rated hard. The FAQ's own
+Difficulty, from the intro paragraph and the FAQ: 181 medium, 76
+hard, 20 easy, about a quarter of the set rated hard. The FAQ's own
 characterization is worth keeping verbatim for its shape:
 `Difficulty tends to come from scope rather than algorithmic trickery: several prompts ask for a working multi-service workflow with failure handling rather than one function.`
 Seniority, FAQ block: only 23 questions are tagged Senior+, so the
@@ -280,10 +281,13 @@ Assume 2 million dashers active in a week and 500 thousand inside
 the evening peak hour, each finishing 2.5 deliveries in that hour:
 1.25 million completions in the peak hour, about 350 a second, call
 the band 100 to 350 pay intents a second. A ledger row at 200 bytes
-is 250 MB in the peak hour, about 6 GB a day, 2 TB a year raw, so 3
+is 250 MB in the peak hour, and if every hour of the day ran at the
+peak rate that would be 6 GB a day, an upper bound, the honest day
+is smaller. 2 TB a year raw at that bound, so 3
 years of history is 6 TB with a 90 day hot window near 540 GB.
 Buffering is the cheap part: a 30 minute outage at 350 a second is
-630 thousand pending intents, about 630 MB of queue, so the design
+630 thousand pending intents, about 630 MB of queue at the stated
+200 byte row even before any envelope overhead, so the design
 spends nothing clever on storage and everything on the contract.
 
 #flow(

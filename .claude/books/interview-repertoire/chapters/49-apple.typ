@@ -109,8 +109,9 @@ only countable surface left, and what it shows is signal, not a
 distribution: 18 of the 20 visible cards tag medium and 2 tag
 easy, the store open-hours card and the resource-owning C++ class
 card, none tag hard, and seniority appears only as role tags,
-Software Engineer Senior+ on the read-latency redesign and the
-storage forecast, Software Engineer Intern on the C++ class card.
+Software Engineer Senior+ on the read-latency redesign, Machine
+Learning Engineer Senior+ on the storage forecast, Software
+Engineer Intern on the C++ class card.
 
 == quirks of this loop [DRILL]
 

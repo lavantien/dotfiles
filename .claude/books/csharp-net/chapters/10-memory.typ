@@ -20,9 +20,10 @@ collection marks live objects, relocates them, and compacts the freed
 space. Generation 2 collections are the expensive full collections.
 Objects of 85,000 bytes or more allocate directly on the large object
 heap, which by default is not compacted because copying that much is
-its own cost problem. The suite watches a promotion happen:
+its own cost problem. The suite walks a fresh object up two generations
+with two forced collections, and the survivor lands on exactly 2:
 
-#listing("csharp-net/samples/src/Ch10/Memory.cs", first: 56, last: 63, caption: [a fresh object, a forced collection, a promotion])
+#listing("csharp-net/samples/src/Ch10/Memory.cs", first: 56, last: 63, caption: [a fresh object, two forced collections, the survivor lands in generation 2])
 
 #flow(
   [the generational heap, survivors climb, big objects stay put],

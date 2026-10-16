@@ -60,8 +60,8 @@ from a visible truncated title and nothing else.
 The experiences tell the same story in the first person. The intro
 paragraph counts 31 first-hand experiences, the footer link says all
 44, and both are quoted here because the disagreement is the page's
-own. Eight experience entries are visible on page 1: four screen
-write-ups, two HR screens, and two onsites, including the screen that
+own. Eight experience entries are visible on page 1: three technical
+screens, three HR screens, and two onsites, including the screen that
 rescheduled around a telemetry design interview and its naming
 variants, and the onsite that spent its time reviewing and improving
 pull requests with Claude Code.
@@ -289,8 +289,8 @@ The arithmetic, the method of #xref-to("repertoire",
 "estimation-answers"). One replica completes one batch of 32 per
 100 ms, so 320 requests per second per replica, and 10k peak needs
 32 replicas at perfect fill, call it 40 with fill slack. Little's
-law checks the queue: 320 in flight per replica at 0.1 s is exactly
-the batch of 32, so the batcher's queue is the only elasticity in
+law checks the queue: a rate of 320 per second at 0.1 s means 32 in
+flight per replica, exactly one batch, so the batcher's queue is the only elasticity in
 the system and its depth is the latency budget. Weights dominate
 memory: a 70B model at 8 bits is about 70 GB, one accelerator card
 per replica before any kv cache, and the kv cache per request is
@@ -390,10 +390,11 @@ every worker fetches chunks from any peer that holds one, verifying
 each chunk against the manifest on arrival, and starts serving the
 chunks it has verified while it fetches the rest. A tree with fanout
 10 over 1,000 workers is 3 generations, and if the 10 Gbps uplink is
-each host's wall, a generation costs on the order of 400 s, roughly
-20 minutes end to end against the serial road's 4.6 days, while a
-chunked swarm pipelines instead of locking generations and approaches
-the 160 s per-worker floor. Resumption is free: a worker that dies
+each host's wall, a parent's fanout of 10 pushes 10 copies through one
+1.25 GB/s link, 10 times 500 GB over 1.25 GB/s is 4,000 s a
+generation, roughly 3.3 hours end to end against the serial road's
+4.6 days, while a chunked swarm pipelines instead of locking
+generations and approaches the 160 s per-worker floor. Resumption is free: a worker that dies
 mid-download re-asks for its missing chunks by hash, the same
 contract as the page's parallel and resumable model downloader card,
 5 likes, 93 solvers.

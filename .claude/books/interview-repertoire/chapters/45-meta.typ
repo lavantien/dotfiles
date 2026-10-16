@@ -1,6 +1,3 @@
-// chapter 45: the meta loop from the pinned prachub page bytes, the
-// count anomaly named to its surface, the data-role bank, two worked
-// prompts, two design drills floored on the corpus
 #import "../../theme/lib.typ": listing, callout, xref-to, diagram, cdraw, flow
 #import "@preview/fletcher:0.5.8": node, edge
 

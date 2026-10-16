@@ -76,8 +76,8 @@ percentile tracking, experimentation metrics, and ML job scheduling.
 The visible cards fill it in, prefix-aware deduplication for homepage
 content rows, an ML job scheduler for training and batch inference on
 a shared cluster, an open matrix-multiply card, a culture screen
-battery, and a TTL cache pair that shows up twice with different
-titles, the most repeated coding shape on the page.
+battery, and a TTL cache shape that shows up three times under
+different titles, the most repeated coding shape on the page.
 
 The visible experiences set the tempo. A 90-minute OA with 4 multiple
 choice and 2 coding questions for an intern. 7 interviews over more
