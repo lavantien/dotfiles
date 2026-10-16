@@ -2,9 +2,15 @@
 
 All notable changes to this project are documented in this file, newest first. One short line per release states what happened, with no detail enumeration, the commit history carries the detail. Versioning is major.minor. Unreleased work lands under an `## [Unreleased]` heading that is renamed to the version and date at release time.
 
-## [Unreleased]
+## [6.7] - 2026-10-16
 
 The pre-commit rust gates are keyed on staged .rs files instead of a root Cargo.toml: each staged file resolves the nearest manifest above it, cargo runs inside that manifest, monorepo commits gate every manifest touched, and manifest-less teaching trees skip the cargo gates entirely.
+
+The books corpus added the rust volume at book 3 with the full renumber, resequenced the icpc finals, spliced the 1brc nine lanes into the appendix, synced math and dsa chapter updates, and closed the interview repertoire with the uber, doordash, nvidia, and citadel chapters plus appendices. The index now covers 549 chapters across 16 volumes and the pdfs were rebuilt.
+
+sync-book prunes renumbered pdfs by manifest num, takes corpus and target path overrides, and carries bats regression tests over mirror, prune, and warning paths. The readme names the full exclude set and the make books-sync target, and the plugin template enables math-proof.
+
+The workflow directives became a bullet list, the memory guard became a fixed 16 GB cap with least-recently-used disposal scoped to the working repo's own processes, terminal commands must run async, and the voice rules were reworded toward plain common words.
 
 ## [6.6] - 2026-10-10
 
