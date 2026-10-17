@@ -40,13 +40,14 @@
 
 ### Plan execution
 
-1. Before implementing, derive a comprehensive conflict-free task list from the plan: partition work so concurrent tasks never touch the same files or shared state, and keep dependent tasks sequenced.
+1. Before implementing, derive a comprehensive conflict-free task list from the plan: partition work so concurrent tasks never touch the same files or shared state, and keep dependent tasks sequenced. If changes end up sharing affected areas, revisit the division or hand each a separate worktree, never idle and wait serially.
 2. Fan out sub-agents over the list, at most 8 concurrent development slots plus 1 temporary slot for auxiliary checks like the CI watcher, 9 sub-agents maximum in flight at any time. Recycle slots continuously: launch the next queued task in each freed slot until the list is empty.
 3. Never sit idle waiting for verification or test processes. The moment a task's verification chain starts running, take all independent and nearly independent work and keep making progress in parallel: verification results gate that task's own commit, never the start of other work.
-4. Dispose of and clean up every agent you do not intend to reuse as soon as it finishes, fails, or goes idle, temp agents (CI watcher) especially, or defer cleanup explicitly. TaskStop on arrival: the moment a task notification for a background agent lands, issue an explicit TaskStop for it before anything else reuses the slot. Prevent self-inflicted memory leaks at all cost: never leave a finished, failed, idle, or unused agent holding context. Disposal includes the process: kill the agent's process tree and verify the OS process is gone, a released agent with a live orphaned process is still a leak. The same disposal covers project processes: on every slot recycle and at fan-out end, sweep for orphaned compilers, test binaries, mutation, and fuzz processes, kill each, and verify the OS process is gone.
-5. Each agent records progress durably (task notes or commit messages) and commits small atomic units often, so an outage loses at most the last unit.
-6. Every sub-agent keeps a reading log while working and appends it to its final report: one short line per file access in the form `read <path> <lines or grep> - <why>`. Never full-read generated files, only component logic.
-7. A task counts as done only when it passes the verification chain under Testing.
+4. Each change runs only its affected tests, fuzz, mutation, and verification steps, never the full `make verify` or full chain equivalent. The subagent in charge of the change owns this verification and completes it before delivering its work.
+5. Dispose of and clean up every agent you do not intend to reuse as soon as it finishes, fails, or goes idle, temp agents (CI watcher) especially, or defer cleanup explicitly. TaskStop on arrival: the moment a task notification for a background agent lands, issue an explicit TaskStop for it before anything else reuses the slot. Prevent self-inflicted memory leaks at all cost: never leave a finished, failed, idle, or unused agent holding context. Disposal includes the process: kill the agent's process tree and verify the OS process is gone, a released agent with a live orphaned process is still a leak. The same disposal covers project processes: on every slot recycle and at fan-out end, sweep for orphaned compilers, test binaries, mutation, and fuzz processes, kill each, and verify the OS process is gone.
+6. Each agent records progress durably (task notes or commit messages) and commits small atomic units often, so an outage loses at most the last unit.
+7. Every sub-agent keeps a reading log while working and appends it to its final report: one short line per file access in the form `read <path> <lines or grep> - <why>`. Never full-read generated files, only component logic.
+8. A task counts as done only when it passes the verification chain under Testing.
 
 ### Artifacts
 
