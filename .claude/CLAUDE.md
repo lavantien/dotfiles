@@ -127,6 +127,7 @@ Windows:
 - Use pwsh.exe (v7+), never powershell.exe (v5.1).
 - Actually build the .exe binaries: the build target must emit the real name.exe artifact and the verification chain must run that artifact, compile-only checks and unix binary names do not count.
 - Always use native toolchains and avoid git-bash at all cost: its emulation layer obscures the underlying processes and their command lines. If a required tool is missing, escalate and get the native tool installed, never route the call through git-bash or another wrapper to work around the gap.
+- If a C or C++ toolchain or compiler is required, use native LLVM/clang or the Visual Studio compiler, never MinGW and never anything bundled inside git-for-windows.
 
 ## Voice and format
 
