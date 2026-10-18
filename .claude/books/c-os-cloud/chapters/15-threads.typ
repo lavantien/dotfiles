@@ -336,19 +336,20 @@ support any of its facilities", n3220 7.28.1. The macro is the
 sanctioned preprocessor gate. On this box the gate and the ground
 disagree:
 
-#block(breakable: false)[#listing("c-os-cloud/samples/src/Ch15/threads.c", first: 26, last: 30, caption: [the compile-time gate and the probed fact on this box])]
+#block(breakable: false)[#listing("c-os-cloud/samples/src/Ch15/threads.c", first: 26, last: 30, caption: [the compile-time probe, __has_include of the header on this box])]
 
 Probed 2026-09-12: clang 23.1.1 predefines `__STDC_NO_THREADS__` as 1
 on the `x86_64-pc-windows-msvc` target, visible in `clang -dM -E`
 output before any header is read, while the msvc 14.44 toolset linked
-right next to it ships a complete, working `threads.h`. The check
-holds both facts together: the macro is defined and every
-threads.h-based check in this chapter still passes. A portable
-ladder that trusts the macro alone would step past a working
-implementation and into a fallback it did not need. The chapter 2
-vocabulary already has the honest probe: `__has_include(<threads.h>)`
-asks the compiler what is actually in front of it. Trust the crt you
-link, not the compiler's assumption about it.
+right next to it ships a complete, working `threads.h`. A ladder that
+trusted the macro alone would have stepped past a working
+implementation and into a fallback it did not need. Clang 23.1.3 then
+dropped the predefined macro on the same target, probed 2026-10-17:
+the gate flipped between patch releases while the header never moved.
+The sample therefore asks the chapter 2 question directly,
+`__has_include(<threads.h>)`, and every threads.h-based check in this
+chapter still passes through it. Trust the crt you link, not the
+compiler's assumption about it.
 
 Below the header, whatever provides it, the comparison target for
 every explanation of this chapter's primitives is posix, cited here
