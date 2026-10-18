@@ -8,7 +8,7 @@ The unified guard cron is the single watcher over the fan-out: it fires once eve
 
 Each change runs only its affected tests, fuzz, mutation, and verification steps, owned by the subagent in charge of the change, and shared areas split into worktrees instead of serial waiting. Sleep and wait shell commands are forbidden, tracing is mandatory in code and scripts, builds ship without debug symbols, and the windows toolchain rules pin native tools with llvm/clang or msvc over mingw and no routing through git-bash.
 
-Readmes follow one standard template: high level documentation, showcasing, and usage instructions only, never versionings, dates, or obscure numbering references.
+Readmes follow lavantien/quotes-manager (~/dev/github/quotes-manager) as the standard template: high level documentation, showcasing, and usage instructions only, never versionings, dates, or obscure numbering references.
 
 The books corpus resynced from the authoring repo with 10 pdfs rebuilt and the c-os-cloud threads chapter updated. The readme corpus section names the rust volume and the 01 through 15 plus 17 pdf numbering, the books corpus section moved after neovim, and the release process section is gone.
 
