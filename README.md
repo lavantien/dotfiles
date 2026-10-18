@@ -2,7 +2,7 @@
 
 [![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)](https://github.com/lavantien/dotfiles) [![Windows](https://img.shields.io/badge/Windows-0078D6?logo=windows&logoColor=white)](https://github.com/lavantien/dotfiles) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-The repo deploys a Universal SWE dotfiles for both linux/windows. Neovim, wezterm/winterm, zsh/pwsh, git hooks, claudecode/opencode. Preconfig dev env bootstrap/deploy, 1 single command to update all packages, healthcheck, backup/restore, the maintenance scripts, and a typst books corpus used for offline grounding. The supported platforms are Ubuntu 26.04+ and Windows 11 with pwsh7+. Bootstrap and deploy are idempotent, rerunning them converges the machine, this repo is the source of truth.
+The repo deploys a Universal SWE dotfiles for both linux/windows. Neovim, wezterm/winterm, zsh/pwsh, git hooks, claudecode/opencode. Preconfig dev env bootstrap/deploy, 1 single command to update all packages, healthcheck, backup/restore, the maintenance scripts, and a typst books corpus used for offline grounding and as the opening book for the meta-harness. The supported platforms are Ubuntu 26.04+ and Windows 11 with pwsh7+. Bootstrap and deploy are idempotent, rerunning them converges the machine, this repo is the source of truth.
 
 Here are some quick common prompts ready for yanking:
 > what's the progress? what's in flight? what's remaining? the current estimated time remaining to full finish in one number?
