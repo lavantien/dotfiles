@@ -21,6 +21,7 @@
 7. Zero comments in code and tests. Never write one, remove every single existing comment whenever a file is touched. Anything that needs documenting belongs in the readme, especially the architecture and flows sections.
 8. Disable debug symbols in every build: strip binaries, build with release flags, no debug info in artifacts or intermediate outputs, it only wastes disk space.
 9. Always implement tracing, in code and shell scripts alike: every unit logs entry, exit, and failure with enough context, so any crash pins down where it happened and why.
+10. Readmes follow lavantien/quotes-manager (~/dev/github/quotes-manager) as the standard template: high level documentation, showcasing, and usage instructions only, never versionings, dates, or obscure numbering references.
 
 ## Workflow
 
