@@ -2,9 +2,15 @@
 
 All notable changes to this project are documented in this file, newest first. One short line per release states what happened, with no detail enumeration, the commit history carries the detail. Versioning is major.minor. Unreleased work lands under an `## [Unreleased]` heading that is renamed to the version and date at release time.
 
-## [Unreleased]
+## [6.8] - 2026-10-19
 
-The readme corpus section names the rust volume and the 01 through 15 plus 17 pdf numbering, the books corpus section moved after neovim, and the release process section is gone.
+The unified guard cron is the single watcher over the fan-out: it fires once every 20 minutes and never more often, its quota query reads only the current 5-hour window percentage and never infers anything else or scales down the world, 95 percent stays the only trigger and the halt stops provider-calling agents while shell and scheduled processes that never call the provider keep running, and below 95 percent means constant lookahead with the next or independent task started instead of waiting. The census attributes working set membership by each process's actual working directory read from the PEB, plus prefix matching against the working repo, plus descendant-tree expansion.
+
+Each change runs only its affected tests, fuzz, mutation, and verification steps, owned by the subagent in charge of the change, and shared areas split into worktrees instead of serial waiting. Sleep and wait shell commands are forbidden, tracing is mandatory in code and scripts, builds ship without debug symbols, and the windows toolchain rules pin native tools with llvm/clang or msvc over mingw and no routing through git-bash.
+
+Readmes follow lavantien/quotes-manager as the standard template: high level documentation, showcasing, and usage instructions only, never versionings, dates, or obscure numbering references.
+
+The books corpus resynced from the authoring repo with 10 pdfs rebuilt and the c-os-cloud threads chapter updated. The readme corpus section names the rust volume and the 01 through 15 plus 17 pdf numbering, the books corpus section moved after neovim, and the release process section is gone.
 
 ## [6.7] - 2026-10-16
 
