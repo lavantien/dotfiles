@@ -2,11 +2,24 @@
 
 [![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)](https://github.com/lavantien/dotfiles) [![Windows](https://img.shields.io/badge/Windows-0078D6?logo=windows&logoColor=white)](https://github.com/lavantien/dotfiles) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-The repo deploys an engineering environment for Linux and Windows: Neovim, WezTerm, zsh, and PowerShell configs, git hooks, Claude Code and OpenCode settings, the maintenance scripts, and a typst books corpus used for offline grounding. The supported platforms are Ubuntu 26.04 and newer plus Windows 11 with PowerShell 7. Bootstrap and deploy are idempotent, rerunning them converges the machine.
+The repo deploys a Universal SWE dotfiles for both linux/windows. Neovim, wezterm/winterm, zsh/pwsh, git hooks, claudecode/opencode. Preconfig dev env bootstrap/deploy, 1 single command to update all packages, healthcheck, backup/restore, the maintenance scripts, and a typst books corpus used for offline grounding. The supported platforms are Ubuntu 26.04+ and Windows 11 with pwsh7+. Bootstrap and deploy are idempotent, rerunning them converges the machine, this repo is the source of truth.
 
-> what's the progress? what's in flight? what's remaining?
->
-> the opening books corpus contain chapters that might be useful to our endeavor. now let fan out subagents and start the development loop according to the prime directives and principles
+Here are some quick common prompts ready for yanking:
+> what's the progress? what's in flight? what's remaining? the current estimated time remaining to full finish in one number?
+> 
+> ===
+> 
+> the opening books corpus contain chapters that might be useful to our endeavor. now let build the task list for this plan and fan out subagents and start the development loop according to the prime directives and principles
+> 
+> ===
+> 
+> let push and publish as new github sub minor version. update remote repo's description and tags if needed
+> 
+> ===
+> 
+> audit the repo against our prime directives and universal principles and writing style
+> 
+> add human-onboarding.md with full diagrams of systems and table of the logical evolution of the project and what/why/how/where/when tables of all points of interested. the goal is to most optimally and condensely transfer knowledge of the codebase, language features/libraries usages, techniques, and all the business logic to a human developer, so that they can have an accurate and comprehensive mental model of the project and how to actually adding or removing or improving features.
 
 ## Contents
 
