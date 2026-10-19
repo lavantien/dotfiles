@@ -44,6 +44,10 @@ AI-native development covers Claude Code and OpenCode. The MCP servers are conte
 
 Automation keeps safety: bootstrap and update-all are idempotent and safe to run multiple times, they auto-detect the environment and skip cleanly when a tool is unavailable, and timestamped backup and restore wrap major changes.
 
+![neovim keybind map](docs/diagrams/01-neovim-keybinds.png)
+
+every configured and stated neovim keybind in one mindmap, leader binds on one side, native defaults on the other
+
 ## Quick start
 
 > Required clone location: this repository must be cloned to `~/dev/github/dotfiles`.
@@ -341,10 +345,6 @@ This installs required models and dependencies for AI image generation.
 Leader key is Space.
 
 Unmapped native keys stay live: `Q` toggles a multicursor (`[count]Q` places one per search match, `q=` follow mode, `gQ` restore, CTRL-L clears), `gc` and `gcc` comment, `v_an` and `v_in` grow or shrink the treesitter selection, `v_]N` and `v_[N` jump to sibling nodes, `v_al` and `v_il` select the buffer or line, and the LSP defaults `K`, `grn`, `gra`, `grr`, `gri`, `gO`, `grt`, `grx`, `[d`, `]d`, and `<C-W>d` work without any plugin.
-
-![neovim keybind map](docs/diagrams/01-neovim-keybinds.png)
-
-leader pickers and native defaults in one mindmap, the table below lists every entry
 
 <details>
 <summary>Day-to-day usage guide</summary>
