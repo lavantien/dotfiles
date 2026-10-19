@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented in this file, newest first. One short line per release states what happened, with no detail enumeration, the commit history carries the detail. Versioning is major.minor. Unreleased work lands under an `## [Unreleased]` heading that is renamed to the version and date at release time.
 
+## [6.9] - 2026-10-19
+
+The protocol gained the solo-work law: the hub delegates implementation and keeps only orchestration, verification, and commits, because long solo work on the main hub dilutes the hub and its output cannot be independently verified. Make is gone from the protocol: repo scripts run every development and testing activity, invoking native binaries and OS commands directly, preferably written in the repo's main language, never through make or a bundled sh.exe.
+
+The readme standard now requires architecture and flows diagrams that flow horizontally when possible, generated from puml as actual pngs so clarity never depends on the github renderer. Readmes and release notes never reference or mention external non-related projects or repos, external plan files, or private conversations, and carry no unwarranted explanations of how the artifact was built. The general writing rule also bans disclaimers about how content was made or generated outside the designated section, inventory listings, written counts, jargon stacking, and adjective stacking.
+
+The readme gained revised documentation standards, a typst books corpus section, and clarified common prompts, including the release prompt that now pushes the accumulated changes since the last version before publishing.
+
 ## [6.8] - 2026-10-19
 
 The unified guard cron is the single watcher over the fan-out: it fires once every 20 minutes and never more often, its quota query reads only the current 5-hour window percentage and never infers anything else or scales down the world, 95 percent stays the only trigger and the halt stops provider-calling agents while shell and scheduled processes that never call the provider keep running, and below 95 percent means constant lookahead with the next or independent task started instead of waiting. The census attributes working set membership by each process's actual working directory read from the PEB, plus prefix matching against the working repo, plus descendant-tree expansion.
