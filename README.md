@@ -98,10 +98,11 @@ up  # Runs update-all
 | `assets/` | WezTerm background wallpapers, deployed to ~/assets |
 | `bootstrap/` | bootstrap.sh and bootstrap.ps1, per-platform install scripts, and lib/ helpers |
 | `books/` | The published corpus volumes as PDFs, numbered 01 through 15 plus 17 |
+| `docs/` | puml sources with rendered pngs for the readme diagrams |
 | `home/` | Home-level configs: .bash_aliases, .zshrc, .gitconfig, Microsoft.PowerShell_profile.ps1, .dotfiles.config.yaml.example |
 | `lib/` | Shared script libraries: config parsing and JSON merge |
 | `playground/` | Scratch space for one-off programs, committed with the work unless it holds secrets |
-| `scripts/` | Every maintenance script: allow, deploy, update, update-all, git-update-repos, sync-book, books-index, healthcheck, backup, restore, uninstall, cleanup one-offs |
+| `scripts/` | Every maintenance script: allow, deploy, update, update-all, git-update-repos, sync-book, books-index, diagrams, healthcheck, backup, restore, uninstall, cleanup one-offs |
 
 The root also carries README.md, CHANGELOG.md, DOCKER_K8S.md, LICENSE, the Makefile, the lint configs selene.toml, typos.toml, and vim.yml, and git-clone-all.sh, a vendored gh utility kept at the root.
 
@@ -228,7 +229,7 @@ The MCP servers are context7, playwright, and repomix.
 
 ### Diagram generation
 
-mermaid-cli ships the `mmdc` command to generate Mermaid diagrams from the command line.
+mermaid-cli ships the `mmdc` command to generate Mermaid diagrams from the command line. plantuml renders the readme diagrams from the `docs/diagrams/` puml sources through `scripts/diagrams.sh` and `scripts/diagrams.ps1`, `make diagrams` refreshes the committed pngs.
 
 ### AI applications (Windows)
 
@@ -340,6 +341,10 @@ This installs required models and dependencies for AI image generation.
 Leader key is Space.
 
 Unmapped native keys stay live: `Q` toggles a multicursor (`[count]Q` places one per search match, `q=` follow mode, `gQ` restore, CTRL-L clears), `gc` and `gcc` comment, `v_an` and `v_in` grow or shrink the treesitter selection, `v_]N` and `v_[N` jump to sibling nodes, `v_al` and `v_il` select the buffer or line, and the LSP defaults `K`, `grn`, `gra`, `grr`, `gri`, `gO`, `grt`, `grx`, `[d`, `]d`, and `<C-W>d` work without any plugin.
+
+![neovim keybind map](docs/diagrams/01-neovim-keybinds.png)
+
+leader pickers and native defaults in one mindmap, the table below lists every entry
 
 <details>
 <summary>Day-to-day usage guide</summary>

@@ -9,7 +9,7 @@ PSSA_FORMAT := pwsh -NoProfile -Command 'if (-not (Get-Module -ListAvailable PSS
 
 .DEFAULT_GOAL := help
 
-.PHONY: help baseline lint format test check e2e-linux e2e-windows deploy-windows bootstrap-windows books-sync
+.PHONY: help baseline lint format test check e2e-linux e2e-windows deploy-windows bootstrap-windows books-sync diagrams
 
 help: ## list targets
 	@printf '%-14s %s\n' target description
@@ -92,3 +92,6 @@ bootstrap-windows: ## real bootstrap.ps1 run against the live machine, full cate
 books-sync: ## mirror .claude/books and books/ from the corpus, regenerate the index
 	@./scripts/sync-book.sh
 	@./scripts/books-index.sh
+
+diagrams: ## render every docs/diagrams puml to a committed png beside it
+	@./scripts/diagrams.sh

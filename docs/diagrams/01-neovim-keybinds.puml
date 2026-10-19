@@ -1,0 +1,86 @@
+@startmindmap 01-neovim-keybinds
+title neovim keybind map
+
+* keybinds
+left side
+** native no plugin
+*** browse
+**** - : parent directory
+*** multicursor
+**** Q : cursor on word or selection
+**** [count]Q : cursor per match
+**** q= : follow mode
+**** gQ : restore cursors
+**** CTRL-L : clear cursors
+*** comment
+**** gc : toggle comment
+**** gcc : toggle line comment
+*** treesitter selection
+**** v_an : grow selection
+**** v_in : shrink selection
+**** v_]N v_[N : jump to sibling node
+**** v_al v_il : select buffer or line
+*** lsp defaults
+**** K : hover
+**** grn : rename
+**** gra : code action
+**** grr : references
+**** gri : implementations
+**** gO : outline
+**** grt grx : other lsp defaults
+**** [d ]d : diagnostic jump
+**** C-W d : diagnostic popup
+*** completion
+**** C-n C-p : walk completion menu
+**** Enter : accept
+*** folds
+**** za zR zM : toggle fold, open all, close all
+right side
+** leader space
+*** session and upkeep
+**** q : quit window
+**** x : write and re-source
+**** ' : alternate file split
+**** u : pack update
+*** pickers fzf-lua
+**** e : global
+**** n : combine
+**** / : grep buffer
+**** z : live grep
+**** f : files
+**** h : help tags
+**** k : keymaps
+**** l : loclist
+**** m : marks
+**** t : quickfix
+*** git fzf-lua
+**** gf : git files
+**** gs : git status
+**** gd : git diff
+**** gh : git hunks
+**** gc : git commits
+**** gl : git blame
+**** gb : git branches
+**** gt : git tags
+**** gk : git stash
+*** lsp
+**** \ : all-in-one finder
+**** dd : document diagnostics
+**** dw : workspace diagnostics
+**** , : incoming calls
+**** . : outgoing calls
+**** a : code actions
+**** s : document symbols
+**** w : workspace symbols
+**** r : references
+**** i : implementations
+**** o : type definitions
+**** j : definitions
+**** v : declarations
+**** b : format buffer
+*** document preview
+**** pt : typst preview toggle
+**** ps : live preview start
+**** pc : live preview close
+**** ; : live preview pick
+@endmindmap
