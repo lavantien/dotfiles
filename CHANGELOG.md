@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented in this file, newest first. One short line per release states what happened, with no detail enumeration, the commit history carries the detail. Versioning is major.minor. Unreleased work lands under an `## [Unreleased]` heading that is renamed to the version and date at release time.
 
+## [6.10] - 2026-10-20
+
+The readme gained a plantuml mindmap of every configured and stated neovim keybind, the 41 leader binds grouped by function on one side and the native keys that stay live on the other, embedded as a png rendered from the docs/diagrams puml source so clarity never depends on the github renderer.
+
+The repo gained its first diagram pipeline: scripts/diagrams.ps1 and scripts/diagrams.sh render every docs/diagrams puml beside its source through plantuml with per-file trace logging, make diagrams wraps the bash twin, and bats tests cover render, the pwsh twin, syntax error propagation, stale png refresh, and the two failure paths. The readme layout table and diagram generation section name the new pieces.
+
 ## [6.9] - 2026-10-19
 
 The protocol gained the solo-work law: the hub delegates implementation and keeps only orchestration, verification, and commits, because long solo work on the main hub dilutes the hub and its output cannot be independently verified. Make is gone from the protocol: repo scripts run every development and testing activity, invoking native binaries and OS commands directly, preferably written in the repo's main language, never through make or a bundled sh.exe.
