@@ -26,6 +26,7 @@
 ## Workflow
 
 - Subagent fan-out is the default execution mode.
+- Solo-work law: the hub delegates implementation and keeps only orchestration, verification, and commits. Never run long solo work on the main hub: it dilutes the hub and its output cannot be independently verified.
 - Before any execution, prepare a comprehensive task list with isolated concurrency in mind and proper dependency relationships.
 - All terminal commands always need to be async, especially with sub agents, so that they can communicate back when pinged and not get stuck unnoticed. Always have resumable and async design in mind when spawning sub agents and shell processes: durably record progress so each one can restart from its last recorded point.
 - Never use sleep or wait shell commands. A fixed timer obscures the real problem and holds the session idle: everything must be async, completion arrives as a notification or callback, never as a guessed delay running out.
