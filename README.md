@@ -13,7 +13,7 @@ Here are some quick common prompts ready for yanking:
 > 
 > ===
 > 
-> let push the accumulate changes so far since last version and publish as new github sub minor version
+> let push the accumulate changes so far since last version and publish as new github sub minor version. update remote repo's description and tags if needed
 > 
 > ===
 > 
