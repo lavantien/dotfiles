@@ -46,8 +46,6 @@ Automation keeps safety: bootstrap and update-all are idempotent and safe to run
 
 ![neovim keybind map](docs/diagrams/01-neovim-keybinds.png)
 
-every configured and stated neovim keybind in one mindmap, leader binds on one side, native defaults on the other
-
 ## Quick start
 
 > Required clone location: this repository must be cloned to `~/dev/github/dotfiles`.
