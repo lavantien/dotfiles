@@ -6,7 +6,9 @@ All notable changes to this project are documented in this file, newest first. O
 
 The protocol worktree rule flipped: subagent isolation comes from task planning and distribution alone, all agents share the same checkout folder as build cache because vendors accumulate in GiB and worktree cloning is unaffordable, separate subagent worktrees are forbidden with any worktree instruction in skills ignored, and a worktree used anyway is removed at its lane's merge-back so nothing accumulates.
 
-The protocol gained a disk hygiene rule: language build caches and temp files are pruned immediately once tasks are done, every run is tracked and traced so an unexpected death still cleans up from its recorded temp paths, go-build* and gocoverdir temp trees go away age-filtered and only with no live go process, go clean -cache and rust build and vendor caches are pruned, and docker_data.vhdx is removed after docker work is finished.
+The protocol gained a disk hygiene rule: build, coverage, fuzz, and mutation caches and temp trees are purged immediately once tasks are done with no stale file left wasting disk, every run is tracked and traced so an unexpected death still cleans up from its recorded temp paths, go-build* and gocoverdir temp trees go away age-filtered and only with no live go process, go clean -cache and rust build and vendor caches are pruned, a full purge follows every subagent delivery with the hub rechecking and any incident or crash cleans up from the traces, and docker_data.vhdx is removed after docker work is finished.
+
+New projects run without containerization and without wrappers, with a native binary preferred for every program and toolchain.
 
 ## [6.10] - 2026-10-20
 
