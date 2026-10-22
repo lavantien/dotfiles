@@ -6,6 +6,8 @@ All notable changes to this project are documented in this file, newest first. O
 
 The protocol worktree rule flipped: subagent isolation comes from task planning and distribution alone, all agents share the same checkout folder as build cache because vendors accumulate in GiB and worktree cloning is unaffordable, separate subagent worktrees are forbidden with any worktree instruction in skills ignored, and a worktree used anyway is removed at its lane's merge-back so nothing accumulates.
 
+The protocol gained a disk hygiene rule: language build caches and temp files are pruned immediately once tasks are done, every run is tracked and traced so an unexpected death still cleans up from its recorded temp paths, go-build* and gocoverdir temp trees go away age-filtered and only with no live go process, go clean -cache and rust build and vendor caches are pruned, and docker_data.vhdx is removed after docker work is finished.
+
 ## [6.10] - 2026-10-20
 
 The readme gained a plantuml mindmap of every configured and stated neovim keybind, the 41 leader binds grouped by function on one side and the native keys that stay live on the other, embedded as a png rendered from the docs/diagrams puml source so clarity never depends on the github renderer.
