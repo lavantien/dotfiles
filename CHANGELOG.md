@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file, newest first. One short line per release states what happened, with no detail enumeration, the commit history carries the detail. Versioning is major.minor. Unreleased work lands under an `## [Unreleased]` heading that is renamed to the version and date at release time.
 
+## [Unreleased]
+
+The protocol worktree rule flipped: subagent isolation comes from task planning and distribution alone, all agents share the same checkout folder as build cache because vendors accumulate in GiB and worktree cloning is unaffordable, separate subagent worktrees are forbidden with any worktree instruction in skills ignored, and a worktree used anyway is removed at its lane's merge-back so nothing accumulates.
+
 ## [6.10] - 2026-10-20
 
 The readme gained a plantuml mindmap of every configured and stated neovim keybind, the 41 leader binds grouped by function on one side and the native keys that stay live on the other, embedded as a png rendered from the docs/diagrams puml source so clarity never depends on the github renderer.
