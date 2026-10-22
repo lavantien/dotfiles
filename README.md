@@ -5,20 +5,21 @@
 The repo deploys a Universal SWE dotfiles for both linux/windows. Neovim, wezterm/winterm, zsh/pwsh, git hooks, claudecode/opencode. Preconfig dev env bootstrap/deploy, 1 single command to update all packages, healthcheck, backup/restore, the maintenance scripts, and a typst books corpus used for offline grounding and as the opening book for the meta-harness. The supported platforms are Ubuntu 26.04+ and Windows 11 with pwsh7+. Bootstrap and deploy are idempotent, rerunning them converges the machine, this repo is the source of truth.
 
 Here are some quick common prompts ready for yanking:
+
 > the opening books corpus contain chapters that might be useful to our endeavor. now let build the task list for this plan and fan out subagents and start the development loop according to the prime directives and principles
-> 
+>
 > ===
-> 
+>
 > what's the progress? what's in flight? what's remaining? the current estimated time remaining to full finish in one number?
-> 
+>
 > ===
-> 
+>
 > let push the accumulate changes so far since last version and publish as new github sub minor version. update remote repo's description and tags if needed
-> 
+>
 > ===
-> 
+>
 > audit the repo against our prime directives and universal principles and writing style
-> 
+>
 > add human-onboarding.md with full diagrams of systems and table of the logical evolution of the project and what/why/how/where/when tables of all points of interested. the goal is to most optimally and condensely transfer knowledge of the codebase, language features/libraries usages, techniques, and all the business logic to a human developer, so that they can have an accurate and comprehensive mental model of the project and how to actually adding or removing or improving features.
 
 ## Contents
@@ -92,19 +93,19 @@ up  # Runs update-all
 
 ## Repo layout
 
-| Entry | Holds |
-|-------|-------|
-| `.claude/` | Claude Code config: CLAUDE.md, BOOKS.md, settings templates, statusline.sh, quality-check twins, tdd-guard, and books/ holding the typst corpus |
-| `.config/` | Tool configs deployed to the XDG config dir: nvim (init.lua plus lockfile), wezterm, git hooks, opencode platform templates |
-| `.vscode/` | VS Code settings |
-| `assets/` | WezTerm background wallpapers, deployed to ~/assets |
-| `bootstrap/` | bootstrap.sh and bootstrap.ps1, per-platform install scripts, and lib/ helpers |
-| `books/` | The published corpus volumes as PDFs, numbered 01 through 15 plus 17 |
-| `docs/` | puml sources with rendered pngs for the readme diagrams |
-| `home/` | Home-level configs: .bash_aliases, .zshrc, .gitconfig, Microsoft.PowerShell_profile.ps1, .dotfiles.config.yaml.example |
-| `lib/` | Shared script libraries: config parsing and JSON merge |
-| `playground/` | Scratch space for one-off programs, committed with the work unless it holds secrets |
-| `scripts/` | Every maintenance script: allow, deploy, update, update-all, git-update-repos, sync-book, books-index, diagrams, healthcheck, backup, restore, uninstall, cleanup one-offs |
+| Entry         | Holds                                                                                                                                                                      |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.claude/`    | Claude Code config: CLAUDE.md, BOOKS.md, settings templates, statusline.sh, quality-check twins, tdd-guard, and books/ holding the typst corpus                            |
+| `.config/`    | Tool configs deployed to the XDG config dir: nvim (init.lua plus lockfile), wezterm, git hooks, opencode platform templates                                                |
+| `.vscode/`    | VS Code settings                                                                                                                                                           |
+| `assets/`     | WezTerm background wallpapers, deployed to ~/assets                                                                                                                        |
+| `bootstrap/`  | bootstrap.sh and bootstrap.ps1, per-platform install scripts, and lib/ helpers                                                                                             |
+| `books/`      | The published corpus volumes as PDFs, numbered 01 through 15 plus 17                                                                                                       |
+| `docs/`       | puml sources with rendered pngs for the readme diagrams                                                                                                                    |
+| `home/`       | Home-level configs: .bash_aliases, .zshrc, .gitconfig, Microsoft.PowerShell_profile.ps1, .dotfiles.config.yaml.example                                                     |
+| `lib/`        | Shared script libraries: config parsing and JSON merge                                                                                                                     |
+| `playground/` | Scratch space for one-off programs, committed with the work unless it holds secrets                                                                                        |
+| `scripts/`    | Every maintenance script: allow, deploy, update, update-all, git-update-repos, sync-book, books-index, diagrams, healthcheck, backup, restore, uninstall, cleanup one-offs |
 
 The root also carries README.md, CHANGELOG.md, DOCKER_K8S.md, LICENSE, the Makefile, the lint configs selene.toml, typos.toml, and vim.yml, and git-clone-all.sh, a vendored gh utility kept at the root.
 
@@ -122,12 +123,12 @@ Development gates run through make: `make check` runs the lint gate plus the bat
 
 ### Bootstrap options
 
-| Option | Bash | PowerShell | Default |
-|--------|------|------------|---------|
-| Non-interactive | `-y`, `--yes` | `-Y` | Prompt for confirmation |
-| Dry-run | `--dry-run` | `-DryRun` | Install everything |
-| Categories | `--categories sdk` | `-Categories sdk` | full |
-| Verbose | `--verbose` | `-VerboseMode` | Show detailed output |
+| Option          | Bash               | PowerShell        | Default                 |
+| --------------- | ------------------ | ----------------- | ----------------------- |
+| Non-interactive | `-y`, `--yes`      | `-Y`              | Prompt for confirmation |
+| Dry-run         | `--dry-run`        | `-DryRun`         | Install everything      |
+| Categories      | `--categories sdk` | `-Categories sdk` | full                    |
+| Verbose         | `--verbose`        | `-VerboseMode`    | Show detailed output    |
 
 ### Update-all options
 
@@ -135,12 +136,12 @@ Development gates run through make: `make check` runs the lint gate plus the bat
 
 ### Deploy options
 
-| Option | Bash | PowerShell | Purpose |
-|--------|------|------------|---------|
-| Skip config deployment | `--skip-config` | `-SkipConfig` | Deploy ~/dev scripts only, skip all config deployment |
-| Verbose file logging | `--verbose` | (always on) | Log each copied file |
-| Pre-deploy backup | `--backup` | `-Backup` | Force backup before deploy (also via `backup_before_deploy` config) |
-| Help | `--help` | (Get-Help) | Show usage |
+| Option                 | Bash            | PowerShell    | Purpose                                                             |
+| ---------------------- | --------------- | ------------- | ------------------------------------------------------------------- |
+| Skip config deployment | `--skip-config` | `-SkipConfig` | Deploy ~/dev scripts only, skip all config deployment               |
+| Verbose file logging   | `--verbose`     | (always on)   | Log each copied file                                                |
+| Pre-deploy backup      | `--backup`      | `-Backup`     | Force backup before deploy (also via `backup_before_deploy` config) |
+| Help                   | `--help`        | (Get-Help)    | Show usage                                                          |
 
 Both deploys write a `~/.dotfiles-installed` marker (timestamp, version, OS) read by uninstall. `-DotfilesDir` is a Windows-only parameter and `POWERSHELL_PROFILE_CONFIG` is a Windows-only environment variable. Bash derives the repo location from the script path and honors `XDG_CONFIG_HOME`.
 
@@ -160,24 +161,24 @@ vim ~/.dotfiles.config.yaml
 
 Configuration priority: command-line flags override the config file, and the config file overrides the hardcoded defaults.
 
-| Setting | Values | Default |
-|---------|--------|---------|
-| categories | minimal, sdk, full | full |
-| editor | nvim, vim, code, nano | (none) |
-| terminal | wezterm, alacritty, kitty | (none) |
-| theme | rose-pine, rose-pine-dawn, rose-pine-moon | (none) |
-| github_username | your github username | git config user.name, else lavantien |
-| base_dir | path to git repos | ~/dev/github |
-| auto_commit_changes | true, false | false |
-| auto_update_repos | true, false | false |
-| backup_before_deploy | true, false | false |
-| sign_commits | true, false | false |
-| default_branch | branch name for new repos | main |
-| skip_packages | comma or space separated package list | (empty) |
-| linux.package_manager | auto, apt, dnf, pacman, zypper | auto |
-| linux.display_server | x11, wayland | (none) |
-| windows.package_manager | scoop, winget, choco | scoop |
-| macos.package_manager | brew | brew |
+| Setting                 | Values                                    | Default                              |
+| ----------------------- | ----------------------------------------- | ------------------------------------ |
+| categories              | minimal, sdk, full                        | full                                 |
+| editor                  | nvim, vim, code, nano                     | (none)                               |
+| terminal                | wezterm, alacritty, kitty                 | (none)                               |
+| theme                   | rose-pine, rose-pine-dawn, rose-pine-moon | (none)                               |
+| github_username         | your github username                      | git config user.name, else lavantien |
+| base_dir                | path to git repos                         | ~/dev/github                         |
+| auto_commit_changes     | true, false                               | false                                |
+| auto_update_repos       | true, false                               | false                                |
+| backup_before_deploy    | true, false                               | false                                |
+| sign_commits            | true, false                               | false                                |
+| default_branch          | branch name for new repos                 | main                                 |
+| skip_packages           | comma or space separated package list     | (empty)                              |
+| linux.package_manager   | auto, apt, dnf, pacman, zypper            | auto                                 |
+| linux.display_server    | x11, wayland                              | (none)                               |
+| windows.package_manager | scoop, winget, choco                      | scoop                                |
+| macos.package_manager   | brew                                      | brew                                 |
 
 ### Health and troubleshooting
 
@@ -194,30 +195,30 @@ If git hooks are not running, set `git config --global core.hooksPath ~/.config/
 
 Cells list what the bootstrap scripts install, what the git hooks invoke, and what ships with the SDKs the bootstrap installs. A dash means nothing installs or invokes it.
 
-| Language | LSP | Tester | Formatter | Linter | Type Check |
-|----------|-----|--------|-----------|--------|------------|
-| Bash | bashls | bats | shfmt | shellcheck | - |
-| PowerShell | - | Pester | Invoke-Formatter | PSScriptAnalyzer | PSScriptAnalyzer |
-| Go | gopls | go test | gofmt, goimports | golangci-lint | go vet |
-| Rust | rust-analyzer | cargo test | rustfmt | clippy | cargo check |
-| Python | pyright | pytest | ruff, black | ruff | mypy |
-| JavaScript/TypeScript | ts_ls | - | prettier | eslint | tsc |
-| HTML | html | - | prettier | - | - |
-| CSS/SCSS/SASS | cssls | - | prettier | stylelint | - |
-| Svelte | svelte | - | prettier | - | svelte-check |
-| C/C++ | clangd | Catch2 (Linux/macOS) | clang-format | clang-tidy, cppcheck | compiler |
-| C# | csharp_ls | dotnet test | dotnet format | Roslyn analyzers | dotnet build |
-| Java | jdtls (Linux/macOS only) | - | - | checkstyle (Linux/macOS) | javac |
-| PHP | intelephense | php | pint | - | - |
-| Scala | metals | - | scalafmt | scalafix | - |
-| Lua | lua_ls | busted (Linux/macOS) | stylua | selene | - |
-| Typst | tinymist | built-in | tinymist | tinymist | - |
-| Dockerfile | docker_language_server | - | - | hadolint | - |
-| Docker Compose | docker_language_server | - | prettier | - | - |
-| Helm | helm_ls | - | prettier | - | - |
-| Kubernetes YAML | yamlls | kubectl | prettier | yamllint | - |
-| YAML | yamlls | - | prettier | yamllint | - |
-| TOML | tombi | - | - | - | - |
+| Language              | LSP                      | Tester               | Formatter        | Linter                   | Type Check       |
+| --------------------- | ------------------------ | -------------------- | ---------------- | ------------------------ | ---------------- |
+| Bash                  | bashls                   | bats                 | shfmt            | shellcheck               | -                |
+| PowerShell            | -                        | Pester               | Invoke-Formatter | PSScriptAnalyzer         | PSScriptAnalyzer |
+| Go                    | gopls                    | go test              | gofmt, goimports | golangci-lint            | go vet           |
+| Rust                  | rust-analyzer            | cargo test           | rustfmt          | clippy                   | cargo check      |
+| Python                | pyright                  | pytest               | ruff, black      | ruff                     | mypy             |
+| JavaScript/TypeScript | ts_ls                    | -                    | prettier         | eslint                   | tsc              |
+| HTML                  | html                     | -                    | prettier         | -                        | -                |
+| CSS/SCSS/SASS         | cssls                    | -                    | prettier         | stylelint                | -                |
+| Svelte                | svelte                   | -                    | prettier         | -                        | svelte-check     |
+| C/C++                 | clangd                   | Catch2 (Linux/macOS) | clang-format     | clang-tidy, cppcheck     | compiler         |
+| C#                    | csharp_ls                | dotnet test          | dotnet format    | Roslyn analyzers         | dotnet build     |
+| Java                  | jdtls (Linux/macOS only) | -                    | -                | checkstyle (Linux/macOS) | javac            |
+| PHP                   | intelephense             | php                  | pint             | -                        | -                |
+| Scala                 | metals                   | -                    | scalafmt         | scalafix                 | -                |
+| Lua                   | lua_ls                   | busted (Linux/macOS) | stylua           | selene                   | -                |
+| Typst                 | tinymist                 | built-in             | tinymist         | tinymist                 | -                |
+| Dockerfile            | docker_language_server   | -                    | -                | hadolint                 | -                |
+| Docker Compose        | docker_language_server   | -                    | prettier         | -                        | -                |
+| Helm                  | helm_ls                  | -                    | prettier         | -                        | -                |
+| Kubernetes YAML       | yamlls                   | kubectl              | prettier         | yamllint                 | -                |
+| YAML                  | yamlls                   | -                    | prettier         | yamllint                 | -                |
+| TOML                  | tombi                    | -                    | -                | -                        | -                |
 
 The enabled servers and parsers are listed in `.config/nvim/init.lua`, which is the source of truth for the Neovim side.
 
@@ -261,45 +262,45 @@ The template is the source of truth: template values win for shared keys recursi
 
 Injected top-level fields:
 
-| Field | Template value | Purpose |
-|-------|----------------|---------|
-| `env` | the variables in the table below | API endpoint, models, limits, feature flags |
-| `model` | `glm-5.3[1m]` | Default model |
-| `statusLine` | `bash ~/.claude/statusline.sh` | Statusline command |
-| `enabledPlugins` | the plugins listed in the template | Plugin enablement |
-| `alwaysThinkingEnabled` | `true` | Extended thinking by default |
-| `autoUpdatesChannel` | `latest` | Update channel |
-| `tui` | `fullscreen` | Terminal UI mode |
-| `skipDangerousModePermissionPrompt` | `true` | Skip dangerous-mode prompt |
-| `teammateMode` | `auto` | Agent teams mode |
-| `attribution` | `{commit: "", pr: ""}` | No attribution lines in commits and PRs |
+| Field                               | Template value                     | Purpose                                     |
+| ----------------------------------- | ---------------------------------- | ------------------------------------------- |
+| `env`                               | the variables in the table below   | API endpoint, models, limits, feature flags |
+| `model`                             | `glm-5.3[1m]`                      | Default model                               |
+| `statusLine`                        | `bash ~/.claude/statusline.sh`     | Statusline command                          |
+| `enabledPlugins`                    | the plugins listed in the template | Plugin enablement                           |
+| `alwaysThinkingEnabled`             | `true`                             | Extended thinking by default                |
+| `autoUpdatesChannel`                | `latest`                           | Update channel                              |
+| `tui`                               | `fullscreen`                       | Terminal UI mode                            |
+| `skipDangerousModePermissionPrompt` | `true`                             | Skip dangerous-mode prompt                  |
+| `teammateMode`                      | `auto`                             | Agent teams mode                            |
+| `attribution`                       | `{commit: "", pr: ""}`             | No attribution lines in commits and PRs     |
 
 Injected `env` variables:
 
-| Variable | Value | Purpose |
-|----------|-------|---------|
-| `ANTHROPIC_BASE_URL` | `https://api.z.ai/api/anthropic` | API endpoint |
-| `API_TIMEOUT_MS` | `3000000` | Request timeout |
-| `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` | `1` | Disable telemetry traffic |
-| `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` | `1` | Enable agent teams |
-| `CLAUDE_CODE_ENABLE_AUTO_MODE` | `1` | Enable auto mode |
-| `CLAUDE_CODE_MAX_OUTPUT_TOKENS` | `131072` | Max output tokens |
-| `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE` | `48.5` | Autocompact trigger percentage (48.5% of the 1M window = 485k tokens) |
-| `CLAUDE_CODE_AUTO_COMPACT_WINDOW` | `1000000` | Autocompact context window |
-| `ANTHROPIC_DEFAULT_HAIKU_MODEL` | `glm-5.3-flash[1m]` | Haiku-class model override |
-| `ANTHROPIC_DEFAULT_SONNET_MODEL` | `glm-5.3[1m]` | Sonnet-class model override |
-| `ANTHROPIC_DEFAULT_OPUS_MODEL` | `glm-5.3[1m]` | Opus-class model override |
-| `CLAUDE_CODE_EFFORT_LEVEL` | `max` | Reasoning effort |
-| `CLAUDE_CODE_SUBAGENT_MODEL` | `glm-5.3[1m]` | Sub-agent model override |
+| Variable                                   | Value                            | Purpose                                                               |
+| ------------------------------------------ | -------------------------------- | --------------------------------------------------------------------- |
+| `ANTHROPIC_BASE_URL`                       | `https://api.z.ai/api/anthropic` | API endpoint                                                          |
+| `API_TIMEOUT_MS`                           | `3000000`                        | Request timeout                                                       |
+| `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` | `1`                              | Disable telemetry traffic                                             |
+| `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`     | `1`                              | Enable agent teams                                                    |
+| `CLAUDE_CODE_ENABLE_AUTO_MODE`             | `1`                              | Enable auto mode                                                      |
+| `CLAUDE_CODE_MAX_OUTPUT_TOKENS`            | `131072`                         | Max output tokens                                                     |
+| `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE`          | `48.5`                           | Autocompact trigger percentage (48.5% of the 1M window = 485k tokens) |
+| `CLAUDE_CODE_AUTO_COMPACT_WINDOW`          | `1000000`                        | Autocompact context window                                            |
+| `ANTHROPIC_DEFAULT_HAIKU_MODEL`            | `glm-5.3-flash[1m]`              | Haiku-class model override                                            |
+| `ANTHROPIC_DEFAULT_SONNET_MODEL`           | `glm-5.3[1m]`                    | Sonnet-class model override                                           |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL`             | `glm-5.3[1m]`                    | Opus-class model override                                             |
+| `CLAUDE_CODE_EFFORT_LEVEL`                 | `max`                            | Reasoning effort                                                      |
+| `CLAUDE_CODE_SUBAGENT_MODEL`               | `glm-5.3[1m]`                    | Sub-agent model override                                              |
 
 `enabledPlugins` enables the plugins listed in `.claude/settings.template.json`: the repomix plugins, the official LSP plugins, and the workflow plugins such as feature-dev, code-review, superpowers, and claude-security.
 
 Retired settings, deleted from the live file on deploy via `.claude/settings.retired.json`:
 
-| Retired key | Reason | Reference |
-|-------------|--------|-----------|
-| `env.CLAUDE_CODE_MAX_OUTPUT_TOKEN` | Misspelling of the documented `CLAUDE_CODE_MAX_OUTPUT_TOKENS`, which the template now sets | [env vars reference](https://code.claude.com/docs/en/env-vars) |
-| `enabledPlugins.remember@claude-plugins-official` | Unused plugin that only appeared in /plugin because a v5.28.1 template sync copied the live disable flag in | [plugins reference](https://code.claude.com/docs/en/plugins) |
+| Retired key                                       | Reason                                                                                                      | Reference                                                      |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| `env.CLAUDE_CODE_MAX_OUTPUT_TOKEN`                | Misspelling of the documented `CLAUDE_CODE_MAX_OUTPUT_TOKENS`, which the template now sets                  | [env vars reference](https://code.claude.com/docs/en/env-vars) |
+| `enabledPlugins.remember@claude-plugins-official` | Unused plugin that only appeared in /plugin because a v5.28.1 template sync copied the live disable flag in | [plugins reference](https://code.claude.com/docs/en/plugins)   |
 
 ### OpenCode config merging
 
@@ -385,50 +386,50 @@ Typst: `<leader>pt` toggles the live preview, which re-renders in a browser pane
 
 </details>
 
-| Keybinding | Action |
-|------------|--------|
-| `-` | Open parent directory (builtin) |
-| `<leader>q` | Quit |
-| `<leader>x` | Write and source |
-| `<leader>'` | Alternate file |
-| `<leader>pt` | Toggle Typst preview |
-| `<leader>ps` | Start live preview |
-| `<leader>pc` | Close live preview |
-| `<leader>;` | Pick live preview |
-| `<leader>b` | LSP format |
-| `<leader>u` | Pack update |
-| `<leader>e` | FzfLua global |
-| `<leader>n` | FzfLua combine |
-| `<leader>/` | Grep current buffer |
-| `<leader>z` | Live grep native |
-| `<leader>f` | Files |
-| `<leader>h` | Help tags |
-| `<leader>k` | Keymaps |
-| `<leader>l` | Loclist |
-| `<leader>m` | Marks |
-| `<leader>t` | Quickfix |
-| `<leader>gf` | Git files |
-| `<leader>gs` | Git status |
-| `<leader>gd` | Git diff |
-| `<leader>gh` | Git hunks |
-| `<leader>gc` | Git commits |
-| `<leader>gl` | Git blame |
-| `<leader>gb` | Git branches |
-| `<leader>gt` | Git tags |
-| `<leader>gk` | Git stash |
-| `<leader>\` | LSP finder |
-| `<leader>dd` | LSP document diagnostics |
-| `<leader>dw` | LSP workspace diagnostics |
-| `<leader>,` | LSP incoming calls |
-| `<leader>.` | LSP outgoing calls |
-| `<leader>a` | LSP code actions |
-| `<leader>s` | LSP document symbols |
-| `<leader>w` | LSP workspace symbols |
-| `<leader>r` | LSP references |
-| `<leader>i` | LSP implementations |
-| `<leader>o` | LSP type definitions |
-| `<leader>j` | LSP definitions |
-| `<leader>v` | LSP declarations |
+| Keybinding   | Action                          |
+| ------------ | ------------------------------- |
+| `-`          | Open parent directory (builtin) |
+| `<leader>q`  | Quit                            |
+| `<leader>x`  | Write and source                |
+| `<leader>'`  | Alternate file                  |
+| `<leader>pt` | Toggle Typst preview            |
+| `<leader>ps` | Start live preview              |
+| `<leader>pc` | Close live preview              |
+| `<leader>;`  | Pick live preview               |
+| `<leader>b`  | LSP format                      |
+| `<leader>u`  | Pack update                     |
+| `<leader>e`  | FzfLua global                   |
+| `<leader>n`  | FzfLua combine                  |
+| `<leader>/`  | Grep current buffer             |
+| `<leader>z`  | Live grep native                |
+| `<leader>f`  | Files                           |
+| `<leader>h`  | Help tags                       |
+| `<leader>k`  | Keymaps                         |
+| `<leader>l`  | Loclist                         |
+| `<leader>m`  | Marks                           |
+| `<leader>t`  | Quickfix                        |
+| `<leader>gf` | Git files                       |
+| `<leader>gs` | Git status                      |
+| `<leader>gd` | Git diff                        |
+| `<leader>gh` | Git hunks                       |
+| `<leader>gc` | Git commits                     |
+| `<leader>gl` | Git blame                       |
+| `<leader>gb` | Git branches                    |
+| `<leader>gt` | Git tags                        |
+| `<leader>gk` | Git stash                       |
+| `<leader>\`  | LSP finder                      |
+| `<leader>dd` | LSP document diagnostics        |
+| `<leader>dw` | LSP workspace diagnostics       |
+| `<leader>,`  | LSP incoming calls              |
+| `<leader>.`  | LSP outgoing calls              |
+| `<leader>a`  | LSP code actions                |
+| `<leader>s`  | LSP document symbols            |
+| `<leader>w`  | LSP workspace symbols           |
+| `<leader>r`  | LSP references                  |
+| `<leader>i`  | LSP implementations             |
+| `<leader>o`  | LSP type definitions            |
+| `<leader>j`  | LSP definitions                 |
+| `<leader>v`  | LSP declarations                |
 
 ## Books corpus
 
