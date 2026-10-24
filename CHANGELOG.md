@@ -2,13 +2,19 @@
 
 All notable changes to this project are documented in this file, newest first. One short line per release states what happened, with no detail enumeration, the commit history carries the detail. Versioning is major.minor. Unreleased work lands under an `## [Unreleased]` heading that is renamed to the version and date at release time.
 
-## [Unreleased]
+## [6.11] - 2026-10-24
 
 The protocol worktree rule flipped: subagent isolation comes from task planning and distribution alone, all agents share the same checkout folder as build cache because vendors accumulate in GiB and worktree cloning is unaffordable, separate subagent worktrees are forbidden with any worktree instruction in skills ignored, and a worktree used anyway is removed at its lane's merge-back so nothing accumulates.
 
-The protocol gained a disk hygiene rule: build, coverage, fuzz, and mutation caches and temp trees are purged immediately once tasks are done with no stale file left wasting disk, every run is tracked and traced so an unexpected death still cleans up from its recorded temp paths, go-build* and gocoverdir temp trees go away age-filtered and only with no live go process, go clean -cache and rust build and vendor caches plus pip, uv, and venv cache and temp trees are pruned, a full purge follows every subagent delivery with the hub rechecking and any incident or crash cleans up from the traces, and docker_data.vhdx is removed after docker work is finished.
+The protocol gained a disk hygiene rule: build, coverage, fuzz, and mutation caches and temp trees are purged immediately once tasks are done with no stale file left wasting disk, every run is tracked and traced so an unexpected death still cleans up from its recorded temp paths, go-build\* and gocoverdir temp trees go away age-filtered and only with no live go process, go clean -cache and rust build and vendor caches plus pip, uv, and venv cache and temp trees are pruned, a full purge follows every subagent delivery with the hub rechecking and any incident or crash cleans up from the traces, and docker_data.vhdx is removed after docker work is finished.
 
 New projects run without containerization and without wrappers, with a native binary preferred for every program and toolchain.
+
+The quality-check ps1 wrapper fixed its bash invocation, which quoted the whole command into one unrunnable token, and now resolves the bash twin beside itself instead of only in the deployed location, with entry, exit, and failure tracing.
+
+The protocol gained subagent toolset rules: workhorse sub-agents mostly inherit the main agent's toolbox, the full set under bypass permissions, tools a task can never use drop off such as a browser or repomix for a commit agent, the granted set is verified before launch so test agents actually run their shell and python, a missing tool is raised instead of worked around, and local files, git, and github work go through native file tools and the git and gh binaries, never a browser or web fetch.
+
+The writing rules gained a priority: when density and plain wording conflict, plain wins, with simpler casual vernacular language constructs preferred over terse, dense, complicated, or ad-hoc made-up writing.
 
 ## [6.10] - 2026-10-20
 
