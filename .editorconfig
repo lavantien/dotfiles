@@ -1,0 +1,5 @@
+root = true
+
+[git-clone-all.sh]
+indent_style = space
+indent_size = 8

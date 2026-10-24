@@ -39,7 +39,7 @@ lint: ## shellcheck error gate, shfmt diff, selene, typos, PSSA when installed
 	done < <(git ls-files -z -- '*.sh'); \
 	if [ "$$status" -eq 0 ]; then echo 'shellcheck: 0 errors'; else exit 1; fi
 	@echo '== shfmt (diff, -ln bash) =='
-	@git ls-files -z -- '*.sh' | xargs -0 shfmt -ln bash -d && echo 'shfmt: clean'
+	@git ls-files -z -- '*.sh' | xargs -0 shfmt -d && echo 'shfmt: clean'
 	@echo '== selene =='
 	@selene .
 	@echo '== typos =='
@@ -49,7 +49,7 @@ lint: ## shellcheck error gate, shfmt diff, selene, typos, PSSA when installed
 	@$(PSSA_LINT)
 
 format: ## shfmt rewrite, typos fix, Invoke-Formatter for .ps1 when installed
-	@git ls-files -z -- '*.sh' | xargs -0 shfmt -ln bash -w
+	@git ls-files -z -- '*.sh' | xargs -0 shfmt -w
 	@typos -w
 	@command -v pwsh >/dev/null 2>&1 || { echo 'skip: pwsh not installed'; exit 0; }
 	@$(PSSA_FORMAT)
