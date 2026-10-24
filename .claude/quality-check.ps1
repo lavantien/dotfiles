@@ -1,54 +1,52 @@
-# Claude Code Quality Check Script (Windows)
-# Wrapper that calls the bash version via git-bash
-# The bash script is the source of truth for cross-platform consistency
+#requires -Version 7
 
 param(
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory = $false)]
     [string]$ChangedFile
 )
 
-$ErrorActionPreference = "Continue"
+$ErrorActionPreference = "Stop"
 
-# Find git-bash.exe (Git for Windows installation)
+Write-Host "[quality-check.ps1] entry: changed file '$ChangedFile'" -ForegroundColor Cyan
+
 $gitBashPaths = @(
     "$env:LOCALAPPDATA\Programs\Git\bin\bash.exe",
     "${env:ProgramFiles}\Git\bin\bash.exe",
     "${env:ProgramFiles(x86)}\Git\bin\bash.exe"
 )
 
-$gitBash = $null
-foreach ($path in $gitBashPaths) {
-    if (Test-Path $path) {
-        $gitBash = $path
-        break
-    }
-}
+$gitBash = $gitBashPaths | Where-Object { Test-Path $_ } | Select-Object -First 1
 
 if (-not $gitBash) {
-    Write-Host "Git Bash not found. Please install Git for Windows." -ForegroundColor Red
+    Write-Host "[quality-check.ps1] failure: git-bash.exe not found in any known location: $($gitBashPaths -join ', ')" -ForegroundColor Red
     exit 1
 }
 
-# Get the quality check script path
-$qualityCheckScript = Join-Path $HOME ".claude/quality-check.sh"
+$qualityCheckScript = Join-Path $PSScriptRoot "quality-check.sh"
 
 if (!(Test-Path $qualityCheckScript)) {
-    Write-Host "Quality check script not found: $qualityCheckScript" -ForegroundColor Red
+    Write-Host "[quality-check.ps1] failure: quality-check.sh not found at $qualityCheckScript, deploy first or run from the repo" -ForegroundColor Red
     exit 1
 }
 
-# Convert Windows path to Git Bash path (C:\ -> /c/)
-$bashScriptPath = $qualityCheckScript -replace '\\', '/' -replace '^([A-Z]):', '/$1'
+Write-Host "[quality-check.ps1] running $qualityCheckScript via $gitBash" -ForegroundColor Cyan
 
-# Build the bash command
+$bashScriptPath = $qualityCheckScript -replace '\\', '/' -replace '^([A-Za-z]):', '/$1'
+
 if ([string]::IsNullOrEmpty($ChangedFile)) {
-    $bashArgs = @("-l", "-c", "`"$bashScriptPath`"")
+    $bashCommand = $bashScriptPath
 } else {
-    # Convert file path for bash
-    $bashFilePath = $ChangedFile -replace '\\', '/' -replace '^([A-Z]):', '/$1'
-    $bashArgs = @("-l", "-c", "`"$bashScriptPath '$bashFilePath'`"")
+    $bashFilePath = $ChangedFile -replace '\\', '/' -replace '^([A-Za-z]):', '/$1'
+    $bashCommand = "$bashScriptPath '$bashFilePath'"
 }
 
-# Execute bash script
-& $gitBash $bashArgs
-exit $LASTEXITCODE
+& $gitBash -l -c $bashCommand
+$exitCode = $LASTEXITCODE
+
+if ($exitCode -ne 0) {
+    Write-Host "[quality-check.ps1] failure: quality-check.sh exited with code $exitCode" -ForegroundColor Red
+} else {
+    Write-Host "[quality-check.ps1] exit: ok" -ForegroundColor Green
+}
+
+exit $exitCode
