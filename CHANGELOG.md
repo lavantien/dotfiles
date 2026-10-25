@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented in this file, newest first. One short line per release states what happened, with no detail enumeration, the commit history carries the detail. Versioning is major.minor. Unreleased work lands under an `## [Unreleased]` heading that is renamed to the version and date at release time.
 
+## [6.12] - 2026-10-25
+
+git-clone-all.sh is now a preserved museum artifact whose exact bytes matter: the shfmt reflow that once reformatted it was excised from history by re-editing the reflow commit without the file's hunk and replaying every commit after it with the merge topology preserved, so the file's history view shows just its two original commits, and a root .editorconfig section declaring its space style keeps the pre-commit hook, make lint, make format, and editorconfig-aware editors from ever reflowing it again, with the Makefile shfmt sweep dropping its forced language flag because forcing the language disables editorconfig.
+
+The protocol gained a tool discipline rule: a defective or missing tool gets raised with a proposed root-cause fix and never worked around, covering hooks, wrappers, formatters, the shell layer, and harness behavior, and a degraded callable toolset such as file tools, the shell, agents, or skills vanishing after compaction is a halt condition, no improvising with whatever remains like reading files through a browser because the file tools are gone.
+
+The readme common prompts list is now foldable behind a details element and gained a prompt that asks whether the plan really maximized parallelism for subagent task distribution and which other independent tasks can start right away to use the idle capacity.
+
 ## [6.11] - 2026-10-24
 
 The protocol worktree rule flipped: subagent isolation comes from task planning and distribution alone, all agents share the same checkout folder as build cache because vendors accumulate in GiB and worktree cloning is unaffordable, separate subagent worktrees are forbidden with any worktree instruction in skills ignored, and a worktree used anyway is removed at its lane's merge-back so nothing accumulates.
