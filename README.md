@@ -9,11 +9,15 @@ Here are some quick common prompts ready for yanking:
 <details>
 <summary>common prompts</summary>
 
+> what's the progress? what's in flight? what's remaining? the current estimated time remaining to full finish in one number?
+>
+> ===
+>
 > the opening books corpus contain chapters that might be useful to our endeavor. now let build the task list for this plan and fan out subagents and start the development loop according to the prime directives and principles
 >
 > ===
 >
-> what's the progress? what's in flight? what's remaining? the current estimated time remaining to full finish in one number?
+> did our grand plan really maximize parallelism for subagent task distribution and minimize downtime? what are the other independent tasks that can start right away alongside and utilize the full to-be-wasted horse power? what's the progress til next step? and is there anything next based on the current state of the codebase and the roadmap that we can parallely tackling right now instead of idling and waiting?
 >
 > ===
 >
@@ -24,10 +28,6 @@ Here are some quick common prompts ready for yanking:
 > audit the repo against our prime directives and universal principles and writing style
 >
 > add human-onboarding.md with full diagrams of systems and table of the logical evolution of the project and what/why/how/where/when tables of all points of interested. the goal is to most optimally and condensely transfer knowledge of the codebase, language features/libraries usages, techniques, and all the business logic to a human developer, so that they can have an accurate and comprehensive mental model of the project and how to actually adding or removing or improving features.
->
-> ===
->
-> did our grand plan really maximize parallelism for subagent task distribution and minimize downtime? what are the other independent tasks that can start right away alongside and utilize the full to-be-wasted horse power?
 
 </details>
 

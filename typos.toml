@@ -17,6 +17,13 @@ offical = "offical"
 oudated = "oudated"
 ADDRESSS = "ADDRESSS"
 
+# Readme common prompts are quoted verbatim user prompts
+[type.readme]
+extend-glob = ["README.md"]
+
+[type.readme.extend-words]
+parallely = "parallely"
+
 # Published books corpus mirrors the private corpus, not repo-authored prose
 [files]
 extend-exclude = [".claude/books/**"]
