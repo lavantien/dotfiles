@@ -393,25 +393,34 @@ function Main {
     # ============================================================================
     Write-Step "DOTNET TOOLS"
     if (Test-Command dotnet) {
-        try {
-            $tools = dotnet tool list 2>&1 | Select-Object -Skip 2 | Where-Object { $_ -match '^\S+' }
-            if ($tools) {
-                foreach ($tool in $tools) {
-                    $toolName = ($tool -split '\s+')[0]
-                    if ($toolName -eq 'Package') { continue }
-                    dotnet tool update $toolName
+        # global scope: local scope requires a dotnet-tools.json manifest no
+        # target machine carries
+        $tools = dotnet tool list --global | Select-Object -Skip 2 | Where-Object { $_ -match '^\S+' }
+        if ($LASTEXITCODE -ne 0) {
+            Write-Fail "dotnet tool list"
+            $script:failed++
+        }
+        elseif ($tools) {
+            $failedTools = @()
+            foreach ($tool in $tools) {
+                $toolName = ($tool -split '\s+')[0]
+                dotnet tool update --global $toolName
+                if ($LASTEXITCODE -ne 0) {
+                    $failedTools += $toolName
                 }
+            }
+            if ($failedTools.Count -eq 0) {
                 Write-Success "dotnet"
                 $script:updated++
             }
             else {
-                Write-Skip "No dotnet tools installed"
-                $script:skipped++
+                Write-Fail "dotnet (failed: $($failedTools -join ', '))"
+                $script:failed++
             }
         }
-        catch {
-            Write-Fail "dotnet"
-            $script:failed++
+        else {
+            Write-Skip "No dotnet tools installed"
+            $script:skipped++
         }
     }
     else {

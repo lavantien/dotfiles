@@ -330,14 +330,20 @@ update_pip() {
 	update_success "$name"
 }
 
-# Update helper for dotnet tools (handles list and update loop)
+# Update helper for dotnet tools (global scope; local scope dies without a
+# dotnet-tools.json manifest, which no target machine carries)
 update_dotnet_tools() {
+	local rc=0
 	while read -r tool; do
 		if [ -n "$tool" ] && [ "$tool" != "Package" ]; then
-			dotnet tool update "$tool"
+			dotnet tool update --global "$tool" || rc=$?
 		fi
-	done < <(dotnet tool list 2>/dev/null | tail -n +3 | awk '{print $1}')
+	done < <(dotnet tool list --global 2>/dev/null | tail -n +3 | awk '{print $1}')
 
+	if [[ $rc -ne 0 ]]; then
+		update_fail "dotnet" ""
+		return 1
+	fi
 	update_success "dotnet"
 }
 

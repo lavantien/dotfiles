@@ -37,6 +37,19 @@ REPO_ROOT="$(cd "$BATS_TEST_DIRNAME/.." && pwd)"
 	[ "$(grep -v '^[[:space:]]*#' "$REPO_ROOT/scripts/update-all.ps1" | grep -c 'gup update')" -le 2 ]
 }
 
+@test "dotnet tool list and update always run in global scope" {
+	# without --global both commands resolve to the local manifest, and a
+	# machine with no dotnet-tools.json dies on "Cannot find a manifest file"
+	for f in scripts/update-all.sh scripts/update-all.ps1; do
+		grep -qE '(^|[[:space:]]|=[[:space:]]|\()dotnet tool list --global' "$REPO_ROOT/$f"
+		grep -qE '(^|[[:space:]]|=[[:space:]]|\()dotnet tool update --global' "$REPO_ROOT/$f"
+		if grep -E '(^|[[:space:]]|=[[:space:]]|\()dotnet tool (list|update)' "$REPO_ROOT/$f" | grep -v -- '--global' | grep -q .; then
+			echo "a dotnet tool call without --global resolves to the local manifest scope" >&2
+			return 1
+		fi
+	done
+}
+
 @test "pip_install retries with --break-system-packages only on PEP 668 errors" {
 	fakebin="$BATS_TEST_TMPDIR/pipbin"
 	mkdir -p "$fakebin"
