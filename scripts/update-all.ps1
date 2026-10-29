@@ -81,7 +81,7 @@ function Invoke-WingetBatch {
     $batchPath = Join-Path $env:TEMP "winget-batch-$tag.json"
     $logPath = Join-Path $env:TEMP "winget-batch-$tag.log"
     ConvertTo-Json @($Batch) -Compress -Depth 3 | Set-Content -LiteralPath $batchPath -Encoding utf8
-    Set-Content -LiteralPath $logPath -Value '' -Encoding utf8
+    New-Item -ItemType File -Path $logPath -Force | Out-Null
 
     $child = @'
 $ErrorActionPreference = 'Continue'
@@ -91,14 +91,15 @@ foreach ($cmdArgs in $batch) {
     $output = & '<winget>' @cmdArgs *>&1
     $code = if ($null -ne $LASTEXITCODE) { $LASTEXITCODE } else { 127 }
     if ($output) { $output | Add-Content -LiteralPath '<log>' -Encoding utf8 }
-    "WINGET_RESULT|$code" | Add-Content -LiteralPath '<log>' -Encoding utf8
+    "WINGET_RESULT|<tag>|$code" | Add-Content -LiteralPath '<log>' -Encoding utf8
 }
 exit 0
 '@
     $child = $child.
         Replace('<batch>', $batchPath.Replace("'", "''")).
         Replace('<winget>', $WingetExe.Replace("'", "''")).
-        Replace('<log>', $logPath.Replace("'", "''"))
+        Replace('<log>', $logPath.Replace("'", "''")).
+        Replace('<tag>', $tag)
     $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($child))
 
     Write-Info "elevating winget batch, one UAC prompt covers every upgrade"
@@ -106,12 +107,16 @@ exit 0
         $proc = Start-Process -FilePath (Get-Process -Id $PID).Path -ArgumentList @('-NoProfile', '-NonInteractive', '-EncodedCommand', $encoded) -Verb RunAs -WindowStyle Hidden -PassThru -Wait
     }
     catch {
-        Write-Info "elevation declined: $($_.Exception.Message)"
+        $reason = $_.Exception.Message
+        Write-Info "elevation failed: $reason"
         Remove-Item $batchPath, $logPath -Force -ErrorAction SilentlyContinue
         # one outcome per command keeps Main's per-command indexing honest:
-        # every upgrade reports the decline under its own label
+        # a decline and a launch failure report under their own labels
+        $declined = $reason -match 'cancel'
+        $code = if ($declined) { 1223 } else { -1 }
+        $message = if ($declined) { 'UAC elevation was declined' } else { "winget batch could not elevate: $reason" }
         foreach ($cmdArgs in $Batch) {
-            [pscustomobject]@{ Code = 1223; Output = @('UAC elevation was declined') }
+            [pscustomobject]@{ Code = $code; Output = @($message) }
         }
         return
     }
@@ -119,10 +124,13 @@ exit 0
     $logLines = @(Get-Content -LiteralPath $logPath)
     Remove-Item $batchPath, $logPath -Force -ErrorAction SilentlyContinue
 
+    # the tag makes the marker unforgeable: no winget output line can carry
+    # this run's GUID
+    $marker = '^WINGET_RESULT\|' + [regex]::Escape($tag) + '\|(-?\d+)$'
     $outcomes = [System.Collections.Generic.List[object]]::new()
     $pending = [System.Collections.Generic.List[string]]::new()
     foreach ($line in $logLines) {
-        if ($line -match '^WINGET_RESULT\|(-?\d+)$') {
+        if ($line -match $marker) {
             $outcomes.Add([pscustomobject]@{ Code = [int]$matches[1]; Output = @($pending) })
             $pending = [System.Collections.Generic.List[string]]::new()
         }
@@ -130,8 +138,10 @@ exit 0
             $pending.Add($line)
         }
     }
-    while ($outcomes.Count -lt $Batch.Count) {
+    if ($outcomes.Count -lt $Batch.Count) {
         Write-Info "elevated batch exited with $($proc.ExitCode), $($Batch.Count - $outcomes.Count) command(s) left no result marker"
+    }
+    while ($outcomes.Count -lt $Batch.Count) {
         $outcomes.Add([pscustomobject]@{ Code = $proc.ExitCode; Output = @($pending) })
         $pending = [System.Collections.Generic.List[string]]::new()
     }
