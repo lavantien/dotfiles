@@ -89,13 +89,16 @@ $batch = @(Get-Content -Raw -LiteralPath '<batch>' | ConvertFrom-Json)
 foreach ($cmdArgs in $batch) {
     $cmdArgs = @($cmdArgs)
     $output = & '<winget>' @cmdArgs *>&1
-    $code = $LASTEXITCODE
+    $code = if ($null -ne $LASTEXITCODE) { $LASTEXITCODE } else { 127 }
     if ($output) { $output | Add-Content -LiteralPath '<log>' -Encoding utf8 }
     "WINGET_RESULT|$code" | Add-Content -LiteralPath '<log>' -Encoding utf8
 }
 exit 0
 '@
-    $child = $child.Replace('<batch>', $batchPath).Replace('<winget>', $WingetExe).Replace('<log>', $logPath)
+    $child = $child.
+        Replace('<batch>', $batchPath.Replace("'", "''")).
+        Replace('<winget>', $WingetExe.Replace("'", "''")).
+        Replace('<log>', $logPath.Replace("'", "''"))
     $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($child))
 
     Write-Info "elevating winget batch, one UAC prompt covers every upgrade"
@@ -105,7 +108,11 @@ exit 0
     catch {
         Write-Info "elevation declined: $($_.Exception.Message)"
         Remove-Item $batchPath, $logPath -Force -ErrorAction SilentlyContinue
-        [pscustomobject]@{ Code = 1223; Output = @('UAC elevation was declined') }
+        # one outcome per command keeps Main's per-command indexing honest:
+        # every upgrade reports the decline under its own label
+        foreach ($cmdArgs in $Batch) {
+            [pscustomobject]@{ Code = 1223; Output = @('UAC elevation was declined') }
+        }
         return
     }
 
