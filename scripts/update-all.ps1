@@ -51,6 +51,86 @@ function Test-Command {
     return $?
 }
 
+function Test-IsElevated {
+    $principal = [Security.Principal.WindowsPrincipal]::new([Security.Principal.WindowsIdentity]::GetCurrent())
+    return $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+}
+
+# Runs an array of winget argument arrays, returns one object per command
+# with Code and Output. One elevated child shell covers the whole batch:
+# winget inherits the admin token and machine-scope installers stop popping
+# a UAC prompt each. Native sudo prompts per invocation and, in its default
+# forceNewWindow mode, hides all output in a separate window.
+function Invoke-WingetBatch {
+    param(
+        [string]$WingetExe,
+        [object[]]$Batch
+    )
+
+    if (Test-IsElevated) {
+        Write-Info "already elevated, running winget batch inline"
+        foreach ($cmdArgs in $Batch) {
+            $cmdArgs = @($cmdArgs)
+            $output = & $WingetExe @cmdArgs 2>&1
+            [pscustomobject]@{ Code = $LASTEXITCODE; Output = @($output) }
+        }
+        return
+    }
+
+    $tag = [guid]::NewGuid().ToString('N')
+    $batchPath = Join-Path $env:TEMP "winget-batch-$tag.json"
+    $logPath = Join-Path $env:TEMP "winget-batch-$tag.log"
+    ConvertTo-Json @($Batch) -Compress -Depth 3 | Set-Content -LiteralPath $batchPath -Encoding utf8
+    Set-Content -LiteralPath $logPath -Value '' -Encoding utf8
+
+    $child = @'
+$ErrorActionPreference = 'Continue'
+$batch = @(Get-Content -Raw -LiteralPath '<batch>' | ConvertFrom-Json)
+foreach ($cmdArgs in $batch) {
+    $cmdArgs = @($cmdArgs)
+    $output = & '<winget>' @cmdArgs *>&1
+    $code = $LASTEXITCODE
+    if ($output) { $output | Add-Content -LiteralPath '<log>' -Encoding utf8 }
+    "WINGET_RESULT|$code" | Add-Content -LiteralPath '<log>' -Encoding utf8
+}
+exit 0
+'@
+    $child = $child.Replace('<batch>', $batchPath).Replace('<winget>', $WingetExe).Replace('<log>', $logPath)
+    $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($child))
+
+    Write-Info "elevating winget batch, one UAC prompt covers every upgrade"
+    try {
+        $proc = Start-Process -FilePath (Get-Process -Id $PID).Path -ArgumentList @('-NoProfile', '-NonInteractive', '-EncodedCommand', $encoded) -Verb RunAs -WindowStyle Hidden -PassThru -Wait
+    }
+    catch {
+        Write-Info "elevation declined: $($_.Exception.Message)"
+        Remove-Item $batchPath, $logPath -Force -ErrorAction SilentlyContinue
+        [pscustomobject]@{ Code = 1223; Output = @('UAC elevation was declined') }
+        return
+    }
+
+    $logLines = @(Get-Content -LiteralPath $logPath)
+    Remove-Item $batchPath, $logPath -Force -ErrorAction SilentlyContinue
+
+    $outcomes = [System.Collections.Generic.List[object]]::new()
+    $pending = [System.Collections.Generic.List[string]]::new()
+    foreach ($line in $logLines) {
+        if ($line -match '^WINGET_RESULT\|(-?\d+)$') {
+            $outcomes.Add([pscustomobject]@{ Code = [int]$matches[1]; Output = @($pending) })
+            $pending = [System.Collections.Generic.List[string]]::new()
+        }
+        else {
+            $pending.Add($line)
+        }
+    }
+    while ($outcomes.Count -lt $Batch.Count) {
+        Write-Info "elevated batch exited with $($proc.ExitCode), $($Batch.Count - $outcomes.Count) command(s) left no result marker"
+        $outcomes.Add([pscustomobject]@{ Code = $proc.ExitCode; Output = @($pending) })
+        $pending = [System.Collections.Generic.List[string]]::new()
+    }
+    $outcomes
+}
+
 # Run command directly, showing all output
 function Invoke-Command {
     param(
@@ -159,37 +239,40 @@ function Main {
         # while upgrade <id> still works; --location is passed to the installer
         # verbatim, unlike installBehavior.defaultInstallRoot which gets the
         # package ID appended
+        $wingetBatch = @()
         foreach ($pkg in $WingetLocationUpgrades.GetEnumerator()) {
             $installed = & $wingetExe list --id $pkg.Key --exact --accept-source-agreements 2>$null |
                 Select-String -SimpleMatch $pkg.Key
             if (-not $installed) { continue }
 
             & $wingetExe pin add --id $pkg.Key --exact --accept-source-agreements 2>$null
-            $output = & $wingetExe upgrade --id $pkg.Key --exact --include-unknown --location $pkg.Value --accept-source-agreements --accept-package-agreements 2>&1
-            if ($output -match "No available upgrade") {
-                Write-Skip "$($pkg.Key) (up to date)"
-                $script:skipped++
-            }
-            elseif ($LASTEXITCODE -eq 0) {
-                Write-Success $pkg.Key
-                $script:updated++
-            }
-            else {
-                Write-Fail $pkg.Key
-                $script:failed++
-            }
+            $wingetBatch += , @('upgrade', '--id', $pkg.Key, '--exact', '--include-unknown', '--location', $pkg.Value, '--accept-source-agreements', '--accept-package-agreements')
         }
 
-        try {
-            # winget upgrade --all runs interactively with prompts
-            # Use --accept-source-agreements --accept-package-agreements to auto-accept
-            & $wingetExe upgrade --all --include-unknown --accept-source-agreements --accept-package-agreements
-            Write-Success "winget"
-            $script:updated++
-        }
-        catch {
-            Write-Fail "winget"
-            $script:failed++
+        $wingetBatch += , @('upgrade', '--all', '--include-unknown', '--accept-source-agreements', '--accept-package-agreements')
+
+        $results = @(Invoke-WingetBatch -WingetExe $wingetExe -Batch $wingetBatch)
+        for ($i = 0; $i -lt $wingetBatch.Count; $i++) {
+            $cmdArgs = $wingetBatch[$i]
+            $idIndex = [array]::IndexOf($cmdArgs, '--id')
+            $label = if ($idIndex -ge 0) { $cmdArgs[$idIndex + 1] } else { 'winget' }
+            $result = $results[$i]
+
+            if ($result.Output) {
+                $result.Output | ForEach-Object { Write-Host "  $_" }
+            }
+            if ($result.Code -eq 0) {
+                Write-Success $label
+                $script:updated++
+            }
+            elseif (($result.Output -join "`n") -match 'No available upgrade') {
+                Write-Skip "$label (up to date)"
+                $script:skipped++
+            }
+            else {
+                Write-Fail "$label (exit $($result.Code))"
+                $script:failed++
+            }
         }
     }
     else {

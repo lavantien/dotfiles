@@ -50,6 +50,23 @@ REPO_ROOT="$(cd "$BATS_TEST_DIRNAME/.." && pwd)"
 	done
 }
 
+@test "update-all.ps1 elevates the whole winget batch once instead of per upgrade" {
+	ps1="$REPO_ROOT/scripts/update-all.ps1"
+	# machine-scope installers pop one UAC prompt each when winget runs
+	# unelevated: one elevated batch shell replaces them all
+	grep -q 'WindowsBuiltInRole]::Administrator' "$ps1"
+	grep -q -- '-Verb RunAs' "$ps1"
+	# the batch is built as one list and handed to a single runner
+	[ "$(grep -c 'WingetBatch' "$ps1")" -ge 2 ]
+	# upgrade --all exists only as the single batch tail element, never as a
+	# second inline invocation
+	[ "$(grep -c "'upgrade', '--all'" "$ps1")" -eq 1 ]
+	if grep -qE '& \$wingetExe upgrade' "$ps1"; then
+		echo "a direct winget upgrade call bypasses the elevated batch" >&2
+		return 1
+	fi
+}
+
 @test "pip_install retries with --break-system-packages only on PEP 668 errors" {
 	fakebin="$BATS_TEST_TMPDIR/pipbin"
 	mkdir -p "$fakebin"
