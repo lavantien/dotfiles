@@ -334,11 +334,20 @@ update_pip() {
 # dotnet-tools.json manifest, which no target machine carries)
 update_dotnet_tools() {
 	local rc=0
+	local list
+	if ! list=$(dotnet tool list --global 2>/dev/null); then
+		update_fail "dotnet" ""
+		return 1
+	fi
+	local names
+	names=$(printf '%s\n' "$list" | awk '{ lines[NR] = $1 } /^-+$/ { last = NR } END { for (i = last + 1; i <= NR; i++) if (lines[i] != "") print lines[i] }')
+	if [[ -z "$names" ]]; then
+		update_skip "No dotnet tools installed"
+		return 0
+	fi
 	while read -r tool; do
-		if [ -n "$tool" ] && [ "$tool" != "Package" ]; then
-			dotnet tool update --global "$tool" || rc=$?
-		fi
-	done < <(dotnet tool list --global 2>/dev/null | tail -n +3 | awk '{print $1}')
+		dotnet tool update --global "$tool" || rc=$?
+	done < <(printf '%s\n' "$names")
 
 	if [[ $rc -ne 0 ]]; then
 		update_fail "dotnet" ""

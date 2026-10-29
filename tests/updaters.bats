@@ -48,6 +48,10 @@ REPO_ROOT="$(cd "$BATS_TEST_DIRNAME/.." && pwd)"
 			return 1
 		fi
 	done
+	# exact invocation forms: a --global elsewhere on the same line must not
+	# vouch for a bare call
+	grep -qF 'dotnet tool update --global "$tool"' "$REPO_ROOT/scripts/update-all.sh"
+	grep -qF 'dotnet tool update --global $toolName' "$REPO_ROOT/scripts/update-all.ps1"
 }
 
 @test "update-all.ps1 elevates the whole winget batch once instead of per upgrade" {

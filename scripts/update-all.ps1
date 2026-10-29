@@ -478,32 +478,42 @@ function Main {
     if (Test-Command dotnet) {
         # global scope: local scope requires a dotnet-tools.json manifest no
         # target machine carries
-        $tools = dotnet tool list --global | Select-Object -Skip 2 | Where-Object { $_ -match '^\S+' }
+        $list = @(dotnet tool list --global)
         if ($LASTEXITCODE -ne 0) {
             Write-Fail "dotnet tool list"
             $script:failed++
         }
-        elseif ($tools) {
-            $failedTools = @()
-            foreach ($tool in $tools) {
-                $toolName = ($tool -split '\s+')[0]
-                dotnet tool update --global $toolName
-                if ($LASTEXITCODE -ne 0) {
-                    $failedTools += $toolName
+        else {
+            # the last dashed rule anchors the table: preamble lines before it
+            # (SDK first-run banner, even one with its own rule) never turn
+            # into tool names
+            $sepIndex = -1
+            for ($i = 0; $i -lt $list.Count; $i++) {
+                if ($list[$i] -match '^-+$') { $sepIndex = $i }
+            }
+            $tools = if ($sepIndex -ge 0) { $list | Select-Object -Skip ($sepIndex + 1) | Where-Object { $_ -match '^\S+' } }
+            if ($tools) {
+                $failedTools = @()
+                foreach ($tool in $tools) {
+                    $toolName = ($tool -split '\s+')[0]
+                    dotnet tool update --global $toolName
+                    if ($LASTEXITCODE -ne 0) {
+                        $failedTools += $toolName
+                    }
+                }
+                if ($failedTools.Count -eq 0) {
+                    Write-Success "dotnet"
+                    $script:updated++
+                }
+                else {
+                    Write-Fail "dotnet (failed: $($failedTools -join ', '))"
+                    $script:failed++
                 }
             }
-            if ($failedTools.Count -eq 0) {
-                Write-Success "dotnet"
-                $script:updated++
-            }
             else {
-                Write-Fail "dotnet (failed: $($failedTools -join ', '))"
-                $script:failed++
+                Write-Skip "No dotnet tools installed"
+                $script:skipped++
             }
-        }
-        else {
-            Write-Skip "No dotnet tools installed"
-            $script:skipped++
         }
     }
     else {
