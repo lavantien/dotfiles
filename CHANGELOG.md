@@ -1,6 +1,12 @@
 # Changelog
 
-All notable changes to this project are documented in this file, newest first. One short line per release states what happened, with no detail enumeration, the commit history carries the detail. Versioning is major.minor. Unreleased work lands under an `## [Unreleased]` heading that is renamed to the version and date at release time.
+All notable changes to this project are documented in this file, newest first. One short line per release states what happened, with no detail enumeration, the commit history carries the detail. Versioning is major.minor. Unreleased work is written under an `## [Unreleased]` heading that is renamed to the version and date at release time.
+
+## [Unreleased]
+
+The protocol text is rewritten in plain language, with the same directives, structure, and thresholds carried over in new wording: clipped fragment stacks became flowing sentences joined with commas, and every sentence the old text wrote with a word from its own banned list is reworded, covering pins down, unlanded, gate, lands, lives in, showcases, actually, baseline, the gap, inventory listings, and the framing cliches header, and acronyms now expand to their full words at first use, covering e2e, SLOC, PEB, TDD, OS, CI, PR, PID, and MCP.
+
+The voice rules gained a plain English mandate that governs thinking and reasoning as well as output, with committed output allowed in another language only when the task requires it, a new abstraction section writes for a reader like a smart 10 year old new to the topic with no analogies and the lowest abstraction, explains every concept in the simplest words at first use, bans invented acronyms, abbreviations, composite words, coined terms, ambiguous words, dense sentences, and made-up compound words, requires plain literal verbs and names the metaphor verbs like lands, gates, and pins, requires commas and natural spoken flow over short terse sentences, bans refuting claims nobody made, bans side details of the conversation or investigation in comments, docs, and commits, requires naming the file, command, or output instead of indirect references, and the banned word list grew by rung, fold, seam, land in all its forms, gate, chrome, no-op, pin, yak shaving, suspenders, smoking gun, lives in, caveat, bespoke, clique, blast radius, hinge, is the real, framing, and honest, with a scope note that a literal dictionary use and a product or command name containing the word stay allowed.
 
 ## [6.13] - 2026-10-29
 
