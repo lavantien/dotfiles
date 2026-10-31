@@ -293,6 +293,7 @@ Injected `env` variables:
 | `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` | `1`                              | Disable telemetry traffic                                             |
 | `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`     | `1`                              | Enable agent teams                                                    |
 | `CLAUDE_CODE_ENABLE_AUTO_MODE`             | `1`                              | Enable auto mode                                                      |
+| `CLAUDE_CODE_AUTO_MODE_SERVER`             | `0`                              | Skip auto mode server eligibility checks                              |
 | `CLAUDE_CODE_MAX_OUTPUT_TOKENS`            | `131072`                         | Max output tokens                                                     |
 | `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE`          | `48.5`                           | Autocompact trigger percentage (48.5% of the 1M window = 485k tokens) |
 | `CLAUDE_CODE_AUTO_COMPACT_WINDOW`          | `1000000`                        | Autocompact context window                                            |

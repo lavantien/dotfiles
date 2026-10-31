@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file, newest first. One short line per release states what happened, with no detail enumeration, the commit history carries the detail. Versioning is major.minor. Unreleased work is written under an `## [Unreleased]` heading that is renamed to the version and date at release time.
 
+## [Unreleased]
+
+Claude settings gained `CLAUDE_CODE_AUTO_MODE_SERVER` set to `0`, which stops Claude Code from running the auto mode server check against the z.ai gateway and removes the startup notice that asks the gateway to confirm no-charge classifier billing.
+
 ## [6.14] - 2026-10-31
 
 The protocol text is rewritten in plain language, with the same directives, structure, and thresholds carried over in new wording: clipped fragment stacks became flowing sentences joined with commas, and every sentence the old text wrote with a word from its own banned list is reworded, covering pins down, unlanded, gate, lands, lives in, showcases, actually, baseline, the gap, inventory listings, and the framing cliches header, and acronyms now expand to their full words at first use, covering e2e, SLOC, PEB, TDD, OS, CI, PR, PID, and MCP.
