@@ -78,6 +78,11 @@ if [ -f "$HOME/.dotfiles-installed" ] && [ "$hooks_path" = "$HOME/.config/git/ho
 else
 	report fail "3 marker and core.hooksPath" "marker=$([ -f "$HOME/.dotfiles-installed" ] && echo present || echo missing), hooksPath=$hooks_path"
 fi
+if [ -f "$HOME/.claude/keybindings.json" ] && grep -q 'task:background' "$HOME/.claude/keybindings.json"; then
+	report pass "3b keybindings deployed" "$(grep -o '"-"' "$HOME/.claude/keybindings.json" | head -n 1) backgrounds a task"
+else
+	report fail "3b keybindings deployed" "file=$([ -f "$HOME/.claude/keybindings.json" ] && echo present || echo missing)"
+fi
 
 echo "=== step 4: commit-msg on a real repo ==="
 repo="$(mktemp -d)"

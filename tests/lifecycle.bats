@@ -183,19 +183,30 @@ make_backup() {
 	touch "$sb/.dotfiles-installed" "$sb/.bash_aliases" "$sb/.zshrc" "$sb/.gitconfig" \
 		"$sb/.config/nvim/init.lua" "$sb/.config/opencode/opencode.json" \
 		"$sb/assets/bg.png" "$sb/dev/git-clone-all.sh" "$sb/dev/git-update-repos.sh" \
-		"$sb/dev/update-all.sh" "$sb/.claude/CLAUDE.md"
+		"$sb/dev/update-all.sh" "$sb/.claude/CLAUDE.md" "$sb/.claude/keybindings.json"
 	run env HOME="$sb" bash "$UNINSTALL" --verify-only </dev/null
 	[ "$status" -eq 0 ]
 	local p
 	for p in "$sb/.config/nvim" "$sb/.config/opencode/opencode.json" "$sb/assets" \
 		"$sb/dev/git-clone-all.sh" "$sb/dev/git-update-repos.sh" "$sb/dev/update-all.sh" \
-		"$sb/.claude/CLAUDE.md"; do
+		"$sb/.claude/CLAUDE.md" "$sb/.claude/keybindings.json"; do
 		[[ "$output" == *"Would remove: $p"* ]] || { echo "missing from inventory: $p"; false; }
 	done
 	for p in "$sb/.config/nvim/init.lua" "$sb/.bash_aliases"; do
 		[ -e "$p" ]
 	done
 	rm -rf "$sb"
+}
+
+@test "claude keybindings template is valid and wired into deploy and uninstall" {
+	[ -f "$REPO_ROOT/.claude/keybindings.json" ]
+	if command -v jq >/dev/null 2>&1; then
+		jq -e '.bindings | type == "array" and length > 0' \
+			"$REPO_ROOT/.claude/keybindings.json" >/dev/null
+	fi
+	grep -q 'keybindings\.json' "$REPO_ROOT/scripts/deploy.sh"
+	grep -q 'keybindings\.json' "$REPO_ROOT/scripts/deploy.ps1"
+	grep -q 'keybindings\.json' "$REPO_ROOT/scripts/uninstall.sh"
 }
 
 @test "verify-only never offers paths deploy stopped writing" {

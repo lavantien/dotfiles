@@ -49,6 +49,7 @@ DOTFILES_FILES=(
 	"$HOME/dev/update-all.sh"
 	"$HOME/.claude/CLAUDE.md"
 	"$HOME/.claude/BOOKS.md"
+	"$HOME/.claude/keybindings.json"
 	"$HOME/.claude/quality-check.sh"
 	"$HOME/.claude/quality-check.ps1"
 	"$HOME/.claude/statusline.sh"

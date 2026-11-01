@@ -104,7 +104,7 @@ up  # Runs update-all
 
 | Entry         | Holds                                                                                                                                                                      |
 | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `.claude/`    | Claude Code config: CLAUDE.md, BOOKS.md, settings templates, statusline.sh, quality-check twins, tdd-guard, and books/ holding the typst corpus                            |
+| `.claude/`    | Claude Code config: CLAUDE.md, BOOKS.md, settings templates, keybindings.json, statusline.sh, quality-check twins, tdd-guard, and books/ holding the typst corpus         |
 | `.config/`    | Tool configs deployed to the XDG config dir: nvim (init.lua plus lockfile), wezterm, git hooks, opencode platform templates                                                |
 | `.vscode/`    | VS Code settings                                                                                                                                                           |
 | `assets/`     | WezTerm background wallpapers, deployed to ~/assets                                                                                                                        |
@@ -268,6 +268,8 @@ Quality checks can be configured per-project using project-specific hooks or MCP
 Deploy merges the committed `.claude/settings.template.json` into `~/.claude/settings.json` on every run, on both platforms:
 
 The template is the source of truth: template values win for shared keys recursively at every level, live-only keys survive the merge, and a missing `settings.json` is created from the template. `env.ANTHROPIC_AUTH_TOKEN` is deliberately absent from the template so the live value survives. Linux/macOS uses jq with a python3 fallback and Windows uses native PowerShell JSON. Keys listed in `.claude/settings.retired.json` are deleted from the live file on every deploy. Each entry maps a dotted path to the reason and reference for its retirement, and entries should target leaf keys: retiring a parent path also removes live-only keys beneath it.
+
+Deploy also copies `.claude/keybindings.json` to `~/.claude/keybindings.json` on both platforms. It binds `-` to `task:background` in the Task context, so pressing minus sends a foreground task to the background. Claude Code's built-in left-arrow background gesture is hardcoded in the terminal UI and cannot be rebound or disabled through the keybindings file, so it stays active next to the minus binding.
 
 Injected top-level fields:
 

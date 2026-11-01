@@ -4,6 +4,8 @@ All notable changes to this project are documented in this file, newest first. O
 
 ## [Unreleased]
 
+Claude Code gained a deployed `keybindings.json` that binds `-` to `task:background` in the Task context, so pressing minus sends a foreground task to the background, and the built-in left-arrow background gesture stays active because the terminal UI hardcodes it and no setting exposes it.
+
 Claude settings gained `CLAUDE_CODE_AUTO_MODE_SERVER` set to `0`, which stops Claude Code from running the auto mode server check against the z.ai gateway and removes the startup notice that asks the gateway to confirm no-charge classifier billing.
 
 ## [6.14] - 2026-10-31

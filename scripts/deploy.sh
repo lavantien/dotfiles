@@ -491,6 +491,11 @@ deploy_claude_hooks() {
 		echo -e "${GREEN}BOOKS.md deployed to: $HOME/.claude/${NC}"
 	fi
 
+	# Deploy the Claude Code keybindings (minus backgrounds a foreground task)
+	if [ -f "$ROOT_DIR/.claude/keybindings.json" ]; then
+		copy_file "$ROOT_DIR/.claude/keybindings.json" "$HOME/.claude/"
+	fi
+
 	# Deploy quality check script
 	if [ -f "$ROOT_DIR/.claude/quality-check.sh" ]; then
 		copy_file "$ROOT_DIR/.claude/quality-check.sh" "$HOME/.claude/"
