@@ -51,7 +51,7 @@ toc:
 - 40 the test suite (c-os-cloud/chapters/40-suite.typ)
 - 41 appendices: topic matrix and sources (c-os-cloud/chapters/41-appendices.typ)
 
-## mathematics for programmers (book 2, v2.2, math, 33 chapters)
+## mathematics for programmers (book 2, v2.3, math, 33 chapters)
 
 summary: mathematics for programmers in c23: floating point and error analysis, linear algebra, calculus, optimization and autodiff, logic with proofs as machine-checkable data against the lean 4 formalization share of published research results, algebra, and graphs, probability, statistics, numerical methods with sparse matrix systems solved by jacobi and gauss-seidel iteration, game theory, then functional patterns in c23. 33 chapters, the coverage appendix names the sample check proving each topic.
 capstone: the arena game in 3 parts: design (game spec, adt state, numerics budget, mixed-strategy plus mcts ai, two-lane bit-exact architecture), implementation (verlet physics, sat collision, group hashing, allegro host), verification (discipline-to-module audit, determinism pins).
@@ -399,7 +399,7 @@ toc:
 - 32 capstone: auto chess, human versus bot (lua/chapters/32-capstone.typ)
 - 33 appendices: coverage and sources (lua/chapters/33-appendices.typ)
 
-## practical data structures and algorithms (book 10, v9.1, dsa, 45 chapters)
+## practical data structures and algorithms (book 10, v9.2, dsa, 45 chapters)
 
 summary: a data structures and algorithms handbook in 8 languages, from complexity analysis and arrays through hashing, trees, graphs, dynamic programming, geometry, flows, game theory, and fine-grained speedups that apply sparse matrix multiplication to triangle counting and subcubic apsp, pairing each structure with cost and library counterpart. the appendix tracks each topic with cost and library columns.
 capstone: storage engine toolkit: a log-structured storage engine with a crc-32 framed write-ahead log, bloom filters, crash recovery, prefix scans, and compaction, plus an htmx 4 web dashboard, every file under 260 lines.

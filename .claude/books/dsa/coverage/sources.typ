@@ -459,4 +459,13 @@
   (topic: "family 191, heilbronn triangle lower bound",
    url: "openai math release, local cache ref/openai-math/family-191/ with lean doc doc-191.md",
    accessed: "2026-10-15"),
+  (topic: "family 378, the exponential time hypothesis disproof",
+   url: "the exponential time hypothesis is false, dated 2026-10-25, github.com/openai/math, local cache ref/openai-math/family-378/paper-eth-disproof.pdf, sha256 5b1612dc",
+   accessed: "2026-11-03"),
+  (topic: "family 378 lean scope, subexponential counting in polynomial space",
+   url: "ref/openai-math/family-378/doc-378.md with the comparator challenge subexponential sat, sha256 a2f7b390, fetched from github.com/openai/math",
+   accessed: "2026-11-03"),
+  (topic: "openai math release overview and history, october 26 additions",
+   url: "ref/openai-math/overview.tex catalog at 721 manuscripts in 373 result families plus ref/openai-math/history.md october 26 entry, fetched 2026-11-03 from github.com/openai/math commit 4eaee875",
+   accessed: "2026-11-03"),
 )

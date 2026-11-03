@@ -7,7 +7,7 @@
     title: "mathematics for programmers",
     subtitle: "trigonometry to monads in c23, with a physics game capstone",
     author: "Raeliosol",
-    version: "2.2",
+    version: "2.3",
     volume-label: "book 2",
   ),
   chapters: (

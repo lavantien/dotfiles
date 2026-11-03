@@ -24,6 +24,9 @@ page 33), and the consequences for 3SUM and APSP (theorems 19 and 22,
 pages 35 and 36). A closing section opens the matrix multiplication
 black box those towers stand on, the 2026 exponent ladder and the 9/4
 profile argument of the openai/math release, priced by two more toys.
+A dated section beside it restates the repository's October 26
+disproof of the exponential time hypothesis, the claim, the Lean
+scope, and what it touches.
 An honesty thread runs through all 8: the exponents
 that move are small, the regimes that justify them are enormous, and
 the toy fixtures show the algorithms losing on purpose, because a
@@ -1302,6 +1305,79 @@ bits throughout, the cube trick's largest product 48 times 145^3 about
 trees thinly: a function pointer in c, native fn types in rust, a
 delegate in c\#, an interface
 in java, plain function values in go, javascript, python, and lua.
+
+== the october 26 release disproves the exponential time hypothesis
+
+The chapter's first sentence asked whether an algorithm is polynomial,
+and every section since asks whether the exponent moves. Section 9
+recorded 2026 moving the multiplication exponent twice on paper, and the
+same repository's October 26 release claims a bigger one falls, the
+exponent of satisfiability itself. It is a GitHub publication by
+OpenAI dated 2026-10-26, fetched for this book on 2026-11-03, 721
+manuscripts in 373 result families, a preprint release with no peer
+review behind it. Family 378, Disproof of the Exponential Time
+Hypothesis, states its claim: for every fixed k at least 2, a
+deterministic algorithm counts the satisfying assignments of a k-CNF
+with n variables and m clauses in time (n+m)^(O_k(1)) 2^(n / (log
+n)^(1/2 + o(1))). An exact count decides satisfiability, a count of
+zero means unsatisfiable, so at k = 3 the bound reads 2^(o(n)),
+subexponential, and the release's history note names that case the
+refutation of the hypothesis.
+
+What the hypothesis asserts: 3-SAT, satisfiability of CNF formulas
+whose clauses hold at most 3 literals, admits no algorithm running in
+2^(o(n)) time on n variables. The strong form, SETH, fixes the
+constant: for every eps below 1, some k-SAT still needs 2^((1-eps) n)
+time. The family 378 bound hands every fixed k a 2^(o(n)) counting
+algorithm, an exponent below every (1-eps) n, so both premises fall
+together, modulo the release's proof.
+
+The Lean scope covers the counting machine itself. For fixed k at
+least 2, a deterministic machine exactly counts the satisfying
+assignments of a canonically encoded k-CNF on n variables in time
+(L+1)^(O_k(1)) 2^(O_k(n (log log n)^2 / sqrt(log n))), where L is
+the encoding's bit length, and at every step the machine has visited
+at most (L+1)^(O_k(1)) tape cells in total, polynomial space. The
+October 25 manuscript states a sharper bound in n and m,
+(n+m)^(O_k(1)) 2^(O_k(n log log n / sqrt(log n))), improving further
+when m is at most D n for a fixed D, to (n+m)^(O(1)) 2^(O(n /
+sqrt(log n))) with both constants depending on k and D. The
+comparator challenge is SubexponentialSAT, and the formalized
+catalogue carries the paper with review status unchecked.
+
+The same entry yields a lower-bound consequence: superlinear circuit
+lower bounds for a language in E^NP, linear exponential time with an
+NP oracle, on infinitely many input lengths. Section 9 closed on how
+thin the lower-bound side is, and this corollary is the entry's
+paper-tier piece of it, stated by the entry and the paper, not
+covered by the Lean scope above.
+
+The release's history note names an independent working group of
+computer scientists led by Russell Impagliazzo, Ramamohan Paturi, and
+Ryan Williams that will examine and explain the proof, and records
+that the materials went public immediately at the group's request so
+others can examine them as well.
+
+What the disproof touches and what it leaves standing. This chapter
+premises nothing on ETH or SETH, its 3SUM, APSP, and triangle towers
+are unconditional upper bounds, and every reduction the chapter
+builds stands on its own proof. The engine paper already broke one
+field premise itself, the 3SUM hypothesis, as
+#xref-to("dsa", "geometry") records. Family 378 claims 2 more, ETH
+and SETH: every hardness bound in the wider field whose premise was
+ETH or SETH loses that premise, while the reductions behind such
+bounds stay valid and unconditional statements stay untouched, all
+modulo the release's proof.
+
+#callout("warning", "a release disproof is not a settled theorem", [
+  The algorithm is a proof artifact, and this chapter implements none
+  of it: no sample counts a formula, no fixture pins the bound, and
+  nothing here runs it. The claim carries no peer review, the
+  formalized catalogue's review status reads unchecked, and the
+  working group's examination is still ahead. The section states the
+  release's claim with its date and tier, and it stands or falls
+  with the release's proof.
+])
 
 == across the eight languages
 

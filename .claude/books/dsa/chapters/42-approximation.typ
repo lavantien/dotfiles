@@ -1071,8 +1071,8 @@ drew it.
 Section 12 closed 3 thresholds and left the rest of the map as
 section 11 drew it. One table makes the whole map explicit, a row per
 classic problem, because the first question at any whiteboard is where
-the problem on it sits today. 13 rows follow, 6 moved in 2026 and 7
-stand still, 5 of the movers come from the release and 1 from a
+the problem on it sits today. 13 rows follow, 7 moved in 2026 and 6
+stand still, 6 of the movers come from the release and 1 from a
 refutation outside it, and none of the movement separates P from NP,
 which the release does not prove and no row here claims.
 
@@ -1085,7 +1085,7 @@ which the release does not prove and no row here claims.
   [matrix multiplication], [P], [omega over C at most 9/4, O(n^(9/4+epsilon)) operations], [family 107, comparator-checked],
   [3SUM], [P], [truly subquadratic, n^1.99923], [arXiv 2610.06783, preprint],
   [mean-payoff, stochastic, parity games], [quasipolynomial, exact], [2^(O(log^2 L)) bit operations, 4 preprints], [family 104, split tier],
-  [satisfiability], [NP-complete], [nothing, the barrier stands], [classic],
+  [satisfiability], [NP-complete], [exact counting in 2^(n / (log n)^(1/2 + o(1))) on polynomial space, the exponential time hypothesis falls], [family 378, comparator-checked],
   [max clique], [NP-complete], [nothing, the barrier stands], [classic],
   [traveling salesman], [NP-complete], [nothing, the metric 1.5 of section 6 stands], [classic],
   [graph coloring], [NP-complete], [nothing, the barrier stands], [classic],
@@ -1130,12 +1130,22 @@ Truffet's elimination procedure, outside the catalog. The graph arena is the
 one #xref-to("dsa", "games") decides by retrograde sweeps for win,
 lose, and draw, valued here instead of colored.
 
-The NP-complete column is where nothing moved, on purpose.
-Satisfiability, max clique, the traveling salesman decision problem,
-graph coloring, and hamilton cycle sit where the classics placed them,
-the release proves no separation of P from NP, and section 11's first
-barrier still prices all 5 rows the same way. What collapsed is the
-column that used to sit beside them. Before 2026 a list of
+The NP-complete column is where the classifications stand, and 1 of
+its 5 rows still carries news. Satisfiability, max clique, the
+traveling salesman decision problem, graph coloring, and hamilton
+cycle sit where the classics placed them, the release proves no
+separation of P from NP, and section 11's first barrier still prices
+all 5 rows the same way. What moved under satisfiability is the finer
+barrier that priced its difficulty, the exponential time hypothesis,
+which forbade subexponential 3-SAT. Family 378 of the release's
+October 26 additions exactly counts the satisfying assignments of a
+k-CNF for every fixed k at least 2, deterministically, in
+subexponential time on polynomial space, the hypothesis falls modulo
+the release's proof, and the standing cell does not move, NP-complete
+is a P versus NP statement and the release proves no separation
+there. #xref-to("dsa", "finegrained") restates the claim, the Lean
+scope, and the verification tier in its dated section. What collapsed
+is the column that used to sit beside them. Before 2026 a list of
 approximation thresholds were theorems only under the unique games
 conjecture, and section 12 recorded the release's proof of the
 conjecture itself, family 102. A proof of the conjecture is a proof
