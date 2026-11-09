@@ -13,6 +13,18 @@ ps1_section() {
 	' "$1"
 }
 
+gate_leads_to_success() {
+	awk -v g="$2" '
+		index($0, g) > 0 {
+			found = 1
+			nxt = ""
+			while ((getline nxt) > 0 && nxt ~ /^[[:space:]]*$/) { }
+			if (nxt !~ /Write-Success/) { bad = 1 }
+		}
+		END { exit ((found && !bad) ? 0 : 1) }
+	' <<<"$1"
+}
+
 @test "git-update-repos.sh reports a missing gh instead of crashing on unbound colors" {
 	empty_bin="$BATS_TEST_TMPDIR/empty-bin"
 	mkdir -p "$empty_bin"
@@ -77,6 +89,42 @@ ps1_section() {
 	scoop_n=$(grep -nF 'Write-Step "SCOOP"' "$ps1" | head -1 | cut -d: -f1)
 	[ -n "$scoop_n" ]
 	[ "$gate_n" -lt "$scoop_n" ]
+	probe="$BATS_TEST_TMPDIR/gate-probe.ps1"
+	cat >"$probe" <<'PROBE'
+$ErrorActionPreference = 'Stop'
+$src = Get-Content -Raw $env:PS1_PATH
+$errs = $null
+$ast = [System.Management.Automation.Language.Parser]::ParseInput($src, [ref]$null, [ref]$errs)
+if ($errs.Count -gt 0) {
+	Write-Output 'parse-errors'
+	exit 1
+}
+$funcs = $ast.FindAll({ param($node) $node -is [System.Management.Automation.Language.FunctionDefinitionAst] }, $true)
+$defs = @{}
+foreach ($name in @('Get-UpdateDriveRoots', 'Test-DiskSpace')) {
+	$def = $funcs | Where-Object { $_.Name -eq $name } | Select-Object -First 1
+	if (-not $def) {
+		Write-Output "missing:$name"
+		exit 1
+	}
+	$defs[$name] = $def.Extent.Text
+}
+function Get-PSDrive {
+	[CmdletBinding()]
+	param([string]$Name)
+	[pscustomobject]@{ Free = [long]$env:PROBE_FREE_BYTES }
+}
+$MinFreeSpaceGB = 10
+Invoke-Expression $defs['Get-UpdateDriveRoots']
+Invoke-Expression $defs['Test-DiskSpace']
+$env:PROBE_FREE_BYTES = '5368709120'
+Write-Output "low:$(-not (Test-DiskSpace))"
+$env:PROBE_FREE_BYTES = '536870912000'
+Write-Output "ample:$(Test-DiskSpace)"
+PROBE
+	out="$(PS1_PATH="$ps1" TEMP='C:\probe-temp' USERPROFILE='C:\probe-home' pwsh -NoProfile -File "$probe" 2>&1)"
+	grep -q '^low:True$' <<<"$out"
+	grep -q '^ample:True$' <<<"$out"
 }
 
 @test "update-all.ps1 explains the winget upgrade --all aggregate failure code" {
@@ -84,6 +132,8 @@ ps1_section() {
 	grep -q '^\$WingetExitNotes = @{' "$ps1"
 	grep -qF -- "-1978335188 = 'upgrade --all completed with failures'" "$ps1"
 	[ "$(grep -cF -- '-1978335188' "$ps1")" -eq 1 ]
+	grep -qF '$note = $WingetExitNotes[$result.Code]' "$ps1"
+	grep -qF 'if ($note) {' "$ps1"
 }
 
 @test "update-all.ps1 decides every manager section on LASTEXITCODE" {
@@ -107,6 +157,38 @@ ps1_section() {
 	grep -q 'failedPackages' <<<"$slice"
 	grep -q 'LASTEXITCODE' <<<"$slice"
 	grep -qF 'pip (failed: $($failedPackages -join' <<<"$slice"
+}
+
+@test "update-all.ps1 npm and pip verdicts need every command to succeed" {
+	ps1="$REPO_ROOT/scripts/update-all.ps1"
+	npm_slice="$(ps1_section "$ps1" NPM)"
+	grep -qF 'if ($npmSelf -eq 0 -and $LASTEXITCODE -eq 0) {' <<<"$npm_slice"
+	pip_slice="$(ps1_section "$ps1" PIP)"
+	grep -qF 'if ($pipSelf -eq 0 -and $freezeOk -and $failedPackages.Count -eq 0) {' <<<"$pip_slice"
+}
+
+@test "update-all.ps1 prints success only on the success side of each exit-code gate" {
+	ps1="$REPO_ROOT/scripts/update-all.ps1"
+	for section in SCOOP CHOCOLATEY PNPM YARN GUP CARGO RUSTUP POETRY UV; do
+		slice="$(ps1_section "$ps1" "$section")"
+		[ -n "$slice" ]
+		if ! gate_leads_to_success "$slice" 'if ($LASTEXITCODE -eq 0) {'; then
+			echo "section $section does not follow its exit-code gate with Write-Success" >&2
+			return 1
+		fi
+	done
+	if ! gate_leads_to_success "$(ps1_section "$ps1" BUN)" 'if ($bunOk) {'; then
+		echo "BUN does not follow its gate with Write-Success" >&2
+		return 1
+	fi
+	if ! gate_leads_to_success "$(ps1_section "$ps1" NPM)" 'if ($npmSelf -eq 0'; then
+		echo "NPM does not follow its gate with Write-Success" >&2
+		return 1
+	fi
+	if ! gate_leads_to_success "$(ps1_section "$ps1" PIP)" 'if ($pipSelf -eq 0'; then
+		echo "PIP does not follow its gate with Write-Success" >&2
+		return 1
+	fi
 }
 
 @test "update-all.ps1 treats winget outcomes without a result marker as failed" {
@@ -139,14 +221,17 @@ ps1_section() {
 
 @test "update-all.ps1 and updaters.bats carry no prose comments" {
 	ps1="$REPO_ROOT/scripts/update-all.ps1"
-	if grep '^#' "$ps1" | grep -v '^#requires' | grep -q .; then
-		grep '^#' "$ps1" | grep -v '^#requires' >&2
-		return 1
-	fi
-	if grep '^#' "$BATS_TEST_FILENAME" | grep -vE '^#!|^# shellcheck' | grep -q .; then
-		grep '^#' "$BATS_TEST_FILENAME" | grep -vE '^#!|^# shellcheck' >&2
-		return 1
-	fi
+	for f in "$ps1" "$BATS_TEST_FILENAME"; do
+		if grep '^#' "$f" | grep -vE '^(#!|[[:space:]]*# shellcheck|#requires)' | grep -q .; then
+			grep '^#' "$f" | grep -vE '^(#!|[[:space:]]*# shellcheck|#requires)' >&2
+			return 1
+		fi
+		hits="$(grep -nE '(^|[[:space:]])#([[:space:]]|$)' "$f" | grep -vE '^[0-9]+:[[:space:]]*#(!| shellcheck|requires)' || true)"
+		if [ -n "$hits" ]; then
+			echo "$hits" >&2
+			return 1
+		fi
+	done
 }
 
 @test "pip_install retries with --break-system-packages only on PEP 668 errors" {
