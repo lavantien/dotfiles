@@ -109,6 +109,23 @@ ps1_section() {
 	grep -qF 'pip (failed: $($failedPackages -join' <<<"$slice"
 }
 
+@test "update-all.ps1 treats winget outcomes without a result marker as failed" {
+	ps1="$REPO_ROOT/scripts/update-all.ps1"
+	if grep -qF 'Code = $proc.ExitCode' "$ps1"; then
+		echo "the elevated child always exits 0, padding with its exit code fakes success" >&2
+		return 1
+	fi
+	grep -qF 'Code = -1' "$ps1"
+	grep -qF 'no result marker in the elevated log, treating this command as failed' "$ps1"
+}
+
+@test "update-all.ps1 gates the bun section on the package listing exit code" {
+	ps1="$REPO_ROOT/scripts/update-all.ps1"
+	slice="$(ps1_section "$ps1" BUN)"
+	grep -qF '$pmLs = $LASTEXITCODE' <<<"$slice"
+	grep -qE '\$pmLs -ne 0' <<<"$slice"
+}
+
 @test "update-all.ps1 carries no Invoke-Expression and no dead Invoke-Command helper" {
 	if grep -nE 'Invoke-(Command|Expression)' "$REPO_ROOT/scripts/update-all.ps1"; then
 		echo "Invoke-Command and Invoke-Expression hide exit codes" >&2

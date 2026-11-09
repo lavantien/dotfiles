@@ -139,8 +139,7 @@ exit 0
         Write-Info "elevated batch exited with $($proc.ExitCode), $($Batch.Count - $outcomes.Count) command(s) left no result marker"
     }
     while ($outcomes.Count -lt $Batch.Count) {
-        $outcomes.Add([pscustomobject]@{ Code = $proc.ExitCode; Output = @($pending) })
-        $pending = [System.Collections.Generic.List[string]]::new()
+        $outcomes.Add([pscustomobject]@{ Code = -1; Output = @('no result marker in the elevated log, treating this command as failed') })
     }
     $outcomes
 }
@@ -354,6 +353,8 @@ function Main {
             if ($LASTEXITCODE -ne 0) { $bunOk = $false }
 
             $globalPackages = bun pm ls -g 2>&1 | Select-String -Pattern "^\w" | Measure-Object
+            $pmLs = $LASTEXITCODE
+            if ($pmLs -ne 0) { $bunOk = $false }
             $hasGlobalPackages = $globalPackages.Count -gt 0
 
             if ($hasGlobalPackages) {
