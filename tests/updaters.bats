@@ -1,14 +1,21 @@
 #!/usr/bin/env bash
-# Slot 2 updater contracts: gh-missing crash, gup module path, pip PEP 668
-# retry, fetch-before-pull, and skip counting.
-# Note: this bats install has no fail() helper, guards echo and return 1.
 
 REPO_ROOT="$(cd "$BATS_TEST_DIRNAME/.." && pwd)"
+
+ps1_section() {
+	awk -v s="Write-Step \"$2" '
+		/^ *Write-Step "/ {
+			if (grab) { exit }
+			grab = index($0, s) > 0
+			next
+		}
+		grab { print }
+	' "$1"
+}
 
 @test "git-update-repos.sh reports a missing gh instead of crashing on unbound colors" {
 	empty_bin="$BATS_TEST_TMPDIR/empty-bin"
 	mkdir -p "$empty_bin"
-	# absolute interpreter: env and the shebang would PATH-search an empty PATH
 	run env PATH="$empty_bin" "$(command -v bash)" "$REPO_ROOT/scripts/git-update-repos.sh"
 	[ "$status" -eq 1 ]
 	grep -q 'gh) not found' <<<"$output"
@@ -24,7 +31,6 @@ REPO_ROOT="$(cd "$BATS_TEST_DIRNAME/.." && pwd)"
 		echo "all@latest is an invalid module path, go install rejects it" >&2
 		return 1
 	fi
-	# the go fallback only exists to bootstrap gup, gup update must not run twice
 	[ "$(grep -v '^[[:space:]]*#' "$REPO_ROOT/scripts/update-all.sh" | grep -c 'gup update')" -le 2 ]
 }
 
@@ -38,8 +44,6 @@ REPO_ROOT="$(cd "$BATS_TEST_DIRNAME/.." && pwd)"
 }
 
 @test "dotnet tool list and update always run in global scope" {
-	# without --global both commands resolve to the local manifest, and a
-	# machine with no dotnet-tools.json dies on "Cannot find a manifest file"
 	for f in scripts/update-all.sh scripts/update-all.ps1; do
 		grep -qE '(^|[[:space:]]|=[[:space:]]|\()dotnet tool list --global' "$REPO_ROOT/$f"
 		grep -qE '(^|[[:space:]]|=[[:space:]]|\()dotnet tool update --global' "$REPO_ROOT/$f"
@@ -48,25 +52,82 @@ REPO_ROOT="$(cd "$BATS_TEST_DIRNAME/.." && pwd)"
 			return 1
 		fi
 	done
-	# exact invocation forms: a --global elsewhere on the same line must not
-	# vouch for a bare call
 	grep -qF 'dotnet tool update --global "$tool"' "$REPO_ROOT/scripts/update-all.sh"
 	grep -qF 'dotnet tool update --global $toolName' "$REPO_ROOT/scripts/update-all.ps1"
 }
 
 @test "update-all.ps1 elevates the whole winget batch once instead of per upgrade" {
 	ps1="$REPO_ROOT/scripts/update-all.ps1"
-	# machine-scope installers pop one UAC prompt each when winget runs
-	# unelevated: one elevated batch shell replaces them all
 	grep -q 'WindowsBuiltInRole]::Administrator' "$ps1"
 	grep -q -- '-Verb RunAs' "$ps1"
-	# the batch is built as one list and handed to a single runner
 	[ "$(grep -c 'WingetBatch' "$ps1")" -ge 2 ]
-	# upgrade --all exists only as the single batch tail element, never as a
-	# second inline invocation
 	[ "$(grep -c "'upgrade', '--all'" "$ps1")" -eq 1 ]
 	if grep -qE '& \$wingetExe upgrade' "$ps1"; then
 		echo "a direct winget upgrade call bypasses the elevated batch" >&2
+		return 1
+	fi
+}
+
+@test "update-all.ps1 gates the run on free disk space before the first manager" {
+	ps1="$REPO_ROOT/scripts/update-all.ps1"
+	grep -q '^\$MinFreeSpaceGB = 10$' "$ps1"
+	grep -q 'function Test-DiskSpace' "$ps1"
+	gate_n=$(grep -nF 'if (-not (Test-DiskSpace))' "$ps1" | head -1 | cut -d: -f1)
+	[ -n "$gate_n" ]
+	scoop_n=$(grep -nF 'Write-Step "SCOOP"' "$ps1" | head -1 | cut -d: -f1)
+	[ -n "$scoop_n" ]
+	[ "$gate_n" -lt "$scoop_n" ]
+}
+
+@test "update-all.ps1 explains the winget upgrade --all aggregate failure code" {
+	ps1="$REPO_ROOT/scripts/update-all.ps1"
+	grep -q '^\$WingetExitNotes = @{' "$ps1"
+	grep -qF -- "-1978335188 = 'upgrade --all completed with failures'" "$ps1"
+	[ "$(grep -cF -- '-1978335188' "$ps1")" -eq 1 ]
+}
+
+@test "update-all.ps1 decides every manager section on LASTEXITCODE" {
+	ps1="$REPO_ROOT/scripts/update-all.ps1"
+	for section in SCOOP CHOCOLATEY NPM PNPM BUN YARN GUP CARGO RUSTUP POETRY UV PIP; do
+		slice="$(ps1_section "$ps1" "$section")"
+		if [ -z "$slice" ]; then
+			echo "section $section not found in update-all.ps1" >&2
+			return 1
+		fi
+		if ! grep -q 'LASTEXITCODE' <<<"$slice"; then
+			echo "section $section never checks \$LASTEXITCODE" >&2
+			return 1
+		fi
+	done
+}
+
+@test "update-all.ps1 counts failed pip upgrades instead of always printing success" {
+	ps1="$REPO_ROOT/scripts/update-all.ps1"
+	slice="$(ps1_section "$ps1" PIP)"
+	grep -q 'failedPackages' <<<"$slice"
+	grep -q 'LASTEXITCODE' <<<"$slice"
+	grep -qF 'pip (failed: $($failedPackages -join' <<<"$slice"
+}
+
+@test "update-all.ps1 carries no Invoke-Expression and no dead Invoke-Command helper" {
+	if grep -nE 'Invoke-(Command|Expression)' "$REPO_ROOT/scripts/update-all.ps1"; then
+		echo "Invoke-Command and Invoke-Expression hide exit codes" >&2
+		return 1
+	fi
+}
+
+@test "update-all.ps1 holds at or below the 1000 line ceiling" {
+	[ "$(wc -l <"$REPO_ROOT/scripts/update-all.ps1")" -le 1000 ]
+}
+
+@test "update-all.ps1 and updaters.bats carry no prose comments" {
+	ps1="$REPO_ROOT/scripts/update-all.ps1"
+	if grep '^#' "$ps1" | grep -v '^#requires' | grep -q .; then
+		grep '^#' "$ps1" | grep -v '^#requires' >&2
+		return 1
+	fi
+	if grep '^#' "$BATS_TEST_FILENAME" | grep -vE '^#!|^# shellcheck' | grep -q .; then
+		grep '^#' "$BATS_TEST_FILENAME" | grep -vE '^#!|^# shellcheck' >&2
 		return 1
 	fi
 }
@@ -140,15 +201,11 @@ EOF
 	ps1="$REPO_ROOT/scripts/git-update-repos.ps1"
 	fetch_n=$(grep -n 'git fetch origin' "$ps1" | head -1 | cut -d: -f1)
 	[ -n "$fetch_n" ]
-	# the pull call, not a comment mentioning it
 	pull_n=$(grep -n '^\s*\$null = git pull' "$ps1" | head -1 | cut -d: -f1)
 	[ -n "$pull_n" ]
-	# an exit-code gate must sit between the fetch and the pull
 	gate_n=$(awk -v s="$fetch_n" 'NR > s && /LASTEXITCODE -eq 0/ {print NR; exit}' "$ps1")
 	[ -n "$gate_n" ]
 	[ "$gate_n" -lt "$pull_n" ]
-	# the old output-truthiness chain must be gone: quiet fetch success
-	# evaluated to false and reported Error updating
 	if grep -q -- '-and (git pull' "$ps1"; then
 		echo "found the old -and fetch/pull chain" >&2
 		return 1
@@ -156,12 +213,7 @@ EOF
 }
 
 @test "git-update-repos.sh fetches before comparing so an advanced remote reports an update" {
-	# A clean clone holds a stale tracking ref: comparing before any fetch
-	# reports up to date forever. Advance the remote after cloning and the
-	# script must notice and pull.
 	rt="$BATS_TEST_TMPDIR/rt"
-	# isolate git from the host gitconfig: the live core.hooksPath drags the
-	# deployed pre-commit into seed commits and aborts them
 	g() { env GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_SYSTEM=/dev/null git "$@"; }
 	mkdir -p "$rt/remote" "$rt/base" "$rt/fakebin"
 	bare="$rt/remote/c1repo.git"
@@ -187,14 +239,11 @@ EOF
 	run env PATH="$rt/fakebin:$PATH" bash "$REPO_ROOT/scripts/git-update-repos.sh" -u tester -d "$rt/base"
 	[ "$status" -eq 0 ]
 	grep -q 'Cloned' <<<"$output"
-	# push a commit the clone has never fetched
 	echo two >"$seed/f"
 	g -C "$seed" commit -qam two
 	g -C "$seed" push -q origin HEAD
 	run env PATH="$rt/fakebin:$PATH" bash "$REPO_ROOT/scripts/git-update-repos.sh" -u tester -d "$rt/base"
 	[ "$status" -eq 0 ]
-	# assert on repo state, not on colored output: the clone must carry the
-	# remote tip and its content after the pull
 	if grep -q 'Skipped (already up to date)' <<<"$output"; then
 		echo "stale tracking ref reported up to date, no fetch happened: $output" >&2
 		return 1
@@ -235,8 +284,6 @@ EOF
 }
 
 @test "update-all.sh never calls the undefined log_info helper" {
-	# no logger named log_info exists in the script, any call prints a
-	# command-not-found error instead of the intended message
 	if grep -n 'log_info' "$REPO_ROOT/scripts/update-all.sh"; then
 		echo "log_info is undefined in update-all.sh, use the file's own echo idiom" >&2
 		return 1
@@ -244,7 +291,6 @@ EOF
 }
 
 @test "update-all.sh holds at or below its current line ceiling" {
-	# 1000 SLOC repo cap, grandfathered ceiling while fixes land
 	[ "$(wc -l <"$REPO_ROOT/scripts/update-all.sh")" -le 1012 ]
 }
 
@@ -265,8 +311,6 @@ EOF
 }
 
 @test "allow.sh chmods every tracked .sh in its repo" {
-	# exec bits are unobservable on noacl mounts, so assert the chmod call
-	# set: stub chmod and require it to see exactly the tracked .sh files
 	sb="$BATS_TEST_TMPDIR/repo"
 	fakebin="$BATS_TEST_TMPDIR/fakebin"
 	log="$BATS_TEST_TMPDIR/chmod.log"

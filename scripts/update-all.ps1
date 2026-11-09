@@ -1,52 +1,41 @@
 #requires -Version 7
-# Native Windows Update All Script
-# Updates all package managers and tools on Windows (no WSL, no sudo)
-# VERSION POLICY: Always updates to LATEST available versions
-#
-# NOTE: Verbose mode is the default - all package manager output is shown.
-# No quiet/silent flags are used.
-#
-# Usage: .\update-all.ps1 [-SkipPip]
 param([switch]$SkipPip)
 
-# Don't treat native command stderr as errors with Stop preference
 $PSNativeCommandUseErrorActionPreference = $false
 $ErrorActionPreference = 'Continue'
 
-# Colors
 function Write-Step { Write-Host "`n[$(Get-Date -Format 'HH:mm:ss')] $args" -ForegroundColor Cyan }
 function Write-Success { Write-Host "  $args" -ForegroundColor Green }
 function Write-Skip { Write-Host "  Skipped: $args" -ForegroundColor Yellow }
-function Write-Fail { Write-Host "  Failed: $args" -ForegroundColor Yellow }
+function Write-Fail { Write-Host "  $args" -ForegroundColor Yellow }
 function Write-Info { Write-Host "  $args" -ForegroundColor Gray }
 
-# Counters
 $script:updated = 0
 $script:skipped = 0
 $script:failed = 0
 
-# winget packages whose manifest requires an install location (InstallLocationRequired);
-# pinned out of `winget upgrade --all` and upgraded explicitly with these paths
+$MinFreeSpaceGB = 10
+
 $WingetLocationUpgrades = @{
     "Blizzard.BattleNet" = "C:\Program Files (x86)\Battle.net"
 }
 
-# Command exists checker
+$WingetExitNotes = @{
+    -1978335188 = 'upgrade --all completed with failures'
+}
+
 function Test-Command {
     param([string]$Name)
 
-    # Special handling for winget (Windows Store wrapper)
     if ($Name -eq "winget") {
         $wingetPath = Join-Path $env:LOCALAPPDATA "Microsoft\WindowsApps\winget.exe"
         if (Test-Path $wingetPath) {
-            # Verify it actually works by trying to get version
             $result = & $wingetPath --version 2>&1
             return $LASTEXITCODE -eq 0
         }
         return $false
     }
 
-    # Standard command detection
     $null = Get-Command $Name -ErrorAction SilentlyContinue
     return $?
 }
@@ -56,11 +45,23 @@ function Test-IsElevated {
     return $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 }
 
-# Runs an array of winget argument arrays, returns one object per command
-# with Code and Output. One elevated child shell covers the whole batch:
-# winget inherits the admin token and machine-scope installers stop popping
-# a UAC prompt each. Native sudo prompts per invocation and, in its default
-# forceNewWindow mode, hides all output in a separate window.
+function Get-UpdateDriveRoots {
+    @($env:TEMP, $env:USERPROFILE) |
+        ForEach-Object { [IO.Path]::GetPathRoot([IO.Path]::GetFullPath($_)) } |
+        Where-Object { $_ } |
+        Sort-Object -Unique
+}
+
+function Test-DiskSpace {
+    foreach ($root in (Get-UpdateDriveRoots)) {
+        $drive = Get-PSDrive -Name ($root.TrimEnd('\', ':')) -ErrorAction SilentlyContinue
+        if ($drive -and $null -ne $drive.Free -and $drive.Free -lt $MinFreeSpaceGB * 1GB) {
+            return $false
+        }
+    }
+    return $true
+}
+
 function Invoke-WingetBatch {
     param(
         [string]$WingetExe,
@@ -110,8 +111,6 @@ exit 0
         $reason = $_.Exception.Message
         Write-Info "elevation failed: $reason"
         Remove-Item $batchPath, $logPath -Force -ErrorAction SilentlyContinue
-        # one outcome per command keeps Main's per-command indexing honest:
-        # a decline and a launch failure report under their own labels
         $declined = $reason -match 'cancel'
         $code = if ($declined) { 1223 } else { -1 }
         $message = if ($declined) { 'UAC elevation was declined' } else { "winget batch could not elevate: $reason" }
@@ -124,8 +123,6 @@ exit 0
     $logLines = @(Get-Content -LiteralPath $logPath)
     Remove-Item $batchPath, $logPath -Force -ErrorAction SilentlyContinue
 
-    # the tag makes the marker unforgeable: no winget output line can carry
-    # this run's GUID
     $marker = '^WINGET_RESULT\|' + [regex]::Escape($tag) + '\|(-?\d+)$'
     $outcomes = [System.Collections.Generic.List[object]]::new()
     $pending = [System.Collections.Generic.List[string]]::new()
@@ -148,35 +145,6 @@ exit 0
     $outcomes
 }
 
-# Run command directly, showing all output
-function Invoke-Command {
-    param(
-        [string]$Command,
-        [string]$Name
-    )
-
-    try {
-        Invoke-Expression $Command
-        $exitCode = $LASTEXITCODE
-
-        if ($exitCode -ne 0) {
-            Write-Fail $Name
-            $script:failed++
-            return $false
-        }
-
-        Write-Success $Name
-        $script:updated++
-        return $true
-    }
-    catch {
-        Write-Fail $Name
-        $script:failed++
-        return $false
-    }
-}
-
-# Main execution
 function Main {
     Write-Host "`n========================================" -ForegroundColor Blue
     Write-Host "   Native Windows Update All" -ForegroundColor Blue
@@ -184,7 +152,18 @@ function Main {
 
     $startTime = Get-Date
 
-    # Check prerequisites
+    if (-not (Test-DiskSpace)) {
+        foreach ($root in (Get-UpdateDriveRoots)) {
+            $drive = Get-PSDrive -Name ($root.TrimEnd('\', ':')) -ErrorAction SilentlyContinue
+            if ($drive -and $null -ne $drive.Free -and $drive.Free -lt $MinFreeSpaceGB * 1GB) {
+                $freeGB = [math]::Round($drive.Free / 1GB, 1)
+                Write-Host "Error: $root has $freeGB GB free, an update run needs at least $MinFreeSpaceGB GB." -ForegroundColor Red
+            }
+        }
+        Write-Host "Free disk space on the temp or profile drive, then rerun update-all." -ForegroundColor Yellow
+        return
+    }
+
     Write-Step "Checking package managers..."
     $hasManager = $false
 
@@ -222,16 +201,19 @@ function Main {
         return
     }
 
-    # ============================================================================
-    # SCOOP
-    # ============================================================================
     Write-Step "SCOOP"
     if (Test-Command scoop) {
         try {
-            # Update scoop buckets and all apps in one command (same as manual `scoop update -a`)
+            $LASTEXITCODE = 0
             scoop update -a
-            Write-Success "scoop"
-            $script:updated++
+            if ($LASTEXITCODE -eq 0) {
+                Write-Success "scoop"
+                $script:updated++
+            }
+            else {
+                Write-Fail "scoop"
+                $script:failed++
+            }
         }
         catch {
             Write-Fail "scoop"
@@ -243,19 +225,10 @@ function Main {
         $script:skipped++
     }
 
-    # ============================================================================
-    # WINGET
-    # ============================================================================
     Write-Step "WINGET"
     if (Test-Command winget) {
-        # Use full path since winget is in WindowsApps which may not be in PATH
         $wingetExe = Join-Path $env:LOCALAPPDATA "Microsoft\WindowsApps\winget.exe"
 
-        # InstallLocationRequired packages first: a non-blocking pin keeps them
-        # out of upgrade --all (which prompts interactively for an install root),
-        # while upgrade <id> still works; --location is passed to the installer
-        # verbatim, unlike installBehavior.defaultInstallRoot which gets the
-        # package ID appended
         $wingetBatch = @()
         foreach ($pkg in $WingetLocationUpgrades.GetEnumerator()) {
             $installed = & $wingetExe list --id $pkg.Key --exact --accept-source-agreements 2>$null |
@@ -288,6 +261,10 @@ function Main {
             }
             else {
                 Write-Fail "$label (exit $($result.Code))"
+                $note = $WingetExitNotes[$result.Code]
+                if ($note) {
+                    Write-Info $note
+                }
                 $script:failed++
             }
         }
@@ -297,15 +274,18 @@ function Main {
         $script:skipped++
     }
 
-    # ============================================================================
-    # CHOCOLATEY
-    # ============================================================================
     Write-Step "CHOCOLATEY"
     if (Test-Command choco) {
         try {
             choco upgrade all -y
-            Write-Success "Chocolatey"
-            $script:updated++
+            if ($LASTEXITCODE -eq 0) {
+                Write-Success "Chocolatey"
+                $script:updated++
+            }
+            else {
+                Write-Fail "Chocolatey"
+                $script:failed++
+            }
         }
         catch {
             Write-Fail "Chocolatey"
@@ -317,18 +297,21 @@ function Main {
         $script:skipped++
     }
 
-    # ============================================================================
-    # NPM (Node.js global packages)
-    # ============================================================================
     Write-Step "NPM (Node.js global packages)"
     if (Test-Command npm) {
         try {
             Write-Info "Updating npm itself..."
             npm install -g npm@latest
-
+            $npmSelf = $LASTEXITCODE
             npm update -g
-            Write-Success "npm"
-            $script:updated++
+            if ($npmSelf -eq 0 -and $LASTEXITCODE -eq 0) {
+                Write-Success "npm"
+                $script:updated++
+            }
+            else {
+                Write-Fail "npm"
+                $script:failed++
+            }
         }
         catch {
             Write-Fail "npm"
@@ -340,15 +323,18 @@ function Main {
         $script:skipped++
     }
 
-    # ============================================================================
-    # PNPM
-    # ============================================================================
     Write-Step "PNPM"
     if (Test-Command pnpm) {
         try {
             pnpm update -g
-            Write-Success "pnpm"
-            $script:updated++
+            if ($LASTEXITCODE -eq 0) {
+                Write-Success "pnpm"
+                $script:updated++
+            }
+            else {
+                Write-Fail "pnpm"
+                $script:failed++
+            }
         }
         catch {
             Write-Fail "pnpm"
@@ -360,26 +346,29 @@ function Main {
         $script:skipped++
     }
 
-    # ============================================================================
-    # BUN (JavaScript runtime and package manager)
-    # ============================================================================
-    Write-Step "BUN"
+    Write-Step "BUN (JavaScript runtime and package manager)"
     if (Test-Command bun) {
         try {
-            # First upgrade bun itself
+            $bunOk = $true
             bun upgrade
+            if ($LASTEXITCODE -ne 0) { $bunOk = $false }
 
-            # Check if there are global packages to update
             $globalPackages = bun pm ls -g 2>&1 | Select-String -Pattern "^\w" | Measure-Object
             $hasGlobalPackages = $globalPackages.Count -gt 0
 
             if ($hasGlobalPackages) {
-                # Only run bun update -g if there are global packages
                 bun update -g
+                if ($LASTEXITCODE -ne 0) { $bunOk = $false }
             }
 
-            Write-Success "bun"
-            $script:updated++
+            if ($bunOk) {
+                Write-Success "bun"
+                $script:updated++
+            }
+            else {
+                Write-Fail "bun"
+                $script:failed++
+            }
         }
         catch {
             Write-Fail "bun"
@@ -391,15 +380,18 @@ function Main {
         $script:skipped++
     }
 
-    # ============================================================================
-    # YARN
-    # ============================================================================
     Write-Step "YARN"
     if (Test-Command yarn) {
         try {
             yarn global upgrade
-            Write-Success "yarn"
-            $script:updated++
+            if ($LASTEXITCODE -eq 0) {
+                Write-Success "yarn"
+                $script:updated++
+            }
+            else {
+                Write-Fail "yarn"
+                $script:failed++
+            }
         }
         catch {
             Write-Fail "yarn"
@@ -411,15 +403,18 @@ function Main {
         $script:skipped++
     }
 
-    # ============================================================================
-    # GUP (Go global packages): go installs gup when missing, gup updates all
-    # ============================================================================
     Write-Step "GUP (Go global packages)"
     if (Test-Command gup) {
         try {
             gup update
-            Write-Success "gup"
-            $script:updated++
+            if ($LASTEXITCODE -eq 0) {
+                Write-Success "gup"
+                $script:updated++
+            }
+            else {
+                Write-Fail "gup"
+                $script:failed++
+            }
         }
         catch {
             Write-Fail "gup"
@@ -429,8 +424,14 @@ function Main {
     elseif (Test-Command go) {
         try {
             go install github.com/nao1215/gup@latest && gup update
-            Write-Success "gup"
-            $script:updated++
+            if ($LASTEXITCODE -eq 0) {
+                Write-Success "gup"
+                $script:updated++
+            }
+            else {
+                Write-Fail "gup"
+                $script:failed++
+            }
         }
         catch {
             Write-Fail "gup"
@@ -442,16 +443,19 @@ function Main {
         $script:skipped++
     }
 
-    # ============================================================================
-    # CARGO (Rust packages)
-    # ============================================================================
     Write-Step "CARGO (Rust packages)"
     if (Test-Command cargo) {
         if (Test-Command cargo-install-update) {
             try {
                 cargo install-update -a
-                Write-Success "cargo"
-                $script:updated++
+                if ($LASTEXITCODE -eq 0) {
+                    Write-Success "cargo"
+                    $script:updated++
+                }
+                else {
+                    Write-Fail "cargo"
+                    $script:failed++
+                }
             }
             catch {
                 Write-Fail "cargo"
@@ -468,15 +472,18 @@ function Main {
         $script:skipped++
     }
 
-    # ============================================================================
-    # RUSTUP
-    # ============================================================================
     Write-Step "RUSTUP"
     if (Test-Command rustup) {
         try {
             rustup update
-            Write-Success "rustup"
-            $script:updated++
+            if ($LASTEXITCODE -eq 0) {
+                Write-Success "rustup"
+                $script:updated++
+            }
+            else {
+                Write-Fail "rustup"
+                $script:failed++
+            }
         }
         catch {
             Write-Fail "rustup"
@@ -488,22 +495,14 @@ function Main {
         $script:skipped++
     }
 
-    # ============================================================================
-    # DOTNET TOOLS
-    # ============================================================================
     Write-Step "DOTNET TOOLS"
     if (Test-Command dotnet) {
-        # global scope: local scope requires a dotnet-tools.json manifest no
-        # target machine carries
         $list = @(dotnet tool list --global)
         if ($LASTEXITCODE -ne 0) {
             Write-Fail "dotnet tool list"
             $script:failed++
         }
         else {
-            # the last dashed rule anchors the table: preamble lines before it
-            # (SDK first-run banner, even one with its own rule) never turn
-            # into tool names
             $sepIndex = -1
             for ($i = 0; $i -lt $list.Count; $i++) {
                 if ($list[$i] -match '^-+$') { $sepIndex = $i }
@@ -538,22 +537,37 @@ function Main {
         $script:skipped++
     }
 
-    # ============================================================================
-    # PIP (Python packages)
-    # ============================================================================
     if (-not $SkipPip) {
         Write-Step "PIP (Python packages)"
 
         if (Test-Command pip) {
             try {
-                # Upgrade pip first using python -m pip (recommended on Windows)
                 python -m pip install --upgrade pip
-
-                # Update all packages using the simple one-liner
-                pip freeze 2>&1 | ForEach-Object { $_.Split('==')[0] } | ForEach-Object { python -m pip install --upgrade $_ }
-
-                Write-Success "pip"
-                $script:updated++
+                $pipSelf = $LASTEXITCODE
+                $failedPackages = @()
+                $packages = @(pip freeze 2>$null | ForEach-Object { $_.Split('==')[0] })
+                $freezeOk = $LASTEXITCODE -eq 0
+                if ($freezeOk) {
+                    foreach ($package in $packages) {
+                        python -m pip install --upgrade $package
+                        if ($LASTEXITCODE -ne 0) {
+                            $failedPackages += $package
+                        }
+                    }
+                }
+                if ($pipSelf -eq 0 -and $freezeOk -and $failedPackages.Count -eq 0) {
+                    Write-Success "pip"
+                    $script:updated++
+                }
+                else {
+                    if ($failedPackages.Count -gt 0) {
+                        Write-Fail "pip (failed: $($failedPackages -join ', '))"
+                    }
+                    else {
+                        Write-Fail "pip"
+                    }
+                    $script:failed++
+                }
             }
             catch {
                 Write-Fail "pip"
@@ -570,15 +584,18 @@ function Main {
         $script:skipped++
     }
 
-    # ============================================================================
-    # POETRY
-    # ============================================================================
     Write-Step "POETRY"
     if (Test-Command poetry) {
         try {
             poetry self update
-            Write-Success "poetry"
-            $script:updated++
+            if ($LASTEXITCODE -eq 0) {
+                Write-Success "poetry"
+                $script:updated++
+            }
+            else {
+                Write-Fail "poetry"
+                $script:failed++
+            }
         }
         catch {
             Write-Fail "poetry"
@@ -590,15 +607,19 @@ function Main {
         $script:skipped++
     }
 
-    # ============================================================================
-    # UV (Python package manager)
-    # ============================================================================
-    Write-Step "UV"
+    Write-Step "UV (Python package manager)"
     if (Test-Command uv) {
         try {
+            $LASTEXITCODE = 0
             irm https://astral.sh/uv/install.ps1 | iex
-            Write-Success "uv"
-            $script:updated++
+            if ($LASTEXITCODE -eq 0) {
+                Write-Success "uv"
+                $script:updated++
+            }
+            else {
+                Write-Fail "uv"
+                $script:failed++
+            }
         }
         catch {
             Write-Fail "uv"
@@ -610,11 +631,6 @@ function Main {
         $script:skipped++
     }
 
-    # ============================================================================
-    # NEOVIM (plugins and treesitter parsers)
-    # ============================================================================
-    # Both calls block until their work finishes: vim.pack.update() with force
-    # waits internally, and the nvim-treesitter Task:wait() pumps the loop.
     Write-Step "NEOVIM (plugins and parsers)"
     if (Test-Command nvim) {
         & nvim --headless "+lua vim.pack.update(nil, { force = true })" "+qa"
@@ -642,24 +658,19 @@ function Main {
         $script:skipped++
     }
 
-    # ============================================================================
-    # CLAUDE CODE CLI
-    # ============================================================================
     Write-Step "CLAUDE CODE CLI"
     if (Test-Command claude) {
-        # Verify claude actually works before trying to update
         $claudeWorks = $false
         try {
             $null = & claude --version 2>&1 | Out-Null
             if ($LASTEXITCODE -eq 0) {
                 $claudeWorks = $true
             }
-        } catch {
-            # claude command doesn't work
+        }
+        catch {
         }
 
         if ($claudeWorks) {
-            # Get version before update
             $versionBefore = ""
             try {
                 $versionOutput = claude --version 2>$null
@@ -668,10 +679,8 @@ function Main {
                 }
             }
             catch {
-                # If version extraction fails, continue anyway
             }
 
-            # Remove old bun/npm global packages
             if (Test-Command bun) {
                 bun remove -g @anthropic-ai/claude-code 2>$null
             }
@@ -679,11 +688,9 @@ function Main {
                 npm rm -g @anthropic-ai/claude-code 2>$null
             }
 
-            # Update via native installer (idempotent)
             Write-Info "claude-code updating via native installer..."
             irm https://claude.ai/install.ps1 | iex
 
-            # Ensure native installer bin dir is in PATH
             $claudeBin = Join-Path $env:USERPROFILE ".claude\local\bin"
             if (Test-Path $claudeBin) {
                 $envPath = [Environment]::GetEnvironmentVariable("Path", "User")
@@ -692,7 +699,6 @@ function Main {
                 }
             }
 
-            # Verify the update worked
             $versionAfter = ""
             $updateWorks = $false
             try {
@@ -706,7 +712,6 @@ function Main {
                 }
             }
             catch {
-                # Verification failed
             }
 
             if ($updateWorks -and $versionAfter -and $versionAfter -ne $versionBefore) {
@@ -732,13 +737,9 @@ function Main {
         $script:skipped++
     }
 
-    # ============================================================================
-    # OPENCODE AI CLI
-    # ============================================================================
     Write-Step "OPENCODE AI CLI"
 
     if (Test-Command bun) {
-        # Get current version if installed
         $currentVersion = ""
         if (Test-Command opencode) {
             try {
@@ -746,14 +747,17 @@ function Main {
                 if ($versionOutput -match '(\d+\.\d+\.\d+)') {
                     $currentVersion = $matches[1]
                 }
-            } catch {}
+            }
+            catch {
+            }
         }
 
-        # Get latest version from npm registry
         $latestVersion = ""
         try {
             $latestVersion = npm view opencode-ai version 2>$null
-        } catch {}
+        }
+        catch {
+        }
 
         if ($currentVersion -and $latestVersion -and $currentVersion -eq $latestVersion) {
             Write-Skip "opencode already at latest version ($currentVersion)"
@@ -764,7 +768,6 @@ function Main {
                 Write-Info "opencode update available: $currentVersion -> $latestVersion"
             }
 
-            # Install/update via bun
             $result = bun install -g opencode-ai 2>&1
             if ($LASTEXITCODE -eq 0) {
                 Write-Success "opencode ($currentVersion -> $latestVersion)"
@@ -781,9 +784,6 @@ function Main {
         $script:skipped++
     }
 
-    # ============================================================================
-    # SUMMARY
-    # ============================================================================
     $endTime = Get-Date
     $duration = $endTime - $startTime
 
@@ -801,5 +801,4 @@ function Main {
     return
 }
 
-# Run main
 Main
