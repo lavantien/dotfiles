@@ -15,6 +15,8 @@ $script:skipped = 0
 $script:failed = 0
 
 $MinFreeSpaceGB = 10
+$WingetProgressMs = 2000
+$WingetStallMinutes = 5
 
 $WingetLocationUpgrades = @{
     "Blizzard.BattleNet" = "C:\Program Files (x86)\Battle.net"
@@ -102,10 +104,11 @@ exit 0
         Replace('<log>', $logPath.Replace("'", "''")).
         Replace('<tag>', $tag)
     $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($child))
+    $marker = '^WINGET_RESULT\|' + [regex]::Escape($tag) + '\|(-?\d+)$'
 
     Write-Info "elevating winget batch, one UAC prompt covers every upgrade"
     try {
-        $proc = Start-Process -FilePath (Get-Process -Id $PID).Path -ArgumentList @('-NoProfile', '-NonInteractive', '-EncodedCommand', $encoded) -Verb RunAs -WindowStyle Hidden -PassThru -Wait
+        $proc = Start-Process -FilePath (Get-Process -Id $PID).Path -ArgumentList @('-NoProfile', '-NonInteractive', '-EncodedCommand', $encoded) -Verb RunAs -WindowStyle Hidden -PassThru
     }
     catch {
         $reason = $_.Exception.Message
@@ -120,10 +123,44 @@ exit 0
         return
     }
 
+    $progressStart = Get-Date
+    $lastChange = $progressStart
+    $done = 0
+    $tail = 'waiting for winget output'
+    while (-not $proc.WaitForExit($WingetProgressMs)) {
+        $tick = @(Get-Content -LiteralPath $logPath -ErrorAction SilentlyContinue)
+        if ($tick.Count -gt 0) {
+            $tickDone = @($tick | Where-Object { $_ -match $marker }).Count
+            $tickTail = $tail
+            $lastLine = [string]($tick | Where-Object { $_ -and $_ -notmatch $marker -and $_ -notmatch '^WINGET_RESULT' } | Select-Object -Last 1)
+            if ($lastLine) {
+                $tickTail = ($lastLine -replace "`e\[[0-9;?]*[ -/]*[@-~]", '' -replace '[^\x20-\x7E]', '' -replace '\s+', ' ').Trim()
+                if (-not $tickTail) { $tickTail = 'waiting for winget output' }
+            }
+            if ($tickDone -ne $done -or $tickTail -ne $tail) {
+                $done = $tickDone
+                $tail = $tickTail
+                $lastChange = Get-Date
+            }
+        }
+        $now = Get-Date
+        $elapsed = [int]($now - $progressStart).TotalSeconds
+        $stalled = ([int]($now - $lastChange).TotalMinutes) -ge $WingetStallMinutes
+        $color = if ($stalled) { 'Yellow' } else { 'DarkGray' }
+        $stallText = if ($stalled) { ', stalled {0}m' -f [int]($now - $lastChange).TotalMinutes } else { '' }
+        $prefix = '  winget {0}/{1} | {2:d2}:{3:d2} | ' -f $done, $Batch.Count, [int]($elapsed / 60), ($elapsed % 60)
+        $budget = [Math]::Max(0, 79 - $prefix.Length - $stallText.Length)
+        $view = $tail
+        if ($view.Length -gt $budget) { $view = $view.Substring(0, $budget) }
+        $frame = $prefix + $view + $stallText
+        Write-Host ("`r" + $frame) -NoNewline -ForegroundColor $color
+    }
+    $null = $proc.WaitForExit()
+    Write-Host ("`r" + (' ' * 79) + "`r") -NoNewline
+
     $logLines = @(Get-Content -LiteralPath $logPath)
     Remove-Item $batchPath, $logPath -Force -ErrorAction SilentlyContinue
 
-    $marker = '^WINGET_RESULT\|' + [regex]::Escape($tag) + '\|(-?\d+)$'
     $outcomes = [System.Collections.Generic.List[object]]::new()
     $pending = [System.Collections.Generic.List[string]]::new()
     foreach ($line in $logLines) {

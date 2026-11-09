@@ -201,6 +201,231 @@ PROBE
 	grep -qF 'no result marker in the elevated log, treating this command as failed' "$ps1"
 }
 
+@test "update-all.ps1 ticks winget batch progress instead of blocking silently" {
+	ps1="$REPO_ROOT/scripts/update-all.ps1"
+	grep -q '^\$WingetProgressMs = 2000$' "$ps1"
+	grep -q '^\$WingetStallMinutes = 5$' "$ps1"
+	if grep -q -- '-Wait' "$ps1"; then
+		echo "the elevated batch still blocks in Start-Process -Wait with no output" >&2
+		return 1
+	fi
+	grep -qF -- 'while (-not $proc.WaitForExit($WingetProgressMs)) {' "$ps1"
+	grep -qF -- '$proc.WaitForExit()' "$ps1"
+	grep -qF -- 'Write-Host ("`r" + $frame) -NoNewline -ForegroundColor $color' "$ps1"
+	grep -qF -- '$budget = [Math]::Max(0, 79 - $prefix.Length - $stallText.Length)' "$ps1"
+	grep -qF -- "-notmatch '^WINGET_RESULT'" "$ps1"
+	grep -qF -- "(' ' * 79)" "$ps1"
+	grep -qF -- 'TotalMinutes) -ge $WingetStallMinutes' "$ps1"
+	grep -qF -- 'stalled {0}m' "$ps1"
+	grep -qF -- "'Yellow' } else { 'DarkGray'" "$ps1"
+	grep -qF -- '-ForegroundColor $color' "$ps1"
+	[ "$(grep -cF -- '-match $marker' "$ps1")" -eq 2 ]
+	[ "$(grep -cF -- '-notmatch $marker' "$ps1")" -eq 1 ]
+	[ "$(grep -cF -- "^WINGET_RESULT\\|" "$ps1")" -eq 1 ]
+	marker_n="$(grep -nF -- "^WINGET_RESULT\\|" "$ps1" | head -1 | cut -d: -f1)"
+	loop_n="$(grep -nF -- 'while (-not $proc.WaitForExit($WingetProgressMs)) {' "$ps1" | head -1 | cut -d: -f1)"
+	[ -n "$marker_n" ] && [ -n "$loop_n" ]
+	[ "$marker_n" -lt "$loop_n" ]
+}
+
+@test "update-all.ps1 prints winget progress frames from the elevated log while waiting" {
+	ps1="$REPO_ROOT/scripts/update-all.ps1"
+	wtemp="$BATS_TEST_TMPDIR/wtemp"
+	mkdir -p "$wtemp"
+	wtemp_win="$(cygpath -w "$wtemp" 2>/dev/null || echo "$wtemp")"
+	ps1_win="$(cygpath -w "$ps1" 2>/dev/null || echo "$ps1")"
+	probe="$BATS_TEST_TMPDIR/ticker-probe.ps1"
+	cat >"$probe" <<'PROBE'
+$ErrorActionPreference = 'Stop'
+$src = Get-Content -Raw $env:PS1_PATH
+$errs = $null
+$ast = [System.Management.Automation.Language.Parser]::ParseInput($src, [ref]$null, [ref]$errs)
+if ($errs.Count -gt 0) {
+	Write-Output 'parse-errors'
+	exit 1
+}
+$funcs = $ast.FindAll({ param($node) $node -is [System.Management.Automation.Language.FunctionDefinitionAst] }, $true)
+$defs = @{}
+foreach ($name in @('Invoke-WingetBatch', 'Write-Info')) {
+	$def = $funcs | Where-Object { $_.Name -eq $name } | Select-Object -First 1
+	if (-not $def) {
+		Write-Output "missing:$name"
+		exit 1
+	}
+	$defs[$name] = $def.Extent.Text
+}
+$script:hostLog = Join-Path $env:PROBE_DIR 'host.log'
+$script:callsLog = Join-Path $env:PROBE_DIR 'calls.log'
+$script:waitTicks = 0
+function Write-Host {
+	param([Parameter(Position = 0)][object]$Object, [switch]$NoNewline, [object]$ForegroundColor)
+	Add-Content -LiteralPath $script:hostLog -Value "$ForegroundColor|$(if ($NoNewline) { 'nn' } else { 'nl' })|$Object"
+}
+function Test-IsElevated { $false }
+function Get-Process { param([int]$Id) [pscustomobject]@{ Path = 'pwsh' } }
+function New-Item {
+	[CmdletBinding()]
+	param([string]$ItemType, [string]$Path, [switch]$Force)
+	if ($ItemType -eq 'File' -and ([IO.Path]::GetFileName($Path) -like 'winget-batch-*.log')) {
+		$tag = [IO.Path]::GetFileNameWithoutExtension($Path) -replace '^winget-batch-', ''
+		@('first winget line', "WINGET_RESULT|$tag|0", 'second winget line', "WINGET_RESULT|$tag|0", "WINGET_RESULT|$tag") |
+			Set-Content -LiteralPath $Path -Encoding utf8
+		return (Get-Item -LiteralPath $Path)
+	}
+	Microsoft.PowerShell.Management\New-Item -ItemType $ItemType -Path $Path -Force:$Force
+}
+function Start-Process {
+	[CmdletBinding()]
+	param([string]$FilePath, [string[]]$ArgumentList, [string]$Verb, [string]$WindowStyle, [switch]$PassThru, [switch]$Wait)
+	if ($Wait) { Add-Content -LiteralPath $script:callsLog -Value 'start-wait-bound' }
+	$p = [pscustomobject]@{ ExitCode = 0 }
+	$p | Add-Member -MemberType ScriptMethod -Name WaitForExit -Value {
+		param([int]$Milliseconds = -1)
+		if ($Milliseconds -lt 0) {
+			Add-Content -LiteralPath $script:callsLog -Value 'wait:final'
+			return $true
+		}
+		Add-Content -LiteralPath $script:callsLog -Value "wait:$Milliseconds"
+		$script:waitTicks++
+		return $script:waitTicks -ge 3
+	}
+	return $p
+}
+$WingetProgressMs = 2000
+$WingetStallMinutes = 5
+Invoke-Expression $defs['Write-Info']
+Invoke-Expression $defs['Invoke-WingetBatch']
+$batch = @(
+	@('upgrade', '--id', 'Example.App', '--exact'),
+	@('upgrade', '--all')
+)
+$r = @(Invoke-WingetBatch -WingetExe 'winget.exe' -Batch $batch)
+Write-Output "outcomes:$($r.Count) codes:$($r[0].Code),$($r[1].Code)"
+PROBE
+	out="$(PS1_PATH="$ps1_win" PROBE_DIR="$wtemp_win" TEMP="$wtemp_win" pwsh -NoProfile -File "$probe" 2>&1)"
+	grep -q '^outcomes:2 codes:0,0$' <<<"$out"
+	[ "$(grep -c 'winget 2/2 | [0-9][0-9]:[0-9][0-9] | second winget line' "$wtemp/host.log")" -eq 2 ]
+	if grep 'winget 2/2' "$wtemp/host.log" | grep -qv '|nn|'; then
+		echo "a ticker frame was written without -NoNewline and would scroll" >&2
+		return 1
+	fi
+	if grep -q 'WINGET_RESULT' "$wtemp/host.log"; then
+		echo "internal marker text leaked into a visible frame" >&2
+		return 1
+	fi
+	awk '/ {79}/{found = 1} END {exit (found ? 0 : 1)}' "$wtemp/host.log"
+	last_frame_n="$(grep -n 'winget 2/2' "$wtemp/host.log" | tail -1 | cut -d: -f1)"
+	erase_n="$(awk '/ {79}/{print NR}' "$wtemp/host.log" | tail -1)"
+	[ "$erase_n" -gt "$last_frame_n" ]
+	printf 'wait:2000\r\nwait:2000\r\nwait:2000\r\nwait:final\r\n' >"$wtemp/calls.expected"
+	cmp "$wtemp/calls.expected" "$wtemp/calls.log"
+	if grep -q 'start-wait-bound' "$wtemp/calls.log"; then
+		echo "Invoke-WingetBatch still passes -Wait to Start-Process" >&2
+		return 1
+	fi
+}
+
+@test "update-all.ps1 flags a stalled winget batch in yellow with the idle minutes" {
+	ps1="$REPO_ROOT/scripts/update-all.ps1"
+	wtemp="$BATS_TEST_TMPDIR/wtemp-stall"
+	mkdir -p "$wtemp"
+	wtemp_win="$(cygpath -w "$wtemp" 2>/dev/null || echo "$wtemp")"
+	ps1_win="$(cygpath -w "$ps1" 2>/dev/null || echo "$ps1")"
+	probe="$BATS_TEST_TMPDIR/stall-probe.ps1"
+	cat >"$probe" <<'PROBE'
+$ErrorActionPreference = 'Stop'
+$src = Get-Content -Raw $env:PS1_PATH
+$errs = $null
+$ast = [System.Management.Automation.Language.Parser]::ParseInput($src, [ref]$null, [ref]$errs)
+if ($errs.Count -gt 0) {
+	Write-Output 'parse-errors'
+	exit 1
+}
+$funcs = $ast.FindAll({ param($node) $node -is [System.Management.Automation.Language.FunctionDefinitionAst] }, $true)
+$defs = @{}
+foreach ($name in @('Invoke-WingetBatch', 'Write-Info')) {
+	$def = $funcs | Where-Object { $_.Name -eq $name } | Select-Object -First 1
+	if (-not $def) {
+		Write-Output "missing:$name"
+		exit 1
+	}
+	$defs[$name] = $def.Extent.Text
+}
+$script:hostLog = Join-Path $env:PROBE_DIR 'host.log'
+$script:callsLog = Join-Path $env:PROBE_DIR 'calls.log'
+$script:waitTicks = 0
+$script:clockCalls = 0
+function Get-Date {
+	$script:clockCalls++
+	return ([datetime]'2026-01-01T00:00:00').AddSeconds(180 * ($script:clockCalls - 1))
+}
+function Write-Host {
+	param([Parameter(Position = 0)][object]$Object, [switch]$NoNewline, [object]$ForegroundColor)
+	Add-Content -LiteralPath $script:hostLog -Value "$ForegroundColor|$(if ($NoNewline) { 'nn' } else { 'nl' })|$Object"
+}
+function Test-IsElevated { $false }
+function Get-Process { param([int]$Id) [pscustomobject]@{ Path = 'pwsh' } }
+function New-Item {
+	[CmdletBinding()]
+	param([string]$ItemType, [string]$Path, [switch]$Force)
+	if ($ItemType -eq 'File' -and ([IO.Path]::GetFileName($Path) -like 'winget-batch-*.log')) {
+		$tag = [IO.Path]::GetFileNameWithoutExtension($Path) -replace '^winget-batch-', ''
+		@('first winget line', "WINGET_RESULT|$tag|0", ('z' * 70), "WINGET_RESULT|$tag|0", "WINGET_RESULT|$tag") |
+			Set-Content -LiteralPath $Path -Encoding utf8
+		return (Get-Item -LiteralPath $Path)
+	}
+	Microsoft.PowerShell.Management\New-Item -ItemType $ItemType -Path $Path -Force:$Force
+}
+function Start-Process {
+	[CmdletBinding()]
+	param([string]$FilePath, [string[]]$ArgumentList, [string]$Verb, [string]$WindowStyle, [switch]$PassThru, [switch]$Wait)
+	if ($Wait) { Add-Content -LiteralPath $script:callsLog -Value 'start-wait-bound' }
+	$p = [pscustomobject]@{ ExitCode = 0 }
+	$p | Add-Member -MemberType ScriptMethod -Name WaitForExit -Value {
+		param([int]$Milliseconds = -1)
+		if ($Milliseconds -lt 0) {
+			Add-Content -LiteralPath $script:callsLog -Value 'wait:final'
+			return $true
+		}
+		Add-Content -LiteralPath $script:callsLog -Value "wait:$Milliseconds"
+		$script:waitTicks++
+		return $script:waitTicks -ge 4
+	}
+	return $p
+}
+$WingetProgressMs = 2000
+$WingetStallMinutes = 5
+Invoke-Expression $defs['Write-Info']
+Invoke-Expression $defs['Invoke-WingetBatch']
+$batch = @(
+	@('upgrade', '--id', 'Example.App', '--exact'),
+	@('upgrade', '--all')
+)
+$r = @(Invoke-WingetBatch -WingetExe 'winget.exe' -Batch $batch)
+Write-Output "outcomes:$($r.Count) codes:$($r[0].Code),$($r[1].Code)"
+PROBE
+	out="$(PS1_PATH="$ps1_win" PROBE_DIR="$wtemp_win" TEMP="$wtemp_win" pwsh -NoProfile -File "$probe" 2>&1)"
+	grep -q '^outcomes:2 codes:0,0$' <<<"$out"
+	grep -qE 'DarkGray\|nn\|  winget 2/2 \| 06:00 \| z{56}' "$wtemp/host.log"
+	if grep -q 'DarkGray|.*stalled' "$wtemp/host.log"; then
+		echo "a normal frame carries the stalled marker" >&2
+		return 1
+	fi
+	if grep 'stalled' "$wtemp/host.log" | grep -qv 'Yellow|nn|'; then
+		echo "a stalled frame lost its yellow color or -NoNewline" >&2
+		return 1
+	fi
+	if grep -q 'WINGET_RESULT' "$wtemp/host.log"; then
+		echo "internal marker text leaked into a visible frame" >&2
+		return 1
+	fi
+	awk 'index($0, "winget 2/2") { s = substr($0, index($0, "|nn|") + 4); gsub(/\r/, "", s); if (length(s) > 79) { print "frame length " length(s) " overflows 79"; bad = 1 } } END { exit (bad ? 1 : 0) }' "$wtemp/host.log"
+	grep -qE 'Yellow\|nn\|  winget 2/2 \| 09:00 \| z{44}, stalled 6m' "$wtemp/host.log"
+	grep -qE 'Yellow\|nn\|  winget 2/2 \| 12:00 \| z{44}, stalled 9m' "$wtemp/host.log"
+	printf 'wait:2000\r\nwait:2000\r\nwait:2000\r\nwait:2000\r\nwait:final\r\n' >"$wtemp/calls.expected"
+	cmp "$wtemp/calls.expected" "$wtemp/calls.log"
+}
+
 @test "update-all.ps1 gates the bun section on the package listing exit code" {
 	ps1="$REPO_ROOT/scripts/update-all.ps1"
 	slice="$(ps1_section "$ps1" BUN)"
