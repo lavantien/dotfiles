@@ -8,6 +8,10 @@ Claude Code gained a deployed `keybindings.json` that binds `-` to `task:backgro
 
 Claude settings gained `CLAUDE_CODE_AUTO_MODE_SERVER` set to `0`, which stops Claude Code from running the auto mode server check against the z.ai gateway and removes the startup notice that asks the gateway to confirm no-charge classifier billing.
 
+update-all on windows now decides every package manager section by the exit code of its commands, so a failing npm, yarn, pip, bun, or winget command reports a failure instead of a success line, pip counts and names failed package upgrades, a winget outcome whose result marker never reached the elevated log reports as failed instead of trusting the child exit code, the run stops before the first manager when free space on the temp or profile drive drops below 10 GB, and winget exit -1978335188 prints its cause, that upgrade --all completed with failures.
+
+The elevated winget batch now prints a live progress line that updates every 2 seconds with the completed command count, the elapsed time, and the latest winget output, erases itself before the per-command verdicts print, and turns yellow with the idle minutes when the batch writes nothing for 5 minutes, so a hung upgrade shows itself instead of a silent wait.
+
 ## [6.14] - 2026-10-31
 
 The protocol text is rewritten in plain language, with the same directives, structure, and thresholds carried over in new wording: clipped fragment stacks became flowing sentences joined with commas, and every sentence the old text wrote with a word from its own banned list is reworded, covering pins down, unlanded, gate, lands, lives in, showcases, actually, baseline, the gap, inventory listings, and the framing cliches header, and acronyms now expand to their full words at first use, covering e2e, SLOC, PEB, TDD, OS, CI, PR, PID, and MCP.
