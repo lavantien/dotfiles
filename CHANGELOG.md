@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented in this file, newest first. One short line per release states what happened, with no detail enumeration, the commit history carries the detail. Versioning is major.minor. Unreleased work is written under an `## [Unreleased]` heading that is renamed to the version and date at release time.
 
-## [Unreleased]
+## [6.15] - 2026-11-13
 
 Claude Code gained a deployed `keybindings.json` that binds `-` to `task:background` in the Task context, so pressing minus sends a foreground task to the background, and the built-in left-arrow background gesture stays active because the terminal UI hardcodes it and no setting exposes it.
 
