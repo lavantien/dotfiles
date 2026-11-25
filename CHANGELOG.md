@@ -6,6 +6,8 @@ All notable changes to this project are documented in this file, newest first. O
 
 Claude Code settings now use glm-5.4[1m] for the default model, the sub-agent model, and the haiku, sonnet, and opus class overrides, so haiku-class calls leave glm-5.3-flash[1m] and run on the primary model. The sub-agent rule in CLAUDE.md names GLM-5.4 as the primary model.
 
+The protocol scopes fuzzy testing and mutation testing to core logic, which covers parsing, validation, algorithms, arithmetic, data conversion, state machines, concurrency, and money or security decisions, judged per function, so config, glue code, build and deploy scripts, generated code, documentation, and test code get no fuzz target and no mutation run, a money or security decision counts as core logic wherever it sits, and TDD and e2e testing stay mandatory on every task. The verification chain runs its fuzz and mutation steps when a change alters what a core logic function computes or how it handles an input, and the agent states a skip in its report. The rest of the protocol is regrouped in the order work happens, with prepare, fan out, disposal, guard, teardown, and the CI watcher as their own subsections and each repeated idea stated once.
+
 ## [6.15] - 2026-11-13
 
 Claude Code gained a deployed `keybindings.json` that binds `-` to `task:background` in the Task context, so pressing minus sends a foreground task to the background, and the built-in left-arrow background gesture stays active because the terminal UI hardcodes it and no setting exposes it.
