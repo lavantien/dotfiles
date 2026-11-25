@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file, newest first. One short line per release states what happened, with no detail enumeration, the commit history carries the detail. Versioning is major.minor. Unreleased work is written under an `## [Unreleased]` heading that is renamed to the version and date at release time.
 
+## [Unreleased]
+
+Claude Code settings now use glm-5.4[1m] for the default model, the sub-agent model, and the haiku, sonnet, and opus class overrides, so haiku-class calls leave glm-5.3-flash[1m] and run on the primary model. The sub-agent rule in CLAUDE.md names GLM-5.4 as the primary model.
+
 ## [6.15] - 2026-11-13
 
 Claude Code gained a deployed `keybindings.json` that binds `-` to `task:background` in the Task context, so pressing minus sends a foreground task to the background, and the built-in left-arrow background gesture stays active because the terminal UI hardcodes it and no setting exposes it.

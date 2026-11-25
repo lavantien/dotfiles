@@ -276,7 +276,7 @@ Injected top-level fields:
 | Field                               | Template value                     | Purpose                                     |
 | ----------------------------------- | ---------------------------------- | ------------------------------------------- |
 | `env`                               | the variables in the table below   | API endpoint, models, limits, feature flags |
-| `model`                             | `glm-5.3[1m]`                      | Default model                               |
+| `model`                             | `glm-5.4[1m]`                      | Default model                               |
 | `statusLine`                        | `bash ~/.claude/statusline.sh`     | Statusline command                          |
 | `enabledPlugins`                    | the plugins listed in the template | Plugin enablement                           |
 | `alwaysThinkingEnabled`             | `true`                             | Extended thinking by default                |
@@ -299,11 +299,11 @@ Injected `env` variables:
 | `CLAUDE_CODE_MAX_OUTPUT_TOKENS`            | `131072`                         | Max output tokens                                                     |
 | `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE`          | `48.5`                           | Autocompact trigger percentage (48.5% of the 1M window = 485k tokens) |
 | `CLAUDE_CODE_AUTO_COMPACT_WINDOW`          | `1000000`                        | Autocompact context window                                            |
-| `ANTHROPIC_DEFAULT_HAIKU_MODEL`            | `glm-5.3-flash[1m]`              | Haiku-class model override                                            |
-| `ANTHROPIC_DEFAULT_SONNET_MODEL`           | `glm-5.3[1m]`                    | Sonnet-class model override                                           |
-| `ANTHROPIC_DEFAULT_OPUS_MODEL`             | `glm-5.3[1m]`                    | Opus-class model override                                             |
+| `ANTHROPIC_DEFAULT_HAIKU_MODEL`            | `glm-5.4[1m]`                    | Haiku-class model override                                            |
+| `ANTHROPIC_DEFAULT_SONNET_MODEL`           | `glm-5.4[1m]`                    | Sonnet-class model override                                           |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL`             | `glm-5.4[1m]`                    | Opus-class model override                                             |
 | `CLAUDE_CODE_EFFORT_LEVEL`                 | `max`                            | Reasoning effort                                                      |
-| `CLAUDE_CODE_SUBAGENT_MODEL`               | `glm-5.3[1m]`                    | Sub-agent model override                                              |
+| `CLAUDE_CODE_SUBAGENT_MODEL`               | `glm-5.4[1m]`                    | Sub-agent model override                                              |
 
 `enabledPlugins` enables the plugins listed in `.claude/settings.template.json`: the repomix plugins, the official LSP plugins, and the workflow plugins such as feature-dev, code-review, superpowers, and claude-security.
 
