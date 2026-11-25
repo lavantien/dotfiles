@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented in this file, newest first. One short line per release states what happened, with no detail enumeration, the commit history carries the detail. Versioning is major.minor. Unreleased work is written under an `## [Unreleased]` heading that is renamed to the version and date at release time.
 
-## [Unreleased]
+## [6.17] - 2026-11-25
 
 The pre-commit hook runs its python checks once per project and takes the staged `.py` files only, so a staged `pyproject.toml` only marks the project as python and never reaches ruff, black, isort, or mypy. The python tools and the spell check receive every file name after `--`, so a staged python file whose name starts with a dash no longer blocks the commit. The first ruff check runs with `--no-fix` so a project config cannot rewrite files on its own, and a ruff error that `ruff check --fix` cannot clear blocks the commit.
 
