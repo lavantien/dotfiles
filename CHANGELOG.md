@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented in this file, newest first. One short line per release states what happened, with no detail enumeration, the commit history carries the detail. Versioning is major.minor. Unreleased work is written under an `## [Unreleased]` heading that is renamed to the version and date at release time.
 
+## [Unreleased]
+
+The pre-commit hook runs its python checks once per project and takes the staged `.py` files only, so a staged `pyproject.toml` only marks the project as python and never reaches ruff, black, isort, or mypy. The python tools and the spell check receive every file name after `--`, so a staged python file whose name starts with a dash no longer blocks the commit. The first ruff check runs with `--no-fix` so a project config cannot rewrite files on its own, and a ruff error that `ruff check --fix` cannot clear blocks the commit.
+
+After a formatter rewrites a staged file, the hook stages only the files it rewrote and blocks the commit when a rewritten file held unstaged edits, and black and isort follow the same rule when ruff is missing. A failed fix, format, or staging step blocks the commit with a red line, and the hook always reaches its summary line. The hook and its test file carry no comments, and shfmt formats the hook.
+
 ## [6.16] - 2026-11-25
 
 Claude Code settings now use glm-5.4[1m] for the default model, the sub-agent model, and the haiku, sonnet, and opus class overrides, so haiku-class calls leave glm-5.3-flash[1m] and run on the primary model. The sub-agent rule in CLAUDE.md names GLM-5.4 as the primary model.
